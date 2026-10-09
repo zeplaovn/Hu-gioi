@@ -1,0 +1,40 @@
+# Thiên Vân Đại Lục – bản Web
+
+Bản port của game Python/tkinter `tu_tien` sang HTML + CSS + JavaScript thuần (không framework, không cần build).
+
+## Chạy
+- **Cách nhanh:** mở file `index.html` bằng trình duyệt (Chrome/Edge/Firefox).
+- **Hoặc chạy server cục bộ** (khuyến nghị khi đưa lên host): `python3 -m http.server 8000` rồi vào `http://localhost:8000`.
+- Đưa lên GitHub Pages / Netlify / bất kỳ static hosting nào: chỉ cần upload nguyên thư mục.
+
+Dữ liệu lưu bằng `localStorage` (khóa `tu_tien_save_v2`) – tự lưu sau mỗi hành động, nút "Lưu game" để lưu thủ công.
+Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · **D** đột phá. Minigame: **Space** hoặc chuột/chạm.
+
+## Cấu trúc
+```
+index.html            trang chính
+css/style.css         giao diện (responsive: máy tính / máy tính bảng / điện thoại)
+js/data.js            dữ liệu thế giới + nghề phụ + tiện ích  (world.py, crafting.py)
+js/assets.js          nạp ảnh + bảng ánh xạ icon (kể cả asset mới)
+js/player.js          nhân vật + save/load                    (player.py)
+js/ui.js              helper DOM, modal, thanh tiến độ        (widgets.py)
+js/scene.js           cảnh canvas: parallax, sprite, VFX      (scene.py)
+js/minigames.js       giữ lửa / bấm nhịp / kéo phù văn         (minigames.py)
+js/game.js            lõi: hành động, chiến đấu, đột phá, túi đồ, cửa hàng, công pháp, tông môn
+js/screens.js         màn tạo nhân vật, màn chính, hộp thoại   (ui/*.py)
+js/farm.js            linh điền                                (systems/farm.py)
+js/crafts.js          luyện đan / vẽ phù / luyện khí           (systems/crafts.py)
+js/auto.js            tu luyện tự động + hộp thoại đột phá     (systems/auto_cultivate.py)
+assets/               toàn bộ ảnh (cũ + mới)
+assets_src/           3 ảnh sheet gốc của bản cập nhật asset
+tools/slice_sheets.py cắt sheet -> sprite lẻ (cần pillow, numpy, scipy)
+```
+
+## Asset mới (cập nhật)
+| Sheet | Thư mục | Dùng ở đâu |
+|---|---|---|
+| `plants_sheet.png` (12 linh thảo) | `assets/plants/` | Biểu tượng **Linh Thảo** theo phẩm chất (cỏ → nhân sâm → linh chi → sen băng), Trường Thọ Quả, huy hiệu phẩm chất dự kiến trên ô đất chín |
+| `farm_sheet.png` (12 ô đất / đồ trang trí) | `assets/farm/` | **Linh điền**: ô trống → hạt → mầm → lớn → chín → héo; hiệu ứng tưới nước / bón thổ; bù nhìn, bia đá, hàng rào, máng nước trang trí |
+| `skills_sheet.png` (12 huy hiệu) | `assets/skills/` | Biểu tượng **công pháp** (5 huy hiệu), **tông môn** (sách xanh/đỏ/lục), nhiệm vụ tông môn, nút Công pháp, Luyện đan/Vẽ phù/Luyện khí |
+
+Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `python tools/slice_sheets.py` để cập nhật.
