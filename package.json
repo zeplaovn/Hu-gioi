@@ -1,0 +1,7 @@
+{
+  "name": "thien-van-dai-luc",
+  "private": true,
+  "version": "1.1.0",
+  "scripts": { "build": "node tools/build.mjs", "serve": "python3 -m http.server 8000" },
+  "devDependencies": { "terser": "^5.51.2", "javascript-obfuscator": "^5.9.0" }
+}

@@ -2,7 +2,7 @@
    và quản lý dữ liệu (xuất / nhập / xóa save). Lưu riêng ở khóa tu_tien_meta_v1 nên không đụng tới save cũ. */
 "use strict";
 (function () {
-  const KEY = "tu_tien_meta_v1", SAVE_KEY = "tu_tien_save_v2", MAX_HISTORY = 20;
+  const KEY = "tu_tien_meta_v1", SAVE_KEY = "tu_tien_save_v2", FLAG = "tu_tien_sec_v1", MAX_HISTORY = 20;
 
   /* ---------- Thiên Mệnh: nâng cấp vĩnh viễn, mua bằng điểm nhận được khi chết / phi thăng ---------- */
   const UP = {
@@ -65,10 +65,27 @@
     return m;
   };
 
-  let M;
-  try { M = sanitize(JSON.parse(localStorage.getItem(KEY))); } catch (e) { M = fresh(); }
+  /** Kiểm tra tính nhất quán: điểm đã tiêu phải khớp đúng giá các nâng cấp, tổng điểm không vượt mức có thể kiếm được. */
+  const consistent = m => {
+    let spent = 0;
+    for (const k of Object.keys(UP)) for (let i = 0; i < m.up[k]; i++) spent += UP[k].cost[i];
+    const achPts = ACH.reduce((n, a) => n + (m.ach[a.id] ? a.pts : 0), 0);
+    const allAch = ACH.reduce((n, a) => n + a.pts, 0);
+    return m.earned - m.legacy === spent && m.earned >= achPts && m.earned <= allAch + m.totals.lives * 80;
+  };
+  const plain = m => ({ v: 1, legacy: m.legacy, earned: m.earned, up: m.up, history: m.history, ach: m.ach, totals: m.totals, best: m.best });
+
+  let M = fresh();
+  {
+    const r = TT.sec.read(KEY, "meta");
+    if (r?.bad) TT.sec.error = "Dữ liệu Thiên Mệnh bị chỉnh sửa nên đã được đặt lại.";
+    else if (r?.obj) {
+      const m = sanitize(r.obj);
+      if (consistent(m)) M = m; else TT.sec.error = "Dữ liệu Thiên Mệnh không hợp lệ nên đã được đặt lại.";
+    }
+  }
   TT.meta = M;
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(M)); } catch (e) { /* bỏ qua */ } };
+  const save = () => TT.sec.write(KEY, "meta", plain(M));
 
   M.save = save;
   M.UP = UP; M.ACH = ACH;
@@ -118,21 +135,31 @@
     return pts;
   };
 
-  /* ---------- xuất / nhập / xóa dữ liệu ---------- */
-  const readRawSave = () => { try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return null; } };
-  M.exportText = () => JSON.stringify({ game: "thien-van-dai-luc", v: 1, save: readRawSave(), meta: M });
+  /* ---------- xuất / nhập / xóa dữ liệu (có chữ ký, nhập vào được kiểm tra lại toàn bộ) ---------- */
+  M.exportText = () => {
+    const cur = TT.readSave();
+    const data = JSON.stringify({ save: cur.player ? { count: cur.count, player: cur.player } : null, meta: plain(M) });
+    return JSON.stringify({ game: "thien-van-dai-luc", v: 2, data, sig: TT.sec.sign("export", data) });
+  };
   M.importText = text => {
-    let d;
-    try { d = JSON.parse(text); } catch (e) { return "Nội dung không phải JSON hợp lệ."; }
-    if (!d || typeof d !== "object" || d.game !== "thien-van-dai-luc") return "Đây không phải dữ liệu xuất từ game này.";
-    if (d.save != null && (typeof d.save !== "object" || !Number.isFinite(+d.save.count))) return "Phần save nhân vật bị hỏng.";
-    try {
-      if (d.save != null) localStorage.setItem(SAVE_KEY, JSON.stringify(d.save));
-      localStorage.setItem(KEY, JSON.stringify(sanitize(d.meta)));
-    } catch (e) { return "Không ghi được dữ liệu vào trình duyệt."; }
+    let env, d;
+    try { env = JSON.parse(text); } catch (e) { return "Nội dung không phải JSON hợp lệ."; }
+    if (!env || env.game !== "thien-van-dai-luc" || typeof env.data !== "string" || typeof env.sig !== "string") return "Đây không phải dữ liệu xuất từ game này.";
+    if (TT.sec.sign("export", env.data) !== env.sig) return "Chữ ký không khớp: dữ liệu đã bị chỉnh sửa hoặc hỏng.";
+    try { d = JSON.parse(env.data); } catch (e) { return "Dữ liệu bên trong bị hỏng."; }
+    const meta = sanitize(d?.meta);
+    if (!consistent(meta)) return "Dữ liệu Thiên Mệnh không hợp lệ.";
+    let save = null;
+    if (d.save != null) {
+      const p = TT.sec.cleanPlayer(d.save.player);
+      if (!p) return "Save nhân vật bị từ chối: " + TT.sec.error;
+      save = { count: Math.max(1, Math.trunc(+d.save.count) || 1), player: p };
+    }
+    if (save) TT.sec.write(SAVE_KEY, "save", save);
+    TT.sec.write(KEY, "meta", plain(meta));
     return "";
   };
-  M.wipe = () => { try { localStorage.removeItem(SAVE_KEY); localStorage.removeItem(KEY); } catch (e) { /* bỏ qua */ } };
+  M.wipe = () => { try { [SAVE_KEY, KEY, FLAG].forEach(k => localStorage.removeItem(k)); } catch (e) { /* bỏ qua */ } };
 
   /* ================= GIAO DIỆN: THIÊN ĐẠO CÁC ================= */
   const G = TT.Game.prototype;

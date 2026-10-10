@@ -27,6 +27,8 @@ js/farm.js            linh điền                                (systems/farm.
 js/crafts.js          luyện đan / vẽ phù / luyện khí           (systems/crafts.py)
 js/auto.js            tu luyện tự động + hộp thoại đột phá     (systems/auto_cultivate.py)
 js/meta.js            Thiên Mệnh, thành tựu, lịch sử các kiếp, xuất/nhập save
+js/security.js        chữ ký save, kiểm tra tính hợp lý (chống sửa save)
+tools/build.mjs       build bản phát hành (gộp + nén + làm rối) -> dist/
 assets/               toàn bộ ảnh (cũ + mới)
 assets_src/           3 ảnh sheet gốc của bản cập nhật asset
 tools/slice_sheets.py cắt sheet -> sprite lẻ (cần pillow, numpy, scipy)
@@ -48,3 +50,7 @@ Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `pyt
 - **Kiếp trước:** bảng lịch sử 20 kiếp gần nhất.
 - **Dữ liệu:** sao chép / tải file / nhập / xóa save ngay trong game (mục "Thiên Đạo Các" > "Dữ liệu").
 - Dữ liệu xuyên kiếp lưu ở khóa `tu_tien_meta_v1` (tách khỏi `tu_tien_save_v2`, save cũ vẫn dùng được).
+
+## Bảo mật & phát hành
+- Save, Thiên Mệnh và file xuất đều có chữ ký HMAC; save bị sửa hoặc vô lý sẽ bị từ chối. Chi tiết và giới hạn: xem [SECURITY.md](SECURITY.md).
+- Build bản phát hành: `npm i && npm run build`, rồi deploy thư mục `dist/` (kèm `_headers` / `vercel.json`).
