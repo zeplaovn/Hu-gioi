@@ -2,6 +2,8 @@
 "use strict";
 (function () {
   const SAVE_KEY = "tu_tien_save_v2";
+  /** Bộ đếm hoạt động của kiếp này (phục vụ thành tựu). */
+  TT.newTrack = () => ({ kills: 0, explores: 0, brk: 0, fails: 0, trib: 0, missions: 0, crafted: 0, herbs: 0, sold: 0 });
 
   class Player {
     constructor(gender, age, race, alloc) {
@@ -15,6 +17,13 @@
       this.inv = {}; this.plots = [null, null, null, null]; this.gear = {};
       this.guard = 0.0; this.fbuff = 0; this.suppress = false;
       this.auto_cfg = TT.defaultAuto();
+      this.track = TT.newTrack();
+      const M = TT.meta;                       // Thiên Mệnh: quà khởi đầu từ kiếp trước
+      if (M) {
+        this.stats["Vận Khí"] += M.up.luck;
+        this.lifespan += M.up.life * 5;
+        this.stone += M.up.stone * 20;
+      }
       this.hp = this.max_hp();
     }
     gv(k) {
@@ -25,11 +34,13 @@
     ensure() {
       this.inv ??= {}; this.plots ??= [null, null, null, null]; this.gear ??= {};
       this.guard ??= 0.0; this.fbuff ??= 0; this.suppress ??= false; this.auto_cfg ??= TT.defaultAuto();
+      this.track = Object.assign(TT.newTrack(), this.track);
     }
     get level() { return this.realm * 9 + this.tang; }
     exp_mult() {
       let m = 1.0 + this.skills.reduce((s, k) => s + TT.SKILLS[k].exp, 0) + this.gv("exp");
       if (this.sect) m += TT.SECTS[this.sect].exp;
+      if (TT.meta) m += TT.meta.bonus("exp");     // Đạo Tâm (Thiên Mệnh)
       return m;
     }
     max_hp() {

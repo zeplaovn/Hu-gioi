@@ -72,6 +72,7 @@
       const y = Math.floor(p.months / 12) + 1, m = p.months % 12 + 1;
       U.time.textContent = `Năm ${y}, tháng ${m} (${TT.SEASONS[Math.floor(p.months / 3) % 4]})`;
       this.scene.setSeason(Math.floor((p.months % 12) / 3));
+      TT.meta?.check(this);
     }
 
     autosave() { TT.writeSave(this.count, this.p); }
@@ -111,6 +112,7 @@
 
     die(reason) {
       this.dead = true;
+      TT.meta?.endLife(this, "death", reason);
       this.log(reason, "red");
       this.log(`=== BẠN ĐÃ CHẾT ===  Cảnh giới: ${this.p.realm_name()}, hưởng thọ ${this.p.age} tuổi.`, "red");
       this.log("Bấm 'Trùng sinh' để bắt đầu kiếp mới.", "gold");
@@ -122,6 +124,7 @@
 
     winGame() {
       this.dead = true;
+      TT.meta?.endLife(this, "win");
       this.log("★★★ Thiên kiếp qua đi, bạn phi thăng Tiên Giới! Đại đạo viên mãn! ★★★", "gold");
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
@@ -135,6 +138,7 @@
 
     reincarnate() {
       this.autoStop();
+      TT.meta?.endLife(this, "abandon");
       this.count++; this.saved = null;
       TT.writeSave(this.count, null);
       this.showCreate();
@@ -173,6 +177,7 @@
       const p = this.p, sc = this.scene;
       const luck = p.stats["Vận Khí"] + p.stats["Phúc Duyên"];
       const r = rnd(1, 100) + luck;
+      p.track.explores++;
       this.lock(1300);
       if (r >= 115) {
         const g = int((rnd(30, 60) + p.level * 5) * p.exp_mult());
@@ -235,6 +240,7 @@
         const g = int((mp * 1.2 + rnd(2, 8)) * p.exp_mult());
         const s = rnd(2, 10) + p.realm * 3;
         const lost = rnd(0, 10);
+        p.track.kills++;
         p.hp = Math.max(1, p.hp - lost); p.stone += s;
         setTimeout(() => {
           if (this.dead) return;
@@ -280,6 +286,11 @@
       if (p.exp < need) { this.log(`Tu vi chưa đủ (${p.exp}/${need}).`, "red"); return; }
       if (this.autoOn) this.autoStop("Bạn dừng tu luyện để đột phá.");
       const big = p.tang === 9;
+      if (big && p.realm + 1 >= 3) {                 // đại cảnh giới từ Kim Đan trở lên phải qua Thiên Kiếp
+        const est = this.tribEstimate(p.realm + 1);
+        if (p.hp < est.expect * 1.2 &&
+          !confirm(`Thiên Kiếp sắp giáng (${est.strikes} đạo lôi, ước tính mất ~${est.expect} khí huyết).\nKhí huyết hiện tại: ${p.hp}/${p.max_hp()}. Nên nghỉ ngơi trước.\nVẫn đột phá ngay?`)) return;
+      }
       let chance = 0.55 + p.stats["Ngộ Tính"] * 0.02 + p.stats["Vận Khí"] * 0.01 - p.realm * 0.04;
       chance += p.pill + (big ? 0.0 : 0.25) - (big ? 0.1 : 0.0);
       chance += Math.min(0.15, Math.max(0.0, p.exp / need - 1) * 0.3);   // thưởng khi áp chế tu vi
@@ -299,10 +310,11 @@
       const p = this.p, sc = this.scene;
       p.pill = 0.0; p.suppress = false;
       if (Math.random() < chance) {
-        p.exp -= need;
+        p.exp -= need; p.track.brk++;
         sc.flash("#ffffff", 10); sc.burst(sc.cx, sc.gy - 60, C.GOLD, 36); sc.addRing(C.GOLD);
         sc.fxOnce("break", null, sc.gy + 8, 0.3, "s");
         if (big) {
+          if (!this.tribulation(p.realm + 1)) return;   // chết dưới thiên lôi
           if (p.realm === REALMS.length - 1) { this.refresh(); this.winGame(); return; }
           p.realm++; p.tang = 1;
           p.lifespan += 30 + p.realm * 10;
@@ -316,6 +328,7 @@
           this.log(`Đột phá thành công, lên ${p.realm_name()}.`, "green");
         }
       } else {
+        p.track.fails++;
         p.exp = int(p.exp * 0.7);
         const d = rnd(10, 30) + (big ? 20 : 0);
         p.hp -= d;
@@ -327,11 +340,48 @@
       if (this.passTime(1)) this.endAction();
     }
 
+    /* ================= THIÊN KIẾP ================= */
+    /** Số đạo lôi và sát thương kỳ vọng khi vượt kiếp lên cảnh giới R. */
+    tribEstimate(R) {
+      const p = this.p, pw = p.power(), mit = pw / (pw + 150 + R * 40);
+      const strikes = 3 + (R >> 1), base = (10 + R * 9) * (1 - mit);
+      const gf = p.guard > 0 ? Math.max(0.15, 1 - 0.35 * p.guard) : 1;
+      return { strikes, base, mit, gf, expect: int(strikes * base * gf) };
+    }
+
+    /** Thiên Kiếp: nhiều đạo lôi đánh xuống, khí huyết về 0 là chết. Trả về false nếu nhân vật đã chết. */
+    tribulation(R) {
+      if (R < 3) return true;
+      const p = this.p, sc = this.scene, est = this.tribEstimate(R);
+      this.log(`⚡ Thiên Kiếp giáng xuống! ${est.strikes} đạo lôi kiếp bổ thẳng vào người bạn...`, "gold");
+      if (p.guard > 0) { this.log("Hộ Thân Phù hóa thành màn sáng, che chắn bớt lôi kiếp!", "cyan"); p.guard = 0.0; }
+      let total = 0, dead = false;
+      for (let i = 0; i < est.strikes; i++) {
+        const d = Math.max(1, int(est.base * est.gf * uni(0.8, 1.25)));
+        total += d; p.hp -= d;
+        setTimeout(() => {
+          if (!this.inGame) return;
+          sc.flash("#cfe8ff", 6); sc.shake = 8; sc.fxOnce("bolt", sc.cx + rnd(-30, 30), sc.gy - 4, 0.6, "s");
+          sc.floatText(`-${d}`, C.RED, rnd(-40, 40));
+        }, i * 220);
+        if (p.hp <= 0) { dead = true; break; }
+      }
+      if (dead) { this.die("Thiên kiếp quá mạnh, thân xác hóa thành tro bụi dưới lôi đình."); return false; }
+      p.track.trib++;
+      this.log(`Bạn gắng gượng chịu ${est.strikes} đạo thiên lôi, mất ${total} khí huyết nhưng vẫn sống sót!`, "gold");
+      const s = pick(STATS);
+      p.stats[s]++;
+      this.log(`Lôi kiếp tẩy lễ thân thể, ${s} +1.`, "green");
+      return true;
+    }
+
     /* ================= TÚI ĐỒ ================= */
     invAdd(name, q = 0, n = 1) {
       const k = q === 0 ? name : `${name}|${q}`, inv = this.p.inv;
       inv[k] = (inv[k] || 0) + n;
       if (inv[k] <= 0) delete inv[k];
+      const t = this.p.track;
+      if (t && n > 0) { if (name === "Linh Thảo") t.herbs += n; else if (USABLE.includes(name)) t.crafted += n; }
     }
     invKeys(name) {
       return Object.keys(this.p.inv).filter(k => k.split("|")[0] === name).map(k => [k, k.includes("|") ? +k.split("|")[1] : 0]);
@@ -389,7 +439,7 @@
       if ((this.p.inv[key] || 0) <= 0) return;
       if (--this.p.inv[key] <= 0) delete this.p.inv[key];
       const v = TT.sellValue(n, q);
-      this.p.stone += v;
+      this.p.stone += v; this.p.track.sold += v;
       this.log(`Bán ${n} được ${v} linh thạch.`, "cyan");
     }
 
@@ -502,7 +552,7 @@
         if (this.fight()) return;
       } else {
         const s = rnd(15, 35) + p.realm * 10, g = int((20 + p.level * 3) * p.exp_mult());
-        p.stone += s;
+        p.stone += s; p.track.missions++;
         this.scene.play("explore", 60); this.scene.floatText(`+${s} linh thạch`, C.CYAN);
         setTimeout(() => this.gainFx(g), 500);
         this.log(`Hoàn thành nhiệm vụ tông môn: +${s} linh thạch, +${g} tu vi.`, "cyan");

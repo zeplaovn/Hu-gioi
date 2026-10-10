@@ -14,6 +14,7 @@ Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · *
 ```
 index.html            trang chính
 css/style.css         giao diện (responsive: máy tính / máy tính bảng / điện thoại)
+css/extras.css        giao diện Thiên Đạo Các
 js/data.js            dữ liệu thế giới + nghề phụ + tiện ích  (world.py, crafting.py)
 js/assets.js          nạp ảnh + bảng ánh xạ icon (kể cả asset mới)
 js/player.js          nhân vật + save/load                    (player.py)
@@ -25,6 +26,7 @@ js/screens.js         màn tạo nhân vật, màn chính, hộp thoại   (ui/*
 js/farm.js            linh điền                                (systems/farm.py)
 js/crafts.js          luyện đan / vẽ phù / luyện khí           (systems/crafts.py)
 js/auto.js            tu luyện tự động + hộp thoại đột phá     (systems/auto_cultivate.py)
+js/meta.js            Thiên Mệnh, thành tựu, lịch sử các kiếp, xuất/nhập save
 assets/               toàn bộ ảnh (cũ + mới)
 assets_src/           3 ảnh sheet gốc của bản cập nhật asset
 tools/slice_sheets.py cắt sheet -> sprite lẻ (cần pillow, numpy, scipy)
@@ -38,3 +40,11 @@ tools/slice_sheets.py cắt sheet -> sprite lẻ (cần pillow, numpy, scipy)
 | `skills_sheet.png` (12 huy hiệu) | `assets/skills/` | Biểu tượng **công pháp** (5 huy hiệu), **tông môn** (sách xanh/đỏ/lục), nhiệm vụ tông môn, nút Công pháp, Luyện đan/Vẽ phù/Luyện khí |
 
 Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `python tools/slice_sheets.py` để cập nhật.
+
+## Tính năng bản nâng cấp
+- **Thiên Kiếp:** đại đột phá lên Kim Đan trở lên phải chịu nhiều đạo lôi (3 + cảnh giới/2 đạo). Khí huyết về 0 là chết; Hộ Thân Phù và chiến lực giúp giảm sát thương. Vượt kiếp được +1 chỉ số ngẫu nhiên. Game cảnh báo nếu khí huyết quá thấp.
+- **Thiên Mệnh (xuyên kiếp):** chết hoặc phi thăng sẽ nhận điểm Thiên Mệnh, dùng để nâng cấp vĩnh viễn: Thiên Tư (+điểm chỉ số), Túi Càn Khôn (+linh thạch), Trường Sinh (+thọ nguyên), Đạo Tâm (+% tu luyện), Thiên Vận (+Vận Khí). Trùng sinh giữa chừng chỉ nhận một nửa điểm.
+- **Thành tựu:** 29 thành tựu (cảnh giới, săn yêu thú, lịch luyện, chế tác, Thiên Kiếp...), mỗi cái thưởng điểm Thiên Mệnh.
+- **Kiếp trước:** bảng lịch sử 20 kiếp gần nhất.
+- **Dữ liệu:** sao chép / tải file / nhập / xóa save ngay trong game (mục "Thiên Đạo Các" > "Dữ liệu").
+- Dữ liệu xuyên kiếp lưu ở khóa `tu_tien_meta_v1` (tách khỏi `tu_tien_save_v2`, save cũ vẫn dùng được).

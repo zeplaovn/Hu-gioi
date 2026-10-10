@@ -1,0 +1,9 @@
+/* ---------- Thiên Đạo Các (Thiên Mệnh / Thành tựu / Kiếp trước / Dữ liệu) ---------- */
+.hub-box { width: 720px; }
+.hub-tabs { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin: 4px 0 10px; }
+.hub-tab { background: var(--panel); color: var(--dim); border: 1px solid var(--line2); border-radius: 3px; padding: 6px 14px; font-weight: bold; cursor: pointer; }
+.hub-tab:hover { color: var(--fg); }
+.hub-tab.on { color: var(--gold); border-color: var(--gold); }
+.hub-tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+.hub-note { margin: 8px 4px; min-height: 1.2em; }
+.data-ta { width: 100%; background: #0b1015; color: var(--fg); border: 1px solid var(--line2); padding: 6px; font: 12px var(--mono); resize: vertical; margin: 6px 0; }
