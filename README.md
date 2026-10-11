@@ -49,11 +49,13 @@ tools/build.mjs       build bản phát hành (gộp + nén + làm rối) -> dis
 assets/               toàn bộ ảnh (cũ + mới)
 assets_src/           3 ảnh sheet gốc của bản cập nhật asset
 tools/slice_sheets.py cắt sheet -> sprite lẻ (cần pillow, numpy, scipy)
+tools/make_frames.py   cắt assets_src/frames_sheet.png -> assets/ui/frame/* (góc, cạnh, ngọc của khung họa tiết)
 ```
 
 ## Asset mới (cập nhật)
 | Sheet | Thư mục | Dùng ở đâu |
 |---|---|---|
+| `frames_sheet.png` (khung dọc + khung ngang) | `assets/ui/frame/` | **Khung họa tiết** hoa sen / mây / ngọc: viền mọi hộp thoại, khung cảnh và cột nhân vật (CSS trong `css/extras.css`, xếp bằng nhiều lớp nền nên co giãn theo mọi kích thước). Chạy lại `python3 tools/make_frames.py` nếu đổi ảnh gốc |
 | `plants_sheet.png` (12 linh thảo) | `assets/plants/` | Biểu tượng **Linh Thảo** theo phẩm chất (cỏ → nhân sâm → linh chi → sen băng), Trường Thọ Quả, huy hiệu phẩm chất dự kiến trên ô đất chín |
 | `farm_sheet.png` (12 ô đất / đồ trang trí) | `assets/farm/` | **Linh điền**: ô trống → hạt → mầm → lớn → chín → héo; hiệu ứng tưới nước / bón thổ; bù nhìn, bia đá, hàng rào, máng nước trang trí |
 | `skills_sheet.png` (12 huy hiệu) | `assets/skills/` | Biểu tượng **công pháp** (5 huy hiệu), **tông môn** (sách xanh/đỏ/lục), nhiệm vụ tông môn, nút Công pháp, Luyện đan/Vẽ phù/Luyện khí |

@@ -90,3 +90,52 @@
   .ach-toast, .ach-toast::before, .ach-shine, .ach-ico img, .ach-new { animation: none !important; }
   .ach-shine { display: none; }
 }
+
+/* ---------- Khung họa tiết (assets/ui/frame/*, tạo bằng tools/make_frames.py) ----------
+   Xếp bằng nhiều lớp nền: 4 góc + ngọc + 4 cạnh lặp. Viền thật (border) chỉ mỏng bằng đường viền nên nội dung không bị thu hẹp. */
+.box {                                  /* mọi hộp thoại (nền tĩnh theo hộp, không cuộn theo nội dung) */
+  border: solid transparent; border-width: 13px 17px 12px; padding: 8px 12px 12px;
+  background: url(../assets/ui/frame/w_tl.png) no-repeat left top / 44.72px 49.4px,
+    url(../assets/ui/frame/w_tr.png) no-repeat right top / 44.72px 49.4px,
+    url(../assets/ui/frame/w_bl.png) no-repeat left bottom / 44.72px 29.12px,
+    url(../assets/ui/frame/w_br.png) no-repeat right bottom / 44.72px 29.12px,
+    url(../assets/ui/frame/gem.png) no-repeat center 1.82px / 43.68px 18.2px,
+    url(../assets/ui/frame/gem.png) no-repeat center bottom 0.26px / 43.68px 18.2px,
+    url(../assets/ui/frame/w_top.png) repeat-x left top / auto 49.4px,
+    url(../assets/ui/frame/w_bot.png) repeat-x left bottom / auto 29.12px,
+    url(../assets/ui/frame/w_left.png) repeat-y left top / 44.72px auto,
+    url(../assets/ui/frame/w_right.png) repeat-y right top / 44.72px auto, var(--bg);
+  background-origin: border-box;
+}
+.scene-wrap {                           /* khung cảnh: lớp phủ nằm trên canvas để góc không bị che */
+  position: relative; border: solid transparent; border-width: 11px 15px 10px;
+}
+.scene-wrap::after {
+  content: ""; position: absolute; inset: -11px -15px -10px; pointer-events: none; z-index: 2;
+  background: url(../assets/ui/frame/w_tl.png) no-repeat left top / 34.4px 38.0px,
+    url(../assets/ui/frame/w_tr.png) no-repeat right top / 34.4px 38.0px,
+    url(../assets/ui/frame/w_bl.png) no-repeat left bottom / 34.4px 22.4px,
+    url(../assets/ui/frame/w_br.png) no-repeat right bottom / 34.4px 22.4px,
+    url(../assets/ui/frame/gem.png) no-repeat center 1.4px / 33.6px 14.0px,
+    url(../assets/ui/frame/gem.png) no-repeat center bottom 0.2px / 33.6px 14.0px,
+    url(../assets/ui/frame/w_top.png) repeat-x left top / auto 38.0px,
+    url(../assets/ui/frame/w_bot.png) repeat-x left bottom / auto 22.4px,
+    url(../assets/ui/frame/w_left.png) repeat-y left top / 34.4px auto,
+    url(../assets/ui/frame/w_right.png) repeat-y right top / 34.4px auto;
+  background-origin: border-box;
+}
+.col-left {                             /* cột nhân vật: khung dọc */
+  position: relative; border: solid transparent; border-width: 12px 14px 12px; padding: 6px 10px 8px;
+}
+.col-left::after {
+  content: ""; position: absolute; inset: -12px -14px -12px; pointer-events: none; z-index: 2;
+  background: url(../assets/ui/frame/t_tl.png) no-repeat left top / 31.28px 46.0px,
+    url(../assets/ui/frame/t_tr.png) no-repeat right top / 31.28px 46.0px,
+    url(../assets/ui/frame/t_bl.png) no-repeat left bottom / 31.28px 32.2px,
+    url(../assets/ui/frame/t_br.png) no-repeat right bottom / 31.28px 32.2px,
+    url(../assets/ui/frame/t_top.png) repeat-x left top / auto 46.0px,
+    url(../assets/ui/frame/t_bot.png) repeat-x left bottom / auto 32.2px,
+    url(../assets/ui/frame/t_left.png) repeat-y left top / 31.28px auto,
+    url(../assets/ui/frame/t_right.png) repeat-y right top / 31.28px auto;
+  background-origin: border-box;
+}
