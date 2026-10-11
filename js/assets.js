@@ -30,6 +30,7 @@
     },
     hero(name) { return A.frames("hero", name); },
     vfx(name) { return A.frames("vfx", name); },
+    season(s, v) { return A.img(`seasons/${s}_${v}.png`); },   // sprite hạt theo mùa: s = 0..3 (Xuân, Hạ, Thu, Đông), v = 0..2
     mon(k, state) {
       const key = `mon:${k}:${state}`;
       if (!cache[key]) cache[key] = Array.from({ length: MON[k][state] }, (_, i) => A.img(`mon/${k}_${state}_${i}.png`));
@@ -42,6 +43,7 @@
       Object.keys(COUNT.hero).forEach(n => list.push(...A.hero(n)));
       Object.keys(COUNT.vfx).forEach(n => list.push(...A.vfx(n)));
       Object.keys(MON).forEach(k => ["idle", "atk", "die"].forEach(s => list.push(...A.mon(+k, s))));
+      for (let s = 0; s < 4; s++) for (let v = 0; v < 3; v++) list.push(A.season(s, v));
       for (let i = 1; i <= 6; i++) list.push(A.img(`ui/dice_${i}.png`));
       const farm = ["empty", "seed", "sprout", "grow", "ripe", "wilt", "water", "gold", "fence", "trough", "rune", "scarecrow"];
       farm.forEach(n => list.push(A.img(`farm/${n}.png`)));

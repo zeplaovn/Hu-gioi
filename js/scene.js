@@ -5,6 +5,25 @@
   const SKY = C.SKY;
   const STEP = 1000 / 30;
 
+  /* ---- Hạt theo mùa (sprite assets/seasons/{mùa}_{biến thể}.png) ----
+     rate: xác suất sinh hạt mỗi tick · wind: hệ số gió · vy: tốc độ rơi · vr: tốc độ xoay [min,max]
+     sa: biên độ lắc ngang · flip: lật khi rơi (lá/cánh hoa) · sm: hệ số kích thước · spr: [biến thể, trọng số]
+     Hạ: biến thể 0,1 là đom đóm (phát sáng, bay lơ lửng); biến thể 2 là lá xanh rơi. */
+  const SEASON = [
+    { rate: 0.10, wind: 0.8, vy: 0.75, vr: [0.015, 0.05], sa: [0.4, 1.2], flip: true, sm: 1.0, spr: [[0, 0.40], [1, 0.35], [2, 0.25]] },
+    { rate: 0.06, wind: 0.3, vy: 0.8, vr: [0.015, 0.04], sa: [0.4, 1.0], flip: true, sm: 1.0, spr: [[0, 0.40], [1, 0.40], [2, 0.20]] },
+    { rate: 0.10, wind: 1.2, vy: 0.95, vr: [0.02, 0.07], sa: [0.4, 1.2], flip: true, sm: 0.9, spr: [[0, 0.34], [1, 0.33], [2, 0.33]] },
+    { rate: 0.20, wind: 1.5, vy: 1.0, vr: [0.006, 0.02], sa: [0.2, 0.6], flip: false, sm: 0.75, spr: [[0, 0.15], [1, 0.30], [2, 0.55]] },
+  ];
+  const LAYERS = [                       // xa → gần: nhỏ, mờ, chậm → lớn, rõ, nhanh
+    { d: 0.45, sc: 0.30, a: 0.55, w: 0.35 },
+    { d: 0.75, sc: 0.42, a: 0.80, w: 0.40 },
+    { d: 1.00, sc: 0.60, a: 1.00, w: 0.25 },
+  ];
+  const FALLBACK_COL = ["#ffb3d1", "#e6ff6a", "#e0782a", "#ffffff"];   // dùng khi chưa có file ảnh
+  const pickW = arr => { let x = Math.random(), t = 0; for (const [v, w] of arr) { t += w; if (x < t) return v; } return arr[arr.length - 1][0]; };
+  const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+
   class Scene {
     constructor(w, h, colorFn, cxRatio = 0.5, kind = "game") {
       this.kind = kind;                     // "game" = cảnh chơi, "title" = bìa màn tạo nhân vật
@@ -21,6 +40,10 @@
       this.shake = 0;
       this.flashC = null; this.flashT = 0; this.flashMax = 1;
       this.scroll = 0; this.speed = 0.2; this.season = 0; this.mon = null;
+      this.wind = 0; this.spN = 0;
+      this.us = Math.max(0.7, Math.min(1.3, h / 340));                       // co kích thước hạt theo cỡ cảnh
+      this.reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      this.maxSp = (w < 520 ? 22 : 38) * (this.reduced ? 0.4 : 1);           // giới hạn số hạt (nhẹ máy / điện thoại)
       this.R = Math.min(w, h * 1.7) * 0.16;
       this.alive = true; this.acc = 0; this.last = performance.now();
       this.loop = this.loop.bind(this);
@@ -70,14 +93,7 @@
     // ---- hạt
     spawn(mode) {
       const t = this.t, w = this.w, r = Math.random;
-      if (r() < 0.22) {                       // hạt môi trường theo mùa
-        const col = ["#ffb3d1", "#e6ff6a", "#e0782a", "#ffffff"][this.season];
-        if (this.season === 1) {
-          this.parts.push({ k: "amb", x: r() * w, y: this.gy - r() * 120, vx: 0, vy: 0, life: 90, max: 90, col, size: 2, ph: r() * 6, fire: true });
-        } else {
-          this.parts.push({ k: "amb", x: r() * w, y: -5, vx: uni(-0.3, 0.6), vy: uni(0.6, 1.6), life: 260, max: 260, col, size: pick([2, 3]), ph: r() * 6 });
-        }
-      }
+      this.spawnSeason();                     // hoa rơi / đom đóm / lá rơi / tuyết theo mùa
       const orbit = (d, size) => {
         const a = r() * 6.28;
         this.parts.push({ k: "qi", x: this.cx + Math.cos(a) * d, y: this.gy - 45 + Math.sin(a) * d * 0.7, vx: 0, vy: 0, life: 80, max: 80, col: this.colorFn(), size, ph: 0 });
@@ -90,6 +106,59 @@
         this.parts.push({ k: "heal", x: this.cx + rnd(-40, 40), y: this.gy - 30, vx: 0, vy: -1.1, life: 40, max: 40, col: "#6dff9a", size: 0, ph: 0 });
       if (mode === "rest" && t % 26 === 0)
         this.floats.push({ x: this.cx + 30, y: this.gy - 110, text: "Zz", col: C.CYAN, life: 50, max: 50 });
+    }
+
+    spawnSeason() {
+      if (this.spN >= this.maxSp) return;
+      const S = SEASON[this.season], r = Math.random;
+      if (r() > S.rate * (this.reduced ? 0.5 : 1)) return;
+      const v = pickW(S.spr);
+      let x = r() * LAYERS[0].w, L = LAYERS[2];
+      for (const l of LAYERS) { x -= l.w; if (x <= 0) { L = l; break; } }
+      const glow = this.season === 1 && v < 2;
+      const p = { k: "sp", s: this.season, v, im: A.season(this.season, v), d: L.d, a: L.a, sc: L.sc * S.sm,
+        ph: r() * 6.28, age: 0, glow, life: 1500, gnd: this.gy + 6 - (1 - L.d) * 50, rot: 0, vr: 0, vy: 0, sf: 0, sa: 0, ff: 0, flip: false,
+        x: 0, y: 0 };
+      if (glow) {                                                       // đom đóm: lơ lửng rồi tắt dần
+        p.x = r() * this.w; p.y = this.gy - 20 - r() * this.h * 0.45;
+        p.life = rnd(200, 340); p.gnd = this.h + 50;
+      } else {                                                          // rơi từ ngoài khung hình
+        p.x = r() * (this.w + 80) - 40; p.y = -30;
+        p.vy = S.vy * (0.6 + 0.6 * L.d) * (0.8 + 0.4 * r());
+        p.rot = r() * 6.28; p.vr = (r() < 0.5 ? -1 : 1) * uni(S.vr[0], S.vr[1]);
+        p.sf = uni(0.03, 0.07); p.sa = uni(S.sa[0], S.sa[1]);
+        p.flip = S.flip; p.ff = uni(0.04, 0.09);
+      }
+      this.parts.push(p);
+    }
+
+    /** Vẽ hạt mùa bằng sprite. behind = true: lớp xa/giữa (sau nhân vật); false: lớp gần (trước nhân vật). */
+    drawSeason(behind) {
+      const c = this.ctx, t = this.t;
+      c.imageSmoothingEnabled = true;                                   // làm mịn khi xoay / thu nhỏ
+      for (const p of this.parts) {
+        if (p.k !== "sp" || (p.d < 0.9) !== behind) continue;
+        let env = Math.min(1, p.age / 30);                              // hiện dần
+        if (p.glow) env = Math.min(env, p.life / 40) * (0.55 + 0.45 * Math.sin(t * 0.08 + p.ph));   // nhấp nháy + tắt dần
+        else env *= clamp01((p.gnd - p.y) / 28);                        // mờ dần khi chạm đất
+        const al = p.a * env;
+        if (al < 0.02) continue;
+        const im = p.im, sc = p.sc * this.us;
+        if (A.ok(im)) {
+          c.save();
+          c.globalAlpha = al;
+          c.translate(Math.round(p.x), Math.round(p.y));
+          if (p.rot) c.rotate(p.rot);
+          c.scale(sc * (p.flip ? Math.max(0.28, Math.abs(Math.cos(t * p.ff + p.ph))) : 1), sc);
+          if (p.glow) c.globalCompositeOperation = "lighter";
+          c.drawImage(im, -im.naturalWidth / 2, -im.naturalHeight / 2);
+          c.restore();
+        } else {                                                        // chưa có ảnh → chấm tròn như bản cũ
+          c.globalAlpha = al; c.fillStyle = FALLBACK_COL[p.s];
+          c.beginPath(); c.arc(p.x, p.y, 2 + p.d, 0, 6.2832); c.fill(); c.globalAlpha = 1;
+        }
+      }
+      c.imageSmoothingEnabled = false;
     }
 
     // ---- sprite nhân vật / yêu thú
@@ -180,26 +249,41 @@
         if (this.mt % 20 === 0) this.addRing("#9fd0ff");
       }
 
+      const wt = (0.25 + 0.55 * Math.sin(t * 0.0035) + 0.25 * Math.sin(t * 0.011 + 1)) * SEASON[this.season].wind + (mode === "break" ? 3 : 0);
+      this.wind += (wt - this.wind) * 0.04;                             // gió đổi hướng từ từ; đột phá thì cuốn mạnh
+
       this.spawn(mode);
 
       // cập nhật hạt
-      const alive = [];
+      const alive = []; let spN = 0;
       for (const p of this.parts) {
         if (p.k === "qi") {
           const dx = this.cx - p.x, dy = (this.gy - 45) - p.y, d = Math.hypot(dx, dy) + 0.01;
           const sp = 2.0 + Math.max(0.0, 1 - d / (this.R * 2.2)) * 5;
           p.x += dx / d * sp; p.y += dy / d * sp;
           if (d < 14) p.life = 0;
-        } else if (p.k === "amb") {
-          if (p.fire) { p.x += Math.sin(t * 0.07 + p.ph) * 0.8; p.y += Math.cos(t * 0.05 + p.ph) * 0.5; }
-          else { p.x += p.vx + Math.sin(t * 0.05 + p.ph) * 0.4; p.y += p.vy; }
+        } else if (p.k === "sp") {
+          p.age++;
+          const wd = this.wind * p.d, par = this.speed * 0.5 * p.d;     // gió + trôi ngược khi đang đi (parallax)
+          if (p.glow) {
+            p.x += Math.sin(t * 0.021 + p.ph) * 0.45 + wd * 0.3 - par;
+            p.y += Math.cos(t * 0.017 + p.ph * 1.7) * 0.35;
+            if (p.s !== this.season) p.life -= 3;                       // đom đóm mùa cũ tắt nhanh khi chuyển mùa
+          } else {
+            p.x += wd + Math.sin(t * p.sf + p.ph) * p.sa - par;
+            p.y += p.vy;
+            p.rot += p.vr * (1 + Math.abs(wd) * 0.3);
+          }
         } else {
           p.x += p.vx; p.y += p.vy;
           if (p.k === "spark") p.vy += 0.15;
         }
         p.life--;
-        if (p.life > 0 && p.y < this.h && p.x > -20 && p.x < this.w + 20) alive.push(p);
+        const inside = p.k === "sp" ? (p.y < p.gnd && p.x > -80 && p.x < this.w + 80)
+          : (p.y < this.h && p.x > -20 && p.x < this.w + 20);
+        if (p.life > 0 && inside) { alive.push(p); if (p.k === "sp") spN++; }
       }
+      this.spN = spN;
       this.parts = alive;
 
       // aura
@@ -224,6 +308,8 @@
         else if (mode === "rest") { const fr = A.vfx("heal"); this.img(fr[Math.floor(t / 4) % fr.length], cx, this.gy + 6, "s"); }
       }
 
+      this.drawSeason(true);                                            // hạt xa / giữa (nằm sau nhân vật)
+
       // nhân vật + yêu thú
       const pose = { explore: "walk", fight: "fight", dead: "dead" }[mode] || "sit";
       if (this.kind !== "title") this.person(cx, this.gy, pose, t);
@@ -239,15 +325,17 @@
         this.fx = keep;
       }
 
+      this.drawSeason(false);                                           // hạt gần (nằm trước nhân vật)
+
       // hạt (vẽ trên)
       for (const p of this.parts) {
+        if (p.k === "sp") continue;
         const f = p.life / p.max;
         let cc = mix(SKY, p.col, Math.min(1.0, f * 1.4));
         if (p.k === "heal") {
           c.font = `bold 18px ${FONT}`; c.textAlign = "center"; c.textBaseline = "middle";
           c.fillStyle = cc; c.fillText("+", p.x, p.y);
         } else {
-          if (p.fire) cc = mix(SKY, p.col, 0.5 + 0.5 * Math.sin(t * 0.2 + p.ph));
           c.fillStyle = cc; c.beginPath(); c.arc(p.x, p.y, p.size, 0, 6.2832); c.fill();
         }
       }
