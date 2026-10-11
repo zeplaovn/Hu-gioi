@@ -107,7 +107,7 @@
         if (p.months % 12 === 0) {
           p.age++;
           if (p.sect) {
-            const st = SECTS[p.sect].stipend; p.stone += st;
+            const st = Math.round(SECTS[p.sect].stipend * TT.sectRank(p).stipend); p.stone += st;
             this.log(`Tông môn phát lương năm: +${st} linh thạch.`, "cyan");
           }
           if (p.age % 10 === 0) this.log(`Bạn đã ${p.age} tuổi.`, "dim");
@@ -534,7 +534,9 @@
     rowsSect() {
       const p = this.p, rows = [];
       if (p.sect) {
-        rows.push({ name: "Nhiệm vụ tông môn", icon: TT.iconFor("Nhiệm vụ tông môn"), desc: "Tốn 2 tháng, có thể gặp nguy hiểm. Thưởng linh thạch và tu vi.", price: "", btn: "Làm nhiệm vụ", cb: () => this.sectMission(), ok: true });
+        const rk = TT.sectRank(p), X = p.sectx, run = X && X.active && TT.missionById(X.active.id);
+        rows.push({ name: "Bảng nhiệm vụ", icon: TT.iconFor("Nhiệm vụ tông môn"), desc: `Chức vị: ${rk.name} · cống hiến ${X ? X.contrib : 0}. Nhiệm vụ chạy theo thời gian thật, kể cả khi đóng game.${run ? " Đang làm: " + run.name + "." : ""}`, price: "", btn: "Mở", cb: () => this.openMissions(), ok: true });
+        rows.push({ name: "Kho tông môn", icon: TT.iconFor("Kho tông môn"), desc: "Đổi cống hiến lấy đan dược, nguyên liệu, Tinh Hoa...", price: "", btn: "Mở", cb: () => this.openSectShop(), ok: true });
         rows.push({ name: "Rời " + p.sect, icon: TT.iconFor("Rời"), desc: "Mất toàn bộ phúc lợi của tông môn.", price: "", btn: "Rời đi", cb: () => this.leaveSect(), ok: true });
       } else {
         for (const [name, s] of Object.entries(SECTS)) {
@@ -547,29 +549,12 @@
     joinSect(name) {
       const p = this.p;
       if (rnd(1, 20) <= 8 + p.stats["Tướng Mạo"]) {
-        p.sect = name;
+        this.sectEnter(name);
         this.log(`Bạn được [${name}] nhận làm đệ tử!`, "gold");
         this.scene.floatText("Gia nhập " + name, C.GOLD);
       } else this.log(`[${name}] từ chối bạn lần này. Tướng Mạo càng cao càng dễ được nhận.`, "red");
     }
-    leaveSect() { this.log(`Bạn rời khỏi [${this.p.sect}].`, "dim"); this.p.sect = null; }
-    sectMission() {
-      const p = this.p;
-      if (this.locked) return;
-      if (this.autoOn) { this.log("Hãy dừng tu luyện tự động trước khi nhận nhiệm vụ.", "red"); return; }
-      this.lock(1500);
-      if (Math.random() < 0.3) {
-        this.log("Nhiệm vụ tông môn gặp phục kích!", "red");
-        if (this.fight()) return;
-      } else {
-        const s = rnd(15, 35) + p.realm * 10, g = int((20 + p.level * 3) * p.exp_mult());
-        p.stone += s; p.track.missions++;
-        this.scene.play("explore", 60); this.scene.floatText(`+${s} linh thạch`, C.CYAN);
-        setTimeout(() => this.gainFx(g), 500);
-        this.log(`Hoàn thành nhiệm vụ tông môn: +${s} linh thạch, +${g} tu vi.`, "cyan");
-      }
-      if (this.passTime(2)) this.endAction();
-    }
+    leaveSect() { this.log(`Bạn rời khỏi [${this.p.sect}].`, "dim"); this.sectExit(); }
   }
   TT.Game = Game;
 })();

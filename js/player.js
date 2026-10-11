@@ -4,7 +4,7 @@
   const SAVE_KEY = "tu_tien_save_v2";
   /** Bộ đếm hoạt động của kiếp này (phục vụ thành tựu). */
   TT.newTrack = () => ({ kills: 0, explores: 0, brk: 0, fails: 0, trib: 0, missions: 0, crafted: 0, herbs: 0, sold: 0,
-    enc: 0, encM: 0, runs: 0, clears: 0 });
+    enc: 0, encM: 0, runs: 0, clears: 0, mbig: 0, mhard: 0, mfeat: 0, mfail: 0, sshop: 0 });
 
   class Player {
     /** opts: { name, root } - đạo hiệu và linh căn đã chọn ở màn tạo nhân vật. */
@@ -19,7 +19,7 @@
       TT.STATS.forEach(s => { this.stats[s] = Math.max(1, 5 + alloc[s] + (bonus[s] || 0)); });
       this.lifespan = baseLife + rnd(-5, 10);
       this.realm = 0; this.tang = 1; this.exp = 0; this.stone = 15; this.months = 0;
-      this.skills = []; this.sect = null; this.pill = 0.0;
+      this.skills = []; this.sect = null; this.sectx = null; this.pill = 0.0;
       this.inv = {}; this.plots = [null, null, null, null]; this.gear = {};
       this.guard = 0.0; this.fbuff = 0; this.suppress = false;
       this.auto_cfg = TT.defaultAuto();
@@ -48,6 +48,8 @@
       this.idle = Object.assign(TT.newIdle(), this.idle);
       this.secret = Object.assign(TT.newSecret(), this.secret);
       this.secret.best ??= {}; this.secret.cleared ??= {};
+      // tông môn nâng cao: chức vị, cống hiến, nhiệm vụ đang làm (save cũ chỉ có p.sect)
+      if (this.sect && TT.SECTS[this.sect]) { if (!this.sectx || this.sectx.name !== this.sect) this.sectx = TT.newSectx(this.sect); } else { this.sect = null; this.sectx = null; }
     }
     get level() { return this.realm * 9 + this.tang; }
 
@@ -59,6 +61,8 @@
       const gear = this.gv("exp");
       if (gear) parts.push(["Pháp khí", gear]);
       if (this.sect && TT.SECTS[this.sect].exp) parts.push(["Tông môn", TT.SECTS[this.sect].exp]);
+      const rk = this.sect && TT.sectRank ? TT.sectRank(this).exp : 0;
+      if (rk) parts.push(["Chức vị", rk]);
       const dt = TT.meta ? TT.meta.bonus("exp") : 0;              // Đạo Tâm (Thiên Mệnh)
       if (dt) parts.push(["Đạo Tâm", dt]);
       return parts;

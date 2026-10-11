@@ -75,6 +75,7 @@
     "Hạt Linh Thảo": "farm/seed.png",
     "Trường Thọ Quả": "plants/fruit_48.png",
     "Nhiệm vụ tông môn": "skills/book_gold_40.png",
+    "Kho tông môn": "skills/book_brown_40.png",
     "Linh điền": "farm/ripe.png",
     "Luyện đan": "plants/fire_48.png",
     "Vẽ phù lục": "skills/book_blue_40.png",

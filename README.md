@@ -19,6 +19,8 @@ Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · *
 - **Kỳ ngộ:** mỗi tháng có cơ hội gặp 1 trong 23 sự kiện (Thường / Hiếm / Cực hiếm / Thiên cơ, gồm cả vài tai ương nhỏ). Phúc Duyên và Vận Khí càng cao càng dễ gặp kỳ ngộ hiếm.
 - **Linh điền theo thời gian thực:** 1 tháng linh điền = 1 phút thật, Linh Thảo chín sau 6 phút và đồng hồ đếm ngược hiện trên từng ô. Cây vẫn lớn khi đóng game hoặc tạm dừng nhập định; lúc vắng mặt cây chỉ lớn đến khi chín rồi chờ bạn (không sâu bệnh, khô hạn hay héo). Khi bạn có mặt vẫn cần tưới nước, bón thổ, trừ sâu. Luyện đan / vẽ phù / luyện khí vẫn là minigame hoàn thành ngay.
 - **Chỉ số:** nút "Chỉ số nhân vật" hiện đủ thông tin, chỉ số gốc, chiến đấu (công, thủ, khí huyết, chí mạng, né tránh, hồi phục) và nguồn tăng tốc độ tu luyện.
+- **Nhiệm vụ tông môn (thời gian thực):** bảng nhiệm vụ theo bậc (1-5) cho 3 tông môn, mỗi nhiệm vụ chạy vài chục giây đến vài phút thật, kể cả khi đóng game; có tỉ lệ thành công / "xuất sắc" (thưởng x2), mỗi ngày có 1 nhiệm vụ nổi bật (thưởng x1,5) và nút tự nhận lại. Hoàn thành nhận linh thạch, tu vi, vật phẩm và **cống hiến**. Cống hiến tổng cộng quyết định **chức vị** (Ngoại Môn → Thái Thượng Trưởng Lão: mở nhiệm vụ bậc cao, tăng tốc độ tu luyện và lương năm); cống hiến còn lại đổi vật phẩm ở **Kho tông môn**.
+- **Thành tựu:** hơn 85 thành tựu chia 9 nhóm (Thiên Đạo Các). Khi mở khóa có thông báo trượt vào, tăng hiệu ứng theo bậc (mới / hiếm / huyền thoại): vòng sáng, pháo hạt và chữ nổi trong cảnh, kèm điểm Thiên Mệnh. Thành tựu chưa đạt có thanh tiến độ.
 - Save cũ vẫn đọc được: nhân vật được gán tên "Đạo Hữu" và một linh căn ngẫu nhiên.
 
 ## Cấu trúc
@@ -39,6 +41,7 @@ js/crafts.js          luyện đan / vẽ phù / luyện khí           (systems
 js/auto.js            tu luyện tự động + hộp thoại đột phá     (systems/auto_cultivate.py)
 js/idle_data.js       dữ liệu + công thức idle: nguyên tố, linh căn, tên, bí cảnh (không đụng DOM)
 js/idle.js            nhập định, kỳ ngộ, bí cảnh, bảng Chỉ số / Linh căn / Bí cảnh / Kỳ ngộ
+js/sect.js            tông môn nâng cao: nhiệm vụ thời gian thật, chức vị, cống hiến, kho tông môn
 js/meta.js            Thiên Mệnh, thành tựu, lịch sử các kiếp, xuất/nhập save
 js/security.js        chữ ký save, kiểm tra tính hợp lý (chống sửa save)
 tools/sim_balance.mjs mô phỏng cân bằng bí cảnh bằng node (node tools/sim_balance.mjs)

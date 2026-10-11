@@ -179,7 +179,7 @@
     const p = this.p, now = Date.now(), dt = (now - this.idleLast) / 1000;
     if (dt < 0) { this.idleLast = now; return; }                 // đồng hồ bị chỉnh lùi
     if (!p.idle.on || this.breaking || this.autoOn) {            // tạm dừng / đang đột phá / đang bế quan tua nhanh: không tính thời gian
-      this.idleLast = now; this.secretCheck(); this.idleRefresh(); return;
+      this.idleLast = now; this.secretCheck(); this.missionCheck(); this.idleRefresh(); return;
     }
     if (dt < 5) {
       const n = Math.floor(dt);
@@ -195,7 +195,7 @@
       this.idleCatchUp(dt);
     }
     if (this.dead) return;
-    this.secretCheck();
+    this.secretCheck(); this.missionCheck();
     this.idleCheckFull();
     this.refresh();
   };
@@ -210,7 +210,7 @@
     const b = { exp: p.exp, stone: p.stone, months: p.months, age: p.age, realm: p.realm_name(), hp: p.hp, wilt: p.plots.filter(x => x && x.wilt).length };
     this.rep = { events: [], secret: null, stopped: "" };
     this.quiet = show;
-    try { this.idleRun(Math.floor(eff)); this.secretCheck(); } finally { this.quiet = false; }
+    try { this.idleRun(Math.floor(eff)); this.secretCheck(); this.missionCheck(); } finally { this.quiet = false; }
     const rep = this.rep; this.rep = null;
     if (this.dead) return;
     this.refresh(); this.autosave();
@@ -246,8 +246,11 @@
     U.secretLine = h("div", { class: "small cyan" });
     U.barSecret = new TT.ui.Bar("#d98a2b", 14);
     U.secretBox = h("div", { class: "idle-secret" }, U.secretLine, U.barSecret.el);
+    U.missionLine = h("div", { class: "small cyan" });
+    U.barMission = new TT.ui.Bar("#3f9bd6", 14);
+    U.missionBox = h("div", { class: "idle-secret" }, U.missionLine, U.barMission.el);
     return h("div", { class: "panel idle-panel" },
-      h("div", { class: "idle-row" }, U.idleState, h("span", { class: "spacer" }), U.idleRate, U.idleBtn), U.barMonth.el, U.secretBox);
+      h("div", { class: "idle-row" }, U.idleState, h("span", { class: "spacer" }), U.idleRate, U.idleBtn), U.barMonth.el, U.secretBox, U.missionBox);
   };
 
   G.idleRefresh = function () {
@@ -273,6 +276,13 @@
       U.barSecret.set(total - left, total, clock(left / 1000));
       U.secretBox.style.display = "";
     } else U.secretBox.style.display = "none";
+    const ma = p.sectx && p.sectx.active, mdef = ma && TT.missionById(ma.id);
+    if (mdef) {
+      const total = ma.end - ma.start, left = Math.max(0, ma.end - Date.now());
+      U.missionLine.textContent = `✦ Nhiệm vụ tông môn: ${mdef.name}...  còn ${clock(left / 1000)}`;
+      U.barMission.set(total - left, total, clock(left / 1000));
+      U.missionBox.style.display = "";
+    } else U.missionBox.style.display = "none";
   };
 
   /* ===================================================================
@@ -282,6 +292,7 @@
     const p = this.p, def = TT.secretById(id), S = p.secret;
     if (!def || this.dead || S.active || p.realm < def.realm) return;
     if (p.hp < p.max_hp() * 0.5) { this.log("Khí huyết dưới 50%, hãy hồi phục trước khi vào bí cảnh.", "red"); return; }
+    if (p.sectx && p.sectx.active) { this.log("Bạn đang làm nhiệm vụ tông môn, hãy đợi xong rồi mới vào bí cảnh.", "red"); return; }
     const now = Date.now();
     S.active = { id, start: now, end: now + def.dur * 1000 };
     this.log(`Bạn bước vào [${def.name}] (${def.el === "Vô" ? "vô hệ" : "hệ " + def.el}), dự kiến ${TT.fmtTime(def.dur)}.`, "gold");
@@ -385,6 +396,7 @@
       if (rep.events.length > 8) L.push(h("div", { class: "dim small" }, `... và ${rep.events.length - 8} kỳ ngộ khác.`));
     }
     if (rep.secret) { L.push(h("div", { class: "t-green bold sec" }, "— Bí cảnh —")); L.push(...resultLines(rep.secret)); }
+    if (rep.missions && rep.missions.length) { L.push(h("div", { class: "t-green bold sec" }, "— Nhiệm vụ tông môn —")); rep.missions.forEach(r => L.push(...TT.missionLines(r))); }
     const m = TT.ui.modal("dlg-box report-box", () => m.close());
     m.box.append(h("h2", { class: "mtitle" }, "Bế quan trở về"), h("div", { class: "rows report-lines" }, L),
       h("div", { class: "row center" }, TT.ui.btn("Tiếp tục tu luyện", () => m.close(), { cls: "gold" })));

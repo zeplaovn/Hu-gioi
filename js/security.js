@@ -107,6 +107,22 @@
     const skills = [...new Set(Array.isArray(d.skills) ? d.skills.filter(s => typeof s === "string" && Object.prototype.hasOwnProperty.call(TT.SKILLS, s)) : [])];
     const sect = typeof d.sect === "string" && Object.prototype.hasOwnProperty.call(TT.SECTS, d.sect) ? d.sect : null;
 
+    let sectx = null;                                          // tông môn nâng cao (bản idle): chỉ giữ khi đang có tông môn
+    if (sect) {
+      const x = isObj(d.sectx) ? d.sectx : {}, base = TT.newSectx(sect);
+      base.earned = int(x.earned, 0, 1e6, 0); base.contrib = int(x.contrib, 0, base.earned, 0);
+      if (isObj(x.done)) for (const id of TT.MISSION_IDS) { const n = int(x.done[id], 0, 99999, 0); if (n) base.done[id] = n; }
+      base.auto = x.auto === true; base.last = TT.MISSION_IDS.includes(x.last) ? x.last : "";
+      if (isObj(x.active)) {
+        const def = TT.missionById(x.active.id), nowM = Date.now();
+        if (def && (!def.sect || def.sect === sect) && def.tier <= TT.sectRank({ sectx: base }).tier) {
+          const start = int(x.active.start, 0, nowM, nowM);
+          base.active = { id: def.id, start, end: int(x.active.end, start, start + def.dur * 1000, start + def.dur * 1000), bonus: x.active.bonus === true };
+        }
+      }
+      sectx = base;
+    }
+
     const known = new Set([...Object.keys(TT.ITEMS), ...Object.keys(TT.MATS), ...TT.USABLE, "Linh Thảo"]);
     const inv = {};
     if (isObj(d.inv)) for (const [k, v] of Object.entries(d.inv)) {
@@ -161,7 +177,7 @@
     for (const id of TT.ENC_IDS) { const n = int(isObj(d.enc) ? d.enc[id] : 0, 0, 99999, 0); if (n) enc[id] = n; }
 
     const out = {
-      gender: d.gender, race: d.race, age, lifespan, stats, realm, tang, exp, stone, months, skills, sect,
+      gender: d.gender, race: d.race, age, lifespan, stats, realm, tang, exp, stone, months, skills, sect, sectx,
       pill: flt(d.pill, 0, 0.5, 0), guard: flt(d.guard, 0, 3, 0), fbuff: int(d.fbuff, 0, 500, 0), suppress: !!d.suppress,
       inv, gear, plots, auto_cfg: auto, track, hp: 1,
       name, root, temper, ess, idle, secret, enc,
