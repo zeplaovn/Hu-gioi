@@ -10,6 +10,16 @@ Bản port của game Python/tkinter `tu_tien` sang HTML + CSS + JavaScript thu�
 Dữ liệu lưu bằng `localStorage` (khóa `tu_tien_save_v2`) – tự lưu sau mỗi hành động, nút "Lưu game" để lưu thủ công.
 Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · **D** đột phá. Minigame: **Space** hoặc chuột/chạm.
 
+## Bản idle
+- **Nhập định tự động:** tu vi tự tăng mỗi giây (10 giây = 1 tháng trong game), có thể **Tạm dừng / Tiếp tục**. Công pháp và nơi tu luyện chọn ở "Tu luyện tự động" cũng áp dụng cho idle. Tu vi dừng ở mức viên mãn để bạn tự đột phá.
+- **Vắng mặt vẫn tu luyện:** 2 phút đầu tính đủ, sau đó 50%, tối đa 2 giờ mỗi lần; mở lại game sẽ có bảng báo cáo. Nếu thọ nguyên sắp cạn, bế quan tự dừng để không tọa hóa khi vắng mặt.
+- **Đạo hiệu:** đặt tên khi tạo nhân vật (tối đa 20 ký tự, tự lọc ký tự nguy hiểm) hoặc gieo xúc xắc ra tên ngẫu nhiên.
+- **Linh căn nguyên tố:** gieo khi tạo nhân vật. Thiên / Song / Tam / Tứ / Ngũ Linh Căn từ Kim, Mộc, Thủy, Hỏa, Thổ (càng ít nguyên tố càng tu nhanh nhưng đủ nguyên tố thì mạnh toàn diện), và 3% ra **Dị Linh Căn** (Lôi, Băng, Phong). Mỗi nguyên tố cho chỉ số riêng; dùng **Tinh Hoa** để tôi luyện (tối đa cấp 10, +8% hiệu quả mỗi cấp).
+- **Bí cảnh:** 8 bí cảnh theo nguyên tố, mở dần theo cảnh giới. Thám hiểm chạy theo thời gian thật (cả khi đóng game), địch mạnh dần theo tầng, hạ Thủ Lĩnh được Tinh Hoa và vật phẩm. Ngũ hành tương khắc ảnh hưởng sát thương: Kim > Mộc > Thổ > Thủy > Hỏa > Kim.
+- **Kỳ ngộ:** mỗi tháng có cơ hội gặp 1 trong 23 sự kiện (Thường / Hiếm / Cực hiếm / Thiên cơ, gồm cả vài tai ương nhỏ). Phúc Duyên và Vận Khí càng cao càng dễ gặp kỳ ngộ hiếm.
+- **Chỉ số:** nút "Chỉ số nhân vật" hiện đủ thông tin, chỉ số gốc, chiến đấu (công, thủ, khí huyết, chí mạng, né tránh, hồi phục) và nguồn tăng tốc độ tu luyện.
+- Save cũ vẫn đọc được: nhân vật được gán tên "Đạo Hữu" và một linh căn ngẫu nhiên.
+
 ## Cấu trúc
 ```
 index.html            trang chính
@@ -26,8 +36,11 @@ js/screens.js         màn tạo nhân vật, màn chính, hộp thoại   (ui/*
 js/farm.js            linh điền                                (systems/farm.py)
 js/crafts.js          luyện đan / vẽ phù / luyện khí           (systems/crafts.py)
 js/auto.js            tu luyện tự động + hộp thoại đột phá     (systems/auto_cultivate.py)
+js/idle_data.js       dữ liệu + công thức idle: nguyên tố, linh căn, tên, bí cảnh (không đụng DOM)
+js/idle.js            nhập định, kỳ ngộ, bí cảnh, bảng Chỉ số / Linh căn / Bí cảnh / Kỳ ngộ
 js/meta.js            Thiên Mệnh, thành tựu, lịch sử các kiếp, xuất/nhập save
 js/security.js        chữ ký save, kiểm tra tính hợp lý (chống sửa save)
+tools/sim_balance.mjs mô phỏng cân bằng bí cảnh bằng node (node tools/sim_balance.mjs)
 tools/build.mjs       build bản phát hành (gộp + nén + làm rối) -> dist/
 assets/               toàn bộ ảnh (cũ + mới)
 assets_src/           3 ảnh sheet gốc của bản cập nhật asset

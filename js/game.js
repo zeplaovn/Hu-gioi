@@ -13,6 +13,7 @@
       this.autoOn = false; this.autoGained = 0; this.autoGoal = 0; this.autoN = 0;
       this.dlg = null; this.scene = null; this.actionBtns = [];
       this.farmFx = {};
+      this.idleTimer = null; this.idleLast = 0; this.quiet = false; this.fullShown = 0; this.rep = null;
       window.addEventListener("keydown", e => this.onKey(e));
     }
 
@@ -25,7 +26,7 @@
     }
 
     /* ---------- nhật ký (gõ chữ dần) ---------- */
-    log(msg, tag) { this.q.push([msg + "\n", tag]); }
+    log(msg, tag) { if (!this.quiet) this.q.push([msg + "\n", tag]); }
 
     startPump() {
       clearInterval(this.pumpTimer);
@@ -60,12 +61,16 @@
       if (!p || !U) return;
       const need = p.need_exp(), col = TT.REALM_COLORS[p.realm];
       U.realm.textContent = p.realm_name(); U.realm.style.color = col;
+      U.name.textContent = p.name;
       U.who.textContent = `${p.gender} · ${p.race} · ${p.age} tuổi`;
+      U.root.replaceChildren(...p.root.els.map(e => h("span", { class: "chip", style: { color: TT.ELEMENTS[e].color, borderColor: TT.ELEMENTS[e].color } }, e)),
+        h("span", { class: "dim small" }, " " + TT.rootInfo(p.root).name));
+      if (p.exp < need) this.fullShown = 0;
       U.barExp.set(p.exp, need, `${p.exp} / ${need}`, p.exp >= need);
       U.barHp.set(p.hp, p.max_hp(), `${p.hp} / ${p.max_hp()}`);
       U.barAge.set(p.age, p.lifespan, `${p.age} / ${p.lifespan} năm`);
       STATS.forEach(s => U.statBars[s].set(p.stats[s], 30, String(p.stats[s])));
-      U.power.textContent = `Chiến lực: ${p.power()}\nTốc độ tu luyện: x${p.exp_mult().toFixed(2)}`;
+      U.power.textContent = `Chiến lực: ${p.power()}   Phòng ngự: ${p.def()}\nTốc độ tu luyện: x${p.exp_mult().toFixed(2)}`;
       U.skills.textContent = "Công pháp: " + (p.skills.length ? p.skills.join(", ") : "chưa có");
       U.sect.textContent = "Tông môn: " + (p.sect ? p.sect : "chưa gia nhập");
       U.stone.textContent = `Linh thạch: ${p.stone}`;
@@ -73,9 +78,14 @@
       U.time.textContent = `Năm ${y}, tháng ${m} (${TT.SEASONS[Math.floor(p.months / 3) % 4]})`;
       this.scene.setSeason(Math.floor((p.months % 12) / 3));
       TT.meta?.check(this);
+      this.idleRefresh();
     }
 
-    autosave() { TT.writeSave(this.count, this.p); }
+    /** Lưu: ghi lại mốc thời gian idle đã xử lý tới đâu để lần mở sau tính được thời gian vắng mặt. */
+    autosave() {
+      if (this.p && this.p.idle) this.p.idle.ts = this.idleLast || Date.now();
+      TT.writeSave(this.count, this.p);
+    }
     manualSave() { if (this.p && !this.dead) { this.autosave(); this.log("Đã lưu game.", "dim"); } }
 
     lock(ms) { this.locked = true; setTimeout(() => { this.locked = false; }, ms); }
@@ -89,11 +99,13 @@
       fn.call(this);
     }
 
-    passTime(months = 1) {
+    /** opts.farm = false: tháng này linh điền không lớn thêm (idle chỉ cho linh điền lớn mỗi vài tháng). */
+    passTime(months = 1, opts = {}) {
       const p = this.p;
       for (let i = 0; i < months; i++) {
         p.months++;
-        this.farmTick();
+        if (opts.farm !== false) this.farmTick();
+        this.rollEncounter();                       // kỳ ngộ: mỗi tháng có cơ hội gặp một lần
         if (p.months % 12 === 0) {
           p.age++;
           if (p.sect) {
@@ -308,7 +320,7 @@
       this.breaking = false;
       if (this.dead) return;
       const p = this.p, sc = this.scene;
-      p.pill = 0.0; p.suppress = false;
+      p.pill = 0.0; p.suppress = false; this.fullShown = 0;
       if (Math.random() < chance) {
         p.exp -= need; p.track.brk++;
         sc.flash("#ffffff", 10); sc.burst(sc.cx, sc.gy - 60, C.GOLD, 36); sc.addRing(C.GOLD);
@@ -376,12 +388,13 @@
     }
 
     /* ================= TÚI ĐỒ ================= */
-    invAdd(name, q = 0, n = 1) {
+    /** noTrack = true: vật phẩm nhặt được (kỳ ngộ / bí cảnh) không tính vào thành tựu thu hoạch / chế tạo. */
+    invAdd(name, q = 0, n = 1, noTrack = false) {
       const k = q === 0 ? name : `${name}|${q}`, inv = this.p.inv;
       inv[k] = (inv[k] || 0) + n;
       if (inv[k] <= 0) delete inv[k];
       const t = this.p.track;
-      if (t && n > 0) { if (name === "Linh Thảo") t.herbs += n; else if (USABLE.includes(name)) t.crafted += n; }
+      if (t && n > 0 && !noTrack) { if (name === "Linh Thảo") t.herbs += n; else if (USABLE.includes(name)) t.crafted += n; }
     }
     invKeys(name) {
       return Object.keys(this.p.inv).filter(k => k.split("|")[0] === name).map(k => [k, k.includes("|") ? +k.split("|")[1] : 0]);

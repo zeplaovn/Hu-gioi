@@ -123,10 +123,43 @@
     const track = {};
     for (const [k, v] of Object.entries(TT.newTrack())) track[k] = int(isObj(d.track) ? d.track[k] : v, 0, 1e7, 0);
 
+    /* ---- bản idle: đạo hiệu, linh căn, tôi luyện, nhập định, bí cảnh, kỳ ngộ (save cũ không có thì lấy mặc định) ---- */
+    const now = Date.now();
+    const name = TT.cleanName(d.name);
+    const root = TT.cleanRoot(d.root);
+    const temper = {}, ess = {};
+    for (const el of Object.keys(TT.ELEMENTS)) {
+      const t = int(isObj(d.temper) ? d.temper[el] : 0, 0, TT.TEMPER_MAX, 0), e = int(isObj(d.ess) ? d.ess[el] : 0, 0, 9999, 0);
+      if (t) temper[el] = t;
+      if (e) ess[el] = e;
+    }
+    const iIn = isObj(d.idle) ? d.idle : {};
+    const idle = {
+      ts: int(iIn.ts, 1, now, now), on: iIn.on !== false, carry: flt(iIn.carry, 0, 1, 0),
+      mt: int(iIn.mt, 0, TT.IDLE.MONTH_TICKS - 1, 0), cd: int(iIn.cd, 0, 12, 3),
+    };
+    const sIn = isObj(d.secret) ? d.secret : {};
+    const secret = { best: {}, cleared: {}, active: null };
+    for (const def of TT.SECRETS) {
+      const b = int(isObj(sIn.best) ? sIn.best[def.id] : 0, 0, def.floors, 0);
+      if (b) secret.best[def.id] = b;
+      if (isObj(sIn.cleared) && sIn.cleared[def.id] === true) secret.cleared[def.id] = true;
+    }
+    if (isObj(sIn.active)) {
+      const def = TT.secretById(sIn.active.id);
+      if (def && realm >= def.realm) {                         // đang thám hiểm: thời gian không được dài hơn quy định
+        const start = int(sIn.active.start, 0, now, now);
+        secret.active = { id: def.id, start, end: int(sIn.active.end, start, start + def.dur * 1000, start + def.dur * 1000) };
+      }
+    }
+    const enc = {};
+    for (const id of TT.ENC_IDS) { const n = int(isObj(d.enc) ? d.enc[id] : 0, 0, 99999, 0); if (n) enc[id] = n; }
+
     const out = {
       gender: d.gender, race: d.race, age, lifespan, stats, realm, tang, exp, stone, months, skills, sect,
       pill: flt(d.pill, 0, 0.5, 0), guard: flt(d.guard, 0, 3, 0), fbuff: int(d.fbuff, 0, 500, 0), suppress: !!d.suppress,
       inv, gear, plots, auto_cfg: auto, track, hp: 1,
+      name, root, temper, ess, idle, secret, enc,
     };
     const p = TT.Player.fromDict(out);                      // dùng công thức thật để giới hạn khí huyết
     p.hp = int(d.hp, 1, p.max_hp(), p.max_hp());

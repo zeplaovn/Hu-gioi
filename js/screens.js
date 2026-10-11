@@ -12,6 +12,7 @@
     if (this.scene) { this.scene.destroy(); this.scene = null; }
     if (this.createScene) { this.createScene.destroy(); this.createScene = null; }
     clearInterval(this.pumpTimer);
+    clearInterval(this.idleTimer);
     app().replaceChildren();
   };
 
@@ -22,6 +23,7 @@
     this.gender = "Nam";
     this.age = rnd(14, 30);
     this.race = pick(Object.keys(RACES));
+    this.rootRoll = TT.rollRoot();
     this.points = 8;
     this.alloc = Object.fromEntries(STATS.map(s => [s, 0]));
 
@@ -30,21 +32,26 @@
     this.createScene = sc;
 
     this.raceInfo = h("div", { class: "panel info-box" });
+    this.rootBox = h("div", { class: "panel info-box root-box" });
     const left = h("div", { class: "create-left" },
       h("div", { class: "scene-wrap" }, sc.cv),
       h("h2", { class: "center" }, `Đây là lần trùng sinh thứ ${this.count} của bạn`),
       h("p", { class: "story" },
         "Bạn vốn là 1 người đi làm bình thường, nhưng vào 1 lần mưa gió xuyên vào thế giới tu tiên chữ thần kỳ. Trong thế giới này, bạn trải nghiệm 1 ",
         h("span", { class: "t-green" }, "hành trình tu hành phong cách đặc biệt.")),
-      this.raceInfo);
+      h("p", { class: "story dim small" }, "Chọn đạo hiệu và linh căn rồi nhập định: tu vi tự tăng theo thời gian, kể cả khi bạn đóng game. Kỳ ngộ sẽ tìm đến, bí cảnh chờ bạn thám hiểm."),
+      this.raceInfo, this.rootBox);
 
     /* giới tính */
     this.lblNam = h("span", { class: "gender", onclick: () => this.setGender("Nam") }, "Nam");
     this.lblNu = h("span", { class: "gender", onclick: () => this.setGender("Nữ") }, "Nữ");
 
-    /* tuổi / chủng tộc + xúc xắc */
+    /* đạo hiệu / tuổi / chủng tộc / linh căn + xúc xắc */
+    this.nameIn = h("input", { class: "field name-in", type: "text", maxlength: TT.NAME_MAX, value: TT.randName("Nam"),
+      placeholder: "Đạo hiệu của bạn", "aria-label": "Đạo hiệu", autocomplete: "off", spellcheck: "false" });
     this.lblAge = h("div", { class: "field" });
     this.lblRace = h("div", { class: "field" });
+    this.lblRoot = h("div", { class: "field root-field" });
     this.diceBtn = {};
     const dice = kind => {
       const img = h("img", { src: "assets/ui/dice_6.png", alt: "xúc xắc", width: 32, height: 32 });
@@ -77,8 +84,10 @@
       h("h2", { class: "center" }, "Chào mừng đến Thiên Vân Đại Lục"),
       h("div", { class: "gender-row" }, this.lblNam, this.lblNu),
       h("div", { class: "form-grid" },
+        h("label", {}, "Đạo hiệu :"), this.nameIn, dice("name"),
         h("label", {}, "Tuổi :"), this.lblAge, dice("age"),
-        h("label", {}, "Chủng Tộc :"), this.lblRace, dice("race")),
+        h("label", {}, "Chủng Tộc :"), this.lblRace, dice("race"),
+        h("label", {}, "Linh căn :"), this.lblRoot, dice("root")),
       this.lblPoints,
       h("div", { class: "stat-grid" }, statRows),
       this.hint,
@@ -100,7 +109,10 @@
   G.roll = function (kind) {
     const step = i => {
       if (!this.lblAge.isConnected) return;
-      if (kind === "age") this.age = rnd(14, 30); else this.race = pick(Object.keys(RACES));
+      if (kind === "age") this.age = rnd(14, 30);
+      else if (kind === "race") this.race = pick(Object.keys(RACES));
+      else if (kind === "root") this.rootRoll = TT.rollRoot();
+      else this.nameIn.value = TT.randName(this.gender);
       this.refreshBasic();
       this.diceBtn[kind].src = `assets/ui/dice_${rnd(1, 6)}.png`;
       if (i < 12) setTimeout(() => step(i + 1), 40 + i * 9);
@@ -115,6 +127,13 @@
     const [life, bonus] = RACES[this.race];
     const b = Object.entries(bonus).map(([k, v]) => `${k} ${v > 0 ? "+" : ""}${v}`).join(", ") || "không có";
     this.raceInfo.textContent = `Chủng tộc ${this.race}: thọ nguyên ~${life} năm. Thiên phú: ${b}.`;
+
+    const root = this.rootRoll, info = TT.rootInfo(root), chip = el => h("span", { class: "chip", style: { color: TT.ELEMENTS[el].color, borderColor: TT.ELEMENTS[el].color } }, el);
+    this.lblRoot.replaceChildren(...root.els.map(chip));
+    this.rootBox.replaceChildren(
+      h("div", { class: "bold" }, `${info.name}  -  tốc độ tu luyện ${info.exp >= 0 ? "+" : ""}${Math.round(info.exp * 100)}%`),
+      ...root.els.map(el => h("div", { class: "small" }, h("span", { style: { color: TT.ELEMENTS[el].color }, class: "bold" }, el + ": "), TT.elemDesc(el, info.scale))),
+      h("div", { class: "dim small" }, "Gieo lại xúc xắc để đổi linh căn. Linh căn ít nguyên tố thì tu luyện nhanh hơn; mỗi nguyên tố cho thêm sức mạnh riêng và tương khắc với bí cảnh."));
   };
 
   G.changeStat = function (s, d) {
@@ -137,18 +156,21 @@
 
   G.startGame = function () {
     while (this.points > 0) { this.alloc[pick(STATS)]++; this.points--; }
-    this.p = new TT.Player(this.gender, this.age, this.race, this.alloc);
+    const name = TT.cleanName(this.nameIn.value) || TT.randName(this.gender);
+    this.p = new TT.Player(this.gender, this.age, this.race, this.alloc, { name, root: this.rootRoll });
     this.showGame();
     const p = this.p;
-    this.log(`Bạn mở mắt ra: một ${p.gender === "Nam" ? "nam tử" : "nữ tử"} ${p.age} tuổi, chủng tộc ${p.race}, giữa Thiên Vân Đại Lục.`, "gold");
-    this.log(`Thọ nguyên dự kiến ${p.lifespan} tuổi. Học công pháp, gia nhập tông môn và tu luyện để kéo dài tuổi thọ!`);
+    this.log(`Bạn mở mắt ra: ${p.name}, một ${p.gender === "Nam" ? "nam tử" : "nữ tử"} ${p.age} tuổi, chủng tộc ${p.race}, mang ${TT.rootLabel(p.root)} giữa Thiên Vân Đại Lục.`, "gold");
+    this.log(`Thọ nguyên dự kiến ${p.lifespan} tuổi. Bạn đã nhập định - tu vi tự tăng theo thời gian. Học công pháp, thám hiểm bí cảnh và đột phá để kéo dài tuổi thọ!`);
+    this.idleStart(false);
     this.autosave();
   };
 
   G.loadGame = function () {
     this.p = TT.Player.fromDict(this.saved);
     this.showGame();
-    this.log("Bạn tiếp tục hành trình tu tiên...", "gold");
+    this.log(`Chào mừng trở lại, ${this.p.name}. Bạn tiếp tục hành trình tu tiên...`, "gold");
+    this.idleStart(true);
   };
 
   /* ===================== MÀN CHƠI CHÍNH ===================== */
@@ -167,7 +189,8 @@
       U.time);
 
     /* cột trái */
-    U.realm = h("div", { class: "realm" }); U.who = h("div", { class: "dim" });
+    U.realm = h("div", { class: "realm" }); U.name = h("div", { class: "pname" }); U.who = h("div", { class: "dim" });
+    U.root = h("div", { class: "root-line" });
     const bar = (name, color) => { const b = new TT.ui.Bar(color, 20); return [h("div", { style: { color } }, name), b.el, b]; };
     const [l1, e1, bExp] = bar("Tu vi", C.GREEN), [l2, e2, bHp] = bar("Khí huyết", "#d63a3a"), [l3, e3, bAge] = bar("Thọ nguyên", "#d9a21b");
     U.barExp = bExp; U.barHp = bHp; U.barAge = bAge;
@@ -177,13 +200,13 @@
       return h("div", { class: "mini-stat" }, h("img", { src: TT.A.icon(TT.ICON_STAT[s], 22), alt: "" }), h("span", {}, s), b.el);
     });
     U.power = h("div", { class: "gold pre" }); U.skills = h("div", { class: "cyan small" }); U.sect = h("div", { class: "orange small" });
-    const left = h("div", { class: "col-left" }, U.realm, U.who, l1, e1, l2, e2, l3, e3,
+    const left = h("div", { class: "col-left" }, U.realm, U.name, U.who, U.root, l1, e1, l2, e2, l3, e3,
       h("div", { class: "t-green bold sec" }, "— Chỉ số —"), statRows, U.power, U.skills, U.sect);
 
     /* giữa: cảnh + nhật ký */
     this.scene = new TT.Scene(700, 290, () => REALM_COLORS[this.p.realm], 0.33);
     this.logEl = h("div", { class: "log", role: "log", "aria-live": "polite" });
-    const center = h("div", { class: "col-center" }, h("div", { class: "scene-wrap" }, this.scene.cv), this.logEl);
+    const center = h("div", { class: "col-center" }, h("div", { class: "scene-wrap" }, this.scene.cv), this.buildIdlePanel(), this.logEl);
 
     /* phải: hành động */
     this.actionBtns = [];
@@ -199,7 +222,16 @@
       const b = TT.ui.btn(label, () => this.act(fn), { cls: cls + " act", icon });
       this.actionBtns.push(b); return b;
     });
+    /* các bảng thông tin: mở ngay, không bị khóa thao tác như hành động tu luyện */
+    const infos = [
+      ["Chỉ số nhân vật", this.openSheet, "cyan", "portrait"], ["Linh căn", this.openRoot, "cyan", "orb_green"],
+      ["Bí cảnh", this.openSecrets, "orange", "crystal"], ["Kỳ ngộ", this.openEnc, "gold", "clover"]];
+    const infoEls = infos.map(([label, fn, cls, ic]) => {
+      const b = TT.ui.btn(label, () => { if (this.inGame && this.p) fn.call(this); }, { cls: cls + " act", icon: TT.A.icon(ic, 22) });
+      this.actionBtns.push(b); return b;
+    });
     const right = h("div", { class: "col-right" }, h("div", { class: "t-green bold center sec" }, "— Hành động —"), actEls,
+      h("div", { class: "t-green bold center sec" }, "— Nhân vật & thế giới —"), infoEls,
       TT.ui.btn("Lưu game", () => this.manualSave(), { cls: "dimbtn act gap" }),
       TT.ui.btn("Trùng sinh (làm lại)", () => { if (confirm("Bỏ nhân vật hiện tại và trùng sinh làm lại?")) this.reincarnate(); }, { cls: "red act" }),
       h("div", { class: "dim small center" }, "Phím tắt: T / L / N / D"));
