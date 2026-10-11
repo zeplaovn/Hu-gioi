@@ -79,14 +79,6 @@ img { max-width: 100%; }
 .craft-cv { width: 100%; max-width: 560px; aspect-ratio: 560 / 300; display: block; margin: 6px auto; border: 1px solid var(--line); touch-action: none; cursor: crosshair; user-select: none; }
 .hint-line { color: var(--cyan); text-align: center; min-height: 2.7em; }
 .bt-box { width: 480px; }
-.auto-box { width: 620px; }
-.form-auto { display: grid; grid-template-columns: 110px 1fr; gap: 8px 10px; align-items: center; margin: 8px 0; }
-.form-auto label { text-align: right; font-weight: bold; }
-.sel { background: var(--panel); color: var(--green); border: 1px solid var(--line2); padding: 6px; font-size: 13.5px; width: 100%; }
-.sel:disabled { color: #4a5560; }
-.info-lines { padding: 8px 12px; margin: 10px 0; display: grid; gap: 4px; }
-.checks { margin: 10px auto; width: fit-content; max-width: 100%; display: grid; gap: 4px; }
-.chk { cursor: pointer; }
 
 /* ---------- linh điền ---------- */
 .farm-box { width: 980px; }
@@ -145,7 +137,6 @@ img { max-width: 100%; }
   .farm-grid .deco.d-scare, .farm-grid .deco.d-rune { display: none; }
   .plots { grid-template-columns: 1fr; }
   .row-item { flex-wrap: wrap; } .row-btns { width: 100%; justify-content: flex-end; }
-  .form-auto { grid-template-columns: 1fr; } .form-auto label { text-align: left; }
   .btn.wide { min-width: 220px; }
 }
 @media (prefers-reduced-motion: reduce) { .overlay { animation: none; } .btn { transition: none; } }

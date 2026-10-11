@@ -2,7 +2,7 @@
    Dữ liệu + công thức thuần nằm ở idle_data.js; file này gắn chúng vào vòng chơi (Game) và giao diện. */
 "use strict";
 (function () {
-  const { C, IDLE, ELEMENTS, SECRETS, STATS, STAT_DESC, PLACES } = TT;
+  const { C, IDLE, ELEMENTS, SECRETS, STATS, STAT_DESC } = TT;
   const G = TT.Game.prototype;
 
   const fmt = n => Math.round(n).toLocaleString("vi-VN");
@@ -124,7 +124,7 @@
   /** Cộng tu vi cho 1 nhịp; dừng ở mức viên mãn (hoặc 150% nếu đang áp chế). Trả về lượng đã cộng. */
   G.idleGain = function () {
     const p = this.p, I = p.idle, need = p.need_exp(), cap = Math.floor(p.suppress ? need * 1.5 : need);
-    I.carry += this.autoMonthGain(true) / IDLE.MONTH_TICKS;
+    I.carry += this.idleMonthGain() / IDLE.MONTH_TICKS;
     const whole = Math.floor(I.carry);
     I.carry -= whole;
     const g = Math.min(whole, Math.max(0, cap - p.exp));
@@ -132,15 +132,9 @@
     return Math.max(0, g);
   };
 
-  /** Hết một tháng: trừ phí địa điểm, hồi khí huyết, trôi thời gian (tuổi, lương tông môn, kỳ ngộ). Linh điền chạy riêng theo đồng hồ thật (farm.js). */
+  /** Hết một tháng: hồi khí huyết, trôi thời gian (tuổi, lương tông môn, kỳ ngộ). Linh điền chạy riêng theo đồng hồ thật (farm.js). */
   G.idleMonth = function () {
-    const p = this.p, cfg = p.auto_cfg, pl = PLACES[cfg.place] || PLACES[0];
-    let cost = pl[2];
-    if (p.realm < pl[1] || p.stone < cost) {            // thiếu linh thạch / chưa đủ cảnh giới: về Tĩnh Thất (miễn phí)
-      if (cfg.place !== 0) { cfg.place = 0; this.log("Không đủ điều kiện ở nơi tu luyện cũ, bạn về Tĩnh Thất nhập định.", "dim"); }
-      cost = 0;
-    }
-    p.stone -= cost;
+    const p = this.p;
     const mhp = p.max_hp();
     if (p.hp < mhp) p.hp = Math.min(mhp, p.hp + Math.max(1, Math.round(mhp * p.regen())));
     const ok = this.passTime(1);
@@ -178,7 +172,7 @@
     this.farmSync();                                             // linh điền chạy theo thời gian thật, kể cả khi tạm dừng nhập định
     const p = this.p, now = Date.now(), dt = (now - this.idleLast) / 1000;
     if (dt < 0) { this.idleLast = now; return; }                 // đồng hồ bị chỉnh lùi
-    if (!p.idle.on || this.breaking || this.autoOn) {            // tạm dừng / đang đột phá / đang bế quan tua nhanh: không tính thời gian
+    if (!p.idle.on || this.breaking) {                            // tạm dừng / đang đột phá: không tính thời gian
       this.idleLast = now; this.secretCheck(); this.missionCheck(); this.idleRefresh(); return;
     }
     if (dt < 5) {
@@ -225,7 +219,7 @@
     if (!st || this.fullShown >= st || TT.ui.anyModal()) return;
     this.fullShown = st;
     this.log(st === 1 ? "Tu vi đã viên mãn - hãy đột phá (hoặc tiếp tục áp chế để tăng tỉ lệ thành công)." : "Tu vi đã áp chế đến cực hạn - hãy đột phá!", "gold");
-    this.promptBreakthrough(st === 2, false);
+    this.promptBreakthrough(st === 2);
   };
 
   G.idleToggle = function () {
@@ -260,11 +254,10 @@
     let st, col;
     if (this.dead) { st = "✝ Đã tọa hóa"; col = C.RED; }
     else if (!I.on) { st = "⏸ Tạm dừng nhập định"; col = C.DIM; }
-    else if (this.autoOn) { st = "● Đang bế quan tua nhanh"; col = C.CYAN; }
     else if (p.exp >= cap) { st = "◆ Tu vi viên mãn - hãy đột phá"; col = C.GOLD; }
     else { st = "● Đang nhập định"; col = C.GREEN; }
     U.idleState.textContent = st; U.idleState.style.color = col;
-    U.idleRate.textContent = `+${(this.autoMonthGain(true) / IDLE.MONTH_TICKS).toFixed(1)} tu vi/giây · 1 tháng = ${IDLE.MONTH_TICKS}s`;
+    U.idleRate.textContent = `+${(this.idleMonthGain() / IDLE.MONTH_TICKS).toFixed(1)} tu vi/giây · 1 tháng = ${IDLE.MONTH_TICKS}s`;
     U.barMonth.set(I.mt, IDLE.MONTH_TICKS, `Tháng kế tiếp sau ${IDLE.MONTH_TICKS - I.mt}s`);
     const btnLabel = U.idleBtn.querySelector("span"), want = I.on ? "Tạm dừng" : "Tiếp tục";
     if (btnLabel.textContent !== want) btnLabel.textContent = want;
@@ -431,7 +424,7 @@
   G.openSheet = function () {
     if (alive(this.sheetWin)) return;
     this.sheetWin = liveModal("sheet-box", close => {
-      const p = this.p, info = TT.rootInfo(p.root), mg = this.autoMonthGain(true);
+      const p = this.p, info = TT.rootInfo(p.root), mg = this.idleMonthGain();
       const bonus = [["atk", "Công kích"], ["def", "Phòng ngự"], ["hp", "Khí huyết"], ["exp", "Tốc độ tu luyện"], ["crit", "Chí mạng"], ["dodge", "Né tránh"], ["regen", "Hồi phục"]]
         .map(([k, l]) => [l, TT.rootBonus(p, k) + (k === "exp" ? info.exp : 0)]).filter(([, v]) => v);
       return [
@@ -459,7 +452,7 @@
             kv("Hồi phục mỗi tháng", `${(p.regen() * 100).toFixed(1)}% khí huyết`)),
           sec("Tu luyện",
             kv("Tốc độ tu luyện", `x${p.exp_mult().toFixed(2)}`, "= 1 " + p.expParts().map(([l, v]) => `${v >= 0 ? "+" : "-"} ${Math.abs(Math.round(v * 100))}% ${l}`).join(" ")),
-            kv("Tu vi mỗi tháng (TB)", fmt(mg), `Tại ${PLACES[p.auto_cfg.place][0]}`),
+            kv("Tu vi mỗi tháng (TB)", fmt(mg)),
             kv("Tu vi mỗi giây (idle)", (mg / IDLE.MONTH_TICKS).toFixed(1)),
             kv("Tinh Hoa", TT.FIVE.concat(TT.RARE_EL).filter(e => p.ess[e]).map(e => `${e} ${p.ess[e]}`).join("  ·  ") || "chưa có"))),
         h("div", { class: "row center" }, TT.ui.btn("Đóng", close, { cls: "dimbtn sm" })),

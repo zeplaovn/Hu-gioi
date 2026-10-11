@@ -11,7 +11,7 @@ Dữ liệu lưu bằng `localStorage` (khóa `tu_tien_save_v2`) – tự lưu s
 Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · **D** đột phá. Minigame: **Space** hoặc chuột/chạm.
 
 ## Bản idle
-- **Nhập định tự động:** tu vi tự tăng mỗi giây (10 giây = 1 tháng trong game), có thể **Tạm dừng / Tiếp tục**. Công pháp và nơi tu luyện chọn ở "Tu luyện tự động" cũng áp dụng cho idle. Tu vi dừng ở mức viên mãn để bạn tự đột phá.
+- **Nhập định (idle):** tu vi tự tăng mỗi giây (10 giây = 1 tháng trong game), có thể **Tạm dừng / Tiếp tục**. Tu vi dừng ở mức viên mãn để bạn tự quyết định đột phá hoặc áp chế thêm. Game không còn chế độ "Tu luyện tự động" (bế quan tua nhanh) và nút tương ứng; các hành động thủ công Tu luyện / Lịch luyện / Nghỉ ngơi vẫn dùng bình thường.
 - **Vắng mặt vẫn tu luyện:** 2 phút đầu tính đủ, sau đó 50%, tối đa 2 giờ mỗi lần; mở lại game sẽ có bảng báo cáo. Nếu thọ nguyên sắp cạn, bế quan tự dừng để không tọa hóa khi vắng mặt.
 - **Đạo hiệu:** đặt tên khi tạo nhân vật (tối đa 20 ký tự, tự lọc ký tự nguy hiểm) hoặc gieo xúc xắc ra tên ngẫu nhiên.
 - **Linh căn nguyên tố:** gieo khi tạo nhân vật. Thiên / Song / Tam / Tứ / Ngũ Linh Căn từ Kim, Mộc, Thủy, Hỏa, Thổ (càng ít nguyên tố càng tu nhanh nhưng đủ nguyên tố thì mạnh toàn diện), và 3% ra **Dị Linh Căn** (Lôi, Băng, Phong). Mỗi nguyên tố cho chỉ số riêng; dùng **Tinh Hoa** để tôi luyện (tối đa cấp 10, +8% hiệu quả mỗi cấp).
@@ -34,15 +34,15 @@ js/player.js          nhân vật + save/load                    (player.py)
 js/ui.js              helper DOM, modal, thanh tiến độ        (widgets.py)
 js/scene.js           cảnh canvas: parallax, sprite, VFX      (scene.py)
 js/minigames.js       giữ lửa / bấm nhịp / kéo phù văn         (minigames.py)
-js/game.js            lõi: hành động, chiến đấu, đột phá, túi đồ, cửa hàng, công pháp, tông môn
+js/game.js            lõi: hành động, chiến đấu, đột phá, túi đồ, cửa hàng, công pháp, gia nhập / rời tông môn
 js/screens.js         màn tạo nhân vật, màn chính, hộp thoại   (ui/*.py)
 js/farm.js            linh điền                                (systems/farm.py)
 js/crafts.js          luyện đan / vẽ phù / luyện khí           (systems/crafts.py)
-js/auto.js            tu luyện tự động + hộp thoại đột phá     (systems/auto_cultivate.py)
+js/train.js           công thức tu vi mỗi tháng của nhập định, hộp thoại đạt điều kiện đột phá
 js/idle_data.js       dữ liệu + công thức idle: nguyên tố, linh căn, tên, bí cảnh (không đụng DOM)
 js/idle.js            nhập định, kỳ ngộ, bí cảnh, bảng Chỉ số / Linh căn / Bí cảnh / Kỳ ngộ
 js/sect.js            tông môn nâng cao: nhiệm vụ thời gian thật, chức vị, cống hiến, kho tông môn
-js/meta.js            Thiên Mệnh, thành tựu, lịch sử các kiếp, xuất/nhập save
+js/meta.js            Thiên Mệnh, thành tựu (+ hiệu ứng mở khóa), lịch sử các kiếp, xuất/nhập save
 js/security.js        chữ ký save, kiểm tra tính hợp lý (chống sửa save)
 tools/sim_balance.mjs mô phỏng cân bằng bí cảnh bằng node (node tools/sim_balance.mjs)
 tools/build.mjs       build bản phát hành (gộp + nén + làm rối) -> dist/
@@ -63,7 +63,7 @@ Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `pyt
 ## Tính năng bản nâng cấp
 - **Thiên Kiếp:** đại đột phá lên Kim Đan trở lên phải chịu nhiều đạo lôi (3 + cảnh giới/2 đạo). Khí huyết về 0 là chết; Hộ Thân Phù và chiến lực giúp giảm sát thương. Vượt kiếp được +1 chỉ số ngẫu nhiên. Game cảnh báo nếu khí huyết quá thấp.
 - **Thiên Mệnh (xuyên kiếp):** chết hoặc phi thăng sẽ nhận điểm Thiên Mệnh, dùng để nâng cấp vĩnh viễn: Thiên Tư (+điểm chỉ số), Túi Càn Khôn (+linh thạch), Trường Sinh (+thọ nguyên), Đạo Tâm (+% tu luyện), Thiên Vận (+Vận Khí). Trùng sinh giữa chừng chỉ nhận một nửa điểm.
-- **Thành tựu:** 29 thành tựu (cảnh giới, săn yêu thú, lịch luyện, chế tác, Thiên Kiếp...), mỗi cái thưởng điểm Thiên Mệnh.
+- **Thành tựu:** hơn 85 thành tựu chia 9 nhóm (cảnh giới, chiến đấu, kỳ ngộ, bí cảnh, linh căn, tông môn, nghề phụ...), mỗi cái thưởng điểm Thiên Mệnh (xem mục Bản idle).
 - **Kiếp trước:** bảng lịch sử 20 kiếp gần nhất.
 - **Dữ liệu:** sao chép / tải file / nhập / xóa save ngay trong game (mục "Thiên Đạo Các" > "Dữ liệu").
 - Dữ liệu xuyên kiếp lưu ở khóa `tu_tien_meta_v1` (tách khỏi `tu_tien_save_v2`, save cũ vẫn dùng được).

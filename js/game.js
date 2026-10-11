@@ -10,7 +10,6 @@
       this.saved = data.player;
       this.p = null; this.inGame = false; this.locked = false; this.dead = false;
       this.q = []; this.cur = null; this.token = 0; this.breaking = false;
-      this.autoOn = false; this.autoGained = 0; this.autoGoal = 0; this.autoN = 0;
       this.dlg = null; this.scene = null; this.actionBtns = [];
       this.farmFx = {};
       this.idleTimer = null; this.idleLast = 0; this.quiet = false; this.fullShown = 0; this.rep = null;
@@ -92,10 +91,6 @@
 
     act(fn) {
       if (this.locked || this.dead || !this.inGame) return;
-      if (this.autoOn && [this.actTrain, this.actExplore, this.actRest, this.actStone].includes(fn)) {
-        this.log("Đang tu luyện tự động - hãy dừng lại trước khi làm việc khác.", "red");
-        return;
-      }
       fn.call(this);
     }
 
@@ -147,7 +142,6 @@
     }
 
     reincarnate() {
-      this.autoStop();
       TT.meta?.endLife(this, "abandon");
       this.count++; this.saved = null;
       TT.writeSave(this.count, null);
@@ -289,12 +283,11 @@
       this.endAction();
     }
 
-    /** Đột phá do người chơi chủ động kích hoạt (tự động tu luyện không bao giờ tự đột phá). */
+    /** Đột phá do người chơi chủ động kích hoạt (nhập định không bao giờ tự đột phá). */
     actBreakthrough() {
       const p = this.p, need = p.need_exp();
       if (this.breaking) return;
       if (p.exp < need) { this.log(`Tu vi chưa đủ (${p.exp}/${need}).`, "red"); return; }
-      if (this.autoOn) this.autoStop("Bạn dừng tu luyện để đột phá.");
       const big = p.tang === 9;
       if (big && p.realm + 1 >= 3) {                 // đại cảnh giới từ Kim Đan trở lên phải qua Thiên Kiếp
         const est = this.tribEstimate(p.realm + 1);

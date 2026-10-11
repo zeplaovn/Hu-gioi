@@ -22,7 +22,6 @@
       this.skills = []; this.sect = null; this.sectx = null; this.pill = 0.0;
       this.inv = {}; this.plots = [null, null, null, null]; this.gear = {};
       this.guard = 0.0; this.fbuff = 0; this.suppress = false;
-      this.auto_cfg = TT.defaultAuto();
       this.track = TT.newTrack();
       const M = TT.meta;                       // Thiên Mệnh: quà khởi đầu từ kiếp trước
       if (M) {
@@ -39,7 +38,7 @@
     }
     ensure() {
       this.inv ??= {}; this.plots ??= [null, null, null, null]; this.gear ??= {};
-      this.guard ??= 0.0; this.fbuff ??= 0; this.suppress ??= false; this.auto_cfg ??= TT.defaultAuto();
+      this.guard ??= 0.0; this.fbuff ??= 0; this.suppress ??= false;
       this.track = Object.assign(TT.newTrack(), this.track);
       // bản idle: save cũ chưa có các trường này
       this.name = TT.cleanName(this.name) || "Đạo Hữu";

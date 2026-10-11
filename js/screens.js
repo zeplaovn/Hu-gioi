@@ -177,7 +177,7 @@
   G.showGame = function () {
     this.clear();
     this.inGame = true; this.dead = false; this.locked = false;
-    this.q = []; this.cur = null; this.token++; this.autoOn = false; this.breaking = false;
+    this.q = []; this.cur = null; this.token++; this.breaking = false;
     const U = this.U = {};
 
     U.time = h("span", { class: "bold" });
@@ -215,7 +215,7 @@
       ["Nghỉ ngơi  [N]", this.actRest, "", "peach"], ["Đột phá  [D]", this.actBreakthrough, "gold", "orb_gold"],
       ["Luyện hóa linh thạch", this.actStone, "", "crystal"], ["Cửa hàng đan dược", this.openShop, "cyan", "orb_green"],
       ["Công pháp", this.openSkills, "cyan", "@skills/book_gold_40.png"], ["Tông môn", this.openSect, "orange", "bagua"],
-      ["Tu luyện tự động", this.openAuto, "", "brain"], ["Nghề phụ", this.openCrafts, "cyan", "@plants/ginseng_48.png"],
+      ["Nghề phụ", this.openCrafts, "cyan", "@plants/ginseng_48.png"],
       ["Túi đồ", this.openBag, "cyan", "charm"]];
     const actEls = acts.map(([label, fn, cls, ic]) => {
       const icon = ic[0] === "@" ? "assets/" + ic.slice(1) : TT.A.icon(ic, 22);

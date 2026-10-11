@@ -100,16 +100,6 @@ TT.SHAPES = {
   tran: [0, 1, 2, 3, 4, 5, 6].map(k => [.5 + .42 * Math.cos(Math.PI / 3 * k - Math.PI / 2), .5 + .42 * Math.sin(Math.PI / 3 * k - Math.PI / 2)]),
 };
 
-TT.PLACES = [["Tĩnh Thất", 0, 0, 1.0], ["Linh Mạch Nhỏ", 1, 3, 1.5],
-  ["Tụ Linh Động", 2, 8, 2.2], ["Tụ Linh Trận", 3, 20, 3.5]]; // [tên, cảnh giới, linh thạch/tháng, hệ số]
-
-TT.TARGETS = [["+100 tu vi", 100], ["+500 tu vi", 500], ["+1.000 tu vi", 1000], ["+5.000 tu vi", 5000],
-  ["+10.000 tu vi", 10000], ["Đến khi đủ đột phá", 0]];
-
-TT.AUTO_MS = 900; // 1 tháng tu luyện = 0,9 giây thật
-
-TT.defaultAuto = () => ({ skill: "", place: 0, target: 5, opts: { change: false, pill: false, full: true, pre: false } });
-
 /* ---------- tiện ích ---------- */
 const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;       // random.randint
 const uni = (a, b) => a + Math.random() * (b - a);                        // random.uniform

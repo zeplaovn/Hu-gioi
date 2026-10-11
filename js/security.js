@@ -140,7 +140,6 @@
         age: int(x.age, 0, 30, 0), water: flt(x.water, 0, 1, 1), soil: flt(x.soil, 0, 1, 0.6), pest: x.pest === true,
         good: flt(x.good, 0, 60, 0), dry: int(x.dry, 0, 3, 0), wilt: x.wilt === true, ts: int(x.ts, 1, nowP, nowP) })
       : [null, null, null, null];
-    const auto = isObj(d.auto_cfg) ? d.auto_cfg : TT.defaultAuto();
     const track = {};
     for (const [k, v] of Object.entries(TT.newTrack())) track[k] = int(isObj(d.track) ? d.track[k] : v, 0, 1e7, 0);
 
@@ -179,7 +178,7 @@
     const out = {
       gender: d.gender, race: d.race, age, lifespan, stats, realm, tang, exp, stone, months, skills, sect, sectx,
       pill: flt(d.pill, 0, 0.5, 0), guard: flt(d.guard, 0, 3, 0), fbuff: int(d.fbuff, 0, 500, 0), suppress: !!d.suppress,
-      inv, gear, plots, auto_cfg: auto, track, hp: 1,
+      inv, gear, plots, track, hp: 1,
       name, root, temper, ess, idle, secret, enc,
     };
     const p = TT.Player.fromDict(out);                      // dùng công thức thật để giới hạn khí huyết
