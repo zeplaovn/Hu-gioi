@@ -17,6 +17,7 @@ Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · *
 - **Linh căn nguyên tố:** gieo khi tạo nhân vật. Thiên / Song / Tam / Tứ / Ngũ Linh Căn từ Kim, Mộc, Thủy, Hỏa, Thổ (càng ít nguyên tố càng tu nhanh nhưng đủ nguyên tố thì mạnh toàn diện), và 3% ra **Dị Linh Căn** (Lôi, Băng, Phong). Mỗi nguyên tố cho chỉ số riêng; dùng **Tinh Hoa** để tôi luyện (tối đa cấp 10, +8% hiệu quả mỗi cấp).
 - **Bí cảnh:** 8 bí cảnh theo nguyên tố, mở dần theo cảnh giới. Thám hiểm chạy theo thời gian thật (cả khi đóng game), địch mạnh dần theo tầng, hạ Thủ Lĩnh được Tinh Hoa và vật phẩm. Ngũ hành tương khắc ảnh hưởng sát thương: Kim > Mộc > Thổ > Thủy > Hỏa > Kim.
 - **Kỳ ngộ:** mỗi tháng có cơ hội gặp 1 trong 23 sự kiện (Thường / Hiếm / Cực hiếm / Thiên cơ, gồm cả vài tai ương nhỏ). Phúc Duyên và Vận Khí càng cao càng dễ gặp kỳ ngộ hiếm.
+- **Linh điền theo thời gian thực:** 1 tháng linh điền = 1 phút thật, Linh Thảo chín sau 6 phút và đồng hồ đếm ngược hiện trên từng ô. Cây vẫn lớn khi đóng game hoặc tạm dừng nhập định; lúc vắng mặt cây chỉ lớn đến khi chín rồi chờ bạn (không sâu bệnh, khô hạn hay héo). Khi bạn có mặt vẫn cần tưới nước, bón thổ, trừ sâu. Luyện đan / vẽ phù / luyện khí vẫn là minigame hoàn thành ngay.
 - **Chỉ số:** nút "Chỉ số nhân vật" hiện đủ thông tin, chỉ số gốc, chiến đấu (công, thủ, khí huyết, chí mạng, né tránh, hồi phục) và nguồn tăng tốc độ tu luyện.
 - Save cũ vẫn đọc được: nhân vật được gán tên "Đạo Hữu" và một linh căn ngẫu nhiên.
 

@@ -99,12 +99,10 @@
       fn.call(this);
     }
 
-    /** opts.farm = false: tháng này linh điền không lớn thêm (idle chỉ cho linh điền lớn mỗi vài tháng). */
-    passTime(months = 1, opts = {}) {
+    passTime(months = 1) {
       const p = this.p;
       for (let i = 0; i < months; i++) {
         p.months++;
-        if (opts.farm !== false) this.farmTick();
         this.rollEncounter();                       // kỳ ngộ: mỗi tháng có cơ hội gặp một lần
         if (p.months % 12 === 0) {
           p.age++;

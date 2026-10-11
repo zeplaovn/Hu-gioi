@@ -132,7 +132,7 @@
     return Math.max(0, g);
   };
 
-  /** Hết một tháng: trừ phí địa điểm, hồi khí huyết, trôi thời gian (tuổi, lương tông môn, kỳ ngộ, linh điền). */
+  /** Hết một tháng: trừ phí địa điểm, hồi khí huyết, trôi thời gian (tuổi, lương tông môn, kỳ ngộ). Linh điền chạy riêng theo đồng hồ thật (farm.js). */
   G.idleMonth = function () {
     const p = this.p, cfg = p.auto_cfg, pl = PLACES[cfg.place] || PLACES[0];
     let cost = pl[2];
@@ -143,7 +143,7 @@
     p.stone -= cost;
     const mhp = p.max_hp();
     if (p.hp < mhp) p.hp = Math.min(mhp, p.hp + Math.max(1, Math.round(mhp * p.regen())));
-    const ok = this.passTime(1, { farm: !this.quiet && p.months % IDLE.FARM_EVERY === 0 });
+    const ok = this.passTime(1);
     if (!ok) return false;
     if (p.months % 12 === 0) {
       const left = p.lifespan - p.age;
@@ -175,6 +175,7 @@
   G.idleTick = function (tok) {
     if (tok !== undefined && tok !== this.token) { clearInterval(this.idleTimer); return; }
     if (!this.inGame || this.dead || !this.p) return;
+    this.farmSync();                                             // linh điền chạy theo thời gian thật, kể cả khi tạm dừng nhập định
     const p = this.p, now = Date.now(), dt = (now - this.idleLast) / 1000;
     if (dt < 0) { this.idleLast = now; return; }                 // đồng hồ bị chỉnh lùi
     if (!p.idle.on || this.breaking || this.autoOn) {            // tạm dừng / đang đột phá / đang bế quan tua nhanh: không tính thời gian
@@ -370,12 +371,14 @@
     const p = this.p, L = [];
     const months = p.months - b.months;
     L.push(h("div", { class: "center" }, `Bạn đã vắng mặt ${TT.fmtTime(dt)}. Thời gian bế quan được tính: ${TT.fmtTime(eff)}${capped ? " (đã đạt mức tối đa)" : ""}.`));
-    L.push(h("div", { class: "dim small center" }, `${Math.round(IDLE.OFFLINE_RATE * 100)}% sau ${IDLE.FULL_RATE_S / 60} phút đầu, tối đa ${IDLE.OFFLINE_CAP_S / 3600} giờ. Linh điền tạm ngưng khi bạn vắng mặt.`));
+    L.push(h("div", { class: "dim small center" }, `${Math.round(IDLE.OFFLINE_RATE * 100)}% sau ${IDLE.FULL_RATE_S / 60} phút đầu, tối đa ${IDLE.OFFLINE_CAP_S / 3600} giờ. Linh điền vẫn lớn đến lúc chín.`));
     L.push(h("div", { class: "cyan" }, `Thời gian trong game: +${months} tháng (tuổi ${b.age} -> ${p.age})`));
     L.push(h("div", { class: "green" }, `Tu vi: +${fmt(p.exp - b.exp)}    Linh thạch: ${p.stone - b.stone >= 0 ? "+" : ""}${fmt(p.stone - b.stone)}`));
     if (p.realm_name() !== b.realm) L.push(h("div", { class: "gold" }, `Cảnh giới: ${b.realm} -> ${p.realm_name()}`));
     if (p.exp >= p.need_exp()) L.push(h("div", { class: "gold bold" }, "◆ Tu vi đã viên mãn - hãy đột phá để tiếp tục tiến bước!"));
     if (rep.stopped === "life") L.push(h("div", { class: "red-t" }, `⚠ Thọ nguyên chỉ còn ${p.lifespan - p.age} năm: bế quan dừng lại để bạn không tọa hóa khi vắng mặt.`));
+    const ripe = p.plots.filter(x => x && !x.wilt && x.age >= TT.RIPE).length;
+    if (ripe) L.push(h("div", { class: "green" }, `🌿 Linh điền: ${ripe} ô Linh Thảo đã chín, đang chờ bạn thu hoạch.`));
     if (rep.events.length) {
       L.push(h("div", { class: "t-green bold sec" }, `— Kỳ ngộ (${rep.events.length}) —`));
       rep.events.slice(0, 8).forEach(e => L.push(h("div", { class: "small", style: { color: RAR[e.r].color } }, `✦ [${RAR[e.r].name}] ${e.name}: ${e.txt}`)));

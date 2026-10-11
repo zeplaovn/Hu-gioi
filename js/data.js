@@ -69,7 +69,7 @@ TT.QMUL = [0.0, 1.0, 1.4, 1.8, 2.5];
 TT.Q_CUT = [0.30, 0.50, 0.68, 0.84];
 
 TT.MATS = {
-  "Hạt Linh Thảo": { cost: 5, desc: "Gieo ở Linh điền, khoảng 6 tháng thì thu hoạch Linh Thảo." },
+  "Hạt Linh Thảo": { cost: 5, desc: "Gieo ở Linh điền, cây lớn theo thời gian thật, khoảng 6 phút thì thu hoạch Linh Thảo." },
   "Quặng Linh Thiết": { cost: 12, desc: "Nguyên liệu luyện khí." },
   "Giấy Phù": { cost: 4, desc: "Giấy để vẽ phù lục." },
 };
@@ -88,7 +88,10 @@ TT.USABLE = ["Tụ Khí Đan", "Hồi Huyết Đan", "Phá Cảnh Đan", "Cườ
 TT.SELL_BASE = { "Linh Thảo": 4, "Tụ Khí Đan": 12, "Hồi Huyết Đan": 9, "Phá Cảnh Đan": 48, "Cường Lực Phù": 14,
   "Hộ Thân Phù": 14, "Phá Cảnh Phù": 40, "Phi Kiếm": 40, "Pháp Bào": 40, "Linh Giới": 60 };
 
-TT.RIPE = 6; // tháng chín của Linh Thảo
+TT.RIPE = 6; // "tháng" chín của Linh Thảo
+/* Linh điền chạy theo thời gian thật: 1 "tháng linh điền" = STEP_S giây thật (cây chín sau RIPE x STEP_S giây).
+   AWAY_MS: lần đồng bộ cách nhau lâu hơn mức này coi như người chơi vắng mặt - cây chỉ lớn đến lúc chín, không sâu bệnh / khô / héo. */
+TT.FARM = { STEP_S: 60, AWAY_MS: 8000, PEST: 0.10 };
 
 TT.SHAPES = {
   loi: [[.08, .18], [.55, .18], [.2, .5], [.85, .5], [.3, .85], [.92, .85]],

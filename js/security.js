@@ -118,7 +118,12 @@
     }
     const gear = {};
     if (isObj(d.gear)) for (const [n, q] of Object.entries(d.gear)) if (Object.prototype.hasOwnProperty.call(TT.GEAR, n)) gear[n] = int(q, 1, 4, 1);
-    const plots = Array.isArray(d.plots) && d.plots.length === 4 && d.plots.every(x => x === null || isObj(x)) ? d.plots : [null, null, null, null];
+    const nowP = Date.now();
+    const plots = Array.isArray(d.plots) && d.plots.length === 4 && d.plots.every(x => x === null || isObj(x))
+      ? d.plots.map(x => x && {                                 // linh điền chạy theo thời gian thật: ts là mốc "tháng linh điền" đã xử lý gần nhất (save cũ chưa có thì lấy hiện tại)
+        age: int(x.age, 0, 30, 0), water: flt(x.water, 0, 1, 1), soil: flt(x.soil, 0, 1, 0.6), pest: x.pest === true,
+        good: flt(x.good, 0, 60, 0), dry: int(x.dry, 0, 3, 0), wilt: x.wilt === true, ts: int(x.ts, 1, nowP, nowP) })
+      : [null, null, null, null];
     const auto = isObj(d.auto_cfg) ? d.auto_cfg : TT.defaultAuto();
     const track = {};
     for (const [k, v] of Object.entries(TT.newTrack())) track[k] = int(isObj(d.track) ? d.track[k] : v, 0, 1e7, 0);
