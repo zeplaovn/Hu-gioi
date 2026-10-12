@@ -55,7 +55,8 @@ fs.rmSync(dist, { recursive: true, force: true }); fs.mkdirSync(dist, { recursiv
 const hash = crypto.createHash("sha256").update(obf).digest("hex").slice(0, 10), bundle = `app.${hash}.js`;
 fs.writeFileSync(path.join(dist, bundle), obf);
 
-const withCsp = text => { const n = text.split("connect-src 'none'").length - 1; if (connectSrc !== "'none'" && n === 0) throw new Error("Không tìm thấy connect-src 'none' để mở cho Supabase."); return text.replaceAll("connect-src 'none'", `connect-src ${connectSrc}`); };
+// Thay MỌI connect-src (index.html có 'none'; vercel.json / _headers gốc có https://*.supabase.co) bằng giá trị thật của bản build này.
+const withCsp = text => { const re = /connect-src [^;"\n]*/g; if (!re.test(text)) throw new Error("Không tìm thấy connect-src để thay."); return text.replace(re, `connect-src ${connectSrc}`); };
 let out = withCsp(html).replace(/\s*<script src="js\/[^"]+"><\/script>/g, "").replace("</body>", `  <script src="${bundle}"></script>\n</body>`);
 fs.writeFileSync(path.join(dist, "index.html"), out);
 fs.cpSync(path.join(root, "css"), path.join(dist, "css"), { recursive: true });
