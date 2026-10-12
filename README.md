@@ -47,10 +47,11 @@ js/ux.js              ấn Đột phá hiển thị tiến độ, chỉ báo tr�
 js/config.js          địa chỉ + khóa công khai của Supabase (build thay vào)
 js/cloud.js           đăng nhập, đồng bộ lên Supabase, xử lý xung đột (gọi REST bằng fetch, không cần SDK)
 js/auth.js            màn đăng nhập / đăng ký, hộp thoại xử lý dữ liệu lệch nhau, đăng xuất
-supabase/migrations/  bảng player_saves + hàm save_game (RLS)
+supabase/migrations/  bảng player_saves + save_game, delete_account, bảng xếp hạng (RLS) — chạy theo thứ tự tên file
 supabase/tests/       kiểm thử SQL
 tools/serve.mjs       server tĩnh cục bộ bằng Node (npm run serve)
 tools/sim_balance.mjs mô phỏng cân bằng bí cảnh bằng node (node tools/sim_balance.mjs)
+tools/gen_leaderboard_bounds.mjs sinh bảng số tháng tu tối thiểu theo cấp cho bảng xếp hạng (chạy lại khi đổi công thức tu vi)
 tools/sim_progress.mjs mô phỏng tiến độ tu hành (node tools/sim_progress.mjs): % đạt từng cảnh giới, thời gian thật, tử vong
 tools/build.mjs       build bản phát hành (gộp + nén + làm rối, chèn khóa TVDL_SALT) -> dist/
 tools/test_security.mjs, tools/test_cloud.mjs  kiểm thử: npm test
@@ -100,7 +101,7 @@ Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `pyt
 Khi cấu hình Supabase, người chơi **đăng ký / đăng nhập bằng email + mật khẩu** (Supabase Auth), tiến trình và Thiên Mệnh được lưu trên tài khoản và chơi tiếp được trên mọi thiết bị. Không cấu hình thì game chạy ngoại tuyến như cũ (chỉ lưu trên máy).
 
 **Cài đặt (một lần):**
-1. Tạo dự án trên [supabase.com](https://supabase.com). Vào *SQL Editor*, dán và chạy `supabase/migrations/20261011000000_player_saves.sql` (hoặc `supabase db push`). File này tạo bảng `player_saves` có Row Level Security (mỗi người chỉ đọc được dòng của mình, **không ghi trực tiếp được**) và hàm `save_game()` làm nơi ghi duy nhất, có kiểm tra kích thước, tần suất và phiên bản.
+1. Tạo dự án trên [supabase.com](https://supabase.com). Vào *SQL Editor*, dán và chạy lần lượt **cả ba** file trong `supabase/migrations/` theo thứ tự tên (`20261011…player_saves`, `20261012…delete_account_and_checks`, `20261013…leaderboard`), hoặc dùng `supabase db push`. File này tạo bảng `player_saves` có Row Level Security (mỗi người chỉ đọc được dòng của mình, **không ghi trực tiếp được**) và hàm `save_game()` làm nơi ghi duy nhất, có kiểm tra kích thước, tần suất và phiên bản.
 2. *Authentication > Sign In / Providers*: bật Email, đặt độ dài mật khẩu tối thiểu **8**, nên bật **Confirm email**. *Authentication > URL Configuration*: đặt Site URL là địa chỉ game. Trên Vercel, build tự xuất `.vercel/output` (Build Output API) để CSP `connect-src` có đúng địa chỉ Supabase; `vercel.json` / `_headers` ở gốc cho phép `https://*.supabase.co` (Vercel chỉ đọc file gốc, không đọc `dist/`); bản build thu hẹp lại đúng project của bạn trong `index.html` (meta) và `.vercel/output`. Sau khi deploy, kiểm tra header `Content-Security-Policy` của trang có `connect-src https://<project>.supabase.co`. Chưa bật CAPTCHA của Supabase, vì client hiện chưa gửi mã CAPTCHA (bật thì đăng ký sẽ lỗi).
 3. *Project Settings > API*: lấy **Project URL** và khóa **anon / publishable**. Trên Vercel / Cloudflare đặt hai biến môi trường `SUPABASE_URL` và `SUPABASE_ANON_KEY` (cùng với `TVDL_SALT`). Khóa này công khai theo thiết kế của Supabase; **không bao giờ** dùng khóa `service_role` hay `sb_secret_`: build sẽ từ chối.
 4. `npm run build` tự thay cấu hình vào `js/config.js` và mở CSP `connect-src` đúng địa chỉ dự án (không có Supabase thì CSP vẫn chặn mọi kết nối mạng).
@@ -114,6 +115,9 @@ Khi cấu hình Supabase, người chơi **đăng ký / đăng nhập bằng ema
 - Dữ liệu từ máy chủ vẫn đi qua bước kiểm tra và làm sạch như save trên máy.
 
 **Thử cục bộ không cần dự án thật:** `npm run mock` chạy một Supabase giả (cổng 54321), rồi `SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_ANON_KEY=local-dev-anon-key-0123456789 npm run build && npm run serve -- dist`.
+
+### Bảng xếp hạng
+Nút **Bảng xếp hạng** (chỉ hiện khi đã đăng nhập) liệt kê top 50 và dòng của bạn. Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít tháng hơn xếp trên; mỗi tài khoản giữ thành tích tốt nhất. Dữ liệu do trigger `lb_sync` lấy từ save mỗi lần `save_game()` ghi, client không ghi trực tiếp được, và bị xóa cùng tài khoản. Đạo hiệu hiển thị công khai. Máy chủ chỉ loại giá trị vô lý (số tháng tu thấp hơn mức tối thiểu của cấp), không kiểm tra được luật chơi, nên đây là bảng giải trí, đừng gắn phần thưởng thật.
 
 ## Phát triển và phát hành
 - Chạy thử: `npm run serve`. Kiểm thử: `npm test` (bảo mật + đồng bộ Supabase, chạy bằng Node). Kiểm thử SQL: `psql -v ON_ERROR_STOP=1 -f supabase/tests/player_saves.test.sql` trên một database Postgres trống (file tự dựng bản giả lập `auth`). Mô phỏng cân bằng bí cảnh: `node tools/sim_balance.mjs`.

@@ -241,6 +241,7 @@
     const infos = [
       ["Chỉ số nhân vật", this.openSheet, "cyan", "portrait"], ["Linh căn", this.openRoot, "cyan", "orb_green"],
       ["Bí cảnh", this.openSecrets, "orange", "crystal"], ["Kỳ ngộ", this.openEnc, "gold", "clover"]];
+    if (TT.cloud && TT.cloud.enabled && TT.cloud.user() && this.openBoard) infos.push(["Bảng xếp hạng", this.openBoard, "gold", "bagua"]);
     const infoEls = infos.map(([label, fn, cls, ic]) => {
       const b = TT.ui.btn(label, () => { if (this.inGame && this.p) fn.call(this); }, { cls: cls + " act", icon: TT.A.icon(ic, 22) });
       this.actionBtns.push(b); return b;

@@ -370,3 +370,15 @@ kbd { font: 600 11px/1 var(--sans); color: var(--dim); border: 1px solid var(--l
 }
 /* điện thoại: hộp thoại trượt từ đáy, chừa chỗ cho thanh điều hướng của hệ điều hành */
 @media (max-width: 760px) { .box { padding-bottom: calc(12px + var(--safe-b)); } }
+
+/* Bảng xếp hạng */
+.board-box { width: 560px; }
+.board-body { max-height: 56vh; overflow-y: auto; margin: 8px 0; }
+.board-list { list-style: none; margin: 0; padding: 0; }
+.board-row { display: grid; grid-template-columns: 2.4em 1fr auto auto; gap: 4px 10px; align-items: baseline; padding: 6px 8px; border-bottom: 1px dotted var(--line); }
+.board-row.me { background: rgba(255, 210, 90, .12); outline: 1px solid var(--gold, #e8c15a); }
+.board-rank { text-align: center; font-weight: 700; }
+.board-name { font-weight: 700; overflow-wrap: anywhere; }
+.board-realm { font-weight: 700; white-space: nowrap; }
+.board-you { margin-top: 10px; }
+@media (max-width: 760px) { .board-row { grid-template-columns: 2.2em 1fr auto; } .board-time { grid-column: 2 / 4; } }

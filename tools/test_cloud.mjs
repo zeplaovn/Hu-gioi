@@ -204,6 +204,19 @@ test("máy chủ từ chối nhân vật vô lý (cảnh giới ngoài phạm vi
   assert.equal(r.status, 400); assert.equal((await r.json()).message, "implausible");
 }));
 
+test("bảng xếp hạng: sắp theo cảnh giới, thấy dòng của mình, bị xóa khi xóa tài khoản", async () => withMock({}, async (mock, port) => {
+  mock.state.minGapMs = 0;
+  const a = device(mock, port); await a.cloud.signUp("a@example.com", PASS); await a.cloud.bootstrap();
+  a.TT.writeSave(1, a.player("Yếu Hơn")); await a.cloud.syncNow();
+  const b = device(mock, port); await b.cloud.signUp("b@example.com", PASS); await b.cloud.bootstrap();
+  const pb = b.player("Mạnh Hơn"); pb.realm = 2; pb.tang = 1; pb.months = 240; pb.age = 40; b.TT.writeSave(1, pb); await b.cloud.syncNow();
+  const lb = await a.cloud.leaderboard();
+  deq(lb.top.map(r => r.name), ["Mạnh Hơn", "Yếu Hơn"]);
+  assert.equal(lb.rank, 2); assert.equal(lb.mine.name, "Yếu Hơn"); assert.equal(lb.top[0].level, 19);
+  await b.cloud.deleteAccount();
+  deq((await a.cloud.leaderboard()).top.map(r => r.name), ["Yếu Hơn"]);
+}));
+
 test("dữ liệu từ máy chủ không được tin: save bị chỉnh vô lý bị từ chối thay vì làm game sập", async () => withMock({}, async (mock, port) => {
   const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
   a.TT.writeSave(1, a.player("Hợp Lệ")); await a.cloud.syncNow();

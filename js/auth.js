@@ -205,6 +205,31 @@
     catch (e) { TT.sec.stale = false; TT.ui.toast(cloud.errorText(e), "bad"); return location.reload(); }
     location.reload();
   }
+  /* ---------- bảng xếp hạng ---------- */
+  const lvName = lv => `${TT.REALMS[Math.floor((lv - 1) / 9)] || "?"} tầng ${(lv - 1) % 9 + 1}`;
+  const years = mo => (mo >= 12 ? `${Math.floor(mo / 12)} năm ${mo % 12} tháng` : `${mo} tháng`);
+  TT.Game.prototype.openBoard = async function () {
+    const m = TT.ui.modal("dlg-box board-box", null, { label: "Bảng xếp hạng", alert: false });
+    const body = h("div", { class: "board-body", role: "status" }, "Đang tải bảng xếp hạng…");
+    m.box.append(h("h2", { class: "mtitle" }, "Bảng xếp hạng"), body,
+      h("p", { class: "dim small center" }, "Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít thời gian hơn xếp trên. Đạo hiệu của bạn hiển thị công khai cho người chơi khác."),
+      h("div", { class: "row center" }, TT.ui.btn("Đóng", () => m.close(), { cls: "dimbtn sm" })));
+    try {
+      const { top, mine, rank, uid } = await cloud.leaderboard();
+      if (!m.box.isConnected) return;
+      const medal = i => (i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1));
+      const row = (r, i, you) => h("li", { class: "board-row" + (r.user_id === uid || you ? " me" : "") },
+        h("span", { class: "board-rank" }, i == null ? "—" : medal(i)),
+        h("span", { class: "board-name" }, r.name, r.user_id === uid ? " (bạn)" : ""),
+        h("span", { class: "board-realm", style: { color: TT.REALM_COLORS[Math.floor((r.level - 1) / 9)] } }, lvName(r.level)),
+        h("span", { class: "board-time dim small" }, years(r.months)));
+      const list = top.length ? h("ol", { class: "board-list" }, top.map((r, i) => row(r, i))) : h("p", { class: "center dim" }, "Chưa có ai trên bảng. Hãy tu luyện và lưu game để là người đầu tiên!");
+      const you = mine && rank == null ? h("div", { class: "board-you" }, h("div", { class: "dim small center" }, "Thành tích của bạn (ngoài top 50)"), h("ol", { class: "board-list" }, row(mine, null, true))) : null;
+      body.replaceChildren(list, ...(you ? [you] : []));
+      body.removeAttribute("role");
+    } catch (e) { body.textContent = cloud.errorText(e); }
+  };
+
   auth.chip = () => {
     const u = cloud.user();
     return h("span", { class: "acct" }, h("span", { class: "acct-mail small dim", title: u ? u.email : "" }, u ? u.email : ""),

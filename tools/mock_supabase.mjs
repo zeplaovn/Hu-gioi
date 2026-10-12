@@ -5,7 +5,8 @@ import http from "node:http"; import crypto from "node:crypto";
 
 export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl = 3600, confirmEmail = false } = {}) {
   const users = new Map(), tokens = new Map(), refresh = new Map(), rows = new Map();
-  const state = { users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000 };
+  const board = new Map();
+  const state = { board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000 };
   const rid = () => crypto.randomBytes(16).toString("hex");
   const issue = u => {
     const access = "at_" + rid(), rt = "rt_" + rid(), exp = Math.floor(Date.now() / 1000) + state.ttl;
@@ -56,8 +57,14 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
       if (path.startsWith("/rest/v1/")) {
         if (!uid) return send(res, 401, { code: "PGRST301", message: "JWT expired" });
         if (path === "/rest/v1/player_saves" && req.method === "GET") { const r = rows.get(uid); return send(res, 200, r ? [{ save: r.save, meta: r.meta, rev: r.rev, updated_at: r.updated_at }] : []); }
+        if (path === "/rest/v1/leaderboard" && req.method === "GET") {
+          let list = [...state.board.entries()].map(([user_id, r]) => ({ user_id, ...r }));
+          const eq = url.searchParams.get("user_id"); if (eq) list = list.filter(r => "eq." + r.user_id === eq);
+          list.sort((a, b) => b.level - a.level || a.months - b.months || a.at - b.at);
+          return send(res, 200, list.slice(0, +url.searchParams.get("limit") || 1000).map(({ at, ...r }) => r));
+        }
         if (path === "/rest/v1/rpc/delete_account" && req.method === "POST") {
-          rows.delete(uid); for (const [k, v] of refresh) if (v === uid) refresh.delete(k);
+          rows.delete(uid); state.board.delete(uid); for (const [k, v] of refresh) if (v === uid) refresh.delete(k);
           for (const [k, u] of users) if (u.id === uid) users.delete(k);
           for (const [k, v] of tokens) if (v.uid === uid) tokens.delete(k);
           return send(res, 204);
@@ -70,6 +77,10 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
           if (JSON.stringify(p_save ?? "").length > 262144 || JSON.stringify(p_meta).length > 262144) return fail("too_large");
           if (isObj(p_save) && isObj(p_save.player)) { const q = p_save.player, n = k => typeof q[k] === "number"; if (!(n("realm") && n("tang") && n("months") && n("age") && n("lifespan") && q.realm >= 0 && q.realm <= 8 && q.tang >= 1 && q.tang <= 9 && q.months >= q.realm * 9 + q.tang - 1 && q.age >= 1 && q.age <= 20000 && q.lifespan >= 1 && q.lifespan <= 20000)) return fail("implausible"); }
           if (!Number.isInteger(p_rev) || p_rev < 0) return fail("bad_rev");
+          if (isObj(p_save) && isObj(p_save.player)) {                  // giống trigger lb_sync: giữ thành tích tốt nhất
+            const q = p_save.player, level = q.realm * 9 + q.tang, b = board.get(uid), name = String(q.name || "").replace(/[\u0000-\u001f]/g, "").trim().slice(0, 24) || "Vô danh";
+            if (!b || level > b.level || (level === b.level && q.months <= b.months)) board.set(uid, { name, level, months: q.months, updated_at: new Date().toISOString(), at: b && level === b.level && q.months === b.months ? b.at : Date.now() });
+          }
           const cur = rows.get(uid), now = Date.now();
           if (!cur) { if (p_rev !== 0 && !p_force) return fail("conflict"); const r = { save: p_save ?? null, meta: p_meta, rev: 1, updated_at: new Date(now).toISOString(), at: now }; rows.set(uid, r); return send(res, 200, { rev: 1, updated_at: r.updated_at }); }
           if (cur.rev !== p_rev && !p_force) return fail("conflict");
