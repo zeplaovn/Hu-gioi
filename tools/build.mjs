@@ -61,5 +61,17 @@ fs.writeFileSync(path.join(dist, "index.html"), out);
 fs.cpSync(path.join(root, "css"), path.join(dist, "css"), { recursive: true });
 fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true });   // KHÔNG chép assets_src/, tools/, *.bat/*.sh, README
 for (const f of ["_headers", "vercel.json"]) if (fs.existsSync(path.join(root, f))) fs.writeFileSync(path.join(dist, f), withCsp(fs.readFileSync(path.join(root, f), "utf8")));
+// Vercel chỉ đọc vercel.json ở thư mục GỐC (bản trong dist/ bị bỏ qua), nên CSP đã mở connect-src cho Supabase phải đi qua Build Output API:
+// .vercel/output/{static,config.json}. Khi có thư mục này Vercel dùng nó thay cho vercel.json gốc.
+if (process.env.VERCEL || process.argv.includes("--vercel")) {
+  const out3 = path.join(root, ".vercel", "output");
+  fs.rmSync(out3, { recursive: true, force: true }); fs.mkdirSync(out3, { recursive: true });
+  fs.cpSync(dist, path.join(out3, "static"), { recursive: true });
+  for (const f of ["_headers", "vercel.json"]) fs.rmSync(path.join(out3, "static", f), { force: true });
+  const cfg = JSON.parse(withCsp(fs.readFileSync(path.join(root, "vercel.json"), "utf8")));
+  const routes = (cfg.headers || []).map(r => ({ src: r.source, headers: Object.fromEntries(r.headers.map(h => [h.key, h.value])), continue: true }));
+  fs.writeFileSync(path.join(out3, "config.json"), JSON.stringify({ version: 3, routes: [...routes, { handle: "filesystem" }] }, null, 2));
+  console.log(`OK .vercel/output : ${routes.length} nhóm header (connect-src ${connectSrc})`);
+}
 if (salt && obf.includes(salt)) console.warn("⚠ Khóa ký còn xuất hiện nguyên văn trong bundle (bình thường nếu chuỗi bị tách, nhưng hãy kiểm tra).");
 console.log(`OK dist/ : ${bundle} (${(obf.length / 1024).toFixed(0)} KB, từ ${(src.length / 1024).toFixed(0)} KB)`);
