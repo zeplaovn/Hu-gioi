@@ -210,9 +210,12 @@
   };
   cloud.discardLocal = row => { hydrate(row || null, session.user.id); };
 
-  cloud.signOut = async () => {
+  /** Đăng xuất. Nếu còn tiến trình chưa lên được máy chủ (mất mạng, xung đột, lỗi) thì KHÔNG xóa gì và ném { unsynced: true },
+      trừ khi truyền force = true (người chơi đã đồng ý bỏ phần chưa đồng bộ). */
+  cloud.signOut = async ({ force = false } = {}) => {
+    if (session && ls.get(DIRTY) === "1" && !conflict) { try { await Promise.race([cloud.push(), new Promise((_, rj) => setTimeout(() => rj({}), 4000))]); } catch (e) { /* kiểm tra DIRTY bên dưới */ } }
+    if (!force && session && (ls.get(DIRTY) === "1" || conflict)) throw { unsynced: true, message: "Còn tiến trình chưa đồng bộ." };
     locked = false;
-    if (session && ls.get(DIRTY) === "1" && !conflict) { try { await Promise.race([cloud.push(), new Promise((_, rj) => setTimeout(() => rj({}), 4000))]); } catch (e) { /* vẫn đăng xuất */ } }
     const t = validToken();
     if (t) { try { await http("/auth/v1/logout", { method: "POST", token: t }); } catch (e) { /* đã xóa phiên ở máy là đủ */ } }
     locked = true; keep(null); cloud.wipeLocal();            // từ đây game không ghi lại được dữ liệu vào máy (tránh lộ sang tài khoản kế tiếp)

@@ -188,7 +188,13 @@
     }
     TT.sec.stale = true;                                        // chặn mọi lần ghi tiếp theo của game
     busy("Đang đăng xuất…");
-    await cloud.signOut();
+    try { await cloud.signOut(); }
+    catch (e) {
+      if (!e || !e.unsynced) throw e;
+      const drop = await TT.ui.confirm({ title: "Chưa đồng bộ được tiến trình", text: "Tiến trình mới nhất chưa lên được tài khoản (mất mạng hoặc dữ liệu bị lệch). Nếu đăng xuất bây giờ, phần này sẽ mất vĩnh viễn.", ok: "Vẫn đăng xuất", cancel: "Ở lại", danger: true });
+      if (!drop) return location.reload();
+      await cloud.signOut({ force: true });
+    }
     location.reload();
   }
   auth.chip = () => {
