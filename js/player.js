@@ -88,7 +88,23 @@
     dodge() { return Math.min(0.4, 0.03 + this.stats["Phúc Duyên"] * 0.003 + TT.rootBonus(this, "dodge")); }
     /** Tỉ lệ khí huyết tự hồi mỗi tháng khi nhập định. */
     regen() { return 0.04 * (1 + TT.rootBonus(this, "regen")); }
-    need_exp() { return int(40 * Math.pow(1.28, this.level - 1)); }
+    need_exp() { return TT.needExp(this.level); }
+    /** Tu vi nhận được trong 1 tháng tu luyện. rng: hàm ngẫu nhiên [0,1) cho kết quả dao động (0,8-1,3); bỏ trống = giá trị trung bình. */
+    monthGain(rng) {
+      const base = 4 + this.stats["Căn Cốt"] * 1.5 + this.stats["Ngộ Tính"] * 2 + this.level * 1.5;
+      return base * this.exp_mult() * (typeof rng === "function" ? 0.8 + rng() * 0.5 : 1.05);
+    }
+    /** Tỉ lệ đột phá thành công (big = đại đột phá ở tầng 9). Tu vi áp chế vượt mức cần thì được cộng thêm tối đa 15%. */
+    breakChance(big) {
+      const C = TT.PROG.CHANCE, need = this.need_exp();
+      let c = C.BASE + this.stats["Ngộ Tính"] * C.NT + this.stats["Vận Khí"] * C.VK - this.realm * C.R + this.pill + (big ? C.BIG_PEN : C.MINOR);
+      c += Math.min(0.15, Math.max(0.0, this.exp / need - 1) * 0.3);
+      return Math.max(C.MIN, Math.min(C.MAX, c));
+    }
+    /** Tỉ lệ tu vi còn giữ lại khi đột phá thất bại. */
+    failKeep(big) { return big ? TT.PROG.KEEP.big : TT.PROG.KEEP.minor; }
+    /** Số tháng tu luyện (trung bình) để đủ tu vi lên tầng kế tiếp. */
+    monthsToFull() { return Math.max(0, this.need_exp() - this.exp) / Math.max(1, this.monthGain()); }
     realm_name() { return `${TT.REALMS[this.realm]} tầng ${this.tang}`; }
     static fromDict(d) { const p = Object.assign(Object.create(Player.prototype), d); p.ensure(); return p; }
   }

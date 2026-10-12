@@ -45,12 +45,24 @@ js/sect.js            tông môn nâng cao: nhiệm vụ thời gian thật, ch�
 js/meta.js            Thiên Mệnh, thành tựu (+ hiệu ứng mở khóa), lịch sử các kiếp, xuất/nhập save
 js/security.js        chữ ký save, kiểm tra tính hợp lý (chống sửa save)
 tools/sim_balance.mjs mô phỏng cân bằng bí cảnh bằng node (node tools/sim_balance.mjs)
+tools/sim_progress.mjs mô phỏng tiến độ tu hành (node tools/sim_progress.mjs): % đạt từng cảnh giới, thời gian thật, tử vong
 tools/build.mjs       build bản phát hành (gộp + nén + làm rối) -> dist/
 assets/               toàn bộ ảnh (cũ + mới)
 assets_src/           3 ảnh sheet gốc của bản cập nhật asset
 tools/slice_sheets.py cắt sheet -> sprite lẻ (cần pillow, numpy, scipy)
 tools/make_frames.py   cắt assets_src/frames_sheet.png -> assets/ui/frame/* (góc, cạnh, ngọc của khung họa tiết)
 ```
+
+## Tu hành & độ khó (cân bằng lại)
+Mọi số liệu nằm trong `TT.PROG` (`js/data.js`); công thức ở `TT.needExp`, `Player.monthGain / breakChance / failKeep`.
+
+- **Tu vi cần để lên tầng** tính theo "số tháng tu luyện" của từng cảnh giới × tu vi/tháng tham chiếu, nên chậm hơn nhiều và luôn tăng dần (kể cả khi sang cảnh giới mới). Tầng 9 đắt hơn ×1,4.
+- **Tu vi/tháng** = (4 + Căn Cốt×1,5 + Ngộ Tính×2 + cấp×1,5) × hệ số công pháp/linh căn × ngẫu nhiên 0,8–1,3.
+- **Đột phá** gốc 50%, cộng Ngộ Tính, Vận Khí, Tâm Cảnh, đan dược và tích lũy thất bại; đại cảnh giới bị trừ 8%; kẹp 8%–90%. Thất bại giữ lại 70% (tầng nhỏ) / 60% (đại cảnh giới) tu vi và mất sinh lực.
+- **Thọ nguyên** cộng khi đại đột phá: 70 / 120 / 270 / 600 / 950 / 1250 / 1550 / 1800 năm. Vật phẩm, kỳ ngộ tăng thêm 50% mỗi cảnh giới. 1 năm game = 120 giây idle, nên thọ nguyên là bức tường thật sự.
+- Tụ Khí Đan hồi 10% tu vi cần để lên tầng.
+- **Mục tiêu thời gian thật (build trung bình):** Luyện Khí ~15 phút, Trúc Cơ ~1,5 giờ, Kim Đan ~5 giờ, Nguyên Anh ~13 giờ, Hóa Thần ~1,2 ngày, Đại Thừa ~4 ngày, Độ Kiếp ~6 ngày. Phi thăng cần build mạnh (~5–6 ngày). Người chơi mới thường chết già quanh Nguyên Anh và phải luân hồi với bản thân mạnh hơn.
+- Chạy `node tools/sim_progress.mjs` sau khi chỉnh số để kiểm tra lại.
 
 ## Asset mới (cập nhật)
 | Sheet | Thư mục | Dùng ở đâu |

@@ -19,10 +19,7 @@
   };
 
   /** Lượng tu vi trung bình một tháng (chưa nhân địa điểm tu luyện) - dùng làm thước đo phần thưởng. */
-  G.baseMonthGain = function () {
-    const p = this.p;
-    return (4 + p.stats["Căn Cốt"] * 1.5 + p.stats["Ngộ Tính"] * 2 + p.level * 1.5) * p.exp_mult();
-  };
+  G.baseMonthGain = function () { return this.p.monthGain(); };
   /** Cộng tu vi bằng k "tháng tu luyện"; trả về lượng đã cộng. */
   G.encExp = function (k) { const g = Math.max(1, int(this.baseMonthGain() * k)); this.p.exp += g; return g; };
 
@@ -61,7 +58,7 @@
       if (!left.length) return `Bạn nhặt được một quyển thiên thư, tham ngộ ba ngày ba đêm: tu vi +${fmt(g.encExp(20))}.`;
       const k = pick(left); p.skills.push(k); return `Bạn nhặt được một quyển thiên thư, lĩnh ngộ công pháp [${k}]!`;
     } },
-    { id: "tho", r: "e", name: "Trường Thọ Quả Chín Muồi", run: (g, p) => { const y = rnd(5, 8); p.lifespan += y; return `Bạn tìm thấy một cây Trường Thọ Quả đúng lúc chín: thọ nguyên +${y} năm.`; } },
+    { id: "tho", r: "e", name: "Trường Thọ Quả Chín Muồi", run: (g, p) => { const y = TT.lifeBonus(rnd(5, 8), p.realm); p.lifespan += y; return `Bạn tìm thấy một cây Trường Thọ Quả đúng lúc chín: thọ nguyên +${y} năm.`; } },
     { id: "phacanh", r: "e", name: "Linh Đan Trên Vách Đá", run: (g, p) => { g.invAdd("Phá Cảnh Đan", rq(p), 1, true); return "Trên vách đá hiểm trở, bạn hái được một viên Phá Cảnh Đan."; } },
     { id: "trieu", r: "e", name: "Linh Khí Triều Tịch", run: g => `Linh khí thiên địa dâng lên như thủy triều, tu vi +${fmt(g.encExp(rnd(25, 40)))}.` },
     { id: "tinhhoa", r: "e", name: "Tinh Hoa Đất Trời", run: (g, p) => { const parts = p.root.els.map(el => { const n = rnd(2, 4); p.ess[el] = (p.ess[el] || 0) + n; return `${n} Tinh Hoa ${el}`; }); return `Bạn thu được ${parts.join(", ")}.`; } },
@@ -76,7 +73,7 @@
       const s = statUp(p);
       return `Linh dịch thiên địa tẩy lễ thân thể: tu vi +${fmt(g.encExp(30))}${s ? `, ${s} +1` : ""}.`;
     } },
-    { id: "tiennhan", r: "m", name: "Tiên Nhân Quán Đỉnh", run: (g, p) => { p.lifespan += 10; const s = statUp(p); return `Một đạo tiên nhân hư ảnh quán đỉnh cho bạn: tu vi +${fmt(g.encExp(rnd(60, 90)))}, thọ nguyên +10${s ? `, ${s} +1` : ""}.`; } },
+    { id: "tiennhan", r: "m", name: "Tiên Nhân Quán Đỉnh", run: (g, p) => { const y = TT.lifeBonus(10, p.realm); p.lifespan += y; const s = statUp(p); return `Một đạo tiên nhân hư ảnh quán đỉnh cho bạn: tu vi +${fmt(g.encExp(rnd(60, 90)))}, thọ nguyên +${y}${s ? `, ${s} +1` : ""}.`; } },
   ];
   TT.ENC_IDS = ENC.map(e => e.id);
 
@@ -332,7 +329,7 @@
       const el = TT.FIVE.includes(def.el) ? def.el : pick(TT.FIVE), n = rnd(1, 2) + (def.floors >= 8 ? 1 : 0);
       p.ess[el] = (p.ess[el] || 0) + n; res.ess = { el, n };
       if (def.realm >= 1 && Math.random() < 0.5) addItem("Phá Cảnh Đan", 1);
-      if (def.realm >= 2 && Math.random() < 0.08) { p.lifespan += 3; res.life = 3; }
+      if (def.realm >= 2 && Math.random() < 0.08) { res.life = TT.lifeBonus(3, p.realm); p.lifespan += res.life; }
       p.track.clears++;
       if (!S.cleared[def.id]) { S.cleared[def.id] = true; res.first = true; res.stat = statUp(p); }
     }
@@ -434,7 +431,7 @@
             kv("Đạo hiệu", p.name, `Kiếp thứ ${this.count}`, C.GOLD),
             kv("Giới tính · Chủng tộc", `${p.gender} · ${p.race}`),
             kv("Cảnh giới", p.realm_name(), null, TT.REALM_COLORS[p.realm]),
-            kv("Tu vi", `${fmt(p.exp)} / ${fmt(p.need_exp())}`),
+            kv("Tu vi", `${TT.fmtNum(p.exp)} / ${TT.fmtNum(p.need_exp())}`, `Đủ để ${p.tang === 9 ? "đại đột phá" : "lên tầng"} sau khoảng ${TT.fmtTime(p.monthsToFull() * IDLE.MONTH_TICKS)} nhập định`),
             kv("Tuổi · Thọ nguyên", `${p.age} / ${p.lifespan}`, `Còn ${Math.max(0, p.lifespan - p.age)} năm`),
             kv("Tông môn", p.sect || "chưa gia nhập"),
             kv("Công pháp", p.skills.length ? p.skills.join(", ") : "chưa có"),
@@ -453,6 +450,7 @@
           sec("Tu luyện",
             kv("Tốc độ tu luyện", `x${p.exp_mult().toFixed(2)}`, "= 1 " + p.expParts().map(([l, v]) => `${v >= 0 ? "+" : "-"} ${Math.abs(Math.round(v * 100))}% ${l}`).join(" ")),
             kv("Tu vi mỗi tháng (TB)", fmt(mg)),
+            kv("Tỉ lệ đột phá", `${Math.round(p.breakChance(p.tang === 9) * 100)}%`, `${p.tang === 9 ? "Đại đột phá lên " + (TT.REALMS[p.realm + 1] || "Phi thăng") : "Lên tầng " + (p.tang + 1)}. Ngộ Tính, Vận Khí, Phá Cảnh Đan và áp chế tu vi đều giúp tăng tỉ lệ; thất bại mất ${Math.round((1 - p.failKeep(p.tang === 9)) * 100)}% tu vi.`, p.breakChance(p.tang === 9) >= 0.6 ? C.GREEN : p.breakChance(p.tang === 9) >= 0.4 ? C.GOLD : C.RED),
             kv("Tu vi mỗi giây (idle)", (mg / IDLE.MONTH_TICKS).toFixed(1)),
             kv("Tinh Hoa", TT.FIVE.concat(TT.RARE_EL).filter(e => p.ess[e]).map(e => `${e} ${p.ess[e]}`).join("  ·  ") || "chưa có"))),
         h("div", { class: "row center" }, TT.ui.btn("Đóng", close, { cls: "dimbtn sm" })),

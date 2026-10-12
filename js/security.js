@@ -92,7 +92,7 @@
     if (!Object.prototype.hasOwnProperty.call(TT.RACES, d.race)) return fail("Chủng tộc không hợp lệ.");
     const realm = int(d.realm, 0, TT.REALMS.length - 1), tang = int(d.tang, 1, 9);
     const months = int(d.months, 0, 1e6), level = realm * 9 + tang;
-    const age = int(d.age, 1, 5000), lifespan = int(d.lifespan, 1, 5000);
+    const age = int(d.age, 1, 20000), lifespan = int(d.lifespan, 1, 20000);
     if (months < level - 1) return fail("Cảnh giới cao hơn thời gian tu luyện cho phép.");
     const age0 = age - Math.floor(months / 12);
     if (age0 < 14 || age0 > 30) return fail("Tuổi và thời gian tu luyện không khớp.");
@@ -100,7 +100,7 @@
     if (!isObj(d.stats)) return fail("Chỉ số không hợp lệ.");
     const stats = {};
     for (const s of TT.STATS) stats[s] = int(d.stats[s], 1, 40, 1);
-    const need = Math.trunc(40 * Math.pow(1.28, level - 1));
+    const need = TT.needExp(level);
     const stone = int(d.stone, 0, 500 + months * 500);
     const exp = int(d.exp, 0, Math.max(100, need * 20));
 

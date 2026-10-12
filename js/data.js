@@ -47,10 +47,10 @@ TT.SECTS = {
 };
 
 TT.ITEMS = {
-  "Tụ Khí Đan": { cost: 20, desc: "Hồi 15% tu vi cần thiết để lên tầng tiếp theo." },
+  "Tụ Khí Đan": { cost: 20, desc: "Hồi 10% tu vi cần thiết để lên tầng tiếp theo." },
   "Hồi Huyết Đan": { cost: 15, desc: "Hồi đầy khí huyết." },
   "Phá Cảnh Đan": { cost: 80, desc: "+20% tỉ lệ cho lần đột phá kế tiếp (cộng dồn tối đa 40%)." },
-  "Trường Thọ Quả": { cost: 150, desc: "Thọ nguyên +8 năm." },
+  "Trường Thọ Quả": { cost: 150, desc: "Thọ nguyên +8 năm (tăng theo cảnh giới)." },
 };
 
 TT.MONSTERS = [
@@ -115,7 +115,7 @@ TT.sellValue = (name, q) => {
 TT.itemDesc = (name, q = 0) => {
   const m = TT.QMUL[q];
   switch (name) {
-    case "Tụ Khí Đan": return `Tăng tu vi bằng ${int(15 * m)}% mức cần để lên tầng.`;
+    case "Tụ Khí Đan": return `Tăng tu vi bằng ${int(TT.PROG.PILL * 100 * m)}% mức cần để lên tầng.`;
     case "Hồi Huyết Đan": return `Hồi ${Math.min(100, int(50 * m))}% khí huyết tối đa.`;
     case "Phá Cảnh Đan": return `+${int(15 * m)}% tỉ lệ đột phá lần tới.`;
     case "Cường Lực Phù": return `Trận đánh kế tiếp: chiến lực +${int(10 * m)}.`;
@@ -130,6 +130,47 @@ TT.itemDesc = (name, q = 0) => {
   }
   if (TT.MATS[name]) return TT.MATS[name].desc;
   return "";
+};
+
+/* ---------- Cân bằng tu hành (chỉnh ở đây, rồi chạy `node tools/sim_progress.mjs` để xem thời gian lên cảnh giới) ----------
+   Tu vi cần để lên 1 tầng = (số "tháng tu luyện" của tầng đó) x (tu vi mỗi tháng của nhân vật tham chiếu).
+   Nhờ vậy thời gian lên cảnh giới quy được ra thời gian thật, và nhân vật mạnh hơn mức tham chiếu thì lên nhanh hơn tương ứng. */
+TT.PROG = {
+  MONTHS: [6, 28, 78, 160, 250, 360, 500, 640, 760],  // số tháng của tầng 1 ở mỗi cảnh giới (Phàm Nhân ... Độ Kiếp)
+  TANG_G: 1.12,                                       // mỗi tầng trong cùng cảnh giới khó hơn tầng trước 12%
+  BIG: 1.4,                                           // tầng 9 (đại đột phá) khó hơn thêm 40%
+  REF_STAT: 15,                                       // Căn Cốt + Ngộ Tính của nhân vật tham chiếu
+  REF_MULT: [1.1, 1.25, 1.55, 1.75, 1.9, 2.0, 2.1, 2.2, 2.3],  // hệ số tốc độ tu luyện tham chiếu theo cảnh giới (công pháp, tông môn, pháp khí...)
+  // thọ nguyên cộng thêm khi đại đột phá lên cảnh giới r (chỉ số r). Phải đủ để người chơi trung bình kịp tới cảnh giới kế tiếp.
+  LIFE: [0, 70, 120, 270, 600, 950, 1250, 1550, 1800],
+  // tỉ lệ đột phá: đầu + Ngộ Tính x NT + Vận Khí x VK - cảnh giới x R; tầng nhỏ +MINOR, đại đột phá BIG_PEN
+  CHANCE: { BASE: 0.50, NT: 0.010, VK: 0.006, R: 0.035, MINOR: 0.20, BIG_PEN: -0.08, MIN: 0.08, MAX: 0.90 },
+  KEEP: { minor: 0.70, big: 0.60 },                   // giữ lại bao nhiêu tu vi khi đột phá thất bại
+  PILL: 0.10,                                         // Tụ Khí Đan hồi bao nhiêu phần tu vi cần cho 1 tầng
+};
+/** Tu vi cần để vượt qua tầng ở cấp level (1 = Phàm Nhân tầng 1). */
+TT.needExp = level => {
+  const P = TT.PROG, top = P.MONTHS.length - 1;
+  const raw = lv => {
+    const realm = Math.min(top, Math.floor((lv - 1) / 9)), tang = (lv - 1) % 9 + 1;
+    const months = P.MONTHS[realm] * Math.pow(P.TANG_G, tang - 1) * (tang === 9 ? P.BIG : 1);
+    const ref = (4 + P.REF_STAT * 1.75 + lv * 1.5) * P.REF_MULT[realm];   // 1,75 = trung bình hệ số Căn Cốt (1,5) và Ngộ Tính (2)
+    return Math.max(40, months * ref);
+  };
+  // Đường cong luôn tăng: mỗi tầng tốn ít nhất 4% hơn tầng trước (tránh tụt khi sang cảnh giới mới).
+  const cache = TT._needCache || (TT._needCache = [0]);
+  for (let l = cache.length; l <= level; l++) cache[l] = Math.max(Math.round(raw(l)), Math.round(cache[l - 1] * 1.04));
+  return cache[level];
+};
+/** Thọ nguyên cộng từ vật phẩm / kỳ ngộ: giá trị gốc tăng 50% mỗi cảnh giới để vẫn có ý nghĩa khi thọ nguyên lên hàng trăm năm. */
+TT.lifeBonus = (base, realm) => Math.round(base * (1 + realm * 0.5));
+/** Số gọn: 1.234 -> "1.234", 12.345 -> "12,3K", 1,2 triệu -> "1,2M". */
+TT.fmtNum = n => {
+  n = Math.round(n);
+  const a = Math.abs(n);
+  if (a < 100000) return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, a >= 10000 ? "." : "");
+  const u = [[1e12, "T"], [1e9, "B"], [1e6, "M"], [1e3, "K"]].find(([v]) => a >= v);
+  return (n / u[0]).toFixed(a / u[0] >= 100 ? 0 : 1).replace(".", ",") + u[1];
 };
 
 TT.fmtTime = sec => {

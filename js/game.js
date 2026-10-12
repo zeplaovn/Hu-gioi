@@ -65,7 +65,7 @@
       U.root.replaceChildren(...p.root.els.map(e => h("span", { class: "chip", style: { color: TT.ELEMENTS[e].color, borderColor: TT.ELEMENTS[e].color } }, e)),
         h("span", { class: "dim small" }, " " + TT.rootInfo(p.root).name));
       if (p.exp < need) this.fullShown = 0;
-      U.barExp.set(p.exp, need, `${p.exp} / ${need}`, p.exp >= need);
+      U.barExp.set(p.exp, need, `${TT.fmtNum(p.exp)} / ${TT.fmtNum(need)}`, p.exp >= need);
       U.barHp.set(p.hp, p.max_hp(), `${p.hp} / ${p.max_hp()}`);
       U.barAge.set(p.age, p.lifespan, `${p.age} / ${p.lifespan} năm`);
       STATS.forEach(s => U.statBars[s].set(p.stats[s], 30, String(p.stats[s])));
@@ -153,8 +153,7 @@
     /* ================= HÀNH ĐỘNG CHÍNH ================= */
     actTrain() {
       const p = this.p;
-      let gain = 4 + p.stats["Căn Cốt"] * 1.5 + p.stats["Ngộ Tính"] * 2 + p.level * 1.5;
-      gain = int(gain * p.exp_mult() * uni(0.8, 1.3));
+      let gain = int(p.monthGain(Math.random));
       this.scene.play("train", 55);
       if (Math.random() < p.stats["Ngộ Tính"] / 100) {
         gain *= 2;
@@ -184,7 +183,7 @@
       p.track.explores++;
       this.lock(1300);
       if (r >= 115) {
-        const g = int((rnd(30, 60) + p.level * 5) * p.exp_mult());
+        const g = int(p.monthGain() * rnd(3, 5));
         sc.play("explore", 45);
         this.log("★ Cơ duyên! Bạn tìm thấy di tích tu sĩ cổ, nhận truyền thừa.", "gold");
         setTimeout(() => this.gainFx(g), 700);
@@ -275,7 +274,7 @@
       const p = this.p;
       if (p.stone < 10) { this.log("Cần ít nhất 10 linh thạch để luyện hóa.", "red"); return; }
       p.stone -= 10;
-      const g = int((25 + p.level * 4 + p.stats["Ngộ Tính"]) * p.exp_mult());
+      const g = int(p.monthGain() * 1.5);
       this.scene.play("train", 45); this.scene.addRing(C.CYAN);
       this.gain(g);
       this.log(`Bạn hấp thu 10 linh thạch. Tu vi +${g}`, "green");
@@ -294,12 +293,9 @@
         if (p.hp < est.expect * 1.2 &&
           !confirm(`Thiên Kiếp sắp giáng (${est.strikes} đạo lôi, ước tính mất ~${est.expect} khí huyết).\nKhí huyết hiện tại: ${p.hp}/${p.max_hp()}. Nên nghỉ ngơi trước.\nVẫn đột phá ngay?`)) return;
       }
-      let chance = 0.55 + p.stats["Ngộ Tính"] * 0.02 + p.stats["Vận Khí"] * 0.01 - p.realm * 0.04;
-      chance += p.pill + (big ? 0.0 : 0.25) - (big ? 0.1 : 0.0);
-      chance += Math.min(0.15, Math.max(0.0, p.exp / need - 1) * 0.3);   // thưởng khi áp chế tu vi
-      chance = Math.max(0.1, Math.min(0.95, chance));
+      const chance = p.breakChance(big);
       this.breaking = true;
-      this.log(`Bạn bắt đầu đột phá... (tỉ lệ thành công ~${int(chance * 100)}%)`, "gold");
+      this.log(`Bạn bắt đầu đột phá${big ? " đại cảnh giới" : ""}... (tỉ lệ thành công ~${int(chance * 100)}%)`, "gold");
       this.scene.play("break", 80);
       this.lock(1700);
       const tok = this.token;
@@ -320,7 +316,7 @@
           if (!this.tribulation(p.realm + 1)) return;   // chết dưới thiên lôi
           if (p.realm === REALMS.length - 1) { this.refresh(); this.winGame(); return; }
           p.realm++; p.tang = 1;
-          p.lifespan += 30 + p.realm * 10;
+          p.lifespan += TT.PROG.LIFE[p.realm];
           p.hp = p.max_hp();
           sc.floatText("ĐỘT PHÁ: " + REALMS[p.realm], C.GOLD);
           this.log(`★ Đột phá đại cảnh giới: ${REALMS[p.realm]}! Thọ nguyên tăng lên ${p.lifespan} tuổi.`, "gold");
@@ -332,12 +328,12 @@
         }
       } else {
         p.track.fails++;
-        p.exp = int(p.exp * 0.7);
-        const d = rnd(10, 30) + (big ? 20 : 0);
+        p.exp = int(p.exp * p.failKeep(big));
+        const d = rnd(10, 30) + (big ? 20 : 0) + p.realm * 6;
         p.hp -= d;
         sc.flash("#ff3030", 12); sc.fxOnce("hit", null, sc.gy - 60, 0.4); sc.shake = 12;
         sc.floatText(`THẤT BẠI -${d}`, C.RED);
-        this.log(`Đột phá thất bại! Tu vi hao tổn, khí huyết -${d}.`, "red");
+        this.log(`Đột phá thất bại! Tu vi hao tổn ${int((1 - p.failKeep(big)) * 100)}%, khí huyết -${d}.`, "red");
         if (p.hp <= 0) { this.die("Tẩu hỏa nhập ma, thân tử đạo tiêu."); return; }
       }
       if (this.passTime(1)) this.endAction();
@@ -411,7 +407,7 @@
     applyItem(name, q) {
       const p = this.p, m = QMUL[q], sc = this.scene;
       if (name === "Tụ Khí Đan") {
-        const g = int(p.need_exp() * 0.15 * m); p.exp += g;
+        const g = int(p.need_exp() * TT.PROG.PILL * m); p.exp += g;
         sc.fxOnce("qi", null, null, 0.4);
         return `Tụ Khí Đan: tu vi +${g}.`;
       }
@@ -482,7 +478,7 @@
       p.stone -= pr;
       if (MATS[name]) { this.invAdd(name); this.log(`Mua ${name} (trong túi: ${this.invN(name)}).`, "cyan"); return; }
       if (name === "Tụ Khí Đan") {
-        const g = int(p.need_exp() * 0.15); this.gain(g);
+        const g = int(p.need_exp() * TT.PROG.PILL); this.gain(g);
         this.log(`Dùng Tụ Khí Đan, tu vi +${g}.`, "green");
       } else if (name === "Hồi Huyết Đan") {
         p.hp = p.max_hp(); sc.floatText("Hồi đầy khí huyết", "#6dff9a");
@@ -491,8 +487,8 @@
         p.pill = Math.min(0.4, p.pill + 0.2);
         this.log(`Nuốt Phá Cảnh Đan, tỉ lệ đột phá lần tới +${int(p.pill * 100)}%.`, "gold");
       } else if (name === "Trường Thọ Quả") {
-        p.lifespan += 8; sc.floatText("Thọ nguyên +8", C.GOLD);
-        this.log("Ăn Trường Thọ Quả, thọ nguyên +8 năm.", "gold");
+        const y = TT.lifeBonus(8, p.realm); p.lifespan += y; sc.floatText(`Thọ nguyên +${y}`, C.GOLD);
+        this.log(`Ăn Trường Thọ Quả, thọ nguyên +${y} năm.`, "gold");
       }
       sc.addRing(C.CYAN);
       const fx = { "Tụ Khí Đan": ["qi", null, 0.4, "center"], "Phá Cảnh Đan": ["break", sc.gy + 8, 0.4, "s"],

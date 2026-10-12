@@ -4,11 +4,7 @@
   const G = TT.Game.prototype;
 
   /** Tu vi trung bình mỗi tháng khi nhập định. */
-  G.idleMonthGain = function () {
-    const p = this.p;
-    const base = 4 + p.stats["Căn Cốt"] * 1.5 + p.stats["Ngộ Tính"] * 2 + p.level * 1.5;
-    return base * p.exp_mult() * 1.05;
-  };
+  G.idleMonthGain = function () { return this.p.monthGain(); };
 
   /** Hộp thoại khi tu vi viên mãn: người chơi tự quyết định đột phá hoặc áp chế thêm (nhập định không bao giờ tự đột phá). */
   G.promptBreakthrough = function (final) {
