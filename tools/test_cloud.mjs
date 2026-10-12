@@ -173,6 +173,18 @@ test("đăng xuất: đẩy phần chưa lưu, xóa sạch dữ liệu trên má
   assert.equal(a.saveName(), null, "sau đăng xuất không được ghi lại dữ liệu vào máy");
 }));
 
+test("đăng xuất khi chưa đồng bộ được (mất mạng): không xóa gì, trừ khi người chơi chấp nhận bỏ", async () => {
+  const mock = createMock({}), port = await mock.ready; mock.state.minGapMs = 0;
+  const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
+  a.TT.writeSave(1, a.player("Chưa Lên Máy Chủ"));
+  await mock.close();                                                            // sập mạng trước khi đồng bộ
+  await assert.rejects(() => a.cloud.signOut(), e => e.unsynced === true);
+  assert.notEqual(a.cloud.user(), null, "vẫn đăng nhập");
+  assert.equal(a.saveName(), "Chưa Lên Máy Chủ", "tiến trình trên máy không bị xóa");
+  await a.cloud.signOut({ force: true });
+  assert.equal(a.cloud.user(), null); assert.equal(a.saveName(), null);
+});
+
 test("dữ liệu từ máy chủ không được tin: save bị chỉnh vô lý bị từ chối thay vì làm game sập", async () => withMock({}, async (mock, port) => {
   const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
   a.TT.writeSave(1, a.player("Hợp Lệ")); await a.cloud.syncNow();
