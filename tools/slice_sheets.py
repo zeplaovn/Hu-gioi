@@ -68,6 +68,6 @@ def cut_medallions(path, names, folder, sizes):
 
 
 if __name__ == "__main__":
-    cut_rgba(os.path.join(SRC, "plants_sheet.png"), PLANTS, "plants", [("", 160), ("_48", 48)])
+    cut_rgba(os.path.join(SRC, "plants_sheet.png"), PLANTS, "plants", [("_48", 48)])
     cut_rgba(os.path.join(SRC, "farm_sheet.png"), TILES, "farm", [("", 220)], grow=4)
-    cut_medallions(os.path.join(SRC, "skills_sheet.png"), SKILLS, "skills", [("", 128), ("_40", 40)])
+    cut_medallions(os.path.join(SRC, "skills_sheet.png"), SKILLS, "skills", [("_40", 40)])
