@@ -197,9 +197,18 @@
     }
     location.reload();
   }
+  async function doDelete() {
+    const yes = await TT.ui.confirm({ title: "Xóa tài khoản vĩnh viễn?", text: "Toàn bộ nhân vật, thành tựu và lịch sử trên tài khoản sẽ bị xóa và KHÔNG thể khôi phục. Bản lưu trên máy này cũng bị xóa.", ok: "Xóa vĩnh viễn", cancel: "Quay lại", danger: true });
+    if (!yes) return;
+    TT.sec.stale = true; busy("Đang xóa tài khoản…");
+    try { await cloud.deleteAccount(); }
+    catch (e) { TT.sec.stale = false; TT.ui.toast(cloud.errorText(e), "bad"); return location.reload(); }
+    location.reload();
+  }
   auth.chip = () => {
     const u = cloud.user();
     return h("span", { class: "acct" }, h("span", { class: "acct-mail small dim", title: u ? u.email : "" }, u ? u.email : ""),
-      TT.ui.btn("Đăng xuất", () => doSignOut(), { cls: "dimbtn sm" }));
+      TT.ui.btn("Đăng xuất", () => doSignOut(), { cls: "dimbtn sm" }),
+      TT.ui.btn("Xóa tài khoản", doDelete, { cls: "dimbtn sm", title: "Xóa vĩnh viễn tài khoản và dữ liệu trên máy chủ" }));
   };
 })();

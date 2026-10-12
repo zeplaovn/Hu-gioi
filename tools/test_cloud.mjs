@@ -185,6 +185,25 @@ test("đăng xuất khi chưa đồng bộ được (mất mạng): không xóa 
   assert.equal(a.cloud.user(), null); assert.equal(a.saveName(), null);
 });
 
+test("xóa tài khoản: dữ liệu trên máy chủ và trên máy đều mất, không đăng nhập lại được", async () => withMock({}, async (mock, port) => {
+  mock.state.minGapMs = 0;
+  const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
+  a.TT.writeSave(1, a.player("Sắp Bị Xóa")); await a.cloud.syncNow();
+  assert.equal(mock.state.rows.size, 1);
+  await a.cloud.deleteAccount();
+  assert.equal(mock.state.rows.size, 0); assert.equal(a.cloud.user(), null); assert.equal(a.saveName(), null);
+  await assert.rejects(() => a.cloud.signIn(EMAIL, PASS), e => /không đúng/.test(a.cloud.errorText(e)));
+}));
+
+test("máy chủ từ chối nhân vật vô lý (cảnh giới ngoài phạm vi)", async () => withMock({}, async (mock, port) => {
+  mock.state.minGapMs = 0;
+  const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
+  const tok = a.cloud.user() && (await a.cloud.pull().then(() => [...mock.state.tokens.keys()].pop()));
+  const r = await fetch(`http://127.0.0.1:${port}/rest/v1/rpc/save_game`, { method: "POST", headers: { apikey: mock.anonKey, Authorization: "Bearer " + tok, "Content-Type": "application/json" },
+    body: JSON.stringify({ p_save: { player: { realm: 99, tang: 1, months: 0, age: 20, lifespan: 80 } }, p_meta: {}, p_rev: 0 }) });
+  assert.equal(r.status, 400); assert.equal((await r.json()).message, "implausible");
+}));
+
 test("dữ liệu từ máy chủ không được tin: save bị chỉnh vô lý bị từ chối thay vì làm game sập", async () => withMock({}, async (mock, port) => {
   const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
   a.TT.writeSave(1, a.player("Hợp Lệ")); await a.cloud.syncNow();

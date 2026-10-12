@@ -56,12 +56,19 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
       if (path.startsWith("/rest/v1/")) {
         if (!uid) return send(res, 401, { code: "PGRST301", message: "JWT expired" });
         if (path === "/rest/v1/player_saves" && req.method === "GET") { const r = rows.get(uid); return send(res, 200, r ? [{ save: r.save, meta: r.meta, rev: r.rev, updated_at: r.updated_at }] : []); }
+        if (path === "/rest/v1/rpc/delete_account" && req.method === "POST") {
+          rows.delete(uid); for (const [k, v] of refresh) if (v === uid) refresh.delete(k);
+          for (const [k, u] of users) if (u.id === uid) users.delete(k);
+          for (const [k, v] of tokens) if (v.uid === uid) tokens.delete(k);
+          return send(res, 204);
+        }
         if (path === "/rest/v1/rpc/save_game" && req.method === "POST") {
           const fail = m => send(res, 400, { code: "P0001", message: m, details: null, hint: null });
           const { p_save, p_meta, p_rev, p_force } = body, isObj = v => v && typeof v === "object" && !Array.isArray(v);
           if (!isObj(p_meta)) return fail("bad_meta");
           if (p_save != null && !isObj(p_save)) return fail("bad_save");
           if (JSON.stringify(p_save ?? "").length > 262144 || JSON.stringify(p_meta).length > 262144) return fail("too_large");
+          if (isObj(p_save) && isObj(p_save.player)) { const q = p_save.player, n = k => typeof q[k] === "number"; if (!(n("realm") && n("tang") && n("months") && n("age") && n("lifespan") && q.realm >= 0 && q.realm <= 8 && q.tang >= 1 && q.tang <= 9 && q.months >= q.realm * 9 + q.tang - 1 && q.age >= 1 && q.age <= 20000 && q.lifespan >= 1 && q.lifespan <= 20000)) return fail("implausible"); }
           if (!Number.isInteger(p_rev) || p_rev < 0) return fail("bad_rev");
           const cur = rows.get(uid), now = Date.now();
           if (!cur) { if (p_rev !== 0 && !p_force) return fail("conflict"); const r = { save: p_save ?? null, meta: p_meta, rev: 1, updated_at: new Date(now).toISOString(), at: now }; rows.set(uid, r); return send(res, 200, { rev: 1, updated_at: r.updated_at }); }

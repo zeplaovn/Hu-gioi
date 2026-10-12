@@ -51,7 +51,7 @@ Nếu repo **public** thì toàn bộ mã gốc ai cũng xem được trên GitH
 
 ## 6. Tài khoản và lưu trên máy chủ (Supabase)
 **Đã có:**
-- Dữ liệu người chơi nằm trong bảng có **Row Level Security**: mỗi tài khoản chỉ đọc được dòng của mình; client **không có quyền insert/update/delete trực tiếp**, chỉ ghi được qua hàm `save_game()` (kiểm tra đăng nhập, kiểu và kích thước dữ liệu, tần suất, và số phiên bản để không đè dữ liệu của thiết bị khác). Đã kiểm thử trên Postgres thật: người dùng B không thấy dữ liệu của A, `anon` bị chặn cả đọc lẫn ghi, ghi trực tiếp vào bảng bị từ chối, xóa tài khoản thì xóa luôn dữ liệu.
+- Dữ liệu người chơi nằm trong bảng có **Row Level Security**: mỗi tài khoản chỉ đọc được dòng của mình; client **không có quyền insert/update/delete trực tiếp**, chỉ ghi được qua hàm `save_game()` (kiểm tra đăng nhập, kiểu và kích thước dữ liệu, tần suất, và số phiên bản để không đè dữ liệu của thiết bị khác). Đã kiểm thử trên Postgres 16 thật (`supabase/tests/player_saves.test.sql`): người dùng B không thấy dữ liệu của A, `anon` bị chặn cả đọc lẫn ghi, ghi trực tiếp vào bảng bị từ chối, xóa tài khoản thì xóa luôn dữ liệu.
 - Chỉ dùng khóa **anon / publishable** (công khai theo thiết kế). Build từ chối `service_role` và `sb_secret_`; `SUPABASE_URL` phải là https (trừ localhost khi thử).
 - CSP vẫn chặt: `connect-src` chỉ mở đúng một địa chỉ dự án Supabase.
 - Đăng ký không tiết lộ email nào đã tồn tại (khi bật Confirm email). Đăng xuất xóa bản lưu tạm để không lộ dữ liệu sang người dùng kế tiếp trên cùng trình duyệt.
@@ -60,5 +60,6 @@ Nếu repo **public** thì toàn bộ mã gốc ai cũng xem được trên GitH
 **Giới hạn (nói thẳng):**
 - **Game vẫn do client quyết định.** Máy chủ chỉ kiểm tra hình thức dữ liệu, không biết nó có "hợp lệ theo luật chơi" hay không; người dùng biết gọi API vẫn có thể ghi một nhân vật mạnh bất thường lên chính tài khoản của họ (HMAC trên máy không giúp được vì khóa nằm trong bundle). Điều này không tệ hơn trước khi có tài khoản, nhưng **đừng dựng bảng xếp hạng hay tính năng cạnh tranh trên dữ liệu này**. Muốn chống gian lận thật phải chuyển logic tính tiến trình sang máy chủ (Edge Function / hàm Postgres).
 - Phiên đăng nhập (access + refresh token) lưu trong `localStorage`, giống SDK chính thức của Supabase. Một lỗ hổng XSS sẽ lộ được phiên, nên CSP chặt, Trusted Types và việc không dùng `innerHTML` là lớp bảo vệ chính.
-- Chưa có CAPTCHA khi đăng ký, chưa có chức năng xóa tài khoản trong game (xóa user ở Supabase Dashboard sẽ xóa dữ liệu theo). Cả hai cần thêm Edge Function hoặc cấu hình riêng.
+- Chưa có CAPTCHA khi đăng ký (cần khóa hCaptcha/Turnstile của riêng bạn và cấu hình ở Supabase). Nút **Xóa tài khoản** trong game gọi `delete_account()` và xóa vĩnh viễn tài khoản cùng dữ liệu.
+- Máy chủ chỉ chặn dữ liệu vô lý rõ ràng (`player_plausible`: cảnh giới 0–8, tầng 1–9, tuổi/thọ nguyên 1–20000, số tháng tu đủ cho cảnh giới), không kiểm tra luật chơi đầy đủ.
 - Client đã kiểm thử với Supabase **giả** (bám sát API Auth / PostgREST) và SQL kiểm thử trên Postgres thật, nhưng chưa chạy trên một dự án Supabase thật. Lần đầu triển khai hãy thử đăng ký, đăng nhập, lưu, đăng xuất trên bản staging.

@@ -136,6 +136,7 @@
       if (m === "conflict") { conflict = true; emit("conflict"); }
       else if (isAuthLoss(e)) emit("signedout");
       else if (m === "too_fast") schedule(3000);
+      else if (m === "implausible") emit("error", { text: "Máy chủ từ chối dữ liệu nhân vật (giá trị không hợp lệ)." });
       else if (m === "local_invalid") emit("error", { text: "Dữ liệu trên máy không hợp lệ, không đồng bộ." });
       else if (e && e.net) { backoff = Math.min(300000, (backoff || 15000) * 2); emit("offline"); schedule(backoff); }
       else { backoff = Math.min(300000, (backoff || 15000) * 2); emit("error", { text: cloud.errorText(e) }); schedule(backoff); }
@@ -219,6 +220,13 @@
     const t = validToken();
     if (t) { try { await http("/auth/v1/logout", { method: "POST", token: t }); } catch (e) { /* đã xóa phiên ở máy là đủ */ } }
     locked = true; keep(null); cloud.wipeLocal();            // từ đây game không ghi lại được dữ liệu vào máy (tránh lộ sang tài khoản kế tiếp)
+  };
+
+  /** Xóa vĩnh viễn tài khoản và dữ liệu trên máy chủ, rồi xóa bản lưu trên máy. */
+  cloud.deleteAccount = async () => {
+    const token = await freshToken();
+    await http("/rest/v1/rpc/delete_account", { method: "POST", token, body: {} });
+    locked = true; keep(null); cloud.wipeLocal();
   };
 
   /* ---------- mọi lần game ghi save/meta xuống máy đều đánh dấu cần đồng bộ ---------- */

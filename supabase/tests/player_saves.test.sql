@@ -11,6 +11,7 @@ grant execute on function auth.uid() to anon, authenticated;
 insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('22222222-2222-2222-2222-222222222222');
 
 \i supabase/migrations/20261011000000_player_saves.sql
+\i supabase/migrations/20261012000000_delete_account_and_checks.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -25,12 +26,12 @@ grant execute on function public.t_expect_error(text, text) to anon, authenticat
 -- người dùng A
 set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 do $$ declare r jsonb; begin
-  r := public.save_game('{"count":1,"player":{"name":"A"}}', '{"legacy":0}', 0);
+  r := public.save_game('{"count":1,"player":{"name":"A","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0);
   assert (r->>'rev')::int = 1, 'lần ghi đầu phải ra rev 1';
 end $$;
 select pg_sleep(1.1);
 do $$ declare r jsonb; begin
-  r := public.save_game('{"count":1,"player":{"name":"A2"}}', '{"legacy":1}', 1);
+  r := public.save_game('{"count":1,"player":{"name":"A2","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":1}', 1);
   assert (r->>'rev')::int = 2, 'rev phải tăng';
 end $$;
 select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 1)$q$, 'conflict');           -- rev cũ
@@ -44,9 +45,13 @@ select public.t_expect_error($q$select public.save_game('{}', '{}', -1)$q$, 'bad
 do $$ declare r jsonb; begin                                                   -- ghi quá nhanh bị chặn, ghi đè chủ động (force) thì được
   perform public.save_game('{"count":1}', '{}', 2);
   perform public.t_expect_error($q$select public.save_game('{"count":1}', '{}', 3)$q$, 'too_fast');
-  r := public.save_game('{"count":1,"player":{"name":"A3"}}', '{}', 0, true);
+  r := public.save_game('{"count":1,"player":{"name":"A3","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{}', 0, true);
   assert (r->>'rev')::int = 4, 'force phải ghi được và tăng rev';
 end $$;
+-- nhân vật vô lý bị chặn ở máy chủ
+select public.t_expect_error($q$select public.save_game('{"player":{"name":"X","realm":9,"tang":1,"months":0,"age":16,"lifespan":80}}', '{}', 0, true)$q$, 'implausible');
+select public.t_expect_error($q$select public.save_game('{"player":{"name":"X","realm":4,"tang":1,"months":3,"age":16,"lifespan":80}}', '{}', 0, true)$q$, 'implausible');
+select public.t_expect_error($q$select public.save_game('{"player":{"name":"X"}}', '{}', 0, true)$q$, 'implausible');
 -- RLS: A chỉ thấy dòng của mình, không ghi trực tiếp được
 do $$ begin assert (select count(*) from public.player_saves) = 1, 'A phải thấy đúng 1 dòng'; end $$;
 select public.t_expect_error($q$update public.player_saves set save = '{"hack":true}'$q$, 'permission denied');
@@ -57,7 +62,7 @@ select public.t_expect_error($q$delete from public.player_saves$q$, 'permission 
 select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
 do $$ begin assert (select count(*) from public.player_saves) = 0, 'B không được thấy dòng của A'; end $$;
 do $$ declare r jsonb; begin
-  r := public.save_game('{"count":1,"player":{"name":"B"}}', '{}', 0);
+  r := public.save_game('{"count":1,"player":{"name":"B","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{}', 0);
   assert (r->>'rev')::int = 1;
   assert (select save #>> '{player,name}' from public.player_saves) = 'B', 'B phải thấy dữ liệu của B';
 end $$;
@@ -71,7 +76,14 @@ select public.t_expect_error($q$select public.save_game('{}', '{}', 0)$q$, 'perm
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select public.save_game('{}', '{}', 0)$q$, 'not_authenticated');
 
+-- người dùng tự xóa tài khoản qua delete_account(); anon không gọi được
+reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);
+select public.t_expect_error($q$select public.delete_account()$q$, 'permission denied');
+reset role; set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
+select public.delete_account();
+reset role;
+do $$ begin assert not exists (select 1 from auth.users where id = '22222222-2222-2222-2222-222222222222'), 'B phải bị xóa'; assert (select count(*) from public.player_saves) = 1, 'dòng của B phải bị xóa theo'; end $$;
 -- xóa tài khoản thì dữ liệu bị xóa theo
 reset role; delete from auth.users where id = '11111111-1111-1111-1111-111111111111';
-do $$ begin assert (select count(*) from public.player_saves) = 1, 'xóa user A phải xóa dòng của A'; end $$;
+do $$ begin assert (select count(*) from public.player_saves) = 0, 'xóa user A phải xóa dòng của A'; end $$;
 \echo 'TẤT CẢ KIỂM THỬ SQL ĐỀU QUA'
