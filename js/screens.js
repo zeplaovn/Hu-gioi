@@ -194,7 +194,7 @@
     U.realm = h("div", { class: "realm" }); U.name = h("div", { class: "pname" }); U.who = h("div", { class: "dim" });
     U.root = h("div", { class: "root-line" });
     const bar = (name, color, text) => { const b = new TT.ui.Bar(color, 20); b.el.setAttribute("aria-label", name); return [h("div", { class: "bar-label", style: { color: text || color } }, name), b.el, b]; };
-    const [l1, e1, bExp] = bar("Tu vi", "#4fae8a", "#7fd1ae"), [l2, e2, bHp] = bar("Khí huyết", "#c9503c", "#f0806a"), [l3, e3, bAge] = bar("Thọ nguyên", "#b8923a", "#e2bd68");
+    const [l1, e1, bExp] = bar("Tu vi", C.GREEN), [l2, e2, bHp] = bar("Khí huyết", "#d63a3a"), [l3, e3, bAge] = bar("Thọ nguyên", "#d9a21b");
     U.barExp = bExp; U.barHp = bHp; U.barAge = bAge;
     U.statBars = {};
     const statRows = STATS.map(s => {

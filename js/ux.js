@@ -6,9 +6,6 @@
   if (!TT.Game) return;
   const G = TT.Game.prototype;
 
-  /* đồng bộ màu chữ do mã JS đặt (trạng thái nhập định, hiệu ứng) với bảng màu mới trong style.css */
-  Object.assign(TT.C, { GREEN: "#7fd1ae", GOLD: "#e2bd68", CYAN: "#8cc3da", RED: "#f0806a", DIM: "#a3b3a8", FG: "#ece5d3" });
-
   const refresh = G.refresh;
   G.refresh = function () {
     refresh.call(this);
