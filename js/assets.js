@@ -39,7 +39,8 @@
     icon: (name, size = 22) => name ? `assets/icons/${name}_${size}.png` : "",
     preload() {
       const list = [];
-      ["far", "mid", "fore", "title"].forEach(n => list.push(A.img(`bg/${n}.png`)));
+      list.push(A.img("bg/title.png"));
+      ["far", "mid", "fore"].forEach(n => { for (let i = 0; i < 4; i++) list.push(A.img(`bg/${n}_${i}.png`)); });
       Object.keys(COUNT.hero).forEach(n => list.push(...A.hero(n)));
       Object.keys(COUNT.vfx).forEach(n => list.push(...A.vfx(n)));
       Object.keys(MON).forEach(k => ["idle", "atk", "die"].forEach(s => list.push(...A.mon(+k, s))));

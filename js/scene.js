@@ -20,6 +20,16 @@
     { d: 0.75, sc: 0.42, a: 0.80, w: 0.40 },
     { d: 1.00, sc: 0.60, a: 1.00, w: 0.25 },
   ];
+  /* ---- Nền parallax 4 mùa: assets/bg/{far|mid|fore}_{0..3}.png (xa: núi + trời, giữa: đảo nổi, gần: vườn đá)
+     k: hệ số cuộn theo tốc độ đi · dr: trôi nhẹ mỗi tick (mây, đảo) khi đứng yên · sc: tỉ lệ ảnh · by: cách đáy khung (px) · bob: biên độ nhấp nhô */
+  const BG_LAYERS = [
+    { n: "far",  k: 0.06, dr: 0.035, sc: 1.18, by: 44, bob: 1.2 },
+    { n: "mid",  k: 0.22, dr: 0.090, sc: 1.10, by: 24, bob: 2.0 },
+    { n: "fore", k: 1.00, dr: 0,     sc: 1.00, by: 0,  bob: 0 },
+  ];
+  const BG_SKY = [                       // [đỉnh, chân] gradient trời theo mùa (Xuân, Hạ, Thu, Đông)
+    ["#a9d4f5", "#f6e6f0"], ["#1b8fda", "#8fd0ee"], ["#99737f", "#f2a65a"], ["#032f70", "#1d518e"],
+  ];
   const FALLBACK_COL = ["#ffb3d1", "#e6ff6a", "#e0782a", "#ffffff"];   // dùng khi chưa có file ảnh
   const pickW = arr => { let x = Math.random(), t = 0; for (const [v, w] of arr) { t += w; if (x < t) return v; } return arr[arr.length - 1][0]; };
   const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
@@ -34,12 +44,12 @@
       this.ctx = this.cv.getContext("2d");
       this.colorFn = colorFn;
       this.cx = Math.floor(w * cxRatio);
-      this.gy = Math.floor(h * 0.82);
+      this.gy = Math.floor(h * (kind === "title" ? 0.82 : 0.87));   // cảnh chơi: chân đứng trên mặt đất của lớp gần
       this.t = 0; this.mode = "idle"; this.mt = 0; this.mdur = 0; this.win = true;
       this.parts = []; this.floats = []; this.rings = []; this.fx = [];
       this.shake = 0;
       this.flashC = null; this.flashT = 0; this.flashMax = 1;
-      this.scroll = 0; this.speed = 0.2; this.season = 0; this.mon = null;
+      this.scroll = 0; this.speed = 0.2; this.season = 0; this.prevSeason = 0; this.sb = 1; this.mon = null;
       this.wind = 0; this.spN = 0;
       this.us = Math.max(0.7, Math.min(1.3, h / 340));                       // co kích thước hạt theo cỡ cảnh
       this.reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -59,7 +69,12 @@
       if (mode === "break") this.addRing("#ffe27a");
     }
     setDead() { this.mode = "dead"; this.mon = null; }
-    setSeason(s) { this.season = ((s % 4) + 4) % 4; }
+    setSeason(s) {
+      s = ((s % 4) + 4) % 4;
+      if (s === this.season) return;
+      this.prevSeason = this.season; this.season = s;
+      this.sb = this.t > 5 ? 0 : 1;                                   // chuyển mùa: hoà dần nền cũ → nền mới (~1.5 giây)
+    }
     floatText(text, col = C.GREEN, dx = 0) {
       this.floats.push({ x: this.cx + dx + rnd(-20, 20), y: this.gy - 130, text, col, life: 55, max: 55 });
     }
@@ -161,6 +176,29 @@
       c.imageSmoothingEnabled = false;
     }
 
+    /** Vẽ nền parallax của một mùa với độ mờ alpha. */
+    drawSeasonBg(season, alpha) {
+      const c = this.ctx, t = this.t, h = this.h;
+      c.save();
+      c.globalAlpha = alpha;
+      c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high";
+      const g = c.createLinearGradient(0, 0, 0, h * 0.8);
+      g.addColorStop(0, BG_SKY[season][0]); g.addColorStop(0.22, BG_SKY[season][0]); g.addColorStop(1, BG_SKY[season][1]);
+      c.fillStyle = g; c.fillRect(0, 0, this.w, h);
+      for (const L of BG_LAYERS) {
+        const im = A.img(`bg/${L.n}_${season}.png`);
+        if (!A.ok(im)) continue;
+        const W = im.naturalWidth * L.sc, H = im.naturalHeight * L.sc;
+        const off = (((this.scroll * L.k + t * L.dr) % W) + W) % W;      // cuộn theo nhân vật + trôi nhẹ theo thời gian
+        const y = Math.round(h - L.by - H + (L.bob ? Math.sin(t * 0.012 + L.k * 9) * L.bob : 0));
+        // Giữ tọa độ và kích thước nhất quán ở sub-pixel; floor/ceil + cộng 1px
+        // khiến mép tile thay đổi theo từng frame, tạo cảm giác nền bị rung.
+        for (let x = -off; x < this.w; x += W) c.drawImage(im, x, y, W, H);
+      }
+      c.restore();
+      c.imageSmoothingEnabled = false;
+    }
+
     // ---- sprite nhân vật / yêu thú
     person(cx, gy, pose, t) {
       if (this.shake > 0) { cx += rnd(-4, 4); gy += rnd(-3, 3); }
@@ -218,12 +256,8 @@
         this.img(A.img("bg/title.png"), 0, 0, "nw");
       } else {
         c.fillStyle = "#0a0f1e"; c.fillRect(0, 0, this.w, this.h);
-        for (const [name, k] of [["far", 0.15], ["mid", 0.4], ["fore", 1.0]]) {
-          const im = A.img(`bg/${name}.png`);
-          if (!A.ok(im)) continue;
-          const W = im.naturalWidth, off = (this.scroll * k) % W;
-          for (let x = -off; x < this.w; x += W) c.drawImage(im, Math.round(x), 0);
-        }
+        if (this.sb < 1) { this.sb = Math.min(1, this.sb + 1 / 45); this.drawSeasonBg(this.prevSeason, 1); }
+        this.drawSeasonBg(this.season, this.sb);
       }
 
       // logic chế độ
