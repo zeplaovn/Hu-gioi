@@ -31,9 +31,36 @@
       h("div", { class: "row center" }, TT.ui.btn("Thử lại", () => auth.boot(start), { cls: "gold" }), TT.ui.btn("Đăng xuất", () => doSignOut(false), { cls: "dimbtn" })))));
   }
 
+
+  /* ---------- hCaptcha (khi có site key) ---------- */
+  const HC_URL = "https://js.hcaptcha.com/1/api.js?render=explicit";
+  const hcHost = u => { try { const x = new URL(u, location.href); return x.protocol === "https:" && (x.hostname === "hcaptcha.com" || x.hostname.endsWith(".hcaptcha.com")); } catch (e) { return false; } };
+  let hcLoading = null;
+  function loadHcaptcha() {                                     // nạp 1 lần; CSP chỉ cho phép *.hcaptcha.com, Trusted Types chỉ cho URL script thuộc hCaptcha
+    if (window.hcaptcha && window.hcaptcha.render) return Promise.resolve();
+    if (hcLoading) return hcLoading;
+    hcLoading = new Promise((resolve, reject) => {
+      const tt = window.trustedTypes;
+      let url = HC_URL;
+      if (tt && tt.createPolicy) {
+        // hCaptcha tự chèn thêm script lúc chạy: chính sách "default" chỉ chấp nhận URL script của hCaptcha, HTML và mã script tự do vẫn bị chặn.
+        if (!tt.defaultPolicy) { try { tt.createPolicy("default", { createScriptURL: u => { if (hcHost(u)) return u; throw new TypeError("Script URL không được phép"); }, createHTML: () => { throw new TypeError("HTML không được phép"); }, createScript: () => { throw new TypeError("Script không được phép"); } }); } catch (e) { /* đã có chính sách */ } }
+        try { url = tt.createPolicy("tvdl-hcaptcha-" + Date.now().toString(36), { createScriptURL: u => (u === HC_URL ? u : (() => { throw new TypeError("URL không được phép"); })()) }).createScriptURL(HC_URL); } catch (e) { /* dùng chuỗi thường nếu không tạo được */ }
+      }
+      const s = document.createElement("script");
+      s.src = url; s.async = true; s.defer = true;
+      s.onload = () => { const t0 = Date.now(), wait = () => (window.hcaptcha && window.hcaptcha.render ? resolve() : Date.now() - t0 > 10000 ? reject({ message: "hcaptcha_load" }) : setTimeout(wait, 100)); wait(); };
+      s.onerror = () => reject({ net: true, message: "hcaptcha_load" });
+      document.head.appendChild(s);
+    }).catch(e => { hcLoading = null; throw e; });
+    return hcLoading;
+  }
+
   /* ---------- màn đăng nhập / đăng ký ---------- */
   function showAuth(start, note) {
-    let mode = "login", pending = false;
+    let mode = "login", pending = false, capToken = "", capWidget = null;
+    const capBox = h("div", { class: "captcha-box", id: "a-captcha", hidden: !cloud.captchaKey });
+    const capReset = () => { capToken = ""; try { if (capWidget !== null && window.hcaptcha) window.hcaptcha.reset(capWidget); } catch (e) { /* bỏ qua */ } };
     const msg = h("div", { class: "auth-msg small", role: "alert", "aria-live": "assertive" }, note || "");
     const say = (text, kind) => { msg.textContent = text || ""; msg.className = "auth-msg small" + (kind ? " " + kind : ""); };
     const email = h("input", { id: "a-email", class: "field auth-in", type: "email", autocomplete: "email", inputmode: "email", maxlength: "254", required: true, autocapitalize: "none", spellcheck: "false" });
@@ -45,8 +72,9 @@
     submit.type = "submit";                                     // bấm nút hoặc Enter đều đi qua onsubmit của form
     const forgot = h("button", { class: "linkbtn", type: "button", onclick: async () => {
       if (!EMAIL_RE.test(email.value.trim())) return say("Hãy nhập email của bạn trước.", "red-t");
-      try { await cloud.recover(email.value.trim()); say("Nếu email này đã đăng ký, bạn sẽ nhận được thư đặt lại mật khẩu.", "green"); }
-      catch (e) { say(cloud.errorText(e), "red-t"); }
+      if (cloud.captchaKey && !capToken) return say("Hãy tích ô xác minh hCaptcha trước.", "red-t");
+      try { await cloud.recover(email.value.trim(), capToken); capReset(); say("Nếu email này đã đăng ký, bạn sẽ nhận được thư đặt lại mật khẩu.", "green"); }
+      catch (e) { capReset(); say(cloud.errorText(e), "red-t"); }
     } }, "Quên mật khẩu?");
     const seg = (m, label) => h("button", { class: "seg", type: "button", role: "radio", "data-m": m, onclick: () => setMode(m) }, label);
     const segLogin = seg("login", "Đăng nhập"), segReg = seg("register", "Đăng ký");
@@ -66,28 +94,33 @@
         if (pw.length < 8) return say("Mật khẩu cần ít nhất 8 ký tự.", "red-t");
         if (pw !== pass2.value) return say("Hai mật khẩu không khớp.", "red-t");
       } else if (!pw) return say("Hãy nhập mật khẩu.", "red-t");
+      if (cloud.captchaKey && !capToken) return say("Hãy tích ô xác minh hCaptcha trước.", "red-t");
       pending = true; submit.disabled = true; say("Đang xử lý…", "dim");
       try {
         if (mode === "register") {
-          const r = await cloud.signUp(em, pw);
+          const r = await cloud.signUp(em, pw, capToken); capReset();
           if (!r.signedIn) { pending = false; submit.disabled = false; setMode("login"); say("Hãy kiểm tra hộp thư để xác nhận email, rồi quay lại đăng nhập.", "green"); return; }
-        } else await cloud.signIn(em, pw);
+        } else { await cloud.signIn(em, pw, capToken); capReset(); }
         pass.value = pass2.value = "";
         return auth.boot(start);                                // đã đăng nhập: nạp dữ liệu tài khoản (hoặc vào màn tạo nhân vật nếu tài khoản mới)
-      } catch (err) { say(cloud.errorText(err), "red-t"); }
+      } catch (err) { capReset(); say(cloud.errorText(err), "red-t"); }
       pending = false; submit.disabled = false;
     } },
     h("div", { class: "auth-field" }, h("label", { for: "a-email" }, "Email"), email),
     h("div", { class: "auth-field" }, h("label", { for: "a-pass" }, "Mật khẩu"), pass),
     row2,
     h("label", { class: "auth-show small dim", for: "a-show" }, show, " Hiện mật khẩu"),
-    msg, h("div", { class: "row center" }, submit), h("div", { class: "center" }, forgot));
+    capBox, msg, h("div", { class: "row center" }, submit), h("div", { class: "center" }, forgot));
     app().replaceChildren(h("div", { class: "auth-screen" }, h("div", { class: "auth-card" },
       h("h1", { class: "auth-title" }, "THIÊN VÂN ĐẠI LỤC"),
       h("p", { class: "dim small center" }, "Đăng nhập để lưu tiến trình trên tài khoản và chơi tiếp trên mọi thiết bị."),
       h("div", { class: "seg-row", role: "radiogroup", "aria-label": "Chế độ" }, segLogin, segReg), form,
       h("p", { class: "dim small center" }, "Tài khoản mới sẽ tạo nhân vật ngay sau khi đăng ký."))));
     setMode("login"); email.focus();
+    if (cloud.captchaKey) loadHcaptcha().then(() => {
+      if (!capBox.isConnected) return;
+      capWidget = window.hcaptcha.render(capBox, { sitekey: cloud.captchaKey, theme: "dark", callback: t => { capToken = String(t || ""); }, "expired-callback": () => { capToken = ""; }, "error-callback": () => { capToken = ""; say("hCaptcha gặp lỗi, hãy tải lại trang và thử lại.", "red-t"); } });
+    }, () => say("Không tải được hCaptcha. Hãy kiểm tra mạng hoặc tắt trình chặn quảng cáo rồi tải lại trang.", "red-t"));
   }
 
   /* ---------- dữ liệu máy chủ và máy này khác nhau ---------- */

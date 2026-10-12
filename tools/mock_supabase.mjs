@@ -6,7 +6,7 @@ import http from "node:http"; import crypto from "node:crypto";
 export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl = 3600, confirmEmail = false } = {}) {
   const users = new Map(), tokens = new Map(), refresh = new Map(), rows = new Map();
   const board = new Map();
-  const state = { board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000 };
+  const state = { board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000, captcha: false };
   const rid = () => crypto.randomBytes(16).toString("hex");
   const issue = u => {
     const access = "at_" + rid(), rt = "rt_" + rid(), exp = Math.floor(Date.now() / 1000) + state.ttl;
@@ -26,6 +26,8 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
       if (state.failNext > 0) { state.failNext--; return send(res, 500, { message: "boom" }); }
       if (req.headers.apikey !== anonKey) return send(res, 401, { message: "Invalid API key" });
 
+      const needCaptcha = ["/auth/v1/signup", "/auth/v1/recover"].includes(path) || (path === "/auth/v1/token" && url.searchParams.get("grant_type") === "password");
+      if (state.captcha && needCaptcha && req.method === "POST" && !(body.gotrue_meta_security && body.gotrue_meta_security.captcha_token === "ok-token")) return send(res, 400, { code: 400, error_code: "captcha_failed", msg: "captcha protection: request disallowed (invalid-input-response)" });
       if (path === "/auth/v1/signup" && req.method === "POST") {
         const email = String(body.email || "").toLowerCase();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return send(res, 422, { error_code: "validation_failed", msg: "Unable to validate email address: invalid format" });
@@ -98,5 +100,6 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const m = createMock({ port: +process.env.PORT || 54321, anonKey: process.env.ANON_KEY || "local-dev-anon-key-0123456789", confirmEmail: process.env.CONFIRM_EMAIL === "1" });
+  m.state.captcha = process.env.CAPTCHA === "1";   // CAPTCHA=1: đòi mã hCaptcha (token hợp lệ: ok-token)
   m.ready.then(p => console.log(`Supabase giả: http://localhost:${p}  (anon key: ${m.anonKey})`));
 }

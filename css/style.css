@@ -382,3 +382,5 @@ kbd { font: 600 11px/1 var(--sans); color: var(--dim); border: 1px solid var(--l
 .board-realm { font-weight: 700; white-space: nowrap; }
 .board-you { margin-top: 10px; }
 @media (max-width: 760px) { .board-row { grid-template-columns: 2.2em 1fr auto; } .board-time { grid-column: 2 / 4; } }
+
+.captcha-box { display: flex; justify-content: center; min-height: 78px; } .captcha-box[hidden] { display: none; }

@@ -46,6 +46,7 @@
     if (code === "weak_password" || msg.includes("password should be")) return "Mật khẩu quá yếu (cần ít nhất 8 ký tự).";
     if (code === "signup_disabled" || msg.includes("signups not allowed")) return "Hiện chưa nhận đăng ký mới.";
     if (code === "validation_failed" || msg.includes("unable to validate email")) return "Email không hợp lệ.";
+    if (code === "captcha_failed" || msg.includes("captcha")) return "Xác minh hCaptcha không thành công, hãy thử lại.";
     if (e.status === 429 || code.includes("rate_limit")) return "Bạn thao tác quá nhanh, hãy thử lại sau ít phút.";
     return "Có lỗi xảy ra, vui lòng thử lại.";
   };
@@ -74,13 +75,15 @@
   const isAuthLoss = e => !!(e && (e.auth || e.status === 401 || (e.status === 403 && /jwt|token/i.test(e.message))));
 
   cloud.user = () => (session ? { id: session.user.id, email: session.user.email } : null);
-  cloud.signUp = async (email, password) => {
-    const d = await http("/auth/v1/signup", { method: "POST", body: { email, password } });
+  const cap = t => (t ? { gotrue_meta_security: { captcha_token: String(t) } } : {});   // mã hCaptcha gửi kèm khi Supabase bật CAPTCHA
+  cloud.captchaKey = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(cfg.hcaptcha)) ? String(cfg.hcaptcha) : "";
+  cloud.signUp = async (email, password, captchaToken) => {
+    const d = await http("/auth/v1/signup", { method: "POST", body: { email, password, ...cap(captchaToken) } });
     if (d && d.access_token) { keep(toSession(d)); return { signedIn: true }; }
     return { signedIn: false };                                 // cần xác nhận email (hoặc email đã tồn tại: Supabase cố ý trả lời giống nhau)
   };
-  cloud.signIn = async (email, password) => { keep(toSession(await http("/auth/v1/token?grant_type=password", { method: "POST", body: { email, password } }))); };
-  cloud.recover = email => http("/auth/v1/recover", { method: "POST", body: { email } });
+  cloud.signIn = async (email, password, captchaToken) => { keep(toSession(await http("/auth/v1/token?grant_type=password", { method: "POST", body: { email, password, ...cap(captchaToken) } }))); };
+  cloud.recover = (email, captchaToken) => http("/auth/v1/recover", { method: "POST", body: { email, ...cap(captchaToken) } });
 
   /* ---------- bộ nhớ đệm trên máy ---------- */
   const rev = () => Math.max(0, parseInt(ls.get(REV), 10) || 0);

@@ -217,6 +217,20 @@ test("bảng xếp hạng: sắp theo cảnh giới, thấy dòng của mình, b
   deq((await a.cloud.leaderboard()).top.map(r => r.name), ["Yếu Hơn"]);
 }));
 
+test("hCaptcha: Supabase bật CAPTCHA thì đăng ký / đăng nhập / quên mật khẩu cần mã, sai mã báo tiếng Việt", async () => withMock({}, async (mock, port) => {
+  mock.state.captcha = true;
+  const a = device(mock, port);
+  await assert.rejects(() => a.cloud.signUp(EMAIL, PASS), e => /hCaptcha/.test(a.cloud.errorText(e)));
+  await assert.rejects(() => a.cloud.signUp(EMAIL, PASS, "token-sai"), e => /hCaptcha/.test(a.cloud.errorText(e)));
+  assert.deepEqual(JSON.parse(JSON.stringify(await a.cloud.signUp(EMAIL, PASS, "ok-token"))), { signedIn: true });
+  const b = device(mock, port);
+  await assert.rejects(() => b.cloud.signIn(EMAIL, PASS), e => /hCaptcha/.test(b.cloud.errorText(e)));
+  await b.cloud.signIn(EMAIL, PASS, "ok-token"); assert.notEqual(b.cloud.user(), null);
+  await assert.rejects(() => b.cloud.recover(EMAIL), e => /hCaptcha/.test(b.cloud.errorText(e)));
+  await b.cloud.recover(EMAIL, "ok-token");
+  mock.state.captcha = false; await b.cloud.signIn(EMAIL, PASS);                // không bật captcha: không gửi token vẫn được
+}));
+
 test("dữ liệu từ máy chủ không được tin: save bị chỉnh vô lý bị từ chối thay vì làm game sập", async () => withMock({}, async (mock, port) => {
   const a = device(mock, port); await a.cloud.signUp(EMAIL, PASS); await a.cloud.bootstrap();
   a.TT.writeSave(1, a.player("Hợp Lệ")); await a.cloud.syncNow();

@@ -1,6 +1,6 @@
 # Cloudflare Pages / Netlify
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; media-src 'none';connect-src https://*.supabase.co; object-src 'none'; worker-src 'none'; frame-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; require-trusted-types-for 'script'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' data: blob:; font-src 'self'; media-src 'none';connect-src https://*.supabase.co https://hcaptcha.com https://*.hcaptcha.com; object-src 'none'; worker-src 'none'; frame-src https://hcaptcha.com https://*.hcaptcha.com; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; require-trusted-types-for 'script'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: no-referrer

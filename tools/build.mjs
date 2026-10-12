@@ -42,6 +42,15 @@ if (sbUrl || sbKey) {
   connectSrc = u.origin;
 } else console.warn("⚠ Chưa đặt SUPABASE_URL / SUPABASE_ANON_KEY: bản build này chạy ngoại tuyến (không có đăng nhập / lưu trên máy chủ).");
 
+// hCaptcha (tuỳ chọn): HCAPTCHA_SITEKEY là site key CÔNG KHAI (dạng UUID). Cần cả Supabase; secret key chỉ đặt ở Supabase Dashboard, không bao giờ vào đây.
+const hcKey = (process.env.HCAPTCHA_SITEKEY || "").trim();
+if (hcKey) {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hcKey)) throw new Error("HCAPTCHA_SITEKEY không đúng định dạng site key (UUID). Đừng dùng secret key (bắt đầu bằng ES_ hoặc 0x).");
+  if (connectSrc === "'none'") throw new Error("Có HCAPTCHA_SITEKEY nhưng chưa đặt SUPABASE_URL / SUPABASE_ANON_KEY: captcha chỉ dùng cho đăng nhập Supabase.");
+  if (src.split('"__HCAPTCHA_SITEKEY__"').length !== 2) throw new Error('Không tìm thấy đúng một chỗ "__HCAPTCHA_SITEKEY__" trong js/config.js.');
+  src = src.replace('"__HCAPTCHA_SITEKEY__"', () => JSON.stringify(hcKey));
+}
+
 const min = await minify(src, { compress: { passes: 2 }, mangle: { toplevel: false }, format: { comments: false } });
 if (min.error) throw min.error;
 const obf = JavaScriptObfuscator.obfuscate(min.code, {
@@ -55,8 +64,15 @@ fs.rmSync(dist, { recursive: true, force: true }); fs.mkdirSync(dist, { recursiv
 const hash = crypto.createHash("sha256").update(obf).digest("hex").slice(0, 10), bundle = `app.${hash}.js`;
 fs.writeFileSync(path.join(dist, bundle), obf);
 
-// Thay MỌI connect-src (index.html có 'none'; vercel.json / _headers gốc có https://*.supabase.co) bằng giá trị thật của bản build này.
-const withCsp = text => { const re = /connect-src [^;"\n]*/g; if (!re.test(text)) throw new Error("Không tìm thấy connect-src để thay."); return text.replace(re, `connect-src ${connectSrc}`); };
+// Ghi lại các directive CSP theo cấu hình của bản build này (index.html có 'none'; vercel.json / _headers gốc có bản rộng hơn):
+// connect-src = Supabase (nếu có), script/style/frame-src chỉ mở hCaptcha khi có HCAPTCHA_SITEKEY.
+const HC = "https://hcaptcha.com https://*.hcaptcha.com";
+const csp = { "script-src": hcKey ? `'self' ${HC}` : "'self'", "style-src": hcKey ? `'self' ${HC}` : "'self'", "frame-src": hcKey ? HC : "'none'",
+  "connect-src": [connectSrc === "'none'" ? "" : connectSrc, hcKey ? HC : ""].filter(Boolean).join(" ") || "'none'" };
+const withCsp = text => {
+  if (!/connect-src [^;"\n]*/.test(text)) throw new Error("Không tìm thấy connect-src để thay.");
+  return text.replace(/\b(script-src|style-src|frame-src|connect-src) [^;"\n]*/g, (_, d) => `${d} ${csp[d]}`);
+};
 let out = withCsp(html).replace(/\s*<script src="js\/[^"]+"><\/script>/g, "").replace("</body>", `  <script src="${bundle}"></script>\n</body>`);
 fs.writeFileSync(path.join(dist, "index.html"), out);
 fs.cpSync(path.join(root, "css"), path.join(dist, "css"), { recursive: true });
