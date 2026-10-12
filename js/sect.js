@@ -286,7 +286,10 @@
         const total = a.end - a.start, left = Math.max(0, a.end - Date.now());
         const bar = new TT.ui.Bar("#3f9bd6", 16); bar.set(total - left, total, clock(left / 1000));
         head.push(h("div", { class: "panel mission-run" }, h("div", { class: "bold cyan" }, `⚔ Đang làm: ${adef.name}${a.bonus ? "  ★ nổi bật" : ""}`), bar.el,
-          h("div", { class: "row center" }, TT.ui.btn("Bỏ dở", () => { if (confirm("Bỏ dở nhiệm vụ sẽ không nhận được phần thưởng. Tiếp tục?")) { this.missionAbort(); redraw(); } }, { cls: "red sm" }))));
+          h("div", { class: "row center" }, TT.ui.btn("Bỏ dở", () => {
+            TT.ui.confirm({ title: "Bỏ dở nhiệm vụ?", text: "Bỏ dở nhiệm vụ sẽ không nhận được phần thưởng.", ok: "Bỏ dở", cancel: "Làm tiếp", danger: true })
+              .then(yes => { if (yes && this.inGame && this.p === p && p.sectx && p.sectx.active) { this.missionAbort(); redraw(); } });
+          }, { cls: "red sm" }))));
       }
       head.push(h("div", { class: "row center" },
         TT.ui.btn(`Tự động nhận lại: ${X.auto ? "BẬT" : "TẮT"}`, () => { X.auto = !X.auto; this.autosave(); redraw(); }, { cls: (X.auto ? "gold" : "dimbtn") + " sm", title: "Khi bạn đang có mặt và nhiệm vụ thành công, tự nhận lại đúng nhiệm vụ đó." }),

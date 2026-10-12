@@ -1,4 +1,4 @@
-/* Cảnh hoạt họa (canvas): nền parallax, nhân vật, yêu thú, hiệu ứng. Port từ game/scene.py */
+/* Cảnh hoạt họa (canvas): nền parallax, nhân vật, yêu thú, hiệu ứng. */
 "use strict";
 (function () {
   const { A, mix, C, FONT } = TT;

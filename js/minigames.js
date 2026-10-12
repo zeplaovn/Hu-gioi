@@ -1,4 +1,4 @@
-/* Minigame nghề phụ: giữ lửa, bấm nhịp, kéo nét phù văn. Port từ game/minigames.py */
+/* Minigame nghề phụ: giữ lửa, bấm nhịp, kéo nét phù văn. */
 "use strict";
 (function () {
   const { C, mix, FONT } = TT;

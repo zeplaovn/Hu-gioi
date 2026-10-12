@@ -2,5 +2,6 @@
 "use strict";
 (function () {
   const start = () => { TT.game = new TT.Game(); TT.game.showCreate(); };
-  TT.A.preload().then(start, start);
+  const boot = () => { if (TT.cloud && TT.cloud.enabled) TT.auth.boot(start); else start(); };   // có Supabase: đăng nhập trước rồi mới vào game
+  TT.A.preload().then(boot, boot);
 })();

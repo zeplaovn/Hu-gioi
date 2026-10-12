@@ -274,11 +274,14 @@
     const data = JSON.stringify({ save: cur.player ? { count: cur.count, player: cur.player } : null, meta: plain(M) });
     return JSON.stringify({ game: "thien-van-dai-luc", v: 2, data, sig: TT.sec.sign("export", data) });
   };
-  M.importText = text => {
+  /** Nhập dữ liệu. dry = true chỉ kiểm tra và ghi tóm tắt vào M.importInfo, chưa ghi gì. Trả về chuỗi lỗi, hoặc "" nếu ổn. */
+  M.importText = (text, dry = false) => {
     let env, d;
+    if (typeof text !== "string" || !text) return "Chưa có dữ liệu để nhập.";
+    if (text.length > 1e6) return "Dữ liệu quá lớn (tối đa 1 MB).";
     try { env = JSON.parse(text); } catch (e) { return "Nội dung không phải JSON hợp lệ."; }
     if (!env || env.game !== "thien-van-dai-luc" || typeof env.data !== "string" || typeof env.sig !== "string") return "Đây không phải dữ liệu xuất từ game này.";
-    if (TT.sec.sign("export", env.data) !== env.sig) return "Chữ ký không khớp: dữ liệu đã bị chỉnh sửa hoặc hỏng.";
+    if (!TT.sec.verify("export", env.data, env.sig)) return "Chữ ký không khớp: dữ liệu đã bị chỉnh sửa hoặc hỏng, hoặc được xuất từ một bản game khác.";
     try { d = JSON.parse(env.data); } catch (e) { return "Dữ liệu bên trong bị hỏng."; }
     const meta = sanitize(d?.meta);
     if (!consistent(meta)) return "Dữ liệu Thiên Mệnh không hợp lệ.";
@@ -288,11 +291,15 @@
       if (!p) return "Save nhân vật bị từ chối: " + TT.sec.error;
       save = { count: Math.max(1, Math.trunc(+d.save.count) || 1), player: p };
     }
+    if (dry) {
+      M.importInfo = (save ? `${save.player.name} · ${save.player.realm_name()} · ${save.player.age} tuổi` : "Không có nhân vật") + `\nThiên Mệnh: ${meta.legacy} điểm, ${Object.keys(meta.ach).length} thành tựu`;
+      return "";
+    }
     if (save) TT.sec.write(SAVE_KEY, "save", save);
     TT.sec.write(KEY, "meta", plain(meta));
     return "";
   };
-  M.wipe = () => { try { [SAVE_KEY, KEY, FLAG].forEach(k => localStorage.removeItem(k)); } catch (e) { /* bỏ qua */ } };
+  M.wipe = () => { try { [SAVE_KEY, KEY, FLAG, ...[SAVE_KEY, KEY].flatMap(k => [k + "_bak", k + "_rejected"])].forEach(k => localStorage.removeItem(k)); } catch (e) { /* bỏ qua */ } };
 
   /* ================= GIAO DIỆN: THIÊN ĐẠO CÁC ================= */
   const G = TT.Game.prototype;
@@ -317,7 +324,7 @@
 
   G.openHub = function (tab = "up") {
     if (this.hub) this.hub.close();
-    const m = TT.ui.modal("dlg-box hub-box", () => { m.close(); this.hub = null; });
+    const m = TT.ui.modal("dlg-box hub-box", () => { m.close(); this.hub = null; }, { label: "Thiên Đạo Các" });
     this.hub = m;
     const tabs = [["up", "Thiên Mệnh"], ["ach", "Thành tựu"], ["hist", "Kiếp trước"], ["data", "Dữ liệu"]];
     const render = (t, note = "") => {
@@ -380,19 +387,24 @@
             TT.ui.btn("Tải file .json", () => { download("thien-van-dai-luc-save.json", M.exportText()); }, { cls: "cyan sm" })),
           ta,
           h("div", { class: "row center" },
-            TT.ui.btn("Nhập dữ liệu", () => {
-              const err = M.importText(ta.value.trim());
+            TT.ui.btn("Nhập dữ liệu", async () => {
+              const text = ta.value.trim(), err = M.importText(text, true);
               if (err) { msg.textContent = err; msg.className = "small center hub-note red-t"; return; }
-              if (confirm("Đã nhập xong. Tải lại trang để áp dụng?")) location.reload();
+              const yes = await TT.ui.confirm({ title: "Nhập dữ liệu này?", text: M.importInfo + "\n\nSave và Thiên Mệnh hiện tại sẽ bị thay thế, trang sẽ tải lại để áp dụng.", ok: "Nhập", cancel: "Hủy", danger: true });
+              if (!yes) return;
+              const err2 = M.importText(text);
+              if (err2) { msg.textContent = err2; msg.className = "small center hub-note red-t"; return; }
+              location.reload();
             }, { cls: "gold sm" }),
-            TT.ui.btn("Xóa toàn bộ dữ liệu", () => {
-              if (confirm("XÓA TOÀN BỘ save, Thiên Mệnh và thành tựu? Không thể hoàn tác!")) { M.wipe(); location.reload(); }
+            TT.ui.btn("Xóa toàn bộ dữ liệu", async () => {
+              const yes = await TT.ui.confirm({ title: "Xóa toàn bộ dữ liệu?", text: "Save nhân vật, Thiên Mệnh, thành tựu và bản sao lưu trên trình duyệt này sẽ bị xóa vĩnh viễn. Hãy xuất dữ liệu trước nếu muốn giữ.", ok: "Xóa tất cả", cancel: "Giữ lại", danger: true });
+              if (yes) { M.wipe(); location.reload(); }
             }, { cls: "red sm" })),
           msg);
       }
       m.box.replaceChildren(
         h("h2", { class: "mtitle" }, "Thiên Đạo Các"),
-        h("div", { class: "hub-tabs" }, tabs.map(([k, label]) => h("button", { class: "hub-tab" + (k === t ? " on" : ""), onclick: () => render(k) }, label))),
+        h("div", { class: "hub-tabs", role: "tablist", "aria-label": "Thiên Đạo Các" }, tabs.map(([k, label]) => h("button", { class: "hub-tab" + (k === t ? " on" : ""), type: "button", role: "tab", "aria-selected": String(k === t), onclick: () => render(k) }, label))),
         h("div", { class: "cyan center pw" }, head), body,
         h("div", { class: "row center" }, TT.ui.btn("Đóng", () => { m.close(); this.hub = null; }, { cls: "dimbtn sm" })));
     };

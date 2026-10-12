@@ -51,7 +51,7 @@
         if (this.cur.i >= text.length) this.cur = null;
       }
       while (box.childElementCount > 500) box.firstElementChild.remove();
-      box.scrollTop = box.scrollHeight;
+      if (box._follow !== false) box.scrollTop = box.scrollHeight;       // đang kéo lên đọc dòng cũ thì không giật về cuối
     }
 
     /* ---------- cập nhật giao diện ---------- */
@@ -290,9 +290,19 @@
       const big = p.tang === 9;
       if (big && p.realm + 1 >= 3) {                 // đại cảnh giới từ Kim Đan trở lên phải qua Thiên Kiếp
         const est = this.tribEstimate(p.realm + 1);
-        if (p.hp < est.expect * 1.2 &&
-          !confirm(`Thiên Kiếp sắp giáng (${est.strikes} đạo lôi, ước tính mất ~${est.expect} khí huyết).\nKhí huyết hiện tại: ${p.hp}/${p.max_hp()}. Nên nghỉ ngơi trước.\nVẫn đột phá ngay?`)) return;
+        if (p.hp < est.expect * 1.2) {
+          TT.ui.confirm({
+            title: "Thiên Kiếp sắp giáng",
+            text: `${est.strikes} đạo lôi, ước tính mất ~${est.expect} khí huyết.\nKhí huyết hiện tại: ${p.hp}/${p.max_hp()}. Nên nghỉ ngơi trước.`,
+            ok: "Vẫn đột phá", cancel: "Nghỉ trước", danger: true,
+          }).then(yes => { if (yes && this.inGame && !this.dead && !this.breaking && this.p === p) this.beginBreak(p, need, big); });
+          return;
+        }
       }
+      this.beginBreak(p, need, big);
+    }
+
+    beginBreak(p, need, big) {
       const chance = p.breakChance(big);
       this.breaking = true;
       this.log(`Bạn bắt đầu đột phá${big ? " đại cảnh giới" : ""}... (tỉ lệ thành công ~${int(chance * 100)}%)`, "gold");

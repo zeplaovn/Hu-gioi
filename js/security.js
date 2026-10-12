@@ -4,8 +4,14 @@
 "use strict";
 (function () {
   const sec = TT.sec = { error: "" };
-  const SALT = "tvdl-v1-7f3a9c52e1b84d06-Xk2pQ9";            // đổi chuỗi này cho bản phát hành của bạn
+  /* Khóa ký KHÔNG còn nằm trong repo: `npm run build` thay chuỗi bên dưới bằng biến môi trường TVDL_SALT.
+     Khi chạy trực tiếp từ mã nguồn (dev) thì dùng khóa tạm, save của bản dev không dùng được cho bản phát hành. */
+  const SALT_BUILD = "__TVDL_SALT__";
+  const SALT = SALT_BUILD.indexOf("__") === 0 ? "dev-only-key-do-not-ship" : SALT_BUILD;
+  sec.devKey = SALT_BUILD.indexOf("__") === 0;
   const FLAG = "tu_tien_sec_v1";                                // đánh dấu đã chuyển sang save có chữ ký
+  const BAK = "_bak", REJ = "_rejected";                        // hậu tố khóa: bản sao lưu gần nhất / bản bị từ chối
+  const BAK_MS = 5 * 60 * 1000, MAX_RAW = 2 * 1024 * 1024;     // sao lưu cách nhau tối thiểu 5 phút; từ chối dữ liệu lớn bất thường
 
   /* ---------- SHA-256 + HMAC (đồng bộ, không cần HTTPS) ---------- */
   const K = new Uint32Array([
@@ -55,29 +61,62 @@
   const hex = u8 => Array.from(u8, b => b.toString(16).padStart(2, "0")).join("");
   sec.sign = (scope, text) => hex(hmac(SALT, utf8(scope + "|" + text)));
   sec._sha256hex = s => hex(sha256(utf8(s)));            // phục vụ kiểm thử
+  sec._hmacHex = (k, m) => hex(hmac(k, utf8(m)));
 
   /* ---------- đọc / ghi có chữ ký ---------- */
   const eq = (a, b) => { if (a.length !== b.length) return false; let r = 0; for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i); return r === 0; };
+  sec.verify = (scope, text, sig) => typeof sig === "string" && eq(sec.sign(scope, text), sig);
   const migrated = () => { try { return localStorage.getItem(FLAG) === "1"; } catch (e) { return false; } };
 
-  /** Trả về { obj, legacy } nếu hợp lệ, null nếu không có, hoặc { bad: true } nếu bị sửa. */
-  sec.read = (key, scope) => {
-    let raw;
-    try { raw = localStorage.getItem(key); } catch (e) { return null; }
-    if (!raw) return null;
+  /** Đọc và kiểm tra một phong bì { d, s }: trả về { obj } nếu hợp lệ, { bad: true } nếu hỏng / bị sửa, { legacy } nếu là save cũ chưa ký. */
+  const open = (raw, scope) => {
+    if (typeof raw !== "string" || raw.length > MAX_RAW) return { bad: true };
     let env;
     try { env = JSON.parse(raw); } catch (e) { return { bad: true }; }
     if (env && typeof env === "object" && typeof env.d === "string" && typeof env.s === "string") {
-      if (!eq(sec.sign(scope, env.d), env.s)) return { bad: true };
+      if (!sec.verify(scope, env.d, env.s)) return { bad: true };
       try { return { obj: JSON.parse(env.d) }; } catch (e) { return { bad: true }; }
     }
     if (migrated()) return { bad: true };                  // đã bật chữ ký mà dữ liệu không có chữ ký -> bị sửa / thay thế
     return { obj: env, legacy: true };                      // save cũ (trước khi có chữ ký): chấp nhận 1 lần để di trú
   };
-  sec.write = (key, scope, obj) => {
-    const d = JSON.stringify(obj);
-    try { localStorage.setItem(key, JSON.stringify({ d, s: sec.sign(scope, d) })); localStorage.setItem(FLAG, "1"); } catch (e) { /* bỏ qua */ }
+  const getRaw = key => { try { return localStorage.getItem(key); } catch (e) { return null; } };
+  const setRaw = (key, v) => { try { localStorage.setItem(key, v); return true; } catch (e) { return false; } };
+
+  /** Trả về { obj, legacy } nếu hợp lệ, null nếu không có, hoặc { bad: true } nếu bị sửa.
+      Dữ liệu bị từ chối được giữ lại ở `<key>_rejected` (không xóa) để người chơi còn xuất / kiểm tra được. */
+  sec.read = (key, scope) => {
+    const raw = getRaw(key);
+    if (!raw) return null;
+    const r = open(raw, scope);
+    if (r.bad) setRaw(key + REJ, raw.length > MAX_RAW ? raw.slice(0, 1024) : raw);
+    return r;
   };
+
+  let failAt = 0;
+  const notifyFail = () => {                                // báo cho người chơi khi không ghi được (bộ nhớ đầy / chế độ riêng tư), tối đa 1 lần / 30 giây
+    const now = Date.now();
+    if (now - failAt < 30000) return; failAt = now;
+    if (TT.ui && TT.ui.toast) TT.ui.toast("Không lưu được vào trình duyệt (bộ nhớ đầy hoặc đang ở chế độ riêng tư). Hãy xuất dữ liệu để sao lưu.", "bad", 8000);
+  };
+
+  /** Ghi có chữ ký. Giữ lại bản hợp lệ trước đó làm bản sao lưu (làm mới tối đa 5 phút / lần). Trả về true nếu ghi thành công. */
+  sec.write = (key, scope, obj) => {
+    const d = JSON.stringify(obj), now = Date.now();
+    const prev = getRaw(key);
+    if (prev && open(prev, scope).obj) {
+      const bak = getRaw(key + BAK);
+      let bt = 0; try { bt = bak ? +JSON.parse(bak).t || 0 : 0; } catch (e) { /* bỏ qua */ }
+      if (!bak || now - bt > BAK_MS) setRaw(key + BAK, prev);
+    }
+    const ok = setRaw(key, JSON.stringify({ d, s: sec.sign(scope, d), t: now })) && setRaw(FLAG, "1");
+    if (!ok) notifyFail();
+    return ok;
+  };
+  /** Có bản sao lưu hợp lệ không? Trả về thời điểm ghi (ms) hoặc 0. */
+  sec.backupTime = (key, scope) => { const raw = getRaw(key + BAK); if (!raw || !open(raw, scope).obj) return 0; try { return +JSON.parse(raw).t || 1; } catch (e) { return 1; } };
+  /** Khôi phục bản sao lưu thành save hiện tại. Trả về true nếu thành công. */
+  sec.restore = (key, scope) => { const raw = getRaw(key + BAK); return !!raw && !!open(raw, scope).obj && setRaw(key, raw); };
 
   /* ---------- kiểm tra tính hợp lý của nhân vật ---------- */
   const isObj = v => v && typeof v === "object" && !Array.isArray(v);
@@ -200,16 +239,44 @@
     if (!p) { sec.error = "Save bị từ chối: " + sec.error; return { count, player: null }; }
     return { count, player: p };
   };
-  TT.writeSave = (count, player) => sec.write(SAVE, "save", { count, player: player || null });
-
-  /* hiển thị cảnh báo ở màn tạo nhân vật khi save bị từ chối */
-  const G = TT.Game.prototype, showCreate = G.showCreate;
-  G.showCreate = function () {
-    showCreate.call(this);
-    if (sec.error) {
-      const box = document.querySelector(".create-right .col.center");
-      if (box) box.prepend(h("div", { class: "red-t bold center", role: "alert" }, "⚠ " + sec.error));
-      sec.error = "";
-    }
+  TT.writeSave = (count, player) => {
+    const ok = !sec.stale && sec.write(SAVE, "save", { count, player: player || null });   // tab khác đang giữ save thì không ghi đè
+    sec.lastSave = { ok, t: Date.now() };
+    return ok;
   };
+  sec.SAVE = SAVE;
+
+  /* ---------- chỉ cho phép một tab chơi: tab khác ghi save thì tab này dừng lại ---------- */
+  if (typeof window !== "undefined" && window.addEventListener) window.addEventListener("storage", e => {
+    if (e.key !== SAVE || sec.stale) return;
+    sec.stale = true;
+    const g = TT.game;
+    if (g) { clearInterval(g.idleTimer); g.locked = true; }
+    if (!TT.ui || !TT.ui.modal) return;
+    const m = TT.ui.modal("dlg-box stale-box", null, { label: "Game đang mở ở tab khác", dismissible: false });
+    m.box.append(
+      h("p", { class: "center" }, "Thiên Vân Đại Lục đang được mở ở một tab hoặc cửa sổ khác. Chơi nhiều tab cùng lúc có thể làm mất tiến trình, nên tab này đã tạm dừng."),
+      h("div", { class: "row center" }, TT.ui.btn("Chơi ở tab này", () => location.reload(), { cls: "gold" })),
+      h("p", { class: "dim small center" }, "Tab kia sẽ tự dừng khi bạn lưu ở đây."));
+  });
+
+  /* hiển thị cảnh báo ở màn tạo nhân vật khi save bị từ chối, kèm nút khôi phục bản sao lưu gần nhất (nếu có) */
+  if (TT.Game) {
+    const G = TT.Game.prototype, showCreate = G.showCreate;
+    G.showCreate = function () {
+      showCreate.call(this);
+      if (sec.error) {
+        const box = document.querySelector(".create-right .col.center");
+        if (box) {
+          const note = h("div", { class: "alert-box", role: "alert" }, h("div", { class: "bold" }, "Không đọc được save"), h("div", { class: "small" }, sec.error));
+          const bt = sec.backupTime(SAVE, "save");
+          if (bt) note.append(TT.ui.btn("Khôi phục bản lưu lúc " + new Date(bt).toLocaleString("vi-VN"), () => {
+            if (sec.restore(SAVE, "save")) location.reload(); else if (TT.ui.toast) TT.ui.toast("Không khôi phục được bản sao lưu.", "bad");
+          }, { cls: "gold sm" }));
+          box.prepend(note);
+        }
+        sec.error = "";
+      }
+    };
+  }
 })();

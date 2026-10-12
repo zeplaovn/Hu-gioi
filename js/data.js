@@ -1,4 +1,4 @@
-/* Dữ liệu thế giới + nghề phụ (port từ game/data/world.py và crafting.py) */
+/* Dữ liệu thế giới + nghề phụ */
 "use strict";
 const TT = window.TT = {};
 

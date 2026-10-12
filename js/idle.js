@@ -507,7 +507,10 @@
         const affTxt = def.el === "Vô" ? "Vô hệ: linh căn không thuận / nghịch" : aff > 0.05 ? `Linh căn thuận lợi: sát thương ${sgn(aff)}` : aff < -0.05 ? `Linh căn bất lợi: sát thương ${sgn(aff)}` : "Linh căn trung tính";
         const est = locked ? 0 : TT.estimateSecret(p, def), ratio = est / def.floors;
         let btn;
-        if (running) btn = TT.ui.btn("Rút lui", () => { if (confirm("Rút khỏi bí cảnh giữa chừng sẽ không nhận được phần thưởng. Tiếp tục?")) { this.secretAbort(); redraw(); } }, { cls: "red sm" });
+        if (running) btn = TT.ui.btn("Rút lui", () => {
+          TT.ui.confirm({ title: "Rút khỏi bí cảnh?", text: "Rút giữa chừng sẽ không nhận được phần thưởng của lần thám hiểm này.", ok: "Rút lui", cancel: "Ở lại", danger: true })
+            .then(yes => { if (yes && this.inGame && this.p === p && p.secret.active) { this.secretAbort(); redraw(); } });
+        }, { cls: "red sm" });
         else btn = TT.ui.btn("Tiến vào", () => { this.secretStart(def.id); redraw(); }, { cls: "gold sm", disabled: locked || !!a || !hpOk });
         return h("div", { class: "row-item panel" + (locked ? " locked" : "") },
           h("div", { class: "el-badge", style: { background: c } }, def.el),

@@ -43,8 +43,8 @@
       this.raceInfo, this.rootBox);
 
     /* giới tính */
-    this.lblNam = h("span", { class: "gender", onclick: () => this.setGender("Nam") }, "Nam");
-    this.lblNu = h("span", { class: "gender", onclick: () => this.setGender("Nữ") }, "Nữ");
+    this.lblNam = h("button", { class: "seg", type: "button", role: "radio", onclick: () => this.setGender("Nam") }, "Nam");
+    this.lblNu = h("button", { class: "seg", type: "button", role: "radio", onclick: () => this.setGender("Nữ") }, "Nữ");
 
     /* đạo hiệu / tuổi / chủng tộc / linh căn + xúc xắc */
     this.nameIn = h("input", { class: "field name-in", type: "text", maxlength: TT.NAME_MAX, value: TT.randName("Nam"),
@@ -55,7 +55,7 @@
     this.diceBtn = {};
     const dice = kind => {
       const img = h("img", { src: "assets/ui/dice_6.png", alt: "xúc xắc", width: 32, height: 32 });
-      const b = h("button", { class: "icon-btn", title: "Gieo xúc xắc", onclick: () => this.roll(kind) }, img);
+      const b = h("button", { class: "icon-btn", type: "button", title: "Gieo xúc xắc", "aria-label": "Gieo xúc xắc: " + ({ name: "đạo hiệu", age: "tuổi", race: "chủng tộc", root: "linh căn" })[kind], onclick: () => this.roll(kind) }, img);
       this.diceBtn[kind] = img; return b;
     };
 
@@ -67,22 +67,22 @@
       const mk = d => {
         const key = d > 0 ? "plus" : "minus";
         const img = h("img", { src: `assets/ui/${key}.png`, alt: key, width: 26, height: 26 });
-        const b = h("button", { class: "icon-btn pm", onclick: () => this.changeStat(s, d) }, img);
+        const b = h("button", { class: "icon-btn pm", type: "button", "aria-label": (d > 0 ? "Tăng " : "Giảm ") + s, onclick: () => this.changeStat(s, d) }, img);
         b.addEventListener("pointerenter", () => { if (!b.disabled) img.src = `assets/ui/${key}_h.png`; });
         b.addEventListener("pointerleave", () => { if (!b.disabled) img.src = `assets/ui/${key}.png`; });
         this.pmBtns[s + d] = { b, img, key };
         return b;
       };
       return h("div", { class: "stat-row" },
-        h("span", { class: "stat-name", onmouseenter: () => { this.hint.textContent = `${s}: ${STAT_DESC[s]}`; }, onclick: () => { this.hint.textContent = `${s}: ${STAT_DESC[s]}`; } }, s + ":"),
+        h("button", { class: "stat-name", type: "button", onmouseenter: () => { this.hint.textContent = `${s}: ${STAT_DESC[s]}`; }, onfocus: () => { this.hint.textContent = `${s}: ${STAT_DESC[s]}`; }, onclick: () => { this.hint.textContent = `${s}: ${STAT_DESC[s]}`; } }, s + ":"),
         v, mk(-1), mk(+1), h("img", { class: "stat-ico", src: TT.A.icon(TT.ICON_STAT[s], 22), alt: "" }));
     });
-    this.hint = h("div", { class: "dim small hint" }, "Rê chuột / chạm vào tên chỉ số để xem mô tả.");
+    this.hint = h("div", { class: "dim small hint", "aria-live": "polite" }, "Rê chuột / chạm vào tên chỉ số để xem mô tả.");
     this.lblPoints = h("h2", { class: "t-green center" });
 
     const right = h("div", { class: "create-right" },
       h("h2", { class: "center" }, "Chào mừng đến Thiên Vân Đại Lục"),
-      h("div", { class: "gender-row" }, this.lblNam, this.lblNu),
+      h("div", { class: "seg-row", role: "radiogroup", "aria-label": "Giới tính" }, this.lblNam, this.lblNu),
       h("div", { class: "form-grid" },
         h("label", {}, "Đạo hiệu :"), this.nameIn, dice("name"),
         h("label", {}, "Tuổi :"), this.lblAge, dice("age"),
@@ -102,8 +102,8 @@
 
   G.setGender = function (g) {
     this.gender = g;
-    this.lblNam.classList.toggle("on", g === "Nam");
-    this.lblNu.classList.toggle("on", g === "Nữ");
+    this.lblNam.classList.toggle("on", g === "Nam"); this.lblNam.setAttribute("aria-checked", String(g === "Nam"));
+    this.lblNu.classList.toggle("on", g === "Nữ"); this.lblNu.setAttribute("aria-checked", String(g === "Nữ"));
   };
 
   G.roll = function (kind) {
@@ -182,31 +182,35 @@
 
     U.time = h("span", { class: "bold" });
     U.stone = h("span", { class: "bold cyan" });
+    U.save = h("span", { class: "save-state", role: "status" }, "Tự động lưu");
     const top = h("div", { class: "topbar" },
       h("span", { class: "game-title" }, "THIÊN VÂN ĐẠI LỤC"),
       h("span", { class: "spacer" }),
+      U.save, TT.cloud && TT.cloud.enabled ? TT.auth.chip() : null,
       h("span", { class: "stone-wrap" }, h("img", { src: TT.A.icon("crystal", 22), alt: "" }), U.stone),
       U.time);
 
     /* cột trái */
     U.realm = h("div", { class: "realm" }); U.name = h("div", { class: "pname" }); U.who = h("div", { class: "dim" });
     U.root = h("div", { class: "root-line" });
-    const bar = (name, color) => { const b = new TT.ui.Bar(color, 20); return [h("div", { style: { color } }, name), b.el, b]; };
-    const [l1, e1, bExp] = bar("Tu vi", C.GREEN), [l2, e2, bHp] = bar("Khí huyết", "#d63a3a"), [l3, e3, bAge] = bar("Thọ nguyên", "#d9a21b");
+    const bar = (name, color, text) => { const b = new TT.ui.Bar(color, 20); b.el.setAttribute("aria-label", name); return [h("div", { class: "bar-label", style: { color: text || color } }, name), b.el, b]; };
+    const [l1, e1, bExp] = bar("Tu vi", "#4fae8a", "#7fd1ae"), [l2, e2, bHp] = bar("Khí huyết", "#c9503c", "#f0806a"), [l3, e3, bAge] = bar("Thọ nguyên", "#b8923a", "#e2bd68");
     U.barExp = bExp; U.barHp = bHp; U.barAge = bAge;
     U.statBars = {};
     const statRows = STATS.map(s => {
-      const b = new TT.ui.Bar("#3f8f6a", 14); U.statBars[s] = b;
+      const b = new TT.ui.Bar("#3f8f6a", 14); U.statBars[s] = b; b.el.setAttribute("aria-label", s);
       return h("div", { class: "mini-stat" }, h("img", { src: TT.A.icon(TT.ICON_STAT[s], 22), alt: "" }), h("span", {}, s), b.el);
     });
     U.power = h("div", { class: "gold pre" }); U.skills = h("div", { class: "cyan small" }); U.sect = h("div", { class: "orange small" });
     const left = h("div", { class: "col-left" }, U.realm, U.name, U.who, U.root, l1, e1, l2, e2, l3, e3,
-      h("div", { class: "t-green bold sec" }, "— Chỉ số —"), statRows, U.power, U.skills, U.sect);
+      h("details", { class: "stat-fold", open: !matchMedia("(max-width: 760px)").matches }, h("summary", {}, "Chỉ số gốc"), statRows), U.power, U.skills, U.sect);
 
     /* giữa: cảnh + nhật ký */
     this.scene = new TT.Scene(700, 290, () => REALM_COLORS[this.p.realm], 0.33);
-    this.logEl = h("div", { class: "log", role: "log", "aria-live": "polite" });
-    const center = h("div", { class: "col-center" }, h("div", { class: "scene-wrap" }, this.scene.cv), this.buildIdlePanel(), this.logEl);
+    const logEl = this.logEl = h("div", { class: "log", role: "log", "aria-live": "polite", "aria-label": "Nhật ký tu luyện", tabindex: "0",
+      onscroll: () => { logEl._follow = logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 40; if (logEl._follow) jump.hidden = true; } });
+    const jump = logEl._jump = h("button", { class: "log-jump", type: "button", hidden: true, onclick: () => { logEl._follow = true; logEl.scrollTop = logEl.scrollHeight; jump.hidden = true; logEl.focus({ preventScroll: true }); } }, "↓ Tin mới");
+    const center = h("div", { class: "col-center" }, h("div", { class: "scene-wrap" }, this.scene.cv), this.buildIdlePanel(), h("div", { class: "log-wrap" }, logEl, jump));
 
     /* phải: hành động */
     this.actionBtns = [];
@@ -217,11 +221,22 @@
       ["Công pháp", this.openSkills, "cyan", "@skills/book_gold_40.png"], ["Tông môn", this.openSect, "orange", "bagua"],
       ["Nghề phụ", this.openCrafts, "cyan", "@plants/ginseng_48.png"],
       ["Túi đồ", this.openBag, "cyan", "charm"]];
+    const mkAct = (name, fn, cls, icon, kbd, extra = "") => { const b = TT.ui.btn(name, () => this.act(fn), { cls: cls + extra, icon, kbd }); this.actionBtns.push(b); return b; };
     const actEls = acts.map(([label, fn, cls, ic]) => {
       const icon = ic[0] === "@" ? "assets/" + ic.slice(1) : TT.A.icon(ic, 22);
-      const b = TT.ui.btn(label, () => this.act(fn), { cls: cls + " act", icon });
-      this.actionBtns.push(b); return b;
+      const m = label.match(/^(.*?)\s*\[(\w)\]$/), name = m ? m[1] : label, kbd = m ? m[2] : null;
+      if (fn === this.actBreakthrough) {                                  // ấn chu sa: vừa là nút, vừa là thanh tiến độ tu vi
+        const b = U.breakBtn = mkAct(name, fn, "", icon, kbd, " act seal");
+        U.breakPct = h("span", { class: "seal-pct" }); b.querySelector(".btn-label").append(" ", U.breakPct);
+        return b;
+      }
+      return mkAct(name, fn, cls, icon, kbd, kbd ? " act dup" : " act");   // 3 việc hay làm đã có trên thanh thao tác nhanh (mobile) nên ẩn bản trùng
     });
+    /* thanh thao tác nhanh (chỉ hiện trên điện thoại): các việc hay làm nhất luôn nằm trong tầm ngón cái */
+    const dockSpec = [["Tu luyện", this.actTrain, "orb_blue"], ["Lịch luyện", this.actExplore, "sword"], ["Nghỉ ngơi", this.actRest, "peach"], ["Đột phá", this.actBreakthrough, "orb_gold", "seal"]];
+    const dock = h("nav", { class: "dock", "aria-label": "Thao tác nhanh" }, dockSpec.map(([name, fn, ic, cls]) => {
+      const b = mkAct(name, fn, cls || "", TT.A.icon(ic, 22), null, ""); if (fn === this.actBreakthrough) U.dockBreak = b; return b;
+    }), TT.ui.btn("Thêm", () => document.querySelector(".col-right")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), { cls: "dimbtn", icon: TT.A.icon("bagua", 22) }));
     /* các bảng thông tin: mở ngay, không bị khóa thao tác như hành động tu luyện */
     const infos = [
       ["Chỉ số nhân vật", this.openSheet, "cyan", "portrait"], ["Linh căn", this.openRoot, "cyan", "orb_green"],
@@ -230,13 +245,15 @@
       const b = TT.ui.btn(label, () => { if (this.inGame && this.p) fn.call(this); }, { cls: cls + " act", icon: TT.A.icon(ic, 22) });
       this.actionBtns.push(b); return b;
     });
-    const right = h("div", { class: "col-right" }, h("div", { class: "t-green bold center sec" }, "— Hành động —"), actEls,
-      h("div", { class: "t-green bold center sec" }, "— Nhân vật & thế giới —"), infoEls,
+    const right = h("div", { class: "col-right" }, h("div", { class: "sec" }, "Tu hành"), actEls,
+      h("div", { class: "sec" }, "Nhân vật & thế giới"), infoEls,
       TT.ui.btn("Lưu game", () => this.manualSave(), { cls: "dimbtn act gap" }),
-      TT.ui.btn("Trùng sinh (làm lại)", () => { if (confirm("Bỏ nhân vật hiện tại và trùng sinh làm lại?")) this.reincarnate(); }, { cls: "red act" }),
-      h("div", { class: "dim small center" }, "Phím tắt: T / L / N / D"));
+      TT.ui.btn("Trùng sinh (làm lại)", async () => {
+        if (this.dead || await TT.ui.confirm({ title: "Trùng sinh làm lại?", text: "Nhân vật hiện tại sẽ bị bỏ dở và chỉ nhận một nửa điểm Thiên Mệnh.", ok: "Trùng sinh", cancel: "Chơi tiếp", danger: true })) this.reincarnate();
+      }, { cls: "red act" }),
+      h("div", { class: "dim small center" }, "Phím tắt: T, L, N, D"));
 
-    app().append(top, h("div", { class: "main" }, left, center, right));
+    app().append(top, h("div", { class: "main" }, left, center, right), dock);
     this.refresh();
     this.startPump();
   };
