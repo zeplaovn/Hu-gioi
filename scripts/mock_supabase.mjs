@@ -6,7 +6,7 @@ import http from "node:http"; import crypto from "node:crypto";
 export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl = 3600, confirmEmail = false } = {}) {
   const users = new Map(), tokens = new Map(), refresh = new Map(), rows = new Map();
   const board = new Map();
-  const state = { board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000, captcha: false };
+  const state = { board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000, captcha: false, maintenance: false, maintenanceReason: "", admins: new Map() };
   const rid = () => crypto.randomBytes(16).toString("hex");
   const issue = u => {
     const access = "at_" + rid(), rt = "rt_" + rid(), exp = Math.floor(Date.now() / 1000) + state.ttl;
@@ -56,7 +56,12 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
       if (path === "/auth/v1/recover" && req.method === "POST") return send(res, 200, {});
 
       const uid = authUser(req);
+      if (path === "/rest/v1/rpc/server_status" && req.method === "POST") return send(res, 200, { maintenance: state.maintenance, maintenance_reason: state.maintenanceReason, banner: null });
       if (path.startsWith("/rest/v1/")) {
+        if (path === "/rest/v1/rpc/admin_me" && req.method === "POST") {
+          const role = uid && state.admins.get(uid);
+          return role ? send(res, 200, { user_id: uid, email: "", role }) : send(res, 403, { code: "42501", message: "forbidden" });
+        }
         if (!uid) return send(res, 401, { code: "PGRST301", message: "JWT expired" });
         if (path === "/rest/v1/player_saves" && req.method === "GET") { const r = rows.get(uid); return send(res, 200, r ? [{ save: r.save, meta: r.meta, rev: r.rev, updated_at: r.updated_at }] : []); }
         if (path === "/rest/v1/leaderboard" && req.method === "GET") {
@@ -74,6 +79,7 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
         }
         if (path === "/rest/v1/rpc/save_game" && req.method === "POST") {
           const fail = m => send(res, 400, { code: "P0001", message: m, details: null, hint: null });
+          if (state.maintenance && !["admin", "owner"].includes(state.admins.get(uid))) return fail("maintenance_mode");
           const { p_save, p_meta, p_rev, p_force } = body, isObj = v => v && typeof v === "object" && !Array.isArray(v);
           if (!isObj(p_meta)) return fail("bad_meta");
           if (p_save != null && !isObj(p_save)) return fail("bad_save");

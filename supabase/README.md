@@ -16,6 +16,7 @@ Chạy theo thứ tự tên file (hoặc dùng `supabase db push`):
 20261016010000_admin_console_fixes.sql
 20261016020000_maintenance_guard.sql
 20261016030000_admin_cleanup.sql
+20261017000000_maintenance_admin_bypass.sql
 ```
 
 Không copy schema sang repo dashboard. Dashboard chỉ là client quản trị; mọi quyền thật nằm ở PostgreSQL/RPC/RLS trong repo này.
@@ -40,7 +41,8 @@ Role hợp lệ: `viewer`, `moderator`, `admin`, `owner`.
 - game client hiển thị maintenance gate;
 - `save_game()` trả `maintenance_mode`;
 - `send_chat()` trả `maintenance_mode`;
-- dashboard admin vẫn hoạt động để có thể tắt maintenance.
+- dashboard admin vẫn hoạt động để có thể tắt maintenance;
+- tài khoản có vai trò `admin` hoặc `owner` (đang bật) vẫn vào game, lưu và chat được trong lúc bảo trì để thử bản mới (migration `20261017…`). Trên màn hình bảo trì có nút **Quản trị viên đăng nhập**; người chơi thường đăng nhập vẫn bị chặn và vẫn thấy màn hình bảo trì.
 
 `server_status()` vẫn public cho `anon/authenticated` nhưng chỉ trả trạng thái maintenance và banner đang active.
 

@@ -20,6 +20,7 @@ insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('222222
 \i supabase/migrations/20261016010000_admin_console_fixes.sql
 \i supabase/migrations/20261016020000_maintenance_guard.sql
 \i supabase/migrations/20261016030000_admin_cleanup.sql
+\i supabase/migrations/20261017000000_maintenance_admin_bypass.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -71,6 +72,13 @@ do $$ begin perform public.admin_set_maintenance(true, 'nâng cấp'); end $$;
 do $$ begin assert (public.server_status()->>'maintenance')::boolean and public.server_status()->>'maintenance_reason' = 'nâng cấp', 'bảo trì bật'; end $$;
 do $$ begin assert (select count(*) from public.admin_list_audit(50) where action in ('BANNER_PUBLISH','MAINTENANCE_SET')) = 2, 'nhật ký ghi đủ hành động'; end $$;
 
+-- khi bảo trì: admin vẫn vào game (lưu / chat được), viewer và người chơi thường thì không
+reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
+do $$ declare r jsonb; begin r := public.save_game('{"count":1,"player":{"name":"Admin","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0); assert (r->>'rev')::int = 1, 'admin lưu game được lúc bảo trì'; end $$;
+do $$ begin perform public.send_chat('admin thử'); end $$;
+reset role; set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
+select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 0)$q$, 'maintenance_mode');            -- viewer không được ngoại lệ
+reset role;
 -- khi bảo trì: người chơi không ghi / chat được, admin vẫn dùng được dashboard
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 0)$q$, 'maintenance_mode');
