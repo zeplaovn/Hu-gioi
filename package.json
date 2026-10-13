@@ -2,6 +2,6 @@
   "name": "thien-van-dai-luc",
   "private": true,
   "version": "1.1.0",
-  "scripts": { "build": "node tools/build.mjs", "serve": "node tools/serve.mjs", "test": "node --test tools/test_security.mjs tools/test_cloud.mjs", "mock": "node tools/mock_supabase.mjs" },
+  "scripts": { "build": "node tools/build.mjs", "serve": "node tools/serve.mjs", "test": "node --test tools/test_security.mjs tools/test_cloud.mjs tools/test_guide.mjs", "mock": "node tools/mock_supabase.mjs" },
   "devDependencies": { "terser": "^5.51.2", "javascript-obfuscator": "^5.9.0" }
 }

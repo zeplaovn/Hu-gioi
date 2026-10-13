@@ -384,3 +384,11 @@ kbd { font: 600 11px/1 var(--sans); color: var(--dim); border: 1px solid var(--l
 @media (max-width: 760px) { .board-row { grid-template-columns: 2.2em 1fr auto; } .board-time { grid-column: 2 / 4; } }
 
 .captcha-box { display: flex; justify-content: center; min-height: 78px; } .captcha-box[hidden] { display: none; }
+
+/* Gợi ý việc nên làm */
+.hint-box { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 10px; background: rgba(255, 210, 90, .08); border: 1px solid var(--line); border-left: 3px solid var(--gold, #e8c15a); border-radius: 8px; }
+.hint-box[hidden] { display: none; }
+.hint-text { flex: 1; min-width: 0; line-height: 1.4; }
+/* Bảng xếp hạng: tab */
+.board-tabs { display: flex; gap: 6px; justify-content: center; margin: 6px 0; }
+.board-tabs .seg { flex: 0 1 auto; }

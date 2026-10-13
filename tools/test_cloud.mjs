@@ -217,6 +217,19 @@ test("bảng xếp hạng: sắp theo cảnh giới, thấy dòng của mình, b
   deq((await a.cloud.leaderboard()).top.map(r => r.name), ["Yếu Hơn"]);
 }));
 
+test("bảng xếp hạng 7 ngày: chỉ gồm người vừa lập thành tích mới", async () => withMock({}, async (mock, port) => {
+  mock.state.minGapMs = 0;
+  const a = device(mock, port); await a.cloud.signUp("a@example.com", PASS); await a.cloud.bootstrap();
+  a.TT.writeSave(1, a.player("Mới Lập")); await a.cloud.syncNow();
+  const b = device(mock, port); await b.cloud.signUp("b@example.com", PASS); await b.cloud.bootstrap();
+  b.TT.writeSave(1, b.player("Thành Tích Cũ")); await b.cloud.syncNow();
+  for (const r of mock.state.board.values()) if (r.name === "Thành Tích Cũ") r.updated_at = new Date(Date.now() - 10 * 86400000).toISOString();
+  deq((await a.cloud.leaderboard({ days: 7 })).top.map(r => r.name), ["Mới Lập"]);
+  deq((await a.cloud.leaderboard()).top.map(r => r.name).sort(), ["Mới Lập", "Thành Tích Cũ"]);
+  const lb = await b.cloud.leaderboard({ days: 7 });
+  assert.equal(lb.top.length, 1); assert.equal(lb.mine, null, "thành tích cũ hơn 7 ngày không hiện ở tab 7 ngày");
+}));
+
 test("hCaptcha: Supabase bật CAPTCHA thì đăng ký / đăng nhập / quên mật khẩu cần mã, sai mã báo tiếng Việt", async () => withMock({}, async (mock, port) => {
   mock.state.captcha = true;
   const a = device(mock, port);

@@ -176,13 +176,14 @@
   };
 
   /** Bảng xếp hạng: top 50 (cấp cao nhất, bằng cấp thì ít tháng tu hơn) và dòng của chính mình (kể cả khi ngoài top). */
-  cloud.leaderboard = async () => {
+  cloud.leaderboard = async ({ days = 0 } = {}) => {                  // days > 0: chỉ tính người vừa lập thành tích mới trong n ngày qua
     const token = await freshToken(), cols = "select=user_id,name,level,months";
-    const top = await http(`/rest/v1/leaderboard?${cols}&order=level.desc,months.asc,updated_at.asc&limit=50`, { token });
+    const since = days > 0 ? `&updated_at=gte.${encodeURIComponent(new Date(Date.now() - days * 86400000).toISOString())}` : "";
+    const top = await http(`/rest/v1/leaderboard?${cols}${since}&order=level.desc,months.asc,updated_at.asc&limit=50`, { token });
     const uid = session.user.id;
     let me = (Array.isArray(top) ? top : []).findIndex(r => r.user_id === uid), mine = me >= 0 ? top[me] : null, rank = me >= 0 ? me + 1 : null;
     if (!mine) {
-      const rows = await http(`/rest/v1/leaderboard?${cols}&user_id=eq.${encodeURIComponent(uid)}&limit=1`, { token });
+      const rows = await http(`/rest/v1/leaderboard?${cols}&user_id=eq.${encodeURIComponent(uid)}${since}&limit=1`, { token });
       mine = Array.isArray(rows) && rows[0] ? rows[0] : null;
     }
     return { top: Array.isArray(top) ? top : [], mine, rank, uid };

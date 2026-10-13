@@ -39,7 +39,8 @@ js/farm.js            linh điền
 js/crafts.js          luyện đan / vẽ phù / luyện khí
 js/train.js           công thức tu vi mỗi tháng của nhập định, hộp thoại đạt điều kiện đột phá
 js/idle_data.js       dữ liệu + công thức idle: nguyên tố, linh căn, tên, bí cảnh (không đụng DOM)
-js/idle.js            nhập định, kỳ ngộ, bí cảnh, bảng Chỉ số / Linh căn / Bí cảnh / Kỳ ngộ
+js/idle.js            nhập định, kỳ ngộ, bí cảnh, bảng Chỉ số / Linh căn / Bí cảnh / Kỳ ngộ, báo cáo khi quay lại
+js/guide.js           gợi ý "việc nên làm tiếp" (dòng gợi ý trên màn chính + mục trong báo cáo khi quay lại); chỉ đọc trạng thái, tắt/bật ở bảng Chỉ số nhân vật
 js/sect.js            tông môn nâng cao: nhiệm vụ thời gian thật, chức vị, cống hiến, kho tông môn
 js/meta.js            Thiên Mệnh, thành tựu (+ hiệu ứng mở khóa), lịch sử các kiếp, xuất/nhập save
 js/security.js        chữ ký save, kiểm tra tính hợp lý, sao lưu, chặn đa tab (chống sửa save)
@@ -54,7 +55,7 @@ tools/sim_balance.mjs mô phỏng cân bằng bí cảnh bằng node (node tools
 tools/gen_leaderboard_bounds.mjs sinh bảng số tháng tu tối thiểu theo cấp cho bảng xếp hạng (chạy lại khi đổi công thức tu vi)
 tools/sim_progress.mjs mô phỏng tiến độ tu hành (node tools/sim_progress.mjs): % đạt từng cảnh giới, thời gian thật, tử vong
 tools/build.mjs       build bản phát hành (gộp + nén + làm rối, chèn khóa TVDL_SALT) -> dist/
-tools/test_security.mjs, tools/test_cloud.mjs  kiểm thử: npm test
+tools/test_security.mjs, tools/test_cloud.mjs, tools/test_guide.mjs  kiểm thử: npm test
 tools/mock_supabase.mjs Supabase giả để thử cục bộ: npm run mock
 assets/               toàn bộ ảnh (cũ + mới)
 assets_src/           3 ảnh sheet gốc của bản cập nhật asset
@@ -117,7 +118,7 @@ Khi cấu hình Supabase, người chơi **đăng ký / đăng nhập bằng ema
 **Thử cục bộ không cần dự án thật:** `npm run mock` chạy một Supabase giả (cổng 54321), rồi `SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_ANON_KEY=local-dev-anon-key-0123456789 npm run build && npm run serve -- dist`.
 
 ### Bảng xếp hạng
-Nút **Bảng xếp hạng** (chỉ hiện khi đã đăng nhập) liệt kê top 50 và dòng của bạn. Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít tháng hơn xếp trên; mỗi tài khoản giữ thành tích tốt nhất. Dữ liệu do trigger `lb_sync` lấy từ save mỗi lần `save_game()` ghi, client không ghi trực tiếp được, và bị xóa cùng tài khoản. Đạo hiệu hiển thị công khai. Máy chủ chỉ loại giá trị vô lý (số tháng tu thấp hơn mức tối thiểu của cấp), không kiểm tra được luật chơi, nên đây là bảng giải trí, đừng gắn phần thưởng thật.
+Nút **Bảng xếp hạng** (chỉ hiện khi đã đăng nhập) liệt kê top 50 và dòng của bạn. Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít tháng hơn xếp trên; mỗi tài khoản giữ thành tích tốt nhất. Có hai tab: *Mọi thời đại* và *7 ngày qua* (chỉ người vừa lập thành tích mới trong tuần, để người mới có cơ hội lên bảng). Dữ liệu do trigger `lb_sync` lấy từ save mỗi lần `save_game()` ghi, client không ghi trực tiếp được, và bị xóa cùng tài khoản. Đạo hiệu hiển thị công khai. Máy chủ chỉ loại giá trị vô lý (số tháng tu thấp hơn mức tối thiểu của cấp), không kiểm tra được luật chơi, nên đây là bảng giải trí, đừng gắn phần thưởng thật.
 
 ## Phát triển và phát hành
 - Chạy thử: `npm run serve`. Kiểm thử: `npm test` (bảo mật + đồng bộ Supabase, chạy bằng Node). Kiểm thử SQL: `psql -v ON_ERROR_STOP=1 -f supabase/tests/player_saves.test.sql` trên một database Postgres trống (file tự dựng bản giả lập `auth`). Mô phỏng cân bằng bí cảnh: `node tools/sim_balance.mjs`.

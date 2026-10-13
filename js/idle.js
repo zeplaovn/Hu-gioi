@@ -387,6 +387,8 @@
     }
     if (rep.secret) { L.push(h("div", { class: "t-green bold sec" }, "— Bí cảnh —")); L.push(...resultLines(rep.secret)); }
     if (rep.missions && rep.missions.length) { L.push(h("div", { class: "t-green bold sec" }, "— Nhiệm vụ tông môn —")); rep.missions.forEach(r => L.push(...TT.missionLines(r))); }
+    const tips = TT.advice ? TT.advice(this).slice(0, 3) : [];
+    if (tips.length) { L.push(h("div", { class: "t-green bold sec" }, "— Việc nên làm tiếp —")); tips.forEach(t => L.push(h("div", { class: "small" }, "→ " + t.text))); }
     const m = TT.ui.modal("dlg-box report-box", () => m.close());
     m.box.append(h("h2", { class: "mtitle" }, "Bế quan trở về"), h("div", { class: "rows report-lines" }, L),
       h("div", { class: "row center" }, TT.ui.btn("Tiếp tục tu luyện", () => m.close(), { cls: "gold" })));
@@ -453,7 +455,8 @@
             kv("Tỉ lệ đột phá", `${Math.round(p.breakChance(p.tang === 9) * 100)}%`, `${p.tang === 9 ? "Đại đột phá lên " + (TT.REALMS[p.realm + 1] || "Phi thăng") : "Lên tầng " + (p.tang + 1)}. Ngộ Tính, Vận Khí, Phá Cảnh Đan và áp chế tu vi đều giúp tăng tỉ lệ; thất bại mất ${Math.round((1 - p.failKeep(p.tang === 9)) * 100)}% tu vi.`, p.breakChance(p.tang === 9) >= 0.6 ? C.GREEN : p.breakChance(p.tang === 9) >= 0.4 ? C.GOLD : C.RED),
             kv("Tu vi mỗi giây (idle)", (mg / IDLE.MONTH_TICKS).toFixed(1)),
             kv("Tinh Hoa", TT.FIVE.concat(TT.RARE_EL).filter(e => p.ess[e]).map(e => `${e} ${p.ess[e]}`).join("  ·  ") || "chưa có"))),
-        h("div", { class: "row center" }, TT.ui.btn("Đóng", close, { cls: "dimbtn sm" })),
+        h("div", { class: "row center" }, TT.ui.btn("Đóng", close, { cls: "dimbtn sm" }),
+          TT.hintOff ? TT.ui.btn(TT.hintOff() ? "Bật gợi ý" : "Tắt gợi ý", () => { this.hintToggle(); redraw(); }, { cls: "dimbtn sm", title: "Dòng gợi ý việc nên làm trên màn chính" }) : null),
       ];
     }, 1000);
   };

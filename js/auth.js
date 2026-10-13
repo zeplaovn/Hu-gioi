@@ -241,26 +241,37 @@
   /* ---------- bảng xếp hạng ---------- */
   const lvName = lv => `${TT.REALMS[Math.floor((lv - 1) / 9)] || "?"} tầng ${(lv - 1) % 9 + 1}`;
   const years = mo => (mo >= 12 ? `${Math.floor(mo / 12)} năm ${mo % 12} tháng` : `${mo} tháng`);
-  TT.Game.prototype.openBoard = async function () {
+  TT.Game.prototype.openBoard = function () {
     const m = TT.ui.modal("dlg-box board-box", null, { label: "Bảng xếp hạng", alert: false });
     const body = h("div", { class: "board-body", role: "status" }, "Đang tải bảng xếp hạng…");
-    m.box.append(h("h2", { class: "mtitle" }, "Bảng xếp hạng"), body,
-      h("p", { class: "dim small center" }, "Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít thời gian hơn xếp trên. Đạo hiệu của bạn hiển thị công khai cho người chơi khác."),
+    const tabs = [[0, "Mọi thời đại"], [7, "7 ngày qua"]].map(([d, label]) => h("button", { class: "seg", type: "button", role: "tab", onclick: () => load(d) }, label));
+    const note = h("p", { class: "dim small center" });
+    m.box.append(h("h2", { class: "mtitle" }, "Bảng xếp hạng"), h("div", { class: "board-tabs", role: "tablist" }, tabs), body, note,
       h("div", { class: "row center" }, TT.ui.btn("Đóng", () => m.close(), { cls: "dimbtn sm" })));
-    try {
-      const { top, mine, rank, uid } = await cloud.leaderboard();
-      if (!m.box.isConnected) return;
-      const medal = i => (i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1));
-      const row = (r, i, you) => h("li", { class: "board-row" + (r.user_id === uid || you ? " me" : "") },
-        h("span", { class: "board-rank" }, i == null ? "—" : medal(i)),
-        h("span", { class: "board-name" }, r.name, r.user_id === uid ? " (bạn)" : ""),
-        h("span", { class: "board-realm", style: { color: TT.REALM_COLORS[Math.floor((r.level - 1) / 9)] } }, lvName(r.level)),
-        h("span", { class: "board-time dim small" }, years(r.months)));
-      const list = top.length ? h("ol", { class: "board-list" }, top.map((r, i) => row(r, i))) : h("p", { class: "center dim" }, "Chưa có ai trên bảng. Hãy tu luyện và lưu game để là người đầu tiên!");
-      const you = mine && rank == null ? h("div", { class: "board-you" }, h("div", { class: "dim small center" }, "Thành tích của bạn (ngoài top 50)"), h("ol", { class: "board-list" }, row(mine, null, true))) : null;
-      body.replaceChildren(list, ...(you ? [you] : []));
-      body.removeAttribute("role");
-    } catch (e) { body.textContent = cloud.errorText(e); }
+    let seq = 0;
+    const medal = i => (i < 3 ? ["🥇", "🥈", "🥉"][i] : String(i + 1));
+    async function load(days) {
+      const my = ++seq;
+      tabs.forEach((t, i) => { const on = (i === 0) === (days === 0); t.classList.toggle("on", on); t.setAttribute("aria-selected", String(on)); });
+      note.textContent = days
+        ? "Chỉ gồm người vừa đạt cảnh giới mới trong 7 ngày qua, nên người mới vẫn có cơ hội lên bảng. Đạo hiệu hiển thị công khai."
+        : "Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít thời gian hơn xếp trên. Đạo hiệu của bạn hiển thị công khai cho người chơi khác.";
+      body.setAttribute("role", "status"); body.textContent = "Đang tải bảng xếp hạng…";
+      try {
+        const { top, mine, rank, uid } = await cloud.leaderboard({ days });
+        if (my !== seq || !m.box.isConnected) return;
+        const row = (r, i, you) => h("li", { class: "board-row" + (r.user_id === uid || you ? " me" : "") },
+          h("span", { class: "board-rank" }, i == null ? "—" : medal(i)),
+          h("span", { class: "board-name" }, r.name, r.user_id === uid ? " (bạn)" : ""),
+          h("span", { class: "board-realm", style: { color: TT.REALM_COLORS[Math.floor((r.level - 1) / 9)] } }, lvName(r.level)),
+          h("span", { class: "board-time dim small" }, years(r.months)));
+        const list = top.length ? h("ol", { class: "board-list" }, top.map((r, i) => row(r, i))) : h("p", { class: "center dim" }, days ? "Tuần này chưa có ai lập thành tích mới. Hãy là người đầu tiên!" : "Chưa có ai trên bảng. Hãy tu luyện và lưu game để là người đầu tiên!");
+        const you = mine && rank == null ? h("div", { class: "board-you" }, h("div", { class: "dim small center" }, "Thành tích của bạn (ngoài top 50)"), h("ol", { class: "board-list" }, row(mine, null, true))) : null;
+        body.replaceChildren(list, ...(you ? [you] : []));
+        body.removeAttribute("role");
+      } catch (e) { if (my === seq) body.textContent = cloud.errorText(e); }
+    }
+    load(0);
   };
 
   auth.chip = () => {

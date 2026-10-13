@@ -61,6 +61,7 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
         if (path === "/rest/v1/player_saves" && req.method === "GET") { const r = rows.get(uid); return send(res, 200, r ? [{ save: r.save, meta: r.meta, rev: r.rev, updated_at: r.updated_at }] : []); }
         if (path === "/rest/v1/leaderboard" && req.method === "GET") {
           let list = [...state.board.entries()].map(([user_id, r]) => ({ user_id, ...r }));
+          const gte = url.searchParams.get("updated_at"); if (gte && gte.startsWith("gte.")) list = list.filter(r => r.updated_at >= gte.slice(4));
           const eq = url.searchParams.get("user_id"); if (eq) list = list.filter(r => "eq." + r.user_id === eq);
           list.sort((a, b) => b.level - a.level || a.months - b.months || a.at - b.at);
           return send(res, 200, list.slice(0, +url.searchParams.get("limit") || 1000).map(({ at, ...r }) => r));
