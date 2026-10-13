@@ -1,27 +1,24 @@
-// Build bản phát hành: gộp toàn bộ js/ thành 1 file, nén + làm rối, chỉ chép phần cần chạy vào dist/.
-// Chạy:  npm i --no-save terser javascript-obfuscator  &&  node scripts/build.mjs
+// Build bản phát hành: gộp toàn bộ runtime trong src/ thành 1 file, nén + làm rối, chỉ chép phần cần chạy vào dist/.
+// Chạy: npm i --no-save terser javascript-obfuscator && node scripts/build.mjs
 import fs from "node:fs"; import path from "node:path"; import crypto from "node:crypto";
 import { minify } from "terser"; import JavaScriptObfuscator from "javascript-obfuscator";
 
 const root = path.resolve(import.meta.dirname, ".."), dist = path.join(root, "dist");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
-const scripts = [...html.matchAll(/<script src="(js\/[^"]+)"><\/script>/g)].map(m => m[1]);   // giữ đúng thứ tự nạp
-// các file được nạp chung 1 phạm vi toàn cục nên chỉ cần nối lại theo thứ tự
+const scripts = [...html.matchAll(/<script src="(src\/[^"]+)"><\/script>/g)].map(m => m[1]);
+if (!scripts.length) throw new Error("Không tìm thấy runtime script trong src/ từ index.html.");
 let src = scripts.map(f => fs.readFileSync(path.join(root, f), "utf8")).join("\n;\n");
 
-// Khóa ký save KHÔNG nằm trong repo: lấy từ biến môi trường TVDL_SALT (đặt trong Vercel / Cloudflare > Environment Variables).
-// Tạo khóa:  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-// Đổi khóa = mọi save cũ của người chơi bị coi là hỏng, nên đặt một lần rồi giữ nguyên.
+// Khóa ký save KHÔNG nằm trong repo: lấy từ biến môi trường TVDL_SALT.
 const salt = process.env.TVDL_SALT, onCI = !!(process.env.VERCEL || process.env.CI || process.env.NETLIFY || process.env.CF_PAGES);
 if (!salt && onCI) throw new Error("Thiếu biến môi trường TVDL_SALT: bản phát hành sẽ dùng khóa ký công khai trong mã nguồn. Hãy đặt TVDL_SALT rồi build lại.");
 if (salt && salt.length < 32) throw new Error("TVDL_SALT quá ngắn (cần ít nhất 32 ký tự).");
 if (salt) {
-  if (src.split('"__TVDL_SALT__"').length !== 2) throw new Error("Không tìm thấy đúng một chỗ \"__TVDL_SALT__\" trong js/infrastructure/security.js.");
+  if (src.split('"__TVDL_SALT__"').length !== 2) throw new Error("Không tìm thấy đúng một chỗ \"__TVDL_SALT__\" trong src/platform/security.js.");
   src = src.replace('"__TVDL_SALT__"', () => JSON.stringify(salt));
 } else console.warn("⚠ Chưa đặt TVDL_SALT: bản build này dùng khóa dev, CHỈ để thử, không phát hành.");
 
-// Supabase (tuỳ chọn): SUPABASE_URL + SUPABASE_ANON_KEY. Cả hai là giá trị công khai, nhưng KHÔNG bao giờ được là khóa bí mật (service_role / sb_secret_).
-// Không đặt cả hai = bản ngoại tuyến (chỉ lưu trên máy) và CSP vẫn chặn mọi kết nối mạng.
+// Supabase (tuỳ chọn): SUPABASE_URL + SUPABASE_ANON_KEY. Cả hai là giá trị công khai, nhưng KHÔNG bao giờ được là khóa bí mật.
 const sbUrl = (process.env.SUPABASE_URL || "").trim(), sbKey = (process.env.SUPABASE_ANON_KEY || "").trim();
 let connectSrc = "'none'";
 if (sbUrl || sbKey) {
@@ -36,18 +33,18 @@ if (sbUrl || sbKey) {
   if (role && role !== "anon") throw new Error(`SUPABASE_ANON_KEY có role "${role}", không phải "anon". KHÔNG được đưa khóa này vào mã chạy trên trình duyệt.`);
   if (sbKey.length < 20 || /\s/.test(sbKey)) throw new Error("SUPABASE_ANON_KEY có vẻ không hợp lệ.");
   for (const [token, value] of [['"__SUPABASE_URL__"', u.origin], ['"__SUPABASE_ANON_KEY__"', sbKey]]) {
-    if (src.split(token).length !== 2) throw new Error(`Không tìm thấy đúng một chỗ ${token} trong js/online/config.js.`);
+    if (src.split(token).length !== 2) throw new Error(`Không tìm thấy đúng một chỗ ${token} trong src/services/config.js.`);
     src = src.replace(token, () => JSON.stringify(value));
   }
   connectSrc = u.origin;
 } else console.warn("⚠ Chưa đặt SUPABASE_URL / SUPABASE_ANON_KEY: bản build này chạy ngoại tuyến (không có đăng nhập / lưu trên máy chủ).");
 
-// hCaptcha (tuỳ chọn): HCAPTCHA_SITEKEY là site key CÔNG KHAI (dạng UUID). Cần cả Supabase; secret key chỉ đặt ở Supabase Dashboard, không bao giờ vào đây.
+// hCaptcha (tuỳ chọn): HCAPTCHA_SITEKEY là site key CÔNG KHAI. Secret key chỉ đặt ở Supabase Dashboard.
 const hcKey = (process.env.HCAPTCHA_SITEKEY || "").trim();
 if (hcKey) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hcKey)) throw new Error("HCAPTCHA_SITEKEY không đúng định dạng site key (UUID). Đừng dùng secret key (bắt đầu bằng ES_ hoặc 0x).");
   if (connectSrc === "'none'") throw new Error("Có HCAPTCHA_SITEKEY nhưng chưa đặt SUPABASE_URL / SUPABASE_ANON_KEY: captcha chỉ dùng cho đăng nhập Supabase.");
-  if (src.split('"__HCAPTCHA_SITEKEY__"').length !== 2) throw new Error('Không tìm thấy đúng một chỗ "__HCAPTCHA_SITEKEY__" trong js/online/config.js.');
+  if (src.split('"__HCAPTCHA_SITEKEY__"').length !== 2) throw new Error('Không tìm thấy đúng một chỗ "__HCAPTCHA_SITEKEY__" trong src/services/config.js.');
   src = src.replace('"__HCAPTCHA_SITEKEY__"', () => JSON.stringify(hcKey));
 }
 
@@ -64,8 +61,6 @@ fs.rmSync(dist, { recursive: true, force: true }); fs.mkdirSync(dist, { recursiv
 const hash = crypto.createHash("sha256").update(obf).digest("hex").slice(0, 10), bundle = `app.${hash}.js`;
 fs.writeFileSync(path.join(dist, bundle), obf);
 
-// Ghi lại các directive CSP theo cấu hình của bản build này (index.html có 'none'; vercel.json / _headers gốc có bản rộng hơn):
-// connect-src = Supabase (nếu có), script/style/frame-src chỉ mở hCaptcha khi có HCAPTCHA_SITEKEY.
 const HC = "https://hcaptcha.com https://*.hcaptcha.com";
 const csp = { "script-src": hcKey ? `'self' ${HC}` : "'self'", "style-src": hcKey ? `'self' ${HC}` : "'self'", "frame-src": hcKey ? HC : "'none'",
   "connect-src": [connectSrc === "'none'" ? "" : connectSrc, hcKey ? HC : ""].filter(Boolean).join(" ") || "'none'" };
@@ -73,13 +68,12 @@ const withCsp = text => {
   if (!/connect-src [^;"\n]*/.test(text)) throw new Error("Không tìm thấy connect-src để thay.");
   return text.replace(/\b(script-src|style-src|frame-src|connect-src) [^;"\n]*/g, (_, d) => `${d} ${csp[d]}`);
 };
-let out = withCsp(html).replace(/\s*<script src="js\/[^"]+"><\/script>/g, "").replace("</body>", `  <script src="${bundle}"></script>\n</body>`);
+let out = withCsp(html).replace(/\s*<script src="src\/[^"]+"><\/script>/g, "").replace("</body>", `  <script src="${bundle}"></script>\n</body>`);
 fs.writeFileSync(path.join(dist, "index.html"), out);
-fs.cpSync(path.join(root, "css"), path.join(dist, "css"), { recursive: true });
-fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true });   // KHÔNG chép assets_src/, scripts/, tests/, README
+fs.cpSync(path.join(root, "styles"), path.join(dist, "styles"), { recursive: true });
+fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true });
 for (const f of ["_headers", "vercel.json"]) if (fs.existsSync(path.join(root, f))) fs.writeFileSync(path.join(dist, f), withCsp(fs.readFileSync(path.join(root, f), "utf8")));
-// Vercel chỉ đọc vercel.json ở thư mục GỐC (bản trong dist/ bị bỏ qua), nên CSP đã mở connect-src cho Supabase phải đi qua Build Output API:
-// .vercel/output/{static,config.json}. Khi có thư mục này Vercel dùng nó thay cho vercel.json gốc.
+
 if (process.env.VERCEL || process.argv.includes("--vercel")) {
   const out3 = path.join(root, ".vercel", "output");
   fs.rmSync(out3, { recursive: true, force: true }); fs.mkdirSync(out3, { recursive: true });
