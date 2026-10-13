@@ -12,7 +12,7 @@ Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · *
 
 ## Bản idle
 - **Nhập định (idle):** tu vi tự tăng mỗi giây (10 giây = 1 tháng trong game), có thể **Tạm dừng / Tiếp tục**. Tu vi dừng ở mức viên mãn để bạn tự quyết định đột phá hoặc áp chế thêm. Game không còn chế độ "Tu luyện tự động" (bế quan tua nhanh) và nút tương ứng; các hành động thủ công Tu luyện / Lịch luyện / Nghỉ ngơi vẫn dùng bình thường.
-- **Vắng mặt vẫn tu luyện:** 2 phút đầu tính đủ, sau đó 50%, tối đa 2 giờ mỗi lần; mở lại game sẽ có bảng báo cáo. Nếu thọ nguyên sắp cạn, bế quan tự dừng để không tọa hóa khi vắng mặt.
+- **Vắng mặt vẫn tu luyện:** 2 phút đầu tính đủ, sau đó 50%, tối đa 2 giờ mỗi lần; mở lại game sẽ có bảng báo cáo. **Vắng mặt quá lâu thì nhân vật có thể tọa hóa** (đặc trưng của game): thời gian vẫn trôi khi đóng game. Khi thọ nguyên còn dưới 40 năm, game báo rõ có thể vắng mặt tối đa bao lâu.
 - **Đạo hiệu:** đặt tên khi tạo nhân vật (tối đa 20 ký tự, tự lọc ký tự nguy hiểm) hoặc gieo xúc xắc ra tên ngẫu nhiên.
 - **Linh căn nguyên tố:** gieo khi tạo nhân vật. Thiên / Song / Tam / Tứ / Ngũ Linh Căn từ Kim, Mộc, Thủy, Hỏa, Thổ (càng ít nguyên tố càng tu nhanh nhưng đủ nguyên tố thì mạnh toàn diện), và 3% ra **Dị Linh Căn** (Lôi, Băng, Phong). Mỗi nguyên tố cho chỉ số riêng; dùng **Tinh Hoa** để tôi luyện (tối đa cấp 10, +8% hiệu quả mỗi cấp).
 - **Bí cảnh:** 8 bí cảnh theo nguyên tố, mở dần theo cảnh giới. Thám hiểm chạy theo thời gian thật (cả khi đóng game), địch mạnh dần theo tầng, hạ Thủ Lĩnh được Tinh Hoa và vật phẩm. Ngũ hành tương khắc ảnh hưởng sát thương: Kim > Mộc > Thổ > Thủy > Hỏa > Kim.

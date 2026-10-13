@@ -10,6 +10,14 @@
   };
 
   /** Danh sách gợi ý theo độ ưu tiên: [{ id, text, label, run }]. */
+  /** Số giây thật có thể vắng mặt mà nhân vật chưa tọa hóa (quy đổi theo tỉ lệ bù thời gian vắng mặt). */
+  TT.safeAway = p => {
+    const I = TT.IDLE, months = Math.max(0, (12 - (p.months % 12)) % 12 + (p.lifespan - p.age - 1) * 12);
+    const eff = Math.max(0, months * I.MONTH_TICKS - 1);
+    const real = eff <= I.FULL_RATE_S ? eff : I.FULL_RATE_S + (eff - I.FULL_RATE_S) / I.OFFLINE_RATE;
+    return eff > I.OFFLINE_CAP_S ? Infinity : Math.floor(real);
+  };
+
   TT.advice = g => {
     const p = g && g.p, out = [];
     if (!p || g.dead) return out;
@@ -17,7 +25,7 @@
     const need = p.need_exp(), left = p.lifespan - p.age, S = p.secret, sx = p.sectx;
     if (p.exp >= need && p.hp < p.max_hp() * 0.5) add("hurt", "Tu vi đã đủ nhưng khí huyết còn thấp. Đột phá thất bại có thể gây Tẩu hỏa nhập ma; hãy Nghỉ ngơi hoặc dùng đan dược hồi phục trước.", "Nghỉ ngơi", () => g.act(g.actRest));
     if (p.exp >= need) add("break", `Tu vi đã đủ. Bấm Đột phá để lên ${p.tang === 9 ? "đại cảnh giới (thọ nguyên tăng thêm)" : "tầng " + (p.tang + 1)}.${p.breakChance(p.tang === 9) < 0.5 ? " Tỉ lệ còn thấp, có thể áp chế thêm hoặc dùng Phá Cảnh Đan." : ""}`, "Đột phá", () => g.act(g.actBreakthrough));
-    if (left <= 12) add("life", `Thọ nguyên chỉ còn ${Math.max(0, left)} năm. Hãy đột phá đại cảnh giới hoặc mua Trường Thọ Quả ở cửa hàng.`, "Cửa hàng", () => g.openShop());
+    if (left <= 40) add("life", `Thọ nguyên chỉ còn ${Math.max(0, left)} năm${Number.isFinite(TT.safeAway(p)) ? `: vắng mặt quá ${TT.fmtTime(TT.safeAway(p))} nhân vật sẽ tọa hóa` : ""}. Hãy đột phá đại cảnh giới hoặc mua Trường Thọ Quả ở cửa hàng.`, "Cửa hàng", () => g.openShop());
     const cheapest = Math.min(...Object.values(TT.SKILLS).filter(s => s.realm <= p.realm).map(s => s.cost));
     if (!p.skills.length) add("skill", p.stone >= cheapest ? "Bạn chưa có công pháp nào. Học Dưỡng Khí Quyết để tăng 20% tốc độ tu luyện." : `Bạn chưa có công pháp. Cần ${cheapest} linh thạch để học công pháp đầu tiên: dùng Luyện hóa linh thạch hoặc Lịch luyện để kiếm thêm.`, p.stone >= cheapest ? "Công pháp" : "Lịch luyện", p.stone >= cheapest ? () => g.openSkills() : () => g.act(g.actExplore));
     const ripe = (p.plots || []).filter(x => x && !x.wilt && x.age >= TT.RIPE).length;

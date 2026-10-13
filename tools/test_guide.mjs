@@ -31,6 +31,12 @@ test("thọ nguyên sắp hết thì cảnh báo", () => {
   const { TT, player } = load(), p = player(); p.lifespan = p.age + 5;
   assert.ok(ids(TT, { p, dead: false }).includes("life"));
 });
+test("vắng mặt quá lâu sẽ tọa hóa: tính đúng thời gian vắng mặt an toàn", () => {
+  const { TT, player } = load(), p = player(); p.lifespan = p.age + 2; p.months = p.age * 12;
+  const sec = TT.safeAway(p); assert.ok(sec > 0 && sec < 7200);
+  assert.ok(TT.advice({ p, dead: false }).find(a => a.id === "life").text.includes("tọa hóa"));
+  p.lifespan = p.age + 1000; assert.equal(TT.safeAway(p), Infinity);
+});
 test("đủ cảnh giới mà chưa có tông môn thì gợi ý gia nhập", () => {
   const { TT, player } = load(), p = player(); p.realm = 1; p.skills = ["Dưỡng Khí Quyết"];
   assert.ok(ids(TT, { p, dead: false }).includes("sect"));

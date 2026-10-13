@@ -108,7 +108,7 @@
           if (p.age % 10 === 0) this.log(`Bạn đã ${p.age} tuổi.`, "dim");
         }
       }
-      if (p.age >= p.lifespan) { this.die("Thọ nguyên cạn kiệt, bạn ngồi hóa giữa đất trời..."); return false; }
+      if (p.age >= p.lifespan) { this.die(this.quiet ? "Bạn vắng mặt quá lâu, thọ nguyên cạn kiệt và tọa hóa trong lúc bế quan..." : "Thọ nguyên cạn kiệt, bạn ngồi hóa giữa đất trời..."); return false; }
       this.renderFarm();
       return true;
     }

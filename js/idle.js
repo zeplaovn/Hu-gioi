@@ -144,18 +144,13 @@
     return true;
   };
 
-  /** Chạy n nhịp. Khi vắng mặt (quiet) thì không để nhân vật chết già trong lúc người chơi không có mặt. */
+  /** Chạy n nhịp. Vắng mặt quá lâu thì thời gian vẫn trôi và nhân vật có thể tọa hóa (đặc trưng của game). */
   G.idleRun = function (n) {
     const p = this.p, I = p.idle;
     let gained = 0;
     for (let i = 0; i < n && !this.dead; i++) {
       gained += this.idleGain();
       if (++I.mt >= IDLE.MONTH_TICKS) {
-        if (this.quiet && (p.months + 1) % 12 === 0 && p.age + 1 >= p.lifespan) {
-          I.mt = IDLE.MONTH_TICKS - 1;
-          if (this.rep) this.rep.stopped = "life";
-          break;
-        }
         I.mt = 0;
         if (!this.idleMonth()) break;
       }
@@ -232,6 +227,7 @@
     const U = this.U;
     U.idleState = h("span", { class: "bold" });
     U.idleRate = h("span", { class: "dim small" });
+    U.idleAway = h("div", { class: "red-t small" });
     U.idleBtn = TT.ui.btn("Tạm dừng", () => this.idleToggle(), { cls: "dimbtn sm" });
     U.barMonth = new TT.ui.Bar("#5b7fd6", 14);
     U.secretLine = h("div", { class: "small cyan" });
@@ -241,7 +237,7 @@
     U.barMission = new TT.ui.Bar("#3f9bd6", 14);
     U.missionBox = h("div", { class: "idle-secret" }, U.missionLine, U.barMission.el);
     return h("div", { class: "panel idle-panel" },
-      h("div", { class: "idle-row" }, U.idleState, h("span", { class: "spacer" }), U.idleRate, U.idleBtn), U.barMonth.el, U.secretBox, U.missionBox);
+      h("div", { class: "idle-row" }, U.idleState, h("span", { class: "spacer" }), U.idleRate, U.idleBtn), U.barMonth.el, U.idleAway, U.secretBox, U.missionBox);
   };
 
   G.idleRefresh = function () {
@@ -255,6 +251,7 @@
     else { st = "● Đang nhập định"; col = C.GREEN; }
     U.idleState.textContent = st; U.idleState.style.color = col;
     U.idleRate.textContent = `+${(this.idleMonthGain() / IDLE.MONTH_TICKS).toFixed(1)} tu vi/giây · 1 tháng = ${IDLE.MONTH_TICKS}s`;
+    if (U.idleAway) { const warn = this.p.idle.on && this.p.lifespan - this.p.age <= 40; U.idleAway.textContent = warn ? `⚠ Thọ nguyên còn ${this.p.lifespan - this.p.age} năm. Vắng mặt quá ${TT.fmtTime(TT.safeAway(this.p))} sẽ tọa hóa.` : ""; }
     U.barMonth.set(I.mt, IDLE.MONTH_TICKS, `Tháng kế tiếp sau ${IDLE.MONTH_TICKS - I.mt}s`);
     const btnLabel = U.idleBtn.querySelector("span"), want = I.on ? "Tạm dừng" : "Tiếp tục";
     if (btnLabel.textContent !== want) btnLabel.textContent = want;
@@ -377,7 +374,8 @@
     L.push(h("div", { class: "green" }, `Tu vi: +${fmt(p.exp - b.exp)}    Linh thạch: ${p.stone - b.stone >= 0 ? "+" : ""}${fmt(p.stone - b.stone)}`));
     if (p.realm_name() !== b.realm) L.push(h("div", { class: "gold" }, `Cảnh giới: ${b.realm} -> ${p.realm_name()}`));
     if (p.exp >= p.need_exp()) L.push(h("div", { class: "gold bold" }, "◆ Tu vi đã viên mãn - hãy đột phá để tiếp tục tiến bước!"));
-    if (rep.stopped === "life") L.push(h("div", { class: "red-t" }, `⚠ Thọ nguyên chỉ còn ${p.lifespan - p.age} năm: bế quan dừng lại để bạn không tọa hóa khi vắng mặt.`));
+    const safe = TT.safeAway(p);
+    if (p.lifespan - p.age <= 40) L.push(h("div", { class: "red-t small" }, `⚠ Thọ nguyên còn ${p.lifespan - p.age} năm: vắng mặt quá ${TT.fmtTime(safe)} nhân vật sẽ tọa hóa.`));
     const ripe = p.plots.filter(x => x && !x.wilt && x.age >= TT.RIPE).length;
     if (ripe) L.push(h("div", { class: "green" }, `🌿 Linh điền: ${ripe} ô Linh Thảo đã chín, đang chờ bạn thu hoạch.`));
     if (rep.events.length) {
