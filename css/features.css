@@ -1,0 +1,92 @@
+.hub-tabs { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 4px 0 12px; }
+.hub-tab { background: var(--panel); color: var(--dim); border: 1px solid var(--line2); border-radius: 999px; padding: 7px 16px; font-weight: 600; cursor: pointer; min-height: 38px; }
+.hub-tab:hover { color: var(--fg); }
+.hub-tab.on { color: var(--gold); border-color: var(--gold); background: var(--panel2); }
+.hub-note { margin: 8px 4px; min-height: 1.2em; }
+.data-ta { width: 100%; background: var(--inset); color: var(--fg); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; resize: vertical; margin: 6px 0; }
+.sheet-box { width: 640px; } .root-box.dlg-box, .secret-box, .enc-box { width: 700px; }
+.report-box { width: 600px; }
+.report-lines > div { margin: 4px 0; }
+.sheet-sec { margin: 6px 0 10px; }
+.kv { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 4px; border-bottom: 1px dotted var(--line); }
+.kv .k { flex: 0 0 190px; color: var(--dim); }
+.kv .v { flex: 1; min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
+.kv-hint { flex: 1 0 100%; margin-left: 200px; }
+.el-badge { flex: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--bg); font-weight: 700; font-size: 14px; box-shadow: 0 0 8px #0008 inset; }
+
+/* ---------- Hiệu ứng mở khóa thành tựu (thông báo trượt vào, mạnh dần theo bậc) ---------- */
+#ach-toasts { position: fixed; top: 54px; right: 14px; z-index: 30; display: flex; flex-direction: column; gap: 10px; width: min(370px, calc(100vw - 28px)); pointer-events: none; }
+.ach-toast { --ach: var(--cyan); pointer-events: auto; position: relative; overflow: hidden; display: flex; gap: 12px; align-items: center; padding: 10px 14px 10px 10px; cursor: pointer;
+  background: linear-gradient(135deg, var(--panel2), var(--inset)); border: 1px solid var(--ach); border-radius: 6px;
+  box-shadow: 0 8px 28px #000a, 0 0 16px -4px var(--ach); animation: ach-in .55s cubic-bezier(.2, .9, .25, 1.12) both, ach-glow 2.4s ease-in-out .55s infinite; }
+.ach-toast:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.ach-toast.out { animation: ach-out .4s ease-in both; }
+.ach-ico { flex: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--ach);
+  background: radial-gradient(circle, color-mix(in srgb, var(--ach) 38%, transparent), transparent 72%); }
+.ach-ico img { image-rendering: pixelated; animation: ach-pop .75s .15s cubic-bezier(.3, 1.6, .4, 1) both; }
+.ach-txt { min-width: 0; }
+.ach-kicker { color: var(--ach); font-size: 11px; font-weight: bold; letter-spacing: .7px; text-transform: uppercase; }
+.ach-name { color: #fff; font-weight: bold; font-size: 15px; overflow-wrap: anywhere; }
+.ach-desc { color: var(--dim); font-size: 12px; }
+.ach-pts { color: var(--gold); font-size: 12.5px; font-weight: bold; margin-top: 2px; }
+.ach-shine { position: absolute; inset: 0; pointer-events: none; transform: translateX(-130%); background: linear-gradient(110deg, transparent 38%, rgba(255, 255, 255, .3) 50%, transparent 62%); animation: ach-shine 1.5s .35s ease-out 1 both; }
+.ach-toast.tier-rare { border-width: 2px; }
+.ach-toast.tier-rare .ach-shine { animation-iteration-count: 2; animation-delay: .35s; }
+.ach-toast.tier-legend { border-width: 2px; background: linear-gradient(135deg, #2f2718, #12171c 70%); box-shadow: 0 10px 34px #000b, 0 0 30px -2px var(--ach); padding: 14px 16px 14px 12px; }
+.ach-toast.tier-legend .ach-name { font-size: 17px; color: var(--ach); text-shadow: 0 0 10px color-mix(in srgb, var(--ach) 60%, transparent); }
+.ach-toast.tier-legend .ach-ico { width: 64px; height: 64px; box-shadow: 0 0 18px var(--ach); }
+.ach-toast.tier-legend .ach-shine { animation: ach-shine 2.2s .35s ease-in-out infinite; }
+.ach-toast.tier-legend::before { content: ""; position: absolute; inset: -40% -10%; pointer-events: none; opacity: .35; mix-blend-mode: screen;
+  background: radial-gradient(circle at 18% 50%, var(--ach), transparent 45%); animation: ach-aura 2.6s ease-in-out infinite; }
+@keyframes ach-in { from { opacity: 0; transform: translateX(120%) scale(.92); } to { opacity: 1; transform: none; } }
+@keyframes ach-out { to { opacity: 0; transform: translateX(60%) scale(.96); } }
+@keyframes ach-pop { from { transform: scale(.2) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes ach-shine { to { transform: translateX(130%); } }
+@keyframes ach-glow { 50% { box-shadow: 0 8px 28px #000a, 0 0 26px -2px var(--ach); } }
+@keyframes ach-aura { 50% { transform: scale(1.25); opacity: .15; } }
+
+/* ---------- Danh sách thành tựu (nhóm, bậc, tiến độ) ---------- */
+.ach-cat { margin: 14px 0 2px; padding-bottom: 2px; border-bottom: 1px solid var(--line); }
+.ach-row { --ach: var(--cyan); border-left: 3px solid var(--line); }
+.ach-row.todo { opacity: .88; }
+.ach-row.got { border-left-color: var(--ach); }
+.ach-row.got.tier-rare { box-shadow: inset 0 0 12px -6px var(--ach); }
+.ach-row.got.tier-legend { box-shadow: inset 0 0 18px -4px var(--ach); background: linear-gradient(90deg, color-mix(in srgb, var(--ach) 12%, var(--panel)), var(--panel) 60%); }
+.ach-meter { width: 96px; height: 7px; }
+.ach-meter i { background: linear-gradient(90deg, #b98a1a, var(--gold)); }
+.ach-new { color: var(--gold); font-weight: bold; animation: ach-blink 1.1s ease-in-out infinite; }
+@keyframes ach-blink { 50% { opacity: .35; } }
+
+@media (max-width: 760px) { #ach-toasts { top: 8px; right: 8px; left: 8px; width: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  .ach-toast, .ach-toast::before, .ach-shine, .ach-ico img, .ach-new { animation: none !important; }
+  .ach-shine { display: none; }
+}
+
+/* ---------- bảng nhiệm vụ tông môn ---------- */
+.mission-box { width: 720px; }
+.rank-bar { height: 8px; background: var(--inset); border: 1px solid var(--line); border-radius: 4px; margin: 8px 4px; overflow: hidden; }
+.rank-bar i { display: block; height: 100%; background: linear-gradient(90deg, #b98a1a, var(--gold)); }
+.mission-run { padding: 8px 12px; margin: 8px 0; border: 1px solid var(--line2); }
+
+/* ---------- đăng nhập / tài khoản ---------- */
+[hidden] { display: none !important; }
+.auth-screen { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.auth-card { width: 420px; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 18px; box-shadow: 0 16px 48px #0008; }
+.auth-title { margin: 0 0 6px; text-align: center; color: var(--gold); font-family: var(--serif); font-size: 24px; letter-spacing: .06em; }
+.auth-form { display: grid; gap: 12px; margin-top: 4px; }
+.auth-field { display: grid; gap: 4px; } .auth-field label { font-weight: 700; font-size: 13.5px; }
+.auth-in { width: 100%; text-align: left; font-weight: 500; color: var(--fg); background: var(--inset); }
+.auth-in:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.auth-show { cursor: pointer; } .auth-msg { min-height: 1.4em; text-align: center; }
+.linkbtn { background: none; border: 0; color: var(--cyan); text-decoration: underline; cursor: pointer; font-size: 13.5px; padding: 6px; border-radius: 4px; }
+.linkbtn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.acct { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.acct-mail { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acct-row { display: flex; justify-content: center; margin-bottom: 8px; }
+
+/* ---------- thông báo nhỏ ---------- */
+#toasts { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--dock-h) + var(--safe-b) + 14px); z-index: 30; display: grid; gap: 8px; width: min(440px, calc(100vw - 24px)); pointer-events: none; }
+.toast { pointer-events: auto; cursor: pointer; background: var(--panel2); border: 1px solid var(--line); border-left: 4px solid var(--cyan); border-radius: var(--r-sm); padding: 10px 14px; box-shadow: 0 8px 24px #0008; animation: toast-in .18s ease-out; }
+.toast-good { border-left-color: var(--green); } .toast-bad { border-left-color: var(--seal); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
