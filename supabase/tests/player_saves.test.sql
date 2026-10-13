@@ -13,7 +13,7 @@ insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('222222
 \i supabase/migrations/20261011000000_player_saves.sql
 \i supabase/migrations/20261012000000_delete_account_and_checks.sql
 \i supabase/migrations/20261013000000_leaderboard.sql
-\i supabase/migrations/20261014000000_leaderboard_fix.sql
+\i supabase/migrations/20261015000000_leaderboard_fix.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
