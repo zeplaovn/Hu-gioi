@@ -1,11 +1,11 @@
 // So sánh tốc độ tu hành giữa các loại linh căn bằng đúng công thức của game (chỉ nhập định + thọ nguyên, một build cố định).
-// Dùng:  node tools/sim_root.mjs [tên cấu hình ...]      (mặc định chạy mọi cấu hình trong CONFIGS)
+// Dùng:  node scripts/sim_root.mjs [tên cấu hình ...]      (mặc định chạy mọi cấu hình trong CONFIGS)
 // Mỗi cấu hình có thể ghi đè: speed = hệ số nhân tốc độ tu chung (mô phỏng chỉnh nhịp TT.PROG), exp(kind, realm) = cộng tốc độ tu luyện của linh căn, life(kind) = thọ nguyên cộng thêm mỗi lần đại đột phá, keep(kind) = cộng tỉ lệ giữ tu vi khi đột phá hỏng.
 import fs from "node:fs"; import path from "node:path"; import vm from "node:vm";
 const root = path.resolve(import.meta.dirname, "..");
 const ctx = vm.createContext({ console, Math, Date, Object, Array, Set, Number, String, JSON, Map });
 ctx.window = ctx;
-for (const f of ["js/data.js", "js/idle_data.js", "js/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
+for (const f of ["js/core/data.js", "js/systems/idle_data.js", "js/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
 const TT = vm.runInContext("TT", ctx);
 const mkRng = s => () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 
@@ -20,7 +20,7 @@ const isRare = els => els.some(e => TT.RARE_EL.includes(e));
 export const CONFIGS = {
   "hiện tại": {},
 };
-if (fs.existsSync(path.join(root, "tools/sim_root_configs.mjs"))) Object.assign(CONFIGS, (await import("./sim_root_configs.mjs")).default(TT));
+if (fs.existsSync(path.join(root, "scripts/sim_root_configs.mjs"))) Object.assign(CONFIGS, (await import("./sim_root_configs.mjs")).default(TT));
 
 const MONTH_S = TT.IDLE.MONTH_TICKS * TT.IDLE.TICK_MS / 1000;
 const fmtT = s => s < 90 ? `${Math.round(s)}s` : s < 5400 ? `${(s / 60).toFixed(0)}ph` : s < 172800 ? `${(s / 3600).toFixed(1)}h` : `${(s / 86400).toFixed(1)}ng`;
@@ -30,9 +30,9 @@ function run(els, cfg, seed) {
   const p = new TT.Player("Nam", 20, BUILD.race, BUILD.alloc, { name: "T", root: kind });
   p.lifespan = TT.RACES[BUILD.race][0] + 20;
   const info = TT.rootInfo(kind), rare = isRare(els);
-  const baseRoot = () => info.exp + TT.rootBonus(p, "exp");          // phần linh căn gốc của game
+  const baseRoot = () => info.exp + TT.rootBonus(p, "exp");
   const em = p.exp_mult.bind(p);
-  const memo = {};                                                   // hệ số chỉ đổi theo cảnh giới nên tính một lần cho nhanh
+  const memo = {};
   p.exp_mult = () => memo[p.realm] ??= (em() - baseRoot() + (cfg.exp ? cfg.exp(els, p.realm, info, rare, TT.rootBonus(p, "exp")) : baseRoot()) + BUILD.extra[Math.min(p.realm, 8)]) * (cfg.speed || 1);
   let months = 0; const times = {};
   while (p.realm < 9 && months < 120000) {

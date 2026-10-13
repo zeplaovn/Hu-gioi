@@ -1,11 +1,11 @@
 // Chạy thử cân bằng bí cảnh bằng đúng công thức của game (không cần trình duyệt).
-// Dùng:  node tools/sim_balance.mjs
+// Dùng:  node scripts/sim_balance.mjs
 import fs from "node:fs"; import path from "node:path"; import vm from "node:vm";
 
 const root = path.resolve(import.meta.dirname, "..");
 const ctx = vm.createContext({ console, Math, Date, Object, Array, Set, Number, String, JSON, Map });
 ctx.window = ctx;
-for (const f of ["js/data.js", "js/idle_data.js", "js/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
+for (const f of ["js/core/data.js", "js/systems/idle_data.js", "js/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
 const TT = vm.runInContext("TT", ctx);
 
 const SK_BY_REALM = [[], ["Dưỡng Khí Quyết"], ["Dưỡng Khí Quyết", "Thanh Phong Kiếm Pháp", "Kim Cang Thể"],

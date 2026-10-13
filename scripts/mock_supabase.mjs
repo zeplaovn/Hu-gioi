@@ -1,5 +1,5 @@
 // Máy chủ Supabase giả (chỉ phần game dùng) để kiểm thử và phát triển cục bộ, không cần dự án thật.
-//   node tools/mock_supabase.mjs            -> http://localhost:54321
+//   node scripts/mock_supabase.mjs          -> http://localhost:54321
 // Hành vi bám sát supabase/migrations (rev, conflict, too_fast, kích thước...) và API Auth thật (mã lỗi, refresh token xoay vòng).
 import http from "node:http"; import crypto from "node:crypto";
 
@@ -47,7 +47,7 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
         if (grant === "refresh_token") {
           const uid = refresh.get(body.refresh_token);
           if (!uid) return send(res, 400, { code: 400, error_code: "refresh_token_not_found", msg: "Invalid Refresh Token: Refresh Token Not Found" });
-          refresh.delete(body.refresh_token);                  // xoay vòng: refresh token chỉ dùng được một lần
+          refresh.delete(body.refresh_token);
           return send(res, 200, issue([...users.values()].find(x => x.id === uid)));
         }
         return send(res, 400, { msg: "unsupported grant_type" });
@@ -80,7 +80,7 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
           if (JSON.stringify(p_save ?? "").length > 262144 || JSON.stringify(p_meta).length > 262144) return fail("too_large");
           if (isObj(p_save) && isObj(p_save.player)) { const q = p_save.player, n = k => typeof q[k] === "number"; if (!(n("realm") && n("tang") && n("months") && n("age") && n("lifespan") && q.realm >= 0 && q.realm <= 8 && q.tang >= 1 && q.tang <= 9 && q.months >= q.realm * 9 + q.tang - 1 && q.age >= 1 && q.age <= 20000 && q.lifespan >= 1 && q.lifespan <= 20000)) return fail("implausible"); }
           if (!Number.isInteger(p_rev) || p_rev < 0) return fail("bad_rev");
-          if (isObj(p_save) && isObj(p_save.player)) {                  // giống trigger lb_sync: giữ thành tích tốt nhất
+          if (isObj(p_save) && isObj(p_save.player)) {
             const q = p_save.player, level = q.realm * 9 + q.tang, b = board.get(uid), name = String(q.name || "").replace(/[\u0000-\u001f]/g, "").trim().slice(0, 24) || "Vô danh";
             if (!b || level > b.level || (level === b.level && q.months <= b.months)) board.set(uid, { name, level, months: q.months, updated_at: new Date().toISOString(), at: b && level === b.level && q.months === b.months ? b.at : Date.now() });
           }
@@ -101,6 +101,6 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const m = createMock({ port: +process.env.PORT || 54321, anonKey: process.env.ANON_KEY || "local-dev-anon-key-0123456789", confirmEmail: process.env.CONFIRM_EMAIL === "1" });
-  m.state.captcha = process.env.CAPTCHA === "1";   // CAPTCHA=1: đòi mã hCaptcha (token hợp lệ: ok-token)
+  m.state.captcha = process.env.CAPTCHA === "1";
   m.ready.then(p => console.log(`Supabase giả: http://localhost:${p}  (anon key: ${m.anonKey})`));
 }

@@ -1,4 +1,4 @@
-// Các bộ số thử cho tools/sim_root.mjs (hướng 1: đuổi kịp theo cảnh giới, 2: bù thọ nguyên / giữ tu vi, 3: nén biên độ).
+// Các bộ số thử cho scripts/sim_root.mjs (hướng 1: đuổi kịp theo cảnh giới, 2: bù thọ nguyên / giữ tu vi, 3: nén biên độ).
 export default TT => {
   const lerp = (a, b, t) => a + (b - a) * Math.max(0, Math.min(1, t));
   /** Hướng 1: bonus tu vi của linh căn trôi dần về MID khi lên cảnh giới (hết trôi ở realm END). rareExp: bonus Dị căn trước khi trôi. */

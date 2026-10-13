@@ -1,0 +1,121 @@
+/* ---------- thanh thao tác nhanh trên điện thoại ---------- */
+.dock { display: none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1150px) {
+  .main { grid-template-columns: minmax(0, 1fr) 280px; }
+  .col-center { grid-column: 1; grid-row: 1 / span 2; order: 1; }
+  .col-right { grid-column: 2; grid-row: 1; }
+  .col-left { grid-column: 2; grid-row: 2; }
+  .create-screen { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  :root { --dock-h: 64px; }
+  .topbar { padding: 8px 12px; gap: 6px 14px; } .game-title { font-size: 17px; }
+  /* thứ tự trên điện thoại: thông tin nhân vật -> cảnh + nhập định -> nhật ký -> menu; thao tác chính nằm ở thanh cố định phía dưới */
+  .main { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
+  .col-center, .col-right, .col-left { grid-column: 1; grid-row: auto; }
+  .col-left { order: 1; } .col-center { order: 2; } .col-right { order: 3; }
+  .realm { font-size: 21px; }
+  .col-right { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .col-right .sec, .col-right .small, .col-right .btn.seal { grid-column: 1 / -1; }
+  .col-right .btn.act { margin: 0; }
+  .btn.act { font-size: 13.5px; padding-left: 8px; }
+  .btn.act kbd { display: none; }
+  .col-right .btn.dup, .col-right .btn.seal { display: none; }
+  .farm-grid .deco.d-scare, .farm-grid .deco.d-rune { display: none; }
+  .plots { grid-template-columns: 1fr; }
+  .row-item { flex-wrap: wrap; } .row-btns { width: 100%; justify-content: flex-end; }
+  .btn.wide { min-width: 220px; }
+  .form-grid { grid-template-columns: 90px minmax(0, 1fr) 44px; }
+  .kv .k { flex-basis: 100%; } .kv-hint { margin-left: 0; }
+  .el-badge { width: 36px; height: 36px; font-size: 12px; }
+  .stat-row { grid-template-columns: 110px 30px 40px 40px 26px; }
+  /* modal thành tấm trượt từ đáy màn hình */
+  .overlay { align-items: flex-end; padding: 0; }
+  .box { width: 100% !important; border-radius: 14px 14px 0 0; max-height: 92dvh; padding-bottom: calc(16px + var(--safe-b)); animation: sheet-up .18s ease-out; }
+  .confirm-box { border-radius: 14px 14px 0 0; }
+  @keyframes sheet-up { from { transform: translateY(24px); opacity: .6; } }
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 8px calc(8px + var(--safe-b)); background: rgba(11, 21, 21, .96); border-top: 1px solid var(--line); }
+  .dock .btn { flex-direction: column; gap: 2px; min-height: 48px; padding: 4px 2px; font-size: 12px; margin: 0; width: 100%; justify-content: center; }
+  .dock .btn .btn-label { flex: none; text-align: center; }
+  .dock .btn.seal { font-size: 12.5px; margin: 0; border-radius: 10px 6px 11px 7px; }
+  .dock .btn-ico { width: 20px; height: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .box, .toast { animation: none; } .btn { transition: none; } .btn.seal.ready { animation: none; }
+}
+@media (forced-colors: active) { .btn, .seg, .hub-tab, .field { border: 1px solid ButtonText; } .btn.seal.ready { outline: 2px solid Highlight; } }
+
+/* ---------- Khung họa tiết (assets/ui/frame/*, tạo bằng scripts/make_frames.py; nằm cuối file để thắng mọi quy tắc .box phía trên) ----------
+   Xếp bằng nhiều lớp nền: 4 góc + ngọc + 4 cạnh lặp. Viền thật (border) chỉ mỏng bằng đường viền nên nội dung không bị thu hẹp. */
+.box {
+  border: solid transparent; border-width: 13px 17px 12px; padding: 8px 12px 12px;
+  background: url(../assets/ui/frame/w_tl.png) no-repeat left top / 44.72px 49.4px,
+    url(../assets/ui/frame/w_tr.png) no-repeat right top / 44.72px 49.4px,
+    url(../assets/ui/frame/w_bl.png) no-repeat left bottom / 44.72px 29.12px,
+    url(../assets/ui/frame/w_br.png) no-repeat right bottom / 44.72px 29.12px,
+    url(../assets/ui/frame/gem.png) no-repeat center 1.82px / 43.68px 18.2px,
+    url(../assets/ui/frame/gem.png) no-repeat center bottom 0.26px / 43.68px 18.2px,
+    url(../assets/ui/frame/w_top.png) repeat-x left top / auto 49.4px,
+    url(../assets/ui/frame/w_bot.png) repeat-x left bottom / auto 29.12px,
+    url(../assets/ui/frame/w_left.png) repeat-y left top / 44.72px auto,
+    url(../assets/ui/frame/w_right.png) repeat-y right top / 44.72px auto, var(--bg);
+  background-origin: border-box;
+}
+.scene-wrap {
+  position: relative; border: solid transparent; border-width: 11px 15px 10px; overflow: visible; border-radius: 0;
+}
+.scene-wrap::after {
+  content: ""; position: absolute; inset: -11px -15px -10px; pointer-events: none; z-index: 2;
+  background: url(../assets/ui/frame/w_tl.png) no-repeat left top / 34.4px 38.0px,
+    url(../assets/ui/frame/w_tr.png) no-repeat right top / 34.4px 38.0px,
+    url(../assets/ui/frame/w_bl.png) no-repeat left bottom / 34.4px 22.4px,
+    url(../assets/ui/frame/w_br.png) no-repeat right bottom / 34.4px 22.4px,
+    url(../assets/ui/frame/gem.png) no-repeat center 1.4px / 33.6px 14.0px,
+    url(../assets/ui/frame/gem.png) no-repeat center bottom 0.2px / 33.6px 14.0px,
+    url(../assets/ui/frame/w_top.png) repeat-x left top / auto 38.0px,
+    url(../assets/ui/frame/w_bot.png) repeat-x left bottom / auto 22.4px,
+    url(../assets/ui/frame/w_left.png) repeat-y left top / 34.4px auto,
+    url(../assets/ui/frame/w_right.png) repeat-y right top / 34.4px auto;
+  background-origin: border-box;
+}
+.col-left {
+  position: relative; border: solid transparent; border-width: 12px 14px 12px; padding: 6px 10px 8px;
+}
+.col-left::after {
+  content: ""; position: absolute; inset: -12px -14px -12px; pointer-events: none; z-index: 2;
+  background: url(../assets/ui/frame/t_tl.png) no-repeat left top / 31.28px 46.0px,
+    url(../assets/ui/frame/t_tr.png) no-repeat right top / 31.28px 46.0px,
+    url(../assets/ui/frame/t_bl.png) no-repeat left bottom / 31.28px 32.2px,
+    url(../assets/ui/frame/t_br.png) no-repeat right bottom / 31.28px 32.2px,
+    url(../assets/ui/frame/t_top.png) repeat-x left top / auto 46.0px,
+    url(../assets/ui/frame/t_bot.png) repeat-x left bottom / auto 32.2px,
+    url(../assets/ui/frame/t_left.png) repeat-y left top / 31.28px auto,
+    url(../assets/ui/frame/t_right.png) repeat-y right top / 31.28px auto;
+  background-origin: border-box;
+}
+@media (max-width: 760px) { .box { padding-bottom: calc(12px + var(--safe-b)); } }
+
+/* Bảng xếp hạng */
+.board-box { width: 560px; }
+.board-body { max-height: 56vh; overflow-y: auto; margin: 8px 0; }
+.board-list { list-style: none; margin: 0; padding: 0; }
+.board-row { display: grid; grid-template-columns: 2.4em 1fr auto auto; gap: 4px 10px; align-items: baseline; padding: 6px 8px; border-bottom: 1px dotted var(--line); }
+.board-row.me { background: rgba(255, 210, 90, .12); outline: 1px solid var(--gold, #e8c15a); }
+.board-rank { text-align: center; font-weight: 700; }
+.board-name { font-weight: 700; overflow-wrap: anywhere; }
+.board-realm { font-weight: 700; white-space: nowrap; }
+.board-you { margin-top: 10px; }
+@media (max-width: 760px) { .board-row { grid-template-columns: 2.2em 1fr auto; } .board-time { grid-column: 2 / 4; } }
+
+.captcha-box { display: flex; justify-content: center; min-height: 78px; } .captcha-box[hidden] { display: none; }
+
+/* Gợi ý việc nên làm */
+.hint-box { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 10px; background: rgba(255, 210, 90, .08); border: 1px solid var(--line); border-left: 3px solid var(--gold, #e8c15a); border-radius: 8px; }
+.hint-box[hidden] { display: none; }
+.hint-text { flex: 1; min-width: 0; line-height: 1.4; }
+/* Bảng xếp hạng: tab */
+.board-tabs { display: flex; gap: 6px; justify-content: center; margin: 6px 0; }
+.board-tabs .seg { flex: 0 1 auto; }
+.btn.cooling { opacity: .6; }

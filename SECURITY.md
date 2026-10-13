@@ -3,7 +3,7 @@
 Game chạy 100% trong trình duyệt, nên **mã nguồn luôn được tải về máy người chơi** và **save nằm trong máy họ**.
 Không có cách nào chặn tuyệt đối; các lớp dưới đây chỉ nâng độ khó.
 
-## 1. Chống sửa save (`js/security.js`)
+## 1. Chống sửa save (`js/infrastructure/security.js`)
 | Lớp | Chặn được | Không chặn được |
 |---|---|---|
 | Chữ ký HMAC-SHA256 trên save, Thiên Mệnh và file xuất | Sửa tay `localStorage` / file JSON, chép đè save lạ | Người đọc code lấy khóa (`SALT`) rồi tự ký lại |
@@ -11,7 +11,7 @@ Không có cách nào chặn tuyệt đối; các lớp dưới đây chỉ nân
 | Thiên Mệnh: điểm đã tiêu phải khớp đúng giá nâng cấp, tổng điểm không vượt mức kiếm được | Cộng điểm tay | — |
 | Save cũ chưa ký được chấp nhận **một lần** để chuyển đổi; sau đó bắt buộc có chữ ký | Xóa chữ ký để lách | Người xóa luôn khóa `tu_tien_sec_v1` rồi nạp save tự tạo (vẫn bị lọc hợp lý ở trên) |
 
-**Khóa ký không còn nằm trong repo.** `js/security.js` chỉ chứa chỗ giữ chỗ `__TVDL_SALT__`; `npm run build` thay nó bằng biến môi trường `TVDL_SALT`.
+**Khóa ký không còn nằm trong repo.** `js/infrastructure/security.js` chỉ chứa chỗ giữ chỗ `__TVDL_SALT__`; `npm run build` thay nó bằng biến môi trường `TVDL_SALT`.
 - Tạo khóa: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`, rồi đặt vào Vercel / Cloudflare > Environment Variables với tên `TVDL_SALT`.
 - Build trên CI mà thiếu `TVDL_SALT` sẽ **báo lỗi và dừng**, để không phát hành nhầm bản dùng khóa dev.
 - Chạy trực tiếp từ mã nguồn (không build) dùng khóa dev tạm, save của bản dev không dùng được cho bản phát hành.
@@ -31,7 +31,7 @@ Kiểm thử tự động: `npm test` (SHA-256 và HMAC đối chiếu `node:cry
 
 ## 2. Che mã nguồn (`npm run build`)
 - Gộp + nén + làm rối toàn bộ `js/` thành một file `dist/app.<hash>.js`, chuỗi bị tách và mã hóa base64.
-- `dist/` chỉ chứa thứ cần chạy: **không** có `assets_src/`, `tools/`, `*.bat`, `*.sh`, README, `.git`.
+- `dist/` chỉ chứa thứ cần chạy: **không** có `assets_src/`, `scripts/`, `tests/`, README, `.git`.
 - Làm rối chỉ là rào cản, không phải mã hóa: ai kiên nhẫn vẫn đọc được bằng DevTools.
 
 ## 3. Quan trọng: repo GitHub đang công khai

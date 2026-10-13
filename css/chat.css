@@ -1,4 +1,4 @@
-/* Chat thế giới (js/chat.js). Dùng các biến màu của style.css. */
+/* Chat thế giới (js/ui/chat.js). Dùng các biến màu chung từ css/base.css. */
 .chat-fab { position: fixed; right: 12px; bottom: calc(var(--dock-h) + var(--safe-b) + 12px); z-index: 8; display: inline-flex; align-items: center; gap: 2px;
   min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--cyan); background: var(--panel2); color: var(--cyan); font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 4px 14px #0009; }
 .chat-fab:hover { background: var(--hover); }

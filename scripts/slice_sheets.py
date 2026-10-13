@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Cắt 3 ảnh sheet trong assets_src/ (lưới 4 cột x 3 hàng) thành sprite lẻ trong assets/.
-Chạy:  pip install pillow numpy scipy   rồi   python tools/slice_sheets.py
+Chạy:  pip install pillow numpy scipy   rồi   python scripts/slice_sheets.py
 Thay ảnh sheet mới (cùng bố cục 4x3) rồi chạy lại là cập nhật asset."""
 import os
 import numpy as np

@@ -1,0 +1,67 @@
+/* Thiên Vân Đại Lục - giao diện.
+   Hướng thiết kế: mực núi + ngọc bích + giấy dó, một điểm nhấn duy nhất là ấn chu sa của nút Đột phá.
+   Chữ: serif cho tiêu đề (có đủ dấu tiếng Việt trên hệ điều hành phổ biến), sans hệ thống cho nội dung. Không cần tải font ngoài. */
+:root {
+  color-scheme: dark;
+  /* Bảng màu gốc của game (giữ nguyên theo bản đầu). Các biến --inset / --hover / --off là màu gốc trước đây viết cứng trong CSS. */
+  --bg: #10161c; --panel: #16202a; --panel2: #1c2a37; --line: #2a4a3a; --line2: #2c3d4d; --inset: #0b1015; --hover: #22313f;
+  --fg: #e8e8e8; --green: #3cff3c; --dim: #8a9aa8; --off: #4a5560; --red: #ff5c5c; --gold: #ffd24a; --cyan: #7fdcff; --orange: #ff9f43;
+  --seal: #c8452e; --seal-deep: #a93520; --paper: #fff4e6;
+  --serif: "Noto Serif", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif;
+  --sans: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --r: 8px; --r-sm: 6px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --dock-h: 0px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+body { min-height: 100vh; min-height: 100dvh; padding-bottom: calc(var(--dock-h) + var(--safe-b)); }
+body.modal-open { overflow: hidden; }
+h2 { font-family: var(--serif); font-size: 19px; line-height: 1.3; margin: 10px 0; }
+button, select, input, textarea { font-family: inherit; }
+img { max-width: 100%; }
+kbd { font: 600 11px/1 var(--sans); color: var(--dim); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 3px 5px; background: var(--inset); }
+
+.t-green, .green { color: var(--green); } .t-red, .red-t { color: var(--red); } .t-gold, .gold-t { color: var(--gold); }
+.t-dim, .dim { color: var(--dim); } .t-cyan, .cyan { color: var(--cyan); } .orange { color: var(--orange); }
+.gold { color: var(--gold); } .bold { font-weight: 700; } .small { font-size: 13px; } .center { text-align: center; }
+.pre { white-space: pre-line; } .pw { white-space: pre-wrap; } .gap { margin-top: 14px; } .spacer { flex: 1; }
+.panel { background: var(--panel); border-radius: var(--r-sm); }
+.sec { margin: 14px 0 6px; font-family: var(--serif); font-weight: 700; color: var(--green); font-size: 14px; letter-spacing: .02em; }
+
+/* ---------- nút ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 7px 14px; font-size: 14.5px; font-weight: 600; cursor: pointer; min-height: 40px;
+  transition: background-color .12s, border-color .12s, transform .05s;
+}
+.btn:hover:not(:disabled) { background: var(--hover); border-color: currentColor; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { color: var(--off); background: var(--panel); border-color: var(--line2); cursor: not-allowed; }
+.btn:focus-visible, .icon-btn:focus-visible, select:focus-visible, .hub-tab:focus-visible, .seg:focus-visible, .stat-name:focus-visible, .log:focus-visible, .log-jump:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.btn.cyan { color: var(--cyan); } .btn.gold { color: var(--gold); } .btn.red { color: var(--red); } .btn.orange { color: var(--orange); } .btn.dimbtn { color: var(--dim); }
+.btn:disabled.cyan, .btn:disabled.gold, .btn:disabled.red, .btn:disabled.orange, .btn:disabled.dimbtn { color: var(--off); }
+.btn.act { width: 100%; justify-content: flex-start; margin: 3px 0; padding-left: 12px; }
+.btn .btn-label { flex: 1; text-align: left; min-width: 0; }
+.btn.wide .btn-label { text-align: center; }
+.btn.wide { min-width: 260px; margin: 6px 0; }
+.btn.sm { min-width: 84px; padding: 5px 12px; min-height: 34px; font-size: 13.5px; }
+.btn.go { min-width: 150px; }
+.btn-ico { width: 22px; height: 22px; object-fit: contain; image-rendering: pixelated; flex: none; }
+.icon-btn { background: none; border: 0; padding: 0; cursor: pointer; line-height: 0; border-radius: 4px; }
+.icon-btn:disabled { cursor: default; }
+.icon-btn img { image-rendering: pixelated; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; } .row.center { justify-content: center; }
+.col { display: flex; flex-direction: column; align-items: center; }
+
+/* Ấn Đột phá: chính là thanh tiến độ tu vi. Đầy thì thành ấn chu sa sáng lên, báo hiệu việc nên làm tiếp theo. */
+.btn.seal { --p: 0%; position: relative; min-height: 48px; font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--paper);
+  background: linear-gradient(90deg, var(--seal-deep) var(--p), #262c33 var(--p)); border: 1px solid var(--seal); border-radius: 10px 6px 11px 7px; margin-top: 8px; }
+.btn.seal:hover:not(:disabled) { background: linear-gradient(90deg, var(--seal) var(--p), #2e353d var(--p)); border-color: var(--red); }
+.btn.seal:disabled { color: var(--off); background: var(--panel); border-color: var(--line2); }
+.btn.seal .seal-pct { font: 600 12.5px var(--sans); opacity: .9; }
+.btn.seal.ready { background: var(--seal); border-color: #ff9a82; box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--seal), 0 0 18px #c8452e88; animation: seal-ring 1.6s ease-out 2; }
+.btn.seal.ready:hover:not(:disabled) { background: #d9533b; }
+@keyframes seal-ring { 0% { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--seal), 0 0 0 3px #c8452eaa; } 100% { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--seal), 0 0 0 14px #c8452e00; } }
