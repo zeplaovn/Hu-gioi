@@ -3,30 +3,30 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Test-only compatibility layer: các test hiện có vẫn dùng đường dẫn JS phẳng cũ.
-// Runtime/browser không tải file này; nó chỉ ánh xạ đường dẫn đọc file sang cấu trúc theo domain mới.
+// Runtime/browser không tải file này; nó chỉ ánh xạ đường dẫn đọc file sang cấu trúc production mới.
 const aliases = new Map([
-  ["js/data.js", "js/core/data.js"],
-  ["js/idle_data.js", "js/systems/idle_data.js"],
-  ["js/assets.js", "js/infrastructure/assets.js"],
-  ["js/player.js", "js/core/player.js"],
-  ["js/ui.js", "js/ui/ui.js"],
-  ["js/scene.js", "js/ui/scene.js"],
-  ["js/minigames.js", "js/systems/minigames.js"],
-  ["js/game.js", "js/core/game.js"],
-  ["js/screens.js", "js/ui/screens.js"],
-  ["js/farm.js", "js/systems/farm.js"],
-  ["js/crafts.js", "js/systems/crafts.js"],
-  ["js/train.js", "js/core/train.js"],
-  ["js/idle.js", "js/systems/idle.js"],
-  ["js/sect.js", "js/systems/sect.js"],
-  ["js/guide.js", "js/ui/guide.js"],
-  ["js/security.js", "js/infrastructure/security.js"],
-  ["js/meta.js", "js/systems/meta.js"],
-  ["js/config.js", "js/online/config.js"],
-  ["js/cloud.js", "js/online/cloud.js"],
-  ["js/auth.js", "js/online/auth.js"],
-  ["js/chat.js", "js/ui/chat.js"],
-  ["js/ux.js", "js/ui/ux.js"],
+  ["js/data.js", "src/game/core/data.js"],
+  ["js/idle_data.js", "src/game/features/idle_data.js"],
+  ["js/assets.js", "src/platform/assets.js"],
+  ["js/player.js", "src/game/core/player.js"],
+  ["js/ui.js", "src/ui/ui.js"],
+  ["js/scene.js", "src/ui/scene.js"],
+  ["js/minigames.js", "src/game/features/minigames.js"],
+  ["js/game.js", "src/game/core/game.js"],
+  ["js/screens.js", "src/ui/screens.js"],
+  ["js/farm.js", "src/game/features/farm.js"],
+  ["js/crafts.js", "src/game/features/crafts.js"],
+  ["js/train.js", "src/game/core/train.js"],
+  ["js/idle.js", "src/game/features/idle.js"],
+  ["js/sect.js", "src/game/features/sect.js"],
+  ["js/guide.js", "src/ui/guide.js"],
+  ["js/security.js", "src/platform/security.js"],
+  ["js/meta.js", "src/game/features/meta.js"],
+  ["js/config.js", "src/services/config.js"],
+  ["js/cloud.js", "src/services/cloud.js"],
+  ["js/auth.js", "src/services/auth.js"],
+  ["js/chat.js", "src/ui/chat.js"],
+  ["js/ux.js", "src/ui/ux.js"],
 ]);
 
 const readFileSync = fs.readFileSync.bind(fs);
