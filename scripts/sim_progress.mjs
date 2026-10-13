@@ -1,10 +1,10 @@
 // Mô phỏng thời gian lên cảnh giới bằng đúng công thức của game (không cần trình duyệt).
-// Dùng:  node tools/sim_progress.mjs          (in bảng thời gian trung bình cho 3 kiểu nhân vật)
+// Dùng:  node scripts/sim_progress.mjs          (in bảng thời gian trung bình cho 3 kiểu nhân vật)
 import fs from "node:fs"; import path from "node:path"; import vm from "node:vm";
 const root = path.resolve(import.meta.dirname, "..");
 const ctx = vm.createContext({ console, Math, Date, Object, Array, Set, Number, String, JSON, Map });
 ctx.window = ctx;
-for (const f of ["js/data.js", "js/idle_data.js", "js/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
+for (const f of ["js/core/data.js", "js/systems/idle_data.js", "js/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
 const TT = vm.runInContext("TT", ctx);
 const mkRng = s => () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 
@@ -24,15 +24,14 @@ function run(profile, seed) {
   p.lifespan = TT.RACES[P.race][0] + 20;
   let bonus = 0; const em = p.exp_mult.bind(p); p.exp_mult = () => em() + bonus;
   const times = {}, ages = {}; let months = 0, fails = 0;
-  const key = () => `${p.realm}`;
   times[0] = 0; ages[0] = 0;
   while (p.realm < TT.REALMS.length && months < 120000) {
-    bonus = P.extra[Math.min(p.realm, 8)];                             // phần tăng tốc từ công pháp / tông môn / pháp khí / Đạo Tâm
+    bonus = P.extra[Math.min(p.realm, 8)];
     const mg = p.monthGain(R);
     p.exp += mg; months++;
     if (months % 12 === 0) p.age++;
     if (p.age >= p.lifespan) return { dead: true, realm: p.realm, tang: p.tang, months, times, ages, fails };
-    const need = p.need_exp(); 
+    const need = p.need_exp();
     if (p.exp >= need) {
       const big = p.tang === 9, chance = p.breakChance(big);
       if (R() < chance) {
