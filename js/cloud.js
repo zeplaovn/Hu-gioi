@@ -188,6 +188,16 @@
     return { top: Array.isArray(top) ? top : [], mine, rank, uid };
   };
 
+  /** Chat thế giới (bảng chat_messages + hàm send_chat, xem migration 20261014). Đọc qua REST, ghi chỉ qua send_chat().
+      chatList({ after }): after > 0 -> các tin có id lớn hơn after (cũ -> mới, tối đa 100); không có after -> 50 tin mới nhất (cũ -> mới). */
+  cloud.chatList = async ({ after = 0 } = {}) => {
+    const token = await freshToken(), cols = "select=id,user_id,name,body,created_at", a = Math.max(0, Math.floor(+after) || 0);
+    const rows = await http(`/rest/v1/chat_messages?${cols}&` + (a > 0 ? `id=gt.${a}&order=id.asc&limit=100` : "order=id.desc&limit=50"), { token });
+    const list = Array.isArray(rows) ? rows : [];
+    return a > 0 ? list : list.reverse();
+  };
+  cloud.chatSend = async body => http("/rest/v1/rpc/send_chat", { method: "POST", token: await freshToken(), body: { p_body: String(body) } });
+
   /** Gọi khi mở game (và sau khi đăng nhập). Trả về một trong:
         { state: "anon" }                 chưa đăng nhập
         { state: "ready", offline }       dùng được dữ liệu trên máy, vào game
