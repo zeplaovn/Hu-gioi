@@ -52,9 +52,63 @@
     return data;
   }
 
+  function ensureTicker() {
+    let root = document.getElementById("serverTicker");
+    if (root) return root;
+    root = document.createElement("div");
+    root.id = "serverTicker";
+    root.className = "server-ticker";
+
+    const label = document.createElement("div");
+    label.className = "server-ticker-label";
+    label.textContent = "THIÊN ĐẠO";
+
+    const win = document.createElement("div");
+    win.className = "server-ticker-window";
+
+    const track = document.createElement("div");
+    track.className = "server-ticker-track";
+    track.id = "serverTickerTrack";
+
+    win.appendChild(track);
+    root.appendChild(label);
+    root.appendChild(win);
+    document.body.appendChild(root);
+    return root;
+  }
+
+  function renderTicker(status) {
+    if (typeof document === "undefined" || !document.body) return;
+    const banner = status && status.banner;
+    const root = ensureTicker();
+    const track = document.getElementById("serverTickerTrack");
+
+    if (!banner || !banner.body) {
+      root.className = "server-ticker";
+      document.body.classList.remove("server-ticker-active");
+      if (track) track.textContent = "";
+      return;
+    }
+
+    const level = ["info", "warning", "critical"].includes(String(banner.level)) ? String(banner.level) : "info";
+    root.className = "server-ticker show " + level;
+    document.body.classList.add("server-ticker-active");
+
+    if (track) {
+      track.textContent = "";
+      if (banner.title) {
+        const strong = document.createElement("strong");
+        strong.textContent = String(banner.title).slice(0, 80) + " —";
+        track.appendChild(strong);
+      }
+      track.appendChild(document.createTextNode(" " + String(banner.body).slice(0, 500)));
+    }
+  }
+
   bridge.status = async () => {
     try {
       lastStatus = await rpc("server_status", {}, null);
+      renderTicker(lastStatus);
       listeners.slice().forEach(fn => { try { fn(lastStatus); } catch (_) {} });
       return lastStatus;
     } catch (_) { return lastStatus; }
@@ -75,11 +129,16 @@
     } catch (_) { return false; }
   };
 
-  bridge.status();
-  bridge.heartbeat();
-  setInterval(() => { if (document.visibilityState !== "hidden") bridge.heartbeat(); }, 45000);
-  setInterval(() => { if (document.visibilityState !== "hidden") bridge.status(); }, 60000);
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") { bridge.status(); bridge.heartbeat(); }
-  });
+  const start = () => {
+    bridge.status();
+    bridge.heartbeat();
+    setInterval(() => { if (document.visibilityState !== "hidden") bridge.heartbeat(); }, 45000);
+    setInterval(() => { if (document.visibilityState !== "hidden") bridge.status(); }, 60000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") { bridge.status(); bridge.heartbeat(); }
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
+  else start();
 })();
