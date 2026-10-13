@@ -1,5 +1,5 @@
 /* Dữ liệu + công thức thuần cho bản idle: nguyên tố / linh căn, tên nhân vật, bí cảnh.
-   File này không đụng DOM nên có thể chạy thử bằng node (xem tools/sim_balance.mjs). */
+   File này không đụng DOM nên có thể chạy thử bằng node (xem scripts/sim_balance.mjs). */
 "use strict";
 (function () {
   /* ---------- hằng số idle ---------- */
@@ -42,7 +42,7 @@
 
   /* ---------- linh căn ---------- */
   // n = số nguyên tố; w = trọng số khi gieo (tổng 97, 3 còn lại là Dị Linh Căn); exp = cộng tốc độ tu luyện; scale = hệ số hiệu quả mỗi nguyên tố
-  // life = thọ nguyên cộng thêm mỗi lần đại đột phá, keep = tu vi giữ thêm khi đột phá thất bại (bù cho linh căn nhiều nguyên tố tu chậm, để không chết già trước đích). Cân bằng bằng `node tools/sim_root.mjs`.
+  // life = thọ nguyên cộng thêm mỗi lần đại đột phá, keep = tu vi giữ thêm khi đột phá thất bại (bù cho linh căn nhiều nguyên tố tu chậm, để không chết già trước đích). Cân bằng bằng `node scripts/sim_root.mjs`.
   TT.ROOT_TYPES = [
     { n: 1, name: "Thiên Linh Căn", exp: 0.40, scale: 1.00, w: 6, life: 0, keep: 0 },
     { n: 2, name: "Song Linh Căn", exp: 0.22, scale: 0.80, w: 18, life: 0, keep: 0 },

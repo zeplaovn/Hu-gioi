@@ -17,7 +17,7 @@ const KINDS = {
 };
 const isRare = els => els.some(e => TT.RARE_EL.includes(e));
 
-/** "hiện tại" = đúng số đang chạy trong game (js/idle_data.js, js/data.js). Thử số mới: tạo tools/sim_root_configs.mjs (không bắt buộc) xuất ra các cấu hình ghi đè; lưu ý monthGain đã gồm TT.PROG.SPEED. */
+/** "hiện tại" = đúng số đang chạy trong game (js/systems/idle_data.js, js/core/data.js). Thử số mới: tạo scripts/sim_root_configs.mjs (không bắt buộc) xuất ra các cấu hình ghi đè; lưu ý monthGain đã gồm TT.PROG.SPEED. */
 export const CONFIGS = {
   "hiện tại": {},
 };

@@ -146,7 +146,7 @@ TT.itemDesc = (name, q = 0) => {
   return "";
 };
 
-/* ---------- Cân bằng tu hành (chỉnh ở đây, rồi chạy `node tools/sim_progress.mjs` để xem thời gian lên cảnh giới) ----------
+/* ---------- Cân bằng tu hành (chỉnh ở đây, rồi chạy `node scripts/sim_progress.mjs` để xem thời gian lên cảnh giới) ----------
    Tu vi cần để lên 1 tầng = (số "tháng tu luyện" của tầng đó) x (tu vi mỗi tháng của nhân vật tham chiếu).
    Nhờ vậy thời gian lên cảnh giới quy được ra thời gian thật, và nhân vật mạnh hơn mức tham chiếu thì lên nhanh hơn tương ứng. */
 TT.PROG = {
@@ -160,7 +160,7 @@ TT.PROG = {
   // tỉ lệ đột phá: đầu + Ngộ Tính x NT + Vận Khí x VK - cảnh giới x R; tầng nhỏ +MINOR, đại đột phá BIG_PEN
   CHANCE: { BASE: 0.50, NT: 0.010, VK: 0.006, R: 0.035, MINOR: 0.20, BIG_PEN: -0.08, MIN: 0.08, MAX: 0.90 },
   KEEP: { minor: 0.70, big: 0.60 },                   // giữ lại bao nhiêu tu vi khi đột phá thất bại
-  SPEED: 1.25,                                        // hệ số nhân tốc độ tu chung (cân bằng cùng linh căn, xem tools/sim_root.mjs)
+  SPEED: 1.25,                                        // hệ số nhân tốc độ tu chung (cân bằng cùng linh căn, xem scripts/sim_root.mjs)
   PILL: 0.06,                                         // Tụ Khí Đan hồi bao nhiêu phần tu vi cần cho 1 tầng
 };
 /** Tu vi cần để vượt qua tầng ở cấp level (1 = Phàm Nhân tầng 1). */
