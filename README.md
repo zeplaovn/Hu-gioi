@@ -42,7 +42,7 @@ js/idle_data.js       dữ liệu + công thức idle: nguyên tố, linh căn, 
 js/idle.js            nhập định, kỳ ngộ, bí cảnh, bảng Chỉ số / Linh căn / Bí cảnh / Kỳ ngộ, báo cáo khi quay lại
 js/guide.js           gợi ý "việc nên làm tiếp" (dòng gợi ý trên màn chính + mục trong báo cáo khi quay lại); chỉ đọc trạng thái, tắt/bật ở bảng Chỉ số nhân vật
 js/sect.js            tông môn nâng cao: nhiệm vụ thời gian thật, chức vị, cống hiến, kho tông môn
-js/meta.js            Thiên Mệnh, thành tựu (+ hiệu ứng mở khóa), lịch sử các kiếp, xuất/nhập save
+js/meta.js            Thiên Mệnh, Mảnh Phi Thăng, thành tựu (+ hiệu ứng mở khóa), lịch sử các kiếp, xuất/nhập save
 js/security.js        chữ ký save, kiểm tra tính hợp lý, sao lưu, chặn đa tab (chống sửa save)
 js/ux.js              ấn Đột phá hiển thị tiến độ, chỉ báo trạng thái lưu
 js/config.js          địa chỉ + khóa công khai của Supabase (build thay vào)
@@ -87,6 +87,8 @@ Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `pyt
 ## Tính năng bản nâng cấp
 - **Thiên Kiếp:** đại đột phá lên Kim Đan trở lên phải chịu nhiều đạo lôi (3 + cảnh giới/2 đạo). Khí huyết về 0 là chết; Hộ Thân Phù và chiến lực giúp giảm sát thương. Vượt kiếp được +1 chỉ số ngẫu nhiên. Game cảnh báo nếu khí huyết quá thấp.
 - **Thiên Mệnh (xuyên kiếp):** chết hoặc phi thăng sẽ nhận điểm Thiên Mệnh, dùng để nâng cấp vĩnh viễn: Thiên Tư (+điểm chỉ số), Túi Càn Khôn (+linh thạch), Trường Sinh (+thọ nguyên), Đạo Tâm (+% tu luyện), Thiên Vận (+Vận Khí). Trùng sinh giữa chừng chỉ nhận một nửa điểm.
+- **Mảnh Phi Thăng:** 12 mảnh mua bằng điểm Thiên Mệnh, giá tăng dần (8, 10, 13 ... 115 điểm, tổng 518), gắn với tài khoản và không trao đổi được; danh hiệu ở mốc 3 / 6 / 9 / 12 mảnh. Trao đổi / đấu giá chỉ làm sau khi việc cấp mảnh do máy chủ xác nhận (dữ liệu Thiên Mệnh hiện nằm ở client).
+- **Hướng dẫn & Cập nhật:** tab trong Thiên Đạo Các, ghi luật Thiên Mệnh khi reset, vắng mặt / tọa hóa, nhiệm vụ tông môn và nhật ký cập nhật (sửa trong `TT.GUIDE_DOCS`, `js/guide.js`).
 - **Thành tựu:** hơn 85 thành tựu chia 9 nhóm (cảnh giới, chiến đấu, kỳ ngộ, bí cảnh, linh căn, tông môn, nghề phụ...), mỗi cái thưởng điểm Thiên Mệnh (xem mục Bản idle).
 - **Kiếp trước:** bảng lịch sử 20 kiếp gần nhất.
 - **Dữ liệu:** sao chép / tải file / nhập / xóa save ngay trong game (mục "Thiên Đạo Các" > "Dữ liệu").

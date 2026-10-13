@@ -65,4 +65,19 @@
   G.refresh = function () { refresh.apply(this, arguments); this.hintRefresh(); };
   G.hintToggle = function () { store.set(!store.get()); this.hintRefresh(); };
   TT.hintOff = () => store.get();
+
+  /** Nội dung hộp "Hướng dẫn & Cập nhật" trong Thiên Đạo Các. */
+  TT.GUIDE_DOCS = {
+    rules: [
+      ["Thiên Mệnh khi reset", "Điểm Thiên Mệnh và Mảnh Phi Thăng gắn với tài khoản. Khi game reset sang bản chính thức, dự kiến Thiên Mệnh chưa tiêu được giữ lại một nửa (làm tròn xuống), Mảnh Phi Thăng đã mua giữ nguyên, thành tựu và Bia Thiên Đạo được lưu. Thông báo ngày reset sẽ được đăng trước ít nhất 1-2 tuần."],
+      ["Vắng mặt và tọa hóa", "Đóng game thì thời gian vẫn trôi: 2 phút đầu tính đủ, sau đó 50%, tối đa 2 giờ mỗi lần. Nếu thọ nguyên cạn trong lúc vắng mặt, nhân vật sẽ tọa hóa. Màn chính luôn hiện thời gian vắng mặt an toàn."],
+      ["Nhiệm vụ tông môn", "Gia nhập tông môn (cần đủ cảnh giới), vào Tông môn rồi mở Bảng nhiệm vụ và bấm Nhận. Nhiệm vụ chạy theo thời gian thật, kể cả khi đóng game; cần khí huyết từ 40% và không đang ở bí cảnh. Hoàn thành được linh thạch, tu vi và cống hiến, thất bại mất khí huyết. Nhiệm vụ nổi bật trong ngày thưởng gấp 1,5 lần. Bật Tự động nhận lại để làm lặp lại."],
+      ["Lịch luyện và Nghỉ ngơi", "Mỗi nút hồi 10 giây thật (bằng 1 tháng nhập định), nên tu vi chủ yếu tăng theo thời gian."],
+      ["Nghề phụ", "Mỗi minigame có nhiều công đoạn. Điểm tổng dưới 30% là thất bại; khi thất bại game cho biết công đoạn kém nhất. Luyện khí thất bại được hoàn lại một nửa quặng."],
+    ],
+    log: [
+      ["13/10/2026", ["Thêm 12 Mảnh Phi Thăng đổi bằng điểm Thiên Mệnh (giá tăng dần), có danh hiệu ở mốc 3/6/9/12 mảnh.", "Nhân vật chết nếu vắng mặt quá lâu; màn chính báo thời gian vắng mặt an toàn.", "Lịch luyện / Nghỉ ngơi có hồi chiêu 10 giây thật; đã bỏ nút Tu luyện bấm tay.", "Bảng xếp hạng cập nhật lại điểm đúng; thêm tab 7 ngày qua.", "Minigame rèn khí dễ hơn, thất bại hoàn nửa quặng; nghề phụ báo rõ lý do thất bại.", "Thêm gợi ý Việc nên làm tiếp (có cảnh báo nghỉ ngơi trước khi đột phá)."]],
+    ],
+  };
+
 })();

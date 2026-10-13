@@ -68,7 +68,7 @@
       if (info.n >= 2 && !TT.RARE_EL.includes(p.root.els[0])) {
         const drop = pick(p.root.els), before = TT.rootLabel(p.root);
         p.root = { els: p.root.els.filter(e => e !== drop) };
-        return `Linh dịch thiên địa gột rửa tạp chất, ${drop} căn tiêu tán: ${before} -> ${TT.rootLabel(p.root)}!`;
+        return `Linh dịch thiên địa gột rửa tạp chất, linh căn được tinh lọc, ${drop} căn tiêu tán (căn càng thuần càng mạnh): ${before} -> ${TT.rootLabel(p.root)}!`;
       }
       const s = statUp(p);
       return `Linh dịch thiên địa tẩy lễ thân thể: tu vi +${fmt(g.encExp(30))}${s ? `, ${s} +1` : ""}.`;
@@ -251,7 +251,11 @@
     else { st = "● Đang nhập định"; col = C.GREEN; }
     U.idleState.textContent = st; U.idleState.style.color = col;
     U.idleRate.textContent = `+${(this.idleMonthGain() / IDLE.MONTH_TICKS).toFixed(1)} tu vi/giây · 1 tháng = ${IDLE.MONTH_TICKS}s`;
-    if (U.idleAway) { const warn = this.p.idle.on && this.p.lifespan - this.p.age <= 40; U.idleAway.textContent = warn ? `⚠ Thọ nguyên còn ${this.p.lifespan - this.p.age} năm. Vắng mặt quá ${TT.fmtTime(TT.safeAway(this.p))} sẽ tọa hóa.` : ""; }
+    if (U.idleAway) {
+      const left = this.p.lifespan - this.p.age, sec = TT.safeAway(this.p), danger = left <= 40;
+      U.idleAway.className = (danger ? "red-t" : "dim") + " small";
+      U.idleAway.textContent = !this.p.idle.on ? "" : Number.isFinite(sec) ? `${danger ? "⚠ " : ""}Thọ nguyên còn ${left} năm: vắng mặt quá ${TT.fmtTime(sec)} nhân vật sẽ tọa hóa.` : "Thọ nguyên còn dài: có thể vắng mặt tối đa 2 giờ mỗi lần mà không lo tọa hóa.";
+    }
     U.barMonth.set(I.mt, IDLE.MONTH_TICKS, `Tháng kế tiếp sau ${IDLE.MONTH_TICKS - I.mt}s`);
     const btnLabel = U.idleBtn.querySelector("span"), want = I.on ? "Tạm dừng" : "Tiếp tục";
     if (btnLabel.textContent !== want) btnLabel.textContent = want;

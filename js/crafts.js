@@ -4,6 +4,11 @@
   const { ALCH, GEAR, QN, TALIS, FireStage, TimingStage, PathStage } = TT;
   const G = TT.Game.prototype;
 
+  /** Lý do thất bại: công đoạn kém nhất và ngưỡng tối thiểu để thành phẩm. */
+  const whyFail = (stages, sc, s) => {
+    const i = sc.indexOf(Math.min(...sc)), st = stages[i];
+    return `\nLý do: công đoạn "${st.name}" chỉ đạt ${int(sc[i] * 100)}%.\nTổng điểm ${int(s * 100)}%, cần tối thiểu ${int(TT.Q_CUT[0] * 100)}% để thành phẩm.`;
+  };
   G.openCrafts = function () { this.openDialog("Nghề phụ", () => this.rowsCrafts()); };
 
   G.rowsCrafts = function () {
@@ -56,7 +61,7 @@
     const done = sc => {
       if (sc === null) { this.log("Bạn bỏ dở lò đan, dược liệu hỏng hết.", "red"); return "Đã hủy - mất nguyên liệu."; }
       const s = Math.min(1.0, sc.reduce((a, b) => a + b, 0) / sc.length * 0.9 + 0.1 * hq), q = TT.qualityOf(s);
-      if (q === 0) { this.log(`Luyện ${name} thất bại, đan hóa tro.`, "red"); return `Luyện đan thất bại!\nDược liệu hóa thành tro (${int(s * 100)}%).`; }
+      if (q === 0) { this.log(`Luyện ${name} thất bại, đan hóa tro.`, "red"); return `Luyện đan thất bại!\nDược liệu hóa thành tro.${whyFail(stages, sc, s)}`; }
       const cnt = q >= 3 && Math.random() < Math.max(0.0, s - 0.6) ? 2 : 1;
       this.invAdd(name, q, cnt);
       const msg = `${name} - ${QN[q]}  (độ tinh khiết ${int(s * 100)}%)${cnt === 2 ? "\nXuất hiện đan văn! Được 2 viên." : ""}`;
@@ -78,7 +83,7 @@
     const done = sc => {
       if (sc === null) { this.log("Bạn bỏ dở, tờ phù rách nát.", "red"); return "Đã hủy - mất giấy phù."; }
       const s = 0.65 * sc[0] + 0.35 * sc[1], q = TT.qualityOf(s);
-      if (q === 0) { this.log(`Vẽ ${name} thất bại, phù cháy rụi.`, "red"); return `Phù lục thất bại!\nPhù văn đứt đoạn (${int(s * 100)}%).`; }
+      if (q === 0) { this.log(`Vẽ ${name} thất bại, phù cháy rụi.`, "red"); return `Phù lục thất bại!\nPhù văn đứt đoạn.${whyFail(stages, sc, s)}`; }
       this.invAdd(name, q);
       const msg = `${name} - ${QN[q]}  (độ hoàn mỹ ${int(s * 100)}%)`;
       this.log("Vẽ thành " + msg, "gold");
@@ -103,7 +108,7 @@
         const back = Math.floor(g.mat / 2); if (back > 0) this.invAdd("Quặng Linh Thiết", 0, back, true);   // thất bại hoàn lại một nửa quặng
         this.log(`Rèn ${name} thất bại, phôi nứt vỡ${back ? `, thu lại ${back} Quặng Linh Thiết` : ""}.`, "red");
         this.refresh(); this.autosave();
-        return `Luyện khí thất bại!\nPhôi nứt vỡ (${int(s * 100)}%).${back ? `\nThu lại ${back} Quặng Linh Thiết.` : ""}`;
+        return `Luyện khí thất bại!\nPhôi nứt vỡ.${whyFail(stages, sc, s)}${back ? `\nThu lại ${back} Quặng Linh Thiết.` : ""}`;
       }
       const old = this.p.gear[name] || 0;
       let msg;

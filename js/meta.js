@@ -13,6 +13,11 @@
     luck: { name: "Thiên Vận", icon: "orb_gold", cost: [5, 9, 14], desc: "+1 Vận Khí khởi đầu mỗi cấp." },
   };
 
+  /* ---------- Mảnh Phi Thăng: 12 mảnh, giá tăng dần ~26% mỗi mảnh, gắn với tài khoản (không trao đổi được) ---------- */
+  const FRAG = { cost: [8, 10, 13, 17, 22, 28, 36, 46, 58, 73, 92, 115],
+    titles: { 3: "Hành giả cầu phi", 6: "Lữ khách thiên môn", 9: "Chân nhân vấn đỉnh", 12: "Thiên Đạo Chi Chủ" } };
+  const fragSpent = n => FRAG.cost.slice(0, n).reduce((a, b) => a + b, 0);
+
   /* ---------- Thành tựu ---------- */
   const RN = ["", "Luyện Khí", "Trúc Cơ", "Kim Đan", "Nguyên Anh", "Hóa Thần", "Luyện Hư", "Đại Thừa", "Độ Kiếp"];
   const ACH = [];
@@ -120,7 +125,7 @@
 
   /* ---------- trạng thái ---------- */
   const fresh = () => ({
-    v: 1, legacy: 0, earned: 0, up: { pts: 0, stone: 0, life: 0, exp: 0, luck: 0 },
+    v: 1, legacy: 0, earned: 0, up: { pts: 0, stone: 0, life: 0, exp: 0, luck: 0 }, frag: 0,
     history: [], ach: {}, totals: { lives: 0, wins: 0, kills: 0 }, best: 0,
   });
   const num = (v, d = 0) => (Number.isFinite(+v) ? Math.max(0, Math.trunc(+v)) : d);
@@ -131,6 +136,7 @@
     if (!raw || typeof raw !== "object") return m;
     m.legacy = num(raw.legacy); m.earned = num(raw.earned); m.best = num(raw.best);
     for (const k of Object.keys(UP)) m.up[k] = Math.min(UP[k].cost.length, num(raw.up?.[k]));
+    m.frag = Math.min(FRAG.cost.length, num(raw.frag));
     for (const k of Object.keys(m.totals)) m.totals[k] = num(raw.totals?.[k]);
     if (raw.ach && typeof raw.ach === "object") for (const a of ACH) if (raw.ach[a.id]) m.ach[a.id] = num(raw.ach[a.id], 1);
     if (Array.isArray(raw.history)) {
@@ -145,13 +151,13 @@
 
   /** Kiểm tra tính nhất quán: điểm đã tiêu phải khớp đúng giá các nâng cấp, tổng điểm không vượt mức có thể kiếm được. */
   const consistent = m => {
-    let spent = 0;
+    let spent = fragSpent(m.frag);
     for (const k of Object.keys(UP)) for (let i = 0; i < m.up[k]; i++) spent += UP[k].cost[i];
     const achPts = ACH.reduce((n, a) => n + (m.ach[a.id] ? a.pts : 0), 0);
     const allAch = ACH.reduce((n, a) => n + a.pts, 0);
     return m.earned - m.legacy === spent && m.earned >= achPts && m.earned <= allAch + m.totals.lives * 80;
   };
-  const plain = m => ({ v: 1, legacy: m.legacy, earned: m.earned, up: m.up, history: m.history, ach: m.ach, totals: m.totals, best: m.best });
+  const plain = m => ({ v: 1, legacy: m.legacy, earned: m.earned, up: m.up, frag: m.frag, history: m.history, ach: m.ach, totals: m.totals, best: m.best });
 
   let M = fresh();
   {
@@ -173,6 +179,15 @@
     const c = M.upCost(k);
     if (c === undefined || M.legacy < c) return false;
     M.legacy -= c; M.up[k]++; save(); return true;
+  };
+
+  M.FRAG = FRAG;
+  M.fragCost = () => FRAG.cost[M.frag];            // undefined nếu đã đủ 12 mảnh
+  M.fragTitle = () => { const t = Object.keys(FRAG.titles).map(Number).filter(n => M.frag >= n).pop(); return t ? FRAG.titles[t] : ""; };
+  M.buyFrag = () => {
+    const c = M.fragCost();
+    if (c === undefined || M.legacy < c) return false;
+    M.legacy -= c; M.frag++; save(); return true;
   };
 
   /* ---------- hiệu ứng mở khóa thành tựu: thông báo trượt vào + vòng sáng / pháo hạt trong cảnh, mạnh dần theo bậc ---------- */
@@ -326,7 +341,7 @@
     if (this.hub) this.hub.close();
     const m = TT.ui.modal("dlg-box hub-box", () => { m.close(); this.hub = null; }, { label: "Thiên Đạo Các" });
     this.hub = m;
-    const tabs = [["up", "Thiên Mệnh"], ["ach", "Thành tựu"], ["hist", "Kiếp trước"], ["data", "Dữ liệu"]];
+    const tabs = [["up", "Thiên Mệnh"], ["ach", "Thành tựu"], ["hist", "Kiếp trước"], ["info", "Hướng dẫn"], ["data", "Dữ liệu"]];
     const render = (t, note = "") => {
       const body = h("div", { class: "rows" });
       let head = "";
@@ -342,6 +357,13 @@
           }, { cls: "gold sm", disabled: c === undefined || M.legacy < c });
           body.append(row(u.icon, `${u.name}  [${lv}/${u.cost.length}]`, u.desc, h("div", { class: "gold small" }, c === undefined ? "Đã đạt cấp tối đa" : `Giá: ${c} điểm`), b));
         }
+        const fc = M.fragCost(), full = fc === undefined;
+        body.append(h("div", { class: "ach-cat t-green bold sec" }, "Mảnh Phi Thăng"));
+        body.append(h("div", { class: "dim small hub-note" }, "Gom đủ 12 mảnh để mở đường tới Thượng Giới. Mảnh gắn với tài khoản, đã mua thì giữ vĩnh viễn; mỗi mảnh sau đắt hơn mảnh trước. Mốc 3 / 6 / 9 / 12 mảnh nhận danh hiệu."));
+        body.append(row("orb_gold", `Mảnh Phi Thăng  [${M.frag}/12]`, M.fragTitle() ? `Danh hiệu: ${M.fragTitle()}` : "Chưa có danh hiệu (mốc đầu: 3 mảnh).",
+          h("div", { class: "small" }, h("span", { class: "meter ach-meter" }, h("i", { style: { width: Math.round(M.frag / 12 * 100) + "%" } })), " ",
+            h("span", { class: "gold" }, full ? "Đã gom đủ 12 mảnh" : `Mảnh kế tiếp: ${fc} điểm  ·  còn cần ${fragSpent(12) - fragSpent(M.frag)} điểm cho đủ bộ`)),
+          TT.ui.btn(full ? "Đủ bộ" : "Mua", () => { if (M.buyFrag()) render("up"); }, { cls: "gold sm", disabled: full || M.legacy < fc })));
       } else if (t === "ach") {
         const n = ACH.filter(a => M.ach[a.id]).length, pts = ACH.reduce((x, a) => x + (M.ach[a.id] ? a.pts : 0), 0);
         head = `Thành tựu: ${n} / ${ACH.length}   ·   đã nhận ${pts} điểm Thiên Mệnh từ thành tựu`;
@@ -376,6 +398,13 @@
             `Kiếp ${x.n}: ${x.gender} ${x.race} - ${x.realm}`, `Thọ ${x.age} tuổi. ${x.cause}`,
             h("div", { class: "cyan small" }, `${fmtDate(x.ts)}  ·  +${x.pts} Thiên Mệnh`)));
         }
+      } else if (t === "info") {
+        head = "Hướng dẫn & Cập nhật";
+        const D = TT.GUIDE_DOCS || { rules: [], log: [] };
+        body.append(h("div", { class: "ach-cat t-green bold sec" }, "Luật chơi cần biết"));
+        for (const [name, txt] of D.rules) body.append(row(null, name, txt));
+        body.append(h("div", { class: "ach-cat t-green bold sec" }, "Nhật ký cập nhật"));
+        for (const [date, items] of D.log) body.append(row(null, date, "", h("div", { class: "small" }, items.map(x => h("div", {}, "• " + x)))));
       } else {
         head = "Quản lý dữ liệu";
         const ta = h("textarea", { class: "data-ta", rows: 4, placeholder: "Dán dữ liệu đã xuất vào đây rồi bấm Nhập…" });
