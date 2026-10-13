@@ -1,10 +1,21 @@
 # Supabase — Thiên Vân Đại Lục
 
-Thư mục này là **nguồn chuẩn duy nhất** cho schema/RPC/RLS của game và Admin Console.
+Thư mục này là **nguồn chuẩn duy nhất** cho schema, RPC và RLS của game + Admin Console.
+
+Repo dashboard không giữ một bản schema riêng.
+
+## Cấu trúc
+
+```text
+supabase/
+  README.md
+  migrations/    lịch sử thay đổi schema/RPC/RLS
+  tests/         SQL/RLS/RPC regression tests
+```
 
 ## Migration order
 
-Chạy theo thứ tự tên file (hoặc dùng `supabase db push`):
+Migration chạy theo thứ tự tên file:
 
 ```text
 20261011000000_player_saves.sql
@@ -19,36 +30,89 @@ Chạy theo thứ tự tên file (hoặc dùng `supabase db push`):
 20261017000000_maintenance_admin_bypass.sql
 ```
 
-Không copy schema sang repo dashboard. Dashboard chỉ là client quản trị; mọi quyền thật nằm ở PostgreSQL/RPC/RLS trong repo này.
+Dùng Supabase CLI thì để migration system chạy theo timestamp. Nếu chạy thủ công trong SQL Editor, vẫn chạy theo thứ tự trên.
+
+## Quy tắc migration
+
+Tên file:
+
+```text
+YYYYMMDDHHMMSS_mo_ta_ngan.sql
+```
+
+Phần timestamp quyết định order; phần mô tả giúp con người đọc.
+
+Quan trọng:
+
+- migration đã từng chạy production là **lịch sử**, không xóa chỉ vì tên cũ hoặc đã có migration fix sau đó;
+- không sửa migration cũ để thay đổi production state; tạo migration mới;
+- migration compatibility/cleanup được phép tồn tại nếu database cũ thực sự cần nó;
+- không copy SQL sang repo dashboard/wiki;
+- trước destructive change phải xem dependency, RLS, RPC và rollback/forward-fix path.
 
 ## Admin bootstrap
 
-Sau khi chạy các migration admin, tạo một Supabase Auth account riêng cho quản trị rồi whitelist UUID:
+Admin là một Supabase Auth account riêng. Sau khi tạo account, whitelist UUID:
 
 ```sql
 insert into public.admin_users(user_id, role, enabled)
 values ('AUTH_USER_UUID', 'owner', true)
 on conflict (user_id) do update
-set role = 'owner', enabled = true, updated_at = now();
+set role = 'owner',
+    enabled = true,
+    updated_at = now();
 ```
 
-Role hợp lệ: `viewer`, `moderator`, `admin`, `owner`.
+Role hợp lệ:
+
+```text
+viewer
+moderator
+admin
+owner
+```
+
+`admin_users` chỉ cấp role cho Auth user; password/email vẫn do Supabase Auth quản lý.
 
 ## Maintenance
 
-`admin_set_maintenance(true, reason)` bật maintenance. Khi bật:
+`admin_set_maintenance(true, reason)` bật maintenance.
 
-- game client hiển thị maintenance gate;
-- `save_game()` trả `maintenance_mode`;
-- `send_chat()` trả `maintenance_mode`;
-- dashboard admin vẫn hoạt động để có thể tắt maintenance;
-- tài khoản có vai trò `admin` hoặc `owner` (đang bật) vẫn vào game, lưu và chat được trong lúc bảo trì để thử bản mới (migration `20261017…`). Trên màn hình bảo trì có nút **Quản trị viên đăng nhập**; người chơi thường đăng nhập vẫn bị chặn và vẫn thấy màn hình bảo trì.
+Player thường:
 
-`server_status()` vẫn public cho `anon/authenticated` nhưng chỉ trả trạng thái maintenance và banner đang active.
+- thấy maintenance gate trong game;
+- `save_game()` bị guard;
+- `send_chat()` bị guard.
 
-## Security
+Admin Console vẫn hoạt động để có thể tắt maintenance.
 
-- Không đưa `service_role`/secret key vào browser.
-- Player write đi qua RPC server-authoritative.
-- Admin action đi qua RPC có RBAC và audit.
-- RLS vẫn là lớp bảo vệ mặc định cho bảng dữ liệu.
+Migration `20261017000000_maintenance_admin_bypass.sql` cho account `admin`/`owner` đang enabled bypass backend maintenance guard để thử game trong lúc server đóng. Client UI vẫn không phải security boundary; quyền thật nằm trong RPC/helper database.
+
+## Banner và server status
+
+`server_status()` là RPC public-safe cho game client. Nó chỉ trả dữ liệu cần cho player UI như maintenance state và active banner.
+
+Không thêm admin metadata/private state vào RPC public này.
+
+## Security rules
+
+- browser chỉ dùng public anon/publishable key;
+- không expose `service_role`, Supabase secret key, database password hoặc JWT signing secret;
+- player write đi qua RPC scoped/validated;
+- admin write đi qua RPC có RBAC và audit;
+- RLS là deny-by-default boundary cho bảng dữ liệu;
+- Auction/Trade/economy tương lai phải transaction server-side.
+
+Threat model đầy đủ: `../SECURITY.md`.
+
+## Tests
+
+SQL tests:
+
+```text
+supabase/tests/player_saves.test.sql
+supabase/tests/chat.test.sql
+supabase/tests/admin.test.sql
+```
+
+Khi thay đổi RPC/RLS có behavior quan trọng, cập nhật regression test tương ứng nếu môi trường test hỗ trợ.
