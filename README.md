@@ -1,139 +1,207 @@
-# Thiên Vân Đại Lục – bản Web
+# Thiên Vân Đại Lục
 
-Game tu tiên dạng idle chạy ngay trên trình duyệt, viết bằng HTML + CSS + JavaScript thuần (không framework; chạy được mà không cần build).
+Game tu tiên idle theo **thời gian thật** chạy trên trình duyệt, viết bằng HTML/CSS/JavaScript thuần.
 
-## Chạy
-- **Cách nhanh:** mở file `index.html` bằng trình duyệt (Chrome/Edge/Firefox).
-- **Hoặc chạy server cục bộ** (khuyến nghị): cần Node 18 trở lên, chạy `npm run serve` rồi vào `http://localhost:8000`.
-- Đưa lên GitHub Pages / Netlify / bất kỳ static hosting nào: chỉ cần upload nguyên thư mục.
+Production: `https://hugioi.vercel.app`
 
-Dữ liệu lưu bằng `localStorage` (khóa `tu_tien_save_v2`) – tự lưu sau mỗi hành động, nút "Lưu game" để lưu thủ công.
-Phím tắt: **T** tu luyện · **L** lịch luyện · **N** nghỉ ngơi · **D** đột phá. Minigame: **Space** hoặc chuột/chạm.
+Định hướng cốt lõi của dự án là mỗi nhân vật là một **kiếp tu hành có lịch sử, lựa chọn, nhân quả và di sản riêng**; thời gian, thọ nguyên và tọa hóa là một phần thật của gameplay.
 
-## Bản idle
-- **Nhập định (idle):** tu vi tự tăng mỗi giây (10 giây = 1 tháng trong game), có thể **Tạm dừng / Tiếp tục**. Tu vi dừng ở mức viên mãn để bạn tự quyết định đột phá hoặc áp chế thêm. Game không còn chế độ "Tu luyện tự động" (bế quan tua nhanh) và nút tương ứng; nút bấm tay "Tu luyện" cũng đã bỏ để không ai tăng tốc tu vi bằng cách bấm liên tục: tu vi chỉ tăng theo thời gian thật. Lịch luyện / Nghỉ ngơi có hồi chiêu 10 giây thật (bằng 1 tháng nhập định, đếm ngược ngay trên nút) nên cũng không bấm liên tục để tua nhanh được.
-- **Vắng mặt vẫn tu luyện:** 2 phút đầu tính đủ, sau đó 50%, tối đa 2 giờ mỗi lần; mở lại game sẽ có bảng báo cáo. **Vắng mặt quá lâu thì nhân vật có thể tọa hóa** (đặc trưng của game): thời gian vẫn trôi khi đóng game. Khi thọ nguyên còn dưới 40 năm, game báo rõ có thể vắng mặt tối đa bao lâu.
-- **Đạo hiệu:** đặt tên khi tạo nhân vật (tối đa 20 ký tự, tự lọc ký tự nguy hiểm) hoặc gieo xúc xắc ra tên ngẫu nhiên.
-- **Linh căn nguyên tố:** gieo khi tạo nhân vật. Thiên / Song / Tam / Tứ / Ngũ Linh Căn từ Kim, Mộc, Thủy, Hỏa, Thổ (càng ít nguyên tố càng tu nhanh nhưng đủ nguyên tố thì mạnh toàn diện), và 3% ra **Dị Linh Căn** (Lôi, Băng, Phong). Mỗi nguyên tố cho chỉ số riêng; dùng **Tinh Hoa** để tôi luyện (tối đa cấp 10, +8% hiệu quả mỗi cấp).
-- **Bí cảnh:** 8 bí cảnh theo nguyên tố, mở dần theo cảnh giới. Thám hiểm chạy theo thời gian thật (cả khi đóng game), địch mạnh dần theo tầng, hạ Thủ Lĩnh được Tinh Hoa và vật phẩm. Ngũ hành tương khắc ảnh hưởng sát thương: Kim > Mộc > Thổ > Thủy > Hỏa > Kim.
-- **Kỳ ngộ:** mỗi tháng có cơ hội gặp 1 trong 23 sự kiện (Thường / Hiếm / Cực hiếm / Thiên cơ, gồm cả vài tai ương nhỏ). Phúc Duyên và Vận Khí càng cao càng dễ gặp kỳ ngộ hiếm.
-- **Linh điền theo thời gian thực:** 1 tháng linh điền = 1 phút thật, Linh Thảo chín sau 6 phút và đồng hồ đếm ngược hiện trên từng ô. Cây vẫn lớn khi đóng game hoặc tạm dừng nhập định; lúc vắng mặt cây chỉ lớn đến khi chín rồi chờ bạn (không sâu bệnh, khô hạn hay héo). Khi bạn có mặt vẫn cần tưới nước, bón thổ, trừ sâu. Luyện đan / vẽ phù / luyện khí vẫn là minigame hoàn thành ngay.
-- **Chỉ số:** nút "Chỉ số nhân vật" hiện đủ thông tin, chỉ số gốc, chiến đấu (công, thủ, khí huyết, chí mạng, né tránh, hồi phục) và nguồn tăng tốc độ tu luyện.
-- **Nhiệm vụ tông môn (thời gian thực):** bảng nhiệm vụ theo bậc (1-5) cho 3 tông môn, mỗi nhiệm vụ chạy vài chục giây đến vài phút thật, kể cả khi đóng game; có tỉ lệ thành công / "xuất sắc" (thưởng x2), mỗi ngày có 1 nhiệm vụ nổi bật (thưởng x1,5) và nút tự nhận lại. Hoàn thành nhận linh thạch, tu vi, vật phẩm và **cống hiến**. Cống hiến tổng cộng quyết định **chức vị** (Ngoại Môn → Thái Thượng Trưởng Lão: mở nhiệm vụ bậc cao, tăng tốc độ tu luyện và lương năm); cống hiến còn lại đổi vật phẩm ở **Kho tông môn**.
-- **Thành tựu:** hơn 85 thành tựu chia 9 nhóm (Thiên Đạo Các). Khi mở khóa có thông báo trượt vào, tăng hiệu ứng theo bậc (mới / hiếm / huyền thoại): vòng sáng, pháo hạt và chữ nổi trong cảnh, kèm điểm Thiên Mệnh. Thành tựu chưa đạt có thanh tiến độ.
-- Save cũ vẫn đọc được: nhân vật được gán tên "Đạo Hữu" và một linh căn ngẫu nhiên.
+## Repo trong hệ sinh thái
 
-## Cấu trúc
-```
-index.html                         trang chính; giữ thứ tự nạp CSS/JS
-css/base.css                       biến màu, typography, nút và helper chung
-css/game.css                       màn chơi, modal, linh điền, tạo nhân vật
-css/features.css                   Thiên Đạo Các, thành tựu, nhiệm vụ, auth, toast
-css/responsive.css                 responsive, mobile dock, khung họa tiết, bảng xếp hạng
-css/chat.css                       giao diện chat
-js/core/data.js                    dữ liệu thế giới + nghề phụ + tiện ích
-js/core/player.js                  nhân vật + save/load
-js/core/game.js                    lõi hành động, chiến đấu, đột phá, túi đồ, cửa hàng, công pháp
-js/core/train.js                   công thức tu vi mỗi tháng, điều kiện đột phá
-js/systems/idle_data.js            dữ liệu + công thức idle, linh căn, bí cảnh (không đụng DOM)
-js/systems/idle.js                 nhập định, kỳ ngộ, bí cảnh, báo cáo quay lại
-js/systems/farm.js                 linh điền
-js/systems/crafts.js               luyện đan / vẽ phù / luyện khí
-js/systems/minigames.js            giữ lửa / bấm nhịp / kéo phù văn
-js/systems/sect.js                 nhiệm vụ, chức vị, cống hiến, kho tông môn
-js/systems/meta.js                 Thiên Mệnh, Mảnh Phi Thăng, thành tựu, lịch sử kiếp, xuất/nhập save
-js/ui/ui.js                        helper DOM, modal, xác nhận, thông báo, thanh tiến độ
-js/ui/scene.js                     cảnh canvas: parallax, sprite, VFX
-js/ui/screens.js                   màn tạo nhân vật, màn chính, hộp thoại
-js/ui/guide.js                     gợi ý "việc nên làm tiếp" + tài liệu trong game
-js/ui/chat.js                      giao diện và tương tác chat
-js/ui/ux.js                        ấn Đột phá hiển thị tiến độ, chỉ báo trạng thái lưu
-js/online/config.js                địa chỉ + khóa công khai Supabase (build thay vào)
-js/online/cloud.js                 đăng nhập, đồng bộ Supabase, xử lý xung đột
-js/online/auth.js                  màn đăng nhập / đăng ký / đăng xuất
-js/infrastructure/assets.js        nạp ảnh + bảng ánh xạ icon
-js/infrastructure/security.js      chữ ký save, kiểm tra hợp lý, sao lưu, chặn đa tab
-js/main.js                         entrypoint khởi tạo game
-supabase/migrations/               schema, RPC, RLS, bảng xếp hạng/chat
-supabase/tests/                    kiểm thử SQL
-scripts/serve.mjs                  server tĩnh cục bộ (npm run serve)
-scripts/build.mjs                  build phát hành -> dist/
-scripts/mock_supabase.mjs          Supabase giả để thử cục bộ (npm run mock)
-scripts/sim_balance.mjs            mô phỏng cân bằng bí cảnh
-scripts/sim_progress.mjs           mô phỏng tiến độ tu hành
-scripts/sim_root.mjs               so sánh linh căn; cấu hình ở sim_root_configs.mjs
-scripts/gen_leaderboard_bounds.mjs sinh cận dưới tháng tu cho bảng xếp hạng
-scripts/slice_sheets.py            cắt sheet -> sprite lẻ
-scripts/make_frames.py             cắt frames_sheet -> assets/ui/frame/*
-tests/                             kiểm thử Node (npm test)
-assets/                            toàn bộ ảnh chạy trong game
-assets_src/                        sheet nguồn dùng khi tạo/cắt lại asset
+```text
+zeplaovn/Hu-gioi            game + backend migrations + tests
+zeplaovn/Hu-gioi-dashboard  Admin Console
+zeplaovn/Hu-gioi-wiki       player wiki + public roadmap
 ```
 
-## Tu hành & độ khó (cân bằng lại)
-Mọi số liệu nằm trong `TT.PROG` (`js/core/data.js`); công thức ở `TT.needExp`, `Player.monthGain / breakChance / failKeep`.
+Không copy schema/RPC sang dashboard hoặc wiki. Database source of truth nằm trong repo game.
 
-- **Tu vi cần để lên tầng** tính theo "số tháng tu luyện" của từng cảnh giới × tu vi/tháng tham chiếu, nên chậm hơn nhiều và luôn tăng dần (kể cả khi sang cảnh giới mới). Tầng 9 đắt hơn ×1,4.
-- **Tu vi/tháng** = (4 + Căn Cốt×1,5 + Ngộ Tính×2 + cấp×1,5) × hệ số công pháp/linh căn × `TT.PROG.SPEED` (1,25) × ngẫu nhiên 0,8–1,3.
-- **Đột phá** gốc 50%, cộng Ngộ Tính, Vận Khí, Tâm Cảnh, đan dược và tích lũy thất bại; đại cảnh giới bị trừ 8%; kẹp 8%–90%. Thất bại giữ lại 70% (tầng nhỏ) / 60% (đại cảnh giới) tu vi và mất sinh lực.
-- **Thọ nguyên** cộng khi đại đột phá: 70 / 120 / 270 / 600 / 950 / 1250 / 1550 / 1800 năm. Vật phẩm, kỳ ngộ tăng thêm 50% mỗi cảnh giới. 1 năm game = 120 giây idle, nên thọ nguyên là bức tường thật sự.
-- **Cửa hàng theo cảnh giới:** 13 loại đan dược / thọ nguyên / chỉ số, mỗi cảnh giới mở thêm hàng mới (cảnh giới kế tiếp hiển thị khóa). Giá = giá gốc × (1 + 0,5 × cảnh giới). Đan tu vi, Phá Cảnh, thọ nguyên và chỉ số có giới hạn mua mỗi kỳ nhập hàng (30 phút thật) để không mua đan tua nhanh tu vi; dữ liệu trong `TT.ITEMS`, `TT.SHOP` (`js/core/data.js`).
-- **Minigame nghề phụ:** điểm của mọi công đoạn được ghi lại kể cả khi công đoạn kết thúc bằng thao tác chuột / phím (lỗi cũ làm luyện khí và vẽ phù hay thất bại dù làm đúng); có test `tests/test_minigames.mjs` bằng DOM giả.
-- **Chỉ số vật phẩm đã giảm:** Tụ Khí Đan 6% tu vi cần để lên tầng (hàng cao cấp 4–5%), Phá Cảnh Đan +12% (chế tạo +10%), Phá Cảnh Phù +5%, Cường Lực Phù +8, Hộ Thân Phù giảm 30%, phẩm chất Cực phẩm ×1,9 (trước ×2,5), Phi Kiếm +6, Pháp Bào +24, Linh Giới +4%.
-- **Mục tiêu thời gian thật (build trung bình, sau cân bằng linh căn):** Luyện Khí ~10 phút, Trúc Cơ ~1 giờ, Kim Đan ~3,6 giờ, Nguyên Anh ~10 giờ, Hóa Thần ~22 giờ, Đại Thừa ~3 ngày, Độ Kiếp ~5 ngày, Phi thăng ~7,6 ngày (build mạnh ~4,4 ngày). Người chơi mới (build yếu) thường chết già quanh Đại Thừa / Độ Kiếp và phải luân hồi với bản thân mạnh hơn.
-- **Cân bằng linh căn (cùng build, chỉ khác linh căn):** vẫn phân hóa rõ nhưng ai cũng có thể tới Phi thăng. Tốc độ tu: Thiên +40%, Song +22%, Tam +8%, Tứ −2%, Ngũ −10%, Dị +45%; Phi thăng khoảng 6,7 ngày (Thiên Thủy, Dị Băng / Phong) tới 8,0 ngày (Ngũ). Linh căn nhiều nguyên tố được bù: Tam +25 / Tứ +55 / Ngũ +100 năm thọ nguyên mỗi đại đột phá và giữ thêm 3% / 6% / 10% tu vi khi đột phá hỏng; Dị căn không được bù. Offline chỉ chậm hơn về giờ thật, không làm ai chết sớm hơn vì thọ nguyên tính theo tháng trong game.
-- Chạy `node scripts/sim_progress.mjs` sau khi chỉnh số để kiểm tra lại.
-- Chạy `node scripts/sim_root.mjs [tên cấu hình]` để so sánh các loại linh căn (cùng một build, chỉ khác linh căn): thời gian tới Hóa Thần / Phi thăng và tỉ lệ sống đến Phi thăng. Muốn thử số khác, tạo `scripts/sim_root_configs.mjs` xuất các cấu hình ghi đè (không bắt buộc).
+## Chạy local
 
-## Asset mới (cập nhật)
-| Sheet | Thư mục | Dùng ở đâu |
-|---|---|---|
-| `frames_sheet.png` (khung dọc + khung ngang) | `assets/ui/frame/` | **Khung họa tiết** hoa sen / mây / ngọc: viền mọi hộp thoại, khung cảnh và cột nhân vật (CSS trong `css/responsive.css`, xếp bằng nhiều lớp nền nên co giãn theo mọi kích thước). Chạy lại `python3 scripts/make_frames.py` nếu đổi ảnh gốc |
-| `plants_sheet.png` (12 linh thảo) | `assets/plants/` | Biểu tượng **Linh Thảo** theo phẩm chất (cỏ → nhân sâm → linh chi → sen băng), Trường Thọ Quả, huy hiệu phẩm chất dự kiến trên ô đất chín |
-| `farm_sheet.png` (12 ô đất / đồ trang trí) | `assets/farm/` | **Linh điền**: ô trống → hạt → mầm → lớn → chín → héo; hiệu ứng tưới nước / bón thổ; bù nhìn, bia đá, hàng rào, máng nước trang trí |
-| `skills_sheet.png` (12 huy hiệu) | `assets/skills/` | Biểu tượng **công pháp** (5 huy hiệu), **tông môn** (sách xanh/đỏ/lục), nhiệm vụ tông môn, nút Công pháp, Luyện đan/Vẽ phù/Luyện khí |
+Yêu cầu Node.js 18+ cho dev tooling.
 
-Thay ảnh trong `assets_src/` (giữ bố cục lưới 4×3) rồi chạy `python scripts/slice_sheets.py` để cập nhật (đây là công cụ làm ảnh duy nhất cần Python; game và build không cần).
+```bash
+npm install
+npm run serve
+```
 
-## Tính năng bản nâng cấp
-- **Thiên Kiếp:** đại đột phá lên Kim Đan trở lên phải chịu nhiều đạo lôi (3 + cảnh giới/2 đạo). Khí huyết về 0 là chết; Hộ Thân Phù và chiến lực giúp giảm sát thương. Vượt kiếp được +1 chỉ số ngẫu nhiên. Game cảnh báo nếu khí huyết quá thấp.
-- **Thiên Mệnh (xuyên kiếp):** chết hoặc phi thăng sẽ nhận điểm Thiên Mệnh, dùng để nâng cấp vĩnh viễn: Thiên Tư (+điểm chỉ số), Túi Càn Khôn (+linh thạch), Trường Sinh (+thọ nguyên), Đạo Tâm (+% tu luyện), Thiên Vận (+Vận Khí). Trùng sinh giữa chừng chỉ nhận một nửa điểm.
-- **Mảnh Phi Thăng:** 12 mảnh mua bằng điểm Thiên Mệnh, giá tăng dần (8, 10, 13 ... 115 điểm, tổng 518), gắn với tài khoản và không trao đổi được; danh hiệu ở mốc 3 / 6 / 9 / 12 mảnh. Trao đổi / đấu giá chỉ làm sau khi việc cấp mảnh do máy chủ xác nhận (dữ liệu Thiên Mệnh hiện nằm ở client).
-- **Hướng dẫn & Cập nhật:** tab trong Thiên Đạo Các, ghi luật Thiên Mệnh khi reset, vắng mặt / tọa hóa, nhiệm vụ tông môn và nhật ký cập nhật (sửa trong `TT.GUIDE_DOCS`, `js/ui/guide.js`).
-- **Thành tựu:** hơn 85 thành tựu chia 9 nhóm (cảnh giới, chiến đấu, kỳ ngộ, bí cảnh, linh căn, tông môn, nghề phụ...), mỗi cái thưởng điểm Thiên Mệnh (xem mục Bản idle).
-- **Kiếp trước:** bảng lịch sử 20 kiếp gần nhất.
-- **Dữ liệu:** sao chép / tải file / nhập / xóa save ngay trong game (mục "Thiên Đạo Các" > "Dữ liệu").
-- Dữ liệu xuyên kiếp lưu ở khóa `tu_tien_meta_v1` (tách khỏi `tu_tien_save_v2`, save cũ vẫn dùng được).
+Sau đó mở:
 
-## Giao diện
-- Bố cục 3 cột trên máy tính; trên điện thoại thông tin nhân vật lên đầu, **thanh thao tác nhanh** (Lịch luyện, Nghỉ ngơi, Đột phá, Thêm) cố định ở đáy màn hình, cửa sổ trượt lên từ đáy.
-- **Nút Đột phá** hiển thị % tu vi và sáng lên khi đủ điều kiện.
-- Thanh trên cùng có chỉ báo **Đã lưu hh:mm** (đổi sang đỏ nếu không lưu được). Mọi xác nhận (trùng sinh, rút bí cảnh, bỏ nhiệm vụ, Thiên Kiếp, nhập/xóa dữ liệu) là hộp thoại trong game.
-- Dùng được bằng bàn phím và trình đọc màn hình (modal giữ focus, Esc để đóng); tôn trọng chế độ giảm chuyển động của hệ điều hành.
+```text
+http://localhost:8000
+```
 
-## Tài khoản và lưu trên máy chủ (Supabase, tuỳ chọn)
-Khi cấu hình Supabase, người chơi **đăng ký / đăng nhập bằng email + mật khẩu** (Supabase Auth), tiến trình và Thiên Mệnh được lưu trên tài khoản và chơi tiếp được trên mọi thiết bị. Không cấu hình thì game chạy ngoại tuyến như cũ (chỉ lưu trên máy).
+Game source vẫn là static web app; Node được dùng cho build, test và tooling.
 
-**Cài đặt (một lần):**
-1. Tạo dự án trên [supabase.com](https://supabase.com). Vào *SQL Editor*, dán và chạy lần lượt **cả năm** file trong `supabase/migrations/` theo thứ tự tên (`20261011…player_saves`, `20261012…delete_account_and_checks`, `20261013…leaderboard`, `20261014…chat`, `20261015…leaderboard_fix`), hoặc dùng `supabase db push`. File này tạo bảng `player_saves` có Row Level Security (mỗi người chỉ đọc được dòng của mình, **không ghi trực tiếp được**) và hàm `save_game()` làm nơi ghi duy nhất, có kiểm tra kích thước, tần suất và phiên bản.
-2. *Authentication > Sign In / Providers*: bật Email, đặt độ dài mật khẩu tối thiểu **8**, nên bật **Confirm email**. *Authentication > URL Configuration*: đặt Site URL là địa chỉ game. Trên Vercel, build tự xuất `.vercel/output` (Build Output API) để CSP `connect-src` có đúng địa chỉ Supabase; `vercel.json` / `_headers` ở gốc cho phép `https://*.supabase.co` (Vercel chỉ đọc file gốc, không đọc `dist/`); bản build thu hẹp lại đúng project của bạn trong `index.html` (meta) và `.vercel/output`. Sau khi deploy, kiểm tra header `Content-Security-Policy` của trang có `connect-src https://<project>.supabase.co`. **CAPTCHA (hCaptcha, tuỳ chọn):** lấy *site key* ở hcaptcha.com, đặt biến môi trường `HCAPTCHA_SITEKEY` (công khai, dạng UUID) cùng `SUPABASE_URL` / `SUPABASE_ANON_KEY` khi build, rồi vào Supabase *Authentication > Attack Protection* bật *Enable CAPTCHA protection*, chọn hCaptcha và dán **secret key** (chỉ dán ở Supabase, không đưa vào Vercel hay code). Hai bước phải bật cùng lúc: Supabase đã bật mà game chưa có site key thì mọi đăng ký / đăng nhập bị từ chối; có site key mà Supabase chưa bật thì ô xác minh vẫn hiện nhưng không chặn được bot. Thử cục bộ: `CAPTCHA=1 npm run mock` (token hợp lệ là `ok-token`).
-3. *Project Settings > API*: lấy **Project URL** và khóa **anon / publishable**. Trên Vercel / Cloudflare đặt hai biến môi trường `SUPABASE_URL` và `SUPABASE_ANON_KEY` (cùng với `TVDL_SALT`). Khóa này công khai theo thiết kế của Supabase; **không bao giờ** dùng khóa `service_role` hay `sb_secret_`: build sẽ từ chối.
-4. `npm run build` tự thay cấu hình vào `js/online/config.js` và mở CSP `connect-src` đúng địa chỉ dự án (không có Supabase thì CSP vẫn chặn mọi kết nối mạng).
+## Scripts
 
-**Cách hoạt động:**
-- Mở game lần đầu: hiện màn đăng nhập / đăng ký. Đăng ký xong vào thẳng màn tạo nhân vật.
-- `localStorage` là bộ nhớ đệm; mỗi lần game lưu, thay đổi được gom lại và đẩy lên máy chủ sau vài giây, và khi đóng hoặc ẩn tab. Mất mạng vẫn chơi được, có mạng lại tự đồng bộ. Thanh trên cùng hiện trạng thái: *Đã đồng bộ / Đang đồng bộ / Ngoại tuyến*.
-- **Hai thiết bị cùng chơi:** mỗi lần ghi mang theo số phiên bản (`rev`); nếu máy chủ đã có bản mới hơn, game hỏi bạn giữ bản nào thay vì âm thầm ghi đè.
-- **Người chơi cũ:** lần đăng nhập đầu, nếu máy có save ngoại tuyến và tài khoản còn trống, game đề nghị tải save đó lên tài khoản.
-- Đăng xuất: đẩy phần chưa đồng bộ, rồi xóa bản lưu tạm trên máy (không để lộ sang người dùng kế tiếp).
-- Dữ liệu từ máy chủ vẫn đi qua bước kiểm tra và làm sạch như save trên máy.
+```bash
+npm run serve    # static dev server
+npm test         # Node/client regression tests
+npm run build    # production build -> dist/
+npm run mock     # mock Supabase cho phát triển/test cục bộ
+```
 
-**Thử cục bộ không cần dự án thật:** `npm run mock` chạy một Supabase giả (cổng 54321), rồi `SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_ANON_KEY=local-dev-anon-key-0123456789 npm run build && npm run serve -- dist`.
+Các simulation/asset tool khác nằm trong `scripts/` và không phải runtime dependency.
 
-### Bảng xếp hạng
-Nút **Bảng xếp hạng** (chỉ hiện khi đã đăng nhập) liệt kê top 50 và dòng của bạn. Xếp theo cảnh giới cao nhất từng đạt, bằng nhau thì ai tu ít tháng hơn xếp trên; mỗi tài khoản giữ thành tích tốt nhất. Có hai tab: *Mọi thời đại* và *7 ngày qua* (chỉ người vừa lập thành tích mới trong tuần, để người mới có cơ hội lên bảng). Dữ liệu do trigger `lb_sync` lấy từ save mỗi lần `save_game()` ghi, client không ghi trực tiếp được, và bị xóa cùng tài khoản. Đạo hiệu hiển thị công khai. Máy chủ chỉ loại giá trị vô lý (số tháng tu thấp hơn mức tối thiểu của cấp), không kiểm tra được luật chơi, nên đây là bảng giải trí, đừng gắn phần thưởng thật.
+## Cấu trúc mã nguồn
 
-## Phát triển và phát hành
-- Chạy thử: `npm run serve`. Kiểm thử: `npm test` (bảo mật + đồng bộ Supabase, chạy bằng Node). Kiểm thử SQL: `psql -v ON_ERROR_STOP=1 -f supabase/tests/player_saves.test.sql` trên một database Postgres trống (file tự dựng bản giả lập `auth`). Mô phỏng cân bằng bí cảnh: `node scripts/sim_balance.mjs`.
-- Build bản phát hành: `npm i && TVDL_SALT=<chuỗi bí mật ≥ 32 ký tự> npm run build`, rồi deploy thư mục `dist/` (kèm `_headers` / `vercel.json`). Khóa ký save **không nằm trong repo**: trên Vercel / Cloudflare hãy đặt `TVDL_SALT` trong Environment Variables, thiếu thì build trên CI sẽ dừng. Tạo khóa: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
-- Save, Thiên Mệnh và file xuất đều có chữ ký HMAC; save bị sửa hoặc vô lý sẽ bị từ chối (có bản sao lưu tự động để khôi phục). Chi tiết và giới hạn: xem [SECURITY.md](SECURITY.md).
+```text
+index.html
+css/
+  base.css
+  game.css
+  features.css
+  responsive.css
+  chat.css
+  server-banner.css
+js/
+  core/             player state, game loop, progression core
+  systems/          gameplay systems
+  ui/               screens, rendering, chat, UX
+  online/           Supabase/Auth/cloud/admin bridge
+  infrastructure/   assets, security, cross-cutting concerns
+  main.js
+assets/              runtime assets
+assets_src/          source assets cho pipeline tạo/cắt asset
+scripts/             build/dev/simulation/asset tools
+tests/               JS/client tests
+supabase/
+  migrations/        database/RPC/RLS source of truth
+  tests/             SQL/RLS/RPC tests
+docs/                engineering docs
+```
+
+Chi tiết boundary và hướng scale project: `docs/ARCHITECTURE.md`.
+
+Quy ước development/cleanup/migration: `docs/DEVELOPMENT.md`.
+
+## Gameplay chính
+
+Game hiện có các nhóm hệ thống lớn:
+
+- tu luyện idle theo thời gian thật;
+- cảnh giới/tầng và đột phá;
+- thọ nguyên, tuổi và tọa hóa;
+- linh căn/ngũ hành;
+- kỳ ngộ;
+- bí cảnh;
+- linh điền;
+- luyện đan, vẽ phù, luyện khí;
+- tông môn, nhiệm vụ, chức vị, kho;
+- thành tựu/Thiên Mệnh/meta progression;
+- tài khoản Supabase, cloud save, leaderboard và World Chat;
+- banner server và maintenance mode.
+
+Tài liệu gameplay/public roadmap được duy trì ở repo `Hu-gioi-wiki` thay vì tiếp tục nhồi số liệu cân bằng vào README kỹ thuật này.
+
+## Supabase
+
+Game dùng Supabase cho Auth, cloud save, leaderboard, chat, presence và Admin Console backend.
+
+**Không chạy migration theo danh sách copy trong README này.** Danh sách chuẩn và luôn cập nhật nằm tại:
+
+```text
+supabase/README.md
+```
+
+Database migration source of truth:
+
+```text
+supabase/migrations/
+```
+
+Nguyên tắc:
+
+- migration production cũ không sửa lại để "cho đẹp";
+- thay đổi schema/RPC bằng migration mới;
+- browser chỉ dùng public anon/publishable config;
+- không đưa `service_role`/secret key/database password vào frontend.
+
+## Admin Console và server control
+
+Admin Console nằm ở repo riêng `Hu-gioi-dashboard`.
+
+Game client chỉ có bridge an toàn:
+
+```text
+js/online/admin_bridge.js
+```
+
+Bridge đọc các contract cần cho player như:
+
+- presence heartbeat;
+- `server_status()`;
+- banner ticker;
+- maintenance gate.
+
+Authorization admin thật nằm trong PostgreSQL/RPC/RBAC, không nằm trong game JavaScript.
+
+## Build configuration
+
+Production build có thể dùng các environment variable tùy feature/config hiện hành, gồm:
+
+```text
+TVDL_SALT
+SUPABASE_URL
+SUPABASE_ANON_KEY
+HCAPTCHA_SITEKEY
+```
+
+Không commit `.env` hoặc secret vào Git.
+
+`dist/` là build output và được ignore.
+
+## Security
+
+Threat model hiện tại: `SECURITY.md`.
+
+Điểm quan trọng nhất: browser là môi trường không đáng tin cậy. Obfuscation/chữ ký local giúp tăng độ khó và bảo vệ integrity cơ bản, nhưng không thay thế server-authoritative logic cho economy/PvP/competition có giá trị.
+
+## Tests
+
+Client regression tests:
+
+```bash
+npm test
+```
+
+SQL/RLS/RPC tests nằm trong:
+
+```text
+supabase/tests/
+```
+
+Không coi build thành test gameplay; thay đổi logic quan trọng nên có regression test khi có thể.
+
+## Engineering docs
+
+```text
+docs/README.md
+  ├─ ARCHITECTURE.md
+  └─ DEVELOPMENT.md
+SECURITY.md
+supabase/README.md
+```
+
+## Quy tắc repo hygiene
+
+- không commit file `temp`, `backup`, redeploy trigger hoặc roadmap `.txt` ở root;
+- roadmap public thuộc wiki;
+- SQL production thuộc `supabase/migrations/`;
+- build output thuộc `dist/` và không commit;
+- asset runtime ở `assets/`, asset source ở `assets_src/`;
+- không xóa asset/migration chỉ vì tên trông cũ — phải kiểm tra reference và production history trước.
+
+## Hướng scale
+
+Hiện cấu trúc `core / systems / ui / online / infrastructure` vẫn phù hợp và chưa cần framework.
+
+Khi feature lớn hơn, ưu tiên:
+
+1. tách responsibility trong cấu trúc hiện tại;
+2. tách feature lớn thành module/thư mục riêng khi có ownership rõ;
+3. tăng test coverage và API boundary;
+4. sau đó mới cân nhắc ES modules/bundler/framework nếu thực sự giải quyết vấn đề cụ thể.
+
+Xem `docs/ARCHITECTURE.md` để biết tiêu chí refactor.
