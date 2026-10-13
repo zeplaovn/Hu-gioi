@@ -1,5 +1,9 @@
 -- Follow-up fixes for Admin Console foundation.
+-- Makes the production migration compatible with the earlier dashboard prototype schema.
 -- leaderboard.level/months are int and level ranges 1..81.
+
+alter table public.admin_users
+  add column if not exists updated_at timestamptz not null default now();
 
 create or replace function public.heartbeat_presence(
   p_session_id uuid,
