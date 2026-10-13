@@ -46,12 +46,26 @@ TT.SECTS = {
     desc: "Đan đạo. Mua đồ giảm 30%, lương 15 linh thạch/năm." },
 };
 
+/* Cửa hàng đan dược: mở thêm vật phẩm theo cảnh giới (realm = cảnh giới tối thiểu).
+   kind: exp = cộng v x tu vi cần cho 1 tầng | heal = hồi v x khí huyết tối đa | pill = +v tỉ lệ đột phá lần tới (tối đa 40%)
+         life = +v năm thọ nguyên (tăng theo cảnh giới) | stat = +v điểm một chỉ số gốc ngẫu nhiên (tối đa 40).
+   lim = số lần mua tối đa mỗi kỳ nhập hàng (SHOP.RESTOCK_S giây thật); không ghi lim = không giới hạn. */
 TT.ITEMS = {
-  "Tụ Khí Đan": { cost: 20, desc: "Hồi 10% tu vi cần thiết để lên tầng tiếp theo." },
-  "Hồi Huyết Đan": { cost: 15, desc: "Hồi đầy khí huyết." },
-  "Phá Cảnh Đan": { cost: 80, desc: "+20% tỉ lệ cho lần đột phá kế tiếp (cộng dồn tối đa 40%)." },
-  "Trường Thọ Quả": { cost: 150, desc: "Thọ nguyên +8 năm (tăng theo cảnh giới)." },
+  "Tụ Khí Đan": { cost: 20, realm: 0, kind: "exp", v: 0.06, lim: 5, desc: "Cộng 6% tu vi cần để lên tầng tiếp theo." },
+  "Hồi Huyết Đan": { cost: 15, realm: 0, kind: "heal", v: 0.6, desc: "Hồi 60% khí huyết tối đa." },
+  "Phá Cảnh Đan": { cost: 90, realm: 1, kind: "pill", v: 0.12, lim: 2, desc: "+12% tỉ lệ cho lần đột phá kế tiếp (cộng dồn tối đa 40%)." },
+  "Trường Thọ Quả": { cost: 160, realm: 1, kind: "life", v: 6, lim: 1, desc: "Thọ nguyên +6 năm (tăng theo cảnh giới)." },
+  "Ngưng Nguyên Đan": { cost: 140, realm: 2, kind: "exp", v: 0.05, lim: 4, desc: "Cộng 5% tu vi cần để lên tầng tiếp theo." },
+  "Đại Hồi Đan": { cost: 70, realm: 2, kind: "heal", v: 1.0, desc: "Hồi đầy khí huyết." },
+  "Dịch Cân Đan": { cost: 420, realm: 3, kind: "stat", v: 1, lim: 1, desc: "Một chỉ số gốc ngẫu nhiên +1 (tối đa 40)." },
+  "Hóa Anh Đan": { cost: 650, realm: 4, kind: "exp", v: 0.045, lim: 3, desc: "Cộng 4,5% tu vi cần để lên tầng tiếp theo." },
+  "Tục Mệnh Đan": { cost: 800, realm: 4, kind: "life", v: 12, lim: 1, desc: "Thọ nguyên +12 năm (tăng theo cảnh giới)." },
+  "Thiên Cơ Đan": { cost: 1600, realm: 5, kind: "pill", v: 0.2, lim: 1, desc: "+20% tỉ lệ cho lần đột phá kế tiếp (cộng dồn tối đa 40%)." },
+  "Thái Hư Đan": { cost: 3200, realm: 6, kind: "exp", v: 0.04, lim: 2, desc: "Cộng 4% tu vi cần để lên tầng tiếp theo." },
+  "Tạo Hóa Dịch": { cost: 5200, realm: 7, kind: "stat", v: 1, lim: 1, desc: "Một chỉ số gốc ngẫu nhiên +1 (tối đa 40)." },
+  "Độ Kiếp Đan": { cost: 9000, realm: 8, kind: "pill", v: 0.25, lim: 1, desc: "+25% tỉ lệ cho lần đột phá kế tiếp (cộng dồn tối đa 40%)." },
 };
+TT.SHOP = { RESTOCK_S: 1800, PRICE_REALM: 0.5 };   // nhập hàng lại sau 30 phút thật; giá tăng 50% mỗi cảnh giới
 
 TT.MONSTERS = [
   ["Hắc Lang", "Độc Xà", "Hoang Thử Yêu"],
@@ -65,7 +79,7 @@ TT.MON_COLORS = ["#8a2be2", "#c0392b", "#1e8449", "#d68910", "#2874a6"];
 
 /* ---------- nghề phụ ---------- */
 TT.QN = ["Phế phẩm", "Hạ phẩm", "Trung phẩm", "Thượng phẩm", "Cực phẩm"];
-TT.QMUL = [0.0, 1.0, 1.4, 1.8, 2.5];
+TT.QMUL = [0.0, 1.0, 1.25, 1.5, 1.9];
 TT.Q_CUT = [0.30, 0.50, 0.68, 0.84];
 
 TT.MATS = {
@@ -78,15 +92,15 @@ TT.ALCH = { "Tụ Khí Đan": [3, 0], "Hồi Huyết Đan": [2, 0], "Phá Cảnh
 TT.TALIS = { "Cường Lực Phù": ["loi", 0], "Hộ Thân Phù": ["khien", 0], "Phá Cảnh Phù": ["tinh", 1] };
 
 TT.GEAR = {
-  "Phi Kiếm": { mat: 3, realm: 0, power: 8, hp: 0, exp: 0.0, desc: v => `Chiến lực +${v}` },
-  "Pháp Bào": { mat: 3, realm: 0, power: 0, hp: 30, exp: 0.0, desc: v => `Khí huyết tối đa +${v}` },
-  "Linh Giới": { mat: 2, realm: 1, power: 0, hp: 0, exp: 0.05, desc: v => `Tốc độ tu luyện +${v}%` },
+  "Phi Kiếm": { mat: 3, realm: 0, power: 6, hp: 0, exp: 0.0, desc: v => `Chiến lực +${v}` },
+  "Pháp Bào": { mat: 3, realm: 0, power: 0, hp: 24, exp: 0.0, desc: v => `Khí huyết tối đa +${v}` },
+  "Linh Giới": { mat: 2, realm: 1, power: 0, hp: 0, exp: 0.04, desc: v => `Tốc độ tu luyện +${v}%` },
 };
 
 TT.USABLE = ["Tụ Khí Đan", "Hồi Huyết Đan", "Phá Cảnh Đan", "Cường Lực Phù", "Hộ Thân Phù", "Phá Cảnh Phù"];
 
 TT.SELL_BASE = { "Linh Thảo": 4, "Tụ Khí Đan": 12, "Hồi Huyết Đan": 9, "Phá Cảnh Đan": 48, "Cường Lực Phù": 14,
-  "Hộ Thân Phù": 14, "Phá Cảnh Phù": 40, "Phi Kiếm": 40, "Pháp Bào": 40, "Linh Giới": 60 };
+  "Hộ Thân Phù": 14, "Phá Cảnh Phù": 40, "Phi Kiếm": 36, "Pháp Bào": 36, "Linh Giới": 54 };
 
 TT.RIPE = 6; // "tháng" chín của Linh Thảo
 /* Linh điền chạy theo thời gian thật: 1 "tháng linh điền" = STEP_S giây thật (cây chín sau RIPE x STEP_S giây).
@@ -116,11 +130,11 @@ TT.itemDesc = (name, q = 0) => {
   const m = TT.QMUL[q];
   switch (name) {
     case "Tụ Khí Đan": return `Tăng tu vi bằng ${int(TT.PROG.PILL * 100 * m)}% mức cần để lên tầng.`;
-    case "Hồi Huyết Đan": return `Hồi ${Math.min(100, int(50 * m))}% khí huyết tối đa.`;
-    case "Phá Cảnh Đan": return `+${int(15 * m)}% tỉ lệ đột phá lần tới.`;
-    case "Cường Lực Phù": return `Trận đánh kế tiếp: chiến lực +${int(10 * m)}.`;
-    case "Hộ Thân Phù": return `Trận đánh kế tiếp: nếu bị thương, giảm ${int(Math.min(85, 35 * m))}% sát thương.`;
-    case "Phá Cảnh Phù": return `+${int(8 * m)}% tỉ lệ đột phá lần tới.`;
+    case "Hồi Huyết Đan": return `Hồi ${Math.min(100, int(40 * m))}% khí huyết tối đa.`;
+    case "Phá Cảnh Đan": return `+${int(10 * m)}% tỉ lệ đột phá lần tới.`;
+    case "Cường Lực Phù": return `Trận đánh kế tiếp: chiến lực +${int(8 * m)}.`;
+    case "Hộ Thân Phù": return `Trận đánh kế tiếp: nếu bị thương, giảm ${int(Math.min(85, 30 * m))}% sát thương.`;
+    case "Phá Cảnh Phù": return `+${int(5 * m)}% tỉ lệ đột phá lần tới.`;
     case "Linh Thảo": return "Dược liệu dùng để luyện đan.";
   }
   if (TT.GEAR[name]) {
@@ -146,7 +160,7 @@ TT.PROG = {
   // tỉ lệ đột phá: đầu + Ngộ Tính x NT + Vận Khí x VK - cảnh giới x R; tầng nhỏ +MINOR, đại đột phá BIG_PEN
   CHANCE: { BASE: 0.50, NT: 0.010, VK: 0.006, R: 0.035, MINOR: 0.20, BIG_PEN: -0.08, MIN: 0.08, MAX: 0.90 },
   KEEP: { minor: 0.70, big: 0.60 },                   // giữ lại bao nhiêu tu vi khi đột phá thất bại
-  PILL: 0.10,                                         // Tụ Khí Đan hồi bao nhiêu phần tu vi cần cho 1 tầng
+  PILL: 0.06,                                         // Tụ Khí Đan hồi bao nhiêu phần tu vi cần cho 1 tầng
 };
 /** Tu vi cần để vượt qua tầng ở cấp level (1 = Phàm Nhân tầng 1). */
 TT.needExp = level => {

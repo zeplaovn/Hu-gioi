@@ -70,7 +70,8 @@ Mọi số liệu nằm trong `TT.PROG` (`js/data.js`); công thức ở `TT.nee
 - **Tu vi/tháng** = (4 + Căn Cốt×1,5 + Ngộ Tính×2 + cấp×1,5) × hệ số công pháp/linh căn × ngẫu nhiên 0,8–1,3.
 - **Đột phá** gốc 50%, cộng Ngộ Tính, Vận Khí, Tâm Cảnh, đan dược và tích lũy thất bại; đại cảnh giới bị trừ 8%; kẹp 8%–90%. Thất bại giữ lại 70% (tầng nhỏ) / 60% (đại cảnh giới) tu vi và mất sinh lực.
 - **Thọ nguyên** cộng khi đại đột phá: 70 / 120 / 270 / 600 / 950 / 1250 / 1550 / 1800 năm. Vật phẩm, kỳ ngộ tăng thêm 50% mỗi cảnh giới. 1 năm game = 120 giây idle, nên thọ nguyên là bức tường thật sự.
-- Tụ Khí Đan hồi 10% tu vi cần để lên tầng.
+- **Cửa hàng theo cảnh giới:** 13 loại đan dược / thọ nguyên / chỉ số, mỗi cảnh giới mở thêm hàng mới (cảnh giới kế tiếp hiển thị khóa). Giá = giá gốc × (1 + 0,5 × cảnh giới). Đan tu vi, Phá Cảnh, thọ nguyên và chỉ số có giới hạn mua mỗi kỳ nhập hàng (30 phút thật) để không mua đan tua nhanh tu vi; dữ liệu trong `TT.ITEMS`, `TT.SHOP` (`js/data.js`).
+- **Chỉ số vật phẩm đã giảm:** Tụ Khí Đan 6% tu vi cần để lên tầng (hàng cao cấp 4–5%), Phá Cảnh Đan +12% (chế tạo +10%), Phá Cảnh Phù +5%, Cường Lực Phù +8, Hộ Thân Phù giảm 30%, phẩm chất Cực phẩm ×1,9 (trước ×2,5), Phi Kiếm +6, Pháp Bào +24, Linh Giới +4%.
 - **Mục tiêu thời gian thật (build trung bình):** Luyện Khí ~15 phút, Trúc Cơ ~1,5 giờ, Kim Đan ~5 giờ, Nguyên Anh ~13 giờ, Hóa Thần ~1,2 ngày, Đại Thừa ~4 ngày, Độ Kiếp ~6 ngày. Phi thăng cần build mạnh (~5–6 ngày). Người chơi mới thường chết già quanh Nguyên Anh và phải luân hồi với bản thân mạnh hơn.
 - Chạy `node tools/sim_progress.mjs` sau khi chỉnh số để kiểm tra lại.
 

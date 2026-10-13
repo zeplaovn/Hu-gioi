@@ -214,10 +214,12 @@
     const enc = {};
     for (const id of TT.ENC_IDS) { const n = int(isObj(d.enc) ? d.enc[id] : 0, 0, 99999, 0); if (n) enc[id] = n; }
 
+    const shop = { ts: int(isObj(d.shop) ? d.shop.ts : 0, 0, nowP, 0), n: {} };
+    if (isObj(d.shop) && isObj(d.shop.n)) for (const [k, v] of Object.entries(d.shop.n)) if (Object.prototype.hasOwnProperty.call(TT.ITEMS, k)) shop.n[k] = int(v, 0, 99, 0);
     const out = {
       gender: d.gender, race: d.race, age, lifespan, stats, realm, tang, exp, stone, months, skills, sect, sectx,
       pill: flt(d.pill, 0, 0.5, 0), guard: flt(d.guard, 0, 3, 0), fbuff: int(d.fbuff, 0, 500, 0), suppress: !!d.suppress,
-      inv, gear, plots, track, hp: 1,
+      inv, gear, plots, track, hp: 1, shop,
       name, root, temper, ess, idle, secret, enc,
     };
     const p = TT.Player.fromDict(out);                      // dùng công thức thật để giới hạn khí huyết

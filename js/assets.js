@@ -60,6 +60,8 @@
     "Tụ Khí Đan": "orb_blue", "Hồi Huyết Đan": "orb_green", "Phá Cảnh Đan": "orb_gold", "Trường Thọ Quả": "peach",
     "Hạt Linh Thảo": "clover", "Linh Thảo": "ginseng", "Quặng Linh Thiết": "crystal", "Giấy Phù": "scroll",
     "Cường Lực Phù": "scroll", "Hộ Thân Phù": "scroll", "Phá Cảnh Phù": "scroll",
+    "Ngưng Nguyên Đan": "orb_blue", "Hóa Anh Đan": "orb_blue", "Thái Hư Đan": "orb_blue", "Đại Hồi Đan": "orb_green",
+    "Thiên Cơ Đan": "orb_gold", "Độ Kiếp Đan": "orb_gold", "Dịch Cân Đan": "brain", "Tạo Hóa Dịch": "brain", "Tục Mệnh Đan": "peach",
     "Phi Kiếm": "sword", "Pháp Bào": "bagua", "Linh Giới": "charm",
     "Linh điền": "ginseng", "Luyện đan": "orb_green", "Vẽ phù lục": "scroll", "Luyện khí": "sword",
   };

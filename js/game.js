@@ -254,7 +254,7 @@
       } else {
         let d = rnd(15, 35) + (mp - me);
         if (p.guard > 0) {
-          d = int(d * Math.max(0.15, 1 - 0.35 * p.guard));
+          d = int(d * Math.max(0.15, 1 - 0.30 * p.guard));
           p.guard = 0.0;
           this.log("Hộ Thân Phù phát sáng, giảm bớt sát thương!", "cyan");
         }
@@ -353,7 +353,7 @@
     tribEstimate(R) {
       const p = this.p, pw = p.power(), mit = pw / (pw + 150 + R * 40);
       const strikes = 3 + (R >> 1), base = (10 + R * 9) * (1 - mit);
-      const gf = p.guard > 0 ? Math.max(0.15, 1 - 0.35 * p.guard) : 1;
+      const gf = p.guard > 0 ? Math.max(0.15, 1 - 0.30 * p.guard) : 1;
       return { strikes, base, mit, gf, expect: int(strikes * base * gf) };
     }
 
@@ -421,19 +421,19 @@
         return `Tụ Khí Đan: tu vi +${g}.`;
       }
       if (name === "Hồi Huyết Đan") {
-        const hh = int(p.max_hp() * Math.min(1.0, 0.5 * m));
+        const hh = int(p.max_hp() * Math.min(1.0, 0.4 * m));
         p.hp = Math.min(p.max_hp(), p.hp + hh);
         sc.fxOnce("heal", null, sc.gy + 6, 0.35, "s");
         return `Hồi Huyết Đan: khí huyết +${hh}.`;
       }
       if (name === "Phá Cảnh Đan") {
-        p.pill = Math.min(0.5, p.pill + 0.15 * m);
+        p.pill = Math.min(0.5, p.pill + 0.10 * m);
         sc.fxOnce("break", null, sc.gy + 8, 0.4, "s");
         return "Phá Cảnh Đan: tỉ lệ đột phá tăng.";
       }
-      if (name === "Cường Lực Phù") { p.fbuff += int(10 * m); return `Cường Lực Phù: chiến lực trận kế +${int(10 * m)}.`; }
+      if (name === "Cường Lực Phù") { p.fbuff += int(8 * m); return `Cường Lực Phù: chiến lực trận kế +${int(8 * m)}.`; }
       if (name === "Hộ Thân Phù") { p.guard = Math.max(p.guard, m); return "Hộ Thân Phù: linh quang hộ thể cho trận kế."; }
-      p.pill = Math.min(0.5, p.pill + 0.08 * m);
+      p.pill = Math.min(0.5, p.pill + 0.05 * m);
       return "Phá Cảnh Phù: tỉ lệ đột phá tăng.";
     }
 
@@ -473,36 +473,61 @@
     openShop() { this.openDialog("Cửa hàng đan dược", () => this.rowsShop()); }
     shopPrice(name) {
       const p = this.p, disc = p.sect ? SECTS[p.sect].disc : 1.0;
-      return int({ ...ITEMS, ...MATS }[name].cost * (1 + p.realm * 0.3) * disc);
+      return int({ ...ITEMS, ...MATS }[name].cost * (1 + p.realm * TT.SHOP.PRICE_REALM) * disc);
+    }
+    /** Số lần đã mua trong kỳ nhập hàng hiện tại (tự đặt lại khi hết kỳ). */
+    shopBought(name) {
+      const p = this.p, now = Date.now();
+      if (!p.shop || now - p.shop.ts >= TT.SHOP.RESTOCK_S * 1000 || p.shop.ts > now) p.shop = { ts: now, n: {} };
+      return p.shop.n[name] || 0;
     }
     rowsShop() {
-      return [...Object.entries(ITEMS), ...Object.entries(MATS)].map(([name, it]) => {
+      const p = this.p, rows = [], next = p.realm + 1;
+      for (const [name, it] of Object.entries(ITEMS)) {
+        if (it.realm > next) continue;                                   // chỉ gợi ý trước tầng cảnh giới kế tiếp
+        if (it.realm > p.realm) {
+          rows.push({ name, icon: TT.iconFor(name, 40), desc: it.desc, price: `Mở khi đạt ${REALMS[it.realm]}`, btn: "Khóa", cb: () => {}, ok: false });
+          continue;
+        }
+        const pr = this.shopPrice(name), left = it.lim ? it.lim - this.shopBought(name) : Infinity;
+        const stock = it.lim ? `  ·  còn ${left}/${it.lim} (nhập lại sau ${TT.fmtTime(Math.max(0, TT.SHOP.RESTOCK_S - (Date.now() - p.shop.ts) / 1000))})` : "";
+        rows.push({ name, icon: TT.iconFor(name, 40), desc: it.desc, price: `Giá: ${pr} linh thạch${stock}`, btn: left > 0 ? "Mua" : "Hết hàng", cb: () => this.buy(name), ok: p.stone >= pr && left > 0 });
+      }
+      for (const [name, it] of Object.entries(MATS)) {
         const pr = this.shopPrice(name);
-        return { name, icon: TT.iconFor(name, 40), desc: it.desc, price: `Giá: ${pr} linh thạch`, btn: "Mua", cb: () => this.buy(name), ok: this.p.stone >= pr };
-      });
+        rows.push({ name, icon: TT.iconFor(name, 40), desc: it.desc, price: `Giá: ${pr} linh thạch`, btn: "Mua", cb: () => this.buy(name), ok: p.stone >= pr });
+      }
+      return rows;
     }
     buy(name) {
-      const p = this.p, pr = this.shopPrice(name), sc = this.scene;
-      if (p.stone < pr) return;
+      const p = this.p, sc = this.scene, it = ITEMS[name], pr = this.shopPrice(name);
+      if (p.stone < pr || this.dead) return;
+      if (it && (it.realm > p.realm || (it.lim && this.shopBought(name) >= it.lim))) return;
       p.stone -= pr;
       if (MATS[name]) { this.invAdd(name); this.log(`Mua ${name} (trong túi: ${this.invN(name)}).`, "cyan"); return; }
-      if (name === "Tụ Khí Đan") {
-        const g = int(p.need_exp() * TT.PROG.PILL); this.gain(g);
-        this.log(`Dùng Tụ Khí Đan, tu vi +${g}.`, "green");
-      } else if (name === "Hồi Huyết Đan") {
-        p.hp = p.max_hp(); sc.floatText("Hồi đầy khí huyết", "#6dff9a");
-        this.log("Dùng Hồi Huyết Đan, khí huyết hồi đầy.", "green");
-      } else if (name === "Phá Cảnh Đan") {
-        p.pill = Math.min(0.4, p.pill + 0.2);
-        this.log(`Nuốt Phá Cảnh Đan, tỉ lệ đột phá lần tới +${int(p.pill * 100)}%.`, "gold");
-      } else if (name === "Trường Thọ Quả") {
-        const y = TT.lifeBonus(8, p.realm); p.lifespan += y; sc.floatText(`Thọ nguyên +${y}`, C.GOLD);
-        this.log(`Ăn Trường Thọ Quả, thọ nguyên +${y} năm.`, "gold");
+      p.shop.n[name] = (p.shop.n[name] || 0) + 1;
+      let fx;
+      if (it.kind === "exp") {
+        const g = int(p.need_exp() * it.v); this.gain(g);
+        this.log(`Dùng ${name}, tu vi +${g}.`, "green"); fx = ["qi", null, 0.4, "center"];
+      } else if (it.kind === "heal") {
+        const hh = int(p.max_hp() * it.v); p.hp = Math.min(p.max_hp(), p.hp + hh); sc.floatText(`+${hh} khí huyết`, "#6dff9a");
+        this.log(`Dùng ${name}, khí huyết +${hh}.`, "green"); fx = ["heal", sc.gy + 6, 0.35, "s"];
+      } else if (it.kind === "pill") {
+        p.pill = Math.min(0.4, p.pill + it.v);
+        this.log(`Nuốt ${name}, tỉ lệ đột phá lần tới ${int(p.pill * 100)}%.`, "gold"); fx = ["break", sc.gy + 8, 0.4, "s"];
+      } else if (it.kind === "life") {
+        const y = TT.lifeBonus(it.v, p.realm); p.lifespan += y; sc.floatText(`Thọ nguyên +${y}`, C.GOLD);
+        this.log(`Dùng ${name}, thọ nguyên +${y} năm.`, "gold"); fx = ["heal", sc.gy + 6, 0.35, "s"];
+      } else if (it.kind === "stat") {
+        const pool = STATS.filter(s => p.stats[s] < 40), s = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
+        if (s) { p.stats[s] += it.v; this.log(`Dùng ${name}, ${s} +${it.v}.`, "gold"); sc.floatText(`${s} +${it.v}`, C.GOLD); }
+        else { const g = int(p.need_exp() * 0.03); this.gain(g); this.log(`Các chỉ số đã đạt tối đa, ${name} hóa thành tu vi +${g}.`, "green"); }
+        fx = ["break", sc.gy + 8, 0.4, "s"];
       }
       sc.addRing(C.CYAN);
-      const fx = { "Tụ Khí Đan": ["qi", null, 0.4, "center"], "Phá Cảnh Đan": ["break", sc.gy + 8, 0.4, "s"],
-        "Hồi Huyết Đan": ["heal", sc.gy + 6, 0.35, "s"], "Trường Thọ Quả": ["heal", sc.gy + 6, 0.35, "s"] }[name];
-      sc.fxOnce(fx[0], null, fx[1], fx[2], fx[3]);
+      if (fx) sc.fxOnce(fx[0], null, fx[1], fx[2], fx[3]);
+      this.refresh(); this.autosave();
     }
 
     openSkills() { this.openDialog("Tàng Kinh Các - Công pháp", () => this.rowsSkills()); }
