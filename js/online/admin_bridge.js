@@ -1,5 +1,5 @@
 /* Cầu nối an toàn giữa game client và Admin Console.
-   Chỉ gọi hai RPC công khai cho game: heartbeat_presence() và server_status().
+   Chỉ gọi RPC public cho game: heartbeat_presence() và server_status().
    Không chứa quyền admin, không chứa service_role. */
 "use strict";
 (function () {
@@ -83,7 +83,7 @@
     const root = ensureTicker();
     const track = document.getElementById("serverTickerTrack");
 
-    if (!banner || !banner.body) {
+    if (!banner || !banner.body || (status && status.maintenance)) {
       root.className = "server-ticker";
       document.body.classList.remove("server-ticker-active");
       if (track) track.textContent = "";
@@ -105,9 +105,72 @@
     }
   }
 
+  function ensureMaintenanceGate() {
+    let gate = document.getElementById("serverMaintenanceGate");
+    if (gate) return gate;
+
+    gate = document.createElement("div");
+    gate.id = "serverMaintenanceGate";
+    gate.className = "server-maintenance-gate";
+
+    const card = document.createElement("section");
+    card.className = "server-maintenance-card";
+
+    const seal = document.createElement("div");
+    seal.className = "server-maintenance-seal";
+    seal.textContent = "天";
+
+    const eyebrow = document.createElement("div");
+    eyebrow.className = "server-maintenance-eyebrow";
+    eyebrow.textContent = "THIÊN VÂN ĐẠI LỤC";
+
+    const title = document.createElement("h1");
+    title.textContent = "Thiên Đạo tạm phong bế";
+
+    const reason = document.createElement("p");
+    reason.id = "serverMaintenanceReason";
+    reason.textContent = "Máy chủ đang bảo trì. Vui lòng quay lại sau.";
+
+    const note = document.createElement("small");
+    note.textContent = "Tiến trình sẽ không được ghi lên máy chủ trong thời gian bảo trì.";
+
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "server-maintenance-retry";
+    retry.textContent = "Kiểm tra lại";
+    retry.addEventListener("click", async () => {
+      retry.disabled = true;
+      retry.textContent = "Đang kiểm tra…";
+      await bridge.status();
+      retry.disabled = false;
+      retry.textContent = "Kiểm tra lại";
+    });
+
+    card.appendChild(seal);
+    card.appendChild(eyebrow);
+    card.appendChild(title);
+    card.appendChild(reason);
+    card.appendChild(note);
+    card.appendChild(retry);
+    gate.appendChild(card);
+    document.body.appendChild(gate);
+    return gate;
+  }
+
+  function renderMaintenance(status) {
+    if (typeof document === "undefined" || !document.body) return;
+    const gate = ensureMaintenanceGate();
+    const active = !!(status && status.maintenance);
+    gate.classList.toggle("show", active);
+    document.body.classList.toggle("server-maintenance-active", active);
+    const reason = document.getElementById("serverMaintenanceReason");
+    if (reason) reason.textContent = active && status.maintenance_reason ? String(status.maintenance_reason).slice(0, 500) : "Máy chủ đang bảo trì. Vui lòng quay lại sau.";
+  }
+
   bridge.status = async () => {
     try {
       lastStatus = await rpc("server_status", {}, null);
+      renderMaintenance(lastStatus);
       renderTicker(lastStatus);
       listeners.slice().forEach(fn => { try { fn(lastStatus); } catch (_) {} });
       return lastStatus;
@@ -117,6 +180,7 @@
   bridge.onStatus = fn => { if (typeof fn === "function") listeners.push(fn); return () => { const i = listeners.indexOf(fn); if (i >= 0) listeners.splice(i, 1); }; };
 
   bridge.heartbeat = async () => {
+    if (lastStatus && lastStatus.maintenance) return false;
     const s = session();
     if (!s || !s.access_token || (s.expires_at && s.expires_at <= Date.now() / 1000)) return false;
     try {
@@ -133,7 +197,7 @@
     bridge.status();
     bridge.heartbeat();
     setInterval(() => { if (document.visibilityState !== "hidden") bridge.heartbeat(); }, 45000);
-    setInterval(() => { if (document.visibilityState !== "hidden") bridge.status(); }, 60000);
+    setInterval(() => { if (document.visibilityState !== "hidden") bridge.status(); }, 15000);
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") { bridge.status(); bridge.heartbeat(); }
     });
