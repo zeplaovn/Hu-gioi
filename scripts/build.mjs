@@ -12,7 +12,8 @@ let src = scripts.map(f => fs.readFileSync(path.join(root, f), "utf8")).join("\n
 // Khóa ký save KHÔNG nằm trong repo: lấy từ biến môi trường TVDL_SALT.
 // Vercel Preview được phép dùng dev salt để preview PR; production/CI thật vẫn bắt buộc secret.
 const salt = process.env.TVDL_SALT;
-const onCI = !!(process.env.CI || process.env.NETLIFY || process.env.CF_PAGES || process.env.VERCEL_ENV === "production");
+const isVercelPreview = !!process.env.VERCEL && process.env.VERCEL_ENV !== "production";
+const onCI = !isVercelPreview && !!(process.env.CI || process.env.NETLIFY || process.env.CF_PAGES || process.env.VERCEL_ENV === "production");
 if (!salt && onCI) throw new Error("Thiếu biến môi trường TVDL_SALT: bản phát hành sẽ dùng khóa ký công khai trong mã nguồn. Hãy đặt TVDL_SALT rồi build lại.");
 if (salt && salt.length < 32) throw new Error("TVDL_SALT quá ngắn (cần ít nhất 32 ký tự).");
 if (salt) {
