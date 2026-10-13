@@ -62,7 +62,7 @@
       this.i = 0; this.m = 0.0; this.d = 1; this.hits = []; this.msg = ""; this.msgc = C.GREEN; this.cool = 0;
       this.newc();
     }
-    newc() { this.c = uni(0.2, 0.8); this.w = 0.13; }
+    newc() { this.c = uni(0.2, 0.8); this.w = 0.15; }
     key(down) { if (down) this.hit(); }
     press() { this.hit(); }
     hit() {
@@ -76,7 +76,7 @@
     }
     tick(c) {
       this.cool = Math.max(0, this.cool - 1);
-      this.m += this.d * this.speed * (1 + 0.12 * this.i);
+      this.m += this.d * this.speed * (1 + 0.06 * this.i);
       if (this.m >= 1) { this.m = 1.0; this.d = -1; }
       if (this.m <= 0) { this.m = 0.0; this.d = 1; }
       const x0 = 40, x1 = 520, y0 = 110, y1 = 160;
@@ -152,7 +152,7 @@
       for (const s of this.stroke) if (s.length > 1) line(c, s, "#e8ffff", 4);
       const ink = Math.max(0.0, this.ink());
       rect(c, 40, 272, 40 + (CW - 80) * ink, 282, mix("#ff3b1f", "#7fdcff", ink));
-      text(c, CW / 2, 292, "Mực (kéo bút bắt đầu từ vòng xanh, thả chuột khi xong)", C.DIM, 12);
+      text(c, CW / 2, 292, `Mực  ·  phủ ${Math.trunc(this.coverage() * 100)}%  (kéo bút từ vòng xanh; thả ra khi phủ từ 80% là xong)`, C.DIM, 12);
     }
   }
 
@@ -196,13 +196,14 @@
     advance() {
       this.i++;
       if (this.i >= this.stages.length) { this.finalize(); return; }
-      this.cur = this.stages[this.i]; this.cur.done = false; this.cur.start();
+      this.cur = this.stages[this.i]; this.cur.done = false; this.counted = false; this.cur.start();
       this.lblSteps.textContent = this.stages.map((s, k) => k === this.i ? `[${s.name}]` : s.name).join("  →  ");
       this.lblHint.textContent = this.cur.hint;
     }
     finalize() {
       this.fin = true; this.cur = null;
-      this.result = this.onDone(this.scores) || "";
+      while (this.scores.length < this.stages.length) this.scores.push(0);          // an toàn: thiếu điểm thì tính 0, không bao giờ ra NaN
+      this.result = this.onDone(this.scores.map(v => (Number.isFinite(v) ? v : 0))) || "";
       this.lblHint.textContent = "";
       this.btnClose.textContent = "Đóng"; this.btnClose.className = "btn";
     }
@@ -220,10 +221,11 @@
         });
         lines.forEach((ln, i) => text(c, CW / 2, CH / 2 + (i - (lines.length - 1) / 2) * 28, ln, C.GOLD, 21, true));
       } else if (this.cur) {
-        if (!this.cur.done) {
-          this.cur.tick(c);
-          if (this.cur.done) { this.scores.push(this.cur.score); this.wait = 22; }
-        } else {
+        if (!this.cur.done) this.cur.tick(c);
+        // Công đoạn có thể kết thúc ngay trong sự kiện chuột / phím (bấm nhịp, kéo nét) chứ không chỉ trong tick:
+        // ghi điểm đúng một lần cho mọi trường hợp (trước đây các công đoạn này mất điểm nên luyện khí / vẽ phù luôn thất bại).
+        if (this.cur.done && !this.counted) { this.counted = true; this.scores.push(this.cur.score); this.wait = 22; }
+        else if (this.cur.done) {
           this.wait--;
           text(c, CW / 2, CH / 2, `${this.cur.name}: ${Math.trunc(this.cur.score * 100)}%`, C.GOLD, 21, true);
           if (this.wait <= 0) this.advance();
