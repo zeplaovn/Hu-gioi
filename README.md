@@ -64,7 +64,7 @@ scripts/sim_progress.mjs           mô phỏng tiến độ tu hành
 scripts/sim_root.mjs               so sánh linh căn; cấu hình ở sim_root_configs.mjs
 scripts/gen_leaderboard_bounds.mjs sinh cận dưới tháng tu cho bảng xếp hạng
 scripts/slice_sheets.py            cắt sheet -> sprite lẻ
-a/scripts/make_frames.py           cắt frames_sheet -> assets/ui/frame/*
+scripts/make_frames.py             cắt frames_sheet -> assets/ui/frame/*
 tests/                             kiểm thử Node (npm test)
 assets/                            toàn bộ ảnh chạy trong game
 assets_src/                        sheet nguồn dùng khi tạo/cắt lại asset
