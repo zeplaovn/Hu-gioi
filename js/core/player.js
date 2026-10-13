@@ -92,7 +92,7 @@
     /** Tu vi nhận được trong 1 tháng tu luyện. rng: hàm ngẫu nhiên [0,1) cho kết quả dao động (0,8-1,3); bỏ trống = giá trị trung bình. */
     monthGain(rng) {
       const base = 4 + this.stats["Căn Cốt"] * 1.5 + this.stats["Ngộ Tính"] * 2 + this.level * 1.5;
-      return base * this.exp_mult() * (typeof rng === "function" ? 0.8 + rng() * 0.5 : 1.05);
+      return base * this.exp_mult() * TT.PROG.SPEED * (typeof rng === "function" ? 0.8 + rng() * 0.5 : 1.05);
     }
     /** Tỉ lệ đột phá thành công (big = đại đột phá ở tầng 9). Tu vi áp chế vượt mức cần thì được cộng thêm tối đa 15%. */
     breakChance(big) {
@@ -102,7 +102,7 @@
       return Math.max(C.MIN, Math.min(C.MAX, c));
     }
     /** Tỉ lệ tu vi còn giữ lại khi đột phá thất bại. */
-    failKeep(big) { return big ? TT.PROG.KEEP.big : TT.PROG.KEEP.minor; }
+    failKeep(big) { return Math.min(0.95, (big ? TT.PROG.KEEP.big : TT.PROG.KEEP.minor) + TT.rootInfo(this.root).keep); }
     /** Số tháng tu luyện (trung bình) để đủ tu vi lên tầng kế tiếp. */
     monthsToFull() { return Math.max(0, this.need_exp() - this.exp) / Math.max(1, this.monthGain()); }
     realm_name() { return `${TT.REALMS[this.realm]} tầng ${this.tang}`; }

@@ -76,6 +76,7 @@
       ["Nghề phụ", "Mỗi minigame có nhiều công đoạn. Điểm tổng dưới 30% là thất bại; khi thất bại game cho biết công đoạn kém nhất. Luyện khí thất bại được hoàn lại một nửa quặng."],
     ],
     log: [
+      ["14/10/2026", ["Cân bằng linh căn: vẫn phân hóa rõ (Thiên / Dị nhanh nhất, Ngũ chậm nhất) nhưng Tam / Tứ / Ngũ linh căn được bù thọ nguyên và giữ thêm tu vi khi đột phá hỏng, nên tới được Phi thăng; tốc độ tu chung tăng 25%."]],
       ["13/10/2026", ["Sửa lỗi nghiêm trọng ở minigame nghề phụ: các công đoạn bấm nhịp và kéo nét trước đây không được tính điểm nên luyện khí / vẽ phù thường thất bại dù làm đúng. Đã sửa; bấm nhịp dễ hơn một chút; vẽ phù hiện % phủ nét.", "Cửa hàng mở thêm vật phẩm theo từng cảnh giới (13 loại, hàng của cảnh giới kế tiếp hiện khóa); hàng mạnh có giới hạn mua, nhập lại sau 30 phút thật.", "Giảm chỉ số: đan dược (Tụ Khí Đan 6% tu vi cần, Phá Cảnh Đan +12%), phù lục, phẩm chất cao (Cực phẩm x1,9), pháp khí.", "Thêm 12 Mảnh Phi Thăng đổi bằng điểm Thiên Mệnh (giá tăng dần), có danh hiệu ở mốc 3/6/9/12 mảnh.", "Nhân vật chết nếu vắng mặt quá lâu; màn chính báo thời gian vắng mặt an toàn.", "Lịch luyện / Nghỉ ngơi có hồi chiêu 10 giây thật; đã bỏ nút Tu luyện bấm tay.", "Bảng xếp hạng cập nhật lại điểm đúng; thêm tab 7 ngày qua.", "Minigame rèn khí dễ hơn, thất bại hoàn nửa quặng; nghề phụ báo rõ lý do thất bại.", "Thêm gợi ý Việc nên làm tiếp (có cảnh báo nghỉ ngơi trước khi đột phá)."]],
     ],
   };

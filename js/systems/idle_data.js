@@ -42,14 +42,15 @@
 
   /* ---------- linh căn ---------- */
   // n = số nguyên tố; w = trọng số khi gieo (tổng 97, 3 còn lại là Dị Linh Căn); exp = cộng tốc độ tu luyện; scale = hệ số hiệu quả mỗi nguyên tố
+  // life = thọ nguyên cộng thêm mỗi lần đại đột phá, keep = tu vi giữ thêm khi đột phá thất bại (bù cho linh căn nhiều nguyên tố tu chậm, để không chết già trước đích). Cân bằng bằng `node tools/sim_root.mjs`.
   TT.ROOT_TYPES = [
-    { n: 1, name: "Thiên Linh Căn", exp: 0.40, scale: 1.00, w: 6 },
-    { n: 2, name: "Song Linh Căn", exp: 0.20, scale: 0.80, w: 18 },
-    { n: 3, name: "Tam Linh Căn", exp: 0.00, scale: 0.62, w: 34 },
-    { n: 4, name: "Tứ Linh Căn", exp: -0.10, scale: 0.50, w: 27 },
-    { n: 5, name: "Ngũ Linh Căn", exp: -0.20, scale: 0.40, w: 12 },
+    { n: 1, name: "Thiên Linh Căn", exp: 0.40, scale: 1.00, w: 6, life: 0, keep: 0 },
+    { n: 2, name: "Song Linh Căn", exp: 0.22, scale: 0.80, w: 18, life: 0, keep: 0 },
+    { n: 3, name: "Tam Linh Căn", exp: 0.08, scale: 0.62, w: 34, life: 25, keep: 0.03 },
+    { n: 4, name: "Tứ Linh Căn", exp: -0.02, scale: 0.50, w: 27, life: 55, keep: 0.06 },
+    { n: 5, name: "Ngũ Linh Căn", exp: -0.10, scale: 0.40, w: 12, life: 100, keep: 0.10 },
   ];
-  const RARE_ROOT = { n: 1, name: "Dị Linh Căn", exp: 0.55, scale: 1.0 };
+  const RARE_ROOT = { n: 1, name: "Dị Linh Căn", exp: 0.45, scale: 1.0, life: 0, keep: 0 };
 
   TT.rollRoot = () => {
     if (rnd(1, 100) <= 3) return { els: [pick(TT.RARE_EL)] };
@@ -73,7 +74,7 @@
     const els = root && Array.isArray(root.els) ? root.els : [];
     if (els.some(e => TT.RARE_EL.includes(e))) return { ...RARE_ROOT };
     const t = TT.ROOT_TYPES[Math.min(5, Math.max(1, els.length)) - 1];
-    return { n: t.n, name: t.name, exp: t.exp, scale: t.scale };
+    return { n: t.n, name: t.name, exp: t.exp, scale: t.scale, life: t.life, keep: t.keep };
   };
   TT.rootLabel = root => `${TT.rootInfo(root).name} (${root.els.join(", ")})`;
 

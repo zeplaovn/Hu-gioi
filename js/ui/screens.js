@@ -133,6 +133,7 @@
     this.rootBox.replaceChildren(
       h("div", { class: "bold" }, `${info.name}  -  tốc độ tu luyện ${info.exp >= 0 ? "+" : ""}${Math.round(info.exp * 100)}%`),
       ...root.els.map(el => h("div", { class: "small" }, h("span", { style: { color: TT.ELEMENTS[el].color }, class: "bold" }, el + ": "), TT.elemDesc(el, info.scale))),
+      info.life ? h("div", { class: "cyan small" }, `Bù đắp: mỗi lần đại đột phá +${info.life} năm thọ nguyên, đột phá thất bại giữ thêm ${Math.round(info.keep * 100)}% tu vi.`) : null,
       h("div", { class: "dim small" }, "Gieo lại xúc xắc để đổi linh căn. Linh căn ít nguyên tố thì tu luyện nhanh hơn; mỗi nguyên tố cho thêm sức mạnh riêng và tương khắc với bí cảnh."));
   };
 

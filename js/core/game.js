@@ -325,7 +325,7 @@
           if (!this.tribulation(p.realm + 1)) return;   // chết dưới thiên lôi
           if (p.realm === REALMS.length - 1) { this.refresh(); this.winGame(); return; }
           p.realm++; p.tang = 1;
-          p.lifespan += TT.PROG.LIFE[p.realm];
+          p.lifespan += TT.PROG.LIFE[p.realm] + TT.rootInfo(p.root).life;   // linh căn nhiều nguyên tố được bù thọ nguyên
           p.hp = p.max_hp();
           sc.floatText("ĐỘT PHÁ: " + REALMS[p.realm], C.GOLD);
           this.log(`★ Đột phá đại cảnh giới: ${REALMS[p.realm]}! Thọ nguyên tăng lên ${p.lifespan} tuổi.`, "gold");

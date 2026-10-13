@@ -17,6 +17,7 @@ const KINDS = {
 };
 const isRare = els => els.some(e => TT.RARE_EL.includes(e));
 
+/** "hiện tại" = đúng số đang chạy trong game (js/idle_data.js, js/data.js). Thử số mới: tạo tools/sim_root_configs.mjs (không bắt buộc) xuất ra các cấu hình ghi đè; lưu ý monthGain đã gồm TT.PROG.SPEED. */
 export const CONFIGS = {
   "hiện tại": {},
 };
@@ -44,9 +45,9 @@ function run(els, cfg, seed) {
       const big = p.tang === 9;
       if (R() < p.breakChance(big)) {
         p.exp -= need;
-        if (big) { p.realm++; p.tang = 1; p.lifespan += TT.PROG.LIFE[p.realm] + (cfg.life ? cfg.life(els, info, rare) : 0); times[p.realm] = months * MONTH_S; }
+        if (big) { p.realm++; p.tang = 1; p.lifespan += TT.PROG.LIFE[p.realm] + (cfg.life ? cfg.life(els, info, rare) : info.life || 0); times[p.realm] = months * MONTH_S; }
         else p.tang++;
-      } else { p.exp = Math.floor(p.exp * Math.min(0.95, p.failKeep(big) + (cfg.keep ? cfg.keep(els, info, rare) : 0))); months++; }
+      } else { p.exp = Math.floor(p.exp * Math.min(0.95, p.failKeep(big) - (info.keep || 0) + (cfg.keep ? cfg.keep(els, info, rare) : info.keep || 0))); months++; }
     }
   }
   return { dead: p.realm < 9, realm: p.realm, times };
