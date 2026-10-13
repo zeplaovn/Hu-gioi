@@ -221,7 +221,12 @@
       ["Công pháp", this.openSkills, "cyan", "@skills/book_gold_40.png"], ["Tông môn", this.openSect, "orange", "bagua"],
       ["Nghề phụ", this.openCrafts, "cyan", "@plants/ginseng_48.png"],
       ["Túi đồ", this.openBag, "cyan", "charm"]];
-    const mkAct = (name, fn, cls, icon, kbd, extra = "") => { const b = TT.ui.btn(name, () => this.act(fn), { cls: cls + extra, icon, kbd }); this.actionBtns.push(b); return b; };
+    this.cdBtns = [];
+    const mkAct = (name, fn, cls, icon, kbd, extra = "") => {
+      const b = TT.ui.btn(name, () => this.act(fn), { cls: cls + extra, icon, kbd }); this.actionBtns.push(b);
+      if (fn === this.actExplore || fn === this.actRest) { b.dataset.base = name; this.cdBtns.push(b); }
+      return b;
+    };
     const actEls = acts.map(([label, fn, cls, ic]) => {
       const icon = ic[0] === "@" ? "assets/" + ic.slice(1) : TT.A.icon(ic, 22);
       const m = label.match(/^(.*?)\s*\[(\w)\]$/), name = m ? m[1] : label, kbd = m ? m[2] : null;

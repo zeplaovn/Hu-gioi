@@ -9,6 +9,7 @@
     FULL_RATE_S: 120,     // vắng mặt đến mức này vẫn tính đủ 100%
     OFFLINE_RATE: 0.5,    // quá mức đó chỉ tính 50%
     OFFLINE_CAP_S: 7200,  // tối đa 2 giờ (đã quy đổi) cho mỗi lần vắng mặt
+    ACT_CD_S: 10,         // Lịch luyện / Nghỉ ngơi: chờ 10 giây thật (= 1 tháng nhập định) giữa hai lần bấm, chống spam
     REPORT_MIN_S: 60,     // vắng mặt lâu hơn mức này thì hiện bảng báo cáo
   };
 

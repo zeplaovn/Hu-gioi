@@ -392,3 +392,4 @@ kbd { font: 600 11px/1 var(--sans); color: var(--dim); border: 1px solid var(--l
 /* Bảng xếp hạng: tab */
 .board-tabs { display: flex; gap: 6px; justify-content: center; margin: 6px 0; }
 .board-tabs .seg { flex: 0 1 auto; }
+.btn.cooling { opacity: .6; }

@@ -87,6 +87,20 @@
     }
     manualSave() { if (this.p && !this.dead) { this.autosave(); this.log("Đã lưu game.", "dim"); } }
 
+    /** Hồi chiêu thật cho Lịch luyện / Nghỉ ngơi: không thể bấm liên tục để tua nhanh thời gian. Hiện đếm ngược trên nút. */
+    cooldown(s = TT.IDLE.ACT_CD_S) {
+      const end = Date.now() + s * 1000;
+      this.lock(s * 1000);
+      clearInterval(this.cdTimer);
+      const btns = (this.cdBtns || []).filter(b => b.isConnected !== false);
+      const tick = () => {
+        const left = Math.ceil((end - Date.now()) / 1000);
+        btns.forEach(b => { const l = b.querySelector(".btn-label"); if (l) l.textContent = left > 0 ? `${b.dataset.base} (${left}s)` : b.dataset.base; b.classList.toggle("cooling", left > 0); });
+        if (left <= 0) clearInterval(this.cdTimer);
+      };
+      tick(); this.cdTimer = setInterval(tick, 250);
+    }
+
     lock(ms) { this.locked = true; setTimeout(() => { this.locked = false; }, ms); }
 
     act(fn) {
@@ -157,7 +171,7 @@
       this.scene.play("rest", 55);
       this.scene.floatText(`+${heal} khí huyết`, "#6dff9a");
       this.log(`Bạn nghỉ ngơi dưỡng thương. Khí huyết +${heal}`);
-      this.lock(700);
+      this.cooldown();
       if (this.passTime(1)) this.endAction();
     }
 
@@ -166,7 +180,7 @@
       const luck = p.stats["Vận Khí"] + p.stats["Phúc Duyên"];
       const r = rnd(1, 100) + luck;
       p.track.explores++;
-      this.lock(1300);
+      this.cooldown();
       if (r >= 115) {
         const g = int(p.monthGain() * rnd(3, 5));
         sc.play("explore", 45);
