@@ -23,6 +23,10 @@ test("tu vi đủ thì gợi ý đột phá được ưu tiên trước mọi g�
   const list = ids(TT, { p, dead: false });
   assert.equal(list[0], "break"); assert.ok(list.includes("skill"));
 });
+test("tu vi đủ nhưng khí huyết thấp: cảnh báo nghỉ ngơi trước khi đột phá", () => {
+  const { TT, player } = load(), p = player(); p.exp = p.need_exp(); p.hp = 1;
+  assert.ok(ids(TT, { p, dead: false }).includes("hurt"));
+});
 test("thọ nguyên sắp hết thì cảnh báo", () => {
   const { TT, player } = load(), p = player(); p.lifespan = p.age + 5;
   assert.ok(ids(TT, { p, dead: false }).includes("life"));

@@ -15,6 +15,7 @@
     if (!p || g.dead) return out;
     const add = (id, text, label, run) => out.push({ id, text, label, run });
     const need = p.need_exp(), left = p.lifespan - p.age, S = p.secret, sx = p.sectx;
+    if (p.exp >= need && p.hp < p.max_hp() * 0.5) add("hurt", "Tu vi đã đủ nhưng khí huyết còn thấp. Đột phá thất bại có thể gây Tẩu hỏa nhập ma; hãy Nghỉ ngơi hoặc dùng đan dược hồi phục trước.", "Nghỉ ngơi", () => g.act(g.actRest));
     if (p.exp >= need) add("break", `Tu vi đã đủ. Bấm Đột phá để lên ${p.tang === 9 ? "đại cảnh giới (thọ nguyên tăng thêm)" : "tầng " + (p.tang + 1)}.${p.breakChance(p.tang === 9) < 0.5 ? " Tỉ lệ còn thấp, có thể áp chế thêm hoặc dùng Phá Cảnh Đan." : ""}`, "Đột phá", () => g.act(g.actBreakthrough));
     if (left <= 12) add("life", `Thọ nguyên chỉ còn ${Math.max(0, left)} năm. Hãy đột phá đại cảnh giới hoặc mua Trường Thọ Quả ở cửa hàng.`, "Cửa hàng", () => g.openShop());
     const cheapest = Math.min(...Object.values(TT.SKILLS).filter(s => s.realm <= p.realm).map(s => s.cost));

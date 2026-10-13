@@ -99,7 +99,12 @@
     const done = sc => {
       if (sc === null) { this.log("Bạn bỏ dở lò rèn, phôi nguội ngắt.", "red"); return "Đã hủy - mất nguyên liệu."; }
       const s = 0.3 * sc[0] + 0.3 * sc[1] + 0.4 * sc[2], q = TT.qualityOf(s);
-      if (q === 0) { this.log(`Rèn ${name} thất bại, phôi nứt vỡ.`, "red"); return `Luyện khí thất bại!\nPhôi nứt vỡ (${int(s * 100)}%).`; }
+      if (q === 0) {
+        const back = Math.floor(g.mat / 2); if (back > 0) this.invAdd("Quặng Linh Thiết", 0, back, true);   // thất bại hoàn lại một nửa quặng
+        this.log(`Rèn ${name} thất bại, phôi nứt vỡ${back ? `, thu lại ${back} Quặng Linh Thiết` : ""}.`, "red");
+        this.refresh(); this.autosave();
+        return `Luyện khí thất bại!\nPhôi nứt vỡ (${int(s * 100)}%).${back ? `\nThu lại ${back} Quặng Linh Thiết.` : ""}`;
+      }
       const old = this.p.gear[name] || 0;
       let msg;
       if (q > old) {

@@ -13,6 +13,7 @@ insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('222222
 \i supabase/migrations/20261011000000_player_saves.sql
 \i supabase/migrations/20261012000000_delete_account_and_checks.sql
 \i supabase/migrations/20261013000000_leaderboard.sql
+\i supabase/migrations/20261014000000_leaderboard_fix.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -81,10 +82,18 @@ do $$ begin
   assert (select level from public.leaderboard where name like 'B%') = 19 and (select name from public.leaderboard where level = 19) = 'B  cao thu', 'cấp 19 hợp lý, tên bỏ ký tự điều khiển';
   perform public.save_game('{"player":{"name":"B kém","realm":0,"tang":3,"months":9,"age":16,"lifespan":80}}', '{}', 2, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'thành tích tốt nhất không bị hạ';
-  perform public.save_game('{"player":{"name":"B gian","realm":4,"tang":1,"months":40,"age":20,"lifespan":500}}', '{}', 3, true);   -- cấp 37 cần >= 317 tháng
+  perform public.save_game('{"player":{"name":"B gian","realm":8,"tang":9,"months":100,"age":40,"lifespan":2000}}', '{}', 3, true);   -- cấp 81 cần >= ~570 tháng
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'số tháng quá thấp so với cấp thì không được lên bảng';
   perform public.save_game('{"player":{"name":"B cao","realm":4,"tang":1,"months":400,"age":40,"lifespan":500}}', '{}', 4, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 37, 'đủ tháng thì lên bảng';
+  -- thành tích tốt nhất của kiếp trước (meta.best) vẫn được tính khi bản lưu hiện tại không còn nhân vật; số tháng lấy từ tuổi lớn nhất trong lịch sử
+  perform public.save_game('{"count":2,"player":null}', '{"best":60,"history":[{"age":150,"end":"win"},{"age":90,"end":"death"}]}', 5, true);
+  assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 60, 'meta.best nâng hạng khi hết nhân vật';
+  assert (select months from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = (150 - 20) * 12, 'số tháng ước lượng từ lịch sử';
+  perform public.save_game('{"count":2,"player":null}', '{"best":30,"history":[]}', 6, true);
+  assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 60, 'best thấp hơn không hạ hạng';
+  perform public.save_game('{"count":2,"player":null}', '{"best":999,"history":"xau"}', 7, true);
+  assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 81, 'best vượt trần bị chặn ở 81, history sai kiểu không làm lỗi';
 end $$;
 
 -- chưa đăng nhập (anon) bị chặn cả đọc lẫn ghi

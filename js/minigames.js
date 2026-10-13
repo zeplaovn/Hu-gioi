@@ -108,21 +108,21 @@
       this.stroke = []; this.drawing = false; this.started = false;
       this.samples = 0; this.good = 0; this.len = 0.0; this.last = null;
     }
-    ink() { return 1 - this.len / (this.total * 1.6); }
+    ink() { return 1 - this.len / (this.total * 2.4); }   // 2,4 lần độ dài đường (trước 1,6): tay rung vẫn đủ mực
     coverage() { return this.cov.filter(Boolean).length / this.cov.length; }
     sample(x, y) {
       let best = 1e9;
       this.g.forEach(([gx, gy], i) => {
         const d = Math.hypot(x - gx, y - gy);
         best = Math.min(best, d);
-        if (d <= 18) this.cov[i] = true;
+        if (d <= 26) this.cov[i] = true;
       });
       this.samples++;
-      if (best <= 16) this.good++;
+      if (best <= 24) this.good++;
     }
     press(x, y) {
       if (this.done) return;
-      if (this.started || Math.hypot(x - this.g[0][0], y - this.g[0][1]) <= 30) {
+      if (this.started || Math.hypot(x - this.g[0][0], y - this.g[0][1]) <= 40) {
         this.drawing = this.started = true;
         this.last = [x, y]; this.stroke.push([[x, y]]); this.sample(x, y);
       }
