@@ -20,7 +20,7 @@
     onKey(e) {
       if (!this.inGame || this.dead || TT.ui.anyModal() || e.ctrlKey || e.metaKey || e.altKey) return;
       if (/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName)) return;
-      const fn = { t: this.actTrain, l: this.actExplore, n: this.actRest, d: this.actBreakthrough }[e.key.toLowerCase()];
+      const fn = { l: this.actExplore, n: this.actRest, d: this.actBreakthrough }[e.key.toLowerCase()];
       if (fn) { e.preventDefault(); this.act(fn); }
     }
 
@@ -151,21 +151,6 @@
     gain(n, label = "tu vi") { this.p.exp += n; this.scene.floatText(`+${n} ${label}`, C.GREEN); }
 
     /* ================= HÀNH ĐỘNG CHÍNH ================= */
-    actTrain() {
-      const p = this.p;
-      let gain = int(p.monthGain(Math.random));
-      this.scene.play("train", 55);
-      if (Math.random() < p.stats["Ngộ Tính"] / 100) {
-        gain *= 2;
-        this.log(`Linh quang chợt lóe, bạn đốn ngộ! Tu vi +${gain}`, "gold");
-        this.scene.flash("#fff2a8", 8); this.scene.addRing(C.GOLD);
-        this.scene.fxOnce("break", null, this.scene.gy + 8, 0.4, "s");
-      } else this.log(`Bạn nhắm mắt vận công một tháng. Tu vi +${gain}`, "green");
-      this.gain(gain);
-      this.lock(700);
-      if (this.passTime(1)) this.endAction();
-    }
-
     actRest() {
       const p = this.p, heal = int(p.max_hp() * 0.5);
       p.hp = Math.min(p.max_hp(), p.hp + heal);

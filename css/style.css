@@ -309,7 +309,7 @@ kbd { font: 600 11px/1 var(--sans); color: var(--dim); border: 1px solid var(--l
   .box { width: 100% !important; border-radius: 14px 14px 0 0; max-height: 92dvh; padding-bottom: calc(16px + var(--safe-b)); animation: sheet-up .18s ease-out; }
   .confirm-box { border-radius: 14px 14px 0 0; }
   @keyframes sheet-up { from { transform: translateY(24px); opacity: .6; } }
-  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 8px 8px calc(8px + var(--safe-b)); background: rgba(11, 21, 21, .96); border-top: 1px solid var(--line); }
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 8px calc(8px + var(--safe-b)); background: rgba(11, 21, 21, .96); border-top: 1px solid var(--line); }
   .dock .btn { flex-direction: column; gap: 2px; min-height: 48px; padding: 4px 2px; font-size: 12px; margin: 0; width: 100%; justify-content: center; }
   .dock .btn .btn-label { flex: none; text-align: center; }
   .dock .btn.seal { font-size: 12.5px; margin: 0; border-radius: 10px 6px 11px 7px; }

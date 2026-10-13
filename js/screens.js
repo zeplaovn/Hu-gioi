@@ -215,7 +215,7 @@
     /* phải: hành động */
     this.actionBtns = [];
     const acts = [
-      ["Tu luyện  [T]", this.actTrain, "", "orb_blue"], ["Lịch luyện  [L]", this.actExplore, "", "sword"],
+      ["Lịch luyện  [L]", this.actExplore, "", "sword"],
       ["Nghỉ ngơi  [N]", this.actRest, "", "peach"], ["Đột phá  [D]", this.actBreakthrough, "gold", "orb_gold"],
       ["Luyện hóa linh thạch", this.actStone, "", "crystal"], ["Cửa hàng đan dược", this.openShop, "cyan", "orb_green"],
       ["Công pháp", this.openSkills, "cyan", "@skills/book_gold_40.png"], ["Tông môn", this.openSect, "orange", "bagua"],
@@ -233,7 +233,7 @@
       return mkAct(name, fn, cls, icon, kbd, kbd ? " act dup" : " act");   // 3 việc hay làm đã có trên thanh thao tác nhanh (mobile) nên ẩn bản trùng
     });
     /* thanh thao tác nhanh (chỉ hiện trên điện thoại): các việc hay làm nhất luôn nằm trong tầm ngón cái */
-    const dockSpec = [["Tu luyện", this.actTrain, "orb_blue"], ["Lịch luyện", this.actExplore, "sword"], ["Nghỉ ngơi", this.actRest, "peach"], ["Đột phá", this.actBreakthrough, "orb_gold", "seal"]];
+    const dockSpec = [["Lịch luyện", this.actExplore, "sword"], ["Nghỉ ngơi", this.actRest, "peach"], ["Đột phá", this.actBreakthrough, "orb_gold", "seal"]];
     const dock = h("nav", { class: "dock", "aria-label": "Thao tác nhanh" }, dockSpec.map(([name, fn, ic, cls]) => {
       const b = mkAct(name, fn, cls || "", TT.A.icon(ic, 22), null, ""); if (fn === this.actBreakthrough) U.dockBreak = b; return b;
     }), TT.ui.btn("Thêm", () => document.querySelector(".col-right")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }), { cls: "dimbtn", icon: TT.A.icon("bagua", 22) }));
