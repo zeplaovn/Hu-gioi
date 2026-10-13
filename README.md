@@ -75,6 +75,7 @@ Mọi số liệu nằm trong `TT.PROG` (`js/data.js`); công thức ở `TT.nee
 - **Chỉ số vật phẩm đã giảm:** Tụ Khí Đan 6% tu vi cần để lên tầng (hàng cao cấp 4–5%), Phá Cảnh Đan +12% (chế tạo +10%), Phá Cảnh Phù +5%, Cường Lực Phù +8, Hộ Thân Phù giảm 30%, phẩm chất Cực phẩm ×1,9 (trước ×2,5), Phi Kiếm +6, Pháp Bào +24, Linh Giới +4%.
 - **Mục tiêu thời gian thật (build trung bình):** Luyện Khí ~15 phút, Trúc Cơ ~1,5 giờ, Kim Đan ~5 giờ, Nguyên Anh ~13 giờ, Hóa Thần ~1,2 ngày, Đại Thừa ~4 ngày, Độ Kiếp ~6 ngày. Phi thăng cần build mạnh (~5–6 ngày). Người chơi mới thường chết già quanh Nguyên Anh và phải luân hồi với bản thân mạnh hơn.
 - Chạy `node tools/sim_progress.mjs` sau khi chỉnh số để kiểm tra lại.
+- Chạy `node tools/sim_root.mjs [tên cấu hình]` để so sánh các loại linh căn (cùng một build, chỉ khác linh căn): thời gian tới Hóa Thần / Phi thăng và tỉ lệ sống đến Phi thăng. Các bộ số thử nằm trong `tools/sim_root_configs.mjs`.
 
 ## Asset mới (cập nhật)
 | Sheet | Thư mục | Dùng ở đâu |
