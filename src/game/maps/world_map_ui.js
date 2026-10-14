@@ -26,21 +26,23 @@
     };
 
     const renderPreview = (world, body) => {
+      const atlas = document.createElement("img");
+      atlas.className = "world-preview-atlas";
+      atlas.src = world.preview;
+      atlas.alt = `Toàn cảnh ${world.name}`;
+      atlas.loading = "lazy";
+      atlas.decoding = "async";
       const grid = el("div", "world-preview-grid");
-      world.regions.forEach(region => {
+      world.regions.forEach((region, i) => {
         const card = el("article", "world-preview-card");
-        const img = document.createElement("img");
-        img.src = region.preview;
-        img.alt = region.name;
-        img.loading = "lazy";
-        img.decoding = "async";
         const copy = el("div", "world-preview-copy");
-        copy.append(el("h3", "", region.name), el("p", "dim small", region.desc));
-        card.append(img, copy);
+        copy.append(el("div", "preview-index", String(i + 1).padStart(2, "0")), el("h3", "", region.name), el("p", "dim small", region.desc));
+        card.append(copy);
         grid.append(card);
       });
       body.append(
         el("div", "world-lock-note", world.unlockText || "Khu vực chưa mở."),
+        atlas,
         grid
       );
     };
