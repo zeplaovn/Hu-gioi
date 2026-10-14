@@ -26,7 +26,6 @@ insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('222222
 \i supabase/migrations/20261018020000_trusted_game_time.sql
 \i supabase/migrations/20261018030000_scale_hot_path_optimization.sql
 \i supabase/migrations/20261019000000_admin_chat_badge.sql
-\i supabase/migrations/20261019010000_admin_list_chat_is_admin.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -58,7 +57,7 @@ select public.t_expect_error($q$select public.heartbeat_presence('aaaaaaaa-aaaa-
 select public.t_expect_error($q$select * from public.server_presence$q$, 'permission denied');
 reset role; set role anon;
 select public.t_expect_error($q$select public.heartbeat_presence('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa')$q$, 'permission denied');
-do $$ begin perform public.server_status(); end $$;                                     -- anon được xem trạng thái
+do $$ begin perform public.server_status(); end $$;
 reset role;
 
 -- viewer (2): xem được, không sửa được
@@ -83,7 +82,7 @@ reset role; set role authenticated; select set_config('request.jwt.claim.sub', '
 do $$ declare r jsonb; begin r := public.save_game('{"count":1,"player":{"name":"Admin","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0); assert (r->>'rev')::int = 1, 'admin lưu game được lúc bảo trì'; end $$;
 do $$ begin perform public.send_chat('admin thử'); end $$;
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
-select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 0)$q$, 'maintenance_mode');            -- viewer không được ngoại lệ
+select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 0)$q$, 'maintenance_mode');
 reset role;
 -- khi bảo trì: người chơi không ghi / chat được, admin vẫn dùng được dashboard
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
@@ -98,7 +97,7 @@ reset role; set role authenticated; select set_config('request.jwt.claim.sub', '
 do $$ declare r jsonb; begin r := public.save_game('{"count":1,"player":{"name":"A","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0); assert (r->>'rev')::int = 1; end $$;
 do $$ begin perform public.send_chat('xin chào'); end $$;
 
--- tên admin nổi bật + chống mạo danh: admin có is_admin, tin admin_send_message tên 'Thiên Đạo'; người thường không đặt được tên giống admin
+-- tên admin nổi bật + chống mạo danh
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ begin
   perform public.admin_send_message('thông báo');

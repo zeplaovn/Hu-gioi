@@ -1,0 +1,9 @@
+-- Historical production migration marker.
+--
+-- This version was applied directly to Supabase production on 2026-10-14.
+-- The effective, idempotent implementation is kept in
+-- 20261018030000_scale_hot_path_optimization.sql for fresh environments.
+--
+-- Do not add schema changes here. Keeping this marker makes local migration
+-- history match the remote Supabase migration table without replaying the
+-- production-only operation out of dependency order.
