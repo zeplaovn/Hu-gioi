@@ -1,15 +1,28 @@
 {
   "name": "thien-van-dai-luc",
   "private": true,
-  "version": "1.2.0",
+  "version": "2.0.0-rewrite.1",
+  "type": "module",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build:legacy": "node scripts/build.mjs",
+    "build:node": "tsc -p tsconfig.node.json",
+    "build": "npm run build:node && npm run build:legacy",
     "serve": "node scripts/serve.mjs",
-    "test": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs tests/test_world_map.mjs tests/test_maintenance.mjs tests/test_loading.mjs tests/test_attributes.mjs",
+    "dev:server": "tsx apps/server/src/index.ts",
+    "test:legacy": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs tests/test_world_map.mjs tests/test_maintenance.mjs tests/test_loading.mjs tests/test_attributes.mjs",
+    "test:node": "node --import tsx --test packages/domain/test/*.test.ts apps/server/test/*.test.ts",
+    "test": "npm run test:legacy && npm run test:node",
     "mock": "node scripts/mock_supabase.mjs"
   },
+  "dependencies": {
+    "fastify": "^5.6.1",
+    "zod": "^4.1.12"
+  },
   "devDependencies": {
+    "@types/node": "^24.7.2",
+    "javascript-obfuscator": "^5.9.0",
     "terser": "^5.51.2",
-    "javascript-obfuscator": "^5.9.0"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   }
 }
