@@ -6,7 +6,7 @@ export interface CreateCharacterInput {
   gender: "Nam" | "Nữ";
   age: number;
   race: RaceName;
-  alloc: Partial<Record<StatName, number>>;
+  alloc: Partial<Record<StatName, number | undefined>>;
   root?: unknown;
 }
 
@@ -17,10 +17,11 @@ export function createCharacter(input: CreateCharacterInput, rng: Rng = Math.ran
   if (input.gender !== "Nam" && input.gender !== "Nữ") throw new Error("invalid_gender");
   if (!Number.isInteger(input.age) || input.age < 14 || input.age > 30) throw new Error("invalid_age");
   const race = RACES[input.race];
+  const raceBonus = race.bonus as Partial<Record<StatName, number>>;
   const stats = {} as Record<StatName, number>;
   for (const stat of STATS) {
     const allocated = Math.max(0, Math.min(40, Math.trunc(input.alloc[stat] ?? 0)));
-    stats[stat] = Math.max(1, 5 + allocated + (race.bonus[stat] ?? 0));
+    stats[stat] = Math.max(1, 5 + allocated + (raceBonus[stat] ?? 0));
   }
   const root = cleanRoot(input.root) ?? rollRoot(rng);
   const lifespan = race.lifespan + Math.floor(rng() * 16) - 5;
@@ -47,8 +48,7 @@ export function createCharacter(input: CreateCharacterInput, rng: Rng = Math.ran
 }
 
 export function maxHp(p: Character): number {
-  const level = p.realm * 9 + p.tang;
-  const base = 80 + p.stats["Căn Cốt"] * 8 + p.realm * 40 + level * 0;
+  const base = 80 + p.stats["Căn Cốt"] * 8 + p.realm * 40;
   return Math.round(base * (1 + rootBonus(p.root, "hp")));
 }
 
