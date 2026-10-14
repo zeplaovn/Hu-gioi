@@ -15,16 +15,24 @@ insert into auth.users values
   ('33333333-3333-3333-3333-333333333333'),
   ('44444444-4444-4444-4444-444444444444');
 
-\i supabase/migrations/20261014000000_01_core.sql
-\i supabase/migrations/20261014000100_02_admin_core.sql
-\i supabase/migrations/20261014000200_03_server.sql
-\i supabase/migrations/20261014000300_04_leaderboard.sql
-\i supabase/migrations/20261014000400_05_gameplay.sql
-\i supabase/migrations/20261014000500_06_chat.sql
-\i supabase/migrations/20261014000600_07_economy.sql
-\i supabase/migrations/20261014000700_08_admin_rpc.sql
-\i supabase/migrations/20261014000800_09_security.sql
-\i supabase/migrations/20261014000900_10_performance.sql
+\i supabase/migrations/20261011000000_player_saves.sql
+\i supabase/migrations/20261012000000_delete_account_and_checks.sql
+\i supabase/migrations/20261013000000_leaderboard.sql
+\i supabase/migrations/20261014000000_chat.sql
+\i supabase/migrations/20261014025908_scale_hot_path_optimization.sql
+\i supabase/migrations/20261014032941_canonical_sql_names_v2.sql
+\i supabase/migrations/20261014041045_remove_canonical_sql_aliases.sql
+\i supabase/migrations/20261015000000_leaderboard_fix.sql
+\i supabase/migrations/20261016000000_admin_console.sql
+\i supabase/migrations/20261016010000_admin_console_fixes.sql
+\i supabase/migrations/20261016020000_maintenance_guard.sql
+\i supabase/migrations/20261016030000_admin_cleanup.sql
+\i supabase/migrations/20261017000000_maintenance_admin_bypass.sql
+\i supabase/migrations/20261018000000_gameplay_hardening.sql
+\i supabase/migrations/20261018010000_game_clock_volatility.sql
+\i supabase/migrations/20261018020000_trusted_game_time.sql
+\i supabase/migrations/20261018030000_scale_hot_path_optimization.sql
+\i supabase/migrations/20261019000000_admin_chat_badge.sql
 \i supabase/migrations/20261020000000_review_fixes.sql
 \i supabase/migrations/20261020010000_maintenance_grace_and_windows.sql
 
