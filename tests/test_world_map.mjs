@@ -33,6 +33,45 @@ test("Ha Gioi keeps progression reward and danger monotonic", () => {
   assert.equal(ctx.TT.maps.canTravel(p, rs[3]), true);
 });
 
+test("Ha Gioi has three distinct gameplay sites per region", () => {
+  const rs = ctx.TT.maps.get("ha_gioi").regions;
+  const ids = [];
+  for (const r of rs) {
+    assert.equal(r.sites.length, 3, r.id);
+    for (const s of r.sites) {
+      ids.push(s.id);
+      assert.equal(s.region, r.id);
+      assert.equal(s.world, "ha_gioi");
+      assert.ok(s.monsters.length >= 2, s.id);
+      assert.ok(s.resources.length >= 2, s.id);
+      assert.ok(s.npcs.length >= 1, s.id);
+    }
+  }
+  assert.equal(ids.length, 27);
+  assert.equal(new Set(ids).size, 27);
+});
+
+test("region travel selects the default site and site travel stays inside region", () => {
+  const p = { realm: 4 };
+  const region = ctx.TT.maps.travel(p, "ha_gioi", "thienha");
+  assert.equal(region.id, "thienha");
+  assert.equal(p.world, "ha_gioi");
+  assert.equal(p.region, "thienha");
+  assert.equal(p.site, "thienha_cang");
+  assert.equal(ctx.TT.maps.currentSite(p).id, "thienha_cang");
+  const site = ctx.TT.maps.travelSite(p, "thienha_vuc");
+  assert.equal(site.id, "thienha_vuc");
+  assert.equal(p.region, "thienha");
+  assert.equal(p.site, "thienha_vuc");
+});
+
+test("old saves without world/site still receive safe map fallbacks", () => {
+  const p = { realm: 2, region: "vanyeu" };
+  assert.equal(ctx.TT.maps.currentWorld(p).id, "ha_gioi");
+  assert.equal(ctx.TT.maps.currentRegion(p).id, "vanyeu");
+  assert.equal(ctx.TT.maps.currentSite(p).id, "vanyeu_ngoai");
+});
+
 test("future worlds stay preview-only and all preview assets exist", () => {
   for (const id of ["tien_gioi", "than_gioi"]) {
     const w = ctx.TT.maps.get(id);

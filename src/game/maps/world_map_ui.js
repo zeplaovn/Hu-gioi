@@ -19,6 +19,7 @@
     this.worldMapWin = m;
     let worldId = TT.maps.get(initialWorld) ? initialWorld : (this.p?.world || "ha_gioi");
     let selected = this.p?.region || "pham";
+    let selectedSite = this.p?.site || null;
 
     const close = () => {
       m.close();
@@ -40,17 +41,68 @@
         card.append(copy);
         grid.append(card);
       });
-      body.append(
-        el("div", "world-lock-note", world.unlockText || "Khu vực chưa mở."),
-        atlas,
-        grid
-      );
+      body.append(el("div", "world-lock-note", world.unlockText || "Khu vực chưa mở."), atlas, grid);
+    };
+
+    const renderSites = (region, body) => {
+      const currentSite = TT.maps.currentSite(this.p);
+      const box = el("section", "map-sites");
+      box.append(el("h3", "map-sites-title", `Địa điểm · ${region.name}`));
+      const grid = el("div", "map-sites-grid");
+      for (const site of region.sites || []) {
+        const active = this.p?.region === region.id && currentSite?.id === site.id;
+        const chosen = selectedSite === site.id;
+        const card = el("button", `map-site-card${active ? " current" : ""}${chosen ? " selected" : ""}`);
+        card.type = "button";
+        card.onclick = () => { selectedSite = site.id; render(); };
+        card.append(
+          el("span", "map-site-kind", site.kind || "địa điểm"),
+          el("strong", "map-site-name", site.name),
+          el("span", "map-site-desc", site.desc),
+          el("span", "map-site-meta", `Nguy hiểm ${site.danger} · thưởng ×${(region.reward * site.reward).toFixed(2)}`)
+        );
+        grid.append(card);
+      }
+      box.append(grid);
+
+      const site = (region.sites || []).find(s => s.id === selectedSite) || region.sites?.[0];
+      if (site) {
+        selectedSite = site.id;
+        const info = el("div", "map-site-detail");
+        const monsters = site.monsters?.join(" · ") || "Chưa rõ";
+        const resources = site.resources?.join(" · ") || "Chưa rõ";
+        const npcs = site.npcs?.join(" · ") || "Chưa rõ";
+        info.append(
+          el("p", "", site.desc),
+          el("div", "map-site-line", `Yêu thú: ${monsters}`),
+          el("div", "map-site-line", `Tài nguyên: ${resources}`),
+          el("div", "map-site-line", `Nhân vật: ${npcs}`)
+        );
+        const here = this.p?.region === region.id && currentSite?.id === site.id;
+        const go = el("button", `game-btn map-travel-btn${here ? " current" : ""}`, here ? "Đang ở địa điểm này" : "Đi tới địa điểm");
+        go.type = "button";
+        go.disabled = here;
+        go.onclick = () => {
+          if (this.p?.region !== region.id) {
+            if (!TT.maps.travel(this.p, region.world, region.id)) return;
+          }
+          const moved = TT.maps.travelSite(this.p, site.id);
+          if (!moved) return;
+          this.log(`Bạn tới ${moved.name}, ${region.name}.`, "cyan");
+          this.autosave();
+          render();
+        };
+        info.append(go);
+        box.append(info);
+      }
+      body.append(box);
     };
 
     const renderHaGioi = (world, body) => {
       const current = TT.maps.currentRegion(this.p);
       if (!world.regions.some(r => r.id === selected)) selected = current?.id || world.regions[0]?.id;
       const selectedRegion = world.regions.find(r => r.id === selected) || current || world.regions[0];
+      if (!selectedRegion.sites?.some(s => s.id === selectedSite)) selectedSite = selectedRegion.sites?.[0]?.id || null;
 
       const map = el("div", "ha-map-canvas");
       world.regions.forEach((region, i) => {
@@ -61,7 +113,7 @@
         b.setAttribute("aria-label", can ? region.name : `${region.name}, khóa tới ${realmName(region.realm)}`);
         b.append(el("span", "node-dot", active ? "●" : can ? "◆" : "✦"), el("span", "node-name", region.name));
         if (!can) b.append(el("span", "node-lock", realmName(region.realm)));
-        b.onclick = () => { selected = region.id; render(); };
+        b.onclick = () => { selected = region.id; selectedSite = region.sites?.[0]?.id || null; render(); };
         map.append(b);
       });
 
@@ -72,27 +124,31 @@
       const stats = el("div", "map-region-stats");
       stats.append(
         el("span", "", `Yêu cầu: ${realmName(selectedRegion.realm)}`),
-        el("span", "", `Thưởng lịch luyện ×${selectedRegion.reward.toFixed(2)}`)
+        el("span", "", `Sinh cảnh: ${selectedRegion.biome || "không rõ"}`),
+        el("span", "", `Thưởng nền ×${selectedRegion.reward.toFixed(2)}`),
+        el("span", "", `${selectedRegion.sites?.length || 0} địa điểm`)
       );
-      const go = el("button", `game-btn map-travel-btn${here ? " current" : ""}`, here ? "Đang ở đây" : can ? "Đi tới khu vực" : "Chưa đủ cảnh giới");
+      const go = el("button", `game-btn map-travel-btn${here ? " current" : ""}`, here ? "Đang ở khu vực này" : can ? "Đi tới khu vực" : "Chưa đủ cảnh giới");
       go.type = "button";
       go.disabled = here || !can;
       go.onclick = () => {
         const moved = TT.maps.travel(this.p, world.id, selectedRegion.id);
         if (!moved) return;
+        selectedSite = this.p.site;
         this.log(`Bạn tới ${moved.name}.`, "cyan");
         this.autosave();
         render();
       };
       detail.append(title, el("p", "", selectedRegion.desc), stats, go);
       body.append(map, detail);
+      if (can) renderSites(selectedRegion, body);
     };
 
     const render = () => {
       const world = TT.maps.get(worldId) || TT.maps.get("ha_gioi");
       m.box.replaceChildren();
       const head = el("div", "world-map-head");
-      head.append(el("h2", "mtitle", "Thiên Vân Địa Đồ"), el("p", "dim small", "Mỗi đại thế giới là một map độc lập. Hạ Giới đang hoạt động; Tiên Giới và Thần Giới đã tách kiến trúc để mở rộng theo progression sau này."));
+      head.append(el("h2", "mtitle", "Thiên Vân Địa Đồ"), el("p", "dim small", "Hạ Giới đã mở tới cấp địa điểm; Tiên Giới và Thần Giới vẫn là đại thế giới độc lập chờ progression tương ứng."));
 
       const tabs = el("div", "world-map-tabs");
       TT.maps.list().forEach(w => {
@@ -121,7 +177,6 @@
     render();
   };
 
-  // ha_gioi_fix.js tạo nút cũ. Giữ vị trí nhưng đổi entry point thành bản đồ đa thế giới.
   const showGame0 = G.showGame;
   G.showGame = function () {
     const out = showGame0.apply(this, arguments);

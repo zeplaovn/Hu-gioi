@@ -13,11 +13,18 @@
     register(world) {
       if (!world || !world.id || !Array.isArray(world.regions)) throw new Error("invalid_world_map");
       if (byId[world.id]) throw new Error("duplicate_world_map:" + world.id);
-      const seen = new Set();
+      const seen = new Set(), siteSeen = new Set();
       for (const region of world.regions) {
         if (!region || !region.id || seen.has(region.id)) throw new Error("invalid_region:" + world.id);
         seen.add(region.id);
         region.world = world.id;
+        region.sites ??= [];
+        for (const site of region.sites) {
+          if (!site || !site.id || siteSeen.has(site.id)) throw new Error("invalid_site:" + world.id + ":" + region.id);
+          siteSeen.add(site.id);
+          site.world = world.id;
+          site.region = region.id;
+        }
       }
       byId[world.id] = world;
       order.push(world.id);
@@ -41,6 +48,12 @@
         || null;
     },
 
+    currentSite(player) {
+      const region = this.currentRegion(player);
+      if (!region?.sites?.length) return null;
+      return region.sites.find(s => s.id === player?.site) || region.sites[0];
+    },
+
     canEnterWorld(player, world) {
       if (!world || world.playable === false) return false;
       return typeof world.unlock === "function" ? !!world.unlock(player) : true;
@@ -59,7 +72,18 @@
       if (!region || !this.canTravel(player, region)) return null;
       player.world = world.id;
       player.region = region.id;
+      player.site = region.sites?.[0]?.id || null;
       return region;
+    },
+
+    travelSite(player, siteId) {
+      const region = this.currentRegion(player);
+      const site = region?.sites?.find(s => s.id === siteId);
+      if (!site || !this.canTravel(player, region)) return null;
+      player.world = region.world;
+      player.region = region.id;
+      player.site = site.id;
+      return site;
     },
   };
 })();
