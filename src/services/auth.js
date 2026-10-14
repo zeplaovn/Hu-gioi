@@ -1,5 +1,5 @@
-/* Giao diện đăng nhập / đăng ký, hộp thoại xử lý dữ liệu lệch nhau, chỉ báo đồng bộ và nút đăng xuất.
-   Chỉ hoạt động khi đã cấu hình Supabase (TT.cloud.enabled); nếu không, game chạy ngoại tuyến như cũ. */
+/* Giao diện tài khoản cho chế độ database-only.
+   Người chơi phải đăng nhập; tiến trình bền vững chỉ nằm trên Supabase. */
 "use strict";
 (function () {
   const cloud = TT.cloud;
@@ -9,43 +9,37 @@
   const busy = text => app().replaceChildren(h("div", { id: "loading", role: "status" }, text));
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  /* ---------- luồng mở game ---------- */
   auth.boot = async start => {
-    busy("Đang kết nối tài khoản…");
+    busy("Đang tải dữ liệu tài khoản…");
     let r;
     try { r = await cloud.bootstrap(); } catch (e) { return fatal(e, start); }
-    return handle(r, start);
-  };
-  async function handle(r, start) {
     if (r.state === "anon") return showAuth(start, r.expired ? "Phiên đăng nhập đã hết hạn, hãy đăng nhập lại." : "");
-    if (r.state === "reload") return location.reload();
-    if (r.state === "conflict") return askConflict(r.row, start);
-    if (r.state === "offer-upload") return askUpload(start);
     wire();
-    if (r.offline) TT.ui.toast("Đang ngoại tuyến: tiến trình sẽ được đồng bộ khi có mạng.", "info", 6000);
     start();
-  }
+  };
+
   function fatal(e, start) {
     app().replaceChildren(h("div", { class: "auth-screen" }, h("div", { class: "auth-card", role: "alert" },
-      h("h1", { class: "auth-title" }, "Không vào được tài khoản"), h("p", { class: "center" }, cloud.errorText(e)),
-      h("div", { class: "row center" }, TT.ui.btn("Thử lại", () => auth.boot(start), { cls: "gold" }), TT.ui.btn("Đăng xuất", () => doSignOut(false), { cls: "dimbtn" })))));
+      h("h1", { class: "auth-title" }, "Không tải được dữ liệu"),
+      h("p", { class: "center" }, cloud.errorText(e)),
+      h("p", { class: "dim small center" }, "Game cần kết nối máy chủ để đọc tiến trình. Dữ liệu cũ trên trình duyệt không được dùng làm save."),
+      h("div", { class: "row center" },
+        TT.ui.btn("Thử lại", () => auth.boot(start), { cls: "gold" }),
+        TT.ui.btn("Đăng xuất", () => doSignOut(false), { cls: "dimbtn" })))));
   }
 
-
-  /* ---------- hCaptcha (khi có site key) ---------- */
   const HC_URL = "https://js.hcaptcha.com/1/api.js?render=explicit";
   const hcHost = u => { try { const x = new URL(u, location.href); return x.protocol === "https:" && (x.hostname === "hcaptcha.com" || x.hostname.endsWith(".hcaptcha.com")); } catch (e) { return false; } };
   let hcLoading = null;
-  function loadHcaptcha() {                                     // nạp 1 lần; CSP chỉ cho phép *.hcaptcha.com, Trusted Types chỉ cho URL script thuộc hCaptcha
+  function loadHcaptcha() {
     if (window.hcaptcha && window.hcaptcha.render) return Promise.resolve();
     if (hcLoading) return hcLoading;
     hcLoading = new Promise((resolve, reject) => {
       const tt = window.trustedTypes;
       let url = HC_URL;
       if (tt && tt.createPolicy) {
-        // hCaptcha tự chèn thêm script lúc chạy: chính sách "default" chỉ chấp nhận URL script của hCaptcha, HTML và mã script tự do vẫn bị chặn.
         if (!tt.defaultPolicy) { try { tt.createPolicy("default", { createScriptURL: u => { if (hcHost(u)) return u; throw new TypeError("Script URL không được phép"); }, createHTML: () => { throw new TypeError("HTML không được phép"); }, createScript: () => { throw new TypeError("Script không được phép"); } }); } catch (e) { /* đã có chính sách */ } }
-        try { url = tt.createPolicy("tvdl-hcaptcha-" + Date.now().toString(36), { createScriptURL: u => (u === HC_URL ? u : (() => { throw new TypeError("URL không được phép"); })()) }).createScriptURL(HC_URL); } catch (e) { /* dùng chuỗi thường nếu không tạo được */ }
+        try { url = tt.createPolicy("tvdl-hcaptcha-" + Date.now().toString(36), { createScriptURL: u => (u === HC_URL ? u : (() => { throw new TypeError("URL không được phép"); })()) }).createScriptURL(HC_URL); } catch (e) { /* fallback */ }
       }
       const s = document.createElement("script");
       s.src = url; s.async = true; s.defer = true;
@@ -56,11 +50,10 @@
     return hcLoading;
   }
 
-  /* ---------- màn đăng nhập / đăng ký ---------- */
   function showAuth(start, note) {
     let mode = "login", pending = false, capToken = "", capWidget = null;
     const capBox = h("div", { class: "captcha-box", id: "a-captcha", hidden: !cloud.captchaKey });
-    const capReset = () => { capToken = ""; try { if (capWidget !== null && window.hcaptcha) window.hcaptcha.reset(capWidget); } catch (e) { /* bỏ qua */ } };
+    const capReset = () => { capToken = ""; try { if (capWidget !== null && window.hcaptcha) window.hcaptcha.reset(capWidget); } catch (e) { /* ignore */ } };
     const msg = h("div", { class: "auth-msg small", role: "alert", "aria-live": "assertive" }, note || "");
     const say = (text, kind) => { msg.textContent = text || ""; msg.className = "auth-msg small" + (kind ? " " + kind : ""); };
     const email = h("input", { id: "a-email", class: "field auth-in", type: "email", autocomplete: "email", inputmode: "email", maxlength: "254", required: true, autocapitalize: "none", spellcheck: "false" });
@@ -68,8 +61,7 @@
     const pass2 = h("input", { id: "a-pass2", class: "field auth-in", type: "password", autocomplete: "new-password", maxlength: "72" });
     const show = h("input", { id: "a-show", type: "checkbox", onchange: () => { pass.type = pass2.type = show.checked ? "text" : "password"; } });
     const row2 = h("div", { class: "auth-field", hidden: true }, h("label", { for: "a-pass2" }, "Nhập lại mật khẩu"), pass2);
-    const submit = TT.ui.btn("Đăng nhập", () => {}, { cls: "gold wide" });
-    submit.type = "submit";                                     // bấm nút hoặc Enter đều đi qua onsubmit của form
+    const submit = TT.ui.btn("Đăng nhập", () => {}, { cls: "gold wide" }); submit.type = "submit";
     const forgot = h("button", { class: "linkbtn", type: "button", onclick: async () => {
       if (!EMAIL_RE.test(email.value.trim())) return say("Hãy nhập email của bạn trước.", "red-t");
       if (cloud.captchaKey && !capToken) return say("Hãy tích ô xác minh hCaptcha trước.", "red-t");
@@ -102,20 +94,20 @@
           if (!r.signedIn) { pending = false; submit.disabled = false; setMode("login"); say("Hãy kiểm tra hộp thư để xác nhận email, rồi quay lại đăng nhập.", "green"); return; }
         } else { await cloud.signIn(em, pw, capToken); capReset(); }
         pass.value = pass2.value = "";
-        return auth.boot(start);                                // đã đăng nhập: nạp dữ liệu tài khoản (hoặc vào màn tạo nhân vật nếu tài khoản mới)
+        return auth.boot(start);
       } catch (err) { capReset(); say(cloud.errorText(err), "red-t"); }
       pending = false; submit.disabled = false;
     } },
     h("div", { class: "auth-field" }, h("label", { for: "a-email" }, "Email"), email),
-    h("div", { class: "auth-field" }, h("label", { for: "a-pass" }, "Mật khẩu"), pass),
-    row2,
-    h("label", { class: "auth-show small dim", for: "a-show" }, show, " Hiện mật khẩu"),
-    capBox, msg, h("div", { class: "row center" }, submit), h("div", { class: "center" }, forgot));
+    h("div", { class: "auth-field" }, h("label", { for: "a-pass" }, "Mật khẩu"), pass), row2,
+    h("label", { class: "auth-show small dim", for: "a-show" }, show, " Hiện mật khẩu"), capBox, msg,
+    h("div", { class: "row center" }, submit), h("div", { class: "center" }, forgot));
+
     app().replaceChildren(h("div", { class: "auth-screen" }, h("div", { class: "auth-card" },
       h("h1", { class: "auth-title" }, "THIÊN VÂN ĐẠI LỤC"),
-      h("p", { class: "dim small center" }, "Đăng nhập để lưu tiến trình trên tài khoản và chơi tiếp trên mọi thiết bị."),
+      h("p", { class: "dim small center" }, "Đăng nhập để tải tiến trình trực tiếp từ tài khoản."),
       h("div", { class: "seg-row", role: "radiogroup", "aria-label": "Chế độ" }, segLogin, segReg), form,
-      h("p", { class: "dim small center" }, "Tài khoản mới sẽ tạo nhân vật ngay sau khi đăng ký."))));
+      h("p", { class: "dim small center" }, "Game cần kết nối máy chủ. Tiến trình không được lưu trong trình duyệt."))));
     setMode("login"); email.focus();
     if (cloud.captchaKey) loadHcaptcha().then(() => {
       if (!capBox.isConnected) return;
@@ -123,73 +115,25 @@
     }, () => say("Không tải được hCaptcha. Hãy kiểm tra mạng hoặc tắt trình chặn quảng cáo rồi tải lại trang.", "red-t"));
   }
 
-  /* ---------- dữ liệu máy chủ và máy này khác nhau ---------- */
-  const when = t => { const d = new Date(t); return isNaN(d) ? "" : ` (lưu lúc ${d.toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })})`; };
-  const describe = (raw, t) => {                                // tóm tắt đủ để phân biệt hai bản: tên, cảnh giới, số tháng đã tu, linh thạch, thời điểm lưu
-    try {
-      if (!raw || !raw.player) return "Chưa có nhân vật";
-      const p = TT.sec.cleanPlayer(JSON.parse(JSON.stringify(raw.player)));
-      return p ? `${p.name} · ${p.realm_name()} · tháng ${p.months} · ${p.stone} linh thạch${when(t)}` : "Không đọc được";
-    } catch (e) { return "Không đọc được"; } finally { TT.sec.error = ""; }
-  };
-  const localSummary = () => {
-    const s = TT.sec.read("tu_tien_save_v2", "save"); let t = 0;
-    try { t = JSON.parse(localStorage.getItem("tu_tien_save_v2")).t; } catch (e) { /* bỏ qua */ }
-    return describe(s && s.obj, t);
-  };
-  function chooser({ title, text, cloudLabel, localLabel, row, onCloud, onLocal }) {
-    const m = TT.ui.modal("dlg-box", null, { label: title, alert: true, dismissible: false });
-    m.box.append(h("h2", { class: "mtitle" }, title), h("p", { class: "center pre" }, text),
-      h("div", { class: "info-lines panel" },
-        h("div", {}, h("span", { class: "dim" }, "Trên tài khoản: "), h("b", {}, row ? describe(row.save, row.updated_at) : "Chưa có dữ liệu")),
-        h("div", {}, h("span", { class: "dim" }, "Trên máy này: "), h("b", {}, localSummary()))),
-      h("div", { class: "row center" },
-        TT.ui.btn(cloudLabel, async () => { m.close(); await onCloud(); }, { cls: "gold" }),
-        TT.ui.btn(localLabel, async () => {
-          if (await TT.ui.confirm({ title: "Ghi đè dữ liệu?", text: "Dữ liệu bị bỏ sẽ mất vĩnh viễn, không khôi phục được.", ok: "Tôi hiểu, tiếp tục", cancel: "Quay lại", danger: true })) { m.close(); await onLocal(); }
-        }, { cls: "red" })));
-    return m;
-  }
-  function askConflict(row, start) {
-    busy("");
-    chooser({
-      title: "Dữ liệu trên máy và trên tài khoản khác nhau",
-      text: "Có thể bạn đã chơi ở thiết bị khác. Hãy chọn bản muốn giữ.",
-      cloudLabel: "Dùng dữ liệu trên tài khoản", localLabel: "Dùng dữ liệu trên máy này", row,
-      onCloud: () => { cloud.discardLocal(row); location.reload(); },
-      onLocal: async () => { try { await cloud.acceptLocalUpload(); wire(); start(); } catch (e) { fatal(e, start); } },
-    });
-  }
-  function askUpload(start) {
-    busy("");
-    const m = TT.ui.modal("dlg-box", null, { label: "Dữ liệu có sẵn trên máy", alert: true, dismissible: false });
-    m.box.append(h("h2", { class: "mtitle" }, "Có dữ liệu chơi sẵn trên máy này"),
-      h("p", { class: "center pre" }, `${localSummary()}\n\nBạn muốn tải tiến trình này lên tài khoản mới không?`),
-      h("div", { class: "row center" },
-        TT.ui.btn("Tải lên tài khoản", async () => { m.close(); try { await cloud.acceptLocalUpload(); wire(); start(); } catch (e) { fatal(e, start); } }, { cls: "gold" }),
-        TT.ui.btn("Bắt đầu mới", async () => {
-          if (await TT.ui.confirm({ title: "Bỏ dữ liệu trên máy?", text: "Tiến trình trên máy này sẽ bị xóa và không khôi phục được.", ok: "Xóa và bắt đầu mới", cancel: "Quay lại", danger: true })) { m.close(); cloud.discardLocal(null); wire(); start(); }
-        }, { cls: "red" })));
-  }
-
-  /* ---------- trong game: chỉ báo đồng bộ, xung đột lúc đang chơi, đăng xuất ---------- */
   const hhmm = t => new Date(t).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
   function paint() {
     const el = TT.game && TT.game.U && TT.game.U.save; if (!el) return;
     const st = cloud.status();
-    const t = ({ syncing: ["Đang đồng bộ…", 0], synced: ["Đã đồng bộ " + hhmm(st.t || Date.now()), 0], offline: ["Ngoại tuyến · chưa đồng bộ", 1], conflict: ["Dữ liệu bị lệch", 1], error: [st.text || "Lỗi đồng bộ", 1], signedout: ["Cần đăng nhập lại", 1] })[st.state] || [cloud.dirty() ? "Chờ đồng bộ…" : "Đã đồng bộ", 0];
-    el.textContent = t[0]; el.classList.toggle("bad", !!t[1]);
+    const view = ({ syncing: ["Đang lưu…", 0], synced: ["Đã lưu " + hhmm(st.t || Date.now()), 0], waiting: ["Chờ máy chủ…", 0], offline: ["Mất kết nối · chưa lưu", 1], error: [st.text || "Lỗi lưu dữ liệu", 1], signedout: ["Cần đăng nhập lại", 1], "server-newer": ["Đang tải bản mới…", 0] })[st.state] || [cloud.dirty() ? "Chờ lưu…" : "Đã tải từ máy chủ", 0];
+    el.textContent = view[0]; el.classList.toggle("bad", !!view[1]);
   }
+
   let wired = false;
   function wire() {
     if (wired) return; wired = true;
     cloud.onStatus(st => {
       paint();
-      if (st.state === "conflict") runtimeConflict();
       if (st.state === "signedout") {
+        TT.sec.stale = true;
         const m = TT.ui.modal("dlg-box", null, { label: "Cần đăng nhập lại", alert: true, dismissible: false });
-        m.box.append(h("h2", { class: "mtitle" }, "Phiên đăng nhập đã hết hạn"), h("p", { class: "center" }, "Tiến trình trên máy vẫn được giữ. Hãy đăng nhập lại để tiếp tục đồng bộ."),
-          h("div", { class: "row center" }, TT.ui.btn("Đăng nhập lại", () => { TT.sec.stale = true; location.reload(); }, { cls: "gold" })));
+        m.box.append(h("h2", { class: "mtitle" }, "Phiên đăng nhập đã hết hạn"),
+          h("p", { class: "center" }, "Hãy đăng nhập lại để tải dữ liệu mới nhất từ máy chủ."),
+          h("div", { class: "row center" }, TT.ui.btn("Đăng nhập lại", () => location.reload(), { cls: "gold" })));
       }
     });
     const G = TT.Game.prototype, showGame = G.showGame, showCreate = G.showCreate;
@@ -201,44 +145,33 @@
     };
     if (TT.game && TT.game.U && TT.game.U.save) paint();
   }
-  async function runtimeConflict() {
-    TT.sec.stale = true;                                        // dừng ghi trong lúc người chơi quyết định
-    if (TT.game) { clearInterval(TT.game.idleTimer); TT.game.locked = true; }
-    let row = null; try { row = await cloud.pull(); } catch (e) { /* vẫn cho chọn */ }
-    chooser({
-      title: "Tài khoản đã được lưu từ nơi khác",
-      text: "Một thiết bị khác vừa lưu tiến trình lên tài khoản. Hãy chọn bản muốn giữ.",
-      cloudLabel: "Dùng dữ liệu trên tài khoản", localLabel: "Giữ dữ liệu trên máy này", row,
-      onCloud: async () => { await cloud.resolveConflict("cloud"); location.reload(); },
-      onLocal: async () => { try { await cloud.resolveConflict("local"); location.reload(); } catch (e) { TT.ui.toast(cloud.errorText(e), "bad"); } },
-    });
-  }
+
   async function doSignOut(ask = true) {
     if (ask) {
       const pending = cloud.dirty();
-      const yes = await TT.ui.confirm({ title: "Đăng xuất?", text: pending ? "Tiến trình mới sẽ được đồng bộ trước khi đăng xuất. Bản lưu tạm trên máy này sẽ bị xóa." : "Dữ liệu đã nằm trên tài khoản. Bản lưu tạm trên máy này sẽ bị xóa.", ok: "Đăng xuất", cancel: "Ở lại" });
+      const yes = await TT.ui.confirm({ title: "Đăng xuất?", text: pending ? "Tiến trình mới sẽ được ghi lên máy chủ trước khi đăng xuất." : "Tiến trình của bạn đã nằm trên máy chủ.", ok: "Đăng xuất", cancel: "Ở lại" });
       if (!yes) return;
     }
-    TT.sec.stale = true;                                        // chặn mọi lần ghi tiếp theo của game
-    busy("Đang đăng xuất…");
+    TT.sec.stale = true; busy("Đang đăng xuất…");
     try { await cloud.signOut(); }
     catch (e) {
-      if (!e || !e.unsynced) throw e;
-      const drop = await TT.ui.confirm({ title: "Chưa đồng bộ được tiến trình", text: "Tiến trình mới nhất chưa lên được tài khoản (mất mạng hoặc dữ liệu bị lệch). Nếu đăng xuất bây giờ, phần này sẽ mất vĩnh viễn.", ok: "Vẫn đăng xuất", cancel: "Ở lại", danger: true });
+      if (!e || !e.unsynced) { TT.sec.stale = false; return fatal(e, () => location.reload()); }
+      const drop = await TT.ui.confirm({ title: "Chưa lưu được tiến trình mới nhất", text: "Máy chủ chưa nhận được thay đổi cuối cùng. Nếu đăng xuất ngay, phần thay đổi đang nằm trong bộ nhớ của tab này sẽ mất.", ok: "Vẫn đăng xuất", cancel: "Ở lại", danger: true });
       if (!drop) return location.reload();
       await cloud.signOut({ force: true });
     }
     location.reload();
   }
+
   async function doDelete() {
-    const yes = await TT.ui.confirm({ title: "Xóa tài khoản vĩnh viễn?", text: "Toàn bộ nhân vật, thành tựu và lịch sử trên tài khoản sẽ bị xóa và KHÔNG thể khôi phục. Bản lưu trên máy này cũng bị xóa.", ok: "Xóa vĩnh viễn", cancel: "Quay lại", danger: true });
+    const yes = await TT.ui.confirm({ title: "Xóa tài khoản vĩnh viễn?", text: "Toàn bộ nhân vật, thành tựu và lịch sử trên máy chủ sẽ bị xóa và KHÔNG thể khôi phục.", ok: "Xóa vĩnh viễn", cancel: "Quay lại", danger: true });
     if (!yes) return;
     TT.sec.stale = true; busy("Đang xóa tài khoản…");
     try { await cloud.deleteAccount(); }
     catch (e) { TT.sec.stale = false; TT.ui.toast(cloud.errorText(e), "bad"); return location.reload(); }
     location.reload();
   }
-  /* ---------- bảng xếp hạng ---------- */
+
   const lvName = lv => `${TT.REALMS[Math.floor((lv - 1) / 9)] || "?"} tầng ${(lv - 1) % 9 + 1}`;
   const years = mo => (mo >= 12 ? `${Math.floor(mo / 12)} năm ${mo % 12} tháng` : `${mo} tháng`);
   TT.Game.prototype.openBoard = function () {
@@ -265,10 +198,9 @@
           h("span", { class: "board-name" }, r.name, r.user_id === uid ? " (bạn)" : ""),
           h("span", { class: "board-realm", style: { color: TT.REALM_COLORS[Math.floor((r.level - 1) / 9)] } }, lvName(r.level)),
           h("span", { class: "board-time dim small" }, years(r.months)));
-        const list = top.length ? h("ol", { class: "board-list" }, top.map((r, i) => row(r, i))) : h("p", { class: "center dim" }, days ? "Tuần này chưa có ai lập thành tích mới. Hãy là người đầu tiên!" : "Chưa có ai trên bảng. Hãy tu luyện và lưu game để là người đầu tiên!");
+        const list = top.length ? h("ol", { class: "board-list" }, top.map((r, i) => row(r, i))) : h("p", { class: "center dim" }, days ? "Tuần này chưa có ai lập thành tích mới. Hãy là người đầu tiên!" : "Chưa có ai trên bảng. Hãy tu luyện để là người đầu tiên!");
         const you = mine && rank == null ? h("div", { class: "board-you" }, h("div", { class: "dim small center" }, "Thành tích của bạn (ngoài top 50)"), h("ol", { class: "board-list" }, row(mine, null, true))) : null;
-        body.replaceChildren(list, ...(you ? [you] : []));
-        body.removeAttribute("role");
+        body.replaceChildren(list, ...(you ? [you] : [])); body.removeAttribute("role");
       } catch (e) { if (my === seq) body.textContent = cloud.errorText(e); }
     }
     load(0);
