@@ -143,3 +143,14 @@ test("tên người chơi: bỏ [ ] và ký tự vô hình, chặn tên giả qu
   assert.equal(TT.isReservedName("Hệ Thống"), true);
   assert.equal(TT.isReservedName("Gia Minh"), false);
 });
+
+test("vị trí bản đồ và chiến lợi phẩm không bị cleanPlayer làm mất, giá trị lạ bị loại", () => {
+  const { TT } = boot(), p = newPlayer(TT);
+  Object.assign(p, { world: "ha_gioi", region: "thanh_moc_lam", site: "thanh_moc_lam_1", mapLoot: { "Linh Thảo": 3, "<b>x</b>": 5, "Rỗng": 0 } });
+  const c = TT.sec.cleanPlayer(JSON.parse(JSON.stringify(p)));
+  assert.equal(c.world, "ha_gioi"); assert.equal(c.region, "thanh_moc_lam"); assert.equal(c.site, "thanh_moc_lam_1");
+  assert.deepEqual(JSON.parse(JSON.stringify(c.mapLoot)), { "Linh Thảo": 3 });
+  Object.assign(p, { region: "<script>", site: 5 });
+  const d = TT.sec.cleanPlayer(JSON.parse(JSON.stringify(p)));
+  assert.equal(d.region, null); assert.equal(d.site, null);
+});

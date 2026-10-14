@@ -23,6 +23,8 @@ insert into auth.users values
 \i supabase/migrations/20261014000700_08_admin_rpc.sql
 \i supabase/migrations/20261014000800_09_security.sql
 \i supabase/migrations/20261014000900_10_performance.sql
+\i supabase/migrations/20261020000000_review_fixes.sql
+\i supabase/migrations/20261020010000_maintenance_grace_and_windows.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin

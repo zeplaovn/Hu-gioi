@@ -6,7 +6,7 @@ import http from "node:http"; import crypto from "node:crypto";
 export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl = 3600, confirmEmail = false } = {}) {
   const users = new Map(), tokens = new Map(), refresh = new Map(), rows = new Map();
   const board = new Map();
-  const state = { board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000, captcha: false, maintenance: false, maintenanceReason: "", admins: new Map() };
+  const state = { windows: [], board, users, rows, tokens, refresh, ttl, confirmEmail, calls: [], failNext: 0, minGapMs: 1000, captcha: false, maintenance: false, maintenanceReason: "", admins: new Map() };
   const rid = () => crypto.randomBytes(16).toString("hex");
   const issue = u => {
     const access = "at_" + rid(), rt = "rt_" + rid(), exp = Math.floor(Date.now() / 1000) + state.ttl;
@@ -56,7 +56,7 @@ export function createMock({ port = 0, anonKey = "test-anon-key-0123456789", ttl
       if (path === "/auth/v1/recover" && req.method === "POST") return send(res, 200, {});
 
       const uid = authUser(req);
-      if (path === "/rest/v1/rpc/server_status" && req.method === "POST") return send(res, 200, { maintenance: state.maintenance, maintenance_reason: state.maintenanceReason, banner: null });
+      if (path === "/rest/v1/rpc/server_status" && req.method === "POST") return send(res, 200, { maintenance: state.maintenance, maintenance_reason: state.maintenanceReason, server_ms: Date.now(), maintenance_windows: state.windows, banner: null });
       if (path.startsWith("/rest/v1/")) {
         if (path === "/rest/v1/rpc/admin_me" && req.method === "POST") {
           const role = uid && state.admins.get(uid);

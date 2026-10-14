@@ -23,6 +23,8 @@ insert into auth.users values
 \i supabase/migrations/20261014000700_08_admin_rpc.sql
 \i supabase/migrations/20261014000800_09_security.sql
 \i supabase/migrations/20261014000900_10_performance.sql
+\i supabase/migrations/20261020000000_review_fixes.sql
+\i supabase/migrations/20261020010000_maintenance_grace_and_windows.sql
 
 insert into public.admin_users(user_id, role) values
   ('11111111-1111-1111-1111-111111111111', 'admin'),
@@ -93,7 +95,7 @@ do $$ begin
   assert (select name from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 'B cao thu', 'tên phải được sanitize';
   perform public.save_game('{"player":{"name":"B kém","realm":0,"tang":3,"months":9,"age":16,"lifespan":80}}', '{}', 2, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'thành tích tốt nhất không bị hạ';
-  perform public.save_game('{"player":{"name":"B gian","realm":8,"tang":9,"months":100,"age":40,"lifespan":2000}}', '{}', 3, true);
+  perform public.t_expect_error($q$select public.save_game('{"player":{"name":"B gian","realm":8,"tang":9,"months":100,"age":40,"lifespan":2000}}', '{}', 3, true)$q$, 'implausible');   -- số tháng quá thấp so với cấp: bị chặn ngay ở save_game
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'số tháng quá thấp so với cấp thì không được lên bảng';
   perform public.save_game('{"player":{"name":"B cao","realm":4,"tang":1,"months":400,"age":40,"lifespan":500}}', '{}', 4, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 37, 'đủ tháng thì lên bảng';

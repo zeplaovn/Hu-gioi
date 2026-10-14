@@ -13,6 +13,7 @@
   const SESSION_ID_KEY = "tu_tien_presence_session";
   const listeners = [];
   let lastStatus = null;
+  let windows = [];                  // các đợt bảo trì [bắt đầu_ms, kết thúc_ms | null] đã đổi sang đồng hồ máy này
   const adminCache = { token: null, ok: false };
 
   function session() {
@@ -120,15 +121,31 @@
   /** Đang bảo trì và không phải admin / owner: chuyển sang trang bảo trì riêng (maintenance.html), không che lên màn hình game.
       Admin vào game bằng cổng đăng nhập riêng staff.html. Trang bảo trì tự quay về game khi hết bảo trì nên không bị vòng lặp. */
   let leaving = false;
-  function gotoMaintenance() {
+  async function gotoMaintenance() {
     if (leaving) return;
     leaving = true;
+    /* Máy chủ cho thêm 60 giây ân hạn ghi dữ liệu sau khi bật bảo trì: lưu nốt tiến trình chưa đồng bộ rồi mới rời game. */
+    try {
+      const c = TT.cloud;
+      if (c && c.enabled && c.syncNow && (!c.dirty || c.dirty())) await Promise.race([Promise.resolve(c.syncNow()).catch(() => {}), new Promise(r => setTimeout(r, 8000))]);
+    } catch (_) { /* vẫn chuyển trang */ }
     try { location.replace("maintenance.html"); } catch (_) { leaving = false; }
   }
+
+  /** Số mili giây trong khoảng [from, to] (đồng hồ máy này) rơi vào các đợt bảo trì: phần này không tính là người chơi vắng mặt. */
+  bridge.maintenanceOverlap = (from, to) => {
+    let ms = 0;
+    for (const [s, e] of windows) ms += Math.max(0, Math.min(to, e == null ? to : e) - Math.max(from, s));
+    return ms;
+  };
 
   bridge.status = async () => {
     try {
       lastStatus = await rpc("server_status", {}, null);
+      const skew = +lastStatus.server_ms > 0 ? +lastStatus.server_ms - Date.now() : 0;
+      windows = Array.isArray(lastStatus.maintenance_windows)
+        ? lastStatus.maintenance_windows.filter(w => Array.isArray(w) && isFinite(+w[0])).map(w => [+w[0] - skew, w[1] == null ? null : +w[1] - skew])
+        : [];
       bridge.admin = lastStatus.maintenance ? await isAdmin() : false;
       if (lastStatus.maintenance && !bridge.admin) gotoMaintenance();
       renderTicker(lastStatus.maintenance && bridge.admin ? { ...lastStatus, maintenance: false } : lastStatus);
@@ -137,6 +154,7 @@
     } catch (_) { return lastStatus; }
   };
   bridge.admin = false;
+  bridge.loaded = false;
   bridge.current = () => lastStatus;
   bridge.onStatus = fn => { if (typeof fn === "function") listeners.push(fn); return () => { const i = listeners.indexOf(fn); if (i >= 0) listeners.splice(i, 1); }; };
 
@@ -154,8 +172,17 @@
     } catch (_) { return false; }
   };
 
+  /* Lần hỏi trạng thái đầu tiên: game chờ (tối đa 4 giây) để biết các đợt bảo trì trước khi tính thời gian vắng mặt. */
+  let first = () => {};
+  bridge.ready = new Promise(resolve => {
+    let done = false;
+    const fin = () => { if (!done) { done = true; bridge.loaded = true; resolve(); } };
+    first = () => { bridge.status().finally(fin); };
+    setTimeout(fin, 4000);
+  });
+
   const start = () => {
-    bridge.status();
+    first();
     bridge.heartbeat();
     setInterval(() => { if (document.visibilityState !== "hidden") bridge.heartbeat(); }, 45000);
     setInterval(() => { if (document.visibilityState !== "hidden") bridge.status(); }, 15000);

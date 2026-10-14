@@ -25,6 +25,8 @@ insert into auth.users values
 \i supabase/migrations/20261014000700_08_admin_rpc.sql
 \i supabase/migrations/20261014000800_09_security.sql
 \i supabase/migrations/20261014000900_10_performance.sql
+\i supabase/migrations/20261020000000_review_fixes.sql
+\i supabase/migrations/20261020010000_maintenance_grace_and_windows.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -72,6 +74,15 @@ select public.t_expect_error($q$select public.admin_publish_banner('', 'b')$q$, 
 select public.t_expect_error($q$select public.admin_publish_banner('a', 'b', 'xx')$q$, 'invalid_level');
 do $$ begin perform public.admin_set_maintenance(true, 'nâng cấp'); end $$;
 do $$ begin assert (public.server_status()->>'maintenance')::boolean and public.server_status()->>'maintenance_reason' = 'nâng cấp', 'bảo trì bật'; end $$;
+do $$ begin
+  assert jsonb_array_length(public.server_status()->'maintenance_windows') = 1 and public.server_status()->'maintenance_windows'->0->>1 is null, 'có một đợt bảo trì đang mở';
+  assert (public.server_status()->>'server_ms')::bigint > 1700000000000, 'server_status trả đồng hồ máy chủ';
+end $$;
+-- ân hạn 60 giây: người chơi vẫn chat / lưu được ngay sau khi bật bảo trì, hết ân hạn mới bị chặn
+reset role; set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
+do $$ begin perform public.send_chat('lưu kịp trong ân hạn'); end $$;
+reset role; update public.maintenance_windows set started_at = started_at - interval '2 minutes' where ended_at is null;
+set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ begin assert (select count(*) from public.admin_list_audit(50) where action in ('BANNER_PUBLISH','MAINTENANCE_SET')) = 2, 'audit ghi đủ'; end $$;
 
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
@@ -88,6 +99,8 @@ select public.t_expect_error($q$select public.send_chat('xin chào')$q$, 'mainte
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ begin perform public.admin_overview(); end $$;
 do $$ begin perform public.admin_set_maintenance(false, null); end $$;
+do $$ begin assert public.server_status()->'maintenance_windows'->0->>1 is not null, 'đợt bảo trì được đóng khi tắt'; end $$;
+select pg_sleep(2.1);
 
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 do $$ declare r jsonb; begin
@@ -123,4 +136,12 @@ update public.admin_users set enabled = false where user_id = '33333333-3333-333
 set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 select public.t_expect_error($q$select public.admin_set_maintenance(true, 'x')$q$, 'forbidden');
 reset role;
+-- admin đã từng bật bảo trì / ghi audit vẫn xóa được tài khoản (khóa ngoại on delete set null), dấu vết audit còn lại
+do $$ begin
+  assert exists (select 1 from public.admin_audit_log where admin_user_id = '33333333-3333-3333-3333-333333333333'), 'admin 3 có audit';
+  delete from auth.users where id = '33333333-3333-3333-3333-333333333333';
+  assert not exists (select 1 from auth.users where id = '33333333-3333-3333-3333-333333333333'), 'xóa được tài khoản admin';
+  assert exists (select 1 from public.admin_audit_log where action = 'MAINTENANCE_SET' and admin_user_id is null), 'audit còn lại, admin_user_id = null';
+  assert (select updated_by from public.server_control) is null, 'server_control.updated_by = null';
+end $$;
 select 'TẤT CẢ KIỂM THỬ SQL ADMIN ĐỀU QUA' as ok;

@@ -109,6 +109,12 @@
      =================================================================== */
   G.idleStart = function (isLoad) {
     clearInterval(this.idleTimer);
+    const br = TT.serverBridge;
+    if (isLoad && br && br.enabled && br.ready && !br.loaded) {   // chờ biết các đợt bảo trì để không tính chúng là thời gian vắng mặt
+      const t0 = this.token;
+      br.ready.then(() => { if (t0 === this.token && this.inGame) this.idleStart(true); });
+      return;
+    }
     const p = this.p;
     this.idleLast = isLoad ? p.idle.ts : Date.now();
     if (!isLoad) p.idle.ts = this.idleLast;
@@ -177,8 +183,9 @@
         this.scene.floatText(`+${fmt(g)}`, "#7dff7d");
       }
     } else {
+      const br = TT.serverBridge, skip = br && br.maintenanceOverlap ? br.maintenanceOverlap(this.idleLast, now) / 1000 : 0;   // bảo trì không tính là vắng mặt
       this.idleLast = now;
-      this.idleCatchUp(dt);
+      if (dt - skip >= 1) this.idleCatchUp(dt - skip);
     }
     if (this.dead) return;
     this.secretCheck(); this.missionCheck();

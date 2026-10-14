@@ -123,3 +123,10 @@ supabase/tests/admin.test.sql
 ```
 
 Cả ba test phải dựng database từ đúng thứ tự migration ở trên. Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
+
+## Migration sau baseline
+
+```text
+20261020000000_review_fixes.sql                    khóa ngoại on delete set null, lb_sync không hạ kỷ lục khi đổi tên, heartbeat 30 giây
+20261020010000_maintenance_grace_and_windows.sql   ân hạn 60 giây khi bật bảo trì + nhật ký đợt bảo trì (trừ khỏi thời gian vắng mặt)
+```

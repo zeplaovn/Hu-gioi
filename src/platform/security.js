@@ -216,7 +216,13 @@
 
     const shop = { ts: int(isObj(d.shop) ? d.shop.ts : 0, 0, nowP, 0), n: {} };
     if (isObj(d.shop) && isObj(d.shop.n)) for (const [k, v] of Object.entries(d.shop.n)) if (Object.prototype.hasOwnProperty.call(TT.ITEMS, k)) shop.n[k] = int(v, 0, 99, 0);
+    /* Vị trí bản đồ và chiến lợi phẩm theo địa điểm (src/game/maps). Giá trị id chỉ được là chữ thường / số / gạch dưới;
+       registry sẽ tự đưa về khu vực hợp lệ nếu id không còn tồn tại hoặc chưa đủ cảnh giới. */
+    const mapId = v => (typeof v === "string" && /^[a-z0-9_]{1,40}$/.test(v) ? v : null);
+    const mapLoot = {};
+    if (isObj(d.mapLoot)) for (const [k, v] of Object.entries(d.mapLoot).slice(0, 200)) if (typeof k === "string" && k.length <= 60 && !/[\u0000-\u001f<>]/.test(k)) { const n = int(v, 0, 99999, 0); if (n) mapLoot[k] = n; }
     const out = {
+      world: mapId(d.world), region: mapId(d.region), site: mapId(d.site), mapLoot,
       gender: d.gender, race: d.race, age, lifespan, stats, realm, tang, exp, stone, months, skills, sect, sectx,
       pill: flt(d.pill, 0, 0.5, 0), guard: flt(d.guard, 0, 3, 0), fbuff: int(d.fbuff, 0, 500, 0), suppress: !!d.suppress,
       inv, gear, plots, track, hp: 1, shop,
