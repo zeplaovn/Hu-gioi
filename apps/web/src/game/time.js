@@ -1,0 +1,14 @@
+import { PROGRESSION, rootInfo, sectById, sectRank } from './catalog.js';
+import { log } from './mutations.js';
+import { maxHp, monthGain, needExp, regenRate } from './rules.js';
+import { rollEncounter } from './encounters.js';
+export function advanceMonths(s,months,{cultivate=true,random=Math.random}={}){const p=s.profile;if(!p)return 0;let advanced=0;for(let i=0;i<months;i++){if(s.runtime.end)break;s.runtime.gameMonths=(s.runtime.gameMonths||0)+1;advanced++;
+    if(cultivate){const need=needExp(p),cap=Math.floor(need*(p.suppress?1.5:1)),gain=monthGain(s);p.exp=Math.min(cap,p.exp+gain);p.qi=(p.qi||0)+Math.max(1,Math.floor(gain*.08));}
+    const mh=maxHp(s);if(p.hp<mh)p.hp=Math.min(mh,p.hp+Math.max(1,Math.round(mh*regenRate(s))));
+    rollEncounter(s,random);p.ageMonths=(p.ageMonths||0)+1;
+    if(s.runtime.gameMonths%12===0&&s.sect.name){const sect=sectById(s.sect.name);if(sect){const stipend=Math.round(sect.stipend*sectRank(s).stipend);p.spiritStones+=stipend;log(s,`Tông môn phát lương năm: +${stipend} linh thạch.`,'cyan');}}
+    if(p.ageMonths>=p.lifespanMonths){s.runtime.end='death';log(s,'Thọ nguyên cạn kiệt, đạo thân tọa hóa.','red');break;}}
+  return advanced;}
+export function consumeActionMonth(s,action,{cultivate=false}={}){const now=Number(action?.now||Date.now()),ready=Number(s.runtime.actionReadyAt||0);if(now<ready){log(s,`Cần chờ ${Math.max(1,Math.ceil((ready-now)/1000))} giây trước hành động kế tiếp.`,'dim');return false;}advanceMonths(s,1,{cultivate,random:typeof action?.rng==='function'?action.rng:Math.random});s.runtime.actionReadyAt=now+PROGRESSION.idle.actionCooldownSeconds*1000;s.runtime.lastProgressAt=Math.max(Number(s.runtime.lastProgressAt||now),s.runtime.actionReadyAt);s.runtime.lastSeenAt=now;return true;}
+export function applyElapsed(s,now=Date.now(),random=Math.random){if(!s.profile||s.runtime.end||s.runtime.idleOn===false)return false;const last=Number(s.runtime.lastProgressAt||s.runtime.lastSeenAt||now),dt=Math.max(0,(now-last)/1000);if(dt<PROGRESSION.idle.monthSeconds)return false;let effective=dt,offline=false;if(dt>PROGRESSION.idle.fullRateSeconds){offline=true;effective=PROGRESSION.idle.fullRateSeconds+(dt-PROGRESSION.idle.fullRateSeconds)*PROGRESSION.idle.offlineRate;effective=Math.min(effective,PROGRESSION.idle.offlineCapSeconds);}const months=Math.floor(effective/PROGRESSION.idle.monthSeconds);if(months<1)return false;advanceMonths(s,months,{cultivate:true,random});s.runtime.lastProgressAt=offline?now:last+months*PROGRESSION.idle.monthSeconds*1000;s.runtime.lastSeenAt=now;if(offline)log(s,`Bế quan khi vắng mặt: ${months} tháng hiệu dụng.`,'cyan');return true;}
+export function addRealmLifespan(s,newRealm){const years=(PROGRESSION.life[newRealm]||0)+rootInfo(s.profile.root).life;s.profile.lifespanMonths+=years*12;return years;}

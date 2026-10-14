@@ -11,7 +11,7 @@ export function currentUser(){return readSession()?.user||null}
 export async function token(){let s=readSession();if(!s)throw new Error('signed_out');if(s.access_token&&s.expires_at-30>Date.now()/1000)return s.access_token;const d=await direct('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:s.refresh_token})});s=normalizeSession(d);writeSession(s);return s.access_token}
 export async function signIn(email,password,captchaToken=''){const body={email,password,...(captchaToken?{gotrue_meta_security:{captcha_token:captchaToken}}:{})};const d=await direct('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify(body)});writeSession(normalizeSession(d));return d.user}
 export async function signUp(email,password,captchaToken=''){const body={email,password,...(captchaToken?{gotrue_meta_security:{captcha_token:captchaToken}}:{})};const d=await direct('/auth/v1/signup',{method:'POST',body:JSON.stringify(body)});if(d.access_token)writeSession(normalizeSession(d));return d}
-export async function recover(email){return direct('/auth/v1/recover',{method:'POST',body:JSON.stringify({email})})}
+export async function recover(email,captchaToken=''){const body={email,...(captchaToken?{gotrue_meta_security:{captcha_token:captchaToken}}:{})};return direct('/auth/v1/recover',{method:'POST',body:JSON.stringify(body)})}
 export async function signOut(){const s=readSession();try{if(s?.access_token)await direct('/auth/v1/logout',{method:'POST',headers:{Authorization:`Bearer ${s.access_token}`}})}catch{}finally{writeSession(null)}}
 async function api(path,options={},auth=true){const headers={'Content-Type':'application/json',...(options.headers||{})};if(auth)headers.Authorization=`Bearer ${await token()}`;const r=await fetch('/api'+path,{...options,cache:'no-store',headers});const text=await r.text();let data=null;try{data=text?JSON.parse(text):null}catch{data={message:text}}if(!r.ok){const e=new Error(data?.error||data?.message||'API error');e.status=r.status;e.data=data;throw e}return data}
 export const me=()=>api('/me');
@@ -21,6 +21,6 @@ export const leaderboard=(days=0)=>api(`/leaderboard?days=${Math.max(0,Number(da
 export const chatList=(after=0)=>api(`/chat?after=${Math.max(0,Number(after)||0)}`);
 export const chatSend=body=>api('/chat',{method:'POST',body:JSON.stringify({body})});
 export const serverStatus=()=>api('/server-status',{},false);
-export const gameClock=()=>api('/game-clock',{},false);
+export const gameClock=()=>api('/game-clock');
 export const deleteAccount=()=>api('/account',{method:'DELETE'});
 export async function heartbeat(realmLevel=null){let id;try{id=localStorage.getItem(PRESENCE_KEY);if(!id){id=crypto.randomUUID();localStorage.setItem(PRESENCE_KEY,id)}}catch{id=crypto.randomUUID()}return api('/heartbeat',{method:'POST',body:JSON.stringify({sessionId:id,clientVersion:'react-v3',realmLevel})});}

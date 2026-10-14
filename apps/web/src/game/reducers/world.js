@@ -1,16 +1,16 @@
 import { allRegions, regionById, secretById } from '../catalog.js';
 import { addItem, grant, log, rng } from '../mutations.js';
-import { power } from '../rules.js';
-export function worldReducer(s,a){const p=s.profile;if(!p)return false;
-  switch(a.type){
-    case'TRAVEL':{const r=regionById(a.id);if(!r||p.realm<r.realm){log(s,'Cảnh giới chưa đủ để đi tới khu vực này.','red');return true;}s.world.location=r.id;if(!s.world.discovered.includes(r.id))s.world.discovered.push(r.id);log(s,`Đã tới ${r.name} (${r.worldName}).`,'cyan');return true;}
-    case'EXPLORE':{const r=regionById(s.world.location),random=rng(a),roll=random();p.ageMonths+=1;s.tracking.explores++;
-      if(roll<.18){const dmg=Math.min(p.hp-1,Math.max(1,Math.floor((5+r.danger*5)*(1-Math.min(.45,p.stats['Vận Khí']*.008)))));p.hp-=Math.max(0,dmg);s.tracking.kills++;log(s,`Chạm trán yêu thú ở ${r.name}, mất ${dmg} khí huyết.`,'red');}
-      else if(roll<.48){const n=1+Math.floor(random()*3);addItem(s,'herb',n);log(s,`Tìm được ${n} Linh Thảo.`,'green');}
-      else if(roll<.70){const n=1+Math.floor(random()*2);addItem(s,'ore',n);log(s,`Khai được ${n} Quặng Linh Thiết.`,'green');}
-      else if(roll<.84){const n=1+Math.floor(random()*3);addItem(s,'paper',n);log(s,`Nhặt được ${n} Giấy Phù.`,'green');}
-      else{const stone=8+r.danger*8+Math.floor(random()*12);p.spiritStones+=stone;p.exp+=stone*2;log(s,`Gặp kỳ ngộ: +${stone} linh thạch, +${stone*2} tu vi.`,'gold');}return true;}
-    case'START_SECRET':{const d=secretById(a.id);if(!d||p.realm<d.realm){log(s,'Cảnh giới chưa đủ vào bí cảnh.','red');return true;}if(s.secret.active)return true;s.secret.active={id:d.id,start:Date.now(),end:Date.now()+d.duration*1000};s.secret.runs++;log(s,`Tiến vào bí cảnh ${d.name}.`,'cyan');return true;}
-    case'RESOLVE_SECRET':{const active=s.secret.active;if(!active)return true;const d=secretById(active.id);if(!d){s.secret.active=null;return true;}if(Date.now()<active.end&&!a.force)return true;const random=rng(a),chance=Math.max(.12,Math.min(.95,.42+power(s)/(80+d.danger*35)*.35+p.stats['Vận Khí']*.008));if(random()<=chance){grant(s,d.reward);s.secret.cleared[d.id]=(s.secret.cleared[d.id]||0)+1;p.exp+=d.danger*35;log(s,`Phá cảnh ${d.name} thành công, thu được chiến lợi phẩm.`,'gold');}else{const dmg=Math.min(p.hp-1,Math.floor(p.maxHp*.3));p.hp-=Math.max(0,dmg);log(s,`Thất bại tại ${d.name}, mất ${dmg} khí huyết.`,'red');}s.secret.active=null;return true;}
-  }return false;
-}
+import { consumeActionMonth } from '../time.js';
+import { dodgeChance, monthGain, power } from '../rules.js';
+function consumeCombatBuffs(p){const b={power:p.combatBuffs?.power||0,guard:p.combatBuffs?.guard||0};p.combatBuffs={power:0,guard:0};return b;}
+export function worldReducer(s,a){const p=s.profile;if(!p)return false;switch(a.type){
+  case'TRAVEL':{const r=regionById(a.id);if(!r||p.realm<r.realm){log(s,'Cảnh giới chưa đủ để đi tới khu vực này.','red');return true;}s.world.location=r.id;if(!s.world.discovered.includes(r.id))s.world.discovered.push(r.id);log(s,`Đã tới ${r.name} (${r.worldName}).`,'cyan');return true;}
+  case'EXPLORE':{if(!consumeActionMonth(s,a,{cultivate:false}))return true;const r=regionById(s.world.location),random=rng(a),luck=p.stats['Vận Khí']+p.stats['Phúc Duyên'],roll=1+Math.floor(random()*100)+luck;s.tracking.explores++;
+    if(roll>=115){const gain=monthGain(s,random)*(3+Math.floor(random()*3));p.exp+=gain;log(s,`Cơ duyên tại ${r.name}: +${gain} tu vi.`,'gold');}
+    else if(roll>=85){const stone=5+Math.floor(random()*16)+p.realm*10;p.spiritStones+=stone;log(s,`Nhặt được túi trữ vật: +${stone} linh thạch.`,'cyan');}
+    else if(roll>=55){const buffs=consumeCombatBuffs(p),enemy=18+r.danger*18+p.realm*8,own=power(s)+buffs.power,win=Math.max(.12,Math.min(.92,.42+own/(own+enemy)*.45+p.stats['Vận Khí']*.003));if(random()<=win){const stone=3+r.danger*3+Math.floor(random()*8);p.spiritStones+=stone;s.tracking.kills++;if(random()<.4)addItem(s,random()<.6?'herb':'ore',1);log(s,`Hạ yêu thú tại ${r.name}: +${stone} linh thạch.`,'gold');}else if(random()<dodgeChance(s)){log(s,'Gặp yêu thú nhưng né được sát chiêu, bình an rút lui.','cyan');}else{let dmg=6+r.danger*6+Math.floor(random()*12);if(buffs.guard)dmg=Math.max(1,Math.floor(dmg*.7));p.hp=Math.max(0,p.hp-dmg);log(s,`Bại trận tại ${r.name}, khí huyết -${dmg}.`,'red');if(p.hp<=0){s.runtime.end='death';log(s,'Thân tử trong lúc lịch luyện.','red');}}}
+    else if(roll>=30){if(1+Math.floor(random()*20)<=p.stats['Tướng Mạo']){const stone=3+Math.floor(random()*10)+p.realm*3;p.spiritStones+=stone;log(s,`Một vị tiền bối tặng ${stone} linh thạch.`,'cyan');}else{const lost=Math.min(p.spiritStones,2+Math.floor(random()*7));p.spiritStones-=lost;log(s,`Bị kẻ gian lừa mất ${lost} linh thạch.`,'red');}}
+    else{const dmg=3+r.danger*3+Math.floor(random()*8);p.hp=Math.max(0,p.hp-dmg);log(s,`Gặp hiểm địa, khí huyết -${dmg}.`,'red');if(p.hp<=0)s.runtime.end='death';}return true;}
+  case'START_SECRET':{const d=secretById(a.id);if(!d||p.realm<d.realm){log(s,'Cảnh giới chưa đủ vào bí cảnh.','red');return true;}if(s.secret.active)return true;const now=Number(a.now||Date.now());s.secret.active={id:d.id,start:now,end:now+d.duration*1000};s.secret.runs++;log(s,`Tiến vào bí cảnh ${d.name}.`,'cyan');return true;}
+  case'RESOLVE_SECRET':{const active=s.secret.active;if(!active)return true;const d=secretById(active.id);if(!d){s.secret.active=null;return true;}const now=Number(a.now||Date.now());if(now<active.end&&!a.force)return true;const random=rng(a),buffs=consumeCombatBuffs(p),chance=Math.max(.12,Math.min(.95,.42+(power(s)+buffs.power)/(80+d.danger*35)*.35+p.stats['Vận Khí']*.008));if(random()<=chance){grant(s,d.reward);s.secret.cleared[d.id]=(s.secret.cleared[d.id]||0)+1;p.exp+=d.danger*35;log(s,`Phá cảnh ${d.name} thành công, thu được chiến lợi phẩm.`,'gold');}else{let dmg=Math.max(1,Math.floor(p.maxHp*.3));if(buffs.guard)dmg=Math.max(1,Math.floor(dmg*.7));p.hp=Math.max(0,p.hp-dmg);log(s,`Thất bại tại ${d.name}, mất ${dmg} khí huyết.`,'red');if(p.hp<=0){s.runtime.end='death';log(s,'Đạo thân vẫn lạc trong bí cảnh.','red');}}s.secret.active=null;return true;}
+}return false;}
