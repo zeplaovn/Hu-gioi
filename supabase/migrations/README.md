@@ -1,27 +1,31 @@
 # Supabase migrations
 
-This directory is the authoritative migration history for Thiên Vân Đại Lục.
+Thư mục này bắt đầu lại từ một **baseline sạch cho database mới**.
 
-## Rules
+## Baseline hiện tại
 
-1. **Applied migrations are immutable.** Never edit or delete a migration version that already exists in production.
-2. **One feature, one migration.** Fold related SQL into a single pending migration instead of adding tiny follow-up patches before release.
-3. **Use idempotent DDL where practical.** Prefer `create ... if not exists`, `drop ... if exists`, and `create or replace function`.
-4. **Do not hardcode production IDs.** Admin accounts and player IDs are data, not schema.
-5. **Keep exposed RPC permissions explicit.** Revoke first, then grant only the roles that need `execute`.
-6. **Security-definer functions must pin `search_path = ''`.**
-7. **Fresh databases must converge to the same schema as production.** Historical production-only versions may be represented by documented no-op marker files when replaying their original SQL out of order would be unsafe.
+```text
+20261014000000_baseline.sql
+```
 
-## Production-only history markers
+Baseline tạo toàn bộ schema game hiện tại trong một lần:
 
-These versions were applied directly to production and are intentionally no-op locally:
+- bảng dữ liệu;
+- index và cấu hình hot-table;
+- RLS/policy/grant;
+- RPC player/server/admin;
+- trigger leaderboard/chat;
+- trusted game-time và anti-cheat validation;
+- presence, banner, audit và economy ledger.
 
-- `20261014025908_scale_hot_path_optimization.sql`
-- `20261014032941_canonical_sql_names_v2.sql`
-- `20261014041045_remove_canonical_sql_aliases.sql`
+Không cần chạy lại các migration `fix`, `cleanup`, `bypass` cũ. Chúng đã được squash vào baseline và bị xóa khỏi repo vì database mục tiêu sẽ được tạo mới từ đầu.
 
-The canonical-name compatibility layer was temporary and is no longer part of the live schema.
+## Quy tắc từ baseline này trở đi
 
-## Pending migrations
-
-`20261019000000_admin_chat_badge.sql` is the consolidated admin-chat identity migration. The former `20261019010000_admin_list_chat_is_admin.sql` patch was merged into it before production application.
+1. Không sửa `20261014000000_baseline.sql` sau khi baseline đã được apply lên database mới.
+2. Mỗi thay đổi schema sau đó tạo migration mới theo dạng `YYYYMMDDHHMMSS_mo_ta.sql`.
+3. Trước khi release, gộp các patch chưa deploy vào cùng một migration thay vì tạo chuỗi `fix_fix2_cleanup`.
+4. RPC exposed phải `revoke` trước rồi `grant execute` đúng role cần thiết.
+5. Hàm `security definer` phải pin `search_path = ''`.
+6. Không hardcode user/admin UUID trong migration schema.
+7. Destructive change phải kiểm tra dependency, RLS và rollback/forward-fix path trước khi deploy.
