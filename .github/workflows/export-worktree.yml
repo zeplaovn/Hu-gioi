@@ -1,4 +1,4 @@
-name: Export worktree
+name: Export repository
 
 on:
   push:
@@ -12,16 +12,16 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout full history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-      - name: Package source
-        run: tar --exclude=.git -czf /tmp/hu-gioi-worktree.tar.gz .
-      - name: Upload worktree
+          fetch-depth: 0
+      - name: Create portable Git bundle
+        run: git bundle create /tmp/hu-gioi.bundle --all
+      - name: Upload repository bundle
         uses: actions/upload-artifact@v4
         with:
-          name: hu-gioi-worktree
-          path: /tmp/hu-gioi-worktree.tar.gz
+          name: hu-gioi-git-bundle
+          path: /tmp/hu-gioi.bundle
           if-no-files-found: error
           retention-days: 1
