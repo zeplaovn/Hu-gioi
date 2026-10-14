@@ -29,6 +29,8 @@
 
 Các version trên phải khớp với `supabase_migrations.schema_migrations` của production. Một số file là marker/no-op lịch sử; vẫn phải giữ nguyên vì version đã được remote ghi nhận.
 
+Không dùng `migration repair`, xóa row lịch sử, hoặc viết lại production history chỉ để làm check xanh. Nếu repo lệch remote, sửa repo để phản ánh lịch sử đã thực sự chạy.
+
 ## Quy tắc
 
 1. Không sửa, xóa, squash hoặc đổi timestamp migration đã apply.
