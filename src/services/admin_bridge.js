@@ -13,7 +13,6 @@
   const SESSION_ID_KEY = "tu_tien_presence_session";
   const listeners = [];
   let lastStatus = null;
-  let peek = false;                  // quản trị viên bấm "đăng nhập quản trị" để thấy màn hình đăng nhập lúc bảo trì
   const adminCache = { token: null, ok: false };
 
   function session() {
@@ -36,7 +35,7 @@
     }
   }
 
-  /** Tài khoản đang đăng nhập có phải admin / owner không (máy chủ xác nhận bằng admin_me; chỉ để ẩn màn hình bảo trì, quyền ghi dữ liệu do máy chủ quyết định). */
+  /** Tài khoản đang đăng nhập có phải admin / owner không (máy chủ xác nhận bằng admin_me; chỉ để quyết định có chuyển sang trang bảo trì hay không, quyền ghi dữ liệu do máy chủ quyết định). */
   async function isAdmin() {
     const s = session();
     if (!s || !s.access_token || (s.expires_at && s.expires_at <= Date.now() / 1000)) { adminCache.token = null; adminCache.ok = false; return false; }
@@ -118,86 +117,20 @@
     }
   }
 
-  function ensureMaintenanceGate() {
-    let gate = document.getElementById("serverMaintenanceGate");
-    if (gate) return gate;
-
-    gate = document.createElement("div");
-    gate.id = "serverMaintenanceGate";
-    gate.className = "server-maintenance-gate";
-
-    const card = document.createElement("section");
-    card.className = "server-maintenance-card";
-
-    const seal = document.createElement("div");
-    seal.className = "server-maintenance-seal";
-    seal.textContent = "天";
-
-    const eyebrow = document.createElement("div");
-    eyebrow.className = "server-maintenance-eyebrow";
-    eyebrow.textContent = "THIÊN VÂN ĐẠI LỤC";
-
-    const title = document.createElement("h1");
-    title.textContent = "Thiên Đạo tạm phong bế";
-
-    const reason = document.createElement("p");
-    reason.id = "serverMaintenanceReason";
-    reason.textContent = "Máy chủ đang bảo trì. Vui lòng quay lại sau.";
-
-    const admin = document.createElement("button");
-    admin.type = "button";
-    admin.id = "serverMaintenanceAdmin";
-    admin.className = "server-maintenance-admin";
-    admin.textContent = "Quản trị viên đăng nhập";
-    admin.addEventListener("click", () => {
-      peek = true; renderMaintenance(lastStatus);
-      const wait = setInterval(() => { if (session()) { clearInterval(wait); bridge.status(); } }, 1500);   // đăng nhập xong thì kiểm tra lại vai trò ngay
-      setTimeout(() => clearInterval(wait), 600000);
-    });
-
-    const note = document.createElement("small");
-    note.textContent = "Tiến trình sẽ không được ghi lên máy chủ trong thời gian bảo trì.";
-
-    const retry = document.createElement("button");
-    retry.type = "button";
-    retry.className = "server-maintenance-retry";
-    retry.textContent = "Kiểm tra lại";
-    retry.addEventListener("click", async () => {
-      retry.disabled = true;
-      retry.textContent = "Đang kiểm tra…";
-      await bridge.status();
-      retry.disabled = false;
-      retry.textContent = "Kiểm tra lại";
-    });
-
-    card.appendChild(seal);
-    card.appendChild(eyebrow);
-    card.appendChild(title);
-    card.appendChild(reason);
-    card.appendChild(note);
-    card.appendChild(retry);
-    card.appendChild(admin);
-    gate.appendChild(card);
-    document.body.appendChild(gate);
-    return gate;
-  }
-
-  /** Quản trị viên vào game lúc bảo trì: màn hình bảo trì ẩn đi. Đang chờ đăng nhập (chưa có phiên) thì cho thấy màn hình đăng nhập. */
-  function renderMaintenance(status) {
-    if (typeof document === "undefined" || !document.body) return;
-    const gate = ensureMaintenanceGate();
-    const active = !!(status && status.maintenance) && !bridge.admin && !(peek && !session());
-    gate.classList.toggle("show", active);
-    document.body.classList.toggle("server-maintenance-active", active);
-    const reason = document.getElementById("serverMaintenanceReason");
-    if (reason) reason.textContent = active && status.maintenance_reason ? String(status.maintenance_reason).slice(0, 500) : "Máy chủ đang bảo trì. Vui lòng quay lại sau.";
+  /** Đang bảo trì và không phải admin / owner: chuyển sang trang bảo trì riêng (maintenance.html), không che lên màn hình game.
+      Admin vào game bằng cổng đăng nhập riêng staff.html. Trang bảo trì tự quay về game khi hết bảo trì nên không bị vòng lặp. */
+  let leaving = false;
+  function gotoMaintenance() {
+    if (leaving) return;
+    leaving = true;
+    try { location.replace("maintenance.html"); } catch (_) { leaving = false; }
   }
 
   bridge.status = async () => {
     try {
       lastStatus = await rpc("server_status", {}, null);
       bridge.admin = lastStatus.maintenance ? await isAdmin() : false;
-      renderMaintenance(lastStatus);
+      if (lastStatus.maintenance && !bridge.admin) gotoMaintenance();
       renderTicker(lastStatus.maintenance && bridge.admin ? { ...lastStatus, maintenance: false } : lastStatus);
       listeners.slice().forEach(fn => { try { fn(lastStatus); } catch (_) {} });
       return lastStatus;

@@ -130,3 +130,17 @@ test("đăng xuất cố ghi phần dirty lên database rồi xóa runtime", asy
   assert.equal(a.store.has("tu_tien_cloud_session"), false);
   assertNoGameplayLocalSave(a.store);
 }));
+
+test("trang bảo trì và cổng quản trị là trang độc lập, game không còn lớp phủ bảo trì", async () => {
+  const fs = await import("node:fs"), root = new URL("../", import.meta.url);
+  for (const page of ["maintenance.html", "staff.html"]) {
+    const html = fs.readFileSync(new URL(page, root), "utf8");
+    const scripts = [...html.matchAll(/<script src="(src\/[^"]+)"/g)].map(m => m[1]);
+    assert.ok(scripts.length >= 3 && scripts.every(f => fs.existsSync(new URL(f, root))), page + " tham chiếu file script có thật");
+    assert.ok(scripts.indexOf("src/services/config.js") < scripts.indexOf("src/standalone/boot.js"), "config.js phải nạp trước boot.js");
+    assert.ok(!scripts.some(f => /game|ui\//.test(f)), page + " không nạp mã game");
+  }
+  const bridge = fs.readFileSync(new URL("src/services/admin_bridge.js", root), "utf8");
+  assert.match(bridge, /location\.replace\("maintenance\.html"\)/);
+  assert.doesNotMatch(bridge, /serverMaintenanceGate|Quản trị viên đăng nhập/);
+});

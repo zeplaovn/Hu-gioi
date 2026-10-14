@@ -85,11 +85,13 @@ owner
 
 Player thường:
 
-- thấy maintenance gate trong game;
+- game chuyển hẳn sang trang `maintenance.html` (trang tĩnh riêng, không che lên màn hình game, tự quay về game khi hết bảo trì);
 - `save_game()` bị guard;
 - `send_chat()` bị guard.
 
 Admin Console vẫn hoạt động để có thể tắt maintenance.
+
+Admin vào game lúc bảo trì qua endpoint riêng `/staff.html` (cổng đăng nhập quản trị, không có nút trên trang bảo trì): đăng nhập, `admin_me` xác nhận admin/owner thì mới lưu phiên và đưa vào game.
 
 Migration `20261017000000_maintenance_admin_bypass.sql` cho account `admin`/`owner` đang enabled bypass backend maintenance guard để thử game trong lúc server đóng. Client UI vẫn không phải security boundary; quyền thật nằm trong RPC/helper database.
 

@@ -137,7 +137,7 @@ Game bridge:
 src/services/admin_bridge.js
 ```
 
-Bridge chỉ xử lý contract dành cho client như presence heartbeat, `server_status()`, banner ticker và maintenance gate. Authorization admin thật nằm trong PostgreSQL/RPC/RBAC.
+Bridge chỉ xử lý contract dành cho client như presence heartbeat, `server_status()`, banner ticker và chuyển hướng sang `maintenance.html` khi bảo trì. Admin vào game lúc bảo trì qua `staff.html` (cổng đăng nhập riêng); hai trang này là bundle độc lập trong `src/standalone/`, không nạp mã game. Authorization admin thật nằm trong PostgreSQL/RPC/RBAC.
 
 ## Build configuration
 

@@ -1,0 +1,20 @@
+/* Trang độc lập: maintenance.html và staff.html (không nạp CSS / JS của game). */
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{display:grid;place-items:center;min-height:100vh;padding:24px;background:radial-gradient(circle at 50% 28%,#1d2b27 0,#09100e 48%,#030605 100%);color:#edf5f0;font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center}
+.sp-card{width:min(520px,94vw);padding:34px 30px 28px;border:1px solid #6f5a2b;border-radius:20px;background:linear-gradient(180deg,#101914f2,#080d0bf7);box-shadow:0 28px 90px #000c,inset 0 1px #ffffff0d}
+.sp-seal{width:76px;height:76px;margin:0 auto 16px;display:grid;place-items:center;border:1px solid #8a6b31;border-radius:50%;color:#f2d98b;background:#1b160b;font:42px Georgia,serif;box-shadow:0 0 36px #d4aa4930}
+.sp-eyebrow{color:#d8b65c;font-size:10px;font-weight:900;letter-spacing:.18em}
+h1{margin:8px 0 12px;font-size:26px;font-weight:800}
+p{margin:0 auto 12px;max-width:440px;color:#c9d4cf;font-size:14px;line-height:1.7}
+small{display:block;color:#778981;font-size:11px;margin-top:4px}
+.sp-btn{margin-top:18px;border:1px solid #6f5a2b;border-radius:10px;padding:10px 18px;background:#231b0d;color:#f5dda0;font:inherit;font-weight:800;cursor:pointer}
+.sp-btn:hover{background:#302512}.sp-btn:disabled{opacity:.55;cursor:wait}.sp-btn:focus-visible,.sp-form input:focus-visible,.sp-link:focus-visible{outline:2px solid #d8b65c;outline-offset:2px}
+.sp-form{display:grid;gap:6px;margin:14px auto 6px;max-width:340px;text-align:left}
+.sp-form label{font-size:12px;color:#aebcb5}
+.sp-form input{width:100%;min-height:42px;padding:8px 10px;border:1px solid #3d4a44;border-radius:8px;background:#0a110e;color:#edf5f0;font:inherit}
+.sp-form .sp-btn{margin-top:12px}
+.sp-captcha{margin-top:6px}.sp-captcha[hidden]{display:none}
+#msg{min-height:1.4em;font-size:13px;color:#aebcb5;text-align:center}#msg.bad{color:#ff8f86}
+.sp-link{display:inline-block;margin-top:14px;color:#778981;font-size:12px}.sp-link:hover{color:#c9d4cf}
+@media(max-width:640px){.sp-card{padding:28px 18px 22px}h1{font-size:22px}.sp-seal{width:64px;height:64px;font-size:34px}}

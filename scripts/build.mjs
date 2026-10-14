@@ -7,6 +7,7 @@ const root = path.resolve(import.meta.dirname, ".."), dist = path.join(root, "di
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const scripts = [...html.matchAll(/<script src="(src\/[^"]+)"><\/script>/g)].map(m => m[1]);
 if (!scripts.length) throw new Error("Không tìm thấy runtime script trong src/ từ index.html.");
+let cfgSrc = fs.readFileSync(path.join(root, "src/services/config.js"), "utf8");   // dùng chung cho các trang độc lập
 let src = scripts.map(f => fs.readFileSync(path.join(root, f), "utf8")).join("\n;\n");
 
 // Khóa ký dùng cho export/integrity helper. Vercel Preview được phép dùng dev salt; production/CI thật vẫn bắt buộc secret.
@@ -39,7 +40,7 @@ if (!sbUrl || !sbKey) {
   if (sbKey.length < 20 || /\s/.test(sbKey)) throw new Error("SUPABASE_ANON_KEY có vẻ không hợp lệ.");
   for (const [token, value] of [['"__SUPABASE_URL__"', u.origin], ['"__SUPABASE_ANON_KEY__"', sbKey]]) {
     if (src.split(token).length !== 2) throw new Error(`Không tìm thấy đúng một chỗ ${token} trong src/services/config.js.`);
-    src = src.replace(token, () => JSON.stringify(value));
+    src = src.replace(token, () => JSON.stringify(value)); cfgSrc = cfgSrc.replace(token, () => JSON.stringify(value));
   }
   connectSrc = u.origin;
 }
@@ -49,17 +50,21 @@ const hcKey = (process.env.HCAPTCHA_SITEKEY || "").trim();
 if (hcKey) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hcKey)) throw new Error("HCAPTCHA_SITEKEY không đúng định dạng site key (UUID). Đừng dùng secret key (bắt đầu bằng ES_ hoặc 0x).");
   if (src.split('"__HCAPTCHA_SITEKEY__"').length !== 2) throw new Error('Không tìm thấy đúng một chỗ "__HCAPTCHA_SITEKEY__" trong src/services/config.js.');
-  src = src.replace('"__HCAPTCHA_SITEKEY__"', () => JSON.stringify(hcKey));
+  src = src.replace('"__HCAPTCHA_SITEKEY__"', () => JSON.stringify(hcKey)); cfgSrc = cfgSrc.replace('"__HCAPTCHA_SITEKEY__"', () => JSON.stringify(hcKey));
 }
 
-const min = await minify(src, { compress: { passes: 2 }, mangle: { toplevel: false }, format: { comments: false } });
-if (min.error) throw min.error;
-const obf = JavaScriptObfuscator.obfuscate(min.code, {
+const OBF = {
   compact: true, renameGlobals: false, identifierNamesGenerator: "hexadecimal",
   stringArray: true, stringArrayThreshold: 0.75, stringArrayEncoding: ["base64"], stringArrayRotate: true, stringArrayShuffle: true,
   splitStrings: true, splitStringsChunkLength: 8, transformObjectKeys: false,
   controlFlowFlattening: false, deadCodeInjection: false, selfDefending: false, debugProtection: false,
-}).getObfuscatedCode();
+};
+const pack = async code => {
+  const min = await minify(code, { compress: { passes: 2 }, mangle: { toplevel: false }, format: { comments: false } });
+  if (min.error) throw min.error;
+  return JavaScriptObfuscator.obfuscate(min.code, OBF).getObfuscatedCode();
+};
+const obf = await pack(src);
 
 fs.rmSync(dist, { recursive: true, force: true }); fs.mkdirSync(dist, { recursive: true });
 const hash = crypto.createHash("sha256").update(obf).digest("hex").slice(0, 10), bundle = `app.${hash}.js`;
@@ -74,6 +79,15 @@ const withCsp = text => {
 };
 let out = withCsp(html).replace(/\s*<script src="src\/[^"]+"><\/script>/g, "").replace("</body>", `  <script src="${bundle}"></script>\n</body>`);
 fs.writeFileSync(path.join(dist, "index.html"), out);
+// Trang độc lập (bảo trì, cổng quản trị): mỗi trang một bundle nhỏ riêng, không chứa mã game.
+for (const page of ["maintenance", "staff"]) {
+  const ph = fs.readFileSync(path.join(root, page + ".html"), "utf8");
+  const files = [...ph.matchAll(/<script src="(src\/[^"]+)"><\/script>/g)].map(m => m[1]);
+  const code = files.map(f => (f === "src/services/config.js" ? cfgSrc : fs.readFileSync(path.join(root, f), "utf8"))).join("\n;\n");
+  const packed = await pack(code), name = `${page}.${crypto.createHash("sha256").update(packed).digest("hex").slice(0, 10)}.js`;
+  fs.writeFileSync(path.join(dist, name), packed);
+  fs.writeFileSync(path.join(dist, page + ".html"), withCsp(ph).replace(/\s*<script src="src\/[^"]+"><\/script>/g, "").replace("</body>", `  <script src="${name}"></script>\n</body>`));
+}
 fs.cpSync(path.join(root, "styles"), path.join(dist, "styles"), { recursive: true });
 fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true });
 for (const f of ["_headers", "vercel.json"]) if (fs.existsSync(path.join(root, f))) fs.writeFileSync(path.join(dist, f), withCsp(fs.readFileSync(path.join(root, f), "utf8")));

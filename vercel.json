@@ -56,7 +56,7 @@
       ]
     },
     {
-      "source": "/(app\\..*\\.js)",
+      "source": "/((app|maintenance|staff)\\..*\\.js)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "source": "/index.html",
+      "source": "/(index|maintenance|staff).html",
       "headers": [
         {
           "key": "Cache-Control",

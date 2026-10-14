@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09100e">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; media-src 'none'; connect-src 'none'; object-src 'none'; worker-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
+  <title>Cổng quản trị - Thiên Vân Đại Lục</title>
+  <link rel="icon" href="assets/icons/orb_gold_22.png">
+  <link rel="stylesheet" href="styles/standalone.css">
+</head>
+<body>
+  <main class="sp-card" role="main">
+    <div class="sp-seal" aria-hidden="true">令</div>
+    <div class="sp-eyebrow">CỔNG QUẢN TRỊ</div>
+    <h1>Quản trị viên đăng nhập</h1>
+    <p>Dành cho tài khoản admin / owner. Sau khi xác nhận quyền, bạn được đưa vào game kể cả lúc bảo trì.</p>
+    <form id="form" class="sp-form" autocomplete="on">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="pass">Mật khẩu</label>
+      <input id="pass" type="password" autocomplete="current-password" required>
+      <div id="captcha" class="sp-captcha" hidden></div>
+      <button type="submit" id="go" class="sp-btn">Đăng nhập</button>
+      <div id="msg" role="status" aria-live="polite"></div>
+    </form>
+    <a class="sp-link" href="./">← Về trang game</a>
+  </main>
+  <script src="src/services/config.js"></script>
+  <script src="src/standalone/boot.js"></script>
+  <script src="src/standalone/staff.js"></script>
+</body>
+</html>
