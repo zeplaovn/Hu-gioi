@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, rewrite/react-vite-fastify]
 
 permissions:
   contents: read
@@ -13,23 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
+          cache: npm
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-
-      - name: Run tests
+      - name: Test rewrite engine
         run: npm test
-
-      - name: Build
-        env:
-          TVDL_SALT: ci-only-test-salt-0123456789abcdef
-          SUPABASE_URL: https://example.supabase.co
-          SUPABASE_ANON_KEY: ci-public-anon-key-0123456789abcdef
+      - name: Build React/Vite application
         run: npm run build
