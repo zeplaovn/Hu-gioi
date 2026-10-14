@@ -157,7 +157,8 @@
 
   G.startGame = function () {
     while (this.points > 0) { this.alloc[pick(STATS)]++; this.points--; }
-    const name = TT.cleanName(this.nameIn.value) || TT.randName(this.gender);
+    const typed = this.nameIn.value, name = TT.cleanName(typed) || TT.randName(this.gender);
+    if (typed.trim() && TT.isReservedName(typed.normalize("NFC").replace(/[\[\]]/g, ""))) TT.ui.toast("Tên này dành riêng cho quản trị viên, đã chọn tên khác cho bạn.", "warn");
     this.p = new TT.Player(this.gender, this.age, this.race, this.alloc, { name, root: this.rootRoll });
     this.showGame();
     const p = this.p;

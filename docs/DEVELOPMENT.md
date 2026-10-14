@@ -6,11 +6,11 @@ Tài liệu này là checklist làm việc cho repo `Hu-gioi`.
 
 Xác định feature thuộc lớp nào:
 
-- luật/state nền: `js/core/`
-- hệ thống gameplay độc lập: `js/systems/`
-- render/interaction: `js/ui/`
-- network/Auth/Supabase: `js/online/`
-- cross-cutting infrastructure: `js/infrastructure/`
+- luật/state nền: `src/game/core/`
+- hệ thống gameplay độc lập: `src/game/features/`
+- render/interaction: `src/ui/`
+- network/Auth/Supabase: `src/services/`
+- cross-cutting infrastructure: `src/platform/`
 - công cụ dev/build/simulation: `scripts/`
 - schema/RPC/RLS: `supabase/migrations/`
 

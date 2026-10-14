@@ -1,13 +1,13 @@
-// Kiểm thử gợi ý "việc nên làm tiếp" (js/guide.js): chỉ đọc trạng thái nhân vật, ưu tiên đúng thứ tự.
+// Kiểm thử gợi ý "việc nên làm tiếp" (src/ui/guide.js): chỉ đọc trạng thái nhân vật, ưu tiên đúng thứ tự.
 import test from "node:test"; import assert from "node:assert/strict"; import fs from "node:fs"; import vm from "node:vm";
 const src = f => fs.readFileSync(new URL("../" + f, import.meta.url), "utf8");
 function load() {
   const ls = new Map(), ctx = vm.createContext({ console, Math, JSON, Object, Array, Set, Number, String, Map, Date, Error, Promise, parseInt, parseFloat, isFinite,
     localStorage: { getItem: k => (ls.has(k) ? ls.get(k) : null), setItem: (k, v) => ls.set(k, String(v)), removeItem: k => ls.delete(k) }, setTimeout, clearTimeout, clearInterval });
   ctx.window = ctx; ctx.h = () => ({});
-  for (const f of ["js/data.js", "js/idle_data.js", "js/player.js"]) vm.runInContext(src(f), ctx);
+  for (const f of ["src/game/core/data.js", "src/game/features/idle_data.js", "src/game/core/player.js"]) vm.runInContext(src(f), ctx);
   vm.runInContext("TT.Game = class { buildIdlePanel() {} refresh() {} }; TT.ui = { btn() { return {}; } };", ctx);
-  vm.runInContext(src("js/guide.js"), ctx);
+  vm.runInContext(src("src/ui/guide.js"), ctx);
   const TT = vm.runInContext("TT", ctx);
   const player = () => new TT.Player("Nam", 20, "Nhân", Object.fromEntries(TT.STATS.map(s => [s, 5])), { name: "Thử" });
   return { TT, player };

@@ -1,4 +1,4 @@
-// Kiểm thử lớp bảo mật (js/security.js) bằng Node, không cần trình duyệt:  node tools/test_security.mjs
+// Kiểm thử lớp bảo mật (src/platform/security.js) bằng Node, không cần trình duyệt:  npm test
 import test from "node:test"; import assert from "node:assert/strict";
 import fs from "node:fs"; import path from "node:path"; import vm from "node:vm"; import crypto from "node:crypto";
 
@@ -15,11 +15,11 @@ function boot(store = new Map(), { quota = Infinity } = {}) {
   const ctx = vm.createContext({ localStorage: ls, console, TextEncoder, Date, Math, JSON, Object, Array, Set, Number, String, Map, Uint8Array, Uint32Array, DataView, Error, parseInt, parseFloat, isFinite, setTimeout, clearInterval });
   ctx.window = ctx;
   ctx.h = () => ({});                                        // ui.js không được nạp trong test
-  for (const f of ["js/data.js", "js/idle_data.js", "js/player.js"]) vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), ctx, { filename: f });
+  for (const f of ["src/game/core/data.js", "src/game/features/idle_data.js", "src/game/core/player.js"]) vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), ctx, { filename: f });
   // TT.ENC_IDS nằm trong idle.js (cần DOM), ở đây chỉ cần danh sách rỗng vì các test không xét kỳ ngộ
   vm.runInContext("TT.ENC_IDS = []; TT.ui = { toast: (m, k) => globalThis.__toasts.push([m, k]) };", ctx);
   ctx.__toasts = toasts;
-  vm.runInContext(fs.readFileSync(path.join(root, "js/security.js"), "utf8"), ctx, { filename: "js/security.js" });
+  vm.runInContext(fs.readFileSync(path.join(root, "src/platform/security.js"), "utf8"), ctx, { filename: "src/platform/security.js" });
   return { TT: vm.runInContext("TT", ctx), store, toasts, ctx };
 }
 const newPlayer = TT => new TT.Player("Nam", 20, "Nhân", Object.fromEntries(TT.STATS.map(s => [s, 1])), { name: "Thử Nghiệm" });
@@ -38,7 +38,7 @@ test("HMAC-SHA256 khớp RFC 4231 (test case 2) và node:crypto", () => {
 });
 
 test("khóa ký không còn nằm cố định trong mã nguồn", () => {
-  const src = fs.readFileSync(path.join(root, "js/security.js"), "utf8");
+  const src = fs.readFileSync(path.join(root, "src/platform/security.js"), "utf8");
   assert.ok(!src.includes("tvdl-v1-7f3a9c52e1b84d06"), "khóa cũ vẫn còn trong mã nguồn");
   assert.ok(boot().TT.sec.devKey, "chạy từ mã nguồn phải dùng khóa dev");
 });
@@ -130,4 +130,16 @@ test("cảnh giới cao hơn thời gian tu luyện cho phép bị từ chối",
   d.realm = 8; d.tang = 9; d.months = 5;
   assert.equal(TT.sec.cleanPlayer(d), null);
   assert.match(TT.sec.error, /Cảnh giới/);
+});
+
+test("tên người chơi: bỏ [ ] và ký tự vô hình, chặn tên giả quản trị viên", () => {
+  const { TT } = boot();
+  assert.equal(TT.cleanName("[ADMIN] Vân"), "");
+  assert.equal(TT.cleanName("Quản Trị Viên"), "");
+  assert.equal(TT.cleanName("a\u200bdmin"), "");
+  assert.equal(TT.cleanName("GM"), "");
+  assert.equal(TT.cleanName("[Lý] <Vân>"), "Lý Vân");
+  assert.equal(TT.cleanName("Lý Phàm Nhân"), "Lý Phàm Nhân");
+  assert.equal(TT.isReservedName("Hệ Thống"), true);
+  assert.equal(TT.isReservedName("Gia Minh"), false);
 });

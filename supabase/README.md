@@ -28,6 +28,11 @@ Migration chạy theo thứ tự tên file:
 20261016020000_maintenance_guard.sql
 20261016030000_admin_cleanup.sql
 20261017000000_maintenance_admin_bypass.sql
+20261018000000_gameplay_hardening.sql
+20261018010000_game_clock_volatility.sql
+20261018020000_trusted_game_time.sql
+20261018030000_scale_hot_path_optimization.sql
+20261019000000_admin_chat_badge.sql
 ```
 
 Dùng Supabase CLI thì để migration system chạy theo timestamp. Nếu chạy thủ công trong SQL Editor, vẫn chạy theo thứ tự trên.
@@ -87,6 +92,8 @@ Player thường:
 Admin Console vẫn hoạt động để có thể tắt maintenance.
 
 Migration `20261017000000_maintenance_admin_bypass.sql` cho account `admin`/`owner` đang enabled bypass backend maintenance guard để thử game trong lúc server đóng. Client UI vẫn không phải security boundary; quyền thật nằm trong RPC/helper database.
+
+Migration `20261019000000_admin_chat_badge.sql`: tin chat của admin/moderator có cột `is_admin` (do trigger đặt, client không tự đặt được) và hiện huy hiệu QTV + tên vàng; tin từ `admin_send_message` mang tên `Thiên Đạo`. `private.safe_name()` bỏ `[ ] < >` và ký tự vô hình, đổi tên giống admin/GM/quản trị/hệ thống thành `Vô danh` cho bảng xếp hạng và chat của người chơi thường.
 
 ## Banner và server status
 

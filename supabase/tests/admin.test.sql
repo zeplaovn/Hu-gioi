@@ -21,6 +21,11 @@ insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('222222
 \i supabase/migrations/20261016020000_maintenance_guard.sql
 \i supabase/migrations/20261016030000_admin_cleanup.sql
 \i supabase/migrations/20261017000000_maintenance_admin_bypass.sql
+\i supabase/migrations/20261018000000_gameplay_hardening.sql
+\i supabase/migrations/20261018010000_game_clock_volatility.sql
+\i supabase/migrations/20261018020000_trusted_game_time.sql
+\i supabase/migrations/20261018030000_scale_hot_path_optimization.sql
+\i supabase/migrations/20261019000000_admin_chat_badge.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -91,6 +96,23 @@ do $$ begin perform public.admin_set_maintenance(false, null); end $$;
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 do $$ declare r jsonb; begin r := public.save_game('{"count":1,"player":{"name":"A","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0); assert (r->>'rev')::int = 1; end $$;
 do $$ begin perform public.send_chat('xin chào'); end $$;
+
+-- tên admin nổi bật + chống mạo danh: admin có is_admin, tin admin_send_message tên 'Thiên Đạo'; người thường không đặt được tên giống admin
+reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
+do $$ begin
+  perform public.admin_send_message('thông báo');
+  assert (select is_admin and name = 'Thiên Đạo' from public.chat_messages order by id desc limit 1), 'tin admin có huy hiệu và tên Thiên Đạo';
+end $$;
+reset role;
+do $$ begin
+  assert private.safe_name('[ADMIN] Hack') = 'Vô danh' and private.safe_name('Quản Trị Viên') = 'Vô danh' and private.safe_name('GM') = 'Vô danh', 'tên giống admin bị chặn';
+  assert private.safe_name(' [Lý <b>Vân]' || chr(8203)) = 'Lý bVân' and private.safe_name('Phàm Nhân') = 'Phàm Nhân' and private.safe_name('   ') = 'Vô danh', 'làm sạch ký tự đặc biệt';
+end $$;
+reset role;
+do $$ begin
+  insert into public.chat_messages(user_id, name, body) values ('11111111-1111-1111-1111-111111111111', '[ADMIN]', 'giả danh');
+  assert (select not is_admin and name = 'Vô danh' from public.chat_messages order by id desc limit 1), 'người thường không thể mang tên [ADMIN]';
+end $$;
 
 -- vai trò bị tắt thì mất quyền
 reset role; update public.admin_users set enabled = false where user_id = '33333333-3333-3333-3333-333333333333';

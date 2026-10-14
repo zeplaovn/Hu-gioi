@@ -1,8 +1,8 @@
-// Kiểm thử dữ liệu cửa hàng theo cảnh giới (js/data.js): mọi cảnh giới đều mở thêm hàng, vật phẩm hợp lệ, đã giảm chỉ số.
+// Kiểm thử dữ liệu cửa hàng theo cảnh giới (src/game/core/data.js): mọi cảnh giới đều mở thêm hàng, vật phẩm hợp lệ, đã giảm chỉ số.
 import test from "node:test"; import assert from "node:assert/strict"; import fs from "node:fs"; import vm from "node:vm";
 const ctx = vm.createContext({ console, Math, JSON, Object, Array, Set, Number, String, Map, Date, Error, parseInt, parseFloat, isFinite });
 ctx.window = ctx;
-for (const f of ["js/data.js"]) vm.runInContext(fs.readFileSync(new URL("../" + f, import.meta.url), "utf8"), ctx);
+for (const f of ["src/game/core/data.js"]) vm.runInContext(fs.readFileSync(new URL("../" + f, import.meta.url), "utf8"), ctx);
 const TT = vm.runInContext("TT", ctx), items = Object.entries(TT.ITEMS);
 test("mỗi cảnh giới từ Phàm Nhân đến Độ Kiếp đều mở thêm ít nhất một vật phẩm", () => {
   for (let r = 0; r < TT.REALMS.length; r++) assert.ok(items.some(([, it]) => it.realm === r), "cảnh giới " + r);

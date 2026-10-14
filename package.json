@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
-    "test": "node --import ./tests/path_aliases.mjs --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs",
+    "test": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs",
     "mock": "node scripts/mock_supabase.mjs"
   },
   "devDependencies": {

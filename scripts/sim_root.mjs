@@ -5,7 +5,7 @@ import fs from "node:fs"; import path from "node:path"; import vm from "node:vm"
 const root = path.resolve(import.meta.dirname, "..");
 const ctx = vm.createContext({ console, Math, Date, Object, Array, Set, Number, String, JSON, Map });
 ctx.window = ctx;
-for (const f of ["js/core/data.js", "js/systems/idle_data.js", "js/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
+for (const f of ["src/game/core/data.js", "src/game/features/idle_data.js", "src/game/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
 const TT = vm.runInContext("TT", ctx);
 const mkRng = s => () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 
@@ -17,7 +17,7 @@ const KINDS = {
 };
 const isRare = els => els.some(e => TT.RARE_EL.includes(e));
 
-/** "hiện tại" = đúng số đang chạy trong game (js/systems/idle_data.js, js/core/data.js). Thử số mới: tạo scripts/sim_root_configs.mjs (không bắt buộc) xuất ra các cấu hình ghi đè; lưu ý monthGain đã gồm TT.PROG.SPEED. */
+/** "hiện tại" = đúng số đang chạy trong game (src/game/features/idle_data.js, src/game/core/data.js). Thử số mới: tạo scripts/sim_root_configs.mjs (không bắt buộc) xuất ra các cấu hình ghi đè; lưu ý monthGain đã gồm TT.PROG.SPEED. */
 export const CONFIGS = {
   "hiện tại": {},
 };

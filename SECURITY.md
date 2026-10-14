@@ -31,7 +31,7 @@ Không có `service_role`, database password, JWT signing secret hay secret serv
 
 ## 2. Local save integrity
 
-`js/infrastructure/security.js` cung cấp các lớp bảo vệ local như chữ ký save, validation, backup, rejected-save preservation và chặn đa tab.
+`src/platform/security.js` cung cấp các lớp bảo vệ local như chữ ký save, validation, backup, rejected-save preservation và chặn đa tab.
 
 Các lớp này giúp chống:
 

@@ -109,10 +109,14 @@
   const TEN = { "Nam": ["Vân", "Cực", "Phong", "Thiên", "Nhiên", "Hiên", "Phàm", "Dạ", "Sơn", "Hạo", "Lăng", "Nhai"], "Nữ": ["Nhi", "Lung", "Hà", "Ngọc", "Vi", "Sương", "Yên", "Lan", "Thủy", "Tâm", "Dao", "Anh"] };
   TT.NAME_MAX = 20;
   TT.randName = gender => { const g = gender === "Nữ" ? "Nữ" : "Nam"; return `${pick(HO)} ${pick(DEM[g])} ${pick(TEN[g])}`; };
-  /** Làm sạch tên: bỏ ký tự điều khiển / ký tự HTML, gộp khoảng trắng, giới hạn độ dài. Trả về "" nếu rỗng. */
+  /** Tên giống quản trị viên (admin, GM, quản trị, hệ thống...) bị cấm để không ai mạo danh; máy chủ cũng chặn lại (private.safe_name). */
+  TT.RESERVED_NAME = /(admin|moderator|quản trị|quan tri|thiên đạo|thien dao|hệ thống|he thong|system|(^|[^a-z])gm([^a-z]|$))/i;
+  TT.isReservedName = raw => typeof raw === "string" && TT.RESERVED_NAME.test(raw.normalize("NFC"));
+  /** Làm sạch tên: bỏ ký tự điều khiển / vô hình / HTML / dấu [ ], gộp khoảng trắng, giới hạn độ dài. Trả về "" nếu rỗng hoặc là tên dành riêng. */
   TT.cleanName = raw => {
     if (typeof raw !== "string") return "";
-    return raw.normalize("NFC").replace(/[\u0000-\u001f\u007f-\u009f<>&"'`]/g, "").replace(/\s+/g, " ").trim().slice(0, TT.NAME_MAX).trim();
+    const s = raw.normalize("NFC").replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2060\ufeff<>&"'`\[\]]/g, "").replace(/\s+/g, " ").trim().slice(0, TT.NAME_MAX).trim();
+    return TT.isReservedName(s) ? "" : s;
   };
 
   /* ---------- bí cảnh ---------- */

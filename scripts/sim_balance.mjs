@@ -5,7 +5,7 @@ import fs from "node:fs"; import path from "node:path"; import vm from "node:vm"
 const root = path.resolve(import.meta.dirname, "..");
 const ctx = vm.createContext({ console, Math, Date, Object, Array, Set, Number, String, JSON, Map });
 ctx.window = ctx;
-for (const f of ["js/core/data.js", "js/systems/idle_data.js", "js/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
+for (const f of ["src/game/core/data.js", "src/game/features/idle_data.js", "src/game/core/player.js"]) new vm.Script(fs.readFileSync(path.join(root, f), "utf8"), { filename: f }).runInContext(ctx);
 const TT = vm.runInContext("TT", ctx);
 
 const SK_BY_REALM = [[], ["Dưỡng Khí Quyết"], ["Dưỡng Khí Quyết", "Thanh Phong Kiếm Pháp", "Kim Cang Thể"],

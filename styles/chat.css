@@ -11,6 +11,9 @@
 .chat-msg { padding: 3px 0; overflow-wrap: anywhere; line-height: 1.45; }
 .chat-name { font-weight: 700; color: var(--cyan); }
 .chat-msg.me .chat-name { color: var(--gold); }
+.chat-msg.admin { background: color-mix(in srgb, var(--gold) 12%, transparent); border-left: 3px solid var(--gold); padding-left: 6px; border-radius: 3px; }
+.chat-msg.admin .chat-name { color: var(--gold); text-shadow: 0 0 6px color-mix(in srgb, var(--gold) 55%, transparent); }
+.chat-admin-tag { display: inline-block; margin-right: 4px; padding: 0 5px; border-radius: 3px; background: var(--gold); color: var(--paper); font-size: 11px; font-weight: 700; letter-spacing: .5px; line-height: 16px; vertical-align: 1px; }
 .chat-colon { color: var(--dim); }
 .chat-text { white-space: pre-wrap; }
 .chat-note { min-height: 1.5em; margin: 2px 0 4px; }

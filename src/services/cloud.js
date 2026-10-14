@@ -174,9 +174,16 @@
     return { top: Array.isArray(top) ? top : [], mine, rank, uid };
   };
 
+  let chatHasAdminCol = true;                                     // cột is_admin có từ migration 20261019; máy chủ cũ thì bỏ qua
   cloud.chatList = async ({ after = 0 } = {}) => {
-    const token = await freshToken(), cols = "select=id,user_id,name,body,created_at", a = Math.max(0, Math.floor(+after) || 0);
-    const rows = await http(`/rest/v1/chat_messages?${cols}&` + (a > 0 ? `id=gt.${a}&order=id.asc&limit=100` : "order=id.desc&limit=50"), { token });
+    const token = await freshToken(), a = Math.max(0, Math.floor(+after) || 0);
+    const q = cols => `/rest/v1/chat_messages?select=${cols}&` + (a > 0 ? `id=gt.${a}&order=id.asc&limit=100` : "order=id.desc&limit=50");
+    let rows;
+    try { rows = await http(q("id,user_id,name,body,created_at" + (chatHasAdminCol ? ",is_admin" : "")), { token }); }
+    catch (e) {
+      if (!chatHasAdminCol || !e || e.status !== 400) throw e;
+      chatHasAdminCol = false; rows = await http(q("id,user_id,name,body,created_at"), { token });
+    }
     const list = Array.isArray(rows) ? rows : [];
     return a > 0 ? list : list.reverse();
   };

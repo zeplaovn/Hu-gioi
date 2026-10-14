@@ -1,5 +1,5 @@
 """Cắt assets_src/frames_sheet.png (1 khung dọc + 1 khung ngang) thành các mảnh nhỏ: 4 góc, 4 cạnh (lát cắt thẳng, lặp được) và viên ngọc giữa cạnh.
-CSS (css/responsive.css, mục "Khung họa tiết") xếp các mảnh này bằng nhiều lớp nền nên góc to mà viền vẫn mỏng.
+CSS (styles/responsive.css, mục "Khung họa tiết") xếp các mảnh này bằng nhiều lớp nền nên góc to mà viền vẫn mỏng.
 Chạy:  python3 scripts/make_frames.py   (cần pillow, numpy, scipy)   ->   assets/ui/frame/{w,t}_{tl,tr,bl,br,top,bot,left,right}.png + gem.png
 w = khung ngang, t = khung dọc. Ảnh lưu ở nửa độ phân giải (SIZES bên dưới dùng trong CSS)."""
 import os

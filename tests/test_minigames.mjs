@@ -1,4 +1,4 @@
-// Kiểm thử minigame nghề phụ (js/minigames.js) bằng DOM giả: điểm của MỌI công đoạn phải được ghi lại,
+// Kiểm thử minigame nghề phụ (src/game/features/minigames.js) bằng DOM giả: điểm của MỌI công đoạn phải được ghi lại,
 // kể cả công đoạn kết thúc bằng thao tác chuột / phím (trước đây mất điểm khiến luyện khí / vẽ phù luôn thất bại).
 import test from "node:test"; import assert from "node:assert/strict"; import fs from "node:fs"; import vm from "node:vm";
 const src = f => fs.readFileSync(new URL("../" + f, import.meta.url), "utf8");
@@ -7,9 +7,9 @@ function load() {
   const ctx = vm.createContext({ console, Math, JSON, Object, Array, Set, Number, String, Map, Date, Error, parseInt, parseFloat, isFinite, setTimeout, clearTimeout, setInterval, clearInterval });
   ctx.window = ctx; ctx.addEventListener = noop; ctx.removeEventListener = noop;
   ctx.h = (tag, props, ...kids) => ({ tag, props, kids, textContent: "", className: "", addEventListener: noop, getContext: () => c2d, setPointerCapture: noop, getBoundingClientRect: () => ({ left: 0, top: 0, width: 560, height: 300 }), append: noop, isConnected: true });
-  vm.runInContext(src("js/data.js"), ctx);
+  vm.runInContext(src("src/game/core/data.js"), ctx);
   vm.runInContext("TT.ui = { modal: () => ({ overlay: { isConnected: true }, box: { append() {} }, close() {} }) };", ctx);
-  vm.runInContext(src("js/minigames.js"), ctx);
+  vm.runInContext(src("src/game/features/minigames.js"), ctx);
   return vm.runInContext("TT", ctx);
 }
 /** Mở cửa sổ, chạy từng công đoạn bằng tay: hàm `play(stage)` mô phỏng người chơi, rồi bơm vòng lặp cho tới khi xong. */

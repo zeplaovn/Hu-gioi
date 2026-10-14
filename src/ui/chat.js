@@ -26,7 +26,7 @@
       const fresh = [];
       for (const r of rows) {
         if (!r || typeof r.id !== "number" || byId.has(r.id)) continue;
-        byId.set(r.id, { id: r.id, user_id: String(r.user_id || ""), name: String(r.name || "Vô danh"), body: String(r.body || ""), t: r.created_at });
+        byId.set(r.id, { id: r.id, user_id: String(r.user_id || ""), name: String(r.name || "Vô danh"), body: String(r.body || ""), t: r.created_at, admin: r.is_admin === true });
         fresh.push(byId.get(r.id));
         if (r.id > lastId) lastId = r.id;
       }
@@ -93,8 +93,8 @@
 
     const paint = () => {                                       // chỉ thêm tin mới, không vẽ lại cả danh sách (không mất cuộn / bôi chọn)
       const stick = list.scrollHeight - list.scrollTop - list.clientHeight < 48 || shown === 0, me = myId(), add = [];
-      for (const msg of byId.values()) if (msg.id > shown) add.push(h("div", { class: "chat-msg" + (msg.user_id === me ? " me" : "") },
-        h("span", { class: "chat-time small dim" }, hhmm(msg.t)), " ", h("span", { class: "chat-name" }, msg.name), h("span", { class: "chat-colon" }, ": "), h("span", { class: "chat-text" }, msg.body)));
+      for (const msg of byId.values()) if (msg.id > shown) add.push(h("div", { class: "chat-msg" + (msg.user_id === me ? " me" : "") + (msg.admin ? " admin" : "") },
+        h("span", { class: "chat-time small dim" }, hhmm(msg.t)), " ", msg.admin ? h("span", { class: "chat-admin-tag", title: "Quản trị viên" }, "QTV") : "", h("span", { class: "chat-name" }, msg.name), h("span", { class: "chat-colon" }, ": "), h("span", { class: "chat-text" }, msg.body)));
       if (add.length) { list.append(...add); shown = Math.max(...[...byId.keys()]); }
       while (list.childElementCount > KEEP) list.firstElementChild.remove();
       if (!list.childElementCount) list.append(h("p", { class: "chat-empty dim center" }, "Chưa có ai nói gì. Hãy là người đầu tiên!"));
