@@ -7,30 +7,40 @@ Thư mục này là **nguồn chuẩn duy nhất** cho schema, RPC và RLS của
 ```text
 supabase/
   README.md
-  migrations/    migration theo domain
+  migrations/    lịch sử migration production, bất biến sau khi đã apply
   tests/         SQL/RLS/RPC regression tests
 ```
 
-## Database mới
+## Migration history
 
-Project Supabase mới chạy migration theo timestamp:
+`supabase/migrations` phải khớp với `supabase_migrations.schema_migrations` của production. Migration đã chạy production là **immutable history**: không xóa, không squash, không đổi timestamp, không thay nội dung để “làm sạch” repo.
+
+Lịch sử production hiện tại:
 
 ```text
-20261014000000_01_core.sql
-20261014000100_02_admin_core.sql
-20261014000200_03_server.sql
-20261014000300_04_leaderboard.sql
-20261014000400_05_gameplay.sql
-20261014000500_06_chat.sql
-20261014000600_07_economy.sql
-20261014000700_08_admin_rpc.sql
-20261014000800_09_security.sql
-20261014000900_10_performance.sql
+20261011000000_player_saves.sql
+20261012000000_delete_account_and_checks.sql
+20261013000000_leaderboard.sql
+20261014000000_chat.sql
+20261014025908_scale_hot_path_optimization.sql
+20261014032941_canonical_sql_names_v2.sql
+20261014041045_remove_canonical_sql_aliases.sql
+20261015000000_leaderboard_fix.sql
+20261016000000_admin_console.sql
+20261016010000_admin_console_fixes.sql
+20261016020000_maintenance_guard.sql
+20261016030000_admin_cleanup.sql
+20261017000000_maintenance_admin_bypass.sql
+20261018000000_gameplay_hardening.sql
+20261018010000_game_clock_volatility.sql
+20261018020000_trusted_game_time.sql
+20261018030000_scale_hot_path_optimization.sql
+20261019000000_admin_chat_badge.sql
+20261020000000_review_fixes.sql
+20261020010000_maintenance_grace_and_windows.sql
 ```
 
-Đây vẫn là một baseline sạch cho database mới, nhưng được tách theo domain để dễ đọc và bảo trì. Các migration cũ dạng `fix`, `cleanup`, `bypass` không còn tồn tại.
-
-Sau khi database mới đã apply bộ migration này, các file trên trở thành immutable history; mọi thay đổi tiếp theo phải dùng timestamp mới.
+Ba migration `20261014025908`, `20261014032941`, `20261014041045` là marker/lịch sử thật đã từng được production ghi nhận. Chúng phải tồn tại trong repo để Supabase Preview và CLI có thể đối chiếu migration history chính xác.
 
 ## Quy tắc migration
 
@@ -42,9 +52,9 @@ YYYYMMDDHHMMSS_mo_ta_ngan.sql
 
 Nguyên tắc:
 
-- không sửa migration đã apply;
-- thay đổi production state bằng migration mới;
-- trước release, gom các patch chưa apply của cùng một feature vào một migration hoàn chỉnh;
+- không sửa, xóa, squash hoặc renumber migration đã apply;
+- thay đổi production state bằng migration timestamp mới;
+- trước release, gom patch **chưa deploy** của cùng một feature vào một migration hoàn chỉnh;
 - `security definer` function phải pin `search_path = ''`;
 - quyền RPC phải `revoke` trước rồi `grant` đúng role;
 - không hardcode UUID, email, password, secret hoặc production-only data trong migration;
@@ -91,7 +101,7 @@ Admin Console vẫn hoạt động để có thể tắt maintenance. Account `a
 
 ## Chat quản trị
 
-Bộ migration gồm toàn bộ identity hardening của admin chat:
+Migration `20261019000000_admin_chat_badge.sql` gồm identity hardening của admin chat:
 
 - `chat_messages.is_admin` do server stamp;
 - admin/moderator không thể bị giả mạo bằng display name;
@@ -122,11 +132,4 @@ supabase/tests/chat.test.sql
 supabase/tests/admin.test.sql
 ```
 
-Cả ba test phải dựng database từ đúng thứ tự migration ở trên. Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
-
-## Migration sau baseline
-
-```text
-20261020000000_review_fixes.sql                    khóa ngoại on delete set null, lb_sync không hạ kỷ lục khi đổi tên, heartbeat 30 giây
-20261020010000_maintenance_grace_and_windows.sql   ân hạn 60 giây khi bật bảo trì + nhật ký đợt bảo trì (trừ khỏi thời gian vắng mặt)
-```
+Các test phải dựng database trống theo đúng thứ tự migration production ở trên. Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
