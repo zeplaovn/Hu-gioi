@@ -14,7 +14,8 @@ export interface AuthVerifier {
 
 const bearer = (header: string | undefined) => {
   const m = /^Bearer\s+(.+)$/i.exec(String(header || "").trim());
-  return m ? m[1].trim() : "";
+  const token = m?.[1];
+  return token ? token.trim() : "";
 };
 
 export class StaticAuthVerifier implements AuthVerifier {
@@ -50,6 +51,8 @@ export class SupabaseAuthVerifier implements AuthVerifier {
     if (!response.ok) return null;
     const data = await response.json().catch(() => null) as { id?: unknown; email?: unknown } | null;
     if (!data || typeof data.id !== "string" || !data.id) return null;
-    return { user: { id: data.id, email: typeof data.email === "string" ? data.email : undefined }, accessToken };
+    const user: AuthUser = { id: data.id };
+    if (typeof data.email === "string") user.email = data.email;
+    return { user, accessToken };
   }
 }
