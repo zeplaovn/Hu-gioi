@@ -1,19 +1,24 @@
--- Kiểm thử migration trên Postgres thật bằng bản giả lập tối thiểu của Supabase (auth.users, auth.uid(), role anon/authenticated).
--- Chạy:  psql -v ON_ERROR_STOP=1 -f supabase/tests/player_saves.test.sql   (trên DB trống)
+-- Kiểm thử baseline trên Postgres thật bằng bản giả lập tối thiểu của Supabase.
+-- Chạy: psql -v ON_ERROR_STOP=1 -f supabase/tests/player_saves.test.sql (trên DB trống)
 \set ON_ERROR_STOP on
 create schema auth;
 create table auth.users (id uuid primary key);
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+create function auth.jwt() returns jsonb language sql stable as $$ select '{}'::jsonb $$;
 do $$ begin create role anon nologin; exception when duplicate_object then null; end $$;
 do $$ begin create role authenticated nologin; exception when duplicate_object then null; end $$;
 grant usage on schema auth, public to anon, authenticated;
-grant execute on function auth.uid() to anon, authenticated;
-insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('22222222-2222-2222-2222-222222222222');
+grant execute on function auth.uid(), auth.jwt() to anon, authenticated;
+insert into auth.users values
+  ('11111111-1111-1111-1111-111111111111'),
+  ('22222222-2222-2222-2222-222222222222');
 
-\i supabase/migrations/20261011000000_player_saves.sql
-\i supabase/migrations/20261012000000_delete_account_and_checks.sql
-\i supabase/migrations/20261013000000_leaderboard.sql
-\i supabase/migrations/20261015000000_leaderboard_fix.sql
+\i supabase/migrations/20261014000000_baseline.sql
+
+-- Hai account fixture được cấp admin chỉ để kiểm thử nhánh p_force của save_game().
+insert into public.admin_users(user_id, role) values
+  ('11111111-1111-1111-1111-111111111111', 'admin'),
+  ('22222222-2222-2222-2222-222222222222', 'admin');
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -36,24 +41,26 @@ do $$ declare r jsonb; begin
   r := public.save_game('{"count":1,"player":{"name":"A2","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":1}', 1);
   assert (r->>'rev')::int = 2, 'rev phải tăng';
 end $$;
-select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 1)$q$, 'conflict');           -- rev cũ
+select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 1)$q$, 'conflict');
 select pg_sleep(1.1);
-select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 0)$q$, 'conflict');           -- rev 0 khi đã có dòng
+select public.t_expect_error($q$select public.save_game('{"a":1}', '{}', 0)$q$, 'conflict');
 select public.t_expect_error($q$select public.save_game('[1]'::jsonb, '{}', 2)$q$, 'bad_save');
 select public.t_expect_error($q$select public.save_game('{}', '[1]'::jsonb, 2)$q$, 'bad_meta');
 select public.t_expect_error($q$select public.save_game('{}', null, 2)$q$, 'bad_meta');
 select public.t_expect_error($q$select public.save_game(jsonb_build_object('x', repeat('a', 300000)), '{}', 2)$q$, 'too_large');
 select public.t_expect_error($q$select public.save_game('{}', '{}', -1)$q$, 'bad_rev');
-do $$ declare r jsonb; begin                                                   -- ghi quá nhanh bị chặn, ghi đè chủ động (force) thì được
+do $$ declare r jsonb; begin
   perform public.save_game('{"count":1}', '{}', 2);
-  perform public.t_expect_error($q$select public.save_game('{"count":1}', '{}', 3)$q$, 'too_fast');
+  perform public.t_expect_error($q$select public.save_game('{"count":1,"meta":1}', '{}', 3)$q$, 'too_fast');
   r := public.save_game('{"count":1,"player":{"name":"A3","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{}', 0, true);
   assert (r->>'rev')::int = 4, 'force phải ghi được và tăng rev';
 end $$;
+
 -- nhân vật vô lý bị chặn ở máy chủ
 select public.t_expect_error($q$select public.save_game('{"player":{"name":"X","realm":9,"tang":1,"months":0,"age":16,"lifespan":80}}', '{}', 0, true)$q$, 'implausible');
 select public.t_expect_error($q$select public.save_game('{"player":{"name":"X","realm":4,"tang":1,"months":3,"age":16,"lifespan":80}}', '{}', 0, true)$q$, 'implausible');
 select public.t_expect_error($q$select public.save_game('{"player":{"name":"X"}}', '{}', 0, true)$q$, 'implausible');
+
 -- RLS: A chỉ thấy dòng của mình, không ghi trực tiếp được
 do $$ begin assert (select count(*) from public.player_saves) = 1, 'A phải thấy đúng 1 dòng'; end $$;
 select public.t_expect_error($q$update public.player_saves set save = '{"hack":true}'$q$, 'permission denied');
@@ -69,7 +76,7 @@ do $$ declare r jsonb; begin
   assert (select save #>> '{player,name}' from public.player_saves) = 'B', 'B phải thấy dữ liệu của B';
 end $$;
 
--- bảng xếp hạng: B (đang đăng nhập) thấy A và B; ghi trực tiếp bị chặn; chỉ giữ thành tích tốt nhất; cận dưới số tháng; tên được làm sạch
+-- bảng xếp hạng: chỉ giữ thành tích tốt nhất và client không ghi trực tiếp được
 do $$ begin
   assert (select count(*) from public.leaderboard) = 2, 'bảng xếp hạng phải có A và B';
   assert (select name from public.leaderboard where user_id = '11111111-1111-1111-1111-111111111111') = 'A3', 'A xếp hạng với nhân vật vừa lưu';
@@ -79,40 +86,43 @@ select public.t_expect_error($q$insert into public.leaderboard (user_id, name, l
 select public.t_expect_error($q$delete from public.leaderboard$q$, 'permission denied');
 do $$ begin
   perform public.save_game('{"player":{"name":"B  cao thu\u0007","realm":2,"tang":1,"months":50,"age":20,"lifespan":200}}', '{}', 1, true);
-  assert (select level from public.leaderboard where name like 'B%') = 19 and (select name from public.leaderboard where level = 19) = 'B  cao thu', 'cấp 19 hợp lý, tên bỏ ký tự điều khiển';
+  assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'cấp 19 hợp lý';
+  assert (select name from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 'B cao thu', 'tên phải được sanitize';
   perform public.save_game('{"player":{"name":"B kém","realm":0,"tang":3,"months":9,"age":16,"lifespan":80}}', '{}', 2, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'thành tích tốt nhất không bị hạ';
-  perform public.save_game('{"player":{"name":"B gian","realm":8,"tang":9,"months":100,"age":40,"lifespan":2000}}', '{}', 3, true);   -- cấp 81 cần >= ~570 tháng
+  perform public.save_game('{"player":{"name":"B gian","realm":8,"tang":9,"months":100,"age":40,"lifespan":2000}}', '{}', 3, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 19, 'số tháng quá thấp so với cấp thì không được lên bảng';
   perform public.save_game('{"player":{"name":"B cao","realm":4,"tang":1,"months":400,"age":40,"lifespan":500}}', '{}', 4, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 37, 'đủ tháng thì lên bảng';
-  -- thành tích tốt nhất của kiếp trước (meta.best) vẫn được tính khi bản lưu hiện tại không còn nhân vật; số tháng lấy từ tuổi lớn nhất trong lịch sử
   perform public.save_game('{"count":2,"player":null}', '{"best":60,"history":[{"age":150,"end":"win"},{"age":90,"end":"death"}]}', 5, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 60, 'meta.best nâng hạng khi hết nhân vật';
   assert (select months from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = (150 - 20) * 12, 'số tháng ước lượng từ lịch sử';
   perform public.save_game('{"count":2,"player":null}', '{"best":30,"history":[]}', 6, true);
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 60, 'best thấp hơn không hạ hạng';
   perform public.save_game('{"count":2,"player":null}', '{"best":999,"history":"xau"}', 7, true);
-  assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 81, 'best vượt trần bị chặn ở 81, history sai kiểu không làm lỗi';
+  assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 81, 'best vượt trần bị chặn ở 81';
 end $$;
 
--- chưa đăng nhập (anon) bị chặn cả đọc lẫn ghi
+-- anon bị chặn
 reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select * from public.player_saves$q$, 'permission denied');
 select public.t_expect_error($q$select public.save_game('{}', '{}', 0)$q$, 'permission denied');
 
--- đăng nhập nhưng không có sub (token hỏng) cũng bị chặn
+-- token thiếu sub bị chặn
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select public.save_game('{}', '{}', 0)$q$, 'not_authenticated');
 
--- người dùng tự xóa tài khoản qua delete_account(); anon không gọi được
+-- tự xóa tài khoản
 reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select public.delete_account()$q$, 'permission denied');
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
 select public.delete_account();
 reset role;
-do $$ begin assert not exists (select 1 from auth.users where id = '22222222-2222-2222-2222-222222222222'), 'B phải bị xóa'; assert (select count(*) from public.player_saves) = 1, 'dòng của B phải bị xóa theo'; assert (select count(*) from public.leaderboard) = 1, 'B bị xóa khỏi bảng xếp hạng'; end $$;
--- xóa tài khoản thì dữ liệu bị xóa theo
-reset role; delete from auth.users where id = '11111111-1111-1111-1111-111111111111';
-do $$ begin assert (select count(*) from public.player_saves) = 0 and (select count(*) from public.leaderboard) = 0, 'xóa user A phải xóa dòng của A'; end $$;
-\echo 'TẤT CẢ KIỂM THỬ SQL ĐỀU QUA'
+do $$ begin
+  assert not exists (select 1 from auth.users where id = '22222222-2222-2222-2222-222222222222'), 'B phải bị xóa';
+  assert (select count(*) from public.player_saves) = 1, 'dòng của B phải bị xóa theo';
+  assert (select count(*) from public.leaderboard) = 1, 'B bị xóa khỏi bảng xếp hạng';
+end $$;
+delete from auth.users where id = '11111111-1111-1111-1111-111111111111';
+do $$ begin assert (select count(*) from public.player_saves) = 0 and (select count(*) from public.leaderboard) = 0, 'xóa user A phải xóa dữ liệu A'; end $$;
+\echo 'TẤT CẢ KIỂM THỬ SQL PLAYER SAVE ĐỀU QUA'
