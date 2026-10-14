@@ -72,11 +72,17 @@
         const monsters = site.monsters?.join(" · ") || "Chưa rõ";
         const resources = site.resources?.join(" · ") || "Chưa rõ";
         const npcs = site.npcs?.join(" · ") || "Chưa rõ";
+        const loot = site.lootTable?.map(x => x.name).join(" · ") || "Chưa rõ";
         info.append(
           el("p", "", site.desc),
+          el("div", "map-site-line", `Sinh cảnh: ${site.theme?.ambience || site.kind || "không rõ"}`),
           el("div", "map-site-line", `Yêu thú: ${monsters}`),
+          el("div", "map-site-line", `Tinh anh: ${site.elite?.name || "Chưa rõ"}`),
+          el("div", "map-site-line", `BOSS: ${site.boss?.name || "Không có boss cố định"}`),
           el("div", "map-site-line", `Tài nguyên: ${resources}`),
-          el("div", "map-site-line", `Nhân vật: ${npcs}`)
+          el("div", "map-site-line", `Chiến lợi phẩm: ${loot}`),
+          el("div", "map-site-line", `Nhân vật: ${npcs}`),
+          el("div", "map-site-line", `Sự kiện: ${site.specialEvent?.name || "Chưa rõ"}`)
         );
         const here = this.p?.region === region.id && currentSite?.id === site.id;
         const go = el("button", `game-btn map-travel-btn${here ? " current" : ""}`, here ? "Đang ở địa điểm này" : "Đi tới địa điểm");
@@ -88,6 +94,7 @@
           }
           const moved = TT.maps.travelSite(this.p, site.id);
           if (!moved) return;
+          TT.maps.applySiteTheme?.(this.p);
           this.log(`Bạn tới ${moved.name}, ${region.name}.`, "cyan");
           this.autosave();
           render();
@@ -135,6 +142,7 @@
         const moved = TT.maps.travel(this.p, world.id, selectedRegion.id);
         if (!moved) return;
         selectedSite = this.p.site;
+        TT.maps.applySiteTheme?.(this.p);
         this.log(`Bạn tới ${moved.name}.`, "cyan");
         this.autosave();
         render();
@@ -148,7 +156,7 @@
       const world = TT.maps.get(worldId) || TT.maps.get("ha_gioi");
       m.box.replaceChildren();
       const head = el("div", "world-map-head");
-      head.append(el("h2", "mtitle", "Thiên Vân Địa Đồ"), el("p", "dim small", "Hạ Giới đã mở tới cấp địa điểm; Tiên Giới và Thần Giới vẫn là đại thế giới độc lập chờ progression tương ứng."));
+      head.append(el("h2", "mtitle", "Thiên Vân Địa Đồ"), el("p", "dim small", "Hạ Giới đã có nội dung riêng theo từng địa điểm: sự kiện, chiến lợi phẩm, NPC, tinh anh và BOSS. Tiên Giới / Thần Giới vẫn chờ progression tương ứng."));
 
       const tabs = el("div", "world-map-tabs");
       TT.maps.list().forEach(w => {
@@ -180,6 +188,7 @@
   const showGame0 = G.showGame;
   G.showGame = function () {
     const out = showGame0.apply(this, arguments);
+    TT.maps.applySiteTheme?.(this.p);
     const b = document.querySelector(".world-map-btn");
     if (b) {
       const label = b.querySelector(".btn-label");
