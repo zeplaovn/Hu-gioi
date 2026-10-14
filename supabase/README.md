@@ -7,42 +7,25 @@ Thư mục này là **nguồn chuẩn duy nhất** cho schema, RPC và RLS của
 ```text
 supabase/
   README.md
-  migrations/    migration history + migration policy
+  migrations/    baseline + các migration mới sau baseline
   tests/         SQL/RLS/RPC regression tests
 ```
 
-## Migration order
+## Database mới
 
-Migration chạy theo timestamp trong tên file:
+Project Supabase mới chỉ cần chạy:
 
 ```text
-20261011000000_player_saves.sql
-20261012000000_delete_account_and_checks.sql
-20261013000000_leaderboard.sql
-20261014000000_chat.sql
-20261014025908_scale_hot_path_optimization.sql      # production history marker
-20261014032941_canonical_sql_names_v2.sql           # production history marker / no-op
-20261014041045_remove_canonical_sql_aliases.sql     # production history marker / no-op
-20261015000000_leaderboard_fix.sql
-20261016000000_admin_console.sql
-20261016010000_admin_console_fixes.sql
-20261016020000_maintenance_guard.sql
-20261016030000_admin_cleanup.sql
-20261017000000_maintenance_admin_bypass.sql
-20261018000000_gameplay_hardening.sql
-20261018010000_game_clock_volatility.sql
-20261018020000_trusted_game_time.sql
-20261018030000_scale_hot_path_optimization.sql
-20261019000000_admin_chat_badge.sql
+20261014000000_baseline.sql
 ```
 
-Ba file `2026101402...` / `2026101403...` / `2026101404...` tồn tại để local history khớp với `supabase_migrations` trên production. Hai migration canonical-name là thay đổi tạm thời đã bị rollback bằng migration kế tiếp, nên fresh database không cần dựng rồi xóa lại compatibility layer đó.
+Baseline đã squash toàn bộ lịch sử cũ gồm player save, leaderboard, chat, admin, maintenance, gameplay hardening, trusted game-time, scale optimization và admin chat identity.
 
-`20261018030000_scale_hot_path_optimization.sql` là bản idempotent dùng cho fresh environment. Production đã nhận cùng nhóm tối ưu trước đó ở version `20261014025908`; chạy lại bản idempotent không được phép làm mất dữ liệu.
+Các migration cũ dạng `fix`, `cleanup`, `bypass` đã bị xóa khỏi repo vì database mục tiêu sẽ được tạo lại từ đầu. Sau khi baseline đã apply lên database mới, baseline trở thành immutable và mọi thay đổi tiếp theo phải dùng migration timestamp mới.
 
 ## Quy tắc migration
 
-Tên file:
+Tên file mới:
 
 ```text
 YYYYMMDDHHMMSS_mo_ta_ngan.sql
@@ -50,10 +33,10 @@ YYYYMMDDHHMMSS_mo_ta_ngan.sql
 
 Nguyên tắc:
 
-- migration đã chạy production là **immutable history**: không sửa, không xóa, không đổi timestamp;
-- thay đổi production state bằng migration mới, không sửa ngược file cũ;
-- trước khi release, gom các patch chưa apply cùng một feature vào một migration hoàn chỉnh;
-- migration phải pin `search_path = ''` cho `security definer` function;
+- không sửa `20261014000000_baseline.sql` sau khi database mới đã apply;
+- thay đổi production state bằng migration mới;
+- trước release, gom các patch chưa apply của cùng một feature vào một migration hoàn chỉnh;
+- `security definer` function phải pin `search_path = ''`;
 - quyền RPC phải `revoke` trước rồi `grant` đúng role;
 - không hardcode UUID, email, password, secret hoặc production-only data trong migration;
 - destructive change phải kiểm tra dependency, RLS, RPC và có forward-fix path;
@@ -99,7 +82,7 @@ Admin Console vẫn hoạt động để có thể tắt maintenance. Account `a
 
 ## Chat quản trị
 
-Migration `20261019000000_admin_chat_badge.sql` gom toàn bộ thay đổi identity của admin chat vào một migration:
+Baseline gồm toàn bộ identity hardening của admin chat:
 
 - `chat_messages.is_admin` do server stamp;
 - admin/moderator không thể bị giả mạo bằng display name;
@@ -130,4 +113,4 @@ supabase/tests/chat.test.sql
 supabase/tests/admin.test.sql
 ```
 
-Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
+Cả ba test đều dựng database từ baseline duy nhất. Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.

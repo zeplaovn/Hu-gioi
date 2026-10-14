@@ -1,8 +1,0 @@
--- Historical production migration marker.
---
--- A temporary canonical naming compatibility layer was applied directly to
--- production under this version. It was intentionally removed by
--- 20261014041045_remove_canonical_sql_aliases.sql.
---
--- Fresh databases do not need to create those temporary views/RPC aliases,
--- so this migration is deliberately a no-op.
