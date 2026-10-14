@@ -4,7 +4,16 @@
   if (!TT.Game) return;
   const G = TT.Game.prototype;
   const syncOnly = () => {
-    if (TT.cloud && TT.cloud.enabled && TT.cloud.syncNow) Promise.resolve(TT.cloud.syncNow()).catch(() => {});
+    const cloud = TT.cloud;
+    if (!cloud || !cloud.enabled || !cloud.syncNow) return;
+    let tries = 0;
+    const flush = () => {
+      tries++;
+      Promise.resolve(cloud.syncNow()).catch(() => {}).finally(() => {
+        if (tries < 6 && cloud.dirty && cloud.dirty()) setTimeout(flush, 500);
+      });
+    };
+    flush();
   };
 
   // Keep all user-facing descriptions aligned with the effective breakthrough cap.
@@ -19,7 +28,9 @@
   if (typeof critical0 === "function") {
     G.syncCritical = function () {
       if (this.dead) { syncOnly(); return; }
-      return critical0.apply(this, arguments);
+      const r = critical0.apply(this, arguments);
+      syncOnly();
+      return r;
     };
   }
 
