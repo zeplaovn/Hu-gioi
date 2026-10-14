@@ -7,21 +7,30 @@ Thư mục này là **nguồn chuẩn duy nhất** cho schema, RPC và RLS của
 ```text
 supabase/
   README.md
-  migrations/    baseline + các migration mới sau baseline
+  migrations/    migration theo domain
   tests/         SQL/RLS/RPC regression tests
 ```
 
 ## Database mới
 
-Project Supabase mới chỉ cần chạy:
+Project Supabase mới chạy migration theo timestamp:
 
 ```text
-20261014000000_baseline.sql
+20261014000000_01_core.sql
+20261014000100_02_admin_core.sql
+20261014000200_03_server.sql
+20261014000300_04_leaderboard.sql
+20261014000400_05_gameplay.sql
+20261014000500_06_chat.sql
+20261014000600_07_economy.sql
+20261014000700_08_admin_rpc.sql
+20261014000800_09_security.sql
+20261014000900_10_performance.sql
 ```
 
-Baseline đã squash toàn bộ lịch sử cũ gồm player save, leaderboard, chat, admin, maintenance, gameplay hardening, trusted game-time, scale optimization và admin chat identity.
+Đây vẫn là một baseline sạch cho database mới, nhưng được tách theo domain để dễ đọc và bảo trì. Các migration cũ dạng `fix`, `cleanup`, `bypass` không còn tồn tại.
 
-Các migration cũ dạng `fix`, `cleanup`, `bypass` đã bị xóa khỏi repo vì database mục tiêu sẽ được tạo lại từ đầu. Sau khi baseline đã apply lên database mới, baseline trở thành immutable và mọi thay đổi tiếp theo phải dùng migration timestamp mới.
+Sau khi database mới đã apply bộ migration này, các file trên trở thành immutable history; mọi thay đổi tiếp theo phải dùng timestamp mới.
 
 ## Quy tắc migration
 
@@ -33,7 +42,7 @@ YYYYMMDDHHMMSS_mo_ta_ngan.sql
 
 Nguyên tắc:
 
-- không sửa `20261014000000_baseline.sql` sau khi database mới đã apply;
+- không sửa migration đã apply;
 - thay đổi production state bằng migration mới;
 - trước release, gom các patch chưa apply của cùng một feature vào một migration hoàn chỉnh;
 - `security definer` function phải pin `search_path = ''`;
@@ -82,7 +91,7 @@ Admin Console vẫn hoạt động để có thể tắt maintenance. Account `a
 
 ## Chat quản trị
 
-Baseline gồm toàn bộ identity hardening của admin chat:
+Bộ migration gồm toàn bộ identity hardening của admin chat:
 
 - `chat_messages.is_admin` do server stamp;
 - admin/moderator không thể bị giả mạo bằng display name;
@@ -113,4 +122,4 @@ supabase/tests/chat.test.sql
 supabase/tests/admin.test.sql
 ```
 
-Cả ba test đều dựng database từ baseline duy nhất. Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
+Cả ba test phải dựng database từ đúng thứ tự migration ở trên. Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
