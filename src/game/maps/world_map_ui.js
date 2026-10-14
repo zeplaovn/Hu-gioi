@@ -37,7 +37,36 @@
       world.regions.forEach((region, i) => {
         const card = el("article", "world-preview-card");
         const copy = el("div", "world-preview-copy");
-        copy.append(el("div", "preview-index", String(i + 1).padStart(2, "0")), el("h3", "", region.name), el("p", "dim small", region.desc));
+        const meta = el("div", "preview-region-meta");
+        meta.append(
+          el("span", "", `Tầng thiết kế ${region.tier || i + 1}`),
+          el("span", "", `Nguy hiểm ${region.danger ?? "?"}`),
+          el("span", "", region.biome || "sinh cảnh chưa định danh")
+        );
+        if (region.faction) meta.append(el("span", "", `Thế lực: ${region.faction}`));
+
+        const sites = el("div", "preview-site-list");
+        for (const site of region.sites || []) {
+          const row = el("div", "preview-site-row");
+          row.append(
+            el("span", "preview-site-kind", site.kind || "địa điểm"),
+            el("strong", "preview-site-name", site.name),
+            el("span", "preview-site-desc", site.desc)
+          );
+          const extra = [];
+          if (site.resources?.length) extra.push(`Tài nguyên: ${site.resources.join(" · ")}`);
+          if (site.boss) extra.push(`BOSS dự kiến: ${site.boss}`);
+          if (extra.length) row.append(el("span", "preview-site-extra", extra.join("  |  ")));
+          sites.append(row);
+        }
+
+        copy.append(
+          el("div", "preview-index", String(i + 1).padStart(2, "0")),
+          el("h3", "", region.name),
+          el("p", "dim small", region.desc),
+          meta,
+          sites
+        );
         card.append(copy);
         grid.append(card);
       });
@@ -156,7 +185,7 @@
       const world = TT.maps.get(worldId) || TT.maps.get("ha_gioi");
       m.box.replaceChildren();
       const head = el("div", "world-map-head");
-      head.append(el("h2", "mtitle", "Thiên Vân Địa Đồ"), el("p", "dim small", "Hạ Giới đã có nội dung riêng theo từng địa điểm: sự kiện, chiến lợi phẩm, NPC, tinh anh và BOSS. Tiên Giới / Thần Giới vẫn chờ progression tương ứng."));
+      head.append(el("h2", "mtitle", "Thiên Vân Địa Đồ"), el("p", "dim small", "Hạ Giới đang hoạt động theo từng địa điểm. Tiên Giới và Thần Giới đã được quy hoạch thành các vực/địa điểm riêng để chuẩn bị expansion, nhưng vẫn khóa gameplay cho tới progression tương ứng."));
 
       const tabs = el("div", "world-map-tabs");
       TT.maps.list().forEach(w => {
@@ -167,7 +196,7 @@
       });
 
       const banner = el("div", `world-banner world-${world.id}`);
-      const badge = el("span", `world-status ${world.playable === false ? "locked" : "open"}`, world.playable === false ? "Bản đồ mở rộng" : "Đang hoạt động");
+      const badge = el("span", `world-status ${world.playable === false ? "locked" : "open"}`, world.playable === false ? "Đã quy hoạch · chưa mở" : "Đang hoạt động");
       banner.append(el("div", "world-kicker", world.subtitle || ""), el("h2", "", world.name), el("p", "", world.desc || ""), badge);
 
       const body = el("div", "world-map-body");
