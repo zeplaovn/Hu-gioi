@@ -13,7 +13,16 @@ insert into auth.users values
   ('11111111-1111-1111-1111-111111111111'),
   ('22222222-2222-2222-2222-222222222222');
 
-\i supabase/migrations/20261014000000_baseline.sql
+\i supabase/migrations/20261014000000_01_core.sql
+\i supabase/migrations/20261014000100_02_admin_core.sql
+\i supabase/migrations/20261014000200_03_server.sql
+\i supabase/migrations/20261014000300_04_leaderboard.sql
+\i supabase/migrations/20261014000400_05_gameplay.sql
+\i supabase/migrations/20261014000500_06_chat.sql
+\i supabase/migrations/20261014000600_07_economy.sql
+\i supabase/migrations/20261014000700_08_admin_rpc.sql
+\i supabase/migrations/20261014000800_09_security.sql
+\i supabase/migrations/20261014000900_10_performance.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -25,7 +34,6 @@ begin
 end $$;
 grant execute on function public.t_expect_error(text, text) to anon, authenticated;
 
--- người dùng A: có nhân vật nên có tên trên bảng xếp hạng
 set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 select public.save_game('{"count":1,"player":{"name":"Tiểu A","realm":0,"tang":2,"months":5,"age":16,"lifespan":80}}', '{}', 0);
 do $$ declare r jsonb; begin
@@ -40,7 +48,6 @@ select public.t_expect_error($q$select public.send_chat(null)$q$, 'empty');
 select public.t_expect_error($q$select public.send_chat(repeat('a', 201))$q$, 'too_long');
 do $$ begin perform public.send_chat(repeat('a', 200)); end $$;
 
--- người dùng B: chưa có nhân vật -> Vô danh; thấy tin A; không ghi trực tiếp được
 select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
 do $$ declare r jsonb; begin
   assert (select count(*) from public.chat_messages) = 2, 'B phải thấy tin của A';
@@ -51,7 +58,6 @@ select public.t_expect_error($q$insert into public.chat_messages (user_id, name,
 select public.t_expect_error($q$update public.chat_messages set body = 'sửa'$q$, 'permission denied');
 select public.t_expect_error($q$delete from public.chat_messages$q$, 'permission denied');
 
--- giới hạn 10 tin/phút
 reset role;
 delete from public.chat_messages where user_id = '22222222-2222-2222-2222-222222222222';
 insert into public.chat_messages(user_id, name, body, created_at)
@@ -60,14 +66,12 @@ insert into public.chat_messages(user_id, name, body, created_at)
 set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
 select public.t_expect_error($q$select public.send_chat('thứ 11')$q$, 'too_fast');
 
--- chưa đăng nhập / anon
 select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select public.send_chat('ẩn danh')$q$, 'not_authenticated');
 reset role; set role anon;
 select public.t_expect_error($q$select public.send_chat('anon')$q$, 'permission denied');
 select public.t_expect_error($q$select * from public.chat_messages$q$, 'permission denied');
 
--- xóa tài khoản kéo theo tin nhắn
 reset role;
 delete from auth.users where id = '22222222-2222-2222-2222-222222222222';
 do $$ begin
