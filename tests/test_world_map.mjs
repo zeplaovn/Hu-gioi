@@ -106,3 +106,29 @@ test("future worlds stay preview-only and all preview assets exist", () => {
     assert.ok(fs.existsSync(path.join(root, w.preview)), w.preview);
   }
 });
+
+test("Tien Gioi and Than Gioi are preplanned as independent region/site graphs", () => {
+  for (const id of ["tien_gioi", "than_gioi"]) {
+    const w = ctx.TT.maps.get(id);
+    const ids = [];
+    for (let i = 0; i < w.regions.length; i++) {
+      const r = w.regions[i];
+      assert.equal(r.tier, i + 1, `${id}:${r.id}:tier`);
+      assert.ok(r.biome, `${id}:${r.id}:biome`);
+      assert.ok(r.faction, `${id}:${r.id}:faction`);
+      assert.ok(r.resources.length >= 3, `${id}:${r.id}:resources`);
+      assert.equal(r.sites.length, 3, `${id}:${r.id}:sites`);
+      for (const s of r.sites) {
+        ids.push(s.id);
+        assert.equal(s.world, id);
+        assert.equal(s.region, r.id);
+        assert.ok(s.monsters.length >= 2, `${id}:${s.id}:monsters`);
+        assert.ok(s.resources.length >= 2, `${id}:${s.id}:resources`);
+        assert.ok(s.npcs.length >= 1, `${id}:${s.id}:npcs`);
+      }
+      assert.ok(r.sites[2].boss, `${id}:${r.id}:boss`);
+    }
+    assert.equal(ids.length, 12, id);
+    assert.equal(new Set(ids).size, 12, id);
+  }
+});
