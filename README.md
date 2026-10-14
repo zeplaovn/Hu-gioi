@@ -14,9 +14,33 @@ zeplaovn/Hu-gioi-wiki       player wiki + public roadmap
 
 Database source of truth chỉ nằm trong repo game.
 
+## Lưu dữ liệu
+
+Game dùng mô hình **database-only persistence**:
+
+```text
+Đăng nhập
+   ↓
+Supabase player_saves
+   ↓
+RAM của tab đang chơi
+   ↓
+save_game() RPC
+   ↓
+Supabase player_saves
+```
+
+- `player_saves` trên Supabase là nguồn dữ liệu bền vững duy nhất của tiến trình game.
+- Save nhân vật và meta progression không còn được lưu vào `localStorage`.
+- Khi mở game, dữ liệu được tải từ database trước khi tạo `Game`.
+- Trong lúc chơi, state tồn tại trong bộ nhớ của tab và được ghi lại qua `save_game()`.
+- Khi revision trên máy chủ mới hơn, bản database thắng và client tải lại.
+- Không còn chế độ chơi offline rồi đồng bộ sau.
+- `localStorage` vẫn có thể được dùng cho phiên đăng nhập Supabase và preference UI nhỏ; chúng không phải gameplay save.
+
 ## Chạy local
 
-Yêu cầu Node.js 18+:
+Yêu cầu Node.js 18+ và cấu hình Supabase hợp lệ:
 
 ```bash
 npm install
@@ -42,7 +66,7 @@ src/
   game/
     core/                     data, player, game loop, train
     features/                 idle, farm, crafts, sect, meta, minigames
-  platform/                   assets + client security
+  platform/                   assets + security + runtime memory store
   services/                   Supabase config/cloud/auth/admin bridge
   ui/                         screens, scene, guide, chat, UX
 assets/                       runtime assets
@@ -64,7 +88,7 @@ game/core + game/features
           ↓
           ui
 
-platform  → shared browser concerns
+platform  → shared browser concerns + runtime state adapter
 services  → network/auth/server boundary
 bootstrap → wiring cuối cùng
 ```
@@ -81,7 +105,7 @@ Game vẫn dùng namespace `TT` và `<script>` truyền thống; thứ tự load
 - luyện đan, vẽ phù, luyện khí;
 - tông môn;
 - thành tựu/Thiên Mệnh/meta progression;
-- Supabase Auth + cloud save + leaderboard + World Chat;
+- Supabase Auth + database save + leaderboard + World Chat;
 - banner server + maintenance mode.
 
 Gameplay/public roadmap thuộc repo `Hu-gioi-wiki`.
@@ -100,7 +124,8 @@ Nguyên tắc:
 - migration production cũ không sửa lại;
 - thay đổi schema/RPC bằng migration mới;
 - browser chỉ dùng public anon/publishable config;
-- không đưa `service_role`, database password hoặc secret server-side vào frontend.
+- không đưa `service_role`, database password hoặc secret server-side vào frontend;
+- `SUPABASE_URL` và `SUPABASE_ANON_KEY` là bắt buộc đối với build game DB-only.
 
 ## Admin Console và server control
 
@@ -125,7 +150,7 @@ SUPABASE_ANON_KEY
 HCAPTCHA_SITEKEY
 ```
 
-`npm run build` tạo `dist/`. Vercel Preview có thể build bằng dev salt để kiểm tra PR; Vercel Production vẫn bắt buộc `TVDL_SALT`.
+`npm run build` tạo `dist/`. Vercel Preview có thể build bằng dev salt để kiểm tra PR; Vercel Production vẫn bắt buộc `TVDL_SALT`. Supabase config là bắt buộc vì game không còn fallback sang local save.
 
 ## Security và tests
 
