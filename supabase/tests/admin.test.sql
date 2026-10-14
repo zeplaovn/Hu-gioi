@@ -15,7 +15,16 @@ insert into auth.users values
   ('33333333-3333-3333-3333-333333333333'),
   ('44444444-4444-4444-4444-444444444444');
 
-\i supabase/migrations/20261014000000_baseline.sql
+\i supabase/migrations/20261014000000_01_core.sql
+\i supabase/migrations/20261014000100_02_admin_core.sql
+\i supabase/migrations/20261014000200_03_server.sql
+\i supabase/migrations/20261014000300_04_leaderboard.sql
+\i supabase/migrations/20261014000400_05_gameplay.sql
+\i supabase/migrations/20261014000500_06_chat.sql
+\i supabase/migrations/20261014000600_07_economy.sql
+\i supabase/migrations/20261014000700_08_admin_rpc.sql
+\i supabase/migrations/20261014000800_09_security.sql
+\i supabase/migrations/20261014000900_10_performance.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -27,12 +36,10 @@ begin
 end $$;
 grant execute on function public.t_expect_error(text, text) to anon, authenticated;
 
--- bootstrap quản trị
 insert into public.admin_users(user_id, role) values
   ('22222222-2222-2222-2222-222222222222', 'viewer'),
   ('33333333-3333-3333-3333-333333333333', 'admin');
 
--- người chơi thường: không gọi được RPC admin, không đọc được bảng private/admin
 set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 select public.t_expect_error($q$select public.admin_me()$q$, 'forbidden');
 select public.t_expect_error($q$select public.admin_overview()$q$, 'forbidden');
@@ -52,14 +59,12 @@ select public.t_expect_error($q$select public.heartbeat_presence('aaaaaaaa-aaaa-
 do $$ begin perform public.server_status(); end $$;
 reset role;
 
--- viewer: xem được, không sửa được
 set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
 do $$ begin assert public.admin_me()->>'role' = 'viewer', 'vai trò viewer'; end $$;
 do $$ begin assert (public.admin_overview()->>'online_now')::int >= 1, 'đếm được người đang online'; end $$;
 select public.t_expect_error($q$select public.admin_send_message('hi')$q$, 'forbidden');
 select public.t_expect_error($q$select public.admin_set_maintenance(true, 'x')$q$, 'forbidden');
 
--- admin: bật bảo trì, đăng banner; có audit
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ begin perform public.admin_publish_banner('Tiêu đề', 'Nội dung'); end $$;
 do $$ begin assert public.server_status()->'banner'->>'title' = 'Tiêu đề', 'banner hiện ở server_status'; end $$;
@@ -69,7 +74,6 @@ do $$ begin perform public.admin_set_maintenance(true, 'nâng cấp'); end $$;
 do $$ begin assert (public.server_status()->>'maintenance')::boolean and public.server_status()->>'maintenance_reason' = 'nâng cấp', 'bảo trì bật'; end $$;
 do $$ begin assert (select count(*) from public.admin_list_audit(50) where action in ('BANNER_PUBLISH','MAINTENANCE_SET')) = 2, 'audit ghi đủ'; end $$;
 
--- khi bảo trì: admin vẫn save/chat; viewer và player thường bị chặn
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ declare r jsonb; begin
   r := public.save_game('{"count":1,"player":{"name":"Admin","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0);
@@ -85,7 +89,6 @@ reset role; set role authenticated; select set_config('request.jwt.claim.sub', '
 do $$ begin perform public.admin_overview(); end $$;
 do $$ begin perform public.admin_set_maintenance(false, null); end $$;
 
--- tắt bảo trì: player lưu lại được
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 do $$ declare r jsonb; begin
   r := public.save_game('{"count":1,"player":{"name":"A","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0);
@@ -93,7 +96,6 @@ do $$ declare r jsonb; begin
 end $$;
 do $$ begin perform public.send_chat('xin chào'); end $$;
 
--- tên admin nổi bật + chống mạo danh
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ begin
   perform public.admin_send_message('thông báo');
@@ -110,7 +112,6 @@ do $$ begin
   assert (select not is_admin and name = 'Vô danh' from public.chat_messages order by id desc limit 1), 'người thường không thể giả admin';
 end $$;
 
--- dashboard nhận diện admin qua is_admin
 set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 do $$ begin
   assert (select count(*) from public.admin_list_chat(50) where is_admin) >= 1, 'admin_list_chat trả is_admin';
@@ -118,7 +119,6 @@ do $$ begin
 end $$;
 reset role;
 
--- role bị disable thì mất quyền
 update public.admin_users set enabled = false where user_id = '33333333-3333-3333-3333-333333333333';
 set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
 select public.t_expect_error($q$select public.admin_set_maintenance(true, 'x')$q$, 'forbidden');

@@ -13,9 +13,17 @@ insert into auth.users values
   ('11111111-1111-1111-1111-111111111111'),
   ('22222222-2222-2222-2222-222222222222');
 
-\i supabase/migrations/20261014000000_baseline.sql
+\i supabase/migrations/20261014000000_01_core.sql
+\i supabase/migrations/20261014000100_02_admin_core.sql
+\i supabase/migrations/20261014000200_03_server.sql
+\i supabase/migrations/20261014000300_04_leaderboard.sql
+\i supabase/migrations/20261014000400_05_gameplay.sql
+\i supabase/migrations/20261014000500_06_chat.sql
+\i supabase/migrations/20261014000600_07_economy.sql
+\i supabase/migrations/20261014000700_08_admin_rpc.sql
+\i supabase/migrations/20261014000800_09_security.sql
+\i supabase/migrations/20261014000900_10_performance.sql
 
--- Hai account fixture được cấp admin chỉ để kiểm thử nhánh p_force của save_game().
 insert into public.admin_users(user_id, role) values
   ('11111111-1111-1111-1111-111111111111', 'admin'),
   ('22222222-2222-2222-2222-222222222222', 'admin');
@@ -30,7 +38,6 @@ begin
 end $$;
 grant execute on function public.t_expect_error(text, text) to anon, authenticated;
 
--- người dùng A
 set role authenticated; select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 do $$ declare r jsonb; begin
   r := public.save_game('{"count":1,"player":{"name":"A","realm":0,"tang":1,"months":0,"age":16,"lifespan":80}}', '{"legacy":0}', 0);
@@ -56,18 +63,15 @@ do $$ declare r jsonb; begin
   assert (r->>'rev')::int = 4, 'force phải ghi được và tăng rev';
 end $$;
 
--- nhân vật vô lý bị chặn ở máy chủ
 select public.t_expect_error($q$select public.save_game('{"player":{"name":"X","realm":9,"tang":1,"months":0,"age":16,"lifespan":80}}', '{}', 0, true)$q$, 'implausible');
 select public.t_expect_error($q$select public.save_game('{"player":{"name":"X","realm":4,"tang":1,"months":3,"age":16,"lifespan":80}}', '{}', 0, true)$q$, 'implausible');
 select public.t_expect_error($q$select public.save_game('{"player":{"name":"X"}}', '{}', 0, true)$q$, 'implausible');
 
--- RLS: A chỉ thấy dòng của mình, không ghi trực tiếp được
 do $$ begin assert (select count(*) from public.player_saves) = 1, 'A phải thấy đúng 1 dòng'; end $$;
 select public.t_expect_error($q$update public.player_saves set save = '{"hack":true}'$q$, 'permission denied');
 select public.t_expect_error($q$insert into public.player_saves (user_id) values ('22222222-2222-2222-2222-222222222222')$q$, 'permission denied');
 select public.t_expect_error($q$delete from public.player_saves$q$, 'permission denied');
 
--- người dùng B không thấy dữ liệu của A, ghi của B không đụng A
 select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
 do $$ begin assert (select count(*) from public.player_saves) = 0, 'B không được thấy dòng của A'; end $$;
 do $$ declare r jsonb; begin
@@ -76,7 +80,6 @@ do $$ declare r jsonb; begin
   assert (select save #>> '{player,name}' from public.player_saves) = 'B', 'B phải thấy dữ liệu của B';
 end $$;
 
--- bảng xếp hạng: chỉ giữ thành tích tốt nhất và client không ghi trực tiếp được
 do $$ begin
   assert (select count(*) from public.leaderboard) = 2, 'bảng xếp hạng phải có A và B';
   assert (select name from public.leaderboard where user_id = '11111111-1111-1111-1111-111111111111') = 'A3', 'A xếp hạng với nhân vật vừa lưu';
@@ -103,16 +106,11 @@ do $$ begin
   assert (select level from public.leaderboard where user_id = '22222222-2222-2222-2222-222222222222') = 81, 'best vượt trần bị chặn ở 81';
 end $$;
 
--- anon bị chặn
 reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select * from public.player_saves$q$, 'permission denied');
 select public.t_expect_error($q$select public.save_game('{}', '{}', 0)$q$, 'permission denied');
-
--- token thiếu sub bị chặn
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select public.save_game('{}', '{}', 0)$q$, 'not_authenticated');
-
--- tự xóa tài khoản
 reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);
 select public.t_expect_error($q$select public.delete_account()$q$, 'permission denied');
 reset role; set role authenticated; select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);

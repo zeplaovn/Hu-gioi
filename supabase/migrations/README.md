@@ -1,31 +1,43 @@
 # Supabase migrations
 
-Thư mục này bắt đầu lại từ một **baseline sạch cho database mới**.
+Database mới được dựng từ **10 migration nền tảng theo domain**, thay vì một file baseline hơn 1.000 dòng.
 
-## Baseline hiện tại
+## Thứ tự hiện tại
 
 ```text
-20261014000000_baseline.sql
+20261014000000_01_core.sql
+20261014000100_02_admin_core.sql
+20261014000200_03_server.sql
+20261014000300_04_leaderboard.sql
+20261014000400_05_gameplay.sql
+20261014000500_06_chat.sql
+20261014000600_07_economy.sql
+20261014000700_08_admin_rpc.sql
+20261014000800_09_security.sql
+20261014000900_10_performance.sql
 ```
 
-Baseline tạo toàn bộ schema game hiện tại trong một lần:
+Mỗi file có một trách nhiệm rõ ràng:
 
-- bảng dữ liệu;
-- index và cấu hình hot-table;
-- RLS/policy/grant;
-- RPC player/server/admin;
-- trigger leaderboard/chat;
-- trusted game-time và anti-cheat validation;
-- presence, banner, audit và economy ledger.
+- `01_core`: `player_saves` và private schema;
+- `02_admin_core`: admin identity, moderation, audit, RBAC helpers;
+- `03_server`: maintenance, banner, presence, server clock/status;
+- `04_leaderboard`: leaderboard projection, plausibility, trigger;
+- `05_gameplay`: `save_game`, trusted game-time, account deletion;
+- `06_chat`: chat, admin badge, throttle, housekeeping;
+- `07_economy`: economy ledger;
+- `08_admin_rpc`: Admin Console RPCs;
+- `09_security`: RLS, policies, table/RPC grants;
+- `10_performance`: indexes, fillfactor, autovacuum tuning.
 
-Không cần chạy lại các migration `fix`, `cleanup`, `bypass` cũ. Chúng đã được squash vào baseline và bị xóa khỏi repo vì database mục tiêu sẽ được tạo mới từ đầu.
+Không tạo chuỗi `*_fix.sql`, `*_cleanup.sql`, `*_bypass.sql` cho trạng thái ban đầu. Khi database mới đã apply các file trên, chúng trở thành immutable history.
 
-## Quy tắc từ baseline này trở đi
+## Quy tắc từ đây trở đi
 
-1. Không sửa `20261014000000_baseline.sql` sau khi baseline đã được apply lên database mới.
-2. Mỗi thay đổi schema sau đó tạo migration mới theo dạng `YYYYMMDDHHMMSS_mo_ta.sql`.
-3. Trước khi release, gộp các patch chưa deploy vào cùng một migration thay vì tạo chuỗi `fix_fix2_cleanup`.
-4. RPC exposed phải `revoke` trước rồi `grant execute` đúng role cần thiết.
+1. Không sửa migration đã apply trên database mới.
+2. Mỗi thay đổi schema mới tạo migration timestamp mới.
+3. Trước release, gom patch chưa deploy của cùng một feature vào một migration hoàn chỉnh.
+4. RPC exposed phải `revoke` trước rồi `grant execute` đúng role.
 5. Hàm `security definer` phải pin `search_path = ''`.
 6. Không hardcode user/admin UUID trong migration schema.
-7. Destructive change phải kiểm tra dependency, RLS và rollback/forward-fix path trước khi deploy.
+7. Destructive change phải kiểm tra dependency, RLS và forward-fix path trước khi deploy.
