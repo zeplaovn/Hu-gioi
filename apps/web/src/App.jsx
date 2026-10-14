@@ -1,0 +1,3 @@
+import React,{useState}from'react';import{hasSession}from'./services/client.js';import{GameProvider,useGame}from'./state/GameProvider.jsx';import AuthScreen from'./screens/AuthScreen.jsx';import CreateScreen from'./screens/CreateScreen.jsx';import GameScreen from'./screens/GameScreen.jsx';
+function SessionGame({onSignedOut}){const{state,ready}=useGame();if(!ready)return <main className="center"><div className="card">Đang tải tiến trình từ máy chủ…</div></main>;return state.created?<GameScreen onSignedOut={onSignedOut}/>:<CreateScreen/>}
+export default function App(){const[authed,setAuthed]=useState(()=>hasSession());if(!authed)return <AuthScreen onDone={()=>setAuthed(true)}/>;return <GameProvider><SessionGame onSignedOut={()=>setAuthed(false)}/></GameProvider>}

@@ -1,43 +1,34 @@
-# Node.js + React/Vite + Fastify migration
+# Rewrite v2: React/Vite + Fastify + Supabase PostgreSQL
 
-This branch is an incremental migration, **not a completed rewrite**. Legacy gameplay remains under `src/` and is not removed or modified. Supabase SQL migrations remain the schema source of truth.
+Branch `rewrite/react-vite-fastify` now runs a React gameplay implementation directly. The previous iframe compatibility bridge is removed from the new runtime.
 
-## Local development
+## Architecture
 
-From repository root:
+- `apps/web`: React 19 + Vite. Owns screens, gameplay state, feature panels and client session handling.
+- `apps/api`: Fastify gateway. Verifies Supabase access tokens and exposes save, leaderboard, chat and account endpoints.
+- `assets/`: reused unchanged. Vite serves them in development and copies them to `dist/assets` during build.
+- `supabase/migrations`: remains the database source of truth. Existing production migrations are not rewritten.
+- legacy `src/`, `styles/`, `scripts/`: retained temporarily as reference/regression material but are no longer used by the v2 web runtime.
 
-```sh
-npm install --prefix apps/api
-npm install --prefix apps/web
+## Run
+
+```bash
+npm install
 npm run dev:api
-# in another terminal
 npm run dev:web
 ```
 
-Web: http://localhost:5173; API: http://localhost:3001/api/health.
+Required API environment:
 
-## Migration sequence
+```text
+SUPABASE_URL
+SUPABASE_ANON_KEY
+HCAPTCHA_SITEKEY   # optional in current v2 UI
+WEB_ORIGINS        # optional, default http://localhost:5173
+```
 
-1. Preserve legacy behavior with existing regression tests and snapshot expected flows.
-2. Extract TT gameplay state and actions into framework-independent ES modules with parity tests.
-3. Wrap screens in React components and move legacy DOM mutations behind adapters during transition.
-4. Move privileged operations into Fastify endpoints using verified Supabase JWTs; keep existing RLS/RPC checks, never trust browser-provided player IDs.
-5. Migrate auth, cloud saves, chat, admin bridge and maintenance flows; retain database-only save and revision semantics.
-6. Migrate standalone staff/maintenance pages and production deployment configuration.
-7. Run end-to-end and SQL/RLS regression tests before switching traffic. Do not change production migrations in place.
+## Current rewrite scope
 
-Only public Supabase URL and anon key may be sent to browser; never expose service-role credentials.
+Implemented in the new runtime: account sign-in/sign-up, database save load/push with revision, character creation, cultivation, exploration, rest, breakthrough, inventory, farm, crafting, sect membership/missions, world travel, reincarnation/meta progression, world chat, leaderboard and asset reuse.
 
-## Current implementation status
-
-- React app now embeds the existing browser game at `/legacy/index.html` in **Vite development mode only**.
-- Vite middleware reads existing source and assets directly from repository root without copying or deleting legacy files.
-- Fastify provides health and public configuration endpoints, but **does not yet replace Supabase RPC/Auth**.
-- The iframe is a compatibility adapter, **not** a rewrite of game screens/state. The Vite production build does not yet package the legacy game, and must not be deployed as a replacement for production.
-- Legacy HTML still requires its Supabase configuration/build pipeline; using the dev bridge alone does not inject production configuration.
-- Existing SQL migrations, RLS policies, cloud saves and leaderboard remain unchanged.
-- Build, integration and gameplay regression tests for the new stack have not been executed yet.
-
-### Release gate
-
-Do not switch production traffic until all gameplay modules, screens, authentication, save synchronization, chat, admin/maintenance routes and security boundaries have migrated, production asset packaging works, and end-to-end plus SQL/RLS tests pass.
+This is an aggressive rewrite pass. Gameplay formulas and old-save migration are approximate and intentionally require later parity testing/fixes. Do not assume production equivalence until regression tests and database integration tests are run.
