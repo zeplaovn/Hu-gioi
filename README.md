@@ -66,6 +66,7 @@ src/
   game/
     core/                     data, player, game loop, train
     features/                 idle, farm, crafts, sect, meta, minigames
+    maps/                     registry + map module Hạ/Tiên/Thần Giới
   platform/                   assets + security + runtime memory store
   services/                   Supabase config/cloud/auth/admin bridge
   ui/                         screens, scene, guide, chat, UX
@@ -84,7 +85,7 @@ docs/                         engineering docs
 ### Dependency direction
 
 ```text
-game/core + game/features
+game/core + game/features + game/maps
           ↓
           ui
 
@@ -95,6 +96,26 @@ bootstrap → wiring cuối cùng
 
 Game vẫn dùng namespace `TT` và `<script>` truyền thống; thứ tự load trong `index.html` vẫn là runtime contract cho đến khi có một đợt migration riêng sang ES modules.
 
+## Thiên Vân Địa Đồ
+
+Bản đồ được tách theo **đại thế giới** thay vì tiếp tục mở rộng trong một feature file:
+
+```text
+src/game/maps/registry.js
+src/game/maps/ha_gioi.js
+src/game/maps/tien_gioi.js
+src/game/maps/than_gioi.js
+src/game/maps/world_map_ui.js
+```
+
+- **Hạ Giới**: playable, gồm 9 khu vực theo progression hiện tại.
+- **Tiên Giới**: module + preview asset độc lập; chưa bật gameplay để không thay đổi flow Phi Thăng trong phase map architecture.
+- **Thần Giới**: module + preview asset độc lập; dành cho expansion sau Tiên Giới.
+- Registry chung quản lý world/region/travel; gameplay riêng của từng thế giới phải tiếp tục tách thành module riêng.
+- Asset runtime map đã tối ưu nằm trong `assets/maps/`; source parallax dung lượng lớn không được nhét nguyên vào production bundle.
+
+Chi tiết kiến trúc: `docs/world-map-architecture.md`.
+
 ## Gameplay chính
 
 - tu luyện idle theo thời gian thật;
@@ -102,6 +123,7 @@ Game vẫn dùng namespace `TT` và `<script>` truyền thống; thứ tự load
 - thọ nguyên, tuổi và tọa hóa;
 - linh căn/ngũ hành;
 - kỳ ngộ, bí cảnh, linh điền;
+- Thiên Vân Địa Đồ với Hạ Giới và kiến trúc expansion Tiên Giới/Thần Giới;
 - luyện đan, vẽ phù, luyện khí;
 - tông môn;
 - thành tựu/Thiên Mệnh/meta progression;
@@ -160,7 +182,7 @@ Threat model: `SECURITY.md`.
 npm test
 ```
 
-SQL/RLS/RPC tests nằm trong `supabase/tests/`.
+Map registry/travel có regression test riêng tại `tests/test_world_map.mjs`. SQL/RLS/RPC tests nằm trong `supabase/tests/`.
 
 ## Engineering docs
 
@@ -169,6 +191,7 @@ docs/README.md
 docs/ARCHITECTURE.md
 docs/DEVELOPMENT.md
 docs/REFACTOR_PLAN.md
+docs/world-map-architecture.md
 SECURITY.md
 supabase/README.md
 ```
