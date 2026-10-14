@@ -1,0 +1,27 @@
+name: Export worktree
+
+on:
+  push:
+    branches:
+      - rewrite/react-vite-fastify
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Package source
+        run: tar --exclude=.git -czf /tmp/hu-gioi-worktree.tar.gz .
+      - name: Upload worktree
+        uses: actions/upload-artifact@v4
+        with:
+          name: hu-gioi-worktree
+          path: /tmp/hu-gioi-worktree.tar.gz
+          if-no-files-found: error
+          retention-days: 1
