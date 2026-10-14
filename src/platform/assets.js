@@ -37,7 +37,8 @@
       return cache[key];
     },
     icon: (name, size = 22) => name ? `assets/icons/${name}_${size}.png` : "",
-    preload() {
+    /** Nạp toàn bộ ảnh dùng trong game. onProgress(đã_xong, tổng) được gọi sau mỗi ảnh (lỗi cũng tính là xong để không kẹt). */
+    preload(onProgress) {
       const list = [];
       list.push(A.img("bg/title.png"));
       ["far", "mid", "fore"].forEach(n => { for (let i = 0; i < 4; i++) list.push(A.img(`bg/${n}_${i}.png`)); });
@@ -48,7 +49,14 @@
       for (let i = 1; i <= 6; i++) list.push(A.img(`ui/dice_${i}.png`));
       const farm = ["empty", "seed", "sprout", "grow", "ripe", "wilt", "water", "gold", "fence", "trough", "rune", "scarecrow"];
       farm.forEach(n => list.push(A.img(`farm/${n}.png`)));
-      return Promise.all(list.map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
+      const total = list.length; let done = 0;
+      const report = () => { if (onProgress) { try { onProgress(done, total); } catch (e) { /* UI lỗi không được chặn việc nạp */ } } };
+      const tick = () => { done++; report(); };
+      report();
+      return Promise.all(list.map(im => new Promise(r => {
+        if (im.complete) { tick(); r(); return; }                       // đã có trong bộ nhớ đệm của trình duyệt
+        im.onload = im.onerror = () => { tick(); r(); };
+      })));
     },
   };
 

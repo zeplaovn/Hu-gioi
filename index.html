@@ -18,7 +18,15 @@
   <link rel="stylesheet" href="styles/server-banner.css">
 </head>
 <body>
-  <div id="app"><div id="loading">Đang nạp tài nguyên…</div></div>
+  <div id="app"><div id="loading" role="status" aria-live="polite">
+    <div class="ld-box">
+      <div class="ld-seal" aria-hidden="true">天</div>
+      <div class="ld-title">Thiên Vân Đại Lục</div>
+      <div class="ld-bar" id="ldBar" role="progressbar" aria-label="Tiến độ nạp tài nguyên" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="ldFill"></i></div>
+      <div class="ld-text" id="ldText">Đang nạp tài nguyên…</div>
+      <div class="ld-note" id="ldNote"></div>
+    </div>
+  </div></div>
   <div id="modal-root"></div>
 
   <script src="src/game/core/data.js"></script>
