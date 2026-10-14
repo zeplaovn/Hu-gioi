@@ -1,24 +1,12 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { createCharacter, emptyState, normalizeSave } from '../apps/web/src/game/state.js';
-import { gameReducer } from '../apps/web/src/game/reducer.js';
-
-test('creates a playable v2 character', () => {
-  const s = createCharacter({ name:'Test', race:'Nhân', stats:{'Tướng Mạo':5,'Phúc Duyên':5,'Căn Cốt':5,'Ngộ Tính':5,'Vận Khí':5} });
-  assert.equal(s.version, 2); assert.equal(s.created, true); assert.equal(s.profile.name, 'Test'); assert.ok(s.profile.hp > 0);
-});
-
-test('training increases cultivation', () => {
-  const base = createCharacter({ name:'Test', race:'Nhân', stats:{} });
-  const next = gameReducer(base, { type:'TRAIN' });
-  assert.ok(next.profile.exp > base.profile.exp); assert.ok(next.profile.qi >= base.profile.qi);
-});
-
-test('legacy-shaped saves are accepted by migration adapter', () => {
-  const migrated = normalizeSave({ player:{ name:'Legacy', race:'Nhân', realm:2, exp:123 } });
-  assert.equal(migrated.profile.name, 'Legacy'); assert.equal(migrated.profile.realm, 2); assert.equal(migrated.profile.exp, 123);
-});
-
-test('empty state is not playable before character creation', () => {
-  const s = emptyState(); assert.equal(s.created, false); assert.equal(s.profile, null);
-});
+import test from 'node:test';import assert from'node:assert/strict';
+import{createCharacter,emptyState,normalizeSave}from'../apps/web/src/game/state.js';import{gameReducer}from'../apps/web/src/game/reducer.js';import{needExp,power}from'../apps/web/src/game/rules.js';
+const stats={'Tướng Mạo':5,'Phúc Duyên':5,'Căn Cốt':5,'Ngộ Tính':5,'Vận Khí':5};
+const make=()=>createCharacter({name:'Test',race:'Nhân',gender:'Nam',root:'kim',stats});
+test('creates v3 character',()=>{const s=make();assert.equal(s.version,3);assert.equal(s.created,true);assert.equal(s.profile.name,'Test');assert.ok(s.profile.maxHp>0);assert.ok(power(s)>0)});
+test('training increases cultivation and age',()=>{const a=make(),b=gameReducer(a,{type:'TRAIN'});assert.ok(b.profile.exp>a.profile.exp);assert.equal(b.profile.ageMonths,a.profile.ageMonths+1)});
+test('deterministic breakthrough can advance a layer',()=>{let s=make();s.profile.exp=needExp(s.profile);const b=gameReducer(s,{type:'BREAKTHROUGH',rng:()=>0});assert.equal(b.profile.layer,2);assert.equal(b.tracking.breaks,1)});
+test('exploration can grant herbs',()=>{const s=make();const seq=[.2,.8];let i=0;const b=gameReducer(s,{type:'EXPLORE',rng:()=>seq[i++]??.5});assert.ok(b.inventory.herb>=1)});
+test('farm plants and harvests',()=>{let s=make();s.inventory.seed=1;s=gameReducer(s,{type:'PLANT',id:0});assert.equal(s.farm[0].crop,'herb');s.farm[0].readyAt=1;s=gameReducer(s,{type:'HARVEST',id:0,now:2,rng:()=>0});assert.equal(s.farm[0].crop,null);assert.ok(s.inventory.herb>=3)});
+test('legacy shaped saves migrate',()=>{const s=normalizeSave({player:{name:'Legacy',race:'Nhân',realm:2,tang:4,exp:123,stone:99,stats}});assert.equal(s.version,3);assert.equal(s.profile.name,'Legacy');assert.equal(s.profile.realm,2);assert.equal(s.profile.layer,4);assert.equal(s.profile.spiritStones,99)});
+test('v2 saves migrate',()=>{const s=normalizeSave({version:2,created:true,profile:{name:'Old',race:'Nhân',stats,realm:1,layer:2,exp:10,hp:50,maxHp:100,spiritStones:3},inventory:{herb:4},farm:[],sect:{},world:{},meta:{}});assert.equal(s.version,3);assert.equal(s.profile.name,'Old');assert.equal(s.inventory.herb,4)});
+test('empty state needs character creation',()=>{const s=emptyState();assert.equal(s.created,false);assert.equal(s.profile,null)});

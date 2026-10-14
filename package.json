@@ -1,7 +1,8 @@
 {
   "name": "thien-van-dai-luc",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
+  "type": "module",
   "workspaces": ["apps/*"],
   "scripts": {
     "dev:web": "npm run dev --workspace @hugioi/web",
@@ -9,6 +10,7 @@
     "build": "npm run build --workspace @hugioi/web",
     "start": "npm run start --workspace @hugioi/api",
     "test": "node --test tests/rewrite_game.mjs",
-    "test:legacy": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs tests/test_world_map.mjs tests/test_maintenance.mjs tests/test_loading.mjs"
-  }
+    "test:engine": "node --test tests/rewrite_game.mjs"
+  },
+  "engines": { "node": ">=20" }
 }

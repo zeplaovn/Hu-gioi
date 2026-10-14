@@ -1,34 +1,23 @@
-# Rewrite v2: React/Vite + Fastify + Supabase PostgreSQL
+# Rewrite status
 
-Branch `rewrite/react-vite-fastify` now runs a React gameplay implementation directly. The previous iframe compatibility bridge is removed from the new runtime.
+Branch này đã chuyển runtime từ JavaScript/DOM namespace `TT` sang React/Vite/Fastify. Cây runtime legacy đã bị xóa khỏi branch rewrite; assets và Supabase database history được giữ.
 
-## Architecture
+Đây là rewrite lớn ưu tiên kiến trúc mới và khả năng tiếp tục phát triển. Gameplay parity chi tiết, balance và migration các field hiếm từ save cũ sẽ được sửa qua regression/QA sau.
 
-- `apps/web`: React 19 + Vite. Owns screens, gameplay state, feature panels and client session handling.
-- `apps/api`: Fastify gateway. Verifies Supabase access tokens and exposes save, leaderboard, chat and account endpoints.
-- `assets/`: reused unchanged. Vite serves them in development and copies them to `dist/assets` during build.
-- `supabase/migrations`: remains the database source of truth. Existing production migrations are not rewritten.
-- legacy `src/`, `styles/`, `scripts/`: retained temporarily as reference/regression material but are no longer used by the v2 web runtime.
+## Đã chuyển
 
-## Run
+- React-owned UI/state/game loop.
+- Domain reducers cho cultivation/world/farm/crafting/sect/economy/meta.
+- Fastify auth boundary, save, chat, leaderboard, presence, server status.
+- Supabase database-only persistence.
+- Vite production asset packaging.
+- Vercel API adapter.
 
-```bash
-npm install
-npm run dev:api
-npm run dev:web
-```
+## Cần QA tiếp
 
-Required API environment:
-
-```text
-SUPABASE_URL
-SUPABASE_ANON_KEY
-HCAPTCHA_SITEKEY   # optional in current v2 UI
-WEB_ORIGINS        # optional, default http://localhost:5173
-```
-
-## Current rewrite scope
-
-Implemented in the new runtime: account sign-in/sign-up, database save load/push with revision, character creation, cultivation, exploration, rest, breakthrough, inventory, farm, crafting, sect membership/missions, world travel, reincarnation/meta progression, world chat, leaderboard and asset reuse.
-
-This is an aggressive rewrite pass. Gameplay formulas and old-save migration are approximate and intentionally require later parity testing/fixes. Do not assume production equivalence until regression tests and database integration tests are run.
+- parity công thức toàn bộ feature cũ;
+- save migration cho các field legacy hiếm;
+- minigame tương tác nghề phụ;
+- admin/staff workflow end-to-end với dashboard repo;
+- mobile UX và performance;
+- SQL/RLS integration test trên Supabase test instance.

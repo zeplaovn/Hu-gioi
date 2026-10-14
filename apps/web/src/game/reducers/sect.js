@@ -1,0 +1,9 @@
+import { SECTS, SECT_MISSIONS, sectById } from '../catalog.js';
+import { grant, log, rng } from '../mutations.js';
+import { power, sectTier } from '../rules.js';
+export function sectReducer(s,a){const p=s.profile;switch(a.type){
+  case'JOIN_SECT':{const sect=sectById(a.id);if(!sect)return true;if(p.realm<sect.realm){log(s,'Cần đạt Luyện Khí để gia nhập tông môn.','red');return true;}s.sect={...s.sect,name:sect.id,reputation:10,contribution:0,activeMission:null};log(s,`Gia nhập ${sect.name}.`,'gold');return true;}
+  case'LEAVE_SECT':s.sect={name:null,reputation:0,contribution:0,activeMission:null,missionsDone:0};log(s,'Đã rời tông môn.','red');return true;
+  case'START_MISSION':{if(!s.sect.name||s.sect.activeMission)return true;const m=SECT_MISSIONS.find(x=>x.id===a.id);if(!m||m.tier>sectTier(s)){log(s,'Chức vị chưa đủ nhận nhiệm vụ này.','red');return true;}s.sect.activeMission={id:m.id,start:Date.now(),end:Date.now()+m.duration*1000};log(s,`Nhận nhiệm vụ ${m.name}.`,'cyan');return true;}
+  case'RESOLVE_MISSION':{const active=s.sect.activeMission;if(!active)return true;const m=SECT_MISSIONS.find(x=>x.id===active.id);if(!m){s.sect.activeMission=null;return true;}if(Date.now()<active.end&&!a.force)return true;const chance=Math.min(.95,.25+power(s)/(100+m.tier*80)*.3+(p.stats[m.stat]||0)*.015);if(rng(a)()<=chance){const sect=sectById(s.sect.name),mult=sect?.id==='van-duoc'&&m.reward?1.3:1;p.spiritStones+=Math.round(m.stone*mult);s.sect.contribution+=m.contrib;s.sect.reputation+=2;s.sect.missionsDone++;if(m.reward)grant(s,Object.fromEntries(Object.entries(m.reward).map(([k,v])=>[k,Math.max(1,Math.round(v*mult))])));log(s,`Hoàn thành ${m.name}: +${Math.round(m.stone*mult)} linh thạch, +${m.contrib} cống hiến.`,'gold');}else log(s,`Nhiệm vụ ${m.name} thất bại.`,'red');s.sect.activeMission=null;return true;}
+}return false;}

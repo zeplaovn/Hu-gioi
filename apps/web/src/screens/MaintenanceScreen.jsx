@@ -1,0 +1,2 @@
+import React from'react';import{useServer}from'../state/ServerProvider.jsx';
+export default function MaintenanceScreen(){const{status}=useServer();return <main className="center-screen"><section className="panel maintenance"><div className="brand-mark">休</div><h1>Thiên Đạo tạm khép</h1><p>Máy chủ đang bảo trì. Tiến trình đã lưu vẫn nằm trong Supabase.</p>{status?.maintenance_message&&<p>{status.maintenance_message}</p>}<p className="muted">Trang sẽ tự cập nhật trạng thái máy chủ.</p></section></main>}
