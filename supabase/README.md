@@ -33,6 +33,7 @@ Migration chạy theo thứ tự tên file:
 20261018020000_trusted_game_time.sql
 20261018030000_scale_hot_path_optimization.sql
 20261019000000_admin_chat_badge.sql
+20261019010000_admin_list_chat_is_admin.sql
 ```
 
 Dùng Supabase CLI thì để migration system chạy theo timestamp. Nếu chạy thủ công trong SQL Editor, vẫn chạy theo thứ tự trên.

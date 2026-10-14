@@ -26,6 +26,7 @@ insert into auth.users values ('11111111-1111-1111-1111-111111111111'), ('222222
 \i supabase/migrations/20261018020000_trusted_game_time.sql
 \i supabase/migrations/20261018030000_scale_hot_path_optimization.sql
 \i supabase/migrations/20261019000000_admin_chat_badge.sql
+\i supabase/migrations/20261019010000_admin_list_chat_is_admin.sql
 
 create function public.t_expect_error(sql text, want text) returns void language plpgsql security invoker as $$
 begin
@@ -113,6 +114,14 @@ do $$ begin
   insert into public.chat_messages(user_id, name, body) values ('11111111-1111-1111-1111-111111111111', '[ADMIN]', 'giả danh');
   assert (select not is_admin and name = 'Vô danh' from public.chat_messages order by id desc limit 1), 'người thường không thể mang tên [ADMIN]';
 end $$;
+
+-- dashboard nhận diện tin admin qua cột is_admin của admin_list_chat
+reset role; set role authenticated; select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', false);
+do $$ begin
+  assert (select count(*) from public.admin_list_chat(50) where is_admin) >= 1, 'admin_list_chat trả is_admin = true cho tin admin';
+  assert (select count(*) from public.admin_list_chat(50) where not is_admin and name = 'Vô danh') >= 1, 'tin giả danh không có is_admin';
+end $$;
+reset role;
 
 -- vai trò bị tắt thì mất quyền
 reset role; update public.admin_users set enabled = false where user_id = '33333333-3333-3333-3333-333333333333';
