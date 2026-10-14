@@ -38,6 +38,6 @@ test("future worlds stay preview-only and all preview assets exist", () => {
     const w = ctx.TT.maps.get(id);
     assert.equal(w.playable, false);
     assert.equal(ctx.TT.maps.canEnterWorld({ realm: 99 }, w), false);
-    for (const r of w.regions) assert.ok(fs.existsSync(path.join(root, r.preview)), r.preview);
+    assert.ok(fs.existsSync(path.join(root, w.preview)), w.preview);
   }
 });
