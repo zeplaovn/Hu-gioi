@@ -1,27 +1,28 @@
 # Supabase — Thiên Vân Đại Lục
 
-Thư mục này là **nguồn chuẩn duy nhất** cho schema, RPC và RLS của game + Admin Console.
-
-Repo dashboard không giữ một bản schema riêng.
+Thư mục này là **nguồn chuẩn duy nhất** cho schema, RPC và RLS của game + Admin Console. Repo dashboard không giữ một bản schema riêng.
 
 ## Cấu trúc
 
 ```text
 supabase/
   README.md
-  migrations/    lịch sử thay đổi schema/RPC/RLS
+  migrations/    migration history + migration policy
   tests/         SQL/RLS/RPC regression tests
 ```
 
 ## Migration order
 
-Migration chạy theo thứ tự tên file:
+Migration chạy theo timestamp trong tên file:
 
 ```text
 20261011000000_player_saves.sql
 20261012000000_delete_account_and_checks.sql
 20261013000000_leaderboard.sql
 20261014000000_chat.sql
+20261014025908_scale_hot_path_optimization.sql      # production history marker
+20261014032941_canonical_sql_names_v2.sql           # production history marker / no-op
+20261014041045_remove_canonical_sql_aliases.sql     # production history marker / no-op
 20261015000000_leaderboard_fix.sql
 20261016000000_admin_console.sql
 20261016010000_admin_console_fixes.sql
@@ -33,10 +34,11 @@ Migration chạy theo thứ tự tên file:
 20261018020000_trusted_game_time.sql
 20261018030000_scale_hot_path_optimization.sql
 20261019000000_admin_chat_badge.sql
-20261019010000_admin_list_chat_is_admin.sql
 ```
 
-Dùng Supabase CLI thì để migration system chạy theo timestamp. Nếu chạy thủ công trong SQL Editor, vẫn chạy theo thứ tự trên.
+Ba file `2026101402...` / `2026101403...` / `2026101404...` tồn tại để local history khớp với `supabase_migrations` trên production. Hai migration canonical-name là thay đổi tạm thời đã bị rollback bằng migration kế tiếp, nên fresh database không cần dựng rồi xóa lại compatibility layer đó.
+
+`20261018030000_scale_hot_path_optimization.sql` là bản idempotent dùng cho fresh environment. Production đã nhận cùng nhóm tối ưu trước đó ở version `20261014025908`; chạy lại bản idempotent không được phép làm mất dữ liệu.
 
 ## Quy tắc migration
 
@@ -46,15 +48,18 @@ Tên file:
 YYYYMMDDHHMMSS_mo_ta_ngan.sql
 ```
 
-Phần timestamp quyết định order; phần mô tả giúp con người đọc.
+Nguyên tắc:
 
-Quan trọng:
+- migration đã chạy production là **immutable history**: không sửa, không xóa, không đổi timestamp;
+- thay đổi production state bằng migration mới, không sửa ngược file cũ;
+- trước khi release, gom các patch chưa apply cùng một feature vào một migration hoàn chỉnh;
+- migration phải pin `search_path = ''` cho `security definer` function;
+- quyền RPC phải `revoke` trước rồi `grant` đúng role;
+- không hardcode UUID, email, password, secret hoặc production-only data trong migration;
+- destructive change phải kiểm tra dependency, RLS, RPC và có forward-fix path;
+- schema/RPC không được copy sang repo dashboard/wiki.
 
-- migration đã từng chạy production là **lịch sử**, không xóa chỉ vì tên cũ hoặc đã có migration fix sau đó;
-- không sửa migration cũ để thay đổi production state; tạo migration mới;
-- migration compatibility/cleanup được phép tồn tại nếu database cũ thực sự cần nó;
-- không copy SQL sang repo dashboard/wiki;
-- trước destructive change phải xem dependency, RLS, RPC và rollback/forward-fix path.
+Quy ước chi tiết nằm trong `migrations/README.md`.
 
 ## Admin bootstrap
 
@@ -86,28 +91,30 @@ owner
 
 Player thường:
 
-- game chuyển hẳn sang trang `maintenance.html` (trang tĩnh riêng, không che lên màn hình game, tự quay về game khi hết bảo trì);
+- game chuyển sang `maintenance.html`;
 - `save_game()` bị guard;
 - `send_chat()` bị guard.
 
-Admin Console vẫn hoạt động để có thể tắt maintenance.
+Admin Console vẫn hoạt động để có thể tắt maintenance. Account `admin`/`owner` đang enabled được backend cho phép bypass maintenance guard để kiểm thử game trong lúc server đóng.
 
-Admin vào game lúc bảo trì qua endpoint riêng `/staff.html` (cổng đăng nhập quản trị, không có nút trên trang bảo trì): đăng nhập, `admin_me` xác nhận admin/owner thì mới lưu phiên và đưa vào game.
+## Chat quản trị
 
-Migration `20261017000000_maintenance_admin_bypass.sql` cho account `admin`/`owner` đang enabled bypass backend maintenance guard để thử game trong lúc server đóng. Client UI vẫn không phải security boundary; quyền thật nằm trong RPC/helper database.
+Migration `20261019000000_admin_chat_badge.sql` gom toàn bộ thay đổi identity của admin chat vào một migration:
 
-Migration `20261019000000_admin_chat_badge.sql`: tin chat của admin/moderator có cột `is_admin` (do trigger đặt, client không tự đặt được) và hiện huy hiệu QTV + tên vàng; tin từ `admin_send_message` mang tên `Thiên Đạo`. `private.safe_name()` bỏ `[ ] < >` và ký tự vô hình, đổi tên giống admin/GM/quản trị/hệ thống thành `Vô danh` cho bảng xếp hạng và chat của người chơi thường.
+- `chat_messages.is_admin` do server stamp;
+- admin/moderator không thể bị giả mạo bằng display name;
+- tin từ `admin_send_message` dùng tên `Thiên Đạo`;
+- `private.safe_name()` làm sạch display name;
+- `admin_list_chat()` trả luôn `is_admin` cho dashboard.
 
 ## Banner và server status
 
-`server_status()` là RPC public-safe cho game client. Nó chỉ trả dữ liệu cần cho player UI như maintenance state và active banner.
-
-Không thêm admin metadata/private state vào RPC public này.
+`server_status()` là RPC public-safe cho game client. Nó chỉ trả maintenance state và active banner; không thêm admin metadata/private state vào RPC này.
 
 ## Security rules
 
-- browser chỉ dùng public anon/publishable key;
-- không expose `service_role`, Supabase secret key, database password hoặc JWT signing secret;
+- browser chỉ dùng anon/publishable key;
+- không expose `service_role`, secret key, database password hoặc JWT signing secret;
 - player write đi qua RPC scoped/validated;
 - admin write đi qua RPC có RBAC và audit;
 - RLS là deny-by-default boundary cho bảng dữ liệu;
@@ -117,12 +124,10 @@ Threat model đầy đủ: `../SECURITY.md`.
 
 ## Tests
 
-SQL tests:
-
 ```text
 supabase/tests/player_saves.test.sql
 supabase/tests/chat.test.sql
 supabase/tests/admin.test.sql
 ```
 
-Khi thay đổi RPC/RLS có behavior quan trọng, cập nhật regression test tương ứng nếu môi trường test hỗ trợ.
+Khi đổi RPC/RLS hoặc migration behavior, cập nhật regression test tương ứng.
