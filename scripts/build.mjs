@@ -9,44 +9,39 @@ const scripts = [...html.matchAll(/<script src="(src\/[^"]+)"><\/script>/g)].map
 if (!scripts.length) throw new Error("Không tìm thấy runtime script trong src/ từ index.html.");
 let src = scripts.map(f => fs.readFileSync(path.join(root, f), "utf8")).join("\n;\n");
 
-// Khóa ký save KHÔNG nằm trong repo: lấy từ biến môi trường TVDL_SALT.
-// Vercel Preview được phép dùng dev salt để preview PR; production/CI thật vẫn bắt buộc secret.
+// Khóa ký dùng cho export/integrity helper. Vercel Preview được phép dùng dev salt; production/CI thật vẫn bắt buộc secret.
 const salt = process.env.TVDL_SALT;
 const isVercelPreview = !!process.env.VERCEL && process.env.VERCEL_ENV !== "production";
 const onCI = !isVercelPreview && !!(process.env.CI || process.env.NETLIFY || process.env.CF_PAGES || process.env.VERCEL_ENV === "production");
-if (!salt && onCI) throw new Error("Thiếu biến môi trường TVDL_SALT: bản phát hành sẽ dùng khóa ký công khai trong mã nguồn. Hãy đặt TVDL_SALT rồi build lại.");
+if (!salt && onCI) throw new Error("Thiếu biến môi trường TVDL_SALT. Hãy đặt TVDL_SALT rồi build lại.");
 if (salt && salt.length < 32) throw new Error("TVDL_SALT quá ngắn (cần ít nhất 32 ký tự).");
 if (salt) {
   if (src.split('"__TVDL_SALT__"').length !== 2) throw new Error("Không tìm thấy đúng một chỗ \"__TVDL_SALT__\" trong src/platform/security.js.");
   src = src.replace('"__TVDL_SALT__"', () => JSON.stringify(salt));
-} else console.warn("⚠ Chưa đặt TVDL_SALT: bản build này dùng khóa dev, CHỈ để thử, không phát hành.");
+} else console.warn("⚠ Chưa đặt TVDL_SALT: bản preview/local dùng khóa dev.");
 
-// Supabase (tuỳ chọn): SUPABASE_URL + SUPABASE_ANON_KEY. Cả hai là giá trị công khai, nhưng KHÔNG bao giờ được là khóa bí mật.
+// Supabase là bắt buộc: từ phiên bản DB-only, game không có local-save/offline gameplay fallback.
 const sbUrl = (process.env.SUPABASE_URL || "").trim(), sbKey = (process.env.SUPABASE_ANON_KEY || "").trim();
-let connectSrc = "'none'";
-if (sbUrl || sbKey) {
-  if (!sbUrl || !sbKey) throw new Error("Cần đặt cả SUPABASE_URL và SUPABASE_ANON_KEY (hoặc bỏ cả hai để build bản ngoại tuyến).");
-  let u; try { u = new URL(sbUrl); } catch (e) { throw new Error("SUPABASE_URL không hợp lệ: " + sbUrl); }
-  const local = u.protocol === "http:" && ["localhost", "127.0.0.1"].includes(u.hostname);
-  if (u.protocol !== "https:" && !local) throw new Error("SUPABASE_URL phải bắt đầu bằng https:// (ví dụ https://abcdxyz.supabase.co).");
-  if (u.pathname.replace(/\/+$/, "") || u.search || u.hash || u.username) throw new Error("SUPABASE_URL chỉ gồm địa chỉ gốc, không kèm đường dẫn: " + sbUrl);
-  if (/^sb_secret_/.test(sbKey)) throw new Error("SUPABASE_ANON_KEY đang là khóa bí mật (sb_secret_...). Chỉ dùng khóa công khai (anon / sb_publishable_...).");
-  let role = null;
-  if (sbKey.split(".").length === 3) { try { role = JSON.parse(Buffer.from(sbKey.split(".")[1], "base64url").toString("utf8")).role; } catch (e) { /* không phải JWT chuẩn */ } }
-  if (role && role !== "anon") throw new Error(`SUPABASE_ANON_KEY có role "${role}", không phải "anon". KHÔNG được đưa khóa này vào mã chạy trên trình duyệt.`);
-  if (sbKey.length < 20 || /\s/.test(sbKey)) throw new Error("SUPABASE_ANON_KEY có vẻ không hợp lệ.");
-  for (const [token, value] of [['"__SUPABASE_URL__"', u.origin], ['"__SUPABASE_ANON_KEY__"', sbKey]]) {
-    if (src.split(token).length !== 2) throw new Error(`Không tìm thấy đúng một chỗ ${token} trong src/services/config.js.`);
-    src = src.replace(token, () => JSON.stringify(value));
-  }
-  connectSrc = u.origin;
-} else console.warn("⚠ Chưa đặt SUPABASE_URL / SUPABASE_ANON_KEY: bản build này chạy ngoại tuyến (không có đăng nhập / lưu trên máy chủ).");
+if (!sbUrl || !sbKey) throw new Error("Thiếu SUPABASE_URL hoặc SUPABASE_ANON_KEY. Game DB-only bắt buộc kết nối Supabase.");
+let u; try { u = new URL(sbUrl); } catch (e) { throw new Error("SUPABASE_URL không hợp lệ: " + sbUrl); }
+const local = u.protocol === "http:" && ["localhost", "127.0.0.1"].includes(u.hostname);
+if (u.protocol !== "https:" && !local) throw new Error("SUPABASE_URL phải bắt đầu bằng https:// (hoặc localhost khi phát triển).");
+if (u.pathname.replace(/\/+$/, "") || u.search || u.hash || u.username) throw new Error("SUPABASE_URL chỉ gồm địa chỉ gốc, không kèm đường dẫn: " + sbUrl);
+if (/^sb_secret_/.test(sbKey)) throw new Error("SUPABASE_ANON_KEY đang là khóa bí mật (sb_secret_...). Chỉ dùng khóa công khai (anon / sb_publishable_...).");
+let role = null;
+if (sbKey.split(".").length === 3) { try { role = JSON.parse(Buffer.from(sbKey.split(".")[1], "base64url").toString("utf8")).role; } catch (e) { /* không phải JWT chuẩn */ } }
+if (role && role !== "anon") throw new Error(`SUPABASE_ANON_KEY có role "${role}", không phải "anon". KHÔNG được đưa khóa này vào mã chạy trên trình duyệt.`);
+if (sbKey.length < 20 || /\s/.test(sbKey)) throw new Error("SUPABASE_ANON_KEY có vẻ không hợp lệ.");
+for (const [token, value] of [['"__SUPABASE_URL__"', u.origin], ['"__SUPABASE_ANON_KEY__"', sbKey]]) {
+  if (src.split(token).length !== 2) throw new Error(`Không tìm thấy đúng một chỗ ${token} trong src/services/config.js.`);
+  src = src.replace(token, () => JSON.stringify(value));
+}
+const connectSrc = u.origin;
 
 // hCaptcha (tuỳ chọn): HCAPTCHA_SITEKEY là site key CÔNG KHAI. Secret key chỉ đặt ở Supabase Dashboard.
 const hcKey = (process.env.HCAPTCHA_SITEKEY || "").trim();
 if (hcKey) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hcKey)) throw new Error("HCAPTCHA_SITEKEY không đúng định dạng site key (UUID). Đừng dùng secret key (bắt đầu bằng ES_ hoặc 0x).");
-  if (connectSrc === "'none'") throw new Error("Có HCAPTCHA_SITEKEY nhưng chưa đặt SUPABASE_URL / SUPABASE_ANON_KEY: captcha chỉ dùng cho đăng nhập Supabase.");
   if (src.split('"__HCAPTCHA_SITEKEY__"').length !== 2) throw new Error('Không tìm thấy đúng một chỗ "__HCAPTCHA_SITEKEY__" trong src/services/config.js.');
   src = src.replace('"__HCAPTCHA_SITEKEY__"', () => JSON.stringify(hcKey));
 }
@@ -66,7 +61,7 @@ fs.writeFileSync(path.join(dist, bundle), obf);
 
 const HC = "https://hcaptcha.com https://*.hcaptcha.com";
 const csp = { "script-src": hcKey ? `'self' ${HC}` : "'self'", "style-src": hcKey ? `'self' ${HC}` : "'self'", "frame-src": hcKey ? HC : "'none'",
-  "connect-src": [connectSrc === "'none'" ? "" : connectSrc, hcKey ? HC : ""].filter(Boolean).join(" ") || "'none'" };
+  "connect-src": [connectSrc, hcKey ? HC : ""].filter(Boolean).join(" ") };
 const withCsp = text => {
   if (!/connect-src [^;"\n]*/.test(text)) throw new Error("Không tìm thấy connect-src để thay.");
   return text.replace(/\b(script-src|style-src|frame-src|connect-src) [^;"\n]*/g, (_, d) => `${d} ${csp[d]}`);
