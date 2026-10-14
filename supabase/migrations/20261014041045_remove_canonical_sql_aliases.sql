@@ -1,0 +1,6 @@
+-- Historical production migration marker.
+--
+-- This version removed the temporary canonical naming compatibility layer
+-- created by 20261014032941_canonical_sql_names_v2.sql.
+--
+-- Fresh databases never create those aliases, so this migration is a no-op.
