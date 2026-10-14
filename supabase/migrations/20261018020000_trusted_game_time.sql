@@ -1,16 +1,17 @@
 -- Trusted game-time ledger.
 -- Each account earns game-time credit from server elapsed time. Frequent save_game calls cannot
--- manufacture extra months because unused/used credit is tracked independently of updated_at.
+-- manufacture extra months because credit is tracked independently of save updated_at.
+-- Milliseconds are kept so frequent legitimate saves do not discard fractional time credit.
 
 alter table public.player_saves
-  add column if not exists trusted_game_ticks bigint not null default 0,
+  add column if not exists trusted_game_ms bigint not null default 0,
   add column if not exists trusted_game_at timestamptz not null default now();
 
 -- Initialize existing lives at their current legitimate progress point.
 update public.player_saves
-set trusted_game_ticks = greatest(0,
-      coalesce((save->'player'->>'months')::numeric::bigint, 0) * 10
-      + coalesce((save->'player'->'idle'->>'mt')::numeric::bigint, 0)),
+set trusted_game_ms = greatest(0,
+      (coalesce((save->'player'->>'months')::numeric::bigint, 0) * 10
+       + coalesce((save->'player'->'idle'->>'mt')::numeric::bigint, 0)) * 1000),
     trusted_game_at = now()
 where save is not null and jsonb_typeof(save) = 'object'
   and save->'player' is not null and save->'player' <> 'null'::jsonb;
@@ -30,7 +31,7 @@ declare
   oldp jsonb; newp jsonb;
   old_count int; new_count int;
   old_lv int; new_lv int;
-  new_ticks bigint := 0; allowed_ticks bigint := 0;
+  new_progress_ms bigint := 0; allowed_ms bigint := 0;
   elapsed numeric := 0; effective numeric := 0;
 begin
   if uid is null then raise exception 'not_authenticated' using errcode = '28000'; end if;
@@ -60,11 +61,11 @@ begin
     if p_rev <> 0 and not coalesce(p_force, false) then raise exception 'conflict' using errcode = 'P0001'; end if;
     newp := case when p_save is not null then p_save->'player' else null end;
     if newp is not null and newp <> 'null'::jsonb then
-      new_ticks := (newp->>'months')::numeric::bigint * 10
-                   + coalesce((newp->'idle'->>'mt')::numeric::bigint, 0);
+      new_progress_ms := ((newp->>'months')::numeric::bigint * 10
+                          + coalesce((newp->'idle'->>'mt')::numeric::bigint, 0)) * 1000;
     end if;
-    insert into public.player_saves (user_id, save, meta, rev, updated_at, trusted_game_ticks, trusted_game_at)
-    values (uid, p_save, p_meta, 1, now_ts, greatest(0, new_ticks), now_ts);
+    insert into public.player_saves (user_id, save, meta, rev, updated_at, trusted_game_ms, trusted_game_at)
+    values (uid, p_save, p_meta, 1, now_ts, greatest(0, new_progress_ms), now_ts);
     return jsonb_build_object('rev', 1, 'updated_at', now_ts);
   end if;
 
@@ -84,10 +85,10 @@ begin
   oldp := case when cur.save is not null then cur.save->'player' else null end;
   newp := case when p_save is not null then p_save->'player' else null end;
   if newp is not null and newp <> 'null'::jsonb then
-    new_ticks := (newp->>'months')::numeric::bigint * 10
-                 + coalesce((newp->'idle'->>'mt')::numeric::bigint, 0);
+    new_progress_ms := ((newp->>'months')::numeric::bigint * 10
+                        + coalesce((newp->'idle'->>'mt')::numeric::bigint, 0)) * 1000;
   else
-    new_ticks := 0;
+    new_progress_ms := 0;
   end if;
 
   if not coalesce(p_force, false) and new_count = old_count
@@ -98,22 +99,22 @@ begin
 
     elapsed := greatest(0, extract(epoch from (now_ts - cur.trusted_game_at)));
     effective := least(7200, case when elapsed <= 120 then elapsed else 120 + (elapsed - 120) * 0.5 end);
-    allowed_ticks := cur.trusted_game_ticks + floor(effective)::bigint;
-    if new_ticks > allowed_ticks then raise exception 'time_jump' using errcode = '22023'; end if;
+    allowed_ms := cur.trusted_game_ms + floor(effective * 1000)::bigint;
+    if new_progress_ms > allowed_ms then raise exception 'time_jump' using errcode = '22023'; end if;
   else
     -- New life / terminal state: old-life time credit never carries into the next incarnation.
-    allowed_ticks := greatest(0, new_ticks);
+    allowed_ms := greatest(0, new_progress_ms);
   end if;
 
   new_rev := cur.rev + 1;
   update public.player_saves
      set save = p_save, meta = p_meta, rev = new_rev, updated_at = now_ts,
-         trusted_game_ticks = case when coalesce(p_force, false) then greatest(cur.trusted_game_ticks, new_ticks)
-                                   else greatest(allowed_ticks, new_ticks) end,
+         trusted_game_ms = case when coalesce(p_force, false) then greatest(cur.trusted_game_ms, new_progress_ms)
+                                else greatest(allowed_ms, new_progress_ms) end,
          trusted_game_at = now_ts
    where user_id = uid;
   return jsonb_build_object('rev', new_rev, 'updated_at', now_ts);
 end;
 $$;
-revoke all on function public.save_game(jsonb, jsonb, bigint, boolean) from public, anon, authenticated;
+revoke all on function public.save_game(jsonb, jsonb,bigint, boolean) from public, anon, authenticated;
 grant execute on function public.save_game(jsonb, jsonb, bigint, boolean) to authenticated;
