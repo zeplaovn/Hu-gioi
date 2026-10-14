@@ -26,3 +26,5 @@ test('sect entry uses appearance roll and rank uses lifetime earned contribution
 test('high-realm shop restores legacy pills and scaled price',()=>{let s=make();s.profile.realm=8;s.profile.spiritStones=100000;const before=s.profile.breakBonus;s=gameReducer(s,{type:'BUY',id:'tribulationPill',now:1000});assert.equal(s.profile.breakBonus,Math.min(.4,before+.25));assert.equal(s.runtime.shop.n.tribulationPill,1)});
 test('legacy save snapshot preserves sect earned contribution and encounter cooldown',()=>{let s=make();s.profile.realm=1;s.sect.name='thanh-van';s.sect.earned=220;s.sect.contribution=80;s.runtime.encounterCooldown=4;const p=serializeSave(s).player;assert.equal(p.sectx.earned,220);assert.equal(p.sectx.contrib,80);assert.equal(p.idle.cd,4)});
 test('empty state needs character creation',()=>{const s=emptyState();assert.equal(s.created,false);assert.equal(s.profile,null)});
+
+test('normalizeSave preserves zero HP rather than reviving a dead character',()=>{const s=make();s.profile.hp=0;const loaded=normalizeSave(serializeSave(s));assert.equal(loaded.profile.hp,0)});
