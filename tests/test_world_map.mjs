@@ -5,10 +5,10 @@ import path from "node:path";
 import vm from "node:vm";
 
 const root = path.resolve(import.meta.dirname, "..");
-const ctx = vm.createContext({ console, Set });
+const ctx = vm.createContext({ console, Set, Math });
 ctx.window = ctx;
 ctx.TT = { REALMS: ["Phàm Nhân","Luyện Khí","Trúc Cơ","Kim Đan","Nguyên Anh","Hóa Thần","Luyện Hư","Đại Thừa","Độ Kiếp"] };
-for (const file of ["registry.js","ha_gioi.js","tien_gioi.js","than_gioi.js"]) {
+for (const file of ["registry.js","ha_gioi.js","tien_gioi.js","than_gioi.js","ha_gioi_content.js"]) {
   vm.runInContext(fs.readFileSync(path.join(root, "src/game/maps", file), "utf8"), ctx, { filename: file });
 }
 
@@ -49,6 +49,32 @@ test("Ha Gioi has three distinct gameplay sites per region", () => {
   }
   assert.equal(ids.length, 27);
   assert.equal(new Set(ids).size, 27);
+});
+
+test("phase3 enriches every Ha Gioi site with event loot npc elite and theme", () => {
+  const rs = ctx.TT.maps.get("ha_gioi").regions;
+  let bosses = 0;
+  for (const r of rs) {
+    for (let i = 0; i < r.sites.length; i++) {
+      const s = r.sites[i];
+      assert.ok(s.theme?.accent, s.id);
+      assert.ok(s.specialEvent?.name, s.id);
+      assert.equal(s.lootTable.length, 3, s.id);
+      assert.ok(s.npcInteraction?.npc, s.id);
+      assert.ok(s.elite?.powerMul > 1, s.id);
+      if (i === r.sites.length - 1) {
+        assert.ok(s.boss?.name, s.id);
+        bosses++;
+      } else assert.equal(s.boss, undefined, s.id);
+    }
+  }
+  assert.equal(bosses, 9);
+});
+
+test("weighted loot picker honors deterministic rng", () => {
+  const site = ctx.TT.maps.get("ha_gioi").regions[0].sites[0];
+  assert.equal(ctx.TT.maps.weightedPick(site.lootTable, () => 0).name, site.lootTable[0].name);
+  assert.equal(ctx.TT.maps.weightedPick(site.lootTable, () => 0.9999).name, site.lootTable[2].name);
 });
 
 test("region travel selects the default site and site travel stays inside region", () => {
