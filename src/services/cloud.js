@@ -1,5 +1,5 @@
 /* Supabase boundary: Auth + database-only player persistence.
-   Game save/meta are kept in memory while the page is open; persistent state lives only in player_saves.
+   Game save/meta are kept in memory while the page is open; persistent state lives only in player_state.
    localStorage is used only for the Auth session, never for gameplay save data. */
 "use strict";
 (function () {
@@ -104,7 +104,7 @@
     if (!session) throw { auth: true, message: "Chưa đăng nhập." };
     const s = snapshot();
     const token = await freshToken();
-    const r = await http("/rest/v1/rpc/save_game", { method: "POST", token, body: { p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: !!force } });
+    const r = await http("/rest/v1/rpc/save_player_state", { method: "POST", token, body: { p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: !!force } });
     revision = Math.max(0, Math.trunc(+r.rev) || revision);
     dirty = false; backoff = 0;
     return r;
@@ -134,7 +134,7 @@
     const s = snapshot(), body = JSON.stringify({ p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: false });
     if (body.length > KEEPALIVE_MAX) return;
     try {
-      fetch(base + "/rest/v1/rpc/save_game", { method: "POST", keepalive: true, headers: { apikey: cfg.anonKey, "Content-Type": "application/json", Authorization: "Bearer " + token }, body })
+      fetch(base + "/rest/v1/rpc/save_player_state", { method: "POST", keepalive: true, headers: { apikey: cfg.anonKey, "Content-Type": "application/json", Authorization: "Bearer " + token }, body })
         .then(r => (r.ok ? r.json() : null)).then(r => { if (r && r.rev) { revision = +r.rev || revision; dirty = false; } }, () => {});
     } catch (e) { /* page is closing */ }
   }
@@ -146,7 +146,7 @@
 
   cloud.pull = async () => {
     const token = await freshToken();
-    const rows = await http("/rest/v1/player_saves?select=save,meta,rev,updated_at&limit=1", { token });
+    const rows = await http("/rest/v1/player_state?select=save,meta,rev,updated_at&limit=1", { token });
     return Array.isArray(rows) && rows[0] ? rows[0] : null;
   };
 
@@ -164,11 +164,11 @@
   cloud.leaderboard = async ({ days = 0 } = {}) => {
     const token = await freshToken(), cols = "select=user_id,name,level,months";
     const since = days > 0 ? `&updated_at=gte.${encodeURIComponent(new Date(Date.now() - days * 86400000).toISOString())}` : "";
-    const top = await http(`/rest/v1/leaderboard?${cols}${since}&order=level.desc,months.asc,updated_at.asc&limit=50`, { token });
+    const top = await http(`/rest/v1/player_rankings?${cols}${since}&order=level.desc,months.asc,updated_at.asc&limit=50`, { token });
     const uid = session.user.id;
     let me = (Array.isArray(top) ? top : []).findIndex(r => r.user_id === uid), mine = me >= 0 ? top[me] : null, rank = me >= 0 ? me + 1 : null;
     if (!mine) {
-      const rows = await http(`/rest/v1/leaderboard?${cols}&user_id=eq.${encodeURIComponent(uid)}${since}&limit=1`, { token });
+      const rows = await http(`/rest/v1/player_rankings?${cols}&user_id=eq.${encodeURIComponent(uid)}${since}&limit=1`, { token });
       mine = Array.isArray(rows) && rows[0] ? rows[0] : null;
     }
     return { top: Array.isArray(top) ? top : [], mine, rank, uid };
@@ -176,11 +176,11 @@
 
   cloud.chatList = async ({ after = 0 } = {}) => {
     const token = await freshToken(), cols = "select=id,user_id,name,body,created_at", a = Math.max(0, Math.floor(+after) || 0);
-    const rows = await http(`/rest/v1/chat_messages?${cols}&` + (a > 0 ? `id=gt.${a}&order=id.asc&limit=100` : "order=id.desc&limit=50"), { token });
+    const rows = await http(`/rest/v1/world_chat_messages?${cols}&` + (a > 0 ? `id=gt.${a}&order=id.asc&limit=100` : "order=id.desc&limit=50"), { token });
     const list = Array.isArray(rows) ? rows : [];
     return a > 0 ? list : list.reverse();
   };
-  cloud.chatSend = async body => http("/rest/v1/rpc/send_chat", { method: "POST", token: await freshToken(), body: { p_body: String(body) } });
+  cloud.chatSend = async body => http("/rest/v1/rpc/send_world_chat", { method: "POST", token: await freshToken(), body: { p_body: String(body) } });
 
   cloud.signOut = async ({ force = false } = {}) => {
     if (session && dirty) { try { await Promise.race([cloud.push(), new Promise((_, reject) => setTimeout(() => reject({}), 4000))]); } catch (e) { /* checked below */ } }
