@@ -1,5 +1,5 @@
 /* Cầu nối an toàn giữa game client và Admin Console.
-   Chỉ gọi RPC public cho game: heartbeat_presence() và server_status().
+   Chỉ gọi RPC public cho game: update_player_presence() và get_server_status().
    Không chứa quyền admin, không chứa service_role. */
 "use strict";
 (function () {
@@ -195,7 +195,7 @@
 
   bridge.status = async () => {
     try {
-      lastStatus = await rpc("server_status", {}, null);
+      lastStatus = await rpc("get_server_status", {}, null);
       bridge.admin = lastStatus.maintenance ? await isAdmin() : false;
       renderMaintenance(lastStatus);
       renderTicker(lastStatus.maintenance && bridge.admin ? { ...lastStatus, maintenance: false } : lastStatus);
@@ -212,7 +212,7 @@
     const s = session();
     if (!s || !s.access_token || (s.expires_at && s.expires_at <= Date.now() / 1000)) return false;
     try {
-      await rpc("heartbeat_presence", {
+      await rpc("update_player_presence", {
         p_session_id: sessionId(),
         p_client_version: String(TT.VERSION || "web").slice(0, 40),
         p_realm_level: null
