@@ -262,7 +262,7 @@
         this.log(`${mon} mạnh hơn! Bạn bị thương, khí huyết -${d}.`, "red");
         if (p.hp <= 0) {
           this.dead = true;                        // chặn thao tác trong lúc diễn hoạt cảnh
-          setTimeout(() => { this.dead = false; this.die(`Bạn bị ${mon} xé xác, hồn phách tiêu tán.`); }, 1000);
+          setTimeout(() => { if (this.p !== p) return; this.dead = false; this.die(`Bạn bị ${mon} xé xác, hồn phách tiêu tán.`); }, 1000);   // người chơi đã Trùng sinh trong lúc diễn hoạt cảnh thì thôi
           return true;
         }
       }

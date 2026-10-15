@@ -8,6 +8,7 @@ const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 
 http.createServer((req, res) => {
   let rel; try { rel = decodeURIComponent(new URL(req.url, "http://x").pathname); } catch (e) { res.writeHead(400); return res.end(); }
+  if (rel.includes("\0")) { res.writeHead(400); return res.end(); }                                           // fs.stat ném lỗi đồng bộ với ký tự NUL và làm sập server
   const file = path.join(root, rel.endsWith("/") ? rel + "index.html" : rel);
   if (file !== root && !file.startsWith(root + path.sep)) { res.writeHead(403); return res.end(); }          // chặn ../
   fs.stat(file, (err, st) => {

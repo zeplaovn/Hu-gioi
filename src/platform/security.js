@@ -123,6 +123,10 @@
   const int = (v, lo, hi, d = lo) => { const n = Math.trunc(+v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
   const flt = (v, lo, hi, d = lo) => { const n = +v; return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
   const fail = m => { sec.error = m; return null; };
+  /* Mốc thời gian trong save (idle.ts, linh điền, bí cảnh, nhiệm vụ tông môn) được ghi bằng đồng hồ máy chủ (TT.now, xem ha_gioi_fix.js),
+     nên phải giới hạn bằng cùng đồng hồ đó. So với đồng hồ thiết bị sẽ cắt lệch mốc khi máy khách chạy chậm hơn máy chủ
+     (cộng thừa thời gian tu luyện / làm cây chín sớm, rồi bị máy chủ từ chối lúc lưu). Chưa đồng bộ được thì dùng đồng hồ thiết bị. */
+  const clk = () => Math.floor(typeof TT.now === "function" ? TT.now() : Date.now());
 
   /** Trả về nhân vật đã làm sạch, hoặc null (kèm sec.error) nếu dữ liệu không thể hợp lệ. */
   sec.cleanPlayer = d => {
@@ -153,7 +157,7 @@
       if (isObj(x.done)) for (const id of TT.MISSION_IDS) { const n = int(x.done[id], 0, 99999, 0); if (n) base.done[id] = n; }
       base.auto = x.auto === true; base.last = TT.MISSION_IDS.includes(x.last) ? x.last : "";
       if (isObj(x.active)) {
-        const def = TT.missionById(x.active.id), nowM = Date.now();
+        const def = TT.missionById(x.active.id), nowM = clk();
         if (def && (!def.sect || def.sect === sect) && def.tier <= TT.sectRank({ sectx: base }).tier) {
           const start = int(x.active.start, 0, nowM, nowM);
           base.active = { id: def.id, start, end: int(x.active.end, start, start + def.dur * 1000, start + def.dur * 1000), bonus: x.active.bonus === true };
@@ -173,7 +177,7 @@
     }
     const gear = {};
     if (isObj(d.gear)) for (const [n, q] of Object.entries(d.gear)) if (Object.prototype.hasOwnProperty.call(TT.GEAR, n)) gear[n] = int(q, 1, 4, 1);
-    const nowP = Date.now();
+    const nowP = clk();
     const plots = Array.isArray(d.plots) && d.plots.length === 4 && d.plots.every(x => x === null || isObj(x))
       ? d.plots.map(x => x && {                                 // linh điền chạy theo thời gian thật: ts là mốc "tháng linh điền" đã xử lý gần nhất (save cũ chưa có thì lấy hiện tại)
         age: int(x.age, 0, 30, 0), water: flt(x.water, 0, 1, 1), soil: flt(x.soil, 0, 1, 0.6), pest: x.pest === true,
@@ -183,7 +187,7 @@
     for (const [k, v] of Object.entries(TT.newTrack())) track[k] = int(isObj(d.track) ? d.track[k] : v, 0, 1e7, 0);
 
     /* ---- bản idle: đạo hiệu, linh căn, tôi luyện, nhập định, bí cảnh, kỳ ngộ (save cũ không có thì lấy mặc định) ---- */
-    const now = Date.now();
+    const now = clk();
     const name = TT.cleanName(d.name);
     const root = TT.cleanRoot(d.root);
     const temper = {}, ess = {};

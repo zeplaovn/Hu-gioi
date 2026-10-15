@@ -272,7 +272,7 @@
       let d = Math.max(1, int(raw * (1 - mit)));
       if (p.guard > 0) { d = int(d * Math.max(0.15, 1 - 0.30 * p.guard)); p.guard = 0; this.log("Hộ Thân Phù phát sáng, giảm bớt sát thương!", "cyan"); }
       p.hp -= d; this.log(`${mon} mạnh hơn! Bạn bị thương, khí huyết -${d}.`, "red");
-      if (p.hp <= 0) { this.dead = true; setTimeout(() => { this.dead = false; this.die(`Bạn bị ${mon} đánh chết tại ${rg.name}.`); }, 650); return true; }
+      if (p.hp <= 0) { this.dead = true; setTimeout(() => { if (this.p !== p) return; this.dead = false; this.die(`Bạn bị ${mon} đánh chết tại ${rg.name}.`); }, 650); return true; }   // đã Trùng sinh trong lúc diễn hoạt cảnh thì không gọi die() lên nhân vật không còn tồn tại
     }
     return false;
   };

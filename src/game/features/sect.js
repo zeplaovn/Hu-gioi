@@ -247,7 +247,7 @@
     const redraw = () => {
       if (!m.overlay.isConnected) { clearInterval(timer); return; }
       const old = m.box.querySelector(".rows"), top = old ? old.scrollTop : 0;
-      m.box.replaceChildren(...build(close, redraw));
+      m.box.replaceChildren(...build(close, redraw).filter(x => x != null && x !== false));   // replaceChildren biến null thành chữ "null"
       const now = m.box.querySelector(".rows");
       if (now) now.scrollTop = top;
     };
