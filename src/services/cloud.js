@@ -45,6 +45,7 @@
     if (code === "captcha_failed" || msg.includes("captcha")) return "Xác minh hCaptcha không thành công, hãy thử lại.";
     if (e.status === 429 || code.includes("rate_limit")) return "Bạn thao tác quá nhanh, hãy thử lại sau ít phút.";
     if (msg === "maintenance_mode") return "Máy chủ đang bảo trì.";
+    if (msg === "time_jump" || msg === "level_reverse" || msg === "bad_life_sequence") return "Máy chủ từ chối lưu vì tiến độ không khớp với thời gian thực. Hãy tải lại trang để đồng bộ lại với máy chủ.";
     return "Có lỗi xảy ra, vui lòng thử lại.";
   };
 
@@ -82,7 +83,9 @@
   cloud.recover = (email, captchaToken) => http("/auth/v1/recover", { method: "POST", body: { email, ...cap(captchaToken) } });
 
   const store = () => TT.runtimeStore;
-  let revision = 0, dirty = false, timer = null, inflight = false, backoff = 0;
+  /* `gen` tăng mỗi lần có thay đổi mới. Một lần gửi chỉ được xóa cờ dirty nếu trong lúc gửi không có thay đổi nào khác
+     (nếu không, thay đổi mới nhất sẽ không bao giờ được đẩy lên và lần flush khi đóng tab cũng bị bỏ qua). */
+  let revision = 0, dirty = false, gen = 0, timer = null, inflight = false, backoff = 0;
   let status = { state: "idle" };
   const listeners = [];
   cloud.status = () => status;
@@ -97,23 +100,24 @@
     dirty = false; backoff = 0;
   };
 
-  cloud.markDirty = () => { if (!session || TT.sec.stale) return; dirty = true; schedule(PUSH_DELAY); };
+  cloud.markDirty = () => { if (!session || TT.sec.stale) return; dirty = true; gen++; schedule(PUSH_DELAY); };
   cloud.dirty = () => dirty;
 
   cloud.push = async ({ force = false } = {}) => {
     if (!session) throw { auth: true, message: "Chưa đăng nhập." };
-    const s = snapshot();
+    const g = gen, s = snapshot();
     const token = await freshToken();
     const r = await http("/rest/v1/rpc/save_game", { method: "POST", token, body: { p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: !!force } });
     revision = Math.max(0, Math.trunc(+r.rev) || revision);
-    dirty = false; backoff = 0;
+    if (gen === g) dirty = false;                                   // có thay đổi mới trong lúc gửi thì giữ dirty để lần sau đẩy tiếp
+    backoff = 0;
     return r;
   };
 
   async function run() {
     if (inflight || !session || !dirty || TT.sec.stale) return;
     inflight = true; emit("syncing");
-    try { await cloud.push(); emit("synced", { t: Date.now() }); }
+    try { await cloud.push(); emit("synced", { t: Date.now() }); if (dirty) schedule(1500); }
     catch (e) {
       const m = String((e && e.message) || "");
       if (m === "conflict") {
@@ -131,11 +135,11 @@
   function flushSync() {
     const token = validToken();
     if (!token || !dirty || TT.sec.stale) return;
-    const s = snapshot(), body = JSON.stringify({ p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: false });
+    const g = gen, s = snapshot(), body = JSON.stringify({ p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: false });
     if (body.length > KEEPALIVE_MAX) return;
     try {
       fetch(base + "/rest/v1/rpc/save_game", { method: "POST", keepalive: true, headers: { apikey: cfg.anonKey, "Content-Type": "application/json", Authorization: "Bearer " + token }, body })
-        .then(r => (r.ok ? r.json() : null)).then(r => { if (r && r.rev) { revision = +r.rev || revision; dirty = false; } }, () => {});
+        .then(r => (r.ok ? r.json() : null)).then(r => { if (r && r.rev) { revision = +r.rev || revision; if (gen === g) dirty = false; } }, () => {});
     } catch (e) { /* page is closing */ }
   }
   if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSync(); });

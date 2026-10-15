@@ -144,3 +144,10 @@ test("trang bảo trì và cổng quản trị là trang độc lập, game khô
   assert.match(bridge, /location\.replace\("maintenance\.html"\)/);
   assert.doesNotMatch(bridge, /serverMaintenanceGate|Quản trị viên đăng nhập/);
 });
+
+test("errorText giải thích các mã save_game bị máy chủ từ chối vì tiến độ", async () => withMock({}, async (mock, port) => {
+  const a = device(mock, port);
+  for (const code of ["time_jump", "level_reverse", "bad_life_sequence"])
+    assert.match(a.cloud.errorText({ message: code }), /tải lại trang/, code);
+  assert.equal(a.cloud.errorText({ message: "mã_lạ" }), "Có lỗi xảy ra, vui lòng thử lại.");
+}));

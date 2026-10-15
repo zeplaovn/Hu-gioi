@@ -431,7 +431,7 @@
   /* ---------- Chỉ số ---------- */
   G.openSheet = function () {
     if (alive(this.sheetWin)) return;
-    this.sheetWin = liveModal("sheet-box", close => {
+    this.sheetWin = liveModal("sheet-box", (close, redraw) => {
       const p = this.p, info = TT.rootInfo(p.root), mg = this.idleMonthGain();
       const bonus = [["atk", "Công kích"], ["def", "Phòng ngự"], ["hp", "Khí huyết"], ["exp", "Tốc độ tu luyện"], ["crit", "Chí mạng"], ["dodge", "Né tránh"], ["regen", "Hồi phục"]]
         .map(([k, l]) => [l, TT.rootBonus(p, k) + (k === "exp" ? info.exp : 0)]).filter(([, v]) => v);
