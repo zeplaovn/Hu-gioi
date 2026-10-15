@@ -64,7 +64,12 @@
     if (!session) throw { auth: true, message: "Chưa đăng nhập." };
     if (!refreshing) refreshing = (async () => {
       try { keep(toSession(await http("/auth/v1/token?grant_type=refresh_token", { method: "POST", body: { refresh_token: session.refresh_token } }))); }
-      catch (e) { if (!e.net) keep(null); throw e.net ? e : { auth: true, message: "Phiên đăng nhập đã hết hạn." }; }
+      catch (e) {
+        /* Chỉ khi máy chủ Auth từ chối chính refresh token (400/401/403) mới xóa phiên. Lỗi mạng, 429 và 5xx là tạm thời:
+           giữ phiên để lần sau thử lại, nếu không người chơi bị đăng xuất oan mỗi khi Supabase chập chờn. */
+        if (e && !e.net && [400, 401, 403].includes(e.status)) { keep(null); throw { auth: true, message: "Phiên đăng nhập đã hết hạn." }; }
+        throw e && e.net ? e : { status: e && e.status, code: e && e.code, message: (e && e.message) || "Không làm mới được phiên, sẽ thử lại." };
+      }
       finally { refreshing = null; }
     })();
     await refreshing; return session.access_token;

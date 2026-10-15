@@ -151,3 +151,24 @@ test("errorText giải thích các mã save_game bị máy chủ từ chối vì
     assert.match(a.cloud.errorText({ message: code }), /tải lại trang/, code);
   assert.equal(a.cloud.errorText({ message: "mã_lạ" }), "Có lỗi xảy ra, vui lòng thử lại.");
 }));
+
+test("lỗi tạm thời (5xx/429) khi làm mới token không xóa phiên đăng nhập; refresh token bị từ chối thì xóa", async () => withMock({}, async (mock, port) => {
+  const a = device(mock, port);
+  await a.cloud.signUp(EMAIL, PASS);
+  const stored = JSON.parse(a.store.get("tu_tien_cloud_session"));
+  stored.expires_at = Math.floor(Date.now() / 1000) - 10;                    // token đã hết hạn -> bắt buộc làm mới
+  const expired = new Map([["tu_tien_cloud_session", JSON.stringify(stored)]]);
+
+  for (const status of [503, 429]) {
+    const b = device(mock, port, new Map(expired));
+    b.ctx.fetch = async () => new Response(JSON.stringify({ msg: "tam thoi" }), { status });
+    await assert.rejects(b.cloud.pull(), e => e.status === status && !e.auth);
+    assert.ok(b.store.has("tu_tien_cloud_session"), `HTTP ${status} không được đăng xuất người chơi`);
+    assert.ok(b.cloud.user(), `HTTP ${status}: phiên vẫn còn trong bộ nhớ`);
+  }
+
+  const bad = JSON.parse(JSON.stringify(stored)); bad.refresh_token = "khong-ton-tai";
+  const c = device(mock, port, new Map([["tu_tien_cloud_session", JSON.stringify(bad)]]));
+  await assert.rejects(c.cloud.pull(), e => e.auth === true);
+  assert.equal(c.store.has("tu_tien_cloud_session"), false, "refresh token bị từ chối -> xóa phiên");
+}));
