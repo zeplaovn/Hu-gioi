@@ -1,13 +1,14 @@
 // Kiểm thử save_game (sổ cái thời gian) trên Postgres thật chạy trong Node (PGlite, không cần cài Postgres hay Docker).
 // Chạy: npm i --no-save @electric-sql/pglite && node supabase/tests/save_game_time_bounds.test.mjs
-// Áp toàn bộ supabase/migrations rồi supabase/pending_migrations/20261020020000_save_game_time_bounds.sql lên một DB trống có bản giả lập tối thiểu của Supabase.
-// NO_FIX=1 node supabase/tests/save_game_time_bounds.test.mjs  -> chạy trên bản đang live (không có bản sửa): các ca A và C phải thất bại, chứng minh test thật sự bắt được lỗi.
+// Áp toàn bộ supabase/migrations rồi MỌI file trong supabase/pending_migrations (theo thứ tự tên) lên một DB trống có bản giả lập tối thiểu của Supabase.
+// NO_FIX=1 node supabase/tests/save_game_time_bounds.test.mjs  -> chạy trên bản đang live (không có bản sửa): các ca A, C và F phải thất bại, chứng minh test thật sự bắt được lỗi.
 import { PGlite } from "@electric-sql/pglite";
 import fs from "node:fs";
 import path from "node:path";
 
 const SUPABASE = path.resolve(import.meta.dirname, "..");
-const FIX = process.env.NO_FIX ? null : path.join(SUPABASE, "pending_migrations", "20261020020000_save_game_time_bounds.sql");
+const PENDING = path.join(SUPABASE, "pending_migrations");
+const FIXES = process.env.NO_FIX ? [] : fs.readdirSync(PENDING).filter(f => f.endsWith(".sql")).sort().map(f => path.join(PENDING, f));
 
 const db = new PGlite();
 await db.exec(`
@@ -19,7 +20,7 @@ await db.exec(`
 `);
 const migDir = path.join(SUPABASE, "migrations");
 for (const f of fs.readdirSync(migDir).filter(f => f.endsWith(".sql")).sort()) await db.exec(fs.readFileSync(path.join(migDir, f), "utf8"));
-if (FIX) await db.exec(fs.readFileSync(FIX, "utf8"));
+for (const f of FIXES) await db.exec(fs.readFileSync(f, "utf8"));
 
 const STATS = { "Tướng Mạo": 5, "Phúc Duyên": 5, "Căn Cốt": 5, "Ngộ Tính": 5, "Vận Khí": 5 };
 const player = (lv, months, mt = 0) => ({
@@ -33,9 +34,9 @@ const newUser = async ({ ageSeconds = 5 } = {}) => {
   await db.exec(`select set_config('request.jwt.claim.sub', '${id}', false), set_config('request.jwt.claim.email', 'u@example.com', false)`);
   return id;
 };
-const save = async (count, p, rev, force = false) => {
+const save = async (count, p, rev, force = false, meta = {}) => {
   try {
-    const r = await db.query("select public.save_game($1::jsonb, '{}'::jsonb, $2::bigint, $3) as r", [JSON.stringify({ count, player: p }), rev, force]);
+    const r = await db.query("select public.save_game($1::jsonb, $4::jsonb, $2::bigint, $3) as r", [JSON.stringify({ count, player: p }), rev, force, JSON.stringify(meta)]);
     return { ok: true, rev: r.rows[0].r.rev };
   } catch (e) { return { ok: false, err: e.message }; }
 };
@@ -102,6 +103,25 @@ console.log("E. Các chặn khác vẫn hoạt động");
   const u = await newUser({ ageSeconds: 7200 }); let r = await save(1, player(10, 100), 0);
   await ago(u, 5); check("E2 lùi cấp trong cùng kiếp", verdict(await save(1, player(9, 100), r.rev)), "level_reverse");
   await newUser(); check("E3 người chơi thường dùng p_force", verdict(await save(1, player(1, 0), 0, true)), "force_forbidden");
+}
+
+console.log("F. meta.best do client khai không được nâng hạng quá thời gian thật");
+{
+  const lvOf = async uid => String((await db.query("select level from public.leaderboard where user_id=$1", [uid])).rows[0]?.level ?? "none");
+  const u = await newUser({ ageSeconds: 600 }); const r = await save(1, player(1, 0), 0);
+  await ago(u, 5);
+  check("F1 tài khoản cấp 1 khai meta.best = 81 (lưu vẫn được, chỉ không nâng hạng)", verdict(await save(1, player(1, 0), r.rev, false, { best: 81, history: [{ age: 20 }] })), "ok");
+  check("F1b bảng xếp hạng vẫn ở cấp 1", await lvOf(u), "1");
+
+  const v = await newUser({ ageSeconds: 7200 }); const s1 = await save(1, player(39, 40), 0);
+  await ago(v, 5);
+  await save(1, player(39, 40), s1.rev, false, { best: 50, history: [{ age: 40 }] });
+  check("F2 cấp 39 khai meta.best = 50 (cận 82 tháng, mới tu 40)", await lvOf(v), "39");
+
+  const w = await newUser({ ageSeconds: 7200 }); const t1 = await save(1, player(39, 40), 0);
+  await ago(w, 5);
+  const t2 = await save(2, null, t1.rev, false, { best: 40, history: [{ age: 23 }] });
+  check("F3 người chơi thật: lên cấp 40 rồi chết giữa hai lần lưu, vẫn được ghi nhận", `${verdict(t2)}/${await lvOf(w)}`, "ok/40");
 }
 
 console.log(failed ? `\n${failed} ca thất bại` : "\nTất cả đạt");
