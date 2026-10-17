@@ -1,0 +1,33 @@
+name: V2 Snapshot Artifact
+on:
+  push:
+    branches: [scratch/v2-locks-20261017]
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct snapshot payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .scratch-v2-build/chunks/00 \
+              .scratch-v2-build/chunks/01 \
+              .scratch-v2-build/chunks/02 \
+              .scratch-v2-build/chunks/03a \
+              .scratch-v2-build/chunks/03b \
+              .scratch-v2-build/chunks/03c \
+              .scratch-v2-build/chunks/04 | base64 -d > /tmp/v2.tar.gz
+          mkdir -p /tmp/v2
+          tar -xzf /tmp/v2.tar.gz -C /tmp/v2
+          find /tmp/v2 -maxdepth 4 -type f -print | sort > /tmp/v2/MANIFEST.txt
+      - name: Upload reconstructed snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: reconstructed-v2-snapshot
+          path: /tmp/v2
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
