@@ -1,18 +1,20 @@
 {
   "name": "@hu-gioi/frontend",
   "private": true,
-  "version": "0.1.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4"
+    "svelte": "^5.39.6"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "svelte-check": "^4.3.2",
     "typescript": "^5.9.3",
     "vite": "^7.1.12"
   }
