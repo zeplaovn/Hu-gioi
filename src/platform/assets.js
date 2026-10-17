@@ -2,24 +2,77 @@
 "use strict";
 (function () {
   const COUNT = {
-    hero: { sit: 3, walk: 6, atk: 5, hurt: 2, dead: 1 },
     vfx: { slash: 8, hit: 8, bolt: 8, break: 8, heal: 8, qi: 8 },
   };
-  const MON = { 0: { idle: 4, atk: 4, die: 4 }, 1: { idle: 4, atk: 3, die: 4 }, 2: { idle: 4, atk: 3, die: 4 },
-    3: { idle: 4, atk: 3, die: 4 }, 4: { idle: 4, atk: 3, die: 4 } };
+
+  /* ---- Cấu trúc assets theo 3 đại thế giới chính thức: ha_gioi -> linh_gioi -> tien_gioi ----
+     parallax/{world}/{prefix}{far|mid|fore}_{mùa 0..3}.png   (prefix theo tên file thực tế trong từng thư mục)
+     player/{male|female}/{world}/{idle|walk|atk}/{n}.png      (n bắt đầu từ 1, số khung tự dò)
+     monster/{world}/{loài}/{idle|atk|die}/{n}.png
+     vfx/seasons/{mùa}_{biến thể}.png                          */
+  const WORLDS = ["ha_gioi", "linh_gioi", "tien_gioi"];
+  const BG_PREFIX = { ha_gioi: "", linh_gioi: "tien_", tien_gioi: "than_" };
+  // Quái cấp 0..4 -> thư mục loài của từng thế giới (thứ tự yếu -> mạnh, có thể chỉnh tại đây).
+  const MON_KIND = {
+    ha_gioi: ["wolf", "fox", "bear", "phoenix", "dragon"],
+    linh_gioi: ["stone_golem", "legend_fox", "electric_qilin_wolf", "legend_crane", "eastern_dragon"],
+    tien_gioi: ["celestial_spirit_wolf", "nine_tailed_fox_spirit", "armored_halberd_warrior", "celestial_knight", "cosmic_mage"],
+  };
+  const MON_TIERS = 5;
+  const HERO_DIR = { sit: "idle", walk: "walk", atk: "atk" };
+  const FRAME_MAX = 8;                 // số khung tối đa khi dò ảnh 1.png, 2.png, ...
+
+  const worldId = () => {
+    try {
+      const g = TT.game, w = TT.maps && TT.maps.currentWorld(g && g.p);
+      return w && WORLDS.includes(w.id) ? w.id : "ha_gioi";
+    } catch (e) { return "ha_gioi"; }
+  };
+  const genderDir = () => {
+    const g = TT.game;
+    return ((g && g.p && g.p.gender) || (g && g.gender)) === "Nữ" ? "female" : "male";
+  };
+
+  /* Đường dẫn cũ (bg/, seasons/) được dịch sang cấu trúc mới để code vẽ không phải đổi. */
+  const resolve = rel => {
+    let m;
+    if (rel === "bg/title.png") return "parallax/title.png";
+    if ((m = /^bg\/(far|mid|fore)_(\d)\.png$/.exec(rel))) {
+      const w = worldId();
+      return `parallax/${w}/${BG_PREFIX[w]}${m[1]}_${m[2]}.png`;
+    }
+    if ((m = /^seasons\/(.+)$/.exec(rel))) return "vfx/seasons/" + m[1];
+    return rel;
+  };
 
   const cache = {};
+  const load = path => {
+    if (!cache[path]) {
+      const im = new Image();
+      im.src = "assets/" + path;
+      cache[path] = im;
+    }
+    return cache[path];
+  };
+  const ok = im => im && im.complete && im.naturalWidth > 0;
+  const wait = im => new Promise(r => {
+    if (im.complete) { r(); return; }
+    im.addEventListener("load", r, { once: true });
+    im.addEventListener("error", r, { once: true });
+  });
+  /* Dò các khung 1..max; khi tải xong thì bỏ khung không tồn tại (sửa tại chỗ để tham chiếu cũ vẫn đúng). */
+  const probe = (pathOf, max = FRAME_MAX) => {
+    const arr = Array.from({ length: max }, (_, i) => load(pathOf(i + 1)));
+    arr.ready = Promise.all(arr.map(wait)).then(() => {
+      for (let i = arr.length - 1; i >= 0; i--) if (!ok(arr[i])) arr.splice(i, 1);
+    });
+    return arr;
+  };
+
   const A = TT.A = {
-    path: rel => "assets/" + rel,
-    img(rel) {                       // Image đã nạp (dùng cho canvas)
-      if (!cache[rel]) {
-        const im = new Image();
-        im.src = "assets/" + rel;
-        cache[rel] = im;
-      }
-      return cache[rel];
-    },
-    ok: im => im && im.complete && im.naturalWidth > 0,
+    path: rel => "assets/" + resolve(rel),
+    img(rel) { return load(resolve(rel)); },   // Image đã nạp (dùng cho canvas)
+    ok,
     frames(group, name) {
       const key = group + ":" + name;
       if (!cache[key]) {
@@ -28,35 +81,47 @@
       }
       return cache[key];
     },
-    hero(name) { return A.frames("hero", name); },
+    hero(name) {
+      const g = genderDir(), w = worldId(), key = `hero:${g}:${w}:${name}`;
+      if (!cache[key]) {
+        // dead / hurt chỉ có 1 ảnh duy nhất (male/ha_gioi), dùng chung cho mọi thế giới & giới tính
+        if (name === "dead" || name === "hurt") cache[key] = [load(`player/male/ha_gioi/${name}.png`)];
+        else cache[key] = probe(i => `player/${g}/${w}/${HERO_DIR[name]}/${i}.png`);
+      }
+      return cache[key];
+    },
     vfx(name) { return A.frames("vfx", name); },
     season(s, v) { return A.img(`seasons/${s}_${v}.png`); },   // sprite hạt theo mùa: s = 0..3 (Xuân, Hạ, Thu, Đông), v = 0..2
     mon(k, state) {
-      const key = `mon:${k}:${state}`;
-      if (!cache[key]) cache[key] = Array.from({ length: MON[k][state] }, (_, i) => A.img(`mon/${k}_${state}_${i}.png`));
+      const w = worldId(), kinds = MON_KIND[w], key = `mon:${w}:${k}:${state}`;
+      if (!cache[key]) {
+        const kind = kinds[Math.max(0, Math.min(k, kinds.length - 1))];
+        cache[key] = probe(i => `monster/${w}/${kind}/${state}/${i}.png`, 6);
+      }
       return cache[key];
     },
     icon: (name, size = 22) => name ? `assets/icons/${name}_${size}.png` : "",
-    /** Nạp toàn bộ ảnh dùng trong game. onProgress(đã_xong, tổng) được gọi sau mỗi ảnh (lỗi cũng tính là xong để không kẹt). */
+    /** Nạp ảnh dùng trong game cho thế giới + giới tính hiện tại (thế giới khác nạp lười khi cần).
+     *  onProgress(đã_xong, tổng) được gọi sau mỗi mục (lỗi cũng tính là xong để không kẹt). */
     preload(onProgress) {
-      const list = [];
-      list.push(A.img("bg/title.png"));
-      ["far", "mid", "fore"].forEach(n => { for (let i = 0; i < 4; i++) list.push(A.img(`bg/${n}_${i}.png`)); });
-      Object.keys(COUNT.hero).forEach(n => list.push(...A.hero(n)));
-      Object.keys(COUNT.vfx).forEach(n => list.push(...A.vfx(n)));
-      Object.keys(MON).forEach(k => ["idle", "atk", "die"].forEach(s => list.push(...A.mon(+k, s))));
-      for (let s = 0; s < 4; s++) for (let v = 0; v < 3; v++) list.push(A.season(s, v));
-      for (let i = 1; i <= 6; i++) list.push(A.img(`ui/dice_${i}.png`));
+      const units = [];                 // mỗi mục: một Image hoặc một mảng khung
+      units.push(A.img("bg/title.png"));
+      ["far", "mid", "fore"].forEach(n => { for (let i = 0; i < 4; i++) units.push(A.img(`bg/${n}_${i}.png`)); });
+      ["sit", "walk", "atk", "hurt", "dead"].forEach(n => units.push(A.hero(n)));
+      Object.keys(COUNT.vfx).forEach(n => units.push(A.vfx(n)));
+      for (let k = 0; k < MON_TIERS; k++) ["idle", "atk", "die"].forEach(s => units.push(A.mon(k, s)));
+      for (let s = 0; s < 4; s++) for (let v = 0; v < 3; v++) units.push(A.season(s, v));
+      for (let i = 1; i <= 6; i++) units.push(A.img(`ui/dice_${i}.png`));
       const farm = ["empty", "seed", "sprout", "grow", "ripe", "wilt", "water", "gold", "fence", "trough", "rune", "scarecrow"];
-      farm.forEach(n => list.push(A.img(`farm/${n}.png`)));
-      const total = list.length; let done = 0;
+      farm.forEach(n => units.push(A.img(`farm/${n}.png`)));
+      const total = units.length; let done = 0;
       const report = () => { if (onProgress) { try { onProgress(done, total); } catch (e) { /* UI lỗi không được chặn việc nạp */ } } };
       const tick = () => { done++; report(); };
       report();
-      return Promise.all(list.map(im => new Promise(r => {
-        if (im.complete) { tick(); r(); return; }                       // đã có trong bộ nhớ đệm của trình duyệt
-        im.onload = im.onerror = () => { tick(); r(); };
-      })));
+      return Promise.all(units.map(u => {
+        const p = Array.isArray(u) ? (u.ready || Promise.all(u.map(wait))) : wait(u);
+        return p.then(tick);
+      }));
     },
   };
 
