@@ -124,5 +124,17 @@ console.log("F. meta.best do client khai không được nâng hạng quá thờ
   check("F3 người chơi thật: lên cấp 40 rồi chết giữa hai lần lưu, vẫn được ghi nhận", `${verdict(t2)}/${await lvOf(w)}`, "ok/40");
 }
 
+console.log("G. Lưu định kỳ khi đang online liên tục (client cộng 1 nhịp/giây, cloud.js ROUTINE_GAP = 45s): không bị time_jump");
+for (const GAP of [45, 60, 120]) {                                    // 120s là mức cuối máy chủ còn tính đủ 100% thời gian thật
+  const u = await newUser({ ageSeconds: 7200 }); let progress = 1000, r = await save(1, player(10, progress / 10), 0), accepted = 0;
+  for (let i = 0; i < 10; i++) {
+    await ago(u, GAP); progress += GAP;
+    const x = await save(1, player(10, Math.floor(progress / 10), progress % 10), r.rev);
+    if (!x.ok) break;
+    r = x; accepted++;
+  }
+  check(`G lưu mỗi ${GAP}s, 10 lần liên tiếp`, accepted, 10);
+}
+
 console.log(failed ? `\n${failed} ca thất bại` : "\nTất cả đạt");
 process.exit(failed ? 1 : 0);
