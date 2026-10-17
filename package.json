@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
-    "test": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs tests/test_world_map.mjs tests/test_maintenance.mjs tests/test_loading.mjs",
+    "test": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs tests/test_world_map.mjs tests/test_maintenance.mjs tests/test_loading.mjs tests/test_autosave_throttle.mjs",
     "mock": "node scripts/mock_supabase.mjs"
   },
   "devDependencies": {

@@ -9,7 +9,11 @@
   if (!enabled) return;
 
   const SESSION = "tu_tien_cloud_session";
-  const PUSH_DELAY = 8000, KEEPALIVE_MAX = 60000;
+  /* PUSH_DELAY: chờ sau một thay đổi thường (hành động của người chơi) trước khi đẩy.
+     ROUTINE_GAP: khoảng cách tối thiểu giữa hai lần đẩy cho lưu định kỳ (mỗi tháng game ~10s, xem cloud.routine). Phải giữ dưới 120s:
+     máy chủ chỉ tính đủ thời gian thật cho 120s đầu kể từ lần ghi trước, quá mức đó chỉ 50% (private.trusted_credit_ms) và dung sai chỉ 30s,
+     nên giãn quá mức này người chơi đang online sẽ bị 'time_jump'. Lần đẩy ngay sau khi bù offline là lưu thường nên vẫn chỉ chờ PUSH_DELAY. */
+  const PUSH_DELAY = 8000, ROUTINE_GAP = 45000, KEEPALIVE_MAX = 60000;
   const base = String(cfg.url).replace(/\/+$/, "");
   const ls = {
     get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -91,12 +95,24 @@
   /* `gen` tăng mỗi lần có thay đổi mới. Một lần gửi chỉ được xóa cờ dirty nếu trong lúc gửi không có thay đổi nào khác
      (nếu không, thay đổi mới nhất sẽ không bao giờ được đẩy lên và lần flush khi đóng tab cũng bị bỏ qua). */
   let revision = 0, dirty = false, gen = 0, timer = null, inflight = false, backoff = 0;
+  /* Giãn nhịp lưu định kỳ. Đo bằng đồng hồ đơn điệu, KHÔNG dùng Date.now(): ha_gioi_fix.js tạm thay Date.now bằng đồng hồ máy chủ
+     trong nhiều hàm game, nên hai lần gọi Date.now có thể thuộc hai đồng hồ lệch nhau hàng giờ. */
+  const mono = () => (typeof performance !== "undefined" && performance && typeof performance.now === "function" ? performance.now() : Date.now());
+  let lastPushAt = -Infinity, lastPushedGen = 0, urgentGen = 0, routineDepth = 0, timerDue = 0;
   let status = { state: "idle" };
   const listeners = [];
   cloud.status = () => status;
   cloud.onStatus = fn => { listeners.push(fn); };
   const emit = (state, extra) => { status = { state, ...(extra || {}) }; listeners.slice().forEach(f => { try { f(status); } catch (e) { /* ignore */ } }); };
-  const schedule = ms => { if (!timer) timer = setTimeout(() => { timer = null; run(); }, ms); };
+  /* Một hẹn giờ duy nhất; hẹn sớm hơn thì thay hẹn muộn hơn (thay đổi quan trọng không bị kẹt sau một lần lưu định kỳ đang chờ).
+     replace = true: đặt lại đúng theo ms dù sớm hay muộn hơn (sau khi gửi xong, tính lại theo lastPushAt mới). */
+  const schedule = (ms, replace = false) => {
+    const due = mono() + ms;
+    if (timer) { if (!replace && timerDue <= due) return; clearTimeout(timer); }
+    timerDue = due;
+    timer = setTimeout(() => { timer = null; run(); }, ms);
+  };
+  const routineDelay = () => Math.max(PUSH_DELAY, lastPushAt + ROUTINE_GAP - mono());
   const snapshot = () => store() ? store().snapshot() : { save: null, meta: {} };
   const hydrate = row => {
     if (!store()) throw new Error("runtime_store_missing");
@@ -105,7 +121,14 @@
     dirty = false; backoff = 0;
   };
 
-  cloud.markDirty = () => { if (!session || TT.sec.stale) return; dirty = true; gen++; schedule(PUSH_DELAY); };
+  cloud.markDirty = () => {
+    if (!session || TT.sec.stale) return;
+    dirty = true; gen++;
+    if (routineDepth > 0) { schedule(routineDelay()); return; }   // lưu định kỳ: giãn tối thiểu ROUTINE_GAP kể từ lần đẩy trước
+    urgentGen = gen; schedule(PUSH_DELAY);
+  };
+  /** Chạy fn (đồng bộ) mà mọi markDirty bên trong là lưu định kỳ, được giãn nhịp. Không dùng cho hành động của người chơi. */
+  cloud.routine = fn => { routineDepth++; try { return fn(); } finally { routineDepth--; } };
   cloud.dirty = () => dirty;
 
   cloud.push = async ({ force = false } = {}) => {
@@ -115,14 +138,14 @@
     const r = await http("/rest/v1/rpc/save_game", { method: "POST", token, body: { p_save: s.save, p_meta: s.meta, p_rev: revision, p_force: !!force } });
     revision = Math.max(0, Math.trunc(+r.rev) || revision);
     if (gen === g) dirty = false;                                   // có thay đổi mới trong lúc gửi thì giữ dirty để lần sau đẩy tiếp
-    backoff = 0;
+    backoff = 0; lastPushAt = mono(); lastPushedGen = g;
     return r;
   };
 
   async function run() {
     if (inflight || !session || !dirty || TT.sec.stale) return;
     inflight = true; emit("syncing");
-    try { await cloud.push(); emit("synced", { t: Date.now() }); if (dirty) schedule(1500); }
+    try { await cloud.push(); emit("synced", { t: Date.now() }); if (dirty) schedule(urgentGen > lastPushedGen ? 1500 : routineDelay(), true); }
     catch (e) {
       const m = String((e && e.message) || "");
       if (m === "conflict") {
@@ -144,7 +167,7 @@
     if (body.length > KEEPALIVE_MAX) return;
     try {
       fetch(base + "/rest/v1/rpc/save_game", { method: "POST", keepalive: true, headers: { apikey: cfg.anonKey, "Content-Type": "application/json", Authorization: "Bearer " + token }, body })
-        .then(r => (r.ok ? r.json() : null)).then(r => { if (r && r.rev) { revision = +r.rev || revision; if (gen === g) dirty = false; } }, () => {});
+        .then(r => (r.ok ? r.json() : null)).then(r => { if (r && r.rev) { revision = +r.rev || revision; if (gen === g) dirty = false; lastPushAt = mono(); lastPushedGen = g; } }, () => {});
     } catch (e) { /* page is closing */ }
   }
   if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSync(); });

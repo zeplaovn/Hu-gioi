@@ -146,7 +146,12 @@
       const left = p.lifespan - p.age;
       if (left === 10 || left === 3 || left === 1) this.log(`⚠ Thọ nguyên chỉ còn ${left} năm! Hãy đột phá hoặc tìm cách kéo dài tuổi thọ.`, "red");
     }
-    if (!this.quiet) { this.autosave(); }
+    /* Lưu định kỳ mỗi tháng game (~10s): vẫn ghi vào RAM để bản chụp luôn mới (đóng tab / ẩn tab lưu từ đó), nhưng việc đẩy lên
+       máy chủ được cloud.js giãn nhịp. Hành động của người chơi và syncCritical không đi qua đây nên vẫn lưu ngay như cũ. */
+    if (!this.quiet) {
+      const c = TT.cloud;
+      if (c && c.routine) c.routine(() => this.autosave()); else this.autosave();
+    }
     return true;
   };
 
