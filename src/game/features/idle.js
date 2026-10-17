@@ -207,6 +207,7 @@
     const rep = this.rep; this.rep = null;
     if (this.dead) return;
     this.refresh(); this.autosave();
+    this.renderFarm();                                          // passTime không vẽ khi quiet; vẽ đúng một lần sau khi bù xong
     if (show) this.showReport(dt, eff, capped, b, rep);
   };
 
