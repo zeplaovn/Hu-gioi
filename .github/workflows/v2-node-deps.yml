@@ -1,0 +1,27 @@
+name: V2 Frontend Dependencies
+on:
+  push:
+    branches: [scratch/v2-locks-20261017]
+permissions:
+  contents: read
+jobs:
+  frontend-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: .scratch-v2-locks/frontend/package-lock.json
+      - name: Install exact frontend dependencies
+        working-directory: .scratch-v2-locks/frontend
+        run: npm ci --no-audit --no-fund
+      - name: Pack node_modules
+        working-directory: .scratch-v2-locks/frontend
+        run: tar -czf ../frontend-node-modules.tgz node_modules
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-node-modules
+          path: .scratch-v2-locks/frontend-node-modules.tgz
+          if-no-files-found: error
