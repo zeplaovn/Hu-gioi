@@ -12,11 +12,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: .scratch-v2-locks/frontend/package-lock.json
       - name: Install exact frontend dependencies
         working-directory: .scratch-v2-locks/frontend
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
       - name: Pack node_modules
         working-directory: .scratch-v2-locks/frontend
         run: tar -czf ../frontend-node-modules.tgz node_modules
