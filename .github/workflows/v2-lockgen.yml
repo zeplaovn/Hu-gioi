@@ -1,0 +1,30 @@
+name: V2 Lockfile Generator
+on:
+  push:
+    branches: [scratch/v2-locks-20261017]
+permissions:
+  contents: read
+jobs:
+  locks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate frontend lock
+        working-directory: .scratch-v2-locks/frontend
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.2'
+      - name: Generate backend sums
+        working-directory: .scratch-v2-locks/backend
+        run: go mod download all
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v2-lockfiles
+          path: |
+            .scratch-v2-locks/frontend/package-lock.json
+            .scratch-v2-locks/backend/go.sum
+          if-no-files-found: error
