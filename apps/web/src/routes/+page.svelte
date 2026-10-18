@@ -18,6 +18,7 @@
 <svelte:head><title>Thiên Vân Đại Lục</title></svelte:head>
 
 <section class="hero">
+  <div class="seal" aria-hidden="true">天</div>
   <p class="dim eyebrow">Sau Thiên Biến, nhân loại bị dịch chuyển khỏi Trái Đất…</p>
   <h1>Thiên Vân Đại Lục</h1>
   <p class="lede">Một kiếp tu sĩ, ba đại giới. Tu luyện theo thời gian thật, vượt Hạ Giới, Linh Giới, Tiên Giới. Chết thật là mất tất cả, chỉ còn Thiên Mệnh theo ngươi qua kiếp sau.</p>
@@ -41,7 +42,10 @@
 </section>
 
 <style>
-  .hero { max-width: 520px; margin: 6vh auto 0; }
+  .hero { max-width: 520px; margin: 6vh auto 0; text-align: center; }
+  .hero form, .hero .notice { text-align: left; }
+  .seal { width: 64px; height: 64px; margin: 0 auto 14px; display: grid; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); font: 36px Georgia, serif; }
+  h1 { color: var(--gold); letter-spacing: .06em; }
   .eyebrow { font-style: italic; margin-bottom: 0.2rem; }
   .lede { color: var(--paper-dim); margin-bottom: 1.5rem; }
   code { background: var(--ink-3); padding: 0.05rem 0.35rem; border-radius: 4px; }
