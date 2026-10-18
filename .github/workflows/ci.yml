@@ -1,35 +1,37 @@
 name: CI
-
 on:
+  push: { branches: [main, "feat/**"] }
   pull_request:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
 
 jobs:
-  test-build:
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build
-        env:
-          TVDL_SALT: ci-only-test-salt-0123456789abcdef
-          SUPABASE_URL: https://example.supabase.co
-          SUPABASE_ANON_KEY: ci-public-anon-key-0123456789abcdef
-        run: npm run build
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: Dữ liệu sinh ra khớp data/*.csv
+        run: pnpm gen:check
+      - name: game-core + web (type-check, unit test)
+        run: |
+          pnpm --filter @hu-gioi/game-core test
+          pnpm --filter web check
+          pnpm --filter web test
+      - name: Edge Function (handler, mock)
+        run: pnpm test:edge
+      - name: Database (migration + SQL + parity + handler↔Postgres)
+        run: pnpm db:test
+      - name: Build web
+        run: pnpm build:web

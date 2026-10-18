@@ -1,0 +1,73 @@
+﻿id,name,world,rarity,source,use,base_price,currency,grow_hours,trade
+HERB-001,Thanh Linh Thảo,Hạ Giới,Phổ thông,Linh điền/rừng,Tu vi,10,LS,2,Có
+HERB-002,Huyết Diệp Hoa,Hạ Giới,Phổ thông,Yêu vực,Hồi phục,12,LS,2,Có
+HERB-003,Ngưng Lộ Thảo,Hạ Giới,Phổ thông,Ven suối linh,Ổn định linh lực,12,LS,2,Có
+HERB-004,Xích Dương Hoa,Hạ Giới,Tốt,Hỏa sơn,Hỏa hệ/luyện đan,24,LS,4,Có
+HERB-005,Hàn Nguyệt Diệp,Hạ Giới,Tốt,Đầm lạnh,Thủy/Băng,25,LS,4,Có
+HERB-006,Kim Tuyến Thảo,Hạ Giới,Tốt,Khoáng mạch,Kim hệ,26,LS,4,Có
+HERB-007,Thổ Linh Sâm,Hạ Giới,Tốt,Hang động,Thổ/DEF,28,LS,4,Có
+HERB-008,Mộc Tâm Nha,Hạ Giới,Tốt,Cổ lâm,Mộc/hồi phục,28,LS,4,Có
+HERB-009,Trúc Cơ Quả,Hạ Giới,Hiếm,Bí cảnh,Đột phá Trúc Cơ,90,LS,8,Hạn chế
+HERB-010,Kim Dương Chi,Hạ Giới,Hiếm,Núi lửa,Kim Đan/Hỏa,95,LS,8,Hạn chế
+HERB-011,Âm Nguyệt Liên,Hạ Giới,Hiếm,Đầm đêm,Thần thức/tâm ma,100,LS,8,Hạn chế
+HERB-012,Hóa Anh Hoa,Hạ Giới,Cực hiếm,Boss Nguyên Anh,Nguyên Anh,300,LS,18,Hạn chế
+HERB-013,Thọ Nguyên Quả,Hạ Giới,Cực hiếm,Kỳ ngộ,Thọ nguyên,360,LS,18,Hạn chế
+HERB-014,Ngũ Sắc Linh Chi,Hạ Giới,Cực hiếm,Sự kiện/bí cảnh,Tinh luyện linh căn,420,LS,18,Hạn chế
+HERB-015,Lôi Văn Quả,Hạ Giới,Hiếm,Lôi vực,Lôi hệ,120,LS,8,Hạn chế
+HERB-016,Phong Linh Hoa,Hạ Giới,Hiếm,Vách núi,Phong/SPD,115,LS,8,Hạn chế
+HERB-017,Tâm Tĩnh Trúc,Hạ Giới,Hiếm,Thanh Vân,Tâm ma,110,LS,8,Hạn chế
+HERB-018,Huyết Linh Sâm,Hạ Giới,Hiếm,Huyết Sát,Luyện thể,125,LS,8,Hạn chế
+HERB-019,Bách Dược Tâm,Hạ Giới,Hiếm,Vạn Dược,Đan đạo,130,LS,8,Hạn chế
+HERB-020,Giới Mạch Thảo,Hạ Giới,Cực hiếm,Giới bích,Phi thăng,450,LS,18,Hạn chế
+HERB-021,Cửu Diệp Chi,Hạ Giới,Hiếm,Cổ động,Tu vi cao cấp,140,LS,8,Hạn chế
+HERB-022,Thanh Hồn Quả,Hạ Giới,Hiếm,Mộ cổ,Thần thức,135,LS,8,Hạn chế
+HERB-023,Hỏa Tủy Liên,Hạ Giới,Hiếm,Dung nham,Hỏa/kháng,145,LS,8,Hạn chế
+HERB-024,Địa Mạch Sâm,Hạ Giới,Hiếm,Địa mạch,HP/DEF,145,LS,8,Hạn chế
+HERB-025,Tinh Huy Thảo,Linh Giới,Tốt,Tinh nguyên cốc,Thần thức,5,LT,4,Có
+HERB-026,Vạn Hồn Thảo,Linh Giới,Hiếm,Hồn vực,Thần hồn,22,LT,8,Hạn chế
+HERB-027,Huyền Chỉ Hoa,Linh Giới,Hiếm,Sát vực,Giảm sát khí,24,LT,8,Hạn chế
+HERB-028,Lưỡng Sinh Diệp,Linh Giới,Cực hiếm,Sinh tử cốc,Bảo mệnh,95,LT,18,Hạn chế
+HERB-029,Hư Không Lan,Linh Giới,Hiếm,Không gian liệt phùng,Không gian,28,LT,8,Hạn chế
+HERB-030,Pháp Tướng Quả,Linh Giới,Hiếm,Boss pháp tướng,Pháp tướng,32,LT,8,Hạn chế
+HERB-031,Thái Hư Chi,Linh Giới,Tốt,Thái Hư Kiếm Cung,Tu vi/kiếm,10,LT,4,Có
+HERB-032,Ma Tâm Liên,Linh Giới,Hiếm,Vô Tướng Ma Điện,Ma công,27,LT,8,Hạn chế
+HERB-033,Bách Thảo Tinh,Linh Giới,Tốt,Bách Thảo Thánh Viện,Luyện đan,12,LT,4,Có
+HERB-034,Thiên Cơ Hoa,Linh Giới,Hiếm,Thiên Cơ Các,Ngộ tính,35,LT,8,Hạn chế
+HERB-035,Tẩy Linh Quả,Linh Giới,Cực hiếm,Cổ bí cảnh,Linh căn,120,LT,18,Hạn chế
+HERB-036,Giới Tâm Liên,Linh Giới,Cực hiếm,Giới tâm,Phi thăng,150,LT,18,Hạn chế
+HERB-037,Không Minh Thảo,Linh Giới,Hiếm,Hư không,RES/không gian,30,LT,8,Hạn chế
+HERB-038,Hợp Nguyên Quả,Linh Giới,Hiếm,Hợp Thể bí cảnh,Hợp Thể,40,LT,8,Hạn chế
+HERB-039,Đại Thừa Kim Liên,Linh Giới,Cực hiếm,Đại Thừa boss,Đại Thừa,130,LT,18,Hạn chế
+HERB-040,Hồn Ngọc Lan,Linh Giới,Hiếm,Hồn trì,SPIRIT,34,LT,8,Hạn chế
+HERB-041,Tinh Không Diệp,Linh Giới,Tốt,Tinh không vực,ACC/EVA,13,LT,4,Có
+HERB-042,Sát Tâm Thảo,Linh Giới,Hiếm,Chiến trường cổ,Sát khí,38,LT,8,Hạn chế
+HERB-043,Ngũ Hành Linh Quả,Linh Giới,Cực hiếm,Ngũ hành bí cảnh,Affinity,110,LT,18,Hạn chế
+HERB-044,Hư Linh Mộc Tâm,Linh Giới,Hiếm,Hư Linh lâm,DEF,36,LT,8,Hạn chế
+HERB-045,Cửu Khúc Linh Sâm,Linh Giới,Cực hiếm,Cổ dược viên,Tu vi,125,LT,18,Hạn chế
+HERB-046,Vấn Tâm Hoa,Linh Giới,Hiếm,Tâm cảnh,Tâm ma,42,LT,8,Hạn chế
+HERB-047,Thiên Hồn Quả,Linh Giới,Cực hiếm,Hồn giới,Thần hồn,140,LT,18,Hạn chế
+HERB-048,Giới Kiếp Tử Liên,Linh Giới,Cực hiếm,Giới kiếp,Phi thăng Tiên Giới,180,LT,18,Hạn chế
+HERB-049,Vân Hạc Tiên Thảo,Tiên Giới,Tốt,Tiên dược viên,Tiên linh lực,3,TN,4,Có
+HERB-050,Thổ Tôn Quả,Tiên Giới,Hiếm,Thổ pháp vực,Thổ pháp tắc,15,TN,8,Hạn chế
+HERB-051,Đản Hồn Hoa,Tiên Giới,Hiếm,U Minh Cổ Điện,Linh hồn,18,TN,8,Hạn chế
+HERB-052,Cầu Long Thảo,Tiên Giới,Hiếm,Long mạch,Luyện thể,16,TN,8,Hạn chế
+HERB-053,Thiên Linh Trúc Diệp,Tiên Giới,Hiếm,Độc cốc,Độc/giải độc,14,TN,8,Hạn chế
+HERB-054,Cuồng Diễm Thảo,Tiên Giới,Hiếm,Hỏa pháp vực,Hỏa pháp tắc,18,TN,8,Hạn chế
+HERB-055,Tinh Huy Tiên Thảo,Tiên Giới,Hiếm,Tinh vực,Tinh thần,16,TN,8,Hạn chế
+HERB-056,Lộc Nhung Tiên Thảo,Tiên Giới,Tốt,Tiên lâm,Hồi phục,5,TN,4,Có
+HERB-057,Vạn Hồn Tiên Thảo,Tiên Giới,Cực hiếm,U Minh,Thần hồn,75,TN,18,Hạn chế
+HERB-058,Huyền Chỉ Tiên Hoa,Tiên Giới,Cực hiếm,Sát vực,Sát suy,82,TN,18,Hạn chế
+HERB-059,Lưỡng Sinh Tiên Quả,Tiên Giới,Cực hiếm,Sinh tử giới,Bảo mệnh/suy kiếp,95,TN,18,Hạn chế
+HERB-060,Kim Tu Thập Diệp,Tiên Giới,Hiếm,Dược viên,Trồng trọt,20,TN,8,Hạn chế
+HERB-061,Khổ Lạc Hoa,Tiên Giới,Cực hiếm,Khổ hải,Túc Sát Đan,100,TN,18,Hạn chế
+HERB-062,Huyền Chân Chi Tinh,Tiên Giới,Cực hiếm,Đại La di tích,Đại La,130,TN,18,Hạn chế
+HERB-063,U Thủy Tiên Liên,Tiên Giới,Cực hiếm,U thủy vực,Thủy pháp tắc,115,TN,18,Hạn chế
+HERB-064,Thời Sa Hoa,Tiên Giới,Cực hiếm,Thời gian khe nứt,Thời Gian,150,TN,18,Hạn chế
+HERB-065,Không Gian Bồ Đề,Tiên Giới,Cực hiếm,Không gian cổ điện,Không Gian,150,TN,18,Hạn chế
+HERB-066,Luân Hồi Quả,Tiên Giới,Đạo phẩm,U Minh cấm địa,Luân Hồi,0,TN,0,Không
+HERB-067,Đạo Tâm Liên,Tiên Giới,Cực hiếm,Vấn đạo đài,Tâm ma,120,TN,18,Hạn chế
+HERB-068,Tiên Khiếu Quả,Tiên Giới,Hiếm,Tiên khiếu bí cảnh,Tiên khiếu,28,TN,8,Hạn chế
+HERB-069,Kim Hồn Tiên Quả,Tiên Giới,Cực hiếm,Kim Tiên boss,Kim Tiên,90,TN,18,Hạn chế
+HERB-070,Thái Ất Ngọc Chi,Tiên Giới,Cực hiếm,Thái Ất bí cảnh,Thái Ất,120,TN,18,Hạn chế
+HERB-071,Đại Đạo Hoa,Tiên Giới,Đạo phẩm,Endgame,Pháp tắc cao cấp,0,TN,0,Không
+HERB-072,Quy Hương Bạch Liên,Tiên Giới,Đạo phẩm,Đài Quy Hương,Cốt truyện,0,TN,0,Không

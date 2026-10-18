@@ -1,0 +1,83 @@
+﻿id,name,world,rarity,slot,tier,effect,focus,price,currency,source
+EQ-001,Thanh Vân Vũ khí I,Hạ Giới,Phàm,Vũ khí,1,"ATK +6%, PEN +1%",ATK/PEN,80,LS,Shop/Craft/Drop
+EQ-002,Huyết Sát Pháp bào I,Hạ Giới,Phàm,Pháp bào,1,"HP +7%, DEF +4%",HP/DEF,80,LS,Shop/Craft/Drop
+EQ-003,Vạn Dược Giày I,Hạ Giới,Phàm,Giày,1,"SPD +2%, EVA +1%",SPD/EVA,80,LS,Shop/Craft/Drop
+EQ-004,Ngũ Hành Hộ phù I,Hạ Giới,Phàm,Hộ phù,1,"RES +4%, SPIRIT +6%",RES/SPIRIT,80,LS,Shop/Craft/Drop
+EQ-005,Thanh Vân Pháp giới I,Hạ Giới,Phàm,Pháp giới,1,"Kho +6, tu luyện +2%",Kho/tu luyện,80,LS,Shop/Craft/Drop
+EQ-006,Huyết Sát Pháp bảo chính I,Hạ Giới,Phàm,Pháp bảo chính,1,Kỹ năng chủ động tier 1,Active,80,LS,Shop/Craft/Drop
+EQ-007,Vạn Dược Pháp bảo phụ I,Hạ Giới,Phàm,Pháp bảo phụ,1,Passive hiệu quả +4%,Passive,80,LS,Shop/Craft/Drop
+EQ-008,Huyết Sát Vũ khí II,Hạ Giới,Hạ phẩm,Vũ khí,2,"ATK +8%, PEN +2%",ATK/PEN,114,LS,Shop/Craft/Drop
+EQ-009,Vạn Dược Pháp bào II,Hạ Giới,Hạ phẩm,Pháp bào,2,"HP +9%, DEF +5%",HP/DEF,114,LS,Shop/Craft/Drop
+EQ-010,Ngũ Hành Giày II,Hạ Giới,Hạ phẩm,Giày,2,"SPD +3%, EVA +1%",SPD/EVA,114,LS,Shop/Craft/Drop
+EQ-011,Thanh Vân Hộ phù II,Hạ Giới,Hạ phẩm,Hộ phù,2,"RES +5%, SPIRIT +8%",RES/SPIRIT,114,LS,Shop/Craft/Drop
+EQ-012,Huyết Sát Pháp giới II,Hạ Giới,Hạ phẩm,Pháp giới,2,"Kho +7, tu luyện +3%",Kho/tu luyện,114,LS,Shop/Craft/Drop
+EQ-013,Vạn Dược Pháp bảo chính II,Hạ Giới,Hạ phẩm,Pháp bảo chính,2,Kỹ năng chủ động tier 2,Active,114,LS,Shop/Craft/Drop
+EQ-014,Ngũ Hành Pháp bảo phụ II,Hạ Giới,Hạ phẩm,Pháp bảo phụ,2,Passive hiệu quả +5%,Passive,114,LS,Shop/Craft/Drop
+EQ-015,Vạn Dược Vũ khí III,Hạ Giới,Trung phẩm,Vũ khí,3,"ATK +10%, PEN +2%",ATK/PEN,161,LS,Shop/Craft/Drop
+EQ-016,Ngũ Hành Pháp bào III,Hạ Giới,Trung phẩm,Pháp bào,3,"HP +11%, DEF +6%",HP/DEF,161,LS,Shop/Craft/Drop
+EQ-017,Thanh Vân Giày III,Hạ Giới,Trung phẩm,Giày,3,"SPD +3%, EVA +2%",SPD/EVA,161,LS,Shop/Craft/Drop
+EQ-018,Huyết Sát Hộ phù III,Hạ Giới,Trung phẩm,Hộ phù,3,"RES +6%, SPIRIT +10%",RES/SPIRIT,161,LS,Shop/Craft/Drop
+EQ-019,Vạn Dược Pháp giới III,Hạ Giới,Trung phẩm,Pháp giới,3,"Kho +8, tu luyện +4%",Kho/tu luyện,161,LS,Shop/Craft/Drop
+EQ-020,Ngũ Hành Pháp bảo chính III,Hạ Giới,Trung phẩm,Pháp bảo chính,3,Kỹ năng chủ động tier 3,Active,161,LS,Shop/Craft/Drop
+EQ-021,Thanh Vân Pháp bảo phụ III,Hạ Giới,Trung phẩm,Pháp bảo phụ,3,Passive hiệu quả +6%,Passive,161,LS,Shop/Craft/Drop
+EQ-022,Ngũ Hành Vũ khí IV,Hạ Giới,Thượng phẩm,Vũ khí,4,"ATK +12%, PEN +3%",ATK/PEN,229,LS,Shop/Craft/Drop
+EQ-023,Thanh Vân Pháp bào IV,Hạ Giới,Thượng phẩm,Pháp bào,4,"HP +13%, DEF +7%",HP/DEF,229,LS,Shop/Craft/Drop
+EQ-024,Huyết Sát Giày IV,Hạ Giới,Thượng phẩm,Giày,4,"SPD +4%, EVA +2%",SPD/EVA,229,LS,Shop/Craft/Drop
+EQ-025,Vạn Dược Hộ phù IV,Hạ Giới,Thượng phẩm,Hộ phù,4,"RES +7%, SPIRIT +12%",RES/SPIRIT,229,LS,Shop/Craft/Drop
+EQ-026,Ngũ Hành Pháp giới IV,Hạ Giới,Thượng phẩm,Pháp giới,4,"Kho +9, tu luyện +5%",Kho/tu luyện,229,LS,Shop/Craft/Drop
+EQ-027,Thanh Vân Pháp bảo chính IV,Hạ Giới,Thượng phẩm,Pháp bảo chính,4,Kỹ năng chủ động tier 4,Active,229,LS,Shop/Craft/Drop
+EQ-028,Huyết Sát Pháp bảo phụ IV,Hạ Giới,Thượng phẩm,Pháp bảo phụ,4,Passive hiệu quả +7%,Passive,229,LS,Shop/Craft/Drop
+EQ-029,Thái Hư Vũ khí I,Linh Giới,Thượng phẩm,Vũ khí,5,"ATK +14%, PEN +3%",ATK/PEN,488,LT,Shop/Craft/Drop
+EQ-030,Vô Tướng Pháp bào I,Linh Giới,Thượng phẩm,Pháp bào,5,"HP +15%, DEF +8%",HP/DEF,488,LT,Shop/Craft/Drop
+EQ-031,Thiên Cơ Giày I,Linh Giới,Thượng phẩm,Giày,5,"SPD +4%, EVA +2%",SPD/EVA,488,LT,Shop/Craft/Drop
+EQ-032,Tinh Không Hộ phù I,Linh Giới,Thượng phẩm,Hộ phù,5,"RES +8%, SPIRIT +14%",RES/SPIRIT,488,LT,Shop/Craft/Drop
+EQ-033,Thái Hư Pháp giới I,Linh Giới,Thượng phẩm,Pháp giới,5,"Kho +10, tu luyện +6%",Kho/tu luyện,488,LT,Shop/Craft/Drop
+EQ-034,Vô Tướng Pháp bảo chính I,Linh Giới,Thượng phẩm,Pháp bảo chính,5,Kỹ năng chủ động tier 5,Active,488,LT,Shop/Craft/Drop
+EQ-035,Thiên Cơ Pháp bảo phụ I,Linh Giới,Thượng phẩm,Pháp bảo phụ,5,Passive hiệu quả +8%,Passive,488,LT,Shop/Craft/Drop
+EQ-036,Vô Tướng Vũ khí II,Linh Giới,Cực phẩm,Vũ khí,6,"ATK +16%, PEN +4%",ATK/PEN,693,LT,Shop/Craft/Drop
+EQ-037,Thiên Cơ Pháp bào II,Linh Giới,Cực phẩm,Pháp bào,6,"HP +17%, DEF +9%",HP/DEF,693,LT,Shop/Craft/Drop
+EQ-038,Tinh Không Giày II,Linh Giới,Cực phẩm,Giày,6,"SPD +5%, EVA +3%",SPD/EVA,693,LT,Shop/Craft/Drop
+EQ-039,Thái Hư Hộ phù II,Linh Giới,Cực phẩm,Hộ phù,6,"RES +9%, SPIRIT +16%",RES/SPIRIT,693,LT,Shop/Craft/Drop
+EQ-040,Vô Tướng Pháp giới II,Linh Giới,Cực phẩm,Pháp giới,6,"Kho +11, tu luyện +7%",Kho/tu luyện,693,LT,Shop/Craft/Drop
+EQ-041,Thiên Cơ Pháp bảo chính II,Linh Giới,Cực phẩm,Pháp bảo chính,6,Kỹ năng chủ động tier 6,Active,693,LT,Shop/Craft/Drop
+EQ-042,Tinh Không Pháp bảo phụ II,Linh Giới,Cực phẩm,Pháp bảo phụ,6,Passive hiệu quả +9%,Passive,693,LT,Shop/Craft/Drop
+EQ-043,Thiên Cơ Vũ khí III,Linh Giới,Linh bảo,Vũ khí,7,"ATK +18%, PEN +4%",ATK/PEN,984,LT,Boss/Craft
+EQ-044,Tinh Không Pháp bào III,Linh Giới,Linh bảo,Pháp bào,7,"HP +19%, DEF +10%",HP/DEF,984,LT,Boss/Craft
+EQ-045,Thái Hư Giày III,Linh Giới,Linh bảo,Giày,7,"SPD +5%, EVA +3%",SPD/EVA,984,LT,Boss/Craft
+EQ-046,Vô Tướng Hộ phù III,Linh Giới,Linh bảo,Hộ phù,7,"RES +10%, SPIRIT +18%",RES/SPIRIT,984,LT,Boss/Craft
+EQ-047,Thiên Cơ Pháp giới III,Linh Giới,Linh bảo,Pháp giới,7,"Kho +12, tu luyện +8%",Kho/tu luyện,984,LT,Boss/Craft
+EQ-048,Tinh Không Pháp bảo chính III,Linh Giới,Linh bảo,Pháp bảo chính,7,Kỹ năng chủ động tier 7,Active,984,LT,Boss/Craft
+EQ-049,Thái Hư Pháp bảo phụ III,Linh Giới,Linh bảo,Pháp bảo phụ,7,Passive hiệu quả +10%,Passive,984,LT,Boss/Craft
+EQ-050,Cửu Tiêu Vũ khí I,Tiên Giới,Cực phẩm,Vũ khí,8,"ATK +20%, PEN +5%",ATK/PEN,1746,TN,Shop/Craft/Drop
+EQ-051,Vạn Pháp Pháp bào I,Tiên Giới,Cực phẩm,Pháp bào,8,"HP +21%, DEF +11%",HP/DEF,1746,TN,Shop/Craft/Drop
+EQ-052,U Minh Giày I,Tiên Giới,Cực phẩm,Giày,8,"SPD +6%, EVA +3%",SPD/EVA,1746,TN,Shop/Craft/Drop
+EQ-053,Quy Hương Hộ phù I,Tiên Giới,Cực phẩm,Hộ phù,8,"RES +11%, SPIRIT +20%",RES/SPIRIT,1746,TN,Shop/Craft/Drop
+EQ-054,Cửu Tiêu Pháp giới I,Tiên Giới,Cực phẩm,Pháp giới,8,"Kho +13, tu luyện +9%",Kho/tu luyện,1746,TN,Shop/Craft/Drop
+EQ-055,Vạn Pháp Pháp bảo chính I,Tiên Giới,Cực phẩm,Pháp bảo chính,8,Kỹ năng chủ động tier 8,Active,1746,TN,Shop/Craft/Drop
+EQ-056,U Minh Pháp bảo phụ I,Tiên Giới,Cực phẩm,Pháp bảo phụ,8,Passive hiệu quả +11%,Passive,1746,TN,Shop/Craft/Drop
+EQ-057,Vạn Pháp Vũ khí II,Tiên Giới,Tiên phẩm,Vũ khí,9,"ATK +22%, PEN +5%",ATK/PEN,2480,TN,Boss/Craft
+EQ-058,U Minh Pháp bào II,Tiên Giới,Tiên phẩm,Pháp bào,9,"HP +23%, DEF +12%",HP/DEF,2480,TN,Boss/Craft
+EQ-059,Quy Hương Giày II,Tiên Giới,Tiên phẩm,Giày,9,"SPD +6%, EVA +4%",SPD/EVA,2480,TN,Boss/Craft
+EQ-060,Cửu Tiêu Hộ phù II,Tiên Giới,Tiên phẩm,Hộ phù,9,"RES +12%, SPIRIT +22%",RES/SPIRIT,2480,TN,Boss/Craft
+EQ-061,Vạn Pháp Pháp giới II,Tiên Giới,Tiên phẩm,Pháp giới,9,"Kho +14, tu luyện +10%",Kho/tu luyện,2480,TN,Boss/Craft
+EQ-062,U Minh Pháp bảo chính II,Tiên Giới,Tiên phẩm,Pháp bảo chính,9,Kỹ năng chủ động tier 9,Active,2480,TN,Boss/Craft
+EQ-063,Quy Hương Pháp bảo phụ II,Tiên Giới,Tiên phẩm,Pháp bảo phụ,9,Passive hiệu quả +12%,Passive,2480,TN,Boss/Craft
+EQ-064,U Minh Vũ khí III,Tiên Giới,Đạo phẩm,Vũ khí,10,"ATK +24%, PEN +6%",ATK/PEN,3521,TN,Boss/Craft
+EQ-065,Quy Hương Pháp bào III,Tiên Giới,Đạo phẩm,Pháp bào,10,"HP +25%, DEF +13%",HP/DEF,3521,TN,Boss/Craft
+EQ-066,Cửu Tiêu Giày III,Tiên Giới,Đạo phẩm,Giày,10,"SPD +7%, EVA +4%",SPD/EVA,3521,TN,Boss/Craft
+EQ-067,Vạn Pháp Hộ phù III,Tiên Giới,Đạo phẩm,Hộ phù,10,"RES +13%, SPIRIT +24%",RES/SPIRIT,3521,TN,Boss/Craft
+EQ-068,U Minh Pháp giới III,Tiên Giới,Đạo phẩm,Pháp giới,10,"Kho +15, tu luyện +10%",Kho/tu luyện,3521,TN,Boss/Craft
+EQ-069,Quy Hương Pháp bảo chính III,Tiên Giới,Đạo phẩm,Pháp bảo chính,10,Kỹ năng chủ động tier 10,Active,3521,TN,Boss/Craft
+EQ-070,Cửu Tiêu Pháp bảo phụ III,Tiên Giới,Đạo phẩm,Pháp bảo phụ,10,Passive hiệu quả +13%,Passive,3521,TN,Boss/Craft
+EQ-071,Thanh Phong Kiếm,Hạ Giới,Trung phẩm,Vũ khí,99,"Kiếm kỹ +12%, ATK +8%",Unique,0,LS,Thanh Vân tuyến
+EQ-072,Huyết Ma Đao,Hạ Giới,Thượng phẩm,Vũ khí,99,ATK +12%; active đổi HP lấy burst,Unique,0,LS,Huyết Sát tuyến
+EQ-073,Dược Vương Đỉnh,Hạ Giới,Thượng phẩm,Pháp bảo chính,99,Tăng xác suất chất lượng luyện đan,Unique,0,LS,Vạn Dược tuyến
+EQ-074,Ngũ Lôi Lệnh,Hạ Giới,Cực phẩm,Pháp bảo chính,99,Lôi kích + phá giáp PvE,Unique,0,LS,Boss Hóa Thần
+EQ-075,Thái Hư Kiếm Trận Đồ,Linh Giới,Linh bảo,Pháp bảo chính,99,Triệu hồi kiếm trận,Unique,0,LT,Thái Hư tuyến
+EQ-076,Vô Tướng Ma Ấn,Linh Giới,Linh bảo,Pháp bảo phụ,99,Đổi HP lấy burst có cooldown,Unique,0,LT,Vô Tướng tuyến
+EQ-077,Thiên Cơ Kính,Linh Giới,Linh bảo,Pháp bảo phụ,99,ACC + phát hiện bẫy/cấm chế,Unique,0,LT,Thiên Cơ tuyến
+EQ-078,Giới Tâm Chung,Linh Giới,Linh bảo,Pháp bảo chính,99,Kháng không gian/giới kiếp,Unique,0,LT,Boss cuối Linh Giới
+EQ-079,Cửu Tiêu Tiên Kiếm,Tiên Giới,Tiên phẩm,Vũ khí,99,Pháp tắc damage +15% PvE,Unique,0,TN,Cửu Tiêu Tiên Đình
+EQ-080,Vạn Pháp Luân,Tiên Giới,Tiên phẩm,Pháp bảo chính,99,Đổi stance pháp tắc,Unique,0,TN,Vạn Pháp Đạo Viện
+EQ-081,U Minh Luân Hồi Đăng,Tiên Giới,Tiên phẩm,Pháp bảo phụ,99,Bảo hộ thần hồn,Unique,0,TN,U Minh Cổ Điện
+EQ-082,Quy Hương Bạch Ngọc Bội,Tiên Giới,Đạo phẩm,Hộ phù,99,Cốt truyện; không cấp lợi thế PvP,Unique,0,TN,Đài Quy Hương

@@ -1,0 +1,61 @@
+﻿id,stage_id,stage,world,category,price,currency,refresh_hours,note
+SHOP-001,HG00,Phàm Nhân,Hạ Giới,Consumable,14,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-002,HG00,Phàm Nhân,Hạ Giới,Material,9,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-003,HG00,Phàm Nhân,Hạ Giới,Equipment,63,LS,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-004,HG00,Phàm Nhân,Hạ Giới,Craft Fee,7,LS,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-005,HG01,Luyện Khí,Hạ Giới,Consumable,18,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-006,HG01,Luyện Khí,Hạ Giới,Material,12,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-007,HG01,Luyện Khí,Hạ Giới,Equipment,81,LS,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-008,HG01,Luyện Khí,Hạ Giới,Craft Fee,9,LS,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-009,HG02,Trúc Cơ,Hạ Giới,Consumable,34,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-010,HG02,Trúc Cơ,Hạ Giới,Material,21,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-011,HG02,Trúc Cơ,Hạ Giới,Equipment,149,LS,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-012,HG02,Trúc Cơ,Hạ Giới,Craft Fee,17,LS,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-013,HG03,Kim Đan,Hạ Giới,Consumable,81,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-014,HG03,Kim Đan,Hạ Giới,Material,51,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-015,HG03,Kim Đan,Hạ Giới,Equipment,355,LS,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-016,HG03,Kim Đan,Hạ Giới,Craft Fee,41,LS,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-017,HG04,Nguyên Anh,Hạ Giới,Consumable,192,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-018,HG04,Nguyên Anh,Hạ Giới,Material,120,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-019,HG04,Nguyên Anh,Hạ Giới,Equipment,841,LS,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-020,HG04,Nguyên Anh,Hạ Giới,Craft Fee,96,LS,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-021,HG05,Hóa Thần,Hạ Giới,Consumable,357,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-022,HG05,Hóa Thần,Hạ Giới,Material,223,LS,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-023,HG05,Hóa Thần,Hạ Giới,Equipment,1560,LS,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-024,HG05,Hóa Thần,Hạ Giới,Craft Fee,178,LS,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-025,LG01,Luyện Hư,Linh Giới,Consumable,8,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-026,LG01,Luyện Hư,Linh Giới,Material,5,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-027,LG01,Luyện Hư,Linh Giới,Equipment,37,LT,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-028,LG01,Luyện Hư,Linh Giới,Craft Fee,4,LT,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-029,LG02,Hợp Thể,Linh Giới,Consumable,21,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-030,LG02,Hợp Thể,Linh Giới,Material,13,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-031,LG02,Hợp Thể,Linh Giới,Equipment,91,LT,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-032,LG02,Hợp Thể,Linh Giới,Craft Fee,10,LT,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-033,LG03,Đại Thừa,Linh Giới,Consumable,54,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-034,LG03,Đại Thừa,Linh Giới,Material,34,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-035,LG03,Đại Thừa,Linh Giới,Equipment,238,LT,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-036,LG03,Đại Thừa,Linh Giới,Craft Fee,27,LT,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-037,LG04,Độ Kiếp / Phi Thăng,Linh Giới,Consumable,98,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-038,LG04,Độ Kiếp / Phi Thăng,Linh Giới,Material,61,LT,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-039,LG04,Độ Kiếp / Phi Thăng,Linh Giới,Equipment,430,LT,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-040,LG04,Độ Kiếp / Phi Thăng,Linh Giới,Craft Fee,49,LT,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-041,TG01,Ngụy Tiên,Tiên Giới,Consumable,2,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-042,TG01,Ngụy Tiên,Tiên Giới,Material,1,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-043,TG01,Ngụy Tiên,Tiên Giới,Equipment,9,TN,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-044,TG01,Ngụy Tiên,Tiên Giới,Craft Fee,1,TN,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-045,TG02,Chân Tiên,Tiên Giới,Consumable,4,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-046,TG02,Chân Tiên,Tiên Giới,Material,2,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-047,TG02,Chân Tiên,Tiên Giới,Equipment,16,TN,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-048,TG02,Chân Tiên,Tiên Giới,Craft Fee,2,TN,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-049,TG03,Kim Tiên,Tiên Giới,Consumable,8,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-050,TG03,Kim Tiên,Tiên Giới,Material,5,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-051,TG03,Kim Tiên,Tiên Giới,Equipment,33,TN,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-052,TG03,Kim Tiên,Tiên Giới,Craft Fee,4,TN,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-053,TG04,Thái Ất,Tiên Giới,Consumable,15,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-054,TG04,Thái Ất,Tiên Giới,Material,9,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-055,TG04,Thái Ất,Tiên Giới,Equipment,65,TN,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-056,TG04,Thái Ất,Tiên Giới,Craft Fee,7,TN,0,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-057,TG05,Đại La sơ nhập / Đài Quy Hương,Tiên Giới,Consumable,26,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-058,TG05,Đại La sơ nhập / Đài Quy Hương,Tiên Giới,Material,16,TN,2,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-059,TG05,Đại La sơ nhập / Đài Quy Hương,Tiên Giới,Equipment,113,TN,8,Giá baseline; telemetry điều chỉnh ±15%
+SHOP-060,TG05,Đại La sơ nhập / Đài Quy Hương,Tiên Giới,Craft Fee,13,TN,0,Giá baseline; telemetry điều chỉnh ±15%

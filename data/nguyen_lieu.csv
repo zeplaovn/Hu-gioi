@@ -1,0 +1,55 @@
+﻿id,name,world,rarity,use,base_value,currency,source,trade
+MAT-001,Hạt Linh Thảo,Hạ Giới,Phổ thông,Trồng linh dược,5,LS,Linh điền,Có
+MAT-002,Quặng Linh Thiết,Hạ Giới,Phổ thông,Luyện khí,12,LS,Mỏ/quái,Có
+MAT-003,Giấy Phù,Hạ Giới,Phổ thông,Vẽ phù,4,LS,Shop/craft,Có
+MAT-004,Yêu Đan,Hạ Giới,Tốt,Pháp bảo/đan,30,LS,Yêu thú,Có
+MAT-005,Kiếm Phôi Thanh Vân,Hạ Giới,Tốt,Rèn kiếm,45,LS,Thanh Vân,Có
+MAT-006,Huyết Tinh,Hạ Giới,Tốt,Luyện thể/ma công,40,LS,Huyết Sát,Có
+MAT-007,Vạn Dược Lệnh,Hạ Giới,Hiếm,Đổi đan phương,80,LS,Vạn Dược,Hạn chế
+MAT-008,Giới Thạch,Hạ Giới,Hiếm,Phi thăng,120,LS,Bí cảnh giới bích,Hạn chế
+MAT-009,Lôi Tinh,Hạ Giới,Tốt,Lôi pháp,35,LS,Lôi vực,Có
+MAT-010,Hỏa Tủy,Hạ Giới,Tốt,Hỏa/luyện khí,35,LS,Hỏa sơn,Có
+MAT-011,Hàn Tinh,Hạ Giới,Tốt,Băng/thủy,35,LS,Hàn vực,Có
+MAT-012,Phong Thạch,Hạ Giới,Tốt,Phong/thân pháp,35,LS,Phong cốc,Có
+MAT-013,Ngũ Hành Tinh Bột,Hạ Giới,Hiếm,Affinity/craft,75,LS,Ngũ hành bí cảnh,Hạn chế
+MAT-014,Linh Mộc,Hạ Giới,Phổ thông,Craft,15,LS,Cổ lâm,Có
+MAT-015,Yêu Cốt,Hạ Giới,Phổ thông,Craft,15,LS,Yêu thú,Có
+MAT-016,Yêu Bì,Hạ Giới,Phổ thông,Craft,12,LS,Yêu thú,Có
+MAT-017,Tinh Huyết,Hạ Giới,Hiếm,Luyện thể,90,LS,Tinh anh/boss,Hạn chế
+MAT-018,Trận Kỳ Phôi,Hạ Giới,Tốt,Trận pháp,30,LS,Craft/shop,Có
+MAT-019,Hư Không Tinh Sa,Linh Giới,Tốt,Không gian/trận pháp,4,LT,Không gian liệt phùng,Có
+MAT-020,Pháp Tướng Linh Tủy,Linh Giới,Hiếm,Nâng pháp tướng,18,LT,Boss pháp tướng,Hạn chế
+MAT-021,Vạn Hồn Tinh,Linh Giới,Hiếm,Thần thức,16,LT,Hồn vực,Hạn chế
+MAT-022,Giới Tâm Thạch,Linh Giới,Cực hiếm,Phi thăng,80,LT,Giới tâm,Hạn chế
+MAT-023,Cổ Trận Tàn Văn,Linh Giới,Hiếm,Trận pháp/lore,20,LT,Di tích,Hạn chế
+MAT-024,Linh Bảo Phôi,Linh Giới,Hiếm,Rèn Linh Bảo,28,LT,Boss/craft,Hạn chế
+MAT-025,Tinh Không Thiết,Linh Giới,Tốt,Craft,8,LT,Tinh không vực,Có
+MAT-026,Hư Linh Mộc,Linh Giới,Tốt,Craft,8,LT,Hư linh lâm,Có
+MAT-027,Ma Tinh,Linh Giới,Tốt,Ma công,10,LT,Ma điện,Có
+MAT-028,Kiếm Ý Tinh,Linh Giới,Tốt,Kiếm đạo,10,LT,Kiếm cung,Có
+MAT-029,Thiên Cơ Đồng,Linh Giới,Tốt,Trận pháp,9,LT,Thiên Cơ Các,Có
+MAT-030,Hồn Sa,Linh Giới,Tốt,Thần hồn,9,LT,Hồn trì,Có
+MAT-031,Sát Tinh,Linh Giới,Hiếm,Sát khí,18,LT,Chiến trường cổ,Hạn chế
+MAT-032,Ngũ Hành Linh Tủy,Linh Giới,Hiếm,Affinity,22,LT,Ngũ hành bí cảnh,Hạn chế
+MAT-033,Giới Lực Kết Tinh,Linh Giới,Cực hiếm,Phi thăng,75,LT,Giới kiếp,Hạn chế
+MAT-034,Pháp Tướng Mảnh,Linh Giới,Hiếm,Pháp tướng,15,LT,Tinh anh,Hạn chế
+MAT-035,Linh Văn Mực,Linh Giới,Tốt,Phù/trận,7,LT,Craft,Có
+MAT-036,Cổ Giới Thạch,Linh Giới,Cực hiếm,Mở bí cảnh cao cấp,60,LT,Cổ bí cảnh,Hạn chế
+MAT-037,Tiên Linh Ngọc Tủy,Tiên Giới,Tốt,Tiên linh lực,3,TN,Tiên mạch,Có
+MAT-038,Pháp Tắc Tinh Sa,Tiên Giới,Hiếm,Pháp tắc,14,TN,Pháp tắc vực,Hạn chế
+MAT-039,Đại Đạo Tàn Phiến,Tiên Giới,Cực hiếm,Đại đạo skill tree,60,TN,Boss/endgame,Hạn chế
+MAT-040,Tiên Khí Phôi,Tiên Giới,Hiếm,Rèn Tiên Khí,20,TN,Boss/craft,Hạn chế
+MAT-041,Suy Kiếp Chi Tức,Tiên Giới,Hiếm,Đan chống suy,16,TN,Suy kiếp,Hạn chế
+MAT-042,Đạo Văn,Tiên Giới,Hiếm,Khắc trang bị,18,TN,Đạo viện,Hạn chế
+MAT-043,Tiên Kim,Tiên Giới,Tốt,Craft,6,TN,Tiên khoáng,Có
+MAT-044,Hư Không Tiên Tinh,Tiên Giới,Hiếm,Không gian,18,TN,Không gian vực,Hạn chế
+MAT-045,Thời Sa,Tiên Giới,Cực hiếm,Thời Gian,65,TN,Thời gian khe nứt,Hạn chế
+MAT-046,Luân Hồi Tinh,Tiên Giới,Cực hiếm,Luân Hồi,65,TN,U Minh,Hạn chế
+MAT-047,Linh Hồn Ngọc,Tiên Giới,Hiếm,Thần hồn,18,TN,U Minh,Hạn chế
+MAT-048,Thiên Lôi Tinh,Tiên Giới,Hiếm,Lôi pháp,18,TN,Lôi kiếp,Hạn chế
+MAT-049,Ngũ Hành Đạo Tinh,Tiên Giới,Hiếm,Ngũ hành,20,TN,Ngũ hành tiên vực,Hạn chế
+MAT-050,Linh Vực Tinh Hạch,Tiên Giới,Cực hiếm,Nâng Linh Vực,55,TN,Boss Linh Vực,Hạn chế
+MAT-051,Tiên Khiếu Ngọc,Tiên Giới,Hiếm,Tiên khiếu,16,TN,Tiên khiếu bí cảnh,Hạn chế
+MAT-052,Đạo Tâm Mảnh,Tiên Giới,Cực hiếm,Tâm ma,50,TN,Vấn đạo đài,Hạn chế
+MAT-053,Đại La Kim Sa,Tiên Giới,Cực hiếm,Đại La,80,TN,Đại La di tích,Hạn chế
+MAT-054,Quy Hương Tinh Trần,Tiên Giới,Đạo phẩm,Cốt truyện,0,TN,Đài Quy Hương,Không

@@ -1,0 +1,133 @@
+﻿id,enemy_id,enemy,drop_type,item,chance_pct,quantity,pity
+DROP-001,MON-001,Hắc Lang,Currency,LS,100,20-40,Không
+DROP-002,MON-001,Hắc Lang,Material,Hạt Linh Thảo,70,1-3,Không
+DROP-003,MON-001,Hắc Lang,Herb,Thanh Linh Thảo,25,1-2,10–20 nếu dùng cho progression
+DROP-004,MON-002,Độc Xà,Currency,LS,100,20-40,Không
+DROP-005,MON-002,Độc Xà,Material,Quặng Linh Thiết,70,1-3,Không
+DROP-006,MON-002,Độc Xà,Herb,Ngưng Lộ Thảo,25,1-2,10–20 nếu dùng cho progression
+DROP-007,MON-003,Hoang Thử Yêu,Currency,LS,100,20-40,Không
+DROP-008,MON-003,Hoang Thử Yêu,Material,Giấy Phù,70,1-3,Không
+DROP-009,MON-003,Hoang Thử Yêu,Herb,Hàn Nguyệt Diệp,25,1-2,10–20 nếu dùng cho progression
+DROP-010,MON-004,Thiết Giáp Hùng,Currency,LS,100,40-80,Không
+DROP-011,MON-004,Thiết Giáp Hùng,Material,Yêu Đan,90,1-3,Không
+DROP-012,MON-004,Thiết Giáp Hùng,Herb,Thổ Linh Sâm,45,1-2,10–20 nếu dùng cho progression
+DROP-013,MON-004,Thiết Giáp Hùng,Equipment,Ngũ Hành Giày II,8,1,Pity 12 boss/cùng tier
+DROP-014,MON-005,Huyết Điêu,Currency,LS,100,40-80,Không
+DROP-015,MON-005,Huyết Điêu,Material,Kiếm Phôi Thanh Vân,90,1-3,Không
+DROP-016,MON-005,Huyết Điêu,Herb,Trúc Cơ Quả,45,1-2,10–20 nếu dùng cho progression
+DROP-017,MON-005,Huyết Điêu,Equipment,Vạn Dược Pháp bảo chính II,8,1,Pity 12 boss/cùng tier
+DROP-018,MON-006,Kiếm Xỉ Hổ,Currency,LS,100,40-80,Không
+DROP-019,MON-006,Kiếm Xỉ Hổ,Material,Huyết Tinh,90,1-3,Không
+DROP-020,MON-006,Kiếm Xỉ Hổ,Herb,Âm Nguyệt Liên,45,1-2,10–20 nếu dùng cho progression
+DROP-021,MON-006,Kiếm Xỉ Hổ,Equipment,Ngũ Hành Pháp bào III,8,1,Pity 12 boss/cùng tier
+DROP-022,MON-007,Ma Hầu,Currency,LS,100,80-160,Không
+DROP-023,MON-007,Ma Hầu,Material,Vạn Dược Lệnh,90,1-3,Không
+DROP-024,MON-007,Ma Hầu,Herb,Thọ Nguyên Quả,75,1-2,10–20 nếu dùng cho progression
+DROP-025,MON-007,Ma Hầu,Equipment,Vạn Dược Pháp giới III,28,1,Pity 12 boss/cùng tier
+DROP-026,MON-007,Ma Hầu,Pill,Dịch Cân Đan,12,1,Pity 8 boss
+DROP-027,MON-008,Thanh Giao,Currency,LS,100,140-280,Không
+DROP-028,MON-008,Thanh Giao,Material,Giới Thạch,90,1-3,Không
+DROP-029,MON-008,Thanh Giao,Herb,Lôi Văn Quả,75,1-2,10–20 nếu dùng cho progression
+DROP-030,MON-008,Thanh Giao,Equipment,Ngũ Hành Vũ khí IV,28,1,Pity 12 boss/cùng tier
+DROP-031,MON-008,Thanh Giao,Pill,Kim Đan Cố Nguyên,12,1,Pity 8 boss
+DROP-032,MON-009,Hỏa Lân Thú,Currency,LS,100,140-280,Không
+DROP-033,MON-009,Hỏa Lân Thú,Material,Lôi Tinh,90,1-3,Không
+DROP-034,MON-009,Hỏa Lân Thú,Herb,Tâm Tĩnh Trúc,75,1-2,10–20 nếu dùng cho progression
+DROP-035,MON-009,Hỏa Lân Thú,Equipment,Vạn Dược Hộ phù IV,28,1,Pity 12 boss/cùng tier
+DROP-036,MON-009,Hỏa Lân Thú,Pill,Hóa Anh Đan,12,1,Pity 8 boss
+DROP-037,MON-010,Cửu Vĩ Hồ,Currency,LS,100,140-280,Không
+DROP-038,MON-010,Cửu Vĩ Hồ,Material,Hỏa Tủy,90,1-3,Không
+DROP-039,MON-010,Cửu Vĩ Hồ,Herb,Bách Dược Tâm,75,1-2,10–20 nếu dùng cho progression
+DROP-040,MON-010,Cửu Vĩ Hồ,Equipment,Huyết Sát Pháp bảo phụ IV,28,1,Pity 12 boss/cùng tier
+DROP-041,MON-010,Cửu Vĩ Hồ,Pill,Dưỡng Hồn Đan,12,1,Pity 8 boss
+DROP-042,MON-011,Kim Dực Bằng,Currency,LS,100,140-280,Không
+DROP-043,MON-011,Kim Dực Bằng,Material,Hàn Tinh,90,1-3,Không
+DROP-044,MON-011,Kim Dực Bằng,Herb,Cửu Diệp Chi,75,1-2,10–20 nếu dùng cho progression
+DROP-045,MON-011,Kim Dực Bằng,Equipment,Vạn Dược Giày I,28,1,Pity 12 boss/cùng tier
+DROP-046,MON-011,Kim Dực Bằng,Pill,Tục Mệnh Đan,12,1,Pity 8 boss
+DROP-047,MON-012,Huyền Quy,Currency,LS,100,240-480,Không
+DROP-048,MON-012,Huyền Quy,Material,Phong Thạch,90,1-3,Không
+DROP-049,MON-012,Huyền Quy,Herb,Hỏa Tủy Liên,75,1-2,10–20 nếu dùng cho progression
+DROP-050,MON-012,Huyền Quy,Equipment,Huyết Sát Pháp bảo chính I,28,1,Pity 12 boss/cùng tier
+DROP-051,MON-012,Huyền Quy,Pill,Thiên Cơ Đan,12,1,Pity 8 boss
+DROP-052,MON-013,Hư Không Thú,Currency,LT,100,3-6,Không
+DROP-053,MON-013,Hư Không Thú,Material,Sát Tinh,70,1-3,Không
+DROP-054,MON-013,Hư Không Thú,Herb,Tinh Huy Thảo,25,1-2,10–20 nếu dùng cho progression
+DROP-055,MON-014,Tinh Hồn Lang,Currency,LT,100,6-12,Không
+DROP-056,MON-014,Tinh Hồn Lang,Material,Ngũ Hành Linh Tủy,90,1-3,Không
+DROP-057,MON-014,Tinh Hồn Lang,Herb,Huyền Chỉ Hoa,45,1-2,10–20 nếu dùng cho progression
+DROP-058,MON-014,Tinh Hồn Lang,Equipment,Thiên Cơ Pháp giới III,8,1,Pity 12 boss/cùng tier
+DROP-059,MON-015,Vô Tướng Ma Khôi,Currency,LT,100,6-12,Không
+DROP-060,MON-015,Vô Tướng Ma Khôi,Material,Giới Lực Kết Tinh,90,1-3,Không
+DROP-061,MON-015,Vô Tướng Ma Khôi,Herb,Hư Không Lan,45,1-2,10–20 nếu dùng cho progression
+DROP-062,MON-015,Vô Tướng Ma Khôi,Equipment,Thái Hư Vũ khí I,8,1,Pity 12 boss/cùng tier
+DROP-063,MON-016,Pháp Tướng Cự Linh,Currency,LT,100,21-42,Không
+DROP-064,MON-016,Pháp Tướng Cự Linh,Material,Pháp Tướng Mảnh,90,1-3,Không
+DROP-065,MON-016,Pháp Tướng Cự Linh,Herb,Thái Hư Chi,75,1-2,10–20 nếu dùng cho progression
+DROP-066,MON-016,Pháp Tướng Cự Linh,Equipment,Tinh Không Hộ phù I,28,1,Pity 12 boss/cùng tier
+DROP-067,MON-016,Pháp Tướng Cự Linh,Pill,Cửu Khúc Linh Đan,12,1,Pity 8 boss
+DROP-068,MON-017,Giới Ngoại Dị Trùng,Currency,LT,100,6-12,Không
+DROP-069,MON-017,Giới Ngoại Dị Trùng,Material,Linh Văn Mực,90,1-3,Không
+DROP-070,MON-017,Giới Ngoại Dị Trùng,Herb,Bách Thảo Tinh,45,1-2,10–20 nếu dùng cho progression
+DROP-071,MON-017,Giới Ngoại Dị Trùng,Equipment,Thiên Cơ Pháp bảo phụ I,8,1,Pity 12 boss/cùng tier
+DROP-072,MON-018,Cổ Kiếm Linh,Currency,LT,100,21-42,Không
+DROP-073,MON-018,Cổ Kiếm Linh,Material,Cổ Giới Thạch,90,1-3,Không
+DROP-074,MON-018,Cổ Kiếm Linh,Herb,Tẩy Linh Quả,75,1-2,10–20 nếu dùng cho progression
+DROP-075,MON-018,Cổ Kiếm Linh,Equipment,Tinh Không Giày II,28,1,Pity 12 boss/cùng tier
+DROP-076,MON-018,Cổ Kiếm Linh,Pill,Thái Hư Kiếm Đan,12,1,Pity 8 boss
+DROP-077,MON-019,Sát Hồn Vương,Currency,LT,100,21-42,Không
+DROP-078,MON-019,Sát Hồn Vương,Material,Hư Không Tinh Sa,90,1-3,Không
+DROP-079,MON-019,Sát Hồn Vương,Herb,Không Minh Thảo,75,1-2,10–20 nếu dùng cho progression
+DROP-080,MON-019,Sát Hồn Vương,Equipment,Thiên Cơ Pháp bảo chính II,28,1,Pity 12 boss/cùng tier
+DROP-081,MON-019,Sát Hồn Vương,Pill,Bách Thảo Hồi Thiên,12,1,Pity 8 boss
+DROP-082,MON-020,Giới Kiếp Lôi Linh,Currency,LT,100,36-72,Không
+DROP-083,MON-020,Giới Kiếp Lôi Linh,Material,Pháp Tướng Linh Tủy,90,1-3,Không
+DROP-084,MON-020,Giới Kiếp Lôi Linh,Herb,Đại Thừa Kim Liên,75,1-2,10–20 nếu dùng cho progression
+DROP-085,MON-020,Giới Kiếp Lôi Linh,Equipment,Tinh Không Pháp bào III,28,1,Pity 12 boss/cùng tier
+DROP-086,MON-020,Giới Kiếp Lôi Linh,Pill,Thiên Cơ Minh Tâm,12,1,Pity 8 boss
+DROP-087,MON-021,Tiên Linh Hạc,Currency,TN,100,1-2,Không
+DROP-088,MON-021,Tiên Linh Hạc,Material,Tiên Khí Phôi,70,1-3,Không
+DROP-089,MON-021,Tiên Linh Hạc,Herb,Kim Hồn Tiên Quả,25,1-2,10–20 nếu dùng cho progression
+DROP-090,MON-022,Kim Giáp Tiên Vệ,Currency,TN,100,2-4,Không
+DROP-091,MON-022,Kim Giáp Tiên Vệ,Material,Suy Kiếp Chi Tức,90,1-3,Không
+DROP-092,MON-022,Kim Giáp Tiên Vệ,Herb,Vân Hạc Tiên Thảo,45,1-2,10–20 nếu dùng cho progression
+DROP-093,MON-022,Kim Giáp Tiên Vệ,Equipment,Cửu Tiêu Vũ khí I,8,1,Pity 12 boss/cùng tier
+DROP-094,MON-023,Sát Suy Ma Ảnh,Currency,TN,100,2-4,Không
+DROP-095,MON-023,Sát Suy Ma Ảnh,Material,Đạo Văn,90,1-3,Không
+DROP-096,MON-023,Sát Suy Ma Ảnh,Herb,Đản Hồn Hoa,45,1-2,10–20 nếu dùng cho progression
+DROP-097,MON-023,Sát Suy Ma Ảnh,Equipment,Quy Hương Hộ phù I,8,1,Pity 12 boss/cùng tier
+DROP-098,MON-024,Thời Sa Cổ Thú,Currency,TN,100,7-14,Không
+DROP-099,MON-024,Thời Sa Cổ Thú,Material,Tiên Kim,90,1-3,Không
+DROP-100,MON-024,Thời Sa Cổ Thú,Herb,Thiên Linh Trúc Diệp,75,1-2,10–20 nếu dùng cho progression
+DROP-101,MON-024,Thời Sa Cổ Thú,Equipment,U Minh Pháp bảo phụ I,28,1,Pity 12 boss/cùng tier
+DROP-102,MON-024,Thời Sa Cổ Thú,Pill,Ngũ Suy Hộ Mệnh,12,1,Pity 8 boss
+DROP-103,MON-025,Hư Không Long Ảnh,Currency,TN,100,7-14,Không
+DROP-104,MON-025,Hư Không Long Ảnh,Material,Hư Không Tiên Tinh,90,1-3,Không
+DROP-105,MON-025,Hư Không Long Ảnh,Herb,Tinh Huy Tiên Thảo,75,1-2,10–20 nếu dùng cho progression
+DROP-106,MON-025,Hư Không Long Ảnh,Equipment,Quy Hương Giày II,28,1,Pity 12 boss/cùng tier
+DROP-107,MON-025,Hư Không Long Ảnh,Pill,Huyền Chân Đan,12,1,Pity 8 boss
+DROP-108,MON-026,Luân Hồi Hồn Tướng,Currency,TN,100,7-14,Không
+DROP-109,MON-026,Luân Hồi Hồn Tướng,Material,Thời Sa,90,1-3,Không
+DROP-110,MON-026,Luân Hồi Hồn Tướng,Herb,Vạn Hồn Tiên Thảo,75,1-2,10–20 nếu dùng cho progression
+DROP-111,MON-026,Luân Hồi Hồn Tướng,Equipment,U Minh Pháp bảo chính II,28,1,Pity 12 boss/cùng tier
+DROP-112,MON-026,Luân Hồi Hồn Tướng,Pill,U Thủy Tiên Đan,12,1,Pity 8 boss
+DROP-113,MON-027,Đạo Tắc Hóa Thân,Currency,TN,100,7-14,Không
+DROP-114,MON-027,Đạo Tắc Hóa Thân,Material,Luân Hồi Tinh,90,1-3,Không
+DROP-115,MON-027,Đạo Tắc Hóa Thân,Herb,Lưỡng Sinh Tiên Quả,75,1-2,10–20 nếu dùng cho progression
+DROP-116,MON-027,Đạo Tắc Hóa Thân,Equipment,Quy Hương Pháp bào III,28,1,Pity 12 boss/cùng tier
+DROP-117,MON-027,Đạo Tắc Hóa Thân,Pill,Cuồng Diễm Tiên Đan,12,1,Pity 8 boss
+DROP-118,MON-028,Cửu Tiêu Phản Tiên,Currency,TN,100,7-14,Không
+DROP-119,MON-028,Cửu Tiêu Phản Tiên,Material,Linh Hồn Ngọc,90,1-3,Không
+DROP-120,MON-028,Cửu Tiêu Phản Tiên,Herb,Khổ Lạc Hoa,75,1-2,10–20 nếu dùng cho progression
+DROP-121,MON-028,Cửu Tiêu Phản Tiên,Equipment,U Minh Pháp giới III,28,1,Pity 12 boss/cùng tier
+DROP-122,MON-028,Cửu Tiêu Phản Tiên,Pill,Cầu Long Luyện Thể Đan,12,1,Pity 8 boss
+DROP-123,MON-029,Đại La Tàn Ảnh,Currency,TN,100,15-30,Không
+DROP-124,MON-029,Đại La Tàn Ảnh,Material,Thiên Lôi Tinh,90,1-3,Không
+DROP-125,MON-029,Đại La Tàn Ảnh,Herb,U Thủy Tiên Liên,75,1-2,10–20 nếu dùng cho progression
+DROP-126,MON-029,Đại La Tàn Ảnh,Equipment,Cửu Tiêu Vũ khí I,28,1,Pity 12 boss/cùng tier
+DROP-127,MON-029,Đại La Tàn Ảnh,Pill,Đản Hồn Tiên Đan,12,1,Pity 8 boss
+DROP-128,MON-030,Đài Quy Hương Thủ Ảnh,Currency,TN,100,10-20,Không
+DROP-129,MON-030,Đài Quy Hương Thủ Ảnh,Material,Ngũ Hành Đạo Tinh,90,1-3,Không
+DROP-130,MON-030,Đài Quy Hương Thủ Ảnh,Herb,Không Gian Bồ Đề,75,1-2,10–20 nếu dùng cho progression
+DROP-131,MON-030,Đài Quy Hương Thủ Ảnh,Equipment,Quy Hương Hộ phù I,28,1,Pity 12 boss/cùng tier
+DROP-132,MON-030,Đài Quy Hương Thủ Ảnh,Pill,Vô Trần Giải Độc Đan,12,1,Pity 8 boss

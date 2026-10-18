@@ -1,0 +1,10 @@
+﻿id,content,mode,can_permadeath,on_zero_hp,notes
+DEATH-001,Thọ nguyên cạn,Lethal,Có,Kết thúc kiếp,Mất toàn bộ vật phẩm/tiền/trang bị; giữ TM/meta
+DEATH-002,Thăng cảnh giới tử vong,Lethal,Có,Kết thúc kiếp,Failure không nhất thiết lethal; chỉ khi kết quả death được xác nhận
+DEATH-003,Độ Kiếp tử vong,Lethal,Có,Kết thúc kiếp,Độ Kiếp thất bại dẫn đến death theo encounter rule
+DEATH-004,PvP Luận Đạo,Safe,Không,Kết thúc trận,HP 0 không phải death thật
+DEATH-005,PvP Sinh Tử,Lethal,Có,Kết thúc kiếp,Phải xác nhận trước trận
+DEATH-006,Bí cảnh lethal,Lethal,Có,Kết thúc kiếp,Cảnh báo trước khi vào
+DEATH-007,Boss lethal,Lethal,Có,Kết thúc kiếp,Encounter phải gắn cờ lethal
+DEATH-008,Khu an toàn,Safe,Không,Không cho permadeath,Không có lethal combat
+DEATH-009,Không Gian Hỗn Độn,Lethal,Có,Kết thúc kiếp,Cả đội phải biết đây là sinh tử trước nghi thức

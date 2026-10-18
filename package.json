@@ -1,15 +1,25 @@
 {
-  "name": "thien-van-dai-luc",
+  "name": "hu-gioi",
   "private": true,
-  "version": "1.2.0",
+  "version": "2.0.0-alpha.0",
+  "description": "Thiên Vân Đại Lục — SvelteKit + Supabase (Edge Functions + pgSQL)",
+  "type": "module",
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "serve": "node scripts/serve.mjs",
-    "test": "node --test tests/test_security.mjs tests/test_cloud.mjs tests/test_guide.mjs tests/test_meta.mjs tests/test_shop.mjs tests/test_minigames.mjs tests/test_world_map.mjs tests/test_maintenance.mjs tests/test_loading.mjs tests/test_autosave_throttle.mjs",
-    "mock": "node scripts/mock_supabase.mjs"
+    "gen": "node tools/gen-static.mjs",
+    "gen:check": "node tools/gen-static.mjs --check",
+    "db:test": "node tools/db-test.mjs",
+    "test": "pnpm gen:check && pnpm -r --if-present test && pnpm test:edge && pnpm db:test",
+    "dev:web": "pnpm --filter web dev",
+    "build:web": "pnpm --filter web build",
+    "test:edge": "vitest run tests/edge/handler.test.ts"
   },
   "devDependencies": {
-    "terser": "^5.51.2",
-    "javascript-obfuscator": "^5.9.0"
+    "postgres": "^3.4.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
   }
 }

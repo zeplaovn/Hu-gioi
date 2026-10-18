@@ -1,0 +1,21 @@
+﻿id,name,stat,unit,min,max,slots,note
+AFX-001,Sinh Mệnh,HP,%,3,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-002,Công Kích,ATK,%,2,15,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-003,Phòng Ngự,DEF,%,2,15,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-004,Tật Phong,SPD,%,1,8,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-005,Tinh Chuẩn,ACC,%,2,12,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-006,Hư Ảnh,EVA,%,2,10,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-007,Bạo Kích,CRIT,điểm %,1,7,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-008,Cuồng Bạo,CRIT_DMG,%,5,30,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-009,Kháng Tính,RES,%,2,12,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-010,Phá Giáp,PEN,%,2,12,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-011,Thần Niệm,SPIRIT,%,3,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-012,Tụ Linh,CULTIVATION,%,2,10,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-013,Kim Thân,KIM_RES,%,4,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-014,Mộc Linh,MOC_RES,%,4,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-015,Thủy Mạc,THUY_RES,%,4,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-016,Hỏa Giáp,HOA_RES,%,4,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-017,Địa Mạch,THO_RES,%,4,18,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-018,Linh Căn Cộng Hưởng,AFFINITY,%,2,10,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-019,Đan Tâm,ALCHEMY,%,2,10,Trang bị phù hợp,Tuân thủ cap hệ thống
+AFX-020,Luyện Khí Tinh Thông,FORGE,%,2,10,Trang bị phù hợp,Tuân thủ cap hệ thống

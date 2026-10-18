@@ -1,0 +1,31 @@
+﻿id,name,world,realm,type
+MON-001,Hắc Lang,Hạ Giới,Phàm,Thường
+MON-002,Độc Xà,Hạ Giới,Phàm,Thường
+MON-003,Hoang Thử Yêu,Hạ Giới,Luyện Khí,Thường
+MON-004,Thiết Giáp Hùng,Hạ Giới,Trúc Cơ,Tinh anh
+MON-005,Huyết Điêu,Hạ Giới,Trúc Cơ,Tinh anh
+MON-006,Kiếm Xỉ Hổ,Hạ Giới,Kim Đan,Tinh anh
+MON-007,Ma Hầu,Hạ Giới,Kim Đan,Boss nhỏ
+MON-008,Thanh Giao,Hạ Giới,Nguyên Anh,Boss
+MON-009,Hỏa Lân Thú,Hạ Giới,Nguyên Anh,Boss
+MON-010,Cửu Vĩ Hồ,Hạ Giới,Hóa Thần,Boss
+MON-011,Kim Dực Bằng,Hạ Giới,Hóa Thần,Boss
+MON-012,Huyền Quy,Hạ Giới,Hóa Thần,Boss cuối map
+MON-013,Hư Không Thú,Linh Giới,Luyện Hư,Thường
+MON-014,Tinh Hồn Lang,Linh Giới,Luyện Hư,Tinh anh
+MON-015,Vô Tướng Ma Khôi,Linh Giới,Hợp Thể,Tinh anh
+MON-016,Pháp Tướng Cự Linh,Linh Giới,Hợp Thể,Boss
+MON-017,Giới Ngoại Dị Trùng,Linh Giới,Đại Thừa,Tinh anh
+MON-018,Cổ Kiếm Linh,Linh Giới,Đại Thừa,Boss
+MON-019,Sát Hồn Vương,Linh Giới,Đại Thừa,Boss
+MON-020,Giới Kiếp Lôi Linh,Linh Giới,Độ Kiếp,Boss cuối map
+MON-021,Tiên Linh Hạc,Tiên Giới,Chân Tiên,Thường
+MON-022,Kim Giáp Tiên Vệ,Tiên Giới,Chân Tiên,Tinh anh
+MON-023,Sát Suy Ma Ảnh,Tiên Giới,Kim Tiên,Tinh anh
+MON-024,Thời Sa Cổ Thú,Tiên Giới,Kim Tiên,Boss
+MON-025,Hư Không Long Ảnh,Tiên Giới,Kim Tiên,Boss
+MON-026,Luân Hồi Hồn Tướng,Tiên Giới,Thái Ất,Boss
+MON-027,Đạo Tắc Hóa Thân,Tiên Giới,Thái Ất,Boss
+MON-028,Cửu Tiêu Phản Tiên,Tiên Giới,Thái Ất,Boss
+MON-029,Đại La Tàn Ảnh,Tiên Giới,Endgame,Boss endgame
+MON-030,Đài Quy Hương Thủ Ảnh,Tiên Giới,Endgame,Boss cốt truyện

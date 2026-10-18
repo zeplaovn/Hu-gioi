@@ -1,0 +1,15 @@
+﻿root_element,technique,recommended_laws,combat_focus,synergy
+Kim,Thanh Phong Kiếm Pháp,Kim / Không Gian / Hủy Diệt,ATK/PEN,+10% hiệu quả cùng hệ ở purity 70; +20% ở 100
+Mộc,Đông Ất Sinh Mệnh Quyết,Mộc / Sinh Mệnh / Độc,Heal/DoT,+10%/+20%
+Thủy,Hắc Hải Trọng Thủy Kinh,Thủy / Băng / Thời Gian,CC/RES,+10%/+20%
+Hỏa,Đại Viêm Phần Thiên Quyết,Hỏa / Hủy Diệt / Thời Gian,Burst/Crit,+10%/+20%
+Thổ,Hỗn Nguyên Luyện Thổ Quyết,Thổ / Không Gian / Giam Cầm,HP/DEF,+10%/+20%
+Băng,Tiêu Sơn Hàn Băng Quyết,Băng / Thời Gian,CC/DEF,+10%/+20%
+Lôi,Ngũ Lôi Chính Pháp,Lôi / Hủy Diệt,Burst/PEN,+10%/+20%
+Phong,Phong Vân Độn Pháp,Phong / Không Gian,SPD/EVA,+10%/+20%
+Quang,Cửu Dương Thanh Tâm Kinh,Quang / Nhân Quả,Heal/RES,+10%/+20%
+Ám,Huyền Sát Minh Linh Công,Ám / Linh Hồn,DoT/ACC,+10%/+20%
+Kim+Hỏa,Cửu Thiên Lôi Pháp,Lôi / Hủy Diệt,Hybrid burst,+6% mỗi hệ phù hợp
+Thủy+Mộc,Vạn Mộc Hồi Xuân Kinh,Sinh Mệnh / Thủy,Hybrid sustain,+6% mỗi hệ phù hợp
+Thổ+Kim,Kim Cang Trấn Ngục Thể,Thổ / Kim,Hybrid tank,+6% mỗi hệ phù hợp
+Phong+Lôi,Phong Lôi Thiên Dực,Không Gian / Lôi,Hybrid speed,+6% mỗi hệ phù hợp

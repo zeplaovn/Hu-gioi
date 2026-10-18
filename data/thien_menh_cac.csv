@@ -1,0 +1,18 @@
+﻿id,name,type,cost,currency,effect,limit,scope,death_rule
+TMSTAT-001,Quán Đỉnh Tướng Mạo,Permanent Stat,6 + 1×level,TM,+1 Tướng Mạo vĩnh viễn,20,Account,Không phải vật phẩm; giữ qua trùng sinh
+TMSTAT-002,Quán Đỉnh Phúc Duyên,Permanent Stat,7 + 1×level,TM,+1 Phúc Duyên vĩnh viễn,20,Account,Không phải vật phẩm; giữ qua trùng sinh
+TMSTAT-003,Quán Đỉnh Căn Cốt,Permanent Stat,8 + 2×level,TM,+1 Căn Cốt vĩnh viễn,20,Account,Không phải vật phẩm; giữ qua trùng sinh
+TMSTAT-004,Quán Đỉnh Ngộ Tính,Permanent Stat,8 + 2×level,TM,+1 Ngộ Tính vĩnh viễn,20,Account,Không phải vật phẩm; giữ qua trùng sinh
+TMSTAT-005,Quán Đỉnh Vận Khí,Permanent Stat,9 + 2×level,TM,+1 Vận Khí vĩnh viễn,20,Account,Không phải vật phẩm; giữ qua trùng sinh
+TMITEM-001,Định Linh Châu,Exclusive Item,20,TM,Chọn một thuộc tính ưu tiên khi tinh luyện linh căn trong kiếp,1/kiếp,Life,Mất khi chết; không shop/drop/boss
+TMITEM-002,Thiên Cơ Lệnh,Exclusive Item,25,TM,Mở một kỳ ngộ Thiên Cơ đặc biệt,2/kiếp,Life,Mất khi chết; không shop/drop/boss
+TMITEM-003,Phá Vọng Kính,Exclusive Item,28,TM,Hiện một đường ẩn/bẫy quan trọng trong bí cảnh,2/kiếp,Life,Mất khi chết; không shop/drop/boss
+TMITEM-004,Nghịch Mệnh Phù,Exclusive Item,35,TM,Một lần chuyển lethal breakthrough failure thành trọng thương; phải kích hoạt trước lần đột phá,1/kiếp,Life,Mất khi chết; không hoàn TM
+TMITEM-005,Thần Hành Phù,Exclusive Item,30,TM,Cho phép rút khỏi bí cảnh lethal khi chưa tử vong; không dùng sau HP=0,1/kiếp,Life,Mất khi chết
+TMITEM-006,Vạn Tượng Phôi,Exclusive Item,40,TM,Phôi chế tạo trang bị hiếm với affix đặc biệt,1/kiếp,Life,Không có trong drop table
+TMITEM-007,Đạo Văn Mặc,Exclusive Item,45,TM,Khắc một dòng Đạo Văn hiếm lên trang bị đủ điều kiện,1/kiếp,Life,Mất cùng trang bị khi chết
+TMITEM-008,Vô Tự Cổ Quyển,Exclusive Item,55,TM,Mở lựa chọn học một công pháp Thiên Mệnh hiếm trong kiếp,1/kiếp,Life,Công pháp của kiếp mất khi trùng sinh
+TMITEM-009,Tẩy Tủy Thiên Đan,Exclusive Item,60,TM,"+1 chỉ số gốc của kiếp hiện tại, không tính vào permanent TM stat",2/kiếp,Life,Item/hiệu ứng của kiếp mất khi chết
+TMITEM-010,Linh Hồn Định Châm,Exclusive Item,65,TM,Giảm một bậc hình phạt tâm ma trong một lần thử,1/kiếp,Life,Không shop/drop/boss
+TMITEM-011,Thiên Mệnh Trận Kỳ,Exclusive Item,75,TM,Mở một trận pháp phụ trợ hiếm cho bí cảnh,1/kiếp,Life,Mất khi chết
+TMITEM-012,Cổ Ấn Vấn Đạo,Exclusive Item,90,TM,Mở thử thách account-lore đặc biệt; phần thưởng không phải TM,1/account milestone,Life,Vật lý mất khi chết nếu chưa dùng

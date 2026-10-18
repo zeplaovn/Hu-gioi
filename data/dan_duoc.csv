@@ -1,0 +1,61 @@
+﻿id,name,world,realm,effect,price,currency,ingredients,limit,shop
+PILL-001,Hồi Huyết Đan,Hạ Giới,Phàm,Hồi 60% HP,15,LS,Huyết Diệp Hoa + Thanh Linh Thảo,Không giới hạn shop; CD combat,Có/Hạn chế
+PILL-002,Tụ Khí Đan,Hạ Giới,Phàm,+6% tiến độ tầng,20,LS,Thanh Linh Thảo + Ngưng Lộ Thảo,5/ngày,Có/Hạn chế
+PILL-003,Phá Cảnh Đan,Hạ Giới,Luyện Khí,+12 điểm % lần đột phá kế,90,LS,Trúc Cơ Quả + Tâm Tĩnh Trúc,2/đại cảnh,Có/Hạn chế
+PILL-004,Trường Thọ Đan,Hạ Giới,Luyện Khí,+6 năm thọ nguyên quy đổi,160,LS,Thọ Nguyên Quả + Cửu Diệp Chi,1/đại cảnh,Có/Hạn chế
+PILL-005,Ngưng Nguyên Đan,Hạ Giới,Trúc Cơ,+5% tiến độ tầng,140,LS,Trúc Cơ Quả + Kim Tuyến Thảo,4/ngày,Có/Hạn chế
+PILL-006,Đại Hồi Đan,Hạ Giới,Trúc Cơ,Hồi đầy HP ngoài PvP,70,LS,Huyết Diệp Hoa + Địa Mạch Sâm,5/ngày,Có/Hạn chế
+PILL-007,Dịch Cân Đan,Hạ Giới,Kim Đan,+1 chỉ số gốc ngẫu nhiên trong cap +40,420,LS,Huyết Linh Sâm + Ngũ Sắc Linh Chi,1/kiếp Hạ Giới,Có/Hạn chế
+PILL-008,Kim Đan Cố Nguyên,Hạ Giới,Kim Đan,Giảm 30% tổn thất đột phá thất bại,520,LS,Kim Dương Chi + Địa Mạch Sâm,2/đại cảnh,Có/Hạn chế
+PILL-009,Hóa Anh Đan,Hạ Giới,Nguyên Anh,+4.5% tiến độ tầng,650,LS,Hóa Anh Hoa + Thanh Hồn Quả,3/ngày,Có/Hạn chế
+PILL-010,Dưỡng Hồn Đan,Hạ Giới,Nguyên Anh,+15% SPIRIT trong 2 giờ,720,LS,Âm Nguyệt Liên + Thanh Hồn Quả,2/ngày,Có/Hạn chế
+PILL-011,Tục Mệnh Đan,Hạ Giới,Nguyên Anh,+12 năm thọ nguyên quy đổi,800,LS,Thọ Nguyên Quả + Hóa Anh Hoa,1/đại cảnh,Có/Hạn chế
+PILL-012,Thiên Cơ Đan,Hạ Giới,Hóa Thần,+20 điểm % đột phá,1600,LS,Ngũ Sắc Linh Chi + Tâm Tĩnh Trúc,1/đại cảnh,Có/Hạn chế
+PILL-013,Thái Hư Đan,Hạ Giới,Hóa Thần,+4% tiến độ tầng,3200,LS,Giới Mạch Thảo + Cửu Diệp Chi,2/ngày,Có/Hạn chế
+PILL-014,Tạo Hóa Dịch,Hạ Giới,Hóa Thần,+1 chỉ số gốc ngẫu nhiên trong cap +40,5200,LS,Ngũ Sắc Linh Chi + Bách Dược Tâm,1/kiếp,Có/Hạn chế
+PILL-015,Độ Kiếp Đan,Hạ Giới,Hóa Thần,+25 điểm % phi thăng Linh Giới,9000,LS,Giới Mạch Thảo + Lôi Văn Quả,1/lần phi thăng,Có/Hạn chế
+PILL-016,Tĩnh Tâm Đan,Hạ Giới,Trúc Cơ+,Giảm 35% tác động tâm ma 1 lần,300,LS,Tâm Tĩnh Trúc + Âm Nguyệt Liên,3/tuần,Có/Hạn chế
+PILL-017,Cường Cốt Đan,Hạ Giới,Trúc Cơ+,+8% HP trong 4 giờ,260,LS,Địa Mạch Sâm + Huyết Linh Sâm,2/ngày,Có/Hạn chế
+PILL-018,Phong Hành Đan,Hạ Giới,Kim Đan+,+8% SPD trong 2 giờ,480,LS,Phong Linh Hoa + Ngưng Lộ Thảo,2/ngày,Có/Hạn chế
+PILL-019,Lôi Dương Đan,Hạ Giới,Kim Đan+,+10% PEN trong 2 giờ,520,LS,Lôi Văn Quả + Xích Dương Hoa,2/ngày,Có/Hạn chế
+PILL-020,Vạn Dược Linh Đan,Hạ Giới,Nguyên Anh+,+10% hiệu quả đan khác trong 1 giờ,1100,LS,Bách Dược Tâm + Cửu Diệp Chi,1/ngày,Có/Hạn chế
+PILL-021,Luyện Hư Đan,Linh Giới,Luyện Hư,+5% tiến độ tầng,25,LT,Thái Hư Chi + Tinh Huy Thảo,4/ngày,Có/Hạn chế
+PILL-022,Hợp Nguyên Đan,Linh Giới,Hợp Thể,+8% hiệu suất pháp tướng 2 giờ,60,LT,Hợp Nguyên Quả + Pháp Tướng Quả,2/ngày,Có/Hạn chế
+PILL-023,Dưỡng Thần Đan,Linh Giới,Luyện Hư,+18% SPIRIT 2 giờ,40,LT,Vạn Hồn Thảo + Hồn Ngọc Lan,2/ngày,Có/Hạn chế
+PILL-024,Phá Hư Đan,Linh Giới,Luyện Hư,+15 điểm % đột phá,180,LT,Hư Không Lan + Không Minh Thảo,2/đại cảnh,Có/Hạn chế
+PILL-025,Pháp Tướng Đan,Linh Giới,Hợp Thể,Tăng 1 cấp hiệu dụng pháp tướng cho 1 trận,120,LT,Pháp Tướng Quả + Bách Thảo Tinh,2/tuần,Có/Hạn chế
+PILL-026,Đại Thừa Đan,Linh Giới,Đại Thừa,+18 điểm % đại đột phá,420,LT,Đại Thừa Kim Liên + Cửu Khúc Linh Sâm,1/đại cảnh,Có/Hạn chế
+PILL-027,Giới Kiếp Đan,Linh Giới,Độ Kiếp,+20 điểm % phi thăng Tiên Giới,1200,LT,Giới Kiếp Tử Liên + Giới Tâm Liên,1/lần,Có/Hạn chế
+PILL-028,Tẩy Linh Dịch,Linh Giới,Luyện Hư+,Tái phân phối 5–10 điểm purity,800,LT,Tẩy Linh Quả + Ngũ Hành Linh Quả,2/map,Có/Hạn chế
+PILL-029,Vấn Tâm Đan,Linh Giới,Hợp Thể+,Pity tâm ma +1 bậc,220,LT,Vấn Tâm Hoa + Thiên Cơ Hoa,1/tuần,Có/Hạn chế
+PILL-030,Sát Khí Tán,Linh Giới,Đại Thừa,Giảm 25% sát khí 1 giờ,180,LT,Sát Tâm Thảo + Huyền Chỉ Hoa,2/ngày,Có/Hạn chế
+PILL-031,Hư Linh Hộ Mạch,Linh Giới,Luyện Hư+,Giảm 20% damage không gian 2 giờ,160,LT,Hư Linh Mộc Tâm + Không Minh Thảo,2/ngày,Có/Hạn chế
+PILL-032,Thiên Hồn Đan,Linh Giới,Đại Thừa,+10% thần hồn vĩnh viễn trong cap,650,LT,Thiên Hồn Quả + Vạn Hồn Thảo,1/map,Có/Hạn chế
+PILL-033,Tinh Không Đan,Linh Giới,Hợp Thể+,+10% ACC/EVA 2 giờ,95,LT,Tinh Không Diệp + Hư Không Lan,2/ngày,Có/Hạn chế
+PILL-034,Ngũ Hành Dung Linh,Linh Giới,Hợp Thể+,Mở thử nghiệm biến dị linh căn,980,LT,Ngũ Hành Linh Quả + Tẩy Linh Quả,1/map,Có/Hạn chế
+PILL-035,Lưỡng Sinh Đan,Linh Giới,Đại Thừa,Sống sót 1 lần ở 1 HP trong PvE,880,LT,Lưỡng Sinh Diệp + Vấn Tâm Hoa,1/tuần,Có/Hạn chế
+PILL-036,Cửu Khúc Linh Đan,Linh Giới,Đại Thừa,+8% tiến độ tầng,240,LT,Cửu Khúc Linh Sâm + Bách Thảo Tinh,3/ngày,Có/Hạn chế
+PILL-037,Ma Tâm Phá Chướng,Linh Giới,Hợp Thể+,"+12% ATK, -8% RES trong 2 giờ",110,LT,Ma Tâm Liên + Sát Tâm Thảo,2/ngày,Có/Hạn chế
+PILL-038,Thái Hư Kiếm Đan,Linh Giới,Hợp Thể+,+12% kiếm kỹ trong 2 giờ,130,LT,Thái Hư Chi + Tinh Không Diệp,2/ngày,Có/Hạn chế
+PILL-039,Bách Thảo Hồi Thiên,Linh Giới,Luyện Hư+,Hồi đầy HP + xóa 1 debuff PvE,75,LT,Bách Thảo Tinh + Lưỡng Sinh Diệp,3/ngày,Có/Hạn chế
+PILL-040,Thiên Cơ Minh Tâm,Linh Giới,Đại Thừa,+15% Ngộ Tính hiệu dụng 1 giờ,300,LT,Thiên Cơ Hoa + Vấn Tâm Hoa,1/ngày,Có/Hạn chế
+PILL-041,Xuân Lâm Tiên Đan,Tiên Giới,Chân Tiên,+4% tiến độ tầng,8,TN,Vân Hạc Tiên Thảo + Lộc Nhung Tiên Thảo,5/ngày,Có/Hạn chế
+PILL-042,Thống Nguyên Tiên Đan,Tiên Giới,Chân Tiên,+12% tiên linh lực 2 giờ,10,TN,Tiên Khiếu Quả + Vân Hạc Tiên Thảo,3/ngày,Có/Hạn chế
+PILL-043,Vạn Luân Đan,Tiên Giới,Chân Tiên hậu kỳ,+10% tiến độ tầng,30,TN,Thời Sa Hoa + Tiên Khiếu Quả,2/ngày,Có/Hạn chế
+PILL-044,Kim Hồn Đan,Tiên Giới,Chân Tiên,+18 điểm % lên Kim Tiên,120,TN,Kim Hồn Tiên Quả + Vạn Hồn Tiên Thảo,1/đại cảnh,Có/Hạn chế
+PILL-045,Túc Sát Đan,Tiên Giới,Kim Tiên,Giảm 40% tác hại Sát Suy,160,TN,Khổ Lạc Hoa + Huyền Chỉ Tiên Hoa,2/suy kiếp,Có/Hạn chế
+PILL-046,Thái Ất Đan,Tiên Giới,Kim Tiên,+15 điểm % lên Thái Ất,300,TN,Thái Ất Ngọc Chi + Lưỡng Sinh Tiên Quả,1/đại cảnh,Có/Hạn chế
+PILL-047,Ngọc Thanh Đan,Tiên Giới,Thái Ất,+4% tiến độ tầng,45,TN,Thái Ất Ngọc Chi + Vân Hạc Tiên Thảo,4/ngày,Có/Hạn chế
+PILL-048,Đạo Tâm Đan,Tiên Giới,Thái Ất,Chặn 1 lần tâm ma/suy kiếp,0,TN,Đạo Tâm Liên + Đại Đạo Hoa,Quest/Boss,Không
+PILL-049,Thời Gian Đạo Đan,Tiên Giới,Endgame,Cộng hưởng Thời Gian tạm; không bán,0,TN,Thời Sa Hoa + Đại Đạo Hoa,Unique,Không
+PILL-050,Không Gian Đạo Đan,Tiên Giới,Endgame,Cộng hưởng Không Gian tạm; không bán,0,TN,Không Gian Bồ Đề + Đại Đạo Hoa,Unique,Không
+PILL-051,Luân Hồi Đạo Đan,Tiên Giới,Endgame,Bảo lưu 1 buff xuyên kiếp giới hạn,0,TN,Luân Hồi Quả + Đại Đạo Hoa,Unique,Không
+PILL-052,Tiên Khiếu Đan,Tiên Giới,Chân Tiên,+1 điểm tiến độ tiên khiếu,18,TN,Tiên Khiếu Quả + Kim Tu Thập Diệp,3/ngày,Có/Hạn chế
+PILL-053,Ngũ Suy Hộ Mệnh,Tiên Giới,Kim Tiên+,Giảm 20% tác hại Ngũ Suy,90,TN,Lưỡng Sinh Tiên Quả + Đạo Tâm Liên,1/ngày,Có/Hạn chế
+PILL-054,Huyền Chân Đan,Tiên Giới,Thái Ất,+10% tiến độ chuẩn bị Đại La,220,TN,Huyền Chân Chi Tinh + Đại Đạo Hoa,1/tuần,Có/Hạn chế
+PILL-055,U Thủy Tiên Đan,Tiên Giới,Kim Tiên+,+15% Thủy pháp 2 giờ,70,TN,U Thủy Tiên Liên + Thổ Tôn Quả,2/ngày,Có/Hạn chế
+PILL-056,Cuồng Diễm Tiên Đan,Tiên Giới,Kim Tiên+,+15% Hỏa pháp 2 giờ,70,TN,Cuồng Diễm Thảo + Đạo Tâm Liên,2/ngày,Có/Hạn chế
+PILL-057,Cầu Long Luyện Thể Đan,Tiên Giới,Chân Tiên+,+12% HP/DEF 2 giờ,55,TN,Cầu Long Thảo + Lộc Nhung Tiên Thảo,2/ngày,Có/Hạn chế
+PILL-058,Đản Hồn Tiên Đan,Tiên Giới,Kim Tiên+,+15% SPIRIT 2 giờ,65,TN,Đản Hồn Hoa + Vạn Hồn Tiên Thảo,2/ngày,Có/Hạn chế
+PILL-059,Vô Trần Giải Độc Đan,Tiên Giới,Chân Tiên+,Xóa độc +30% độc RES 2 giờ,20,TN,Thiên Linh Trúc Diệp + Kim Tu Thập Diệp,3/ngày,Có/Hạn chế
+PILL-060,Quy Hương Tĩnh Tâm,Tiên Giới,Endgame,Khóa lựa chọn Quy Phàm 24h để xác nhận; không bán,0,TN,Quy Hương Bạch Liên + Đạo Tâm Liên,Cốt truyện,Không

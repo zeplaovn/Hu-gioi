@@ -1,0 +1,32 @@
+# Cấu hình Supabase CLI (chạy local: `supabase start`). Giá trị khác mặc định được ghi chú rõ.
+project_id = "hu-gioi"
+
+[api]
+enabled = true
+port = 54321
+# `game` phải được expose để Edge Function gọi hàm bằng supabase-js. Bảo mật KHÔNG dựa vào việc ẩn schema:
+# anon/authenticated không có USAGE trên schema game (xem supabase/tests/03_security.test.sql).
+# Trên Supabase Cloud: Dashboard → Settings → API → Exposed schemas → thêm `game`.
+schemas = ["public", "graphql_public", "game"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173"]
+enable_signup = true
+[auth.email]
+enable_confirmations = false
+
+[functions.api]
+# Handler tự xác minh JWT (supabase.auth.getUser) để tương thích khóa ký JWT mới; /health không cần token.
+verify_jwt = false

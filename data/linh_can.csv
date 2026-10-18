@@ -1,0 +1,8 @@
+﻿id,name,type,spawn_pct,cultivation_mult,structure,identity
+ROOT-001,Ngũ Linh Căn,Ngũ hành,30.0,0.9,5 hệ,Linh hoạt; nhiều công pháp
+ROOT-002,Tứ Linh Căn,Ngũ hành,27.0,0.96,4 hệ,Linh hoạt
+ROOT-003,Tam Linh Căn,Ngũ hành,22.0,1.02,3 hệ,Cân bằng
+ROOT-004,Song Linh Căn,Ngũ hành,14.0,1.08,2 hệ,Chuyên môn hóa
+ROOT-005,Đơn Linh Căn,Ngũ hành,6.0,1.14,1 hệ,Chuyên hệ mạnh
+ROOT-006,Thiên Linh Căn,Ngũ hành,0.9,1.2,1 hệ cực thuần,Cộng hưởng cao; không bán
+ROOT-007,Biến Dị Linh Căn,Biến dị,0.1,1.16,Băng/Lôi/Phong/Quang/Ám,Bộ kỹ năng riêng; là tổng bucket 0.1%

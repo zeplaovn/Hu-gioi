@@ -1,0 +1,10 @@
+﻿id,name,world,bonuses
+SET-001,Thanh Vân Kiếm Tâm,Hạ Giới,2: ATK+6%; 4: kiếm kỹ+12%; 6: đỡ 1 đòn chí mạng PvE/180s
+SET-002,Huyết Sát Chiến Thể,Hạ Giới,2: HP+8%; 4: ATK+8%; 6: dưới 30% HP hút máu+6%
+SET-003,Vạn Dược Linh Y,Hạ Giới,2: heal+10%; 4: đan hiệu quả+8%; 6: hồi phục đội nhẹ
+SET-004,Thái Hư Kiếm Vực,Linh Giới,2: PEN+6%; 4: SPIRIT+10%; 6: kiếm trận giảm DEF boss
+SET-005,Vô Tướng Ma Khu,Linh Giới,2: HP+10%; 4: damage+8%; 6: đổi 5% HP lấy burst
+SET-006,Thiên Cơ Trận Sư,Linh Giới,2: ACC+8%; 4: RES+10%; 6: giảm cooldown pháp bảo 10%
+SET-007,Cửu Tiêu Tiên Uy,Tiên Giới,2: tiên lực+8%; 4: pháp tắc+8%; 6: damage boss+10%
+SET-008,Vạn Pháp Quy Nhất,Tiên Giới,2: affinity+8%; 4: giảm phạt đổi pháp tắc; 6: cộng hưởng kép
+SET-009,U Minh Bất Diệt,Tiên Giới,2: SPIRIT+10%; 4: RES+10%; 6: hồi sinh PvE 1 lần/ngày

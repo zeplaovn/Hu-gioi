@@ -1,149 +1,66 @@
-# Kiến trúc mã nguồn — Thiên Vân Đại Lục
+# Kiến trúc v2
 
-## Cấu trúc chuẩn
-
-```text
-index.html
-styles/
-  base.css
-  game.css
-  features.css
-  responsive.css
-  chat.css
-  server-banner.css
-src/
-  bootstrap/
-    main.js
-  game/
-    core/
-      data.js
-      player.js
-      game.js
-      train.js
-    features/
-      idle_data.js
-      idle.js
-      farm.js
-      crafts.js
-      minigames.js
-      sect.js
-      meta.js
-  platform/
-    assets.js
-    security.js
-  services/
-    config.js
-    cloud.js
-    auth.js
-    admin_bridge.js
-  ui/
-    ui.js
-    scene.js
-    screens.js
-    guide.js
-    chat.js
-    ux.js
-assets/
-assets_src/
-scripts/
-tests/
-supabase/
-```
-
-`src/` là source tree runtime duy nhất. Không tạo lại `js/` song song.
-
-## Boundary
-
-### `src/game/core`
-State/model và vòng đời gameplay nền. Không đặt Auth, Supabase hoặc UI-specific behavior ở đây nếu không cần thiết.
-
-### `src/game/features`
-Luật của từng hệ thống gameplay. Feature lớn được tách tiếp thành thư mục riêng khi có nhiều trách nhiệm độc lập.
-
-### `src/ui`
-Render DOM, screen navigation, guide/chat/UX. UI có thể gọi action của game nhưng không nên sở hữu công thức cân bằng cốt lõi.
-
-### `src/services`
-Network boundary: Supabase config, Auth, cloud sync, presence/server status. Không đưa quyền admin thật vào client.
-
-### `src/platform`
-Concern dùng xuyên hệ thống như asset registry và local integrity/security.
-
-### `src/bootstrap`
-Wiring cuối cùng. Không biến entrypoint thành nơi chứa business logic.
-
-## Dependency direction
+## Luồng một yêu cầu
 
 ```text
-game/core ← game/features
-     ↓          ↓
-          ui
-
-platform → dùng xuyên lớp
-services → network/server boundary
-bootstrap → ghép các lớp và start app
+Trình duyệt ──Bearer JWT──▶ Edge Function `api`
+                              1. xác minh JWT (supabase.auth.getUser)
+                              2. validate đầu vào, giới hạn body 2 KB
+                              3. rate limit (bảng game.rate_limits)
+                              4. gọi hàm game.* bằng service_role
+                           ──▶ pgSQL: khóa life → tính thời gian → quyết định → ghi
 ```
 
-Tránh dependency ngược từ core sang UI/services.
+| Endpoint | Việc | Hàm pgSQL |
+|---|---|---|
+| `GET /state` | đọc trạng thái, **tính thời gian đã trôi** (kể cả offline) | `get_state` → `settle_life` |
+| `POST /life/start` | bắt đầu kiếp (idempotent) | `start_life` |
+| `POST /breakthrough/prepare` | bước 1: hiện xác suất tử vong, tạo intent (TTL 120 s) | `breakthrough_prepare` |
+| `POST /breakthrough/confirm` | bước 2: server tung xúc xắc, thành công hoặc **death transaction** | `breakthrough_confirm` |
+| `POST /tm/stat` | Quán Đỉnh: nâng chỉ số vĩnh viễn | `upgrade_stat` |
+| `POST /tm/item` | Thiên Mệnh Các: mua vật phẩm của kiếp | `buy_tm_item` |
 
-## Script loading
+## Mô hình bảo mật
 
-Runtime hiện vẫn dùng `<script>` truyền thống + namespace `TT`. Vì vậy thứ tự trong `index.html` là contract. Refactor sang ES modules/bundler phải là một đợt riêng có test/build/preview đầy đủ.
+- Mọi bảng/hàm nằm trong schema `game`, **không** nằm trong `public`. Bảng bật `ENABLE` + `FORCE ROW LEVEL SECURITY`, không có policy; `anon`/`authenticated` không có `USAGE` trên schema. Chỉ `service_role` (Edge Function) gọi được hàm. `supabase/tests/03_security.test.sql` kiểm các điều này.
+- `service_role` key chỉ tồn tại trong môi trường Edge Function, không bao giờ xuống web.
+- Mọi hàm đặt `search_path = ''`; số ngẫu nhiên lấy từ `gen_random_uuid()` (không seed được).
+- Thời gian luôn là `now()` của server. Các hàm nhận `p_now` chỉ để test; chúng không thể gọi từ client.
+- Client không quyết định chết, Thiên Mệnh hay kết quả đột phá. UI chỉ hiển thị.
 
-## Khi feature lớn hơn
+## Mô hình dữ liệu
 
-Không tách file chỉ vì nhiều dòng. Tách khi có trách nhiệm rõ, ví dụ:
+- **Account** (`accounts`, `account_stats`, `tm_ledger`): Thiên Mệnh, cấp Quán Đỉnh. Giữ qua trùng sinh.
+- **Life** (`lives`, `life_items`, `life_milestones`): kiếp hiện tại. Mỗi account tối đa **một** kiếp `alive` (unique index một phần).
+- `life_history`: Bia Thiên Mệnh, giữ vĩnh viễn. `events`: telemetry tối thiểu (death theo nguyên nhân/giai đoạn, TM, mua vật phẩm).
+- Khóa luôn theo thứ tự **life trước, account sau** (tránh deadlock).
 
-```text
-src/game/features/sect/
-  data.js
-  state.js
-  missions.js
-  shop.js
+### Death transaction (`game.end_life`)
 
-src/game/features/meta/
-  achievements.js
-  reincarnation.js
-  legacy.js
-```
+Khóa life → ghi nguyên nhân → snapshot vào lịch sử → xóa vật phẩm/ví của kiếp → **không đụng TM/stat** → tăng `life_count` → tạo kiếp mới. Gọi lại trên kiếp đã chết chỉ trả về kiếp đang sống (idempotent).
 
-Các hotspot hiện cần ưu tiên khi tiếp tục mở rộng: `idle`, `meta`, `sect`, `game` và `auth`.
+### Thiên Mệnh
 
-## Asset organization
++1 mỗi tầng (9 tầng × 15 cảnh giới = 135 TM/kiếp). Mỗi mốc `(life, stage, tang)` chỉ phát một lần (khóa chính + ràng buộc unique trên `tm_ledger`). Quán Đỉnh tổng 2.280 TM; vật phẩm mất khi chết, không hoàn TM.
 
-- `assets/`: runtime/deploy.
-- `assets_src/`: source sheet, không deploy.
-- asset tooling ở `scripts/`.
-- trước khi xóa asset phải kiểm tra registry/CSS/runtime references.
+### Thời gian
 
-## Database
+Tiến độ được tính **lười** khi người chơi gọi API, từ mốc `last_settle_at`: 8 giờ đầu 100%, 8–16 giờ 70%, 16–24 giờ 40%, quá 24 giờ không tính. Vì vậy server API ngủ hay Supabase free bị pause không làm sai tiến trình. Tầng 1–8 tự tiến và **không có tử vong**; tới tầng 9 dừng chờ xác nhận đại đột phá.
 
-`supabase/migrations/` là source of truth duy nhất cho schema/RPC/RLS. Migration production đã áp dụng là lịch sử bất biến; thay đổi tiếp theo luôn dùng migration mới.
+## Ngoài phạm vi của bản này (chưa làm)
 
-## Security boundary
+Cửa hàng/kinh tế/đan dược/craft/drop, bí cảnh và boss lethal, tông môn/NPC, chợ, **PvP**, Lục Mệnh/Hỗn Độn, chống chuyển tài sản (mục 3.6 v1.3), dashboard telemetry, Admin Console/wiki mới. Chat, bảng xếp hạng, bảo trì của bản cũ nằm ở `legacy/` và chưa được port.
 
-```text
-Browser game
-  → public Supabase config
-  → Auth session
-  → player-safe RPC/server status
+## Điểm cần chủ dự án duyệt hoặc biết
 
-Admin dashboard
-  → Supabase Auth
-  → audited admin RPC/RBAC
+1. **Tọa hóa khi quay lại.** v1.3 nói offline không gây tử vong, nhưng cũng liệt kê hết thọ nguyên là một nguyên nhân chết. Hiện thực hiện tại: thời gian tính bị chặn ở thọ nguyên còn lại, và nếu đã dùng hết thì kiếp kết thúc (`lifespan`) khi người chơi gọi API lần tới. Nếu muốn "không bao giờ chết lúc vắng mặt", cần đổi thành trạng thái chờ người chơi xác nhận tọa hóa.
+2. **Đột phá tầng nhỏ.** Balance Master mô tả xác suất 35–95% và pity cho tầng nhỏ. Bản này theo simulator v1.3: tầng nhỏ chỉ tốn thời gian, **chỉ đại đột phá (tầng 9) có xác suất tử vong**. Công thức `p = base + 0,004×NgộTính + …` và pity chưa được cài.
+3. **Xác suất chết và hệ số chỉ số** (`p_death_tang9`, tốc độ/giảm rủi ro mỗi cấp) là **giả định chưa đo** của simulator; bí cảnh/boss lethal chưa có.
+4. **Hiệu ứng vật phẩm Thiên Mệnh Các** chưa cài (mua, giữ, mất khi chết thì có).
+5. `time_scale` mặc định 1 ở production. Chỉ `seed.sql` (local) đặt 2000.
 
-Postgres
-  → RLS + SECURITY DEFINER + audit
-```
+## Lộ trình PvP (đã chốt hướng)
 
-Không đưa `service_role`, DB password hoặc JWT signing secret vào browser.
-
-## Tests
-
-```text
-tests/              JS/client regression
-supabase/tests/     SQL/RLS/RPC
-scripts/            dev/simulation/tooling
-```
-
-`tests/path_aliases.mjs` chỉ giữ compatibility cho các test cũ trong lúc test suite chưa đổi toàn bộ path fixture; runtime không dùng file này.
+- **Luận Đạo (xếp hạng, không chết thật): bất đồng bộ.** Đăng ký bản chụp build; thách đấu bản chụp khác (BP ±10%, TM stat tính 50%); server chạy trận tất định một lần, lưu replay.
+- **Sinh Tử: lời mời + chấp nhận, cả hai phải đang online.** Server kiểm online (heartbeat) hai lần, yêu cầu xác nhận hai bước từ cả hai bên, khóa trạng thái trong lúc chờ, rồi chạy trận trong một transaction. Không loot xác. Thay đổi so với v1.3: không còn luật "mất kết nối 30 giây thì thua" vì trận không kéo dài.
+- Đẩy lời mời tới người chơi online: Supabase Realtime hoặc polling ngắn (cần kiểm tra giới hạn gói).

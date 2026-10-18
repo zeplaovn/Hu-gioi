@@ -1,0 +1,170 @@
+{
+  "version": "1.3",
+  "target_endgame_days": 60,
+  "maps": [
+    "Hạ Giới",
+    "Linh Giới",
+    "Tiên Giới"
+  ],
+  "chaos_space_in_sla": false,
+  "offline": {
+    "full_hours": 8,
+    "hours_8_16_efficiency": 0.7,
+    "hours_16_24_efficiency": 0.4,
+    "cap_hours": 24
+  },
+  "currency_rates": {
+    "LT_to_LS": 1000,
+    "TN_to_LT": 1000
+  },
+  "breakthrough": {
+    "minor_cap": [
+      0.35,
+      0.95
+    ],
+    "major_cap": [
+      0.15,
+      0.85
+    ],
+    "ascension_cap": [
+      0.1,
+      0.75
+    ],
+    "pity_increment": 0.08,
+    "guarantee_attempt": 5
+  },
+  "stat_item_cap": 40,
+  "gear_cultivation_cap_pct": 35,
+  "auction_tax_pct": [
+    5,
+    10
+  ],
+  "lifecycle": {
+    "ascension_ends_life": false,
+    "permadeath_on_lethal_death": true,
+    "physical_assets_lost_on_death": true,
+    "heaven_mandate_persists": true
+  },
+  "heaven_mandate": {
+    "points_per_tang": 1,
+    "tang_per_realm": 9,
+    "stages": 15,
+    "points_per_clean_life": 135,
+    "persists_across_lives": true,
+    "permanent_stat_cap_each": 20,
+    "stat_costs": {
+      "TuongMao": {
+        "base": 6,
+        "step": 1
+      },
+      "PhucDuyen": {
+        "base": 7,
+        "step": 1
+      },
+      "CanCot": {
+        "base": 8,
+        "step": 2
+      },
+      "NgoTinh": {
+        "base": 8,
+        "step": 2
+      },
+      "VanKhi": {
+        "base": 9,
+        "step": 2
+      }
+    },
+    "stat_total_cost": 2280,
+    "exclusive_items_lost_on_death": true,
+    "exclusive_item_price_range": [
+      20,
+      90
+    ],
+    "status": "v1.3 parameters; tune after closed beta"
+  },
+  "technology_stack": "OPEN",
+  "guardrails": {
+    "speed_cap": 1.25,
+    "risk_floor": 0.5,
+    "later_life_clean_days_min": 45
+  },
+  "pvp": {
+    "matchmaking_bp_tolerance": 0.1,
+    "tm_stat_effect_ranked_pvp": 0.5,
+    "loot_on_death": false,
+    "disconnect_pvp_sinh_tu_seconds": 30,
+    "disconnect_pve_lethal_pause_seconds": 120,
+    "status": "proposed v1.3"
+  },
+  "offline_rules": {
+    "lethal_events_while_offline": false,
+    "auto_stop_before": [
+      "tang_9_breakthrough",
+      "do_kiep"
+    ],
+    "confirm_online_required": true,
+    "minor_tang_can_kill": false
+  },
+  "tho_nguyen": {
+    "start_years": 100,
+    "use_years_per_credited_day": 10,
+    "grant_years_per_target_day": 20,
+    "table": "data/tho_nguyen.csv",
+    "aging_only_with_credited_time": true,
+    "status": "proposed v1.3"
+  },
+  "trade_rules": {
+    "min_account_age_hours": 72,
+    "received_item_trade_lock_hours": 24,
+    "max_net_outflow_pct_per_day": 20,
+    "flag_pair_trades_per_day": 3,
+    "off_life_storage": false,
+    "status": "proposed v1.3"
+  },
+  "luc_menh": {
+    "min_account_age_days": 14,
+    "party_finder": true,
+    "device_ip_signals": "flag_only"
+  },
+  "death_hazard_assumptions": {
+    "note": "ASSUMPTIONS, not telemetry",
+    "stage_pdeath_at_tang9": {
+      "HG00": 0.0,
+      "HG01": 0.005,
+      "HG02": 0.008,
+      "HG03": 0.01,
+      "HG04": 0.012,
+      "HG05": 0.03,
+      "LG01": 0.01,
+      "LG02": 0.012,
+      "LG03": 0.015,
+      "LG04": 0.06,
+      "TG01": 0.01,
+      "TG02": 0.012,
+      "TG03": 0.015,
+      "TG04": 0.02,
+      "TG05": 0.025
+    },
+    "risky_after_stage_index": {
+      "5": 0.025,
+      "9": 0.035,
+      "14": 0.04
+    }
+  },
+  "simulation_v1_3": {
+    "hazard_scale": 1.0,
+    "p10_days": 50.91,
+    "p25_days": 56.53,
+    "median_days": 64.52,
+    "p75_days": 79.83,
+    "p90_days": 113.5,
+    "mean_days": 74.33,
+    "first_life_clear_pct": 70.44,
+    "mean_deaths": 0.412,
+    "p90_lives": 2.0,
+    "median_tm_earned": 135.0,
+    "median_tm_spent": 0.0,
+    "later_life_clean_days_median": 58.78,
+    "later_life_samples": 5913
+  }
+}
