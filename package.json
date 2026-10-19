@@ -2,7 +2,7 @@
   "name": "hu-gioi",
   "private": true,
   "version": "2.0.0-alpha.0",
-  "description": "Thiên Vân Đại Lục — SvelteKit + Supabase (Edge Functions + pgSQL)",
+  "description": "Thiên Vân Đại Lục — HTML/CSS/JS thuần + Supabase (Edge Functions + pgSQL)",
   "type": "module",
   "packageManager": "pnpm@10.0.0",
   "engines": {

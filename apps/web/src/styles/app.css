@@ -136,3 +136,20 @@ th { color: var(--dim); font-weight: 600; font-size: 13px; }
   .game-title { font-size: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- đăng nhập ---------- */
+.hero { max-width: 520px; margin: 6vh auto 0; text-align: center; }
+.hero form, .hero .notice { text-align: left; }
+.hero .hanzi { width: 64px; height: 64px; margin: 0 auto 14px; display: grid; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); font: 36px Georgia, serif; }
+.hero h1 { color: var(--gold); letter-spacing: .06em; }
+.hero .eyebrow { font-style: italic; margin-bottom: .2rem; }
+.hero .lede { color: var(--dim); margin-bottom: 1.5rem; }
+code { background: var(--panel2); padding: .05rem .35rem; border-radius: 4px; }
+
+/* ---------- tiện ích dùng chung cho các màn ---------- */
+.t-plain { color: var(--fg); } .t-dim { color: var(--dim); }
+.gold-text { color: var(--gold); }
+.check { display: flex; gap: .6rem; align-items: flex-start; color: var(--fg); }
+.check input { width: 18px; height: 18px; margin-top: .25rem; }
+.shop h3 { margin: 0 0 .2rem; }
+.shop p.small { margin: 0 0 .6rem; }

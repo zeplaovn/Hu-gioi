@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { causeLabel, clamp01, duration, pct } from "../src/lib/format.ts";
+import { causeLabel, clamp01, duration, pct } from "../src/format.js";
 
 describe("format", () => {
   it("pct dùng dấu phẩy", () => { expect(pct(0.0625, 2)).toBe("6,25%"); expect(pct(0.5, 0)).toBe("50%"); });

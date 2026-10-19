@@ -3,7 +3,7 @@
 Game tu tiên idle theo **thời gian thật**. Thiết kế canonical: **v1.3** (`docs/design/`).
 
 ```text
-SvelteKit (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (schema `game`) trên Supabase PostgreSQL
+HTML/CSS/JS thuần (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (schema `game`) trên Supabase PostgreSQL
    giao diện                 xác thực, validate, rate limit        LUẬT GAME: tu luyện, đột phá, chết, Thiên Mệnh
 ```
 
@@ -14,7 +14,7 @@ SvelteKit (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (schema `gam
 ## Cấu trúc
 
 ```text
-apps/web/             SvelteKit 2 (SPA): đăng nhập, tu luyện, đột phá, Quán Đỉnh, Bia Thiên Mệnh
+apps/web/             HTML/CSS/JS thuần (ES modules, Vite chỉ để gom mã): đăng nhập, tu luyện, đột phá, Quán Đỉnh, Bia Thiên Mệnh
 packages/game-core/   hằng số + công thức TS (sinh từ data/*.csv), test parity với SQL
 supabase/
   migrations/         schema v2, dữ liệu tĩnh (sinh tự động), hàm pgSQL
@@ -45,7 +45,6 @@ Không có Docker vẫn chạy được toàn bộ **test** (xem dưới): `tool
 
 ```bash
 pnpm test        # gen:check + game-core + web + Edge handler + DB (migration, SQL, parity, handler↔Postgres)
-pnpm --filter web check   # svelte-check
 pnpm build:web
 ```
 
@@ -65,6 +64,6 @@ Chưa phát hành: sửa thẳng migration dữ liệu tĩnh. Sau khi đã có d
 ## Triển khai (tóm tắt)
 
 1. **Supabase**: `supabase link`, `supabase db push`, `supabase functions deploy api`. Đặt secret `ALLOWED_ORIGINS` (danh sách origin web, ngăn cách bằng dấu phẩy). Thêm `game` vào *Exposed schemas* (Settings → API) để Edge Function gọi hàm; client vẫn không có quyền gì trên schema này.
-2. **Web** (Vercel): Root Directory `apps/web`, bật "Include source files outside of Root Directory"; env `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`. Lưu ý: dự án Vercel hiện tại đang build bản cũ ở thư mục gốc, cần đổi cấu hình trước khi hợp nhánh này.
+2. **Web** (Vercel): Root Directory `apps/web`, Framework Preset **Vite** (build `pnpm build`, output `dist`), bật "Include source files outside of Root Directory"; env `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY` (Vite nhúng vào bản build: đổi giá trị phải Redeploy). Router theo hash (`#/play`) nên không cần rewrite. Nếu dự án Vercel đang đặt framework là SvelteKit, đổi sang Vite.
 
 Chi tiết thiết kế, mô hình bảo mật và các điểm cần duyệt: `docs/ARCHITECTURE.md`.
