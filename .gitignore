@@ -12,7 +12,6 @@ Thumbs.db
 .vscode/
 .idea/
 .vercel/
-.svelte-kit/
 build/
 .pgdata/
 supabase/.temp/

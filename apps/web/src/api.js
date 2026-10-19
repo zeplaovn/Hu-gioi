@@ -1,14 +1,16 @@
-/* Client mỏng gọi Edge Function `api`. Không chứa luật game: mọi kết quả (chết, Thiên Mệnh, đột phá) do server quyết định. */
-import type { ConfirmResult, GameState, PrepareResult } from "@hu-gioi/game-core";
-import type { StatKey } from "@hu-gioi/game-core";
+/* Client mỏng gọi Edge Function `api`. Không chứa luật game: mọi kết quả (chết, Thiên Mệnh, đột phá) do server quyết định.
+   Hình dạng JSON trả về: xem packages/game-core/src/types.ts (GameState, PrepareResult, ConfirmResult). */
 
 export class ApiError extends Error {
-  constructor(readonly status: number, readonly code: string) {
+  /** @param {number} status  @param {string} code */
+  constructor(status, code) {
     super(code);
+    this.status = status;
+    this.code = code;
   }
 }
 
-const TEXT: Record<string, string> = {
+const TEXT = {
   unauthorized: "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
   rate_limited: "Bạn thao tác quá nhanh, hãy đợi vài giây.",
   network: "Không kết nối được máy chủ. Hãy kiểm tra mạng.",
@@ -25,23 +27,20 @@ const TEXT: Record<string, string> = {
   internal: "Máy chủ gặp lỗi, hãy thử lại sau.",
 };
 
-export const errorText = (e: unknown): string =>
+export const errorText = (e) =>
   e instanceof ApiError ? (TEXT[e.code] ?? "Có lỗi xảy ra, vui lòng thử lại.") : "Có lỗi xảy ra, vui lòng thử lại.";
 
-export interface ApiOptions {
-  /** URL gốc của function, ví dụ https://xxx.supabase.co/functions/v1/api */
-  baseUrl: string;
-  getToken: () => Promise<string | null>;
-  anonKey?: string;
-  fetchImpl?: typeof fetch;
-}
+/**
+ * @param {{ baseUrl: string, getToken: () => Promise<string | null>, anonKey?: string, fetchImpl?: typeof fetch }} o
+ *   baseUrl: URL gốc của function, ví dụ https://xxx.supabase.co/functions/v1/api
+ */
+export function createApi(o) {
+  const f = o.fetchImpl ?? ((...a) => fetch(...a));
 
-export function createApi(o: ApiOptions) {
-  const f = o.fetchImpl ?? ((...a: Parameters<typeof fetch>) => fetch(...a));
-  async function req<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
+  async function req(method, path, body) {
     const token = await o.getToken();
     if (!token) throw new ApiError(401, "unauthorized");
-    let res: Response;
+    let res;
     try {
       res = await f(o.baseUrl.replace(/\/+$/, "") + path, {
         method,
@@ -56,21 +55,21 @@ export function createApi(o: ApiOptions) {
     } catch {
       throw new ApiError(0, "network");
     }
-    let data: unknown = null;
+    let data = null;
     try { data = await res.json(); } catch { /* thân rỗng hoặc không phải JSON */ }
     if (!res.ok) {
-      const code = data && typeof data === "object" && "error" in data ? String((data as { error: unknown }).error) : "internal";
+      const code = data && typeof data === "object" && "error" in data ? String(data.error) : "internal";
       throw new ApiError(res.status, code);
     }
-    return data as T;
+    return data;
   }
+
   return {
-    state: () => req<GameState>("GET", "/state"),
-    startLife: () => req<GameState>("POST", "/life/start", {}),
-    prepareBreakthrough: () => req<PrepareResult>("POST", "/breakthrough/prepare", {}),
-    confirmBreakthrough: (intentId: string) => req<ConfirmResult>("POST", "/breakthrough/confirm", { intent_id: intentId }),
-    upgradeStat: (stat: StatKey) => req<{ stat: StatKey; level: number; cost: number; tm_balance: number }>("POST", "/tm/stat", { stat }),
-    buyItem: (itemId: string) => req<{ item_id: string; name: string; cost: number; tm_balance: number }>("POST", "/tm/item", { item_id: itemId }),
+    state: () => req("GET", "/state"),
+    startLife: () => req("POST", "/life/start", {}),
+    prepareBreakthrough: () => req("POST", "/breakthrough/prepare", {}),
+    confirmBreakthrough: (intentId) => req("POST", "/breakthrough/confirm", { intent_id: intentId }),
+    upgradeStat: (stat) => req("POST", "/tm/stat", { stat }),
+    buyItem: (itemId) => req("POST", "/tm/item", { item_id: itemId }),
   };
 }
-export type Api = ReturnType<typeof createApi>;
