@@ -16,12 +16,13 @@ const GROUP_ACTIONS = [
   { id: "bag", label: "Túi đồ", cls: "cyan", icon: "charm" },
 ];
 const GROUP_WORLD = [
+  { id: "npc", label: "Nhân duyên Hạ Giới", cls: "cyan", icon: "portrait", href: "#/nhan-duyen" },
   { id: "codex", label: "Tàng Thư Các", cls: "cyan", icon: "scroll", href: "#/thu-vien" },
   { id: "tm", label: "Quán Đỉnh Thiên Mệnh", cls: "gold", icon: "orb_gold", href: "#/quan-dinh" },
   { id: "history", label: "Bia Thiên Mệnh", cls: "gold", icon: "scroll", href: "#/lich-su" },
   { id: "root", label: "Linh căn", cls: "cyan", icon: "orb_green", soon: true },
   { id: "secret", label: "Bí cảnh", cls: "orange", icon: "crystal", soon: true },
-  { id: "enc", label: "Kỳ ngộ", cls: "gold", icon: "clover", soon: true },
+  { id: "enc", label: "Kỳ ngộ", cls: "gold", icon: "clover", href: "#/nhan-duyen" },
   { id: "board", label: "Bảng xếp hạng", cls: "gold", icon: "bagua", soon: true },
   { id: "map", label: "Thiên Vân Địa Đồ", cls: "cyan", icon: "portrait", soon: true },
 ];

@@ -1,0 +1,37 @@
+﻿gift_id,name,category,acquisition,rarity,currency,price,is_quest_artifact,is_tradeable,consumed_on_gifting
+GFT-HG-001,Trà sương Thanh Vân,trà,Thương hội / hái lá,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-002,Giấy ghi chép bền mực,văn thư,Văn phòng tông môn,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-003,Mực khói tùng,văn thư,Thợ mực,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-004,Đá mài kiếm mịn,luyện võ,Tiệm rèn,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-005,Thẻ tre ghi sử,cổ thư,Thợ tre,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-006,Túi dược hương an thần,dược liệu,Vạn Dược Cốc,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-007,Trâm gỗ thủ công,kỷ vật,Thợ mộc,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-008,Bản đồ tinh tú phổ thông,nghiên cứu,Quầy sách,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-009,Thỏi thép rèn tinh,rèn đúc,Tiệm rèn,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-010,Dầu bảo dưỡng binh khí,luyện võ,Tiệm rèn,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-011,Bánh gạo kiểu Trái Đất,ẩm thực,Hội Quy Hương,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-012,Bưu họa quê nhà,kỷ vật,Hội Quy Hương,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-013,Bút bi phục chế,văn thư,Hội Quy Hương,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-014,Túi lương khô đường dài,đường xa,Thương hội,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-015,Hoa mộc dược viên,thảo mộc,Vạn Dược Cốc,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-016,Bộ thẻ nhận diện thảo dược,dược liệu,Vạn Dược Cốc,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-017,Sổ bệnh án giấy dày,y thư,Văn phòng Dược Cốc,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-018,Tinh sa mô phỏng trận,trận đạo,Thợ khoáng,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-019,Bộ kim khâu y thuật,y thư,Tiệm dụng cụ,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-020,Bình lọc nước đường núi,đường xa,Thương hội,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-021,Sổ thu chi đóng chỉ,kinh doanh,Quầy giấy,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-022,Túi vải đựng thuốc,dược liệu,Thợ may,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-023,Đèn dầu đọc sách,cổ thư,Thương hội,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-024,Quả ngọt phàm gian,ẩm thực,Chợ phàm nhân,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-025,Cọc gỗ luyện thể,luyện võ,Thợ mộc,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-026,Hương trầm nhẹ,thư giãn,Thương hội,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-027,Chuông gió tre,kỷ vật,Thợ tre,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-028,Hộp gỗ giữ thư,kỷ vật,Thợ mộc,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-029,Khăn lau binh khí,luyện võ,Tiệm rèn,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-030,Bộ dấu chứng từ,kinh doanh,Quầy giấy,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-031,Mật ong rừng,ẩm thực,Chợ phàm nhân,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-032,Vải đỏ thường,may mặc,Thợ may,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-033,Áo mưa vải sáp,đường xa,Thợ may,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-034,Dây buộc cổ tay,luyện võ,Thợ may,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-035,Bộ cờ gỗ giản dị,thư giãn,Thợ mộc,Phổ thông,linh_thach_ha_pham,BALANCE_TBD,False,True,True
+GFT-HG-036,Đồng xu lưu niệm phàm giới,kỷ vật,Hội Quy Hương,Tốt,linh_thach_ha_pham,BALANCE_TBD,False,True,True

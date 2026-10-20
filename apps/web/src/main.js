@@ -13,11 +13,14 @@ import { createQuanDinhView } from "./views/quan-dinh.js";
 
 import { createThuVienView } from "./views/thu-vien.js";
 
+import { createNpcView } from "./views/nhan-duyen.js";
+
 const BRAND = "Thiên Vân Đại Lục";
 const auth = createAuth();
 const game = createGame({ api: createApi({ baseUrl: functionUrl(), getToken: auth.token, anonKey: SUPABASE_ANON_KEY }) });
 
 const ROUTES = {
+  "/nhan-duyen": { label: "Nhân duyên Hạ Giới", make: () => createNpcView({ game }) },
   "/thu-vien": { label: "Tàng Thư Các", make: () => createThuVienView({ game }) },
   "/play": { label: "Tu luyện", wide: true, make: () => createPlayView({ game }) },
   "/quan-dinh": { label: "Quán Đỉnh", make: () => createQuanDinhView({ game }) },

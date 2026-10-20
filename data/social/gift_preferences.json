@@ -1,0 +1,881 @@
+{
+  "preferences": [
+    {
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "gift_id": "GFT-HG-001",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Quà hữu dụng cho tông môn. Ta nhận lòng thành của ngươi."
+    },
+    {
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "gift_id": "GFT-HG-030",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Quà hữu dụng cho tông môn. Ta nhận lòng thành của ngươi."
+    },
+    {
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "gift_id": "GFT-HG-002",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ngươi để tâm những việc nhỏ. Cảm ơn."
+    },
+    {
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "gift_id": "GFT-HG-005",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ngươi để tâm những việc nhỏ. Cảm ơn."
+    },
+    {
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Thứ này không hợp đại điện. Đừng tốn công nữa."
+    },
+    {
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "gift_id": "GFT-HG-004",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi nhớ cả những thứ ta dùng để luyện kiếm. Ta rất quý."
+    },
+    {
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "gift_id": "GFT-HG-010",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi nhớ cả những thứ ta dùng để luyện kiếm. Ta rất quý."
+    },
+    {
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "gift_id": "GFT-HG-029",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Buổi tập sau sẽ dùng đến, đa tạ."
+    },
+    {
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "gift_id": "GFT-HG-034",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Buổi tập sau sẽ dùng đến, đa tạ."
+    },
+    {
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "gift_id": "GFT-HG-021",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ta không có lòng dạ để dùng món này."
+    },
+    {
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "gift_id": "GFT-HG-003",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ha ha! Quà hợp với một lão già trông sách như ta."
+    },
+    {
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "gift_id": "GFT-HG-005",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ha ha! Quà hợp với một lão già trông sách như ta."
+    },
+    {
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "gift_id": "GFT-HG-023",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Để vào thư phòng được. Cảm ơn tiểu tử."
+    },
+    {
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "gift_id": "GFT-HG-001",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Để vào thư phòng được. Cảm ơn tiểu tử."
+    },
+    {
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ngươi muốn ta đem món ấy vào thư khố làm gì?"
+    },
+    {
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "gift_id": "GFT-HG-004",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Khá lắm! Thứ này giúp ta luyện thêm một bậc."
+    },
+    {
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "gift_id": "GFT-HG-034",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Khá lắm! Thứ này giúp ta luyện thêm một bậc."
+    },
+    {
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "gift_id": "GFT-HG-010",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Được. Ta nhận, lần đấu tới đừng mong ta nương tay."
+    },
+    {
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "gift_id": "GFT-HG-025",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Được. Ta nhận, lần đấu tới đừng mong ta nương tay."
+    },
+    {
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "gift_id": "GFT-HG-012",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ta không cần món này để phân tâm khỏi kiếm đạo."
+    },
+    {
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "gift_id": "GFT-HG-012",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi khiến ta nhớ lại quê nhà một chút. Cảm ơn thật lòng."
+    },
+    {
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "gift_id": "GFT-HG-013",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi khiến ta nhớ lại quê nhà một chút. Cảm ơn thật lòng."
+    },
+    {
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "gift_id": "GFT-HG-011",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Thứ này giúp ích cho việc tìm người lắm."
+    },
+    {
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "gift_id": "GFT-HG-028",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Thứ này giúp ích cho việc tìm người lắm."
+    },
+    {
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "gift_id": "GFT-HG-021",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ta cần ghi tên người hơn là quản tiền."
+    },
+    {
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "gift_id": "GFT-HG-009",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Tốt! Vật này dùng được để giúp môn nhân mạnh lên."
+    },
+    {
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "gift_id": "GFT-HG-034",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Tốt! Vật này dùng được để giúp môn nhân mạnh lên."
+    },
+    {
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "gift_id": "GFT-HG-010",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ngươi hiểu Huyết Sát cần thứ gì thiết thực."
+    },
+    {
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "gift_id": "GFT-HG-025",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ngươi hiểu Huyết Sát cần thứ gì thiết thực."
+    },
+    {
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "gift_id": "GFT-HG-026",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Mùi hương không khiến ta quên lời thề."
+    },
+    {
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "gift_id": "GFT-HG-032",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi không nhìn ta như lời đồn. Ta nhận món này."
+    },
+    {
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "gift_id": "GFT-HG-028",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi không nhìn ta như lời đồn. Ta nhận món này."
+    },
+    {
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "gift_id": "GFT-HG-006",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Được. Ta sẽ để dành cho người thật sự cần."
+    },
+    {
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "gift_id": "GFT-HG-033",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Được. Ta sẽ để dành cho người thật sự cần."
+    },
+    {
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "gift_id": "GFT-HG-035",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Hôm nay ta không có lòng dạ với trò giải trí."
+    },
+    {
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "gift_id": "GFT-HG-014",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Thật sao? Món này giúp ta có thể luyện tập và tìm em."
+    },
+    {
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "gift_id": "GFT-HG-025",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Thật sao? Món này giúp ta có thể luyện tập và tìm em."
+    },
+    {
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "gift_id": "GFT-HG-011",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Cảm ơn. Ta sẽ giữ gìn cẩn thận."
+    },
+    {
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "gift_id": "GFT-HG-033",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Cảm ơn. Ta sẽ giữ gìn cẩn thận."
+    },
+    {
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "gift_id": "GFT-HG-035",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ta không biết dùng thứ đó, xin ngươi đừng giận."
+    },
+    {
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "gift_id": "GFT-HG-021",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một món có thể ghi chép thành khế ước rõ ràng. Tốt."
+    },
+    {
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "gift_id": "GFT-HG-030",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một món có thể ghi chép thành khế ước rõ ràng. Tốt."
+    },
+    {
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "gift_id": "GFT-HG-003",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ngươi biết người làm sổ cần gì."
+    },
+    {
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "gift_id": "GFT-HG-035",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ngươi biết người làm sổ cần gì."
+    },
+    {
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "gift_id": "GFT-HG-012",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Đừng dùng chuyện quê nhà để mua lòng ta."
+    },
+    {
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "gift_id": "GFT-HG-009",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Tiếng vật liệu này tốt. Ta nhận bằng cả hai tay."
+    },
+    {
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "gift_id": "GFT-HG-010",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Tiếng vật liệu này tốt. Ta nhận bằng cả hai tay."
+    },
+    {
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "gift_id": "GFT-HG-029",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Đúng thứ xưởng rèn cần. Đặt bên trái cho ta."
+    },
+    {
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "gift_id": "GFT-HG-018",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Đúng thứ xưởng rèn cần. Đặt bên trái cho ta."
+    },
+    {
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Màu đẹp không thay được sức chịu nhiệt."
+    },
+    {
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "gift_id": "GFT-HG-017",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Món này sẽ giúp dược viện cứu người cẩn thận hơn."
+    },
+    {
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "gift_id": "GFT-HG-016",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Món này sẽ giúp dược viện cứu người cẩn thận hơn."
+    },
+    {
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "gift_id": "GFT-HG-015",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ta nhận. Nhớ rằng công dụng vẫn phải được kiểm tra."
+    },
+    {
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "gift_id": "GFT-HG-006",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ta nhận. Nhớ rằng công dụng vẫn phải được kiểm tra."
+    },
+    {
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Vật này không giúp ích việc chữa bệnh lúc này."
+    },
+    {
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "gift_id": "GFT-HG-016",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "A! Muội thích lắm! Lần này học dược sẽ đỡ sai rồi."
+    },
+    {
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "gift_id": "GFT-HG-022",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "A! Muội thích lắm! Lần này học dược sẽ đỡ sai rồi."
+    },
+    {
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "gift_id": "GFT-HG-015",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Đẹp quá. Muội sẽ hỏi thầy cách dùng cho đúng."
+    },
+    {
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "gift_id": "GFT-HG-031",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Đẹp quá. Muội sẽ hỏi thầy cách dùng cho đúng."
+    },
+    {
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Muội không biết dùng món ấy, huynh giữ lại nhé."
+    },
+    {
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "gift_id": "GFT-HG-018",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Đúng thứ ta đang thiếu! Trận mô phỏng sắp hoàn chỉnh."
+    },
+    {
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "gift_id": "GFT-HG-008",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Đúng thứ ta đang thiếu! Trận mô phỏng sắp hoàn chỉnh."
+    },
+    {
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "gift_id": "GFT-HG-002",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Được. Nhớ đặt xa bản vẽ và bát cơm nhé."
+    },
+    {
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "gift_id": "GFT-HG-023",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Được. Nhớ đặt xa bản vẽ và bát cơm nhé."
+    },
+    {
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Món ấy không sửa được một nét cổ văn nào."
+    },
+    {
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "gift_id": "GFT-HG-017",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một công cụ giúp ghi và kiểm chứng y án. Tốt."
+    },
+    {
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "gift_id": "GFT-HG-019",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một công cụ giúp ghi và kiểm chứng y án. Tốt."
+    },
+    {
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "gift_id": "GFT-HG-016",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ta nhận sau khi kiểm tra tính an toàn."
+    },
+    {
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "gift_id": "GFT-HG-002",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ta nhận sau khi kiểm tra tính an toàn."
+    },
+    {
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Dược phòng đang cần vật dụng khác thiết thực hơn."
+    },
+    {
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "gift_id": "GFT-HG-013",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Cảm ơn. Đây là thứ tôi từng dùng cứu người ở Trái Đất."
+    },
+    {
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "gift_id": "GFT-HG-017",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Cảm ơn. Đây là thứ tôi từng dùng cứu người ở Trái Đất."
+    },
+    {
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "gift_id": "GFT-HG-019",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Dùng được cho hồ sơ và chăm sóc bệnh nhân."
+    },
+    {
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "gift_id": "GFT-HG-011",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Dùng được cho hồ sơ và chăm sóc bệnh nhân."
+    },
+    {
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Phòng bệnh không phải chỗ cất món này."
+    },
+    {
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "gift_id": "GFT-HG-030",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một công cụ giúp Hội Quy Hương ghi được thêm nhiều cái tên."
+    },
+    {
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "gift_id": "GFT-HG-013",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một công cụ giúp Hội Quy Hương ghi được thêm nhiều cái tên."
+    },
+    {
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "gift_id": "GFT-HG-002",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ta sẽ dùng món này cho nhóm tìm người."
+    },
+    {
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "gift_id": "GFT-HG-014",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Ta sẽ dùng món này cho nhóm tìm người."
+    },
+    {
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "gift_id": "GFT-HG-032",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Hội còn nhiều việc khẩn hơn quà đẹp."
+    },
+    {
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "gift_id": "GFT-HG-021",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Hay! Món này làm việc buôn bán rõ ràng hơn."
+    },
+    {
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "gift_id": "GFT-HG-030",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Hay! Món này làm việc buôn bán rõ ràng hơn."
+    },
+    {
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "gift_id": "GFT-HG-014",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Hàng hữu dụng, ta sẽ đưa vào chuyến đi tới."
+    },
+    {
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "gift_id": "GFT-HG-035",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Hàng hữu dụng, ta sẽ đưa vào chuyến đi tới."
+    },
+    {
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "gift_id": "GFT-HG-006",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ta không định kinh doanh thứ này đâu."
+    },
+    {
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "gift_id": "GFT-HG-001",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một món quà dễ thương như tiếng gió sông. Đa tạ khách."
+    },
+    {
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "gift_id": "GFT-HG-027",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Một món quà dễ thương như tiếng gió sông. Đa tạ khách."
+    },
+    {
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "gift_id": "GFT-HG-020",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Giữ bên thuyền cũng được, miễn đừng vướng mái chèo."
+    },
+    {
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "gift_id": "GFT-HG-026",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Giữ bên thuyền cũng được, miễn đừng vướng mái chèo."
+    },
+    {
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "gift_id": "GFT-HG-030",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ông già chèo đò chẳng biết dùng món đó."
+    },
+    {
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "gift_id": "GFT-HG-021",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi hiểu một tổ chức cần những gì để vận hành."
+    },
+    {
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "gift_id": "GFT-HG-030",
+      "preference": "favorite",
+      "affection_delta": 6,
+      "trust_delta": 2,
+      "npc_reply": "Ngươi hiểu một tổ chức cần những gì để vận hành."
+    },
+    {
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "gift_id": "GFT-HG-035",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Khá thực tế. Ta có thể tận dụng."
+    },
+    {
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "gift_id": "GFT-HG-008",
+      "preference": "liked",
+      "affection_delta": 4,
+      "trust_delta": 1,
+      "npc_reply": "Khá thực tế. Ta có thể tận dụng."
+    },
+    {
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "gift_id": "GFT-HG-012",
+      "preference": "disliked",
+      "affection_delta": -4,
+      "trust_delta": -2,
+      "npc_reply": "Ta đang xây tương lai ở đây, không sưu tầm hoài niệm."
+    }
+  ],
+  "default_reaction": "neutral",
+  "taboo_notes": {
+    "HG_TVT_01": "Ghét quà có ý mua quyền xét xử hoặc đổi lấy việc che giấu tội lỗi.",
+    "HG_TVT_02": "Không thích quà kèm lời ép nàng bỏ tìm sư phụ hoặc xem lời hứa như món nợ.",
+    "HG_TVT_03": "Cực ghét quà là trang sách cổ bị xé khỏi thư khố hay thư tịch bị đánh cắp.",
+    "HG_TVT_04": "Không tặng quà đùa cợt cái chết em trai hoặc mô phỏng nút dây kỷ vật để chọc giận.",
+    "HG_TVT_05": "Không tặng 'thông tin tìm thân nhân' chưa xác minh như một món hàng; tuyệt đối không đòi phí để tiết lộ tin giả.",
+    "HG_HSM_01": "Không nhận quà kèm yêu cầu cưỡng ép môn nhân mang Huyết Ấn.",
+    "HG_HSM_02": "Không bình phẩm áo đỏ là áo nhuộm máu; không tặng 'bằng chứng' phục thù chưa xác minh.",
+    "HG_HSM_03": "Cấm trêu tên thật, chiếc vòng số chín hoặc dùng tin thất lạc em gái làm giá trao đổi.",
+    "HG_HSM_04": "Không thích bị tặng quà kiểu bố thí; quà không được làm thay giấy nợ hoặc mua kết quả điều tra.",
+    "HG_HSM_05": "Không đưa pháp khí dính Huyết Ấn chưa kiểm định hoặc hỏi ông 'mù thì rèn sao'.",
+    "HG_VDC_01": "Từ chối dược liệu lấy từ thí nghiệm cưỡng ép hoặc bệnh án mua bán trái phép.",
+    "HG_VDC_02": "Không dùng bệnh tình của ca ca nàng để đùa hoặc tặng thuốc hứa chữa khỏi khi chưa có chứng cứ.",
+    "HG_VDC_03": "Không tặng bản sao cấm trận chưa kiểm định hoặc kích hoạt trận pháp trước mặt ông mà không hỏi.",
+    "HG_VDC_04": "Không nhận đan dược chưa rõ nguồn thử nghiệm hay hồ sơ người bệnh bị đánh cắp.",
+    "HG_VDC_05": "Không thích ai bán tên, triệu chứng hoặc hồ sơ cá nhân của bệnh nhân làm hàng hóa.",
+    "HG_TL_01": "Không nhận danh sách người thất lạc bị lấy trộm hay hồ sơ cá nhân chưa có sự đồng ý.",
+    "HG_TL_02": "Không thích quà giả hàng, hàng lậu, lời chào mua chuộc hoặc đề nghị bán cổ vật ẩn.",
+    "HG_TL_03": "Không quan tâm quà xa xỉ để dò thân phận hay ép ông tiết lộ tên thật; không phát nhiệm vụ trực tiếp.",
+    "HG_TL_04": "Không ưa quà mang hàm ý hắn chỉ là người Trái Đất yếu đuối hoặc bị ép bỏ tham vọng; cấm dùng quà để mua dữ liệu Hội Quy Hương."
+  }
+}

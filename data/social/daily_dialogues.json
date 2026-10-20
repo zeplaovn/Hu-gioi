@@ -1,0 +1,3042 @@
+[
+  {
+    "scene_id": "HG_TVT_01_D01",
+    "npc_id": "HG_TVT_01",
+    "npc_name": "Lục Thanh Huyền",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Một chén trà nguội",
+    "npc_text": "Trà nguội rồi. Ngươi thích uống nóng hay chờ vị đắng lắng xuống?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_01_D01_A",
+        "label": "A",
+        "player_text": "Ta rót thêm nước nóng, rồi cùng ngài bàn việc tông môn.",
+        "npc_reply": "Trà nóng giúp tỉnh đầu, người biết rót trà giúp người khác đỡ mệt.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_01_D01_B",
+        "label": "B",
+        "player_text": "Trà nguội vẫn uống được, xin ngài đừng bỏ phí.",
+        "npc_reply": "Biết quý thứ còn dùng được là tốt.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_01_D01_C",
+        "label": "C",
+        "player_text": "Trà này tệ quá, người hầu đâu?",
+        "npc_reply": "Trong điện không thiếu người làm, chỉ thiếu lời nói tử tế.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_01_D02",
+    "npc_id": "HG_TVT_01",
+    "npc_name": "Lục Thanh Huyền",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Bản trực đêm",
+    "npc_text": "Đêm nay đệ tử trực thành trì hơi thiếu. Ngươi đề nghị bố trí thế nào?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_01_D02_A",
+        "label": "A",
+        "player_text": "Xếp ca ngắn, người mệt được nghỉ và có tín hiệu cầu viện.",
+        "npc_reply": "Một đội biết nghỉ mới giữ được thành qua nhiều đêm.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_01_D02_B",
+        "label": "B",
+        "player_text": "Ta nhận thêm một ca nếu sức mình cho phép.",
+        "npc_reply": "Có trách nhiệm, nhưng đừng tự coi mình không cần nghỉ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_01_D02_C",
+        "label": "C",
+        "player_text": "Cứ bắt ngoại môn trực liên tục, họ yếu thì chịu.",
+        "npc_reply": "Ngươi đang đổi an toàn của tất cả lấy một bảng trực đẹp.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_01_D03",
+    "npc_id": "HG_TVT_01",
+    "npc_name": "Lục Thanh Huyền",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Thanh kiếm trên giá",
+    "npc_text": "Kiếm của ta lâu rồi không rút. Ngươi đoán vì sao?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_01_D03_A",
+        "label": "A",
+        "player_text": "Có lẽ ngài muốn giải quyết được nhiều việc mà không cần dùng kiếm.",
+        "npc_reply": "Ta hy vọng còn giữ được điều ấy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_01_D03_B",
+        "label": "B",
+        "player_text": "Kiếm để rút đúng lúc, không cần sáng bóng để khoe.",
+        "npc_reply": "Ngươi hiểu phần nào đạo của ta.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_01_D03_C",
+        "label": "C",
+        "player_text": "Vì ngài đã già, không còn chiến nổi.",
+        "npc_reply": "Già không có nghĩa chưa biết lúc nên rút kiếm.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_01_D04",
+    "npc_id": "HG_TVT_01",
+    "npc_name": "Lục Thanh Huyền",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Lời phê của môn sinh",
+    "npc_text": "Đệ tử trẻ phê bình quy định của ta. Có nên nghe không?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_01_D04_A",
+        "label": "A",
+        "player_text": "Nghe lý do, thử ở quy mô nhỏ và ghi rõ kết quả.",
+        "npc_reply": "Cứ thế đi. Quy tắc không phải bia đá bất biến.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_01_D04_B",
+        "label": "B",
+        "player_text": "Mời họ trình bày trước hội đồng.",
+        "npc_reply": "Một cơ hội nói đúng nơi có thể ngăn trăm lời đồn.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_01_D04_C",
+        "label": "C",
+        "player_text": "Phạt để giữ thể diện chưởng môn.",
+        "npc_reply": "Thể diện giữ bằng sợ hãi sẽ sớm đổ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_02_D01",
+    "npc_id": "HG_TVT_02",
+    "npc_name": "Tô Nhược Vân",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Sân kiếm vắng",
+    "npc_text": "Hôm nay sương dày. Ngươi còn nhìn thấy đường kiếm không?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_02_D01_A",
+        "label": "A",
+        "player_text": "Ta sẽ giảm tốc, luyện chuẩn từng thức rồi mới tăng nhanh.",
+        "npc_reply": "Ngươi học được cách không thắng chính mình bằng nóng vội.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_02_D01_B",
+        "label": "B",
+        "player_text": "Ta xin sư tỷ sửa tư thế đứng trước.",
+        "npc_reply": "Đứng vững trước, kiếm mới vững.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_02_D01_C",
+        "label": "C",
+        "player_text": "Ta nhắm mắt chém đại, may ra trúng.",
+        "npc_reply": "Đừng lấy đồng môn làm mục tiêu thử vận may.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_02_D02",
+    "npc_id": "HG_TVT_02",
+    "npc_name": "Tô Nhược Vân",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Dây kiếm tuột nút",
+    "npc_text": "Dây buộc chuôi kiếm này đã sờn. Thay dây mới có phải quên dây cũ không?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_02_D02_A",
+        "label": "A",
+        "player_text": "Không. Có thể cất dây cũ và dùng dây mới cho an toàn.",
+        "npc_reply": "Ta cũng nghĩ thế, chỉ là chưa tự nói ra.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_02_D02_B",
+        "label": "B",
+        "player_text": "Ta có thể giúp tỷ thắt lại trước buổi luyện.",
+        "npc_reply": "Cảm ơn. Thắt vừa thôi, đừng quá chặt.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_02_D02_C",
+        "label": "C",
+        "player_text": "Đồ cũ vô dụng thì vứt đi ngay.",
+        "npc_reply": "Không phải thứ gì cũ cũng hết nghĩa.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_02_D03",
+    "npc_id": "HG_TVT_02",
+    "npc_name": "Tô Nhược Vân",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Một trận hòa",
+    "npc_text": "Nếu đấu kiếm hòa nhau, ngươi muốn làm lại ngay không?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_02_D03_A",
+        "label": "A",
+        "player_text": "Ta muốn xem lại từng thế kiếm trước khi tái đấu.",
+        "npc_reply": "Được. Học từ trận hòa khó hơn khoe một trận thắng.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_02_D03_B",
+        "label": "B",
+        "player_text": "Nghỉ một lúc rồi tỷ chỉ cho ta sai ở đâu.",
+        "npc_reply": "Ta sẽ nói thật, đừng giận.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_02_D03_C",
+        "label": "C",
+        "player_text": "Không thắng thì tính là thua, khỏi phân tích.",
+        "npc_reply": "Ngươi tự ném bài học đi rồi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_02_D04",
+    "npc_id": "HG_TVT_02",
+    "npc_name": "Tô Nhược Vân",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Bước chân cuối hành lang",
+    "npc_text": "Gió thổi qua bí cảnh cũ, ta lại nghĩ có người trở về. Ngươi có từng như vậy?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_02_D04_A",
+        "label": "A",
+        "player_text": "Có. Nếu tỷ muốn kể, ta sẽ nghe, không hỏi vội.",
+        "npc_reply": "Có người đứng cạnh im lặng cũng đủ rồi.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_02_D04_B",
+        "label": "B",
+        "player_text": "Ta có thể đi cùng tỷ một vòng cho khuây khỏa.",
+        "npc_reply": "Được. Nhưng ta không muốn nói quá nhiều.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_02_D04_C",
+        "label": "C",
+        "player_text": "Tỷ đa cảm quá, luyện kiếm thêm sẽ hết.",
+        "npc_reply": "Kiếm không chém được mọi ký ức.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_03_D01",
+    "npc_id": "HG_TVT_03",
+    "npc_name": "Mạc Trường Phong",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Bụi trên giá gỗ",
+    "npc_text": "Cái giá sách này nghiêng rồi. Ngươi sửa trước hay đọc tiếp?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_03_D01_A",
+        "label": "A",
+        "player_text": "Cố định giá trước để sách khỏi rơi, rồi ta đọc.",
+        "npc_reply": "Một đệ tử biết quý sách hơn trò khoe chữ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_03_D01_B",
+        "label": "B",
+        "player_text": "Ta chuyển sách nặng xuống tầng thấp.",
+        "npc_reply": "Thế cũng được, giảm tải đúng chỗ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_03_D01_C",
+        "label": "C",
+        "player_text": "Kệ nó đổ, sách còn chép lại được.",
+        "npc_reply": "Một bản độc nhất rơi vào lửa không tự mọc thêm.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_03_D02",
+    "npc_id": "HG_TVT_03",
+    "npc_name": "Mạc Trường Phong",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Một chữ ba cách đọc",
+    "npc_text": "Chữ cổ này có ba nghĩa. Ngươi dùng nghĩa nào?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_03_D02_A",
+        "label": "A",
+        "player_text": "Xem niên đại, văn cảnh và các bản đối chiếu.",
+        "npc_reply": "Tốt. Đừng để một chữ dắt mũi cả thiên hạ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_03_D02_B",
+        "label": "B",
+        "player_text": "Ghi cả ba cách đọc và mức chắc chắn.",
+        "npc_reply": "Có khi câu 'chưa biết' là câu đúng nhất.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_03_D02_C",
+        "label": "C",
+        "player_text": "Nghĩa nào làm câu chuyện ly kỳ nhất.",
+        "npc_reply": "Ngươi viết tiểu thuyết thì được, chép sử thì không.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_03_D03",
+    "npc_id": "HG_TVT_03",
+    "npc_name": "Mạc Trường Phong",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Chén trà ngủ quên",
+    "npc_text": "Ta có ngủ trong giờ trông sách không?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_03_D03_A",
+        "label": "A",
+        "player_text": "Ta không rõ; nhưng thẻ sách vẫn được xếp rất ngay ngắn.",
+        "npc_reply": "Ha ha, biết trả lời thứ mình thấy, khá.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_03_D03_B",
+        "label": "B",
+        "player_text": "Nếu mệt, ta trông giúp thư phòng một lát.",
+        "npc_reply": "Ta sẽ nhớ lời đề nghị ấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_03_D03_C",
+        "label": "C",
+        "player_text": "Ngài lười nhất tông, chắc chắn ngủ.",
+        "npc_reply": "Cứ quét hết sân rồi hãy bình phẩm.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_03_D04",
+    "npc_id": "HG_TVT_03",
+    "npc_name": "Mạc Trường Phong",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Khách xin chép sách",
+    "npc_text": "Một ngoại môn đệ tử muốn chép công pháp nền tảng. Ngươi có cho chép không?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_03_D04_A",
+        "label": "A",
+        "player_text": "Đối chiếu nội quy, cho phép nếu đủ quyền và hướng dẫn ghi nguồn.",
+        "npc_reply": "Biết trao quyền mà vẫn giữ quy củ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_03_D04_B",
+        "label": "B",
+        "player_text": "Ta hỏi trưởng lão quản lý cấp bản nào được chép.",
+        "npc_reply": "Được. Hỏi đúng người đỡ hỏng cả tháng.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_03_D04_C",
+        "label": "C",
+        "player_text": "Bán bản chép lậu sau lưng ngài.",
+        "npc_reply": "Tàng Kinh Các có cửa; ngươi có thể dùng ngay.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_04_D01",
+    "npc_id": "HG_TVT_04",
+    "npc_name": "Hàn Thiên Minh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Đường kiếm buổi sớm",
+    "npc_text": "Ngươi đến sớm hơn ta hôm nay. Có mục đích gì?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_04_D01_A",
+        "label": "A",
+        "player_text": "Muốn xem mình tiến bộ bao nhiêu qua từng thế kiếm.",
+        "npc_reply": "Tốt. Ta cũng đến vì thế.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_04_D01_B",
+        "label": "B",
+        "player_text": "Muốn đấu thử mười chiêu, không phân thắng bại.",
+        "npc_reply": "Được. Đừng than nếu thở không ra hơi.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_04_D01_C",
+        "label": "C",
+        "player_text": "Đến để khoe ngươi sắp bị vượt mặt.",
+        "npc_reply": "Khoe bằng miệng thì ai chẳng thắng.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_04_D02",
+    "npc_id": "HG_TVT_04",
+    "npc_name": "Hàn Thiên Minh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Kiếm gỗ và kiếm thật",
+    "npc_text": "Ngươi thấy buổi tập nào đáng tin hơn?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_04_D02_A",
+        "label": "A",
+        "player_text": "Kiếm gỗ để học kỹ thuật, kiếm thật chỉ dùng có bảo hộ đúng quy định.",
+        "npc_reply": "Ngươi biết giữ mạng mà vẫn biết luyện.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_04_D02_B",
+        "label": "B",
+        "player_text": "Ta muốn thử cả hai theo thứ tự tăng khó.",
+        "npc_reply": "Được, miễn nhớ giới hạn của mình.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_04_D02_C",
+        "label": "C",
+        "player_text": "Kiếm thật mới có uy, cứ chém hết lực.",
+        "npc_reply": "Thế thì ta khỏi cho ngươi bước lên đài.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_04_D03",
+    "npc_id": "HG_TVT_04",
+    "npc_name": "Hàn Thiên Minh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Một lời khen khó nghe",
+    "npc_text": "Ngươi thắng ta một thức, định khoe với cả tông sao?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_04_D03_A",
+        "label": "A",
+        "player_text": "Ta học được vì có đối thủ mạnh; lần sau chắc ngươi sẽ đổi chiêu.",
+        "npc_reply": "Hừ, đừng tưởng ta sẽ dùng lại thế cũ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_04_D03_B",
+        "label": "B",
+        "player_text": "Ta muốn nghe ngươi nhận xét lỗi còn lại.",
+        "npc_reply": "Được. Lỗi đầu tiên là chân trái chậm nửa nhịp.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_04_D03_C",
+        "label": "C",
+        "player_text": "Ta hơn ngươi rồi, khỏi cần tập nữa.",
+        "npc_reply": "Đánh thắng một thức mà thua cả đầu óc.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_04_D04",
+    "npc_id": "HG_TVT_04",
+    "npc_name": "Hàn Thiên Minh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Nút dây trên chuôi",
+    "npc_text": "Thấy ta giữ nút dây cũ, ngươi nghĩ ta vướng bận?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_04_D04_A",
+        "label": "A",
+        "player_text": "Ta nghĩ đó là điều ngươi muốn nhớ, không phải thứ ta có quyền đánh giá.",
+        "npc_reply": "Ngươi ít nhiều biết giữ lời hơn trước.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_04_D04_B",
+        "label": "B",
+        "player_text": "Nếu ngươi muốn, ta không hỏi thêm.",
+        "npc_reply": "Tốt. Có ngày ta sẽ tự kể.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_04_D04_C",
+        "label": "C",
+        "player_text": "Cứ tháo bỏ, yếu lòng làm chậm kiếm.",
+        "npc_reply": "Đi khỏi đây trước khi ta nổi nóng.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_05_D01",
+    "npc_id": "HG_TVT_05",
+    "npc_name": "Vũ Tiểu Thanh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Bánh gạo buổi chiều",
+    "npc_text": "Mùi này làm ta nhớ ngõ nhỏ gần nhà. Ngươi còn nhớ món ăn quê mình không?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_05_D01_A",
+        "label": "A",
+        "player_text": "Ta kể một bữa cơm cũ và hỏi nàng kể lại nếu muốn.",
+        "npc_reply": "Nghe chuyện nhỏ của ngươi lại làm ta nhớ được thêm.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_05_D01_B",
+        "label": "B",
+        "player_text": "Ta xin công thức, biết đâu mọi người cùng nấu.",
+        "npc_reply": "Ý hay, một bữa ăn chung sẽ bớt nhớ nhà.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_05_D01_C",
+        "label": "C",
+        "player_text": "Nhớ làm gì, giờ chỉ cần linh khí.",
+        "npc_reply": "Người ta đâu sống chỉ bằng linh khí.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_05_D02",
+    "npc_id": "HG_TVT_05",
+    "npc_name": "Vũ Tiểu Thanh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Tên gọi khó phát âm",
+    "npc_text": "Tên của một bác mới đến khó phiên âm. Ngươi viết thế nào để không sai?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_05_D02_A",
+        "label": "A",
+        "player_text": "Đọc lại cho bác xác nhận, ghi thêm cách gọi và quê quán.",
+        "npc_reply": "Chính xác. Một nét sai có thể thành hai người.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_05_D02_B",
+        "label": "B",
+        "player_text": "Ta sẽ ghi âm phiên âm bằng ký hiệu mình hiểu.",
+        "npc_reply": "Miễn có người đọc lại được là tốt.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_05_D02_C",
+        "label": "C",
+        "player_text": "Viết đại tên dễ nhớ, người ấy không biết đâu.",
+        "npc_reply": "Đó là tên của họ, không phải của ngươi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_05_D03",
+    "npc_id": "HG_TVT_05",
+    "npc_name": "Vũ Tiểu Thanh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Giấc mơ có tiếng chuông",
+    "npc_text": "Đêm qua ta mơ nghe chuông cửa nhà. Tỉnh dậy chỉ nghe chuông tông môn.",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_05_D03_A",
+        "label": "A",
+        "player_text": "Ta có thể ngồi cùng nàng, nếu muốn kể giấc mơ ấy.",
+        "npc_reply": "Có người chịu nghe làm ta đỡ sợ tỉnh dậy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_05_D03_B",
+        "label": "B",
+        "player_text": "Ta cùng nàng ghi lại ký ức vừa nhớ được.",
+        "npc_reply": "Đúng rồi! Ta chưa kịp viết tiếng chuông ấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_05_D03_C",
+        "label": "C",
+        "player_text": "Chỉ là giấc mơ, đừng phiền ta.",
+        "npc_reply": "Ta đâu bắt ngươi phải nghe mãi...",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_05_D04",
+    "npc_id": "HG_TVT_05",
+    "npc_name": "Vũ Tiểu Thanh",
+    "faction": "Thanh Vân Tông",
+    "kind": "daily",
+    "title": "Mực nhòe trên danh sách",
+    "npc_text": "Mưa làm nhòe vài dòng tên. Chúng ta làm sao tránh điều này?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_05_D04_A",
+        "label": "A",
+        "player_text": "Chép bản dự phòng, bọc chống nước và tách thông tin riêng tư.",
+        "npc_reply": "Đúng, một trận mưa không nên làm ai biến mất lần nữa.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TVT_05_D04_B",
+        "label": "B",
+        "player_text": "Ta giúp hong khô và đọc lại chữ còn thấy.",
+        "npc_reply": "Cẩn thận đừng hơ gần lửa quá.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_05_D04_C",
+        "label": "C",
+        "player_text": "Tên mất rồi thì thôi, ghi người khác.",
+        "npc_reply": "Mỗi dòng tên là một người có người chờ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_01_D01",
+    "npc_id": "HG_HSM_01",
+    "npc_name": "Huyết Vô Nhai",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Đao cùn trên bậc đá",
+    "npc_text": "Ngươi nghĩ thanh đao cùn này còn ích gì?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_01_D01_A",
+        "label": "A",
+        "player_text": "Dùng luyện thế và nhắc người cầm biết giới hạn của mình.",
+        "npc_reply": "Tốt. Người biết đao cùn mới học cách không ỷ vào sắc bén.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_01_D01_B",
+        "label": "B",
+        "player_text": "Ta muốn sửa cán để người mới luyện cầm chắc hơn.",
+        "npc_reply": "Được. Đừng phí thép làm đẹp chuôi.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_01_D01_C",
+        "label": "C",
+        "player_text": "Vứt nó, kẻ yếu cầm gì cũng chết.",
+        "npc_reply": "Ngươi chưa từng thấy kẻ mạnh chết vì coi thường thứ nhỏ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_01_D02",
+    "npc_id": "HG_HSM_01",
+    "npc_name": "Huyết Vô Nhai",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Bữa cơm lính canh",
+    "npc_text": "Môn nhân trực đêm cãi nhau vì chia phần thức ăn. Ngươi giải quyết sao?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_01_D02_A",
+        "label": "A",
+        "player_text": "Kiểm tra định lượng, người bị thương được phần cần thiết.",
+        "npc_reply": "Một đội đói sẽ tự xé nhau trước khi gặp địch.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_01_D02_B",
+        "label": "B",
+        "player_text": "Ta đưa phần mình cho người thiếu rồi báo quản sự.",
+        "npc_reply": "Hào phóng được một đêm, mai nhớ sửa sổ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_01_D02_C",
+        "label": "C",
+        "player_text": "Ai cướp nhanh thì ăn, thế mới là Huyết Sát.",
+        "npc_reply": "Đừng nhầm mạnh với hỗn loạn.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_01_D03",
+    "npc_id": "HG_HSM_01",
+    "npc_name": "Huyết Vô Nhai",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Đường sống và đường thắng",
+    "npc_text": "Trong chiến trận, ngươi chọn lui một bước hay thắng bằng mọi giá?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_01_D03_A",
+        "label": "A",
+        "player_text": "Lui nếu giữ được người và cơ hội thắng ở trận sau.",
+        "npc_reply": "Kẻ sống đủ lâu mới thấy được chiến thắng cuối.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_01_D03_B",
+        "label": "B",
+        "player_text": "Ta xét mục tiêu và đường rút trước khi đánh.",
+        "npc_reply": "Tốt. Đừng tự khóa đường sống.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_01_D03_C",
+        "label": "C",
+        "player_text": "Không bao giờ lui, dù cả đội chết sạch.",
+        "npc_reply": "Đó là cách một kẻ ngốc giết cả đội.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_01_D04",
+    "npc_id": "HG_HSM_01",
+    "npc_name": "Huyết Vô Nhai",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Lời hứa với kẻ bại",
+    "npc_text": "Ngươi hứa tha một tù binh nếu hắn giao vũ khí. Giờ hắn đã giao. Ngươi làm gì?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_01_D04_A",
+        "label": "A",
+        "player_text": "Giữ lời, giam hợp lệ nếu còn nguy cơ, không tùy tiện giết.",
+        "npc_reply": "Huyết Sát không cần thêm kẻ phá khế ước.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_01_D04_B",
+        "label": "B",
+        "player_text": "Thẩm vấn và ghi lại thỏa thuận trước nhân chứng.",
+        "npc_reply": "Cẩn trọng. Ta chấp nhận.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_01_D04_C",
+        "label": "C",
+        "player_text": "Chém hắn cho sạch hậu họa, ai biết được.",
+        "npc_reply": "Ngày mai sẽ chẳng ai chịu đầu hàng ngươi nữa.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_02_D01",
+    "npc_id": "HG_HSM_02",
+    "npc_name": "Diệp Hồng Y",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Vạt áo trước gió",
+    "npc_text": "Màu áo này dễ khiến người ta nhận ra ta từ xa. Ngươi thấy bất lợi chứ?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_02_D01_A",
+        "label": "A",
+        "player_text": "Nếu nàng muốn, ta sẽ giúp chuẩn bị áo choàng khi cần ẩn hành.",
+        "npc_reply": "Ngươi hỏi ta muốn gì trước. Tốt.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_02_D01_B",
+        "label": "B",
+        "player_text": "Áo của nàng, nàng quyết định.",
+        "npc_reply": "Một câu nói ngắn mà dễ nghe.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_02_D01_C",
+        "label": "C",
+        "player_text": "Đổi hết sang đen cho giống sát thủ đi.",
+        "npc_reply": "Ta không mặc áo để giống lời đồn của người khác.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_02_D02",
+    "npc_id": "HG_HSM_02",
+    "npc_name": "Diệp Hồng Y",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Trạm cứu thương nhỏ",
+    "npc_text": "Đứa bé mới đến sợ mỗi khi thấy kiếm. Có cách nào khiến nó yên tâm?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_02_D02_A",
+        "label": "A",
+        "player_text": "Cất vũ khí, hạ giọng và để đứa trẻ tự chọn khoảng cách.",
+        "npc_reply": "Tốt. Không ép nó phải biết ơn ngay.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_02_D02_B",
+        "label": "B",
+        "player_text": "Ta đưa đồ chơi và đứng xa để nó quen dần.",
+        "npc_reply": "Được. Đừng chạm vào khi nó chưa sẵn lòng.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_02_D02_C",
+        "label": "C",
+        "player_text": "Bảo nó phải quen máu, ở đây là Huyết Sát.",
+        "npc_reply": "Trẻ con không sinh ra để luyện gan cho ngươi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_02_D03",
+    "npc_id": "HG_HSM_02",
+    "npc_name": "Diệp Hồng Y",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Tin đồn trong quán",
+    "npc_text": "Người ở chợ lại kể ta giết cả một làng. Ngươi nghe thì làm gì?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_02_D03_A",
+        "label": "A",
+        "player_text": "Hỏi chứng cứ và không kể lại lời đồn như sự thật.",
+        "npc_reply": "Lâu lắm rồi mới có người không vội kết án ta.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_02_D03_B",
+        "label": "B",
+        "player_text": "Nếu nàng muốn, ta giúp tìm nơi tin ấy bắt đầu.",
+        "npc_reply": "Không cần biến mọi lời đồn thành cuộc săn.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_02_D03_C",
+        "label": "C",
+        "player_text": "Tin có lửa mới có khói, chắc nàng đã làm.",
+        "npc_reply": "Ngươi chỉ thích một câu chuyện khiến mình sợ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_02_D04",
+    "npc_id": "HG_HSM_02",
+    "npc_name": "Diệp Hồng Y",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Buổi đêm không ngủ",
+    "npc_text": "Có đêm ta nghe lại tiếng cháy nhà cũ. Ngươi sẽ khuyên thế nào?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_02_D04_A",
+        "label": "A",
+        "player_text": "Nếu muốn, ta ngồi cạnh một lúc, không bắt nàng kể.",
+        "npc_reply": "Sự im lặng của ngươi không làm ta khó chịu.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_02_D04_B",
+        "label": "B",
+        "player_text": "Ta chuẩn bị trà an thần và để nàng tự quyết có dùng không.",
+        "npc_reply": "Được. Ta sẽ xem trước thành phần.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_02_D04_C",
+        "label": "C",
+        "player_text": "Tập giết nhiều hơn thì sẽ hết mơ.",
+        "npc_reply": "Vết thương không cần thêm máu để lành.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_03_D01",
+    "npc_id": "HG_HSM_03",
+    "npc_name": "A Cửu",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Bước tập đầu tiên",
+    "npc_text": "Ta vừa giữ được thế tấn lâu hơn hôm qua một nhịp. Có đáng kể không?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_03_D01_A",
+        "label": "A",
+        "player_text": "Rất đáng. Ngươi có thể ghi tiến bộ mỗi ngày.",
+        "npc_reply": "Ta sẽ làm vậy. Nhìn thấy từng bước nhỏ dễ chịu thật.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_03_D01_B",
+        "label": "B",
+        "player_text": "Ta đứng canh thời gian cho lần luyện sau.",
+        "npc_reply": "Có người đếm giúp chắc ta đỡ run.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_03_D01_C",
+        "label": "C",
+        "player_text": "Một nhịp chẳng nghĩa gì, bỏ đi.",
+        "npc_reply": "Ta biết mình chậm, nhưng vẫn muốn tiến.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_03_D02",
+    "npc_id": "HG_HSM_03",
+    "npc_name": "A Cửu",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Bát cơm chia đôi",
+    "npc_text": "Bạn cùng phòng bị phạt không có phần ăn. Ta nên chia của mình?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_03_D02_A",
+        "label": "A",
+        "player_text": "Chia khi đủ cho cả hai rồi hỏi lý do phạt, tránh lặp lại.",
+        "npc_reply": "Cảm ơn. Ta sợ giúp một lần rồi hắn lại bị đánh.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_03_D02_B",
+        "label": "B",
+        "player_text": "Ta mang thêm nước và nhờ người phụ trách kiểm tra.",
+        "npc_reply": "Được. Ta sẽ không để hắn đói một mình.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_03_D02_C",
+        "label": "C",
+        "player_text": "Giữ hết, yếu thì tự chịu.",
+        "npc_reply": "Ta từng được người khác chia cơm, không quên nổi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_03_D03",
+    "npc_id": "HG_HSM_03",
+    "npc_name": "A Cửu",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Đêm nhìn trời",
+    "npc_text": "Ngươi nghĩ em gái ta có đang nhìn cùng một vầng trăng?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_03_D03_A",
+        "label": "A",
+        "player_text": "Có thể. Hy vọng ấy đáng giữ, nhưng ta sẽ cùng tìm manh mối thật.",
+        "npc_reply": "Ta cần cả hai: hy vọng và một con đường.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_03_D03_B",
+        "label": "B",
+        "player_text": "Ta có thể hỏi Hội Quy Hương giúp thêm lần nữa.",
+        "npc_reply": "Nếu ngươi không phiền... cảm ơn.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_03_D03_C",
+        "label": "C",
+        "player_text": "Chắc nó quên ngươi rồi.",
+        "npc_reply": "Đừng đoán điều đáng sợ nhất của ta như trò đùa.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_03_D04",
+    "npc_id": "HG_HSM_03",
+    "npc_name": "A Cửu",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Vết bầm mới",
+    "npc_text": "Ta giấu vết thương vì sợ mất suất luyện. Ngươi có nói với quản sự không?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_03_D04_A",
+        "label": "A",
+        "player_text": "Ta đưa ngươi đi kiểm tra và cùng giải thích với quản sự.",
+        "npc_reply": "Ta sợ bị đuổi, nhưng giấu nữa chỉ đau hơn.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_03_D04_B",
+        "label": "B",
+        "player_text": "Ta giúp ngươi xin nghỉ buổi này rồi luyện bù.",
+        "npc_reply": "Cũng được. Ta không muốn bỏ hẳn.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_03_D04_C",
+        "label": "C",
+        "player_text": "Cứ cắn răng luyện tiếp cho mạnh.",
+        "npc_reply": "Ngươi không thấy ta sắp không đứng nổi sao?",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_04_D01",
+    "npc_id": "HG_HSM_04",
+    "npc_name": "Tần Vô Sinh",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Một dòng sổ nợ",
+    "npc_text": "Có người quên ngày trả nợ. Ngươi nghĩ ta nên nhắc một lần hay trừng phạt ngay?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_04_D01_A",
+        "label": "A",
+        "player_text": "Nhắc theo điều khoản, ghi rõ và cho cơ hội giải trình.",
+        "npc_reply": "Được. Kẻ biết quy trình có thể quản sổ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_04_D01_B",
+        "label": "B",
+        "player_text": "Ta muốn kiểm tra xem hắn thật quên hay cố ý.",
+        "npc_reply": "Sự khác nhau ấy đáng một trang giấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_04_D01_C",
+        "label": "C",
+        "player_text": "Cắt linh căn hắn cho mọi người sợ.",
+        "npc_reply": "Một biện pháp quá tốn kém để thu món nợ nhỏ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_04_D02",
+    "npc_id": "HG_HSM_04",
+    "npc_name": "Tần Vô Sinh",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Đệ tử thắng cược",
+    "npc_text": "Nếu một môn sinh thắng quá dễ trong trận cược, ngươi nghi hắn gian lận chứ?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_04_D02_A",
+        "label": "A",
+        "player_text": "Kiểm sổ đặt cược và chứng cứ trước khi kết luận.",
+        "npc_reply": "Ta không thích mất tiền vì phán đoán sai.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_04_D02_B",
+        "label": "B",
+        "player_text": "Ta theo dõi vài trận nữa để xem bất thường.",
+        "npc_reply": "Được. Kiên nhẫn là loại vốn hiếm.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_04_D02_C",
+        "label": "C",
+        "player_text": "Tịch thu hết tiền hắn vì ta không thích thua.",
+        "npc_reply": "Kẻ lấy quyền làm thói quen rồi sẽ bị quyền nuốt.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_04_D03",
+    "npc_id": "HG_HSM_04",
+    "npc_name": "Tần Vô Sinh",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Lãi của một món ơn",
+    "npc_text": "Ta cứu ngươi một lần, ngươi định trả ơn thế nào?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_04_D03_A",
+        "label": "A",
+        "player_text": "Ta trả đúng việc đã hứa, không hứa bán cả đời.",
+        "npc_reply": "Ngươi khó mặc cả, nhưng lời nói đáng ghi.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_04_D03_B",
+        "label": "B",
+        "player_text": "Ta hỏi ông muốn trao đổi điều gì rõ ràng.",
+        "npc_reply": "Được. Sổ nợ ghét lời mơ hồ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_04_D03_C",
+        "label": "C",
+        "player_text": "Ta xin làm bất kỳ việc gì kể cả hại vô tội.",
+        "npc_reply": "Một hợp đồng dễ ký thường dễ phản bội.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_04_D04",
+    "npc_id": "HG_HSM_04",
+    "npc_name": "Tần Vô Sinh",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Quyền và sự kính trọng",
+    "npc_text": "Kẻ dưới có nên được phép phản biện trưởng lão?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_04_D04_A",
+        "label": "A",
+        "player_text": "Có, nếu có chứng cứ và chịu trách nhiệm lời mình nói.",
+        "npc_reply": "Ngươi dám cho phép thứ có thể chống lại mình, thú vị.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_04_D04_B",
+        "label": "B",
+        "player_text": "Nên có nơi trình bày kín để tránh hỗn loạn.",
+        "npc_reply": "Ta thích cách kiểm soát đường thông tin ấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_04_D04_C",
+        "label": "C",
+        "player_text": "Không. Quyền lực không bao giờ sai.",
+        "npc_reply": "Ngay cả ta cũng không dám tin câu đó.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_05_D01",
+    "npc_id": "HG_HSM_05",
+    "npc_name": "Hắc Đồng",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Ba tiếng búa",
+    "npc_text": "Nghe ba tiếng búa này, ngươi thấy chỗ nào của thỏi thép chưa đều?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_05_D01_A",
+        "label": "A",
+        "player_text": "Tiếng cuối đục hơn; có thể còn tạp chất gần mép.",
+        "npc_reply": "Tai ngươi bắt đầu biết nghe thép rồi.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_05_D01_B",
+        "label": "B",
+        "player_text": "Ta chưa phân biệt nổi, xin ông gõ lại chậm hơn.",
+        "npc_reply": "Không biết mà hỏi thì học được.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_05_D01_C",
+        "label": "C",
+        "player_text": "Tiếng nào cũng như nhau, mất công nghe.",
+        "npc_reply": "Ngươi dùng tai như một cái móc treo đấy.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_05_D02",
+    "npc_id": "HG_HSM_05",
+    "npc_name": "Hắc Đồng",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Tay chai và tay mềm",
+    "npc_text": "Tay người mới rèn hay phồng rộp. Ngươi sẽ dạy họ làm gì trước?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_05_D02_A",
+        "label": "A",
+        "player_text": "Tập thao tác đúng, dùng bảo hộ và nghỉ khi cần.",
+        "npc_reply": "Da mới rồi sẽ dày, gân đứt thì lâu lành.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_05_D02_B",
+        "label": "B",
+        "player_text": "Ta chỉnh cán búa cho vừa tay học trò.",
+        "npc_reply": "Đúng. Dụng cụ không nên bắt người khổ vô ích.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_05_D02_C",
+        "label": "C",
+        "player_text": "Cứ đánh đến bật máu mới thành thợ.",
+        "npc_reply": "Đồ rèn tốt không cần thợ mang tật.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_05_D03",
+    "npc_id": "HG_HSM_05",
+    "npc_name": "Hắc Đồng",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Lưỡi kiếm nói thật",
+    "npc_text": "Vết gãy cho biết gì về người cầm kiếm?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_05_D03_A",
+        "label": "A",
+        "player_text": "Cho biết lực và thói quen, nhưng chưa đủ kết tội một con người.",
+        "npc_reply": "Hay. Kim loại kể phần việc nó chứng kiến, không kể tất cả.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_05_D03_B",
+        "label": "B",
+        "player_text": "Ta muốn so với nhật ký trận chiến.",
+        "npc_reply": "Một người chịu đối chứng đáng được cầm búa.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_05_D03_C",
+        "label": "C",
+        "player_text": "Kiếm gãy thì chắc chủ nhân hèn nhát.",
+        "npc_reply": "Có kiếm gãy vì đứng che cho người khác.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_05_D04",
+    "npc_id": "HG_HSM_05",
+    "npc_name": "Hắc Đồng",
+    "faction": "Huyết Sát Môn",
+    "kind": "daily",
+    "title": "Nhiệt lò và tiếng mưa",
+    "npc_text": "Trời mưa, lò nguội nhanh. Ngươi đổi cách rèn thế nào?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_05_D04_A",
+        "label": "A",
+        "player_text": "Điều chỉnh chu kỳ nung theo nhiệt thực tế, thử mẫu trước.",
+        "npc_reply": "Đúng. Lửa không quan tâm dự định của thợ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_HSM_05_D04_B",
+        "label": "B",
+        "player_text": "Ta che gió, kiểm lại ống dẫn khí cho an toàn.",
+        "npc_reply": "Được. Lo lò trước, lo thành phẩm sau.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_05_D04_C",
+        "label": "C",
+        "player_text": "Cứ tăng lửa hết mức, thép nào chẳng chảy.",
+        "npc_reply": "Cách ấy chỉ chắc chảy mái xưởng.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_01_D01",
+    "npc_id": "HG_VDC_01",
+    "npc_name": "Dược Vô Trần",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Lá khô trong dược viện",
+    "npc_text": "Một lá thuốc đã héo có còn dùng được không?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_01_D01_A",
+        "label": "A",
+        "player_text": "Phải xét hoạt chất, tình trạng bảo quản và mục đích, không đoán.",
+        "npc_reply": "Ngươi biết thuốc không chỉ là hình dạng.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_01_D01_B",
+        "label": "B",
+        "player_text": "Ta xin đan sư có kinh nghiệm kiểm tra trước.",
+        "npc_reply": "Thận trọng đúng lúc là đáng quý.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_01_D01_C",
+        "label": "C",
+        "player_text": "Cứ trộn vào cho đủ cân.",
+        "npc_reply": "Đó không phải cách cứu người.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_01_D02",
+    "npc_id": "HG_VDC_01",
+    "npc_name": "Dược Vô Trần",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Bản ghi dược tính",
+    "npc_text": "Hai quyển dược điển ghi tác dụng khác nhau. Ngươi tin quyển nào?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_01_D02_A",
+        "label": "A",
+        "player_text": "Đối chiếu nguồn và thí nghiệm đã được xác minh, ghi chỗ bất định.",
+        "npc_reply": "Lời 'chưa đủ chứng cứ' cứu được nhiều mạng.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_01_D02_B",
+        "label": "B",
+        "player_text": "Ta hỏi nhóm trồng và nhóm dùng thuốc riêng.",
+        "npc_reply": "Được. Mỗi người thấy một mặt của cây thuốc.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_01_D02_C",
+        "label": "C",
+        "player_text": "Quyển đắt tiền chắc đúng hơn.",
+        "npc_reply": "Giá sách không quyết định dược tính.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_01_D03",
+    "npc_id": "HG_VDC_01",
+    "npc_name": "Dược Vô Trần",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Người bệnh ở hiên",
+    "npc_text": "Có người muốn hỏi tuổi thọ còn lại, nhưng ta chưa đoán chắc. Nói thế nào?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_01_D03_A",
+        "label": "A",
+        "player_text": "Nói rõ điều đã biết và chưa biết, đồng thời đề xuất chăm sóc.",
+        "npc_reply": "Ta cần học cách không trốn câu hỏi ấy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_01_D03_B",
+        "label": "B",
+        "player_text": "Ta ở cạnh để người bệnh được hỏi tiếp.",
+        "npc_reply": "Đôi khi đó là sự hỗ trợ lớn nhất.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_01_D03_C",
+        "label": "C",
+        "player_text": "Cứ hứa sống trăm năm để họ vui.",
+        "npc_reply": "Một lời hứa giả có thể cướp đi thời gian chuẩn bị của họ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_01_D04",
+    "npc_id": "HG_VDC_01",
+    "npc_name": "Dược Vô Trần",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Mùi đan lò",
+    "npc_text": "Một lò đan thành công khiến môn nhân reo hò. Ngươi làm gì ngay sau đó?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_01_D04_A",
+        "label": "A",
+        "player_text": "Kiểm tra chất lượng, ghi mẻ và theo dõi tác dụng ngoài dự kiến.",
+        "npc_reply": "Vui vẫn phải ghi chép. Đúng thế.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_01_D04_B",
+        "label": "B",
+        "player_text": "Ta chúc mừng rồi dọn sạch khu làm việc.",
+        "npc_reply": "Một nơi sạch là lời cảm ơn thợ đan.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_01_D04_C",
+        "label": "C",
+        "player_text": "Bán ngay trước khi có kết quả kiểm tra.",
+        "npc_reply": "Ta không dùng người mua thay phòng thử nghiệm.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_02_D01",
+    "npc_id": "HG_VDC_02",
+    "npc_name": "Linh Nhi",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Mầm cây ngày nắng",
+    "npc_text": "Huynh xem mầm này mọc nhanh quá! Có nên thêm thật nhiều linh dịch không?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_02_D01_A",
+        "label": "A",
+        "player_text": "Cứ đúng liều tưới và theo dõi phản ứng từng ngày.",
+        "npc_reply": "Muội lại suýt làm quá tay rồi.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_02_D01_B",
+        "label": "B",
+        "player_text": "Ta giúp muội ghi độ ẩm đất vào sổ.",
+        "npc_reply": "Hay! Thế là có thể so ngày nắng với ngày mưa.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_02_D01_C",
+        "label": "C",
+        "player_text": "Đổ hết bình, càng nhiều càng tốt.",
+        "npc_reply": "Không được, rễ sẽ úng mất!",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_02_D02",
+    "npc_id": "HG_VDC_02",
+    "npc_name": "Linh Nhi",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Bữa sáng của dược đồng",
+    "npc_text": "Muội hái thuốc quên ăn, giờ chóng mặt quá. Có nên làm tiếp?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_02_D02_A",
+        "label": "A",
+        "player_text": "Ăn nhẹ, nghỉ rồi mới vào khu nguy hiểm.",
+        "npc_reply": "Có huynh nhắc nên muội mới nhớ thân mình cũng cần chăm.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_02_D02_B",
+        "label": "B",
+        "player_text": "Ta trông giỏ thuốc cho muội dùng bữa.",
+        "npc_reply": "Cảm ơn! Muội quay lại ngay.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_02_D02_C",
+        "label": "C",
+        "player_text": "Cố làm tới khi ngất, mới là chăm chỉ.",
+        "npc_reply": "Huynh nói vậy nghe đáng sợ quá.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_02_D03",
+    "npc_id": "HG_VDC_02",
+    "npc_name": "Linh Nhi",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Nhãn lọ bị nhòe",
+    "npc_text": "Chữ trên hai lọ thuốc bị nhòe. Muội nghĩ theo mùi vẫn đoán được.",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_02_D03_A",
+        "label": "A",
+        "player_text": "Niêm phong cả hai, kiểm mẫu theo quy trình, không đoán để cấp cho người.",
+        "npc_reply": "Phải rồi. Không ai đáng làm người thử đoán của muội.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_02_D03_B",
+        "label": "B",
+        "player_text": "Ta cùng muội tìm hồ sơ nhập kho.",
+        "npc_reply": "Ừ, chắc có số lô trên sổ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_02_D03_C",
+        "label": "C",
+        "player_text": "Đoán một lọ rồi cho bệnh nhân dùng.",
+        "npc_reply": "Không! Muội sẽ không làm vậy.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_02_D04",
+    "npc_id": "HG_VDC_02",
+    "npc_name": "Linh Nhi",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Câu chuyện bên giường",
+    "npc_text": "Ca ca đôi lúc mở mắt nghe muội kể chuyện. Hôm nay kể gì đây?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_02_D04_A",
+        "label": "A",
+        "player_text": "Kể chuyện vườn thuốc mùa xuân, thứ anh ấy từng thích.",
+        "npc_reply": "Muội sẽ kể về cây hoa đang nở ngoài cửa.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_02_D04_B",
+        "label": "B",
+        "player_text": "Ta giúp muội đọc sách cũ anh ấy từng xem.",
+        "npc_reply": "Có lẽ anh ấy còn nhận ra giọng đọc ấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_02_D04_C",
+        "label": "C",
+        "player_text": "Kể rằng anh ấy là gánh nặng, mau tỉnh đi.",
+        "npc_reply": "Đừng nói điều đó trước mặt ca ca.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_03_D01",
+    "npc_id": "HG_VDC_03",
+    "npc_name": "Tạ Thiên Cơ",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Một nét lệch trên giấy",
+    "npc_text": "Nét cuối trận văn này lệch một li. Ngươi thấy là lỗi hay dụng ý?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_03_D01_A",
+        "label": "A",
+        "player_text": "So với các bản cũ, không kích hoạt chỉ vì tò mò.",
+        "npc_reply": "Có thể còn sống đủ lâu để tìm ra câu trả lời đấy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_03_D01_B",
+        "label": "B",
+        "player_text": "Ta vẽ hai mô hình trên giấy để so.",
+        "npc_reply": "Tốt. Giấy chịu sai giỏi hơn người.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_03_D01_C",
+        "label": "C",
+        "player_text": "Bơm linh lực vào là biết ngay.",
+        "npc_reply": "Đó là cách ta mất cả bữa tối, đừng làm.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_03_D02",
+    "npc_id": "HG_VDC_03",
+    "npc_name": "Tạ Thiên Cơ",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Tính nhầm vì đói",
+    "npc_text": "Ta quên ăn rồi hay chưa? Trận bàn vẫn còn ba vòng chưa xong.",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_03_D02_A",
+        "label": "A",
+        "player_text": "Ông ăn trước, ta đánh dấu trạng thái để lát tiếp tục.",
+        "npc_reply": "À... Đúng là bàn tính không cần cơm, còn ta thì cần.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_03_D02_B",
+        "label": "B",
+        "player_text": "Ta để phần ăn bên cạnh, nhắc ông nghỉ giữa hai vòng.",
+        "npc_reply": "Được, đừng đặt lên nét trận thứ bảy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_03_D02_C",
+        "label": "C",
+        "player_text": "Cứ nhịn đi, nghiên cứu quan trọng hơn mạng.",
+        "npc_reply": "Ta cần sống để kiểm chứng kết quả.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_03_D03",
+    "npc_id": "HG_VDC_03",
+    "npc_name": "Tạ Thiên Cơ",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Sáu điểm trên vòng",
+    "npc_text": "Sáu điểm đặt quanh vòng không đều. Ngươi ưu tiên kiểm điều gì?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_03_D03_A",
+        "label": "A",
+        "player_text": "Kiểm tâm, bán kính và hệ quy chiếu trước khi sửa điểm.",
+        "npc_reply": "Đúng! Không biết lấy gốc nào thì mọi điểm đều sai.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_03_D03_B",
+        "label": "B",
+        "player_text": "Ta đối chiếu bản vẽ thời trước với bản mới.",
+        "npc_reply": "Tìm dữ liệu gốc luôn hữu ích.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_03_D03_C",
+        "label": "C",
+        "player_text": "Nối đại các điểm thành hình đẹp hơn.",
+        "npc_reply": "Đẹp không phải đồng nghĩa hoạt động.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_03_D04",
+    "npc_id": "HG_VDC_03",
+    "npc_name": "Tạ Thiên Cơ",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Bài giảng hụt người nghe",
+    "npc_text": "Ta vừa nói suốt một canh giờ. Ngươi hiểu được bao nhiêu?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_03_D04_A",
+        "label": "A",
+        "player_text": "Ba nguyên tắc; phần không rõ ta sẽ hỏi lại từng ý.",
+        "npc_reply": "Tốt, người không giả hiểu là học trò quý.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_03_D04_B",
+        "label": "B",
+        "player_text": "Ta xin mượn bản vẽ để học thêm.",
+        "npc_reply": "Nhớ không mang vào gần lửa.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_03_D04_C",
+        "label": "C",
+        "player_text": "Ta hiểu hết, khỏi kiểm tra, dù chưa nghe đầu câu.",
+        "npc_reply": "Nói dối trước một trận sư còn nguy hiểm hơn sai phép.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_04_D01",
+    "npc_id": "HG_VDC_04",
+    "npc_name": "Bạch Tử Yên",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Bàn tay rửa lâu",
+    "npc_text": "Ta rửa tay sau mỗi ca. Có người bảo ta quá cẩn trọng. Ngươi nghĩ sao?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_04_D01_A",
+        "label": "A",
+        "player_text": "Kiểm soát vệ sinh và quy trình an toàn đáng duy trì.",
+        "npc_reply": "Ít nhất có người hiểu vì sao ta không bớt bước ấy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_04_D01_B",
+        "label": "B",
+        "player_text": "Ta muốn học quy trình vào phòng thuốc.",
+        "npc_reply": "Đến đúng giờ, ta sẽ hướng dẫn.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_04_D01_C",
+        "label": "C",
+        "player_text": "Rửa cho có lệ, tu sĩ có linh khí rồi.",
+        "npc_reply": "Linh khí không thay mọi biện pháp kiểm soát nhiễm bẩn.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_04_D02",
+    "npc_id": "HG_VDC_04",
+    "npc_name": "Bạch Tử Yên",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Biên bản thiếu chữ ký",
+    "npc_text": "Một bản thử đan thiếu người phê duyệt nhưng kết quả tốt. Xếp nó ở đâu?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_04_D02_A",
+        "label": "A",
+        "player_text": "Giữ làm dữ liệu, đánh dấu chưa hợp lệ và không cấp dùng.",
+        "npc_reply": "Không xóa kết quả, không giả quy trình. Đúng.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_04_D02_B",
+        "label": "B",
+        "player_text": "Ta xin người phụ trách làm rõ tại sao thiếu.",
+        "npc_reply": "Cần tìm lý do, không chỉ đi xin một chữ ký.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_04_D02_C",
+        "label": "C",
+        "player_text": "Tự ký hộ, chẳng ai kiểm tra đâu.",
+        "npc_reply": "Ngươi không được chạm vào hồ sơ của ta nữa.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_04_D03",
+    "npc_id": "HG_VDC_04",
+    "npc_name": "Bạch Tử Yên",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Một lời xin lỗi quá muộn",
+    "npc_text": "Thầy thuốc phạm sai lầm rồi xin lỗi. Điều gì khiến lời xin lỗi có ý nghĩa?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_04_D03_A",
+        "label": "A",
+        "player_text": "Nhận trách nhiệm, hỗ trợ người bị hại và sửa quy trình.",
+        "npc_reply": "Xin lỗi không hoàn lại mạng người, nhưng trách nhiệm không thể bỏ.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_04_D03_B",
+        "label": "B",
+        "player_text": "Ghi sự cố đầy đủ để người sau tránh lặp lại.",
+        "npc_reply": "Đó là một phần cần có.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_04_D03_C",
+        "label": "C",
+        "player_text": "Xin lỗi xong thì xóa hồ sơ.",
+        "npc_reply": "Đó là che giấu, không phải sửa sai.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_04_D04",
+    "npc_id": "HG_VDC_04",
+    "npc_name": "Bạch Tử Yên",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Y quy giữa đêm",
+    "npc_text": "Đệ tử trẻ than quy tắc nhiều làm chậm luyện đan. Ngươi nói sao?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_04_D04_A",
+        "label": "A",
+        "player_text": "Phân biệt bước bảo vệ bệnh nhân và thủ tục thừa, sửa bằng chứng cứ.",
+        "npc_reply": "Ta không phản đối cải tiến, chỉ phản đối coi sinh mạng là vật cản.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_04_D04_B",
+        "label": "B",
+        "player_text": "Ta giúp họ học quy trình cho quen.",
+        "npc_reply": "Tốt. Hiểu luật rồi hãy đề nghị sửa.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_04_D04_C",
+        "label": "C",
+        "player_text": "Cứ bỏ hết, tiến cảnh quan trọng hơn.",
+        "npc_reply": "Ta đã thấy điều ấy dẫn đến đâu.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_05_D01",
+    "npc_id": "HG_VDC_05",
+    "npc_name": "Hứa Mặc",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Cây bút hết mực",
+    "npc_text": "Ta nhớ tiếng bút bi trên giấy hơn tiếng đan lò. Ngươi thấy kỳ quặc không?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_05_D01_A",
+        "label": "A",
+        "player_text": "Không. Có khi thói quen ghi chép đã cứu nhiều mạng.",
+        "npc_reply": "Đúng là thứ nhỏ ta không muốn mất.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_05_D01_B",
+        "label": "B",
+        "player_text": "Ta có bút phục chế, muốn thử xem hợp tay không?",
+        "npc_reply": "Hay đấy! Đầu bút hơi cứng nhưng dùng được.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_05_D01_C",
+        "label": "C",
+        "player_text": "Linh căn yếu nên ngươi mới bám mấy thứ phàm.",
+        "npc_reply": "Một tờ bệnh án có thể cứu người mà không cần linh căn mạnh.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_05_D02",
+    "npc_id": "HG_VDC_05",
+    "npc_name": "Hứa Mặc",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Hai thuật ngữ một triệu chứng",
+    "npc_text": "Đan sư gọi là khí nghịch, ta gọi là khó thở. Ngươi sẽ ghi vào hồ sơ thế nào?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_05_D02_A",
+        "label": "A",
+        "player_text": "Ghi mô tả khách quan và cả hai giả thuyết, tách điều đã đo.",
+        "npc_reply": "Đúng rồi. Người đọc sau biết đâu tìm ra đáp án.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_05_D02_B",
+        "label": "B",
+        "player_text": "Ta làm bảng đối chiếu thuật ngữ.",
+        "npc_reply": "Cần đấy. Hai người nói khác không có nghĩa một người sai.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_05_D02_C",
+        "label": "C",
+        "player_text": "Xóa một bên để khỏi rắc rối.",
+        "npc_reply": "Như vậy ta vừa bỏ mất nửa thông tin.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_05_D03",
+    "npc_id": "HG_VDC_05",
+    "npc_name": "Hứa Mặc",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Thầy thuốc cũng mệt",
+    "npc_text": "Ca trực dài làm ta nhìn chữ nhòe đi. Ngươi sẽ nhắc điều gì?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_05_D03_A",
+        "label": "A",
+        "player_text": "Đổi ca, nghỉ ngắn an toàn và bàn giao rõ ca nguy cấp.",
+        "npc_reply": "Cảm ơn. Người cứu bệnh nhân cũng cần được giữ tỉnh táo.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_05_D03_B",
+        "label": "B",
+        "player_text": "Ta giúp chép bàn giao cho ca sau.",
+        "npc_reply": "Được, đọc lại để chắc không thiếu.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_05_D03_C",
+        "label": "C",
+        "player_text": "Cứ cố đến ngất, bác sĩ tốt phải thế.",
+        "npc_reply": "Một bác sĩ ngất thêm một bệnh nhân thôi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_05_D04",
+    "npc_id": "HG_VDC_05",
+    "npc_name": "Hứa Mặc",
+    "faction": "Vạn Dược Cốc",
+    "kind": "daily",
+    "title": "Bảng trắng thay bệnh án",
+    "npc_text": "Một trưởng lão không thích ghi hồ sơ vì 'ta nhớ hết'. Ngươi sẽ làm gì?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_05_D04_A",
+        "label": "A",
+        "player_text": "Đề nghị mẫu ghi nhanh đủ thông tin tối thiểu và kiểm chứng.",
+        "npc_reply": "Ta muốn giải pháp khiến người bận cũng ghi được.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_VDC_05_D04_B",
+        "label": "B",
+        "player_text": "Ta xin được ghi thay và để ông xác nhận.",
+        "npc_reply": "Tốt. Có chữ ký xác nhận càng rõ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_05_D04_C",
+        "label": "C",
+        "player_text": "Không cần ghi, người giỏi không bao giờ quên.",
+        "npc_reply": "Người giỏi càng biết trí nhớ có thể sai.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_01_D01",
+    "npc_id": "HG_TL_01",
+    "npc_name": "Trần Minh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Một bảng biểu kín ô",
+    "npc_text": "Ta từng tưởng Excel là thứ đáng sợ nhất đời. Giờ ngươi nhìn danh sách này xem.",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_01_D01_A",
+        "label": "A",
+        "player_text": "Ta giúp anh chia thành mục đã xác minh và mục còn chờ.",
+        "npc_reply": "May quá. Mình cần hệ thống, không cần thêm một đống giấy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_01_D01_B",
+        "label": "B",
+        "player_text": "Ta sẽ đánh số và làm bản sao.",
+        "npc_reply": "Có người phụ là nhẹ cả người.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_01_D01_C",
+        "label": "C",
+        "player_text": "Đốt đi cho đỡ việc, tìm ai gặp thì gặp.",
+        "npc_reply": "Những cái tên đó không phải việc thừa.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_01_D02",
+    "npc_id": "HG_TL_01",
+    "npc_name": "Trần Minh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Người mới tới hội",
+    "npc_text": "Một bác lớn tuổi xin tham gia tìm thân, nhưng không biết chữ nơi này. Làm sao giúp?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_01_D02_A",
+        "label": "A",
+        "player_text": "Có người đọc/ghi giúp, xác nhận lại bằng tiếng bác hiểu.",
+        "npc_reply": "Ta cần một mẫu đăng ký không bỏ người ít học.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_01_D02_B",
+        "label": "B",
+        "player_text": "Ta hướng dẫn bác nhận dấu hiệu hội và người phụ trách.",
+        "npc_reply": "Hay, đỡ để bác lạc giữa đám đông.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_01_D02_C",
+        "label": "C",
+        "player_text": "Không đọc được thì không cho đăng ký.",
+        "npc_reply": "Hội này mở vì người lạc đường, không phải vì người biết chữ.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_01_D03",
+    "npc_id": "HG_TL_01",
+    "npc_name": "Trần Minh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Bữa cơm tập thể",
+    "npc_text": "Một vài người bảo họ chẳng muốn về nữa. Có nên xóa tên họ khỏi Hội Quy Hương?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TL_01_D03_A",
+        "label": "A",
+        "player_text": "Hỏi họ có muốn tạm ẩn tên, vẫn giữ quyền đổi quyết định.",
+        "npc_reply": "Một lựa chọn hôm nay không nên thành xiềng xích.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_01_D03_B",
+        "label": "B",
+        "player_text": "Ta đánh dấu 'chưa muốn về', không ép họ.",
+        "npc_reply": "Đúng. Hội phải tôn trọng quyết định ấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_01_D03_C",
+        "label": "C",
+        "player_text": "Ai không muốn về là phản bội, xóa hết.",
+        "npc_reply": "Anh lập hội để tìm nhà, không lập để phán ai yêu quê hơn.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_01_D04",
+    "npc_id": "HG_TL_01",
+    "npc_name": "Trần Minh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Bản tin một dòng",
+    "npc_text": "Hôm nay chẳng có tin mới. Ta có nên đăng 'không có gì' không?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TL_01_D04_A",
+        "label": "A",
+        "player_text": "Có. Báo trạng thái và thời gian cập nhật để mọi người khỏi chờ tin giả.",
+        "npc_reply": "Một bản tin thật dù trống vẫn đáng tin.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_01_D04_B",
+        "label": "B",
+        "player_text": "Ta giúp tổng hợp những đầu mối đang được xác minh.",
+        "npc_reply": "Được. Đừng gọi chúng là đã tìm thấy.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_01_D04_C",
+        "label": "C",
+        "player_text": "Bịa một tin vui để hội đỡ nản.",
+        "npc_reply": "Một lời nói dối đủ làm cả hội mất uy tín.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_02_D01",
+    "npc_id": "HG_TL_02",
+    "npc_name": "Bạch Tiểu Ngư",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Buổi sáng mở sạp",
+    "npc_text": "Khách đầu tiên hôm nay chỉ nhìn mà không mua. Ngươi nghĩ ta nên làm gì?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_02_D01_A",
+        "label": "A",
+        "player_text": "Cho họ xem giá và công dụng, không ép mua.",
+        "npc_reply": "Đúng. Người nhìn hôm nay có thể trở lại ngày mai.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_02_D01_B",
+        "label": "B",
+        "player_text": "Ta giúp cô xếp mẫu hàng dễ xem hơn.",
+        "npc_reply": "Hữu ích hơn cả lời chúc mua may.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_02_D01_C",
+        "label": "C",
+        "player_text": "Đuổi họ đi vì không có tiền.",
+        "npc_reply": "Khách tới sạp ta không phải kẻ bị xét túi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_02_D02",
+    "npc_id": "HG_TL_02",
+    "npc_name": "Bạch Tiểu Ngư",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Món hàng bị trả",
+    "npc_text": "Khách dùng một ngày rồi trả vì hàng có lỗi. Ta nên xử lý sao?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_02_D02_A",
+        "label": "A",
+        "player_text": "Kiểm tra lỗi, công khai điều kiện đổi trả và sửa lô hàng.",
+        "npc_reply": "Giữ được chữ tín còn lời hơn bán một món lỗi.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_02_D02_B",
+        "label": "B",
+        "player_text": "Ta giúp ghi ngày bán và tình trạng hàng.",
+        "npc_reply": "Cần đấy. Sổ sách giúp khỏi cãi nhau.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_02_D02_C",
+        "label": "C",
+        "player_text": "Cứ bảo do khách vụng, khỏi kiểm tra.",
+        "npc_reply": "Một lời phủi tay có thể đuổi mười khách.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_02_D03",
+    "npc_id": "HG_TL_02",
+    "npc_name": "Bạch Tiểu Ngư",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Giá mùa mưa",
+    "npc_text": "Mưa làm tuyến hàng xa bị cắt. Nếu giá tăng, ta nên thông báo thế nào?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TL_02_D03_A",
+        "label": "A",
+        "player_text": "Niêm giá mới và lý do, giữ suất tối thiểu cho người cần thuốc.",
+        "npc_reply": "Ta muốn lời, nhưng không muốn người bệnh chết trước quầy.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_02_D03_B",
+        "label": "B",
+        "player_text": "Ta giúp phân loại hàng khan hiếm cần ưu tiên.",
+        "npc_reply": "Có lý. Không thể gom tất cả vào một rổ.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_02_D03_C",
+        "label": "C",
+        "player_text": "Giấu hàng, tung tin sắp hết để ép giá.",
+        "npc_reply": "Làm thế nhanh giàu, cũng nhanh bị cả chợ tẩy chay.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_02_D04",
+    "npc_id": "HG_TL_02",
+    "npc_name": "Bạch Tiểu Ngư",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Đếm tiền bằng hai tay",
+    "npc_text": "Nếu khách trả bằng Linh Thạch thượng phẩm, ngươi có đổi theo giá ta ghi không?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TL_02_D04_A",
+        "label": "A",
+        "player_text": "Theo tỷ giá công khai: 1 thượng phẩm bằng 1.000 hạ phẩm, kiểm đủ rồi giao.",
+        "npc_reply": "Tốt! Không ai cãi nếu sổ rõ ràng.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_02_D04_B",
+        "label": "B",
+        "player_text": "Ta yêu cầu ghi rõ tiền thối và phí nếu có.",
+        "npc_reply": "Đúng. Tiền lẻ là nơi dễ nảy tranh chấp nhất.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_02_D04_C",
+        "label": "C",
+        "player_text": "Tỷ giá tùy miệng người bán, hôm nay ta thích một giá khác.",
+        "npc_reply": "Cách ấy còn nhanh phá thương hiệu hơn làm rơi hàng.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_03_D01",
+    "npc_id": "HG_TL_03",
+    "npc_name": "Ông Lão Vô Danh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Nước sông lên",
+    "npc_text": "Hôm nay dòng nước đục. Ngươi thấy nó khác hôm qua chỗ nào?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_03_D01_A",
+        "label": "A",
+        "player_text": "Nước chảy xiết hơn; có lẽ nên đợi thời điểm an toàn để qua.",
+        "npc_reply": "Người biết nhìn nước sẽ bớt trách thuyền.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_03_D01_B",
+        "label": "B",
+        "player_text": "Ta hỏi ông có cần phụ buộc dây không.",
+        "npc_reply": "Có đôi tay giúp, ông già đỡ mỏi.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_03_D01_C",
+        "label": "C",
+        "player_text": "Nước nào chẳng giống, cứ chèo nhanh.",
+        "npc_reply": "Dòng sông không nghe người nóng ruột.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_03_D02",
+    "npc_id": "HG_TL_03",
+    "npc_name": "Ông Lão Vô Danh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Tiếng mái chèo",
+    "npc_text": "Ngươi nghe mái chèo kêu như tiếng gì?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_03_D02_A",
+        "label": "A",
+        "player_text": "Như có người gõ cửa một nơi rất xa.",
+        "npc_reply": "Có người nghe tiếng nước cũng nhớ nhà.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_03_D02_B",
+        "label": "B",
+        "player_text": "Như nhịp đều giúp giữ thuyền khỏi xoay.",
+        "npc_reply": "Nghe được nhịp là tốt.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_03_D02_C",
+        "label": "C",
+        "player_text": "Chỉ là tiếng gỗ cũ khó chịu.",
+        "npc_reply": "Gỗ cũ cũng đã chở nhiều người rồi.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_03_D03",
+    "npc_id": "HG_TL_03",
+    "npc_name": "Ông Lão Vô Danh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Câu chuyện chẳng có cuối",
+    "npc_text": "Một người đi mãi mà không tới quê. Chuyện ấy có cần đoạn kết không?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TL_03_D03_A",
+        "label": "A",
+        "player_text": "Có thể đoạn kết nằm ở điều người ấy làm dọc đường.",
+        "npc_reply": "Ngươi đã kể thay ông một đoạn đẹp.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_03_D03_B",
+        "label": "B",
+        "player_text": "Ta muốn nghe vì sao người ấy bắt đầu đi.",
+        "npc_reply": "Điểm đầu thường xa hơn người ta tưởng.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_03_D03_C",
+        "label": "C",
+        "player_text": "Không về được thì chuyện vô nghĩa.",
+        "npc_reply": "Có chuyến đò chỉ đáng vì đã giúp người qua.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_03_D04",
+    "npc_id": "HG_TL_03",
+    "npc_name": "Ông Lão Vô Danh",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Bến đò ngày vắng",
+    "npc_text": "Một ngày không có khách, ông già nên buồn hay vui?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TL_03_D04_A",
+        "label": "A",
+        "player_text": "Vui vì không ai gặp nạn, buồn vì thiếu tiếng người cũng được.",
+        "npc_reply": "Một câu có hai bờ, hợp ý ta.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_03_D04_B",
+        "label": "B",
+        "player_text": "Ta ngồi nghe chuyện sông cùng ông nếu ông muốn.",
+        "npc_reply": "Ngồi đi. Gió chưa mạnh đâu.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_03_D04_C",
+        "label": "C",
+        "player_text": "Không khách thì chẳng có giá trị.",
+        "npc_reply": "Có cây cầu không ai qua hôm nay mà mai cứu cả làng.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_04_D01",
+    "npc_id": "HG_TL_04",
+    "npc_name": "Cao Thành",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Một bản kế hoạch gấp",
+    "npc_text": "Ta còn nhớ các cuộc họp trên Trái Đất. Ở đây cần kế hoạch hay chỉ cần nắm đấm?",
+    "min_affection": 0,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_04_D01_A",
+        "label": "A",
+        "player_text": "Cả hai, nhưng kế hoạch có trách nhiệm và đường rút mới bền.",
+        "npc_reply": "Ngươi hiểu quản trị tốt hơn nhiều tu sĩ mạnh.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_04_D01_B",
+        "label": "B",
+        "player_text": "Ta muốn biết mục tiêu và nguồn lực trước.",
+        "npc_reply": "Một câu hỏi kinh doanh tốt.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_04_D01_C",
+        "label": "C",
+        "player_text": "Không cần kế hoạch, cứ đập hết.",
+        "npc_reply": "Kẻ chỉ giỏi phá sẽ chẳng giữ được gì.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_04_D02",
+    "npc_id": "HG_TL_04",
+    "npc_name": "Cao Thành",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Một nhóm mới gia nhập",
+    "npc_text": "Mười người lạc giới muốn vào nhóm ta. Ngươi sẽ đánh giá họ thế nào?",
+    "min_affection": 0,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_04_D02_A",
+        "label": "A",
+        "player_text": "Hỏi nhu cầu, kỹ năng, đồng thuận và cách bảo vệ quyền rời nhóm.",
+        "npc_reply": "Ngươi đặt ra cơ cấu mà ta có thể vận hành.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_04_D02_B",
+        "label": "B",
+        "player_text": "Ta đề xuất thử việc tự nguyện với nhiệm vụ an toàn.",
+        "npc_reply": "Được, có kỷ luật nhưng không cần khóa cửa.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_04_D02_C",
+        "label": "C",
+        "player_text": "Giữ giấy tờ của họ để không ai trốn.",
+        "npc_reply": "Ngươi muốn tổ chức hay nhà tù?",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_04_D03",
+    "npc_id": "HG_TL_04",
+    "npc_name": "Cao Thành",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Sổ kho và sổ người",
+    "npc_text": "Nếu kho đầy tài nguyên mà người trong nhóm đói, tổ chức có mạnh không?",
+    "min_affection": 0,
+    "pool_index": 3,
+    "choices": [
+      {
+        "choice_id": "HG_TL_04_D03_A",
+        "label": "A",
+        "player_text": "Không. Dự trữ phải có kế hoạch phân bổ minh bạch.",
+        "npc_reply": "Đúng, tài sản không tự bảo vệ được chính nó.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_04_D03_B",
+        "label": "B",
+        "player_text": "Ta xin kiểm lịch phát lương thực và phần dự phòng.",
+        "npc_reply": "Ngươi có thể quản trị một trạm.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_04_D03_C",
+        "label": "C",
+        "player_text": "Miễn lãnh đạo đủ ăn là mạnh rồi.",
+        "npc_reply": "Một đội quân đói sẽ đổi lãnh đạo trước khi đổi thế giới.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_04_D04",
+    "npc_id": "HG_TL_04",
+    "npc_name": "Cao Thành",
+    "faction": "Trung lập",
+    "kind": "daily",
+    "title": "Kẻ phản đối hội đồng",
+    "npc_text": "Một thành viên phê bình kế hoạch ta trước mọi người. Ta nên xử trí?",
+    "min_affection": 0,
+    "pool_index": 4,
+    "choices": [
+      {
+        "choice_id": "HG_TL_04_D04_A",
+        "label": "A",
+        "player_text": "Cho anh ta đưa chứng cứ và trả lời công khai, đặt ranh giới cho xúc phạm.",
+        "npc_reply": "Ta không thích bị phản bác, nhưng làm vậy ít tạo thù.",
+        "affection_delta": 5,
+        "trust_delta": 1
+      },
+      {
+        "choice_id": "HG_TL_04_D04_B",
+        "label": "B",
+        "player_text": "Mời nói riêng trước khi mở buổi thảo luận có điều phối.",
+        "npc_reply": "Được. Ta muốn nắm thông tin trước.",
+        "affection_delta": 3,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_04_D04_C",
+        "label": "C",
+        "player_text": "Đuổi cả gia đình anh ta khỏi nơi trú.",
+        "npc_reply": "Ngươi tưởng thế là giữ quyền? Ngươi đang lập kẻ thù.",
+        "affection_delta": -4,
+        "trust_delta": -2
+      }
+    ],
+    "repeatable": true,
+    "one_time_per_life": false,
+    "story_reward": false
+  }
+]
