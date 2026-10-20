@@ -5,7 +5,7 @@ import { handle, type Deps } from "../../supabase/functions/api/handler.ts";
 
 const url = process.env.DATABASE_URL;
 describe.skipIf(!url)("api ↔ Postgres", () => {
-  const sql = postgres(url ?? "postgresql://invalid", { max: 1, onnotice: () => {} });
+  const sql = postgres(url ?? "postgresql://invalid", { max: 4, onnotice: () => {} });
   const users: string[] = [];
   afterAll(async () => { for (const u of users) await sql`delete from auth.users where id = ${u}`; await sql.end(); });
 
@@ -63,6 +63,29 @@ describe.skipIf(!url)("api ↔ Postgres", () => {
     expect(buy.json).toMatchObject({ catalog_id: "TMITEM-001", cost: 20, warning: "lost_on_death" });
     expect((await call(u, "POST", "/tm/item", { item_id: "TMITEM-001" })).json).toEqual({ error: "limit_reached" });
     expect((await call(u, "GET", "/state")).json.life.items).toHaveLength(1);
+  });
+
+  it("social: simultaneous devices share one offer and one inventory debit", async () => {
+    const [{ id: u }] = await sql`insert into auth.users(id) values(gen_random_uuid()) returning id`;
+    users.push(u);
+    const life = (await call(u, "POST", "/life/start")).json.life.life_id;
+    const npc = "HG_TVT_01";
+    const opens = await Promise.all(Array.from({length: 4}, () => call(u, "POST", "/social/action", {kind: "daily", life_id: life, npc_id: npc})));
+    expect(opens.every(x => x.status === 200)).toBe(true);
+    expect(new Set(opens.map(x => x.json.offer_id)).size).toBe(1);
+    const offer = opens[0]!.json;
+    const answers = await Promise.all(Array.from({length: 6}, () => call(u, "POST", "/social/action", {
+      kind: "choose", life_id: life, id: offer.offer_id, choice_id: offer.scene.choices[0].choice_id,
+    })));
+    expect(answers.every(x => x.status === 200 && x.json.affection === 5)).toBe(true);
+    const state = (await call(u, "GET", "/social")).json;
+    expect(state.npcs.find((n: any) => n.id === npc).affection).toBe(5);
+    await sql`update game.social_lives set state=jsonb_set(state,'{gifts}','{"GFT-HG-001":2}') where life_id=${life}`;
+    const gift = (await call(u, "POST", "/social/action", {kind: "gift_prepare", life_id: life, npc_id: npc, id: "GFT-HG-001"})).json;
+    const confirmations = await Promise.all(Array.from({length: 6}, () => call(u, "POST", "/social/action", {kind: "gift_confirm", life_id: life, id: gift.offer_id})));
+    expect(confirmations.every(x => x.status === 200 && x.json.affection === 11)).toBe(true);
+    const final = (await call(u, "GET", "/social")).json;
+    expect(final.gifts.find((g: any) => g.gift_id === "GFT-HG-001").quantity).toBe(1);
   });
 
   it("rate limit thật: vượt 12 lần/phút cho đột phá", async () => {

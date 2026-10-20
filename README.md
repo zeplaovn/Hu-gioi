@@ -9,7 +9,7 @@ HTML/CSS/JS thuần (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (s
 
 - **Server quyết định mọi thứ quan trọng.** Client chỉ gửi ý định ("tôi muốn đột phá"), nhận kết quả.
 - **Luật game nằm trong pgSQL** (một transaction, idempotent). Edge Function là lớp mỏng; `packages/game-core` (TypeScript) chỉ để hiển thị/dự đoán và có test đối chiếu với SQL.
-- Database **làm mới từ đầu** (không còn save cũ). Code bản cũ (HTML/JS thuần + `save_game`) nằm ở `legacy/` để đối chiếu.
+- Schema game mới không nhập save cũ; dữ liệu live chỉ được reset khi triển khai vào đúng dự án. Code và dữ liệu bản cũ đã được bỏ khỏi cây hiện hành; đối chiếu qua lịch sử Git.
 
 ## Cấu trúc
 
@@ -24,7 +24,6 @@ supabase/
 data/                 dữ liệu cân bằng v1.6.1 (nguồn của migration dữ liệu tĩnh)
 tools/                gen-static (CSV → SQL/TS), db-test, simulator thiết kế và bộ kiểm tra nội dung
 docs/                 design/ (tài liệu v1.6.1) và ARCHITECTURE.md
-legacy/               mã bản cũ, không còn chạy
 ```
 
 ## Chạy local
@@ -71,3 +70,7 @@ Chi tiết thiết kế, mô hình bảo mật và các điểm cần duyệt: `
 ## Nâng cấp v1.6.1
 
 Xem [phạm vi, kiểm tra và việc còn lại](docs/UPGRADE_v1.6.1.md). Tàng Thư Các mở tại `#/thu-vien`: truyện theo cảnh giới, Bách Quái Chí và danh mục vật phẩm. Nội dung tra cứu chưa thay thế hệ thống nhiệm vụ/combat.
+
+## Nhân duyên Hạ Giới v1.1
+
+Mở `#/nhan-duyen` để trò chuyện với 19 NPC, tiếp tục 95 cảnh chính và gặp kỳ ngộ. Máy chủ kiểm soát reset UTC, điểm quan hệ, quà và chống thưởng lặp. [Phạm vi đã làm, kiểm thử và phần còn thiếu](docs/social/IMPLEMENTATION.md). Đây chưa phải bản hoàn thiện toàn bộ thiết kế game.

@@ -1,0 +1,108 @@
+{
+  "version": "1.1",
+  "content_realm": "Hạ Giới",
+  "relationship": {
+    "affection_min": -100,
+    "affection_max": 100,
+    "trust_min": -100,
+    "trust_max": 100,
+    "story_milestones": [
+      0,
+      20,
+      50,
+      80,
+      100
+    ],
+    "values_per_life": true,
+    "rebirth_resets_social": true,
+    "ascension_resets_social": false
+  },
+  "daily": {
+    "reset_at": "00:00 UTC",
+    "attempts_per_npc_per_day": 1,
+    "draw_without_replacement_until_cycle_exhausted": true,
+    "choice_reward_once_per_daily_interaction": true,
+    "base_choice_delta": {
+      "A": {
+        "affection": 5,
+        "trust": 1
+      },
+      "B": {
+        "affection": 3,
+        "trust": 2
+      },
+      "C": {
+        "affection": -4,
+        "trust": -2
+      }
+    }
+  },
+  "gifts": {
+    "max_per_npc_per_day": 1,
+    "same_gift_same_npc_cooldown_days": 3,
+    "consumed_on_successful_offer": true,
+    "currency_for_hg": "linh_thach_ha_pham",
+    "price_authority": "balance_master_new_currency_revision",
+    "reaction_points": {
+      "favorite": {
+        "affection": 6,
+        "trust": 2
+      },
+      "liked": {
+        "affection": 4,
+        "trust": 1
+      },
+      "neutral": {
+        "affection": 1,
+        "trust": 0
+      },
+      "disliked": {
+        "affection": -4,
+        "trust": -2
+      }
+    },
+    "taboo_gifts_not_in_normal_catalog": true
+  },
+  "events": {
+    "minimum_affection_by_event_index": [
+      20,
+      50
+    ],
+    "daily_roll_on_first_valid_social_interaction": true,
+    "one_roll_per_account_per_day": true,
+    "base_proc_probability": 0.2,
+    "pity_trigger_after_consecutive_eligible_miss_days": 4,
+    "max_triggers_per_account_per_day": 1,
+    "same_npc_cooldown_days": 3,
+    "one_time_per_life_per_event": true,
+    "npc_weight_if_affection_at_least_50": 1.5,
+    "npc_weight_if_affection_at_least_80": 2.0,
+    "base_choice_delta": {
+      "A": {
+        "affection": 9,
+        "trust": 5
+      },
+      "B": {
+        "affection": 4,
+        "trust": 2
+      },
+      "C": {
+        "affection": -6,
+        "trust": -3
+      }
+    }
+  },
+  "anti_exploit": {
+    "server_authoritative": true,
+    "transactional_consume_and_reward": true,
+    "idempotency_key_schema": "account_id:life_id:npc_id:utc_day:interaction_kind[:event_or_gift_id]",
+    "prevent_client_clock_reset": true,
+    "npc_gifts_no_tianming_points": true,
+    "relationship_cannot_bypass_story_quest_flags": true
+  },
+  "money_conversion": {
+    "tien_ngoc_thuong_to_ha": 100,
+    "tien_ngoc_ha_to_linh_thach_thuong": 10000,
+    "linh_thach_thuong_to_ha": 1000
+  }
+}

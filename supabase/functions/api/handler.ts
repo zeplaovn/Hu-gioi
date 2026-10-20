@@ -66,6 +66,20 @@ const call = async (rpc: Deps["rpc"], fn: string, args: Record<string, unknown>)
 };
 
 const ROUTES: Record<string, Route> = {
+  "/social": { method: "GET", limit: ["read", 120, 60], run: ({ uid, rpc }) => call(rpc, "social_state", { p_account: uid }) },
+  "/social/action": {
+    method: "POST", limit: ["social", 40, 60],
+    run: ({ uid, body, rpc }) => {
+      if (typeof body.life_id !== "string" || !UUID.test(body.life_id)) throw new HttpError(400, "invalid_life_id");
+      const kinds = ["daily", "story", "choose", "gift_prepare", "gift_confirm", "gift_cancel"];
+      if (typeof body.kind !== "string" || !kinds.includes(body.kind)) throw new HttpError(400, "invalid_social_action");
+      for (const key of ["npc_id", "id", "choice_id"]) {
+        if (body[key] !== undefined && (typeof body[key] !== "string" || !/^[A-Za-z0-9_-]{0,80}$/.test(body[key] as string))) throw new HttpError(400, "invalid_social_input");
+      }
+      return call(rpc, "social_action", { p_account: uid, p_life: body.life_id, p_kind: body.kind,
+        p_npc: body.npc_id ?? "", p_id: body.id ?? "", p_choice: body.choice_id ?? "" });
+    },
+  },
   "/state": { method: "GET", limit: ["read", 120, 60], run: ({ uid, rpc }) => call(rpc, "get_state", { p_account: uid }) },
   "/heartbeat": { method: "POST", limit: ["read", 120, 60], run: async ({ uid, rpc }) => ({ now: await call(rpc, "heartbeat", { p_account: uid }) }) },
   "/life/start": {

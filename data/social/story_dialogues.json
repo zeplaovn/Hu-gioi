@@ -1,0 +1,4567 @@
+{
+  "version": "1.0",
+  "base_document": "v1.6.1",
+  "realm": "Hạ Giới",
+  "scenes": [
+    {
+      "dialogue_id": "HG_TVT_01_S01",
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "faction": "Thanh Vân Tông",
+      "role": "Chưởng môn",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Bữa cơm trước câu hỏi",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Người mới đến, hãy ăn đã. Rồi nói ta nghe: gặp người gặp nạn trên đường khảo hạch, ngươi làm gì?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_01_S01_A",
+          "dialogue_id": "HG_TVT_01_S01",
+          "label": "A",
+          "player_text": "Dừng lại cứu người, rồi tìm cách tiếp tục khảo hạch.",
+          "npc_reply": "Vừa có lòng, vừa chưa chịu bỏ cuộc. Tốt.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_01_q_cuu_thi_sinh"
+        },
+        {
+          "choice_id": "HG_TVT_01_S01_B",
+          "dialogue_id": "HG_TVT_01_S01",
+          "label": "B",
+          "player_text": "Báo người phụ trách; ta không đủ sức tự cứu.",
+          "npc_reply": "Biết giới hạn là khôn ngoan. Nhưng chớ để nó thành cái cớ.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_01_S01_C",
+          "dialogue_id": "HG_TVT_01_S01",
+          "label": "C",
+          "player_text": "Khảo hạch quan trọng hơn; người ấy tự chịu số phận.",
+          "npc_reply": "Một thanh kiếm chỉ biết đi thẳng dễ đâm trúng người mình phải bảo vệ.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_01_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_01_S02",
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "faction": "Thanh Vân Tông",
+      "role": "Chưởng môn",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Một làng hay kho linh thạch",
+      "min_affection": 20,
+      "prerequisite": "HG_TVT_01_S01_completed",
+      "npc_text": "Thú triều ập đến. Chỉ đủ nhân lực giữ một nơi: làng dưới núi hay kho linh thạch nuôi cả tông môn?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_01_S02_A",
+          "dialogue_id": "HG_TVT_01_S02",
+          "label": "A",
+          "player_text": "Sơ tán dân, dùng kho linh thạch làm mồi nhử và xin tiếp viện.",
+          "npc_reply": "Ta muốn nghe phương án, không phải khẩu hiệu. Ngươi đã cho ta một phương án.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_01_plan_so_tan"
+        },
+        {
+          "choice_id": "HG_TVT_01_S02_B",
+          "dialogue_id": "HG_TVT_01_S02",
+          "label": "B",
+          "player_text": "Giữ kho để tông môn còn sức cứu các làng sau.",
+          "npc_reply": "Có lý, nhưng hãy tự tay ghi tên người bị bỏ lại.",
+          "affection_delta": -5,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_01_plan_giu_kho"
+        },
+        {
+          "choice_id": "HG_TVT_01_S02_C",
+          "dialogue_id": "HG_TVT_01_S02",
+          "label": "C",
+          "player_text": "Chỉ cứu ai chịu trả công.",
+          "npc_reply": "Đại điện này không phải nơi rao giá sinh mạng.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_01_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_01_S03",
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "faction": "Thanh Vân Tông",
+      "role": "Chưởng môn",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Người đến trước Thiên Biến",
+      "min_affection": 50,
+      "prerequisite": "HG_TVT_01_S02_completed",
+      "npc_text": "Ta từng gặp một kẻ mang dấu ấn tương tự ngươi, từ trước khi Thiên Biến xảy ra. Ngươi muốn biết điều gì trước?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_01_S03_A",
+          "dialogue_id": "HG_TVT_01_S03",
+          "label": "A",
+          "player_text": "Người ấy có còn sống và có cần giúp đỡ không?",
+          "npc_reply": "Ngươi hỏi về con người trước bí mật. Ta ghi nhận.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_01_lore_tien_khach"
+        },
+        {
+          "choice_id": "HG_TVT_01_S03_B",
+          "dialogue_id": "HG_TVT_01_S03",
+          "label": "B",
+          "player_text": "Dấu ấn của người ấy khác ta ở đâu?",
+          "npc_reply": "Câu hỏi sắc bén. Có lẽ nên đưa ngươi đến gặp Mạc trưởng lão.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_01_lore_dau_an"
+        },
+        {
+          "choice_id": "HG_TVT_01_S03_C",
+          "dialogue_id": "HG_TVT_01_S03",
+          "label": "C",
+          "player_text": "Ngài giấu tin lâu như vậy, hẳn đang phản bội chúng ta.",
+          "npc_reply": "Ta có tội. Nhưng buộc tội dễ hơn tìm chứng cứ.",
+          "affection_delta": -10,
+          "trust_delta": -5,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_01_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_01_S04",
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "faction": "Thanh Vân Tông",
+      "role": "Chưởng môn",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Tro trên trang cổ sử",
+      "min_affection": 80,
+      "prerequisite": "HG_TVT_01_S03_completed",
+      "npc_text": "Ta đã thiêu một phần cổ thư vì sợ nhiều đệ tử chết thêm. Nếu biết, ngươi sẽ xử trí thế nào?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_01_S04_A",
+          "dialogue_id": "HG_TVT_01_S04",
+          "label": "A",
+          "player_text": "Giữ chứng cứ còn lại và lập hội đồng xem xét công khai có kiểm soát.",
+          "npc_reply": "Ngươi cho ta cơ hội chịu trách nhiệm mà không đẩy người khác vào lửa.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_01_route_cong_khai"
+        },
+        {
+          "choice_id": "HG_TVT_01_S04_B",
+          "dialogue_id": "HG_TVT_01_S04",
+          "label": "B",
+          "player_text": "Giao bản sao cho một người đáng tin, tạm giữ bí mật.",
+          "npc_reply": "Có lúc giữ cửa là bổn phận. Nhưng cửa không thể đóng mãi.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_01_route_thu_mon"
+        },
+        {
+          "choice_id": "HG_TVT_01_S04_C",
+          "dialogue_id": "HG_TVT_01_S04",
+          "label": "C",
+          "player_text": "Thiêu nốt đi, miễn uy tín tông môn còn nguyên.",
+          "npc_reply": "Ngươi đã không hiểu điều ta hối hận nhất.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_01_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_01_S05",
+      "npc_id": "HG_TVT_01",
+      "npc_name": "Lục Thanh Huyền",
+      "faction": "Thanh Vân Tông",
+      "role": "Chưởng môn",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Thanh Vân Kiếm Lệnh",
+      "min_affection": 100,
+      "prerequisite": "HG_TVT_01_S04_completed",
+      "npc_text": "Trước khi ngươi phi thăng, ta hỏi lần cuối: Thanh Vân nên mở cửa đón sự thật hay đóng cửa để bảo toàn người trong môn?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_01_S05_A",
+          "dialogue_id": "HG_TVT_01_S05",
+          "label": "A",
+          "player_text": "Mở sử liệu từng bước, bảo vệ nhân chứng và để người đời phán xét.",
+          "npc_reply": "Vậy hãy giúp ta gánh lấy những ngày bị chỉ trích đầu tiên.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_01_ending_minh_chu_candidate"
+        },
+        {
+          "choice_id": "HG_TVT_01_S05_B",
+          "dialogue_id": "HG_TVT_01_S05",
+          "label": "B",
+          "player_text": "Trao bản sao cho người nối nghiệp rồi đợi thời cơ.",
+          "npc_reply": "Một lời hứa nặng hơn thanh kiếm. Ta sẽ ghi rõ người giữ lời.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_01_ending_thu_mon_candidate"
+        },
+        {
+          "choice_id": "HG_TVT_01_S05_C",
+          "dialogue_id": "HG_TVT_01_S05",
+          "label": "C",
+          "player_text": "Ngài phải thoái vị ngay, không cần nghe giải thích.",
+          "npc_reply": "Nếu đó là điều môn nhân muốn, ta sẽ nhận. Nhưng hãy để họ được biết vì sao.",
+          "affection_delta": -5,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_01_ending_thoai_vi_candidate"
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_02_S01",
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "faction": "Thanh Vân Tông",
+      "role": "Đại sư tỷ",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Sương trên sân kiếm",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Đường kiếm cuối của ngươi quá vội. Nếu đối thủ đã ngã, ngươi có truy một chiêu nữa không?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_02_S01_A",
+          "dialogue_id": "HG_TVT_02_S01",
+          "label": "A",
+          "player_text": "Thu kiếm; thắng bại đã phân.",
+          "npc_reply": "Tốt. Kiếm không phải để chứng minh mình tàn nhẫn.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_02_S01_B",
+          "dialogue_id": "HG_TVT_02_S01",
+          "label": "B",
+          "player_text": "Chỉ truy nếu họ vẫn còn ý định đánh lén.",
+          "npc_reply": "Ngươi biết đề phòng. Học thêm cách nhìn đôi mắt đối phương.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_02_S01_C",
+          "dialogue_id": "HG_TVT_02_S01",
+          "label": "C",
+          "player_text": "Ra tay đến khi họ không thể đứng dậy nữa.",
+          "npc_reply": "Ta không dạy kiếm cho kẻ xem sân tập là pháp trường.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_02_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_02_S02",
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "faction": "Thanh Vân Tông",
+      "role": "Đại sư tỷ",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Một lời hứa trong mưa",
+      "min_affection": 20,
+      "prerequisite": "HG_TVT_02_S01_completed",
+      "npc_text": "Có người từng hứa sẽ trở về từ bí cảnh. Mười năm rồi không có tin. Ngươi còn chờ không?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_02_S02_A",
+          "dialogue_id": "HG_TVT_02_S02",
+          "label": "A",
+          "player_text": "Ta sẽ giúp tìm manh mối, nhưng không hứa điều ngoài sức mình.",
+          "npc_reply": "Một lời hứa biết giới hạn lại đáng tin hơn vạn câu thề.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_02_quest_dau_tich_bi_canh"
+        },
+        {
+          "choice_id": "HG_TVT_02_S02_B",
+          "dialogue_id": "HG_TVT_02_S02",
+          "label": "B",
+          "player_text": "Ta khuyên tỷ sống tiếp, dù vẫn có thể giữ hy vọng.",
+          "npc_reply": "Có lẽ ta đã quên cách làm cả hai việc ấy.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_02_S02_C",
+          "dialogue_id": "HG_TVT_02_S02",
+          "label": "C",
+          "player_text": "Người đi không về thì nên bị lãng quên.",
+          "npc_reply": "Ngươi không có quyền quyết định ai đáng được nhớ.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_02_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_02_S03",
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "faction": "Thanh Vân Tông",
+      "role": "Đại sư tỷ",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Thanh cổ kiếm giữa chợ đen",
+      "min_affection": 50,
+      "prerequisite": "HG_TVT_02_S02_completed",
+      "npc_text": "Cổ kiếm của sư phụ ta xuất hiện trong tay thương nhân. Họ đòi một giá quá lớn. Ngươi tính sao?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_02_S03_A",
+          "dialogue_id": "HG_TVT_02_S03",
+          "label": "A",
+          "player_text": "Xác minh thật giả, lần ra người bán và thương lượng có chứng cứ.",
+          "npc_reply": "Ta cần một người giữ đầu lạnh. Ngươi đến đúng lúc.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_02_quest_co_kiem"
+        },
+        {
+          "choice_id": "HG_TVT_02_S03_B",
+          "dialogue_id": "HG_TVT_02_S03",
+          "label": "B",
+          "player_text": "Cùng ta kiếm đủ linh thạch để chuộc lại.",
+          "npc_reply": "Đa tạ. Nhưng nếu nó là đồ giả, công sức ấy sẽ rất uổng.",
+          "affection_delta": 10,
+          "trust_delta": 0,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_02_S03_C",
+          "dialogue_id": "HG_TVT_02_S03",
+          "label": "C",
+          "player_text": "Cướp nó, ai cản thì chém.",
+          "npc_reply": "Ta đang tìm sư phụ, không tìm cớ giết người.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_02_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_02_S04",
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "faction": "Thanh Vân Tông",
+      "role": "Đại sư tỷ",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Nhật ký không có thi thể",
+      "min_affection": 80,
+      "prerequisite": "HG_TVT_02_S03_completed",
+      "npc_text": "Trong bí cảnh chỉ có nhật ký. Sư phụ biết nguy hiểm mà vẫn bước vào trận. Ta có nên tin ông đã chọn như vậy?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_02_S04_A",
+          "dialogue_id": "HG_TVT_02_S04",
+          "label": "A",
+          "player_text": "Hãy đọc hết nhật ký rồi tôn trọng lựa chọn của ông.",
+          "npc_reply": "Ta sợ câu trả lời ấy, nhưng ta biết mình phải nghe.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_02_lore_su_phu_chu_dong"
+        },
+        {
+          "choice_id": "HG_TVT_02_S04_B",
+          "dialogue_id": "HG_TVT_02_S04",
+          "label": "B",
+          "player_text": "Chưa có thi thể thì vẫn phải tiếp tục tìm.",
+          "npc_reply": "Ta cũng muốn thế. Nhưng biết đâu ta đang chạy trốn điều mình đã đọc.",
+          "affection_delta": 5,
+          "trust_delta": 0,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_02_S04_C",
+          "dialogue_id": "HG_TVT_02_S04",
+          "label": "C",
+          "player_text": "Ông bỏ rơi tỷ; quên đi là xong.",
+          "npc_reply": "Đừng nói về ông bằng lời ngươi không thể chứng minh.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_02_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_02_S05",
+      "npc_id": "HG_TVT_02",
+      "npc_name": "Tô Nhược Vân",
+      "faction": "Thanh Vân Tông",
+      "role": "Đại sư tỷ",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Một kiếm tìm người",
+      "min_affection": 100,
+      "prerequisite": "HG_TVT_02_S04_completed",
+      "npc_text": "Nếu ta lên Linh Giới tìm câu trả lời, có thể chúng ta sẽ không gặp nhau nữa. Ngươi muốn nói gì?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_02_S05_A",
+          "dialogue_id": "HG_TVT_02_S05",
+          "label": "A",
+          "player_text": "Cứ đi con đường tỷ chọn. Nếu gặp lại, ta muốn cùng tỷ luận kiếm.",
+          "npc_reply": "Được. Ta sẽ giữ một thế kiếm chưa xuất dành cho ngày đó.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_02_route_phi_thang"
+        },
+        {
+          "choice_id": "HG_TVT_02_S05_B",
+          "dialogue_id": "HG_TVT_02_S05",
+          "label": "B",
+          "player_text": "Nếu quá mệt, tỷ có quyền dừng lại mà không thấy có lỗi.",
+          "npc_reply": "Lần đầu có người cho ta quyền ấy.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_02_route_buong_qua_khu"
+        },
+        {
+          "choice_id": "HG_TVT_02_S05_C",
+          "dialogue_id": "HG_TVT_02_S05",
+          "label": "C",
+          "player_text": "Đừng đi, tỷ phải ở lại giúp ta tu luyện.",
+          "npc_reply": "Đồng hành không phải xiềng xích. Ta tưởng ngươi hiểu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_03_S01",
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "faction": "Thanh Vân Tông",
+      "role": "Trưởng lão Tàng Kinh Các",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Trà nguội và sách rách",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Một quyển sách thiếu trang cuối còn đáng đọc không, tiểu tử?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_03_S01_A",
+          "dialogue_id": "HG_TVT_03_S01",
+          "label": "A",
+          "player_text": "Đáng. Chỗ bị xé có thể quan trọng hơn chỗ còn lại.",
+          "npc_reply": "Ha! Có mắt đấy. Cầm chổi quét thư phòng cho ta.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_03_S01_B",
+          "dialogue_id": "HG_TVT_03_S01",
+          "label": "B",
+          "player_text": "Đọc trước rồi mới kết luận.",
+          "npc_reply": "Ít nhất ngươi không khoe hiểu sách chưa mở.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_03_S01_C",
+          "dialogue_id": "HG_TVT_03_S01",
+          "label": "C",
+          "player_text": "Sách rách bán giấy vụn cho tiện.",
+          "npc_reply": "Ra cửa nhớ khép lại. Gió còn quý sách hơn ngươi.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_03_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_03_S02",
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "faction": "Thanh Vân Tông",
+      "role": "Trưởng lão Tàng Kinh Các",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Công huân và quyền đọc",
+      "min_affection": 20,
+      "prerequisite": "HG_TVT_03_S01_completed",
+      "npc_text": "Ngươi đổi công huân lấy ba canh giờ đọc cổ sử. Nếu gặp đoạn không hiểu, ngươi làm gì?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_03_S02_A",
+          "dialogue_id": "HG_TVT_03_S02",
+          "label": "A",
+          "player_text": "Chép nguyên văn, đối chiếu các bản và hỏi người hiểu cổ tự.",
+          "npc_reply": "Làm học trò như thế, ta mới bớt phải giả ngủ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_03_quest_sua_co_thu"
+        },
+        {
+          "choice_id": "HG_TVT_03_S02_B",
+          "dialogue_id": "HG_TVT_03_S02",
+          "label": "B",
+          "player_text": "Đoán theo ngữ cảnh rồi ghi rõ phần suy đoán.",
+          "npc_reply": "Đoán không tội. Giả bộ chắc chắn mới đáng phạt.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_03_S02_C",
+          "dialogue_id": "HG_TVT_03_S02",
+          "label": "C",
+          "player_text": "Tự sửa câu chữ cho hợp ý mình.",
+          "npc_reply": "Ngươi làm sử quan hay thợ trang điểm cho quá khứ?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_03_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_03_S03",
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "faction": "Thanh Vân Tông",
+      "role": "Trưởng lão Tàng Kinh Các",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Tro trong thư khố",
+      "min_affection": 50,
+      "prerequisite": "HG_TVT_03_S02_completed",
+      "npc_text": "Có một thư khố từng bị chính người trong tông thiêu. Ngươi nghe tin này muốn làm gì?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_03_S03_A",
+          "dialogue_id": "HG_TVT_03_S03",
+          "label": "A",
+          "player_text": "Tìm chứng nhân và giữ lại những bản sao chưa cháy.",
+          "npc_reply": "Đừng vội gọi tên thủ phạm. Trước tiên giữ bằng chứng sống sót.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_03_lore_thu_kho_chay"
+        },
+        {
+          "choice_id": "HG_TVT_03_S03_B",
+          "dialogue_id": "HG_TVT_03_S03",
+          "label": "B",
+          "player_text": "Báo chưởng môn và xin phép điều tra kín.",
+          "npc_reply": "Biết lễ là tốt. Nhưng chuẩn bị tinh thần nghe lời từ chối.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_03_S03_C",
+          "dialogue_id": "HG_TVT_03_S03",
+          "label": "C",
+          "player_text": "Đồn khắp tông môn ngay tối nay.",
+          "npc_reply": "Tin đồn là ngọn lửa dễ nhóm nhất.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_03_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_03_S04",
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "faction": "Thanh Vân Tông",
+      "role": "Trưởng lão Tàng Kinh Các",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Sáu ký hiệu lệch hàng",
+      "min_affection": 80,
+      "prerequisite": "HG_TVT_03_S03_completed",
+      "npc_text": "Tờ giấy này có sáu ký hiệu. Ngươi sẽ thử giải theo cách nào?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_03_S04_A",
+          "dialogue_id": "HG_TVT_03_S04",
+          "label": "A",
+          "player_text": "Tìm Tạ Thiên Cơ đối chiếu trận bàn, không tự kích hoạt.",
+          "npc_reply": "Giỏi. Một chữ sai có khi đổi thành bia mộ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_03_quest_hop_tac_ta"
+        },
+        {
+          "choice_id": "HG_TVT_03_S04_B",
+          "dialogue_id": "HG_TVT_03_S04",
+          "label": "B",
+          "player_text": "Vẽ sơ đồ các khả năng trước khi đụng vào vật thật.",
+          "npc_reply": "Cũng không tệ. Lấy giấy trắng ở ngăn dưới.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_03_S04_C",
+          "dialogue_id": "HG_TVT_03_S04",
+          "label": "C",
+          "player_text": "Thử rót linh lực, biết đâu trận tự mở.",
+          "npc_reply": "Làm thế thêm lần nữa, ta khóa ngươi ngoài Tàng Kinh Các.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_03_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_03_S05",
+      "npc_id": "HG_TVT_03",
+      "npc_name": "Mạc Trường Phong",
+      "faction": "Thanh Vân Tông",
+      "role": "Trưởng lão Tàng Kinh Các",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Trang cuối trước ngày đi",
+      "min_affection": 100,
+      "prerequisite": "HG_TVT_03_S04_completed",
+      "npc_text": "Sáu ký hiệu giống vị trí trong một trận, không phải tên tông môn. Ngươi mang tin ấy đi đâu?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_03_S05_A",
+          "dialogue_id": "HG_TVT_03_S05",
+          "label": "A",
+          "player_text": "Ghi bản sao cho người kế nhiệm, rồi theo dấu lên Linh Giới.",
+          "npc_reply": "Tốt. Tri thức không nên chết theo một người.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_03_lore_sau_vi_tri"
+        },
+        {
+          "choice_id": "HG_TVT_03_S05_B",
+          "dialogue_id": "HG_TVT_03_S05",
+          "label": "B",
+          "player_text": "Giữ riêng, chỉ nói cho Tạ Thiên Cơ khi đủ an toàn.",
+          "npc_reply": "Cẩn trọng cũng được, miễn đừng thành chôn vùi.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_03_route_giu_kin"
+        },
+        {
+          "choice_id": "HG_TVT_03_S05_C",
+          "dialogue_id": "HG_TVT_03_S05",
+          "label": "C",
+          "player_text": "Bán cho kẻ trả cao nhất.",
+          "npc_reply": "Ta thà uống trà nguội đến hết đời.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_04_S01",
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "faction": "Thanh Vân Tông",
+      "role": "Chân truyền đệ tử",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Kiếm ước ban mai",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Thiên Ngoại Khách được trời ưu ái hay thật sự biết khổ luyện? Lên đài với ta chứ?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_04_S01_A",
+          "dialogue_id": "HG_TVT_04_S01",
+          "label": "A",
+          "player_text": "Được. Kiếm của ai sắc hơn hãy để trận đấu trả lời.",
+          "npc_reply": "Hừ, ít nhất ngươi dám nhận lời.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_04_quest_kiem_uoc"
+        },
+        {
+          "choice_id": "HG_TVT_04_S01_B",
+          "dialogue_id": "HG_TVT_04_S01",
+          "label": "B",
+          "player_text": "Ta muốn học thêm một thức rồi thách đấu công bằng.",
+          "npc_reply": "Không hèn. Biết chuẩn bị mới có tư cách đấu.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_04_S01_C",
+          "dialogue_id": "HG_TVT_04_S01",
+          "label": "C",
+          "player_text": "Ngươi không xứng làm đối thủ của ta.",
+          "npc_reply": "Ta sẽ nhớ câu ấy khi kiếm ngươi rơi xuống đất.",
+          "affection_delta": -10,
+          "trust_delta": -5,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_04_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_04_S02",
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "faction": "Thanh Vân Tông",
+      "role": "Chân truyền đệ tử",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Công huân hơn thua",
+      "min_affection": 20,
+      "prerequisite": "HG_TVT_04_S01_completed",
+      "npc_text": "Ta hơn ngươi mười điểm công huân. Ngươi định lấy lại bằng cách nào?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_04_S02_A",
+          "dialogue_id": "HG_TVT_04_S02",
+          "label": "A",
+          "player_text": "Nhận nhiệm vụ khó phù hợp, tự kiếm công huân.",
+          "npc_reply": "Ta đợi ngươi đuổi kịp. Đừng làm ta thất vọng.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_04_S02_B",
+          "dialogue_id": "HG_TVT_04_S02",
+          "label": "B",
+          "player_text": "Hợp tác nhiệm vụ lớn, chia theo đóng góp.",
+          "npc_reply": "Cũng được. Trên chiến trường ta không so đo chuyện sống chết.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_04_S02_C",
+          "dialogue_id": "HG_TVT_04_S02",
+          "label": "C",
+          "player_text": "Mua chuộc người ghi bảng.",
+          "npc_reply": "Kẻ ấy không đáng để ta rút kiếm.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_04_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_04_S03",
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "faction": "Thanh Vân Tông",
+      "role": "Chân truyền đệ tử",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Nút dây bạc màu",
+      "min_affection": 50,
+      "prerequisite": "HG_TVT_04_S02_completed",
+      "npc_text": "Nút dây này do em trai ta buộc. Nó chết trong ngày Thiên Biến. Ngươi định nói gì?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_04_S03_A",
+          "dialogue_id": "HG_TVT_04_S03",
+          "label": "A",
+          "player_text": "Ta rất tiếc. Nếu ngươi muốn, ta có thể giúp tìm hồ sơ ngày ấy.",
+          "npc_reply": "Ta không cần thương hại... Nhưng hồ sơ, ta muốn xem.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_04_quest_dieu_tra_em"
+        },
+        {
+          "choice_id": "HG_TVT_04_S03_B",
+          "dialogue_id": "HG_TVT_04_S03",
+          "label": "B",
+          "player_text": "Ta không biết chuyện đã xảy ra nên sẽ nghe ngươi kể.",
+          "npc_reply": "Được. Đừng ngắt lời ta giữa chừng.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_04_S03_C",
+          "dialogue_id": "HG_TVT_04_S03",
+          "label": "C",
+          "player_text": "Người Trái Đất đâu có lỗi, đừng quá cố chấp.",
+          "npc_reply": "Ngươi chưa nghe hết mà đã phán xét nỗi đau của ta?",
+          "affection_delta": -10,
+          "trust_delta": -5,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_04_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_04_S04",
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "faction": "Thanh Vân Tông",
+      "role": "Chân truyền đệ tử",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Lỗ hổng phòng tuyến",
+      "min_affection": 80,
+      "prerequisite": "HG_TVT_04_S03_completed",
+      "npc_text": "Bằng chứng cho thấy một trưởng lão giấu sai lầm phòng thủ. Ta đã đổ tội nhầm người. Phải làm sao?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_04_S04_A",
+          "dialogue_id": "HG_TVT_04_S04",
+          "label": "A",
+          "player_text": "Đem chứng cứ ra đối chất, bảo vệ nhân chứng và người bị oan.",
+          "npc_reply": "Ta muốn chém ngay kẻ ấy... Nhưng ngươi nói đúng, trước hết phải minh oan.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_04_route_minh_oan"
+        },
+        {
+          "choice_id": "HG_TVT_04_S04_B",
+          "dialogue_id": "HG_TVT_04_S04",
+          "label": "B",
+          "player_text": "Thách đấu trưởng lão theo quy củ tông môn.",
+          "npc_reply": "Ta có thể thắng hay chết. Ít nhất ngươi không bảo ta cúi đầu.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": "hg_tvt_04_route_thach_dau"
+        },
+        {
+          "choice_id": "HG_TVT_04_S04_C",
+          "dialogue_id": "HG_TVT_04_S04",
+          "label": "C",
+          "player_text": "Giấu chứng cứ để danh tiếng Thanh Vân không mất.",
+          "npc_reply": "Em ta chết hai lần nếu sự thật lại bị chôn.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_04_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_04_S05",
+      "npc_id": "HG_TVT_04",
+      "npc_name": "Hàn Thiên Minh",
+      "faction": "Thanh Vân Tông",
+      "role": "Chân truyền đệ tử",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Người từng là đối thủ",
+      "min_affection": 100,
+      "prerequisite": "HG_TVT_04_S04_completed",
+      "npc_text": "Nếu lên Linh Giới, ta chưa chắc còn đứng cùng chiến tuyến với ngươi. Ngươi có tiếc không?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_04_S05_A",
+          "dialogue_id": "HG_TVT_04_S05",
+          "label": "A",
+          "player_text": "Dù khác đường, ta vẫn xem ngươi là đối thủ đáng kính.",
+          "npc_reply": "Vậy còn ngày tái đấu. Đừng để ta chờ lâu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_04_route_dong_minh"
+        },
+        {
+          "choice_id": "HG_TVT_04_S05_B",
+          "dialogue_id": "HG_TVT_04_S05",
+          "label": "B",
+          "player_text": "Nếu ngươi cần giúp minh oan lần nữa, hãy gửi tin.",
+          "npc_reply": "Hừ. Ta sẽ chỉ nhờ khi thật cần.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_04_route_hoa_giai"
+        },
+        {
+          "choice_id": "HG_TVT_04_S05_C",
+          "dialogue_id": "HG_TVT_04_S05",
+          "label": "C",
+          "player_text": "Tốt, ta chẳng muốn thấy ngươi nữa.",
+          "npc_reply": "Ta cũng vậy. Nhưng một ngày kiếm sẽ thay lời.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": "hg_tvt_04_route_doi_thu"
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_05_S01",
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "faction": "Thanh Vân Tông",
+      "role": "Ngoại môn đệ tử, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Số điện thoại không tín hiệu",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ta ghi số của mẹ vào sổ, dù ở đây chẳng có sóng. Ngươi thấy buồn cười không?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_05_S01_A",
+          "dialogue_id": "HG_TVT_05_S01",
+          "label": "A",
+          "player_text": "Không. Có những con số giúp ta nhớ mình là ai.",
+          "npc_reply": "Cảm ơn. Ta cứ sợ mọi người nghĩ mình ngốc.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_05_S01_B",
+          "dialogue_id": "HG_TVT_05_S01",
+          "label": "B",
+          "player_text": "Ta cũng sẽ ghi lại vài kỷ niệm của Trái Đất.",
+          "npc_reply": "Vậy mình có thể đổi chuyện cho nhau nghe.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_05_S01_C",
+          "dialogue_id": "HG_TVT_05_S01",
+          "label": "C",
+          "player_text": "Bỏ đi, điện thoại ở đây vô dụng.",
+          "npc_reply": "Ta biết nó không gọi được. Đó đâu phải lý do duy nhất để giữ.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_05_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_05_S02",
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "faction": "Thanh Vân Tông",
+      "role": "Ngoại môn đệ tử, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Chữ viết hai thế giới",
+      "min_affection": 20,
+      "prerequisite": "HG_TVT_05_S01_completed",
+      "npc_text": "Tên một người bị chép sai chữ Hán, nếu sai một nét có thể tìm nhầm. Phải làm sao?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_05_S02_A",
+          "dialogue_id": "HG_TVT_05_S02",
+          "label": "A",
+          "player_text": "Ghi cả phiên âm, quê quán và dấu hiệu nhận dạng; xác minh trước khi báo.",
+          "npc_reply": "Hay quá! Ta sẽ thêm cột phiên âm vào sổ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_05_quest_danh_sach"
+        },
+        {
+          "choice_id": "HG_TVT_05_S02_B",
+          "dialogue_id": "HG_TVT_05_S02",
+          "label": "B",
+          "player_text": "Hỏi thêm hai người từng biết người đó.",
+          "npc_reply": "Có nhân chứng thì ít nhất không chỉ đoán mò.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_05_S02_C",
+          "dialogue_id": "HG_TVT_05_S02",
+          "label": "C",
+          "player_text": "Cứ phát tin ngay; nhầm thì sửa sau.",
+          "npc_reply": "Ngươi không hiểu cảm giác nhận tin giả đâu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_05_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_05_S03",
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "faction": "Thanh Vân Tông",
+      "role": "Ngoại môn đệ tử, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Tin vui giả",
+      "min_affection": 50,
+      "prerequisite": "HG_TVT_05_S02_completed",
+      "npc_text": "Có người bảo đã gặp cha ta, nhưng đòi tiền mới chỉ chỗ. Ta có nên đi không?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_05_S03_A",
+          "dialogue_id": "HG_TVT_05_S03",
+          "label": "A",
+          "player_text": "Đừng đi một mình. Ta sẽ cùng ngươi xác minh và báo Hội Quy Hương.",
+          "npc_reply": "Ta đã suýt chạy đi ngay. May mà có ngươi.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_05_quest_tin_gia"
+        },
+        {
+          "choice_id": "HG_TVT_05_S03_B",
+          "dialogue_id": "HG_TVT_05_S03",
+          "label": "B",
+          "player_text": "Yêu cầu họ đưa dấu hiệu chỉ người nhà biết.",
+          "npc_reply": "Đúng rồi... Cha ta có một vết sẹo ở tay.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_05_S03_C",
+          "dialogue_id": "HG_TVT_05_S03",
+          "label": "C",
+          "player_text": "Cứ đưa tiền, cơ hội hiếm có.",
+          "npc_reply": "Nếu là lừa đảo, ta lấy gì để tiếp tục tìm?",
+          "affection_delta": -5,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_05_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_05_S04",
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "faction": "Thanh Vân Tông",
+      "role": "Ngoại môn đệ tử, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Người chưa nhận ra người",
+      "min_affection": 80,
+      "prerequisite": "HG_TVT_05_S03_completed",
+      "npc_text": "Nếu gặp mẹ sau nhiều năm mà bà không còn nhớ ta, ta có nên nhận mình là con không?",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_05_S04_A",
+          "dialogue_id": "HG_TVT_05_S04",
+          "label": "A",
+          "player_text": "Hãy nói thật, nhưng cho bà thời gian. Tình thân không phải bài kiểm tra trí nhớ.",
+          "npc_reply": "Ta sẽ nhớ lời ấy, dù tim ta còn sợ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_05_lore_noi_nho"
+        },
+        {
+          "choice_id": "HG_TVT_05_S04_B",
+          "dialogue_id": "HG_TVT_05_S04",
+          "label": "B",
+          "player_text": "Mang theo đồ vật và câu chuyện chung để bà nhận ra.",
+          "npc_reply": "Ừ, mẹ hay hát một bài ru... Ta sẽ viết lại.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TVT_05_S04_C",
+          "dialogue_id": "HG_TVT_05_S04",
+          "label": "C",
+          "player_text": "Không nhớ thì coi như hết duyên.",
+          "npc_reply": "Ngươi bảo ta xóa cả người sinh ra mình sao?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TVT_05_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TVT_05_S05",
+      "npc_id": "HG_TVT_05",
+      "npc_name": "Vũ Tiểu Thanh",
+      "faction": "Thanh Vân Tông",
+      "role": "Ngoại môn đệ tử, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Danh Sách Quy Hương",
+      "min_affection": 100,
+      "prerequisite": "HG_TVT_05_S04_completed",
+      "npc_text": "Trần Minh muốn dùng sổ của ta làm Danh Sách Quy Hương chung. Ta sợ tên người thân bị lạm dụng.",
+      "choices": [
+        {
+          "choice_id": "HG_TVT_05_S05_A",
+          "dialogue_id": "HG_TVT_05_S05",
+          "label": "A",
+          "player_text": "Chỉ công khai khi được đồng ý; giữ thông tin nhạy cảm trong nhóm xác minh.",
+          "npc_reply": "Được. Danh sách phải tìm người, không biến họ thành món hàng.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_05_route_danh_sach_bao_mat"
+        },
+        {
+          "choice_id": "HG_TVT_05_S05_B",
+          "dialogue_id": "HG_TVT_05_S05",
+          "label": "B",
+          "player_text": "Chia thành danh sách công khai và phần liên lạc riêng.",
+          "npc_reply": "Ta thích cách ấy. Ai muốn tìm nhau vẫn có đường.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tvt_05_route_danh_sach_phan_quyen"
+        },
+        {
+          "choice_id": "HG_TVT_05_S05_C",
+          "dialogue_id": "HG_TVT_05_S05",
+          "label": "C",
+          "player_text": "Đưa tất cả lên bảng tin để tìm cho nhanh.",
+          "npc_reply": "Tên và nơi ở của người yếu có thể thành mục tiêu bắt cóc.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_01_S01",
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "faction": "Huyết Sát Môn",
+      "role": "Môn chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Thanh đao cùn",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ta đặt trước mặt ngươi một thanh đao cùn. Kẻ khác cầm bảo đao, ngươi có chịu đấu không?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_01_S01_A",
+          "dialogue_id": "HG_HSM_01_S01",
+          "label": "A",
+          "player_text": "Ta sẽ xét thế trận và tìm cách sống, không lao vào chết vô nghĩa.",
+          "npc_reply": "Tốt. Sống sót là bài học đầu của Huyết Sát.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_01_S01_B",
+          "dialogue_id": "HG_HSM_01_S01",
+          "label": "B",
+          "player_text": "Đấu. Nếu thua, ta học cách không thua lần nữa.",
+          "npc_reply": "Có khí phách. Nhưng khí phách không vá được bụng thủng.",
+          "affection_delta": 10,
+          "trust_delta": 0,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_01_S01_C",
+          "dialogue_id": "HG_HSM_01_S01",
+          "label": "C",
+          "player_text": "Ta bỏ chạy và bán tin về đồng đội để được tha.",
+          "npc_reply": "Ngươi có thể sống một lần, rồi cả đời không ai dám đứng cạnh.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_01_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_01_S02",
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "faction": "Huyết Sát Môn",
+      "role": "Môn chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Việc bẩn và giới hạn",
+      "min_affection": 20,
+      "prerequisite": "HG_HSM_01_S01_completed",
+      "npc_text": "Một tên phản đồ biết nơi ẩn náu của đám trẻ. Tra hỏi hắn đến đâu là đủ?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_01_S02_A",
+          "dialogue_id": "HG_HSM_01_S02",
+          "label": "A",
+          "player_text": "Khống chế, lấy tin có thể kiểm chứng, không làm hại người vô can.",
+          "npc_reply": "Ngươi biết dừng tay mà chưa đánh mất mục tiêu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_01_route_gioi_han"
+        },
+        {
+          "choice_id": "HG_HSM_01_S02_B",
+          "dialogue_id": "HG_HSM_01_S02",
+          "label": "B",
+          "player_text": "Dùng áp lực mạnh, nhưng giữ hắn sống để đối chất.",
+          "npc_reply": "Thực dụng. Ta sẽ xem ngươi giữ lời được bao lâu.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_01_S02_C",
+          "dialogue_id": "HG_HSM_01_S02",
+          "label": "C",
+          "player_text": "Giết cả nhà hắn để ép khai.",
+          "npc_reply": "Đồ ngu. Kẻ chết không nói, kẻ sống sẽ hận cả môn.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_01_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_01_S03",
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "faction": "Huyết Sát Môn",
+      "role": "Môn chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Huyết Ấn đến từ đâu",
+      "min_affection": 50,
+      "prerequisite": "HG_HSM_01_S02_completed",
+      "npc_text": "Huyết Ấn không sinh ra ở Hạ Giới. Có một khe trời từng thả nó xuống. Ngươi suy ra điều gì?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_01_S03_A",
+          "dialogue_id": "HG_HSM_01_S03",
+          "label": "A",
+          "player_text": "Phải tìm nguồn ấn và cơ chế thao túng, không chỉ giết kẻ mang ấn.",
+          "npc_reply": "Đúng. Chém người mắc bệnh không diệt được bệnh.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_01_lore_huyet_an_ngoai_gioi"
+        },
+        {
+          "choice_id": "HG_HSM_01_S03_B",
+          "dialogue_id": "HG_HSM_01_S03",
+          "label": "B",
+          "player_text": "Tìm người từng nhìn thấy khe trời để đối chiếu lời kể.",
+          "npc_reply": "Làm đi. Ta không tin một nguồn tin duy nhất.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_01_S03_C",
+          "dialogue_id": "HG_HSM_01_S03",
+          "label": "C",
+          "player_text": "Cứ tăng số người mang ấn, mạnh rồi tính.",
+          "npc_reply": "Ta đã thấy thầy mình phát cuồng. Ngươi đừng nhắc câu ấy lần nữa.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_01_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_01_S04",
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "faction": "Huyết Sát Môn",
+      "role": "Môn chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Quyền lực của ấn",
+      "min_affection": 80,
+      "prerequisite": "HG_HSM_01_S03_completed",
+      "npc_text": "Phá Ấn sẽ khiến môn yếu đi. Giữ Ấn có thể khiến một ngày nào đó chúng ta thành con rối. Ngươi chọn gì?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_01_S04_A",
+          "dialogue_id": "HG_HSM_01_S04",
+          "label": "A",
+          "player_text": "Phá dần, chuẩn bị công pháp thay thế và bảo vệ môn nhân yếu nhất.",
+          "npc_reply": "Lựa chọn tốn kém, nhưng đáng để thử.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_01_route_pha_an"
+        },
+        {
+          "choice_id": "HG_HSM_01_S04_B",
+          "dialogue_id": "HG_HSM_01_S04",
+          "label": "B",
+          "player_text": "Tạm phong ấn, chỉ cho phép sử dụng dưới giám sát nghiêm ngặt.",
+          "npc_reply": "Ta sẽ giao ngươi lập quy chế. Đừng để giấy mực thua lòng tham.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_01_route_nhiep_an"
+        },
+        {
+          "choice_id": "HG_HSM_01_S04_C",
+          "dialogue_id": "HG_HSM_01_S04",
+          "label": "C",
+          "player_text": "Ép toàn môn nhận ấn để thống nhất sức mạnh.",
+          "npc_reply": "Đó là điều ta đã giết sư phụ để ngăn.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": "hg_hsm_01_route_cuc_doan"
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_01_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_01_S05",
+      "npc_id": "HG_HSM_01",
+      "npc_name": "Huyết Vô Nhai",
+      "faction": "Huyết Sát Môn",
+      "role": "Môn chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Không ai định mệnh thay ta",
+      "min_affection": 100,
+      "prerequisite": "HG_HSM_01_S04_completed",
+      "npc_text": "Đại trưởng lão đã khuấy động phe cuồng tín. Nếu nội chiến nổ ra, ngươi sẽ đứng ở đâu?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_01_S05_A",
+          "dialogue_id": "HG_HSM_01_S05",
+          "label": "A",
+          "player_text": "Bảo vệ đệ tử không tham chiến và công khai nguồn gốc Ấn.",
+          "npc_reply": "Ta có thể giao lưng cho ngươi trong đêm ấy.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_01_ending_pha_an_candidate"
+        },
+        {
+          "choice_id": "HG_HSM_01_S05_B",
+          "dialogue_id": "HG_HSM_01_S05",
+          "label": "B",
+          "player_text": "Đứng cùng môn chủ, bắt kẻ cầm đầu bằng chứng cứ.",
+          "npc_reply": "Được. Ta cần người đủ lạnh để không chém nhầm.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_hsm_01_ending_nhiep_an_candidate"
+        },
+        {
+          "choice_id": "HG_HSM_01_S05_C",
+          "dialogue_id": "HG_HSM_01_S05",
+          "label": "C",
+          "player_text": "Theo phe thắng để giữ lợi ích.",
+          "npc_reply": "Kẻ chỉ nhìn gió đổi chiều không thể là đồng đạo của ta.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_02_S01",
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "faction": "Huyết Sát Môn",
+      "role": "Hộ pháp",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Áo đỏ không phải máu",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ngươi cũng nghe chuyện áo ta nhuộm máu sao? Nói thật đi.",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_02_S01_A",
+          "dialogue_id": "HG_HSM_02_S01",
+          "label": "A",
+          "player_text": "Ta nghe rồi, nhưng sẽ hỏi người trong cuộc trước khi tin.",
+          "npc_reply": "Ít nhất ngươi có tai mà không bỏ quên đầu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_02_S01_B",
+          "dialogue_id": "HG_HSM_02_S01",
+          "label": "B",
+          "player_text": "Ta không quan tâm màu áo, chỉ quan tâm người mặc làm gì.",
+          "npc_reply": "Một câu trả lời không tệ.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_02_S01_C",
+          "dialogue_id": "HG_HSM_02_S01",
+          "label": "C",
+          "player_text": "Nhìn màu áo là biết ngươi giết bao nhiêu người.",
+          "npc_reply": "Vậy ngươi nhìn sai từ đầu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_02_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_02_S02",
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "faction": "Huyết Sát Môn",
+      "role": "Hộ pháp",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Đứa trẻ bên đống tro",
+      "min_affection": 20,
+      "prerequisite": "HG_HSM_02_S01_completed",
+      "npc_text": "Đám trẻ mất nhà vì hỏa hoạn đang chờ thuốc và chỗ ngủ. Ngươi có việc riêng gấp, sẽ làm gì?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_02_S02_A",
+          "dialogue_id": "HG_HSM_02_S02",
+          "label": "A",
+          "player_text": "Sắp xếp người chăm sóc chúng rồi mới đi, không hứa suông.",
+          "npc_reply": "Tốt. Những đứa trẻ cần giường khô hơn lời thương hại.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_02_quest_tre_mat_nha"
+        },
+        {
+          "choice_id": "HG_HSM_02_S02_B",
+          "dialogue_id": "HG_HSM_02_S02",
+          "label": "B",
+          "player_text": "Đưa thuốc và nhờ người của môn lo phần còn lại.",
+          "npc_reply": "Ta nhận sự giúp đỡ ấy. Lần sau hãy tự đến nhìn chúng.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_02_S02_C",
+          "dialogue_id": "HG_HSM_02_S02",
+          "label": "C",
+          "player_text": "Trẻ yếu không sống nổi ở Huyết Sát, mặc kệ.",
+          "npc_reply": "Cút khỏi mắt ta.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_02_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_02_S03",
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "faction": "Huyết Sát Môn",
+      "role": "Hộ pháp",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Nhân chứng giữa lằn đao",
+      "min_affection": 50,
+      "prerequisite": "HG_HSM_02_S02_completed",
+      "npc_text": "Người duy nhất chỉ kẻ diệt sư môn ta đang hoảng sợ. Hắn xin được bảo vệ trước khi khai.",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_02_S03_A",
+          "dialogue_id": "HG_HSM_02_S03",
+          "label": "A",
+          "player_text": "Bảo vệ và đối chiếu lời khai với dấu vết thực tế.",
+          "npc_reply": "Ta không thích chờ, nhưng hắn đáng được sống đến lúc nói hết.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_02_quest_nhan_chung"
+        },
+        {
+          "choice_id": "HG_HSM_02_S03_B",
+          "dialogue_id": "HG_HSM_02_S03",
+          "label": "B",
+          "player_text": "Cho hắn chỗ trốn, đổi lại lời khai có ký chứng.",
+          "npc_reply": "Được. Nếu hắn nói dối, ta sẽ tìm ra.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_02_S03_C",
+          "dialogue_id": "HG_HSM_02_S03",
+          "label": "C",
+          "player_text": "Ép hắn khai ngay dưới lưỡi đao.",
+          "npc_reply": "Kẻ sợ chết sẽ nói bất cứ tên nào ngươi muốn nghe.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_02_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_02_S04",
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "faction": "Huyết Sát Môn",
+      "role": "Hộ pháp",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Ký ức sai lệch",
+      "min_affection": 80,
+      "prerequisite": "HG_HSM_02_S03_completed",
+      "npc_text": "Kẻ ta truy sát có thể bị đổ oan. Có người đã sửa ký ức của ta. Ta nên tin ai nữa?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_02_S04_A",
+          "dialogue_id": "HG_HSM_02_S04",
+          "label": "A",
+          "player_text": "Tin vào chứng cứ độc lập, kể cả khi nó phủ nhận điều ngươi nhớ.",
+          "npc_reply": "Ta ghét nghe thế... Nhưng ta sẽ đi đến cùng.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_02_lore_ky_uc_bi_sua"
+        },
+        {
+          "choice_id": "HG_HSM_02_S04_B",
+          "dialogue_id": "HG_HSM_02_S04",
+          "label": "B",
+          "player_text": "Ta sẽ ở cạnh ngươi khi đối diện với ký ức thật.",
+          "npc_reply": "Đừng hứa nếu không chịu nổi con người ta lúc ấy.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_02_S04_C",
+          "dialogue_id": "HG_HSM_02_S04",
+          "label": "C",
+          "player_text": "Nếu đã nghi thì giết hết những người liên quan.",
+          "npc_reply": "Một ngày trước đây có lẽ ta đã đồng ý. Hôm nay thì không.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_02_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_02_S05",
+      "npc_id": "HG_HSM_02",
+      "npc_name": "Diệp Hồng Y",
+      "faction": "Huyết Sát Môn",
+      "role": "Hộ pháp",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Áo đỏ dưới trăng",
+      "min_affection": 100,
+      "prerequisite": "HG_HSM_02_S04_completed",
+      "npc_text": "Nếu sự thật không trao cho ta kẻ để báo thù, ta còn con đường nào?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_02_S05_A",
+          "dialogue_id": "HG_HSM_02_S05",
+          "label": "A",
+          "player_text": "Ngươi có thể dùng kinh nghiệm ấy ngăn kẻ khác bị cướp ký ức.",
+          "npc_reply": "Có lẽ đây là lần đầu ta nghĩ đến một ngày mai khác.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_02_route_buong_sat_nghiep"
+        },
+        {
+          "choice_id": "HG_HSM_02_S05_B",
+          "dialogue_id": "HG_HSM_02_S05",
+          "label": "B",
+          "player_text": "Ngươi có quyền đau buồn và tìm lại mình trước khi quyết định.",
+          "npc_reply": "Cảm ơn. Ta chưa từng cho bản thân quyền đứng yên.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_hsm_02_route_chua_lanh"
+        },
+        {
+          "choice_id": "HG_HSM_02_S05_C",
+          "dialogue_id": "HG_HSM_02_S05",
+          "label": "C",
+          "player_text": "Cứ tìm một kẻ để giết, lòng sẽ nhẹ.",
+          "npc_reply": "Ngươi đang muốn ta giết vì ngươi, không phải vì sự thật.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": "hg_hsm_02_route_sat_dao"
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_03_S01",
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "faction": "Huyết Sát Môn",
+      "role": "Đệ tử ngoại môn, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Chiếc vòng số chín",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Đừng hỏi tên thật. Ta chỉ nhớ số chín trên vòng tay em gái.",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_03_S01_A",
+          "dialogue_id": "HG_HSM_03_S01",
+          "label": "A",
+          "player_text": "Được, ta gọi ngươi là A Cửu. Khi nào muốn kể, ta nghe.",
+          "npc_reply": "...Cảm ơn vì không ép ta.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_03_S01_B",
+          "dialogue_id": "HG_HSM_03_S01",
+          "label": "B",
+          "player_text": "Ta sẽ nhớ số chín, biết đâu giúp tìm người.",
+          "npc_reply": "Ngươi thật sự chịu nhớ sao?",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_03_S01_C",
+          "dialogue_id": "HG_HSM_03_S01",
+          "label": "C",
+          "player_text": "Một cái tên cũng sợ nói thì làm nên trò gì?",
+          "npc_reply": "Ngươi không hiểu gì cả.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_03_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_03_S02",
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "faction": "Huyết Sát Môn",
+      "role": "Đệ tử ngoại môn, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Gánh nước đêm mưa",
+      "min_affection": 20,
+      "prerequisite": "HG_HSM_03_S01_completed",
+      "npc_text": "Ta bị bắt gánh thay người khác. Nếu phản kháng, họ sẽ đánh ta.",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_03_S02_A",
+          "dialogue_id": "HG_HSM_03_S02",
+          "label": "A",
+          "player_text": "Ta cùng ngươi đến gặp người phụ trách, có nhân chứng càng tốt.",
+          "npc_reply": "Ta sợ lắm... Nhưng nếu có ngươi đi cùng, ta thử.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_03_quest_bao_ve_a_cuu"
+        },
+        {
+          "choice_id": "HG_HSM_03_S02_B",
+          "dialogue_id": "HG_HSM_03_S02",
+          "label": "B",
+          "player_text": "Ta dạy ngươi vài thế luyện thể để tự vệ.",
+          "npc_reply": "Ta sẽ luyện, dù mỗi ngày chỉ mạnh thêm một chút.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_03_S02_C",
+          "dialogue_id": "HG_HSM_03_S02",
+          "label": "C",
+          "player_text": "Cứ chịu đòn đi, rồi tự nhiên quen.",
+          "npc_reply": "Ngươi nghĩ ta chưa từng thử sao?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_03_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_03_S03",
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "faction": "Huyết Sát Môn",
+      "role": "Đệ tử ngoại môn, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Sân đấu ngoại môn",
+      "min_affection": 50,
+      "prerequisite": "HG_HSM_03_S02_completed",
+      "npc_text": "Ta thắng một trận nhỏ. Có nên tiếp tục đấu với kẻ mạnh hơn hẳn để được chú ý không?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_03_S03_A",
+          "dialogue_id": "HG_HSM_03_S03",
+          "label": "A",
+          "player_text": "Luyện thêm, chọn trận phù hợp và giữ sức tìm em gái.",
+          "npc_reply": "Ta suýt quên vì sao mình phải sống.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_03_quest_luyen_the"
+        },
+        {
+          "choice_id": "HG_HSM_03_S03_B",
+          "dialogue_id": "HG_HSM_03_S03",
+          "label": "B",
+          "player_text": "Đấu nếu có đường lui và người cứu hộ.",
+          "npc_reply": "Ta sẽ đặt điều kiện trước, không liều mù quáng.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_03_S03_C",
+          "dialogue_id": "HG_HSM_03_S03",
+          "label": "C",
+          "player_text": "Thua cũng được, miễn nổi tiếng.",
+          "npc_reply": "Danh tiếng không đưa ta đến chỗ em ấy.",
+          "affection_delta": -5,
+          "trust_delta": -5,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_03_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_03_S04",
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "faction": "Huyết Sát Môn",
+      "role": "Đệ tử ngoại môn, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Bàn tay buông ra",
+      "min_affection": 80,
+      "prerequisite": "HG_HSM_03_S03_completed",
+      "npc_text": "Ngày Thiên Biến, ta đã sợ đến mức buông tay em gái. Ngươi có khinh ta không?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_03_S04_A",
+          "dialogue_id": "HG_HSM_03_S04",
+          "label": "A",
+          "player_text": "Ngươi từng sợ hãi. Điều đó không khiến ngươi mất quyền tìm và xin lỗi em.",
+          "npc_reply": "Ta... đã chờ ai đó nói câu này rất lâu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_03_lore_buong_tay"
+        },
+        {
+          "choice_id": "HG_HSM_03_S04_B",
+          "dialogue_id": "HG_HSM_03_S04",
+          "label": "B",
+          "player_text": "Ta không phán xét chuyện mình chưa trải qua.",
+          "npc_reply": "Ừ. Ngươi chịu ngồi nghe đã là đủ.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_03_S04_C",
+          "dialogue_id": "HG_HSM_03_S04",
+          "label": "C",
+          "player_text": "Nếu là ta, ta không bao giờ buông tay.",
+          "npc_reply": "Ngươi có chắc không? Ta đã từng chắc như vậy.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_03_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_03_S05",
+      "npc_id": "HG_HSM_03",
+      "npc_name": "A Cửu",
+      "faction": "Huyết Sát Môn",
+      "role": "Đệ tử ngoại môn, người Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Cấm pháp trong hộp sắt",
+      "min_affection": 100,
+      "prerequisite": "HG_HSM_03_S04_completed",
+      "npc_text": "Có cấm pháp giúp mạnh nhanh, nhưng sẽ ăn mòn thần trí. Ta nên dùng để tìm em không?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_03_S05_A",
+          "dialogue_id": "HG_HSM_03_S05",
+          "label": "A",
+          "player_text": "Đừng đánh mất chính mình. Ta sẽ giúp tìm manh mối khác.",
+          "npc_reply": "Nếu còn cách khác, ta muốn thử trước.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_03_ending_tu_choi_cam_phap"
+        },
+        {
+          "choice_id": "HG_HSM_03_S05_B",
+          "dialogue_id": "HG_HSM_03_S05",
+          "label": "B",
+          "player_text": "Hãy hỏi Hắc Đồng và Dược Cốc xem có thể giảm tác hại không.",
+          "npc_reply": "Ít ra ngươi không xem lời quảng cáo là chân lý.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_03_ending_nghien_cuu_cam_phap"
+        },
+        {
+          "choice_id": "HG_HSM_03_S05_C",
+          "dialogue_id": "HG_HSM_03_S05",
+          "label": "C",
+          "player_text": "Dùng ngay. Mạnh rồi sẽ giải quyết tất cả.",
+          "npc_reply": "Ta đã muốn nghe câu ấy... Nhưng sao nghe xong lại thấy sợ hơn?",
+          "affection_delta": 5,
+          "trust_delta": -10,
+          "story_flag": "hg_hsm_03_ending_dung_cam_phap"
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_04_S01",
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "faction": "Huyết Sát Môn",
+      "role": "Đại trưởng lão",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Món nợ đầu tiên",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ta cứu một đệ tử khỏi tử địa. Hắn nợ ta điều gì?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_04_S01_A",
+          "dialogue_id": "HG_HSM_04_S01",
+          "label": "A",
+          "player_text": "Một lời cảm ơn và sự thành thật, không phải mạng sống cả đời.",
+          "npc_reply": "Ngươi nói trái ý ta mà không run. Thú vị.",
+          "affection_delta": -5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_04_S01_B",
+          "dialogue_id": "HG_HSM_04_S01",
+          "label": "B",
+          "player_text": "Hắn nên trả công theo khế ước đã tự nguyện nhận.",
+          "npc_reply": "Ít nhất ngươi hiểu chữ khế ước.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_04_S01_C",
+          "dialogue_id": "HG_HSM_04_S01",
+          "label": "C",
+          "player_text": "Hắn thuộc về trưởng lão từ nay đến chết.",
+          "npc_reply": "Ha ha, ngươi học rất nhanh. Quá nhanh chăng?",
+          "affection_delta": 5,
+          "trust_delta": -5,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_04_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_04_S02",
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "faction": "Huyết Sát Môn",
+      "role": "Đại trưởng lão",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Khoản vay linh thạch",
+      "min_affection": 20,
+      "prerequisite": "HG_HSM_04_S01_completed",
+      "npc_text": "Đệ tử nghèo xin vay linh thạch để chữa bệnh. Ta cho vay kèm khế ước ba năm phục dịch. Có hợp lý?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_04_S02_A",
+          "dialogue_id": "HG_HSM_04_S02",
+          "label": "A",
+          "player_text": "Cần ghi rõ lãi, quyền chuộc khế và không được ép người bệnh ký.",
+          "npc_reply": "Ngươi thích điều khoản đến vậy sao? Ta sẽ dùng ngươi để soạn thử.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_04_quest_so_no"
+        },
+        {
+          "choice_id": "HG_HSM_04_S02_B",
+          "dialogue_id": "HG_HSM_04_S02",
+          "label": "B",
+          "player_text": "Nếu hắn đồng ý và hiểu rõ, có thể chấp nhận.",
+          "npc_reply": "Một thương lượng đúng nghĩa. Tốt.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_04_S02_C",
+          "dialogue_id": "HG_HSM_04_S02",
+          "label": "C",
+          "player_text": "Nên lấy cả linh căn để thế chấp.",
+          "npc_reply": "Lòng tham của ngươi có thể vượt cả ta đấy.",
+          "affection_delta": 5,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_04_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_04_S03",
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "faction": "Huyết Sát Môn",
+      "role": "Đại trưởng lão",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Lời mời vào nội điện",
+      "min_affection": 50,
+      "prerequisite": "HG_HSM_04_S02_completed",
+      "npc_text": "Theo phe ta, ngươi sẽ có công pháp và tài nguyên. Đổi lại, chớ hỏi về Huyết Ấn.",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_04_S03_A",
+          "dialogue_id": "HG_HSM_04_S03",
+          "label": "A",
+          "player_text": "Ta chỉ nhận nhiệm vụ rõ ràng; phần liên quan sinh mạng phải được biết.",
+          "npc_reply": "Khó điều khiển. Nhưng ta biết ngươi không bán lời tùy tiện.",
+          "affection_delta": -5,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_04_route_khong_ban_minh"
+        },
+        {
+          "choice_id": "HG_HSM_04_S03_B",
+          "dialogue_id": "HG_HSM_04_S03",
+          "label": "B",
+          "player_text": "Ta xem điều kiện bằng văn bản rồi quyết định.",
+          "npc_reply": "Có đầu óc giao dịch. Ta chờ câu trả lời.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_04_S03_C",
+          "dialogue_id": "HG_HSM_04_S03",
+          "label": "C",
+          "player_text": "Chỉ cần nhiều tài nguyên, bảo ta làm gì cũng được.",
+          "npc_reply": "Một con dao rẻ tiền. Dùng xong là bỏ.",
+          "affection_delta": 10,
+          "trust_delta": -10,
+          "story_flag": "hg_hsm_04_route_bi_loi_dung"
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_04_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_04_S04",
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "faction": "Huyết Sát Môn",
+      "role": "Đại trưởng lão",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Một đội quân không sợ chết",
+      "min_affection": 80,
+      "prerequisite": "HG_HSM_04_S03_completed",
+      "npc_text": "Nếu Huyết Ấn khiến môn nhân phục tùng tuyệt đối, chẳng phải chiến lực tăng gấp bội sao?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_04_S04_A",
+          "dialogue_id": "HG_HSM_04_S04",
+          "label": "A",
+          "player_text": "Phục tùng mất trí khiến quân đội không thể phân biệt địch ta.",
+          "npc_reply": "Được. Ta sẽ ghi nhớ lập luận ấy... và người dám nói ra.",
+          "affection_delta": -10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_04_lore_am_muu_huyet_an"
+        },
+        {
+          "choice_id": "HG_HSM_04_S04_B",
+          "dialogue_id": "HG_HSM_04_S04",
+          "label": "B",
+          "player_text": "Có thể nghiên cứu nguy cơ trước khi quyết định, không thử lên người.",
+          "npc_reply": "Ngươi đặt rào chắn khó chịu thật.",
+          "affection_delta": -5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_04_S04_C",
+          "dialogue_id": "HG_HSM_04_S04",
+          "label": "C",
+          "player_text": "Cứ ép đám ngoại môn nhận ấn trước.",
+          "npc_reply": "Cuối cùng cũng có kẻ hiểu dụng ý của ta.",
+          "affection_delta": 10,
+          "trust_delta": -10,
+          "story_flag": "hg_hsm_04_route_theo_phan_loi"
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_04_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_04_S05",
+      "npc_id": "HG_HSM_04",
+      "npc_name": "Tần Vô Sinh",
+      "faction": "Huyết Sát Môn",
+      "role": "Đại trưởng lão",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Ngày sổ nợ bị mở",
+      "min_affection": 100,
+      "prerequisite": "HG_HSM_04_S04_completed",
+      "npc_text": "Ngươi đã thấy bằng chứng về kế hoạch của ta. Một lời khai có thể đổi cả Huyết Sát. Ngươi chọn gì?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_04_S05_A",
+          "dialogue_id": "HG_HSM_04_S05",
+          "label": "A",
+          "player_text": "Đưa bản sao cho môn chủ và người có thể xác minh, bảo vệ nhân chứng.",
+          "npc_reply": "Vậy là ngươi chọn đối đầu ta. Ta sẽ không xem nhẹ ngươi.",
+          "affection_delta": -10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_04_ending_to_cao"
+        },
+        {
+          "choice_id": "HG_HSM_04_S05_B",
+          "dialogue_id": "HG_HSM_04_S05",
+          "label": "B",
+          "player_text": "Giả vờ theo phe để lấy thêm chứng cứ, không hại người vô tội.",
+          "npc_reply": "Ngươi bước lên lớp băng mỏng. Hãy nhớ ai đang nhìn.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": "hg_hsm_04_ending_noi_gian_candidate"
+        },
+        {
+          "choice_id": "HG_HSM_04_S05_C",
+          "dialogue_id": "HG_HSM_04_S05",
+          "label": "C",
+          "player_text": "Đốt bằng chứng đổi lấy một vị trí trưởng lão.",
+          "npc_reply": "Tham vọng của ngươi xứng đáng... nếu ta còn cần ngươi.",
+          "affection_delta": 10,
+          "trust_delta": -10,
+          "story_flag": "hg_hsm_04_ending_theo_phe"
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_05_S01",
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "faction": "Huyết Sát Môn",
+      "role": "Luyện khí sư mù",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Vết nứt trên lưỡi kiếm",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Đừng kể thanh kiếm sắc đến đâu. Hãy nói nó gãy ở chỗ nào.",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_05_S01_A",
+          "dialogue_id": "HG_HSM_05_S01",
+          "label": "A",
+          "player_text": "Vết nứt gần chuôi sau khi đỡ đòn ngang; ta có ghi lại trận đánh.",
+          "npc_reply": "Tốt. Người nhớ được vết gãy sẽ sống lâu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_05_S01_B",
+          "dialogue_id": "HG_HSM_05_S01",
+          "label": "B",
+          "player_text": "Ta chưa biết, xin ông xem bằng cách gõ thử.",
+          "npc_reply": "Không biết thì hỏi. Ta thích thế.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_05_S01_C",
+          "dialogue_id": "HG_HSM_05_S01",
+          "label": "C",
+          "player_text": "Ông mù rồi, nhìn sao hiểu kiếm?",
+          "npc_reply": "Tai ta nghe được cả sự rỗng tuếch trong câu ấy.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_05_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_05_S02",
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "faction": "Huyết Sát Môn",
+      "role": "Luyện khí sư mù",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Quặng lẫn tạp",
+      "min_affection": 20,
+      "prerequisite": "HG_HSM_05_S01_completed",
+      "npc_text": "Hai thỏi quặng: một tinh khiết nhưng nhỏ, một lớn mà lẫn tạp. Ngươi chọn cái nào rèn vũ khí cứu người?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_05_S02_A",
+          "dialogue_id": "HG_HSM_05_S02",
+          "label": "A",
+          "player_text": "Chọn theo thiết kế chịu lực, thử mẫu trước khi dùng thật.",
+          "npc_reply": "Rèn là đo, không phải cầu may.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_05_quest_thu_quang"
+        },
+        {
+          "choice_id": "HG_HSM_05_S02_B",
+          "dialogue_id": "HG_HSM_05_S02",
+          "label": "B",
+          "player_text": "Thỏi tinh khiết, chấp nhận làm vũ khí ngắn hơn.",
+          "npc_reply": "Lựa chọn an toàn, nếu ngươi hiểu giới hạn của nó.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_05_S02_C",
+          "dialogue_id": "HG_HSM_05_S02",
+          "label": "C",
+          "player_text": "Thỏi lớn; vẻ ngoài hù được đối thủ.",
+          "npc_reply": "Nó sẽ gãy trước khi đối thủ kịp sợ.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_05_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_05_S03",
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "faction": "Huyết Sát Môn",
+      "role": "Luyện khí sư mù",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Mắt mất vì Huyết Ấn",
+      "min_affection": 50,
+      "prerequisite": "HG_HSM_05_S02_completed",
+      "npc_text": "Ta mất mắt khi nghiên cứu Ấn. Ngươi cho rằng ta nên dừng nghề rèn?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_05_S03_A",
+          "dialogue_id": "HG_HSM_05_S03",
+          "label": "A",
+          "player_text": "Không. Nhưng ta muốn giúp ông có trợ thủ và quy trình an toàn.",
+          "npc_reply": "Được. Đừng thương hại, hãy mang kìm sang đây.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_05_lore_mat_vi_an"
+        },
+        {
+          "choice_id": "HG_HSM_05_S03_B",
+          "dialogue_id": "HG_HSM_05_S03",
+          "label": "B",
+          "player_text": "Quyền quyết định là của ông; ta có thể phụ ghi chép.",
+          "npc_reply": "Cây bút cũng là dụng cụ rèn, tiểu tử.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_05_S03_C",
+          "dialogue_id": "HG_HSM_05_S03",
+          "label": "C",
+          "player_text": "Người mù cầm búa rất nguy hiểm, thôi nghỉ đi.",
+          "npc_reply": "Ngươi thấy mắt ta thiếu mà không thấy tay mình vụng.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_05_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_05_S04",
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "faction": "Huyết Sát Môn",
+      "role": "Luyện khí sư mù",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Đoạn Khế Nhận",
+      "min_affection": 80,
+      "prerequisite": "HG_HSM_05_S03_completed",
+      "npc_text": "Muốn chém khế ước vô hình, thanh đao phải nứt đúng lúc. Ngươi có dám thử một nguyên mẫu?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_05_S04_A",
+          "dialogue_id": "HG_HSM_05_S04",
+          "label": "A",
+          "player_text": "Thử trên phong ấn mô phỏng, có vòng bảo hộ và người cứu viện.",
+          "npc_reply": "Giỏi. Chém đúng một lần hơn chém liều mười lần.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_05_quest_doan_khe_nhan"
+        },
+        {
+          "choice_id": "HG_HSM_05_S04_B",
+          "dialogue_id": "HG_HSM_05_S04",
+          "label": "B",
+          "player_text": "Ta tham gia nếu có thể kiểm tra mức hao tổn trước.",
+          "npc_reply": "Hãy cầm bản vẽ, số liệu nằm ở góc trái.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_05_S04_C",
+          "dialogue_id": "HG_HSM_05_S04",
+          "label": "C",
+          "player_text": "Thử ngay lên môn nhân có Huyết Ấn.",
+          "npc_reply": "Ta không rèn vũ khí để biến người thành đá thử.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_HSM_05_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_HSM_05_S05",
+      "npc_id": "HG_HSM_05",
+      "npc_name": "Hắc Đồng",
+      "faction": "Huyết Sát Môn",
+      "role": "Luyện khí sư mù",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Tiếng kim loại trước lúc chia xa",
+      "min_affection": 100,
+      "prerequisite": "HG_HSM_05_S04_completed",
+      "npc_text": "Nếu Đoạn Khế Nhận chỉ phá được một phần Ấn, công sức này có vô ích không?",
+      "choices": [
+        {
+          "choice_id": "HG_HSM_05_S05_A",
+          "dialogue_id": "HG_HSM_05_S05",
+          "label": "A",
+          "player_text": "Không. Ghi lại kết quả để người sau tiếp tục, kể cả ở Linh Giới.",
+          "npc_reply": "Vết rạn nhỏ trên xiềng cũng là đường cho ánh sáng lọt vào.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_hsm_05_lore_tai_lieu_phong_an"
+        },
+        {
+          "choice_id": "HG_HSM_05_S05_B",
+          "dialogue_id": "HG_HSM_05_S05",
+          "label": "B",
+          "player_text": "Nâng cấp vật liệu và thử lại từng bước.",
+          "npc_reply": "Búa còn đó. Ta đâu định nghỉ.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_HSM_05_S05_C",
+          "dialogue_id": "HG_HSM_05_S05",
+          "label": "C",
+          "player_text": "Không hoàn hảo thì đập bỏ cả ghi chép.",
+          "npc_reply": "Kiếm gãy còn dạy được ta. Chỉ có kẻ kiêu mới không học.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_01_S01",
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "faction": "Vạn Dược Cốc",
+      "role": "Cốc chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Cành thuốc đã héo",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Một cây thuốc quý chỉ đủ cứu một trong hai bệnh nhân. Ngươi quyết định bằng gì?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_01_S01_A",
+          "dialogue_id": "HG_VDC_01_S01",
+          "label": "A",
+          "player_text": "Xét mức nguy cấp, khả năng đáp ứng và tìm cách cứu người còn lại.",
+          "npc_reply": "Đó là y đạo biết nhìn người, không chỉ nhìn dược.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_01_S01_B",
+          "dialogue_id": "HG_VDC_01_S01",
+          "label": "B",
+          "player_text": "Hỏi ý người bệnh, giải thích cơ hội và nguy cơ.",
+          "npc_reply": "Đừng bao giờ quên người nằm trên giường có tiếng nói.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_01_S01_C",
+          "dialogue_id": "HG_VDC_01_S01",
+          "label": "C",
+          "player_text": "Ưu tiên người có linh căn tốt hơn.",
+          "npc_reply": "Một mạng phàm nhân chưa từng nhẹ hơn mạng thiên tài.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_01_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_01_S02",
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "faction": "Vạn Dược Cốc",
+      "role": "Cốc chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Đan phương chưa đủ chứng cứ",
+      "min_affection": 20,
+      "prerequisite": "HG_VDC_01_S01_completed",
+      "npc_text": "Phương đan mới có thể chống suy kiếp nhưng chưa thử đủ. Ngươi sẽ làm gì?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_01_S02_A",
+          "dialogue_id": "HG_VDC_01_S02",
+          "label": "A",
+          "player_text": "Bắt đầu từ thử nghiệm không gây hại, kiểm chứng rồi mới xin đồng thuận.",
+          "npc_reply": "Ngươi đã nhắc ta điều quan trọng hơn thành công.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_01_quest_thu_nghiem_an_toan"
+        },
+        {
+          "choice_id": "HG_VDC_01_S02_B",
+          "dialogue_id": "HG_VDC_01_S02",
+          "label": "B",
+          "player_text": "Mời Bạch Tử Yên thẩm định độc lập.",
+          "npc_reply": "Bà ấy nghiêm khắc, nhưng ta cần người dám phản bác.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_01_S02_C",
+          "dialogue_id": "HG_VDC_01_S02",
+          "label": "C",
+          "player_text": "Thử thẳng lên đệ tử yếu, họ chẳng dám từ chối.",
+          "npc_reply": "Ra khỏi dược phòng của ta.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_01_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_01_S03",
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "faction": "Vạn Dược Cốc",
+      "role": "Cốc chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Bình thuốc cất trong phòng kín",
+      "min_affection": 50,
+      "prerequisite": "HG_VDC_01_S02_completed",
+      "npc_text": "Ta từng mất đạo lữ vì đan phương do chính mình tạo ra. Giờ ta chỉ còn thiếu một bước... ngươi tin ta không?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_01_S03_A",
+          "dialogue_id": "HG_VDC_01_S03",
+          "label": "A",
+          "player_text": "Ta tin nỗi đau của ngài, nhưng phương thuốc vẫn cần được kiểm chứng.",
+          "npc_reply": "Đúng. Niềm tin không thay được dược lý.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_01_lore_dao_lu_qua_doi"
+        },
+        {
+          "choice_id": "HG_VDC_01_S03_B",
+          "dialogue_id": "HG_VDC_01_S03",
+          "label": "B",
+          "player_text": "Ta sẽ nghe toàn bộ quá trình và giúp lưu hồ sơ.",
+          "npc_reply": "Có lẽ ta đã tránh kể chuyện ấy quá lâu.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_01_S03_C",
+          "dialogue_id": "HG_VDC_01_S03",
+          "label": "C",
+          "player_text": "Chỉ cần thành công, hy sinh trước kia coi như đáng.",
+          "npc_reply": "Không. Một cái chết không biến thành đúng chỉ vì ta thành công về sau.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_01_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_01_S04",
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "faction": "Vạn Dược Cốc",
+      "role": "Cốc chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Cấm phương trước hội đồng",
+      "min_affection": 80,
+      "prerequisite": "HG_VDC_01_S03_completed",
+      "npc_text": "Bạch Tử Yên yêu cầu niêm phong nghiên cứu. Ta muốn tiếp tục. Nếu ở giữa, ngươi sẽ khuyên gì?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_01_S04_A",
+          "dialogue_id": "HG_VDC_01_S04",
+          "label": "A",
+          "player_text": "Công khai dữ liệu cho hội đồng độc lập, chỉ tiếp tục phần an toàn.",
+          "npc_reply": "Ta không thích bị giám sát, nhưng chấp nhận để cứu người.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_01_route_kiem_soat_nghien_cuu"
+        },
+        {
+          "choice_id": "HG_VDC_01_S04_B",
+          "dialogue_id": "HG_VDC_01_S04",
+          "label": "B",
+          "player_text": "Niêm phong tạm thời, rà soát toàn bộ rủi ro rồi quyết định.",
+          "npc_reply": "Có lẽ chậm lại một mùa còn hơn gây thêm một tang lễ.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_01_route_niem_phong"
+        },
+        {
+          "choice_id": "HG_VDC_01_S04_C",
+          "dialogue_id": "HG_VDC_01_S04",
+          "label": "C",
+          "player_text": "Giấu Bạch trưởng lão, tiếp tục thử lén.",
+          "npc_reply": "Ngươi đang lặp lại sai lầm mà ta sợ nhất.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_01_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_01_S05",
+      "npc_id": "HG_VDC_01",
+      "npc_name": "Dược Vô Trần",
+      "faction": "Vạn Dược Cốc",
+      "role": "Cốc chủ",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Y đạo đi qua ba giới",
+      "min_affection": 100,
+      "prerequisite": "HG_VDC_01_S04_completed",
+      "npc_text": "Nếu phương thuốc không thể hoàn thiện ở Hạ Giới, ngươi muốn để lại điều gì cho người sau?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_01_S05_A",
+          "dialogue_id": "HG_VDC_01_S05",
+          "label": "A",
+          "player_text": "Bản ghi cả lần thất bại lẫn ca cứu sống, không che giấu tác hại.",
+          "npc_reply": "Khi ấy người sau có thể tiến xa mà không bước lại vào máu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_01_ending_y_an_cong_khai"
+        },
+        {
+          "choice_id": "HG_VDC_01_S05_B",
+          "dialogue_id": "HG_VDC_01_S05",
+          "label": "B",
+          "player_text": "Một phòng nghiên cứu có hội đồng giám sát lâu dài.",
+          "npc_reply": "Ta mong họ nghiêm với ta hơn ta từng nghiêm với mình.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_01_ending_vien_nghien_cuu"
+        },
+        {
+          "choice_id": "HG_VDC_01_S05_C",
+          "dialogue_id": "HG_VDC_01_S05",
+          "label": "C",
+          "player_text": "Chỉ truyền bí phương cho kẻ trả giá cao nhất.",
+          "npc_reply": "Y đạo sẽ chết nếu chỉ người giàu mới được học từ sai lầm.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_02_S01",
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "faction": "Vạn Dược Cốc",
+      "role": "Dược đồng",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Hai chiếc lá giống nhau",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Huynh xem, lá nào là Ngưng Lộ Thảo? Muội lại sợ hái nhầm rồi!",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_02_S01_A",
+          "dialogue_id": "HG_VDC_02_S01",
+          "label": "A",
+          "player_text": "Đối chiếu gân lá, mùi và dược điển, đừng đoán bằng màu.",
+          "npc_reply": "À! Gân lá khác thật. Muội sẽ vẽ vào sổ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_02_S01_B",
+          "dialogue_id": "HG_VDC_02_S01",
+          "label": "B",
+          "player_text": "Mang cả hai về để trưởng lão kiểm tra.",
+          "npc_reply": "Làm vậy chậm hơn, nhưng chắc sẽ không hại ai.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_02_S01_C",
+          "dialogue_id": "HG_VDC_02_S01",
+          "label": "C",
+          "player_text": "Cứ thử nếm, sai một lần sẽ nhớ.",
+          "npc_reply": "Không được! Có loại chỉ nếm một lần là hết đường nhớ.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_02_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_02_S02",
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "faction": "Vạn Dược Cốc",
+      "role": "Dược đồng",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Đan lò khói xanh",
+      "min_affection": 20,
+      "prerequisite": "HG_VDC_02_S01_completed",
+      "npc_text": "Mẻ đan của muội cháy rồi. Có nên giấu đi để không bị phạt không?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_02_S02_A",
+          "dialogue_id": "HG_VDC_02_S02",
+          "label": "A",
+          "player_text": "Ghi rõ thất bại, dọn an toàn và xin chỉ lại quy trình.",
+          "npc_reply": "Muội cứ nghĩ thất bại là xấu hổ. Hóa ra giấu mới nguy hiểm.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_02_quest_luyen_dan"
+        },
+        {
+          "choice_id": "HG_VDC_02_S02_B",
+          "dialogue_id": "HG_VDC_02_S02",
+          "label": "B",
+          "player_text": "Giữ mẫu để trưởng lão tìm nguyên nhân.",
+          "npc_reply": "Muội sẽ bỏ vào bình có nhãn, không trộn vào thuốc.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_02_S02_C",
+          "dialogue_id": "HG_VDC_02_S02",
+          "label": "C",
+          "player_text": "Đổ vào hũ đan thành phẩm, không ai biết đâu.",
+          "npc_reply": "Nếu ai uống phải thì sao? Muội không làm đâu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_02_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_02_S03",
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "faction": "Vạn Dược Cốc",
+      "role": "Dược đồng",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Chiếc ghế cạnh giường",
+      "min_affection": 50,
+      "prerequisite": "HG_VDC_02_S02_completed",
+      "npc_text": "Ca ca mở mắt rồi lại không nhận ra muội. Huynh nghĩ muội còn cứu được ca ca không?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_02_S03_A",
+          "dialogue_id": "HG_VDC_02_S03",
+          "label": "A",
+          "player_text": "Ta không hứa chữa khỏi, nhưng sẽ cùng tìm cách ổn định thần hồn.",
+          "npc_reply": "Chỉ cần ca ca bớt đau, muội đã có hy vọng rồi.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_02_quest_thanh_hon_qua"
+        },
+        {
+          "choice_id": "HG_VDC_02_S03_B",
+          "dialogue_id": "HG_VDC_02_S03",
+          "label": "B",
+          "player_text": "Để Hứa Mặc và Bạch trưởng lão cùng xem bệnh án.",
+          "npc_reply": "Đúng, có nhiều người xem sẽ ít bỏ sót hơn.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_02_S03_C",
+          "dialogue_id": "HG_VDC_02_S03",
+          "label": "C",
+          "player_text": "Không nhận ra muội thì coi như không còn là anh nữa.",
+          "npc_reply": "Đừng nói vậy... Ca ca vẫn ở đây mà.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_02_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_02_S04",
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "faction": "Vạn Dược Cốc",
+      "role": "Dược đồng",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Thanh Hồn Quả HERB-022",
+      "min_affection": 80,
+      "prerequisite": "HG_VDC_02_S03_completed",
+      "npc_text": "Tìm được Thanh Hồn Quả rồi, liệu ca ca sẽ khỏe hẳn chứ?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_02_S04_A",
+          "dialogue_id": "HG_VDC_02_S04",
+          "label": "A",
+          "player_text": "Quả chỉ giúp ổn định thần hồn; ta sẽ nói đúng công dụng với muội.",
+          "npc_reply": "Muội buồn, nhưng thà biết thật còn hơn mừng hụt.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_02_lore_on_dinh_khong_chua_khoi"
+        },
+        {
+          "choice_id": "HG_VDC_02_S04_B",
+          "dialogue_id": "HG_VDC_02_S04",
+          "label": "B",
+          "player_text": "Hãy để đan sư thẩm định liều rồi theo dõi sau dùng.",
+          "npc_reply": "Muội sẽ ghi lại từng thay đổi của ca ca.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_02_S04_C",
+          "dialogue_id": "HG_VDC_02_S04",
+          "label": "C",
+          "player_text": "Uống càng nhiều càng mau khỏi, cứ dùng hết.",
+          "npc_reply": "Không! Muội đã học không được dùng thuốc như vậy.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_02_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_02_S05",
+      "npc_id": "HG_VDC_02",
+      "npc_name": "Linh Nhi",
+      "faction": "Vạn Dược Cốc",
+      "role": "Dược đồng",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Hẹn gặp ở Bách Thảo",
+      "min_affection": 100,
+      "prerequisite": "HG_VDC_02_S04_completed",
+      "npc_text": "Nếu Linh Giới có cách chữa thần hồn tốt hơn, muội muốn lên đó. Huynh có nghĩ muội quá cố chấp?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_02_S05_A",
+          "dialogue_id": "HG_VDC_02_S05",
+          "label": "A",
+          "player_text": "Cứ học tiếp, mang theo bệnh án và chăm sóc ca ca trên đường an toàn.",
+          "npc_reply": "Muội sẽ thành đan sư thật giỏi, không chỉ để cứu một người.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_02_route_phi_thang_bach_thao"
+        },
+        {
+          "choice_id": "HG_VDC_02_S05_B",
+          "dialogue_id": "HG_VDC_02_S05",
+          "label": "B",
+          "player_text": "Muội có thể đi, nhưng cũng phải sống cuộc đời của mình.",
+          "npc_reply": "Muội sẽ thử nhớ cả niềm vui, không chỉ mùi thuốc.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_02_S05_C",
+          "dialogue_id": "HG_VDC_02_S05",
+          "label": "C",
+          "player_text": "Bỏ ca ca lại, theo ta kiếm cơ duyên lớn hơn.",
+          "npc_reply": "Huynh chưa từng hiểu vì sao muội học đan.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_03_S01",
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "faction": "Vạn Dược Cốc",
+      "role": "Khách khanh trận sư",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Bàn ăn thành trận bàn",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Đừng chạm vào bát cơm! Nó đang ở vị trí thứ ba của trận mô phỏng. Ngươi thấy điểm lệch nào?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_03_S01_A",
+          "dialogue_id": "HG_VDC_03_S01",
+          "label": "A",
+          "player_text": "Vị trí bát thứ năm phá đối xứng; hãy dời nó khi trận đã tắt.",
+          "npc_reply": "Ồ! Cuối cùng có người chịu nhìn trận trước nhìn cơm.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_03_S01_B",
+          "dialogue_id": "HG_VDC_03_S01",
+          "label": "B",
+          "player_text": "Ta cần ông giải thích quy ước vị trí trước.",
+          "npc_reply": "Tốt. Hỏi ký hiệu trước khi giải mới không lạc đường.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_03_S01_C",
+          "dialogue_id": "HG_VDC_03_S01",
+          "label": "C",
+          "player_text": "Đạp bàn cho nhanh, trận gì cũng nát.",
+          "npc_reply": "Ngươi vừa phá bữa tối và một tháng tính toán.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_03_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_03_S02",
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "faction": "Vạn Dược Cốc",
+      "role": "Khách khanh trận sư",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Dấu ấn trên thần hồn",
+      "min_affection": 20,
+      "prerequisite": "HG_VDC_03_S01_completed",
+      "npc_text": "Thiên Mệnh Ấn của người Trái Đất có nét giống cổ văn. Ngươi cho ta đo nó chứ?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_03_S02_A",
+          "dialogue_id": "HG_VDC_03_S02",
+          "label": "A",
+          "player_text": "Được nếu chỉ quan sát, ghi rõ rủi ro và dừng khi ta yêu cầu.",
+          "npc_reply": "Thỏa thuận được. Ta sẽ không chạm vào nguyên thần ngươi.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_03_quest_do_dau_an"
+        },
+        {
+          "choice_id": "HG_VDC_03_S02_B",
+          "dialogue_id": "HG_VDC_03_S02",
+          "label": "B",
+          "player_text": "Ta muốn xem bản ghi những lần đo trước.",
+          "npc_reply": "Cẩn trọng là phẩm chất tốt của một trận sư.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_03_S02_C",
+          "dialogue_id": "HG_VDC_03_S02",
+          "label": "C",
+          "player_text": "Cứ kích hoạt thử, ta muốn biết mình mạnh đến đâu.",
+          "npc_reply": "Ngươi tưởng thần hồn là cục đá thử lửa sao?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_03_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_03_S03",
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "faction": "Vạn Dược Cốc",
+      "role": "Khách khanh trận sư",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Ngôi mộ nhà trận sư",
+      "min_affection": 50,
+      "prerequisite": "HG_VDC_03_S02_completed",
+      "npc_text": "Gia tộc ta đã chết vì cấm trận. Ta từng thề không nghiên cứu nó nữa. Giờ dấu ấn của ngươi xuất hiện.",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_03_S03_A",
+          "dialogue_id": "HG_VDC_03_S03",
+          "label": "A",
+          "player_text": "Ta sẽ giúp tìm tài liệu, nhưng không ép ông phá lời thề.",
+          "npc_reply": "Lâu lắm rồi mới có người hỏi ý ta trước khi hỏi về trận.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_03_lore_gia_toc_cam_tran"
+        },
+        {
+          "choice_id": "HG_VDC_03_S03_B",
+          "dialogue_id": "HG_VDC_03_S03",
+          "label": "B",
+          "player_text": "Nếu nghiên cứu, phải có lối thoát và người giám sát độc lập.",
+          "npc_reply": "Ta từng thiếu cả hai. Lần này không được phép.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_03_S03_C",
+          "dialogue_id": "HG_VDC_03_S03",
+          "label": "C",
+          "player_text": "Người chết rồi, lời thề có quan trọng gì?",
+          "npc_reply": "Quan trọng với người phải sống cùng chúng.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_03_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_03_S04",
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "faction": "Vạn Dược Cốc",
+      "role": "Khách khanh trận sư",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Tọa độ bị thiếu",
+      "min_affection": 80,
+      "prerequisite": "HG_VDC_03_S03_completed",
+      "npc_text": "Một tọa độ đã bị xóa khỏi trận đồ. Nếu đoán sai, cổ trận có thể mở sang nơi không biết. Ngươi chọn cách nào?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_03_S04_A",
+          "dialogue_id": "HG_VDC_03_S04",
+          "label": "A",
+          "player_text": "Đối chiếu sáu ký hiệu với Mạc trưởng lão và vô hiệu hóa trận thật.",
+          "npc_reply": "Đúng. Phải để giấy chịu sai thay người.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_03_quest_sau_ky_hieu"
+        },
+        {
+          "choice_id": "HG_VDC_03_S04_B",
+          "dialogue_id": "HG_VDC_03_S04",
+          "label": "B",
+          "player_text": "Dựng mô hình nhỏ để thử từng khả năng.",
+          "npc_reply": "Ta sẽ chuẩn bị ba vòng triệt tiêu linh lực.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_03_S04_C",
+          "dialogue_id": "HG_VDC_03_S04",
+          "label": "C",
+          "player_text": "Cứ bù tọa độ ngẫu nhiên, có khi trúng bí cảnh.",
+          "npc_reply": "Có khi trúng mộ của cả hai chúng ta.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_03_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_03_S05",
+      "npc_id": "HG_VDC_03",
+      "npc_name": "Tạ Thiên Cơ",
+      "faction": "Vạn Dược Cốc",
+      "role": "Khách khanh trận sư",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Người vẽ cửa",
+      "min_affection": 100,
+      "prerequisite": "HG_VDC_03_S04_completed",
+      "npc_text": "Ta phải lên Thiên Cơ Các tại Linh Giới. Nếu ngươi giữ bản sao, ngươi làm gì khi ta không trở lại?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_03_S05_A",
+          "dialogue_id": "HG_VDC_03_S05",
+          "label": "A",
+          "player_text": "Chuyển giao ghi chép cho người đủ năng lực và đánh dấu phần chưa xác thực.",
+          "npc_reply": "Vậy cánh cửa này không phụ thuộc vào một mạng người.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_03_route_linh_gioi_thien_co"
+        },
+        {
+          "choice_id": "HG_VDC_03_S05_B",
+          "dialogue_id": "HG_VDC_03_S05",
+          "label": "B",
+          "player_text": "Niêm phong an toàn, đợi người tiếp tục nghiên cứu.",
+          "npc_reply": "Được. Nhớ ghi cách phá niêm, kẻo ta phải về từ cõi chết.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_03_S05_C",
+          "dialogue_id": "HG_VDC_03_S05",
+          "label": "C",
+          "player_text": "Bán bản đồ cho người trả cao nhất.",
+          "npc_reply": "Ngươi đã định giá một thứ còn không biết dẫn đến đâu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_04_S01",
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "faction": "Vạn Dược Cốc",
+      "role": "Trưởng lão Đan viện",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Tờ cam kết dính mực",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Một người bệnh ký thử thuốc trong lúc đau đớn. Chữ tự nguyện ấy có đủ không?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_04_S01_A",
+          "dialogue_id": "HG_VDC_04_S01",
+          "label": "A",
+          "player_text": "Chưa. Phải giải thích nguy cơ, kiểm tra họ hiểu và được quyền từ chối.",
+          "npc_reply": "Ngươi có thể đứng cạnh lò đan của ta.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_04_S01_B",
+          "dialogue_id": "HG_VDC_04_S01",
+          "label": "B",
+          "player_text": "Cần người làm chứng độc lập và thời gian cân nhắc.",
+          "npc_reply": "Ít nhất ngươi biết chữ ký không thay được lương tri.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_04_S01_C",
+          "dialogue_id": "HG_VDC_04_S01",
+          "label": "C",
+          "player_text": "Đã ký thì chết cũng không trách ai.",
+          "npc_reply": "Lấy tờ giấy ấy ra khỏi phòng ta.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_04_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_04_S02",
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "faction": "Vạn Dược Cốc",
+      "role": "Trưởng lão Đan viện",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Đêm lò đan phát nổ",
+      "min_affection": 20,
+      "prerequisite": "HG_VDC_04_S01_completed",
+      "npc_text": "Ta từng sống sót khi cả phòng luyện đan chết. Ngươi sẽ ghi sự cố đó ra sao?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_04_S02_A",
+          "dialogue_id": "HG_VDC_04_S02",
+          "label": "A",
+          "player_text": "Ghi cả lỗi của người có chức quyền và biện pháp ngăn tái diễn.",
+          "npc_reply": "Ngươi sẽ làm nhiều người khó chịu. Hãy cứ ghi.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_04_lore_no_lo_dan"
+        },
+        {
+          "choice_id": "HG_VDC_04_S02_B",
+          "dialogue_id": "HG_VDC_04_S02",
+          "label": "B",
+          "player_text": "Ghi nguyên nhân chưa rõ, không suy diễn thủ phạm.",
+          "npc_reply": "Khá. Người chết không cần một bản báo cáo dối.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_04_S02_C",
+          "dialogue_id": "HG_VDC_04_S02",
+          "label": "C",
+          "player_text": "Xóa hồ sơ để Cốc không mất danh dự.",
+          "npc_reply": "Danh dự ấy không che nổi một mộ phần.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_04_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_04_S03",
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "faction": "Vạn Dược Cốc",
+      "role": "Trưởng lão Đan viện",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Bệnh án thiếu tên",
+      "min_affection": 50,
+      "prerequisite": "HG_VDC_04_S02_completed",
+      "npc_text": "Đan phương thử nghiệm có hiệu quả nhưng thiếu danh sách người chịu tác dụng phụ. Ngươi phê duyệt chứ?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_04_S03_A",
+          "dialogue_id": "HG_VDC_04_S03",
+          "label": "A",
+          "player_text": "Không. Dừng sử dụng và truy lại hồ sơ trước.",
+          "npc_reply": "Tốt. Hiệu quả không thể mua quyền che giấu thương tổn.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_04_quest_kiem_toan_dan"
+        },
+        {
+          "choice_id": "HG_VDC_04_S03_B",
+          "dialogue_id": "HG_VDC_04_S03",
+          "label": "B",
+          "player_text": "Yêu cầu dữ liệu bổ sung và hội chẩn độc lập.",
+          "npc_reply": "Ta sẽ giúp ngươi đối chiếu từng trang.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_04_S03_C",
+          "dialogue_id": "HG_VDC_04_S03",
+          "label": "C",
+          "player_text": "Công pháp mạnh đáng để bỏ qua vài dòng tên.",
+          "npc_reply": "Những dòng tên ấy từng có người chờ họ về nhà.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_04_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_04_S04",
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "faction": "Vạn Dược Cốc",
+      "role": "Trưởng lão Đan viện",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Đối chất với Cốc chủ",
+      "min_affection": 80,
+      "prerequisite": "HG_VDC_04_S03_completed",
+      "npc_text": "Dược Vô Trần giữ một cấm phương. Ta muốn niêm phong; ông ấy muốn cứu người. Ngươi đứng về ai?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_04_S04_A",
+          "dialogue_id": "HG_VDC_04_S04",
+          "label": "A",
+          "player_text": "Đặt cùng tiêu chuẩn an toàn cho cả hai, mở kiểm tra có giám sát.",
+          "npc_reply": "Ta không cần ngươi theo phe, ta cần ngươi bảo vệ bệnh nhân.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_04_route_hoa_giai"
+        },
+        {
+          "choice_id": "HG_VDC_04_S04_B",
+          "dialogue_id": "HG_VDC_04_S04",
+          "label": "B",
+          "player_text": "Niêm phong mọi thử nghiệm cho đến khi có đánh giá đầy đủ.",
+          "npc_reply": "Ta chấp thuận, miễn đừng xóa cả nghiên cứu có ích.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_04_route_niem_phong"
+        },
+        {
+          "choice_id": "HG_VDC_04_S04_C",
+          "dialogue_id": "HG_VDC_04_S04",
+          "label": "C",
+          "player_text": "Cứ cho Cốc chủ thử lén, rồi xin lỗi sau.",
+          "npc_reply": "Một lời xin lỗi không hồi sinh được người chết.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_04_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_04_S05",
+      "npc_id": "HG_VDC_04",
+      "npc_name": "Bạch Tử Yên",
+      "faction": "Vạn Dược Cốc",
+      "role": "Trưởng lão Đan viện",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Lời dặn trước khi phi thăng",
+      "min_affection": 100,
+      "prerequisite": "HG_VDC_04_S04_completed",
+      "npc_text": "Nếu ta rời Cốc lên Linh Giới, ngươi sẽ bảo vệ quy tắc gì trước tiên?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_04_S05_A",
+          "dialogue_id": "HG_VDC_04_S05",
+          "label": "A",
+          "player_text": "Không thử thuốc khi người bệnh chưa hiểu và đồng ý.",
+          "npc_reply": "Ta giao cho ngươi bản cốc quy đã sửa.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_04_route_bach_thao_thanh_vien"
+        },
+        {
+          "choice_id": "HG_VDC_04_S05_B",
+          "dialogue_id": "HG_VDC_04_S05",
+          "label": "B",
+          "player_text": "Mọi sự cố phải có hồ sơ và cơ chế rà soát.",
+          "npc_reply": "Một lời hứa có thể kiểm chứng. Tốt.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_04_route_hoi_dong_y_duoc"
+        },
+        {
+          "choice_id": "HG_VDC_04_S05_C",
+          "dialogue_id": "HG_VDC_04_S05",
+          "label": "C",
+          "player_text": "Ưu tiên tiến cảnh của Cốc, hậu quả tính sau.",
+          "npc_reply": "Vậy ngươi chưa sẵn sàng giữ lò đan.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_05_S01",
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "faction": "Vạn Dược Cốc",
+      "role": "Thầy thuốc Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Cây bút hết mực",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ở đây ta không có máy đo nhịp tim. Thấy người bị thương mất máu, ngươi ưu tiên điều gì?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_05_S01_A",
+          "dialogue_id": "HG_VDC_05_S01",
+          "label": "A",
+          "player_text": "Đánh giá an toàn, gọi hỗ trợ và cầm máu đúng cách.",
+          "npc_reply": "Tốt. Đạo lý cứu người bắt đầu bằng thứ còn làm được.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_05_S01_B",
+          "dialogue_id": "HG_VDC_05_S01",
+          "label": "B",
+          "player_text": "Theo dõi ý thức, nhịp thở và ghi lại thay đổi.",
+          "npc_reply": "Được. Ta sẽ chỉ thêm cách quan sát mà không cần máy.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_05_S01_C",
+          "dialogue_id": "HG_VDC_05_S01",
+          "label": "C",
+          "player_text": "Cho uống đại một viên tiên đan đắt nhất.",
+          "npc_reply": "Đắt không đồng nghĩa đúng bệnh, càng không thay cầm máu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_05_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_05_S02",
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "faction": "Vạn Dược Cốc",
+      "role": "Thầy thuốc Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Hai cách gọi một căn bệnh",
+      "min_affection": 20,
+      "prerequisite": "HG_VDC_05_S01_completed",
+      "npc_text": "Đan sư nói nghịch khí, ta nghi nhiễm trùng. Làm sao để hai bên hiểu nhau?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_05_S02_A",
+          "dialogue_id": "HG_VDC_05_S02",
+          "label": "A",
+          "player_text": "Ghi triệu chứng khách quan, đối chiếu hai cách giải thích rồi thử an toàn.",
+          "npc_reply": "Cuối cùng cũng có người chịu dịch cả hai ngôn ngữ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_05_quest_y_an_dia_cau"
+        },
+        {
+          "choice_id": "HG_VDC_05_S02_B",
+          "dialogue_id": "HG_VDC_05_S02",
+          "label": "B",
+          "player_text": "Mời người biết cả linh lực lẫn cơ thể cùng hội chẩn.",
+          "npc_reply": "Tốt. Chuyên môn không phải là cuộc thi khẩu khí.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_05_S02_C",
+          "dialogue_id": "HG_VDC_05_S02",
+          "label": "C",
+          "player_text": "Y học Trái Đất luôn đúng, khỏi nghe đan sư.",
+          "npc_reply": "Ta không học lại từ đầu để rồi thành kẻ giáo điều.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_05_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_05_S03",
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "faction": "Vạn Dược Cốc",
+      "role": "Thầy thuốc Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Một ca cứu bằng thao tác đơn giản",
+      "min_affection": 50,
+      "prerequisite": "HG_VDC_05_S02_completed",
+      "npc_text": "Đệ tử ngất trước khi thuốc tới. Mọi người đứng chờ đan dược. Ngươi xử lý thế nào?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_05_S03_A",
+          "dialogue_id": "HG_VDC_05_S03",
+          "label": "A",
+          "player_text": "Kiểm tra đáp ứng và hô hấp, gọi hỗ trợ, thực hiện sơ cứu theo tình trạng.",
+          "npc_reply": "Ngươi nhìn người bệnh trước vật phẩm. Đó là bước đầu.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_05_quest_cuu_de_tu"
+        },
+        {
+          "choice_id": "HG_VDC_05_S03_B",
+          "dialogue_id": "HG_VDC_05_S03",
+          "label": "B",
+          "player_text": "Phân công người lấy thuốc, người giữ lối đi thông thoáng.",
+          "npc_reply": "Tốt. Chỉ huy rõ ràng cũng cứu người.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_05_S03_C",
+          "dialogue_id": "HG_VDC_05_S03",
+          "label": "C",
+          "player_text": "Chờ trưởng lão đến, không ai được chạm vào bệnh nhân.",
+          "npc_reply": "Chờ đợi vô điều kiện có lúc là một dạng bỏ mặc.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_05_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_05_S04",
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "faction": "Vạn Dược Cốc",
+      "role": "Thầy thuốc Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Tri thức không thuộc riêng ai",
+      "min_affection": 80,
+      "prerequisite": "HG_VDC_05_S03_completed",
+      "npc_text": "Có người bảo ta linh căn kém, không xứng bước vào Đan viện. Ngươi nghĩ sao?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_05_S04_A",
+          "dialogue_id": "HG_VDC_05_S04",
+          "label": "A",
+          "player_text": "Giá trị của thầy thuốc nằm ở năng lực cứu người có kiểm chứng.",
+          "npc_reply": "Ta chỉ cần được đánh giá bằng kết quả thật.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_05_lore_tri_thuc_trai_dat"
+        },
+        {
+          "choice_id": "HG_VDC_05_S04_B",
+          "dialogue_id": "HG_VDC_05_S04",
+          "label": "B",
+          "player_text": "Ta sẽ giúp ngươi trình bày một ca bệnh tiêu biểu.",
+          "npc_reply": "Một ca làm đúng tốt hơn trăm lời tranh cãi.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_VDC_05_S04_C",
+          "dialogue_id": "HG_VDC_05_S04",
+          "label": "C",
+          "player_text": "Linh căn kém thì nên bỏ nghề.",
+          "npc_reply": "Có lẽ ngươi sẽ nghĩ khác khi chính mình cần cấp cứu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_VDC_05_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_VDC_05_S05",
+      "npc_id": "HG_VDC_05",
+      "npc_name": "Hứa Mặc",
+      "faction": "Vạn Dược Cốc",
+      "role": "Thầy thuốc Trái Đất",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Y Án Địa Cầu",
+      "min_affection": 100,
+      "prerequisite": "HG_VDC_05_S04_completed",
+      "npc_text": "Ta muốn để lại hệ thống bệnh án mà ai có đủ năng lực cũng học được. Ngươi lo điều gì nhất?",
+      "choices": [
+        {
+          "choice_id": "HG_VDC_05_S05_A",
+          "dialogue_id": "HG_VDC_05_S05",
+          "label": "A",
+          "player_text": "Bảo vệ thông tin bệnh nhân, nhưng chia sẻ phương pháp và bài học sai sót.",
+          "npc_reply": "Đúng thứ ta mong. Tri thức mở, đời tư được giữ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_05_route_y_an_dia_cau"
+        },
+        {
+          "choice_id": "HG_VDC_05_S05_B",
+          "dialogue_id": "HG_VDC_05_S05",
+          "label": "B",
+          "player_text": "Chuẩn hóa biểu mẫu và huấn luyện người ghi hồ sơ.",
+          "npc_reply": "Rất tốt. Một hệ thống chỉ sống khi người khác dùng được.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_vdc_05_route_y_an_chuan_hoa"
+        },
+        {
+          "choice_id": "HG_VDC_05_S05_C",
+          "dialogue_id": "HG_VDC_05_S05",
+          "label": "C",
+          "player_text": "Bán dữ liệu bệnh nhân lấy linh thạch để duy trì viện.",
+          "npc_reply": "Ta thà đi xin giấy còn hơn bán mạng sống người khác.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_01_S01",
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "faction": "Trung lập",
+      "role": "Người sáng lập Hội Quy Hương",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Tờ giấy ghi quê quán",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ta có tên hai mươi ba người từ Trái Đất, nhưng không biết họ đang ở đâu. Ngươi giúp phân loại chứ?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_01_S01_A",
+          "dialogue_id": "HG_TL_01_S01",
+          "label": "A",
+          "player_text": "Chia theo nơi xuất hiện, thông tin xác minh và người liên lạc an toàn.",
+          "npc_reply": "Cảm ơn. Cuối cùng mấy dòng tên đã thành đầu mối có thể tìm.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_01_quest_hoi_quy_huong"
+        },
+        {
+          "choice_id": "HG_TL_01_S01_B",
+          "dialogue_id": "HG_TL_01_S01",
+          "label": "B",
+          "player_text": "Ta nhận vài người trong danh sách để hỏi tin.",
+          "npc_reply": "Có người giúp là tốt. Nhớ đừng hứa tìm thấy chắc chắn.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_01_S01_C",
+          "dialogue_id": "HG_TL_01_S01",
+          "label": "C",
+          "player_text": "Có linh căn mạnh mới đáng tìm, người khác bỏ qua.",
+          "npc_reply": "Ta lập hội để không ai bị gạch tên vì yếu.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_01_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_01_S02",
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "faction": "Trung lập",
+      "role": "Người sáng lập Hội Quy Hương",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Lá thư không địa chỉ",
+      "min_affection": 20,
+      "prerequisite": "HG_TL_01_S01_completed",
+      "npc_text": "Một người mẹ nhờ ta chuyển thư cho con. Không biết cậu bé có còn sống. Ta nên ghi gì khi nhận thư?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_01_S02_A",
+          "dialogue_id": "HG_TL_01_S02",
+          "label": "A",
+          "player_text": "Ghi ngày nhận, manh mối, trạng thái chưa xác minh và cách liên lạc an toàn.",
+          "npc_reply": "Chính xác. Một lời hy vọng phải đi cùng cách tìm.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_01_S02_B",
+          "dialogue_id": "HG_TL_01_S02",
+          "label": "B",
+          "player_text": "Giữ thư nguyên vẹn và chép bản dự phòng.",
+          "npc_reply": "Hay. Nếu một bản mất, người kia vẫn còn cơ hội.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_01_S02_C",
+          "dialogue_id": "HG_TL_01_S02",
+          "label": "C",
+          "player_text": "Bịa tin đứa bé còn sống để người mẹ đỡ khóc.",
+          "npc_reply": "An ủi bằng lời dối sẽ thành nhát dao sau này.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_01_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_01_S03",
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "faction": "Trung lập",
+      "role": "Người sáng lập Hội Quy Hương",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Tổ chức trong thời loạn",
+      "min_affection": 50,
+      "prerequisite": "HG_TL_01_S02_completed",
+      "npc_text": "Một đoàn tị nạn cần đường đi, nhưng thương hội muốn lấy tiền dẫn đường. Ngươi thương lượng ra sao?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_01_S03_A",
+          "dialogue_id": "HG_TL_01_S03",
+          "label": "A",
+          "player_text": "Xin giá minh bạch, trợ cấp người khó khăn và phân nhóm đi an toàn.",
+          "npc_reply": "Tốt. Cứu trợ chỉ bền khi biết ai trả, ai nhận.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_01_quest_mang_luoi_cuu_tro"
+        },
+        {
+          "choice_id": "HG_TL_01_S03_B",
+          "dialogue_id": "HG_TL_01_S03",
+          "label": "B",
+          "player_text": "Hợp tác Bạch Tiểu Ngư để có lộ trình và người bảo vệ.",
+          "npc_reply": "Cô ấy tham tiền nhưng giữ lời. Ta sẽ tìm gặp.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_01_S03_C",
+          "dialogue_id": "HG_TL_01_S03",
+          "label": "C",
+          "player_text": "Bắt người nghèo vay nợ với lãi vô hạn.",
+          "npc_reply": "Như thế khác gì bán họ lần nữa?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_01_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_01_S04",
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "faction": "Trung lập",
+      "role": "Người sáng lập Hội Quy Hương",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Tên người trong tay kẻ xấu",
+      "min_affection": 80,
+      "prerequisite": "HG_TL_01_S03_completed",
+      "npc_text": "Cao Thành muốn lấy toàn bộ danh sách người Trái Đất để 'bảo vệ'. Có nên đưa không?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_01_S04_A",
+          "dialogue_id": "HG_TL_01_S04",
+          "label": "A",
+          "player_text": "Chỉ chia tin tối thiểu khi có đồng ý, không giao dữ liệu đầy đủ.",
+          "npc_reply": "Đúng. Hội Quy Hương không phải kho tuyển quân của ai.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_01_route_doc_lap_cao_thanh"
+        },
+        {
+          "choice_id": "HG_TL_01_S04_B",
+          "dialogue_id": "HG_TL_01_S04",
+          "label": "B",
+          "player_text": "Yêu cầu quy trình xác minh và bên thứ ba giám sát.",
+          "npc_reply": "Ta sẽ nói chuyện, nhưng không nhượng quyền kiểm soát.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_01_S04_C",
+          "dialogue_id": "HG_TL_01_S04",
+          "label": "C",
+          "player_text": "Đưa hết để đổi lấy hộ vệ và linh thạch.",
+          "npc_reply": "Một danh sách có thể trở thành dây trói từng gia đình.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_01_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_01_S05",
+      "npc_id": "HG_TL_01",
+      "npc_name": "Trần Minh",
+      "faction": "Trung lập",
+      "role": "Người sáng lập Hội Quy Hương",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Nếu có con đường về",
+      "min_affection": 100,
+      "prerequisite": "HG_TL_01_S04_completed",
+      "npc_text": "Giả sử vài trăm năm nữa ta tìm được cửa trở về Trái Đất. Ngươi có còn muốn đi?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_01_S05_A",
+          "dialogue_id": "HG_TL_01_S05",
+          "label": "A",
+          "player_text": "Ta muốn được lựa chọn sau khi biết người thân còn ai, và giúp người khác cũng có quyền chọn.",
+          "npc_reply": "Đúng. Quy hương không phải mệnh lệnh, chỉ là một cánh cửa.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_01_route_quy_huong_tu_nguyen"
+        },
+        {
+          "choice_id": "HG_TL_01_S05_B",
+          "dialogue_id": "HG_TL_01_S05",
+          "label": "B",
+          "player_text": "Có thể ta ở lại, nhưng vẫn giúp người muốn về.",
+          "npc_reply": "Ta cần người như ngươi hơn người chỉ biết hô khẩu hiệu.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_tl_01_route_ho_tro_nguoi_ve"
+        },
+        {
+          "choice_id": "HG_TL_01_S05_C",
+          "dialogue_id": "HG_TL_01_S05",
+          "label": "C",
+          "player_text": "Ta sẽ kiểm soát cánh cửa và bán lượt đi cho người giàu.",
+          "npc_reply": "Vậy chúng ta đã trở thành hai loại người khác nhau.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_02_S01",
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "faction": "Trung lập",
+      "role": "Thương nhân lang bạt",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Giá của một lời chào",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Khách quan, hàng tốt không rẻ. Nhưng ngươi thấy thế nào là một cuộc mua bán công bằng?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_02_S01_A",
+          "dialogue_id": "HG_TL_02_S01",
+          "label": "A",
+          "player_text": "Cả hai biết chất lượng, giá và được quyền từ chối.",
+          "npc_reply": "Đúng ý ta! Thuận mua vừa bán, không phải thuận bị lừa.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_02_S01_B",
+          "dialogue_id": "HG_TL_02_S01",
+          "label": "B",
+          "player_text": "Giá cao vẫn được, miễn người mua biết rõ.",
+          "npc_reply": "Ngươi hiểu vì sao ta ghi giá lên bảng.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_02_S01_C",
+          "dialogue_id": "HG_TL_02_S01",
+          "label": "C",
+          "player_text": "Lừa người mới đến một lần rồi bỏ đi.",
+          "npc_reply": "Thương nhân mất chữ tín thì chỉ còn túi rỗng.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_02_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_02_S02",
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "faction": "Trung lập",
+      "role": "Thương nhân lang bạt",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Một túi linh thạch lạc",
+      "min_affection": 20,
+      "prerequisite": "HG_TL_02_S01_completed",
+      "npc_text": "Khách nghèo đánh rơi túi Linh Thạch hạ phẩm. Không ai thấy. Ngươi xử trí thế nào?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_02_S02_A",
+          "dialogue_id": "HG_TL_02_S02",
+          "label": "A",
+          "player_text": "Ghi số lượng, niêm phong và tìm người mất qua dấu hiệu xác minh.",
+          "npc_reply": "Khá lắm. Không nhận nhầm cũng là một loại lương thiện.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_02_quest_tra_tui"
+        },
+        {
+          "choice_id": "HG_TL_02_S02_B",
+          "dialogue_id": "HG_TL_02_S02",
+          "label": "B",
+          "player_text": "Giao cho cửa hàng giữ và thông báo công khai vừa đủ.",
+          "npc_reply": "Tốt. Đừng công khai toàn bộ số tiền cho kẻ mạo nhận.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_02_S02_C",
+          "dialogue_id": "HG_TL_02_S02",
+          "label": "C",
+          "player_text": "Chia đôi với ta, coi như lộc trời.",
+          "npc_reply": "Ngươi nghĩ ta dám bán chữ tín với giá ấy à?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_02_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_02_S03",
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "faction": "Trung lập",
+      "role": "Thương nhân lang bạt",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Tuyến hàng qua yêu vực",
+      "min_affection": 50,
+      "prerequisite": "HG_TL_02_S02_completed",
+      "npc_text": "Đường ngắn có yêu thú, đường vòng tốn nhiều phí. Ngươi khuyên đoàn buôn chọn gì?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_02_S03_A",
+          "dialogue_id": "HG_TL_02_S03",
+          "label": "A",
+          "player_text": "Ước lượng rủi ro, hỏi hộ vệ và chỉ đi đường ngắn nếu có phương án an toàn.",
+          "npc_reply": "Một đồng kiếm thêm không đáng đổi bằng một mạng.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_02_quest_tuyen_thuong"
+        },
+        {
+          "choice_id": "HG_TL_02_S03_B",
+          "dialogue_id": "HG_TL_02_S03",
+          "label": "B",
+          "player_text": "Đi đường vòng và báo rõ phí tăng cho khách.",
+          "npc_reply": "Chậm nhưng chắc. Ta còn muốn mở quán năm sau.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_02_S03_C",
+          "dialogue_id": "HG_TL_02_S03",
+          "label": "C",
+          "player_text": "Giấu nguy hiểm để nhận thêm hợp đồng.",
+          "npc_reply": "Ta kiếm tiền bằng bán hàng, không bán mạng người.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_02_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_02_S04",
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "faction": "Trung lập",
+      "role": "Thương nhân lang bạt",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Tin tức hay bí mật",
+      "min_affection": 80,
+      "prerequisite": "HG_TL_02_S03_completed",
+      "npc_text": "Ta biết nơi người ta đồn có cổ vật liên quan Thiên Mệnh. Ngươi có muốn mua tin?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_02_S04_A",
+          "dialogue_id": "HG_TL_02_S04",
+          "label": "A",
+          "player_text": "Chỉ mua manh mối kiểm chứng được, không đòi mua vật phẩm nhiệm vụ bí ẩn.",
+          "npc_reply": "Đúng. Ta bán đường đi, không bán thứ chưa từng thuộc về ta.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_02_lore_gioi_han_thuong_hoi"
+        },
+        {
+          "choice_id": "HG_TL_02_S04_B",
+          "dialogue_id": "HG_TL_02_S04",
+          "label": "B",
+          "player_text": "Ta muốn biết nguồn tin đáng tin đến mức nào trước khi trả.",
+          "npc_reply": "Khách tỉnh táo thì ta đỡ mất thời gian cãi nhau.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_02_S04_C",
+          "dialogue_id": "HG_TL_02_S04",
+          "label": "C",
+          "player_text": "Bán thẳng cổ vật ẩn cho ta, giá nào cũng trả.",
+          "npc_reply": "Có tiền không có nghĩa mua được mọi thứ.",
+          "affection_delta": -5,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_02_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_02_S05",
+      "npc_id": "HG_TL_02",
+      "npc_name": "Bạch Tiểu Ngư",
+      "faction": "Trung lập",
+      "role": "Thương nhân lang bạt",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Thương hội qua ba giới",
+      "min_affection": 100,
+      "prerequisite": "HG_TL_02_S04_completed",
+      "npc_text": "Nếu thương hội của ta lớn đến Linh Giới, điều gì tuyệt đối không được đánh mất?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_02_S05_A",
+          "dialogue_id": "HG_TL_02_S05",
+          "label": "A",
+          "player_text": "Chữ tín và quy tắc không ép người khó khăn vào đường cùng.",
+          "npc_reply": "Được! Ngươi còn nhớ cô hàng rong năm ấy là tốt.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_02_route_thuong_hoi_chu_tin"
+        },
+        {
+          "choice_id": "HG_TL_02_S05_B",
+          "dialogue_id": "HG_TL_02_S05",
+          "label": "B",
+          "player_text": "Sổ sách minh bạch và mạng lưới vận chuyển an toàn.",
+          "npc_reply": "Ta sẽ thuê người giỏi hơn mình, nhưng tự tay kiểm sổ.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_02_route_thuong_hoi_min_bach"
+        },
+        {
+          "choice_id": "HG_TL_02_S05_C",
+          "dialogue_id": "HG_TL_02_S05",
+          "label": "C",
+          "player_text": "Độc quyền hết nguồn thuốc rồi nâng giá vô hạn.",
+          "npc_reply": "Kiếm nhiều vậy để làm gì nếu thiên hạ chỉ mong ta chết?",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_03_S01",
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "faction": "Trung lập",
+      "role": "Người chèo đò",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Một đồng tiền qua sông",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Khách muốn qua sông mà không có tiền. Ngươi ngồi cùng thuyền, sẽ nói sao?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_03_S01_A",
+          "dialogue_id": "HG_TL_03_S01",
+          "label": "A",
+          "player_text": "Nếu thuyền còn chỗ, ta trả giúp chuyến này.",
+          "npc_reply": "Nước sông không nhớ bạc, người qua sông có thể nhớ.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_03_S01_B",
+          "dialogue_id": "HG_TL_03_S01",
+          "label": "B",
+          "player_text": "Ta hỏi ông có nhận đổi một việc phụ chèo không.",
+          "npc_reply": "Đôi tay biết chèo cũng là tiền công đấy.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_03_S01_C",
+          "dialogue_id": "HG_TL_03_S01",
+          "label": "C",
+          "player_text": "Đẩy khách xuống, thuyền đỡ nặng.",
+          "npc_reply": "Sông sâu hơn lòng người, nhưng không lạnh bằng câu ấy.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_03_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_03_S02",
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "faction": "Trung lập",
+      "role": "Người chèo đò",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Khách từ bên kia trời",
+      "min_affection": 20,
+      "prerequisite": "HG_TL_03_S01_completed",
+      "npc_text": "Ta từng chở một người bảo mình đến từ nơi không có linh khí. Ngươi tin có nơi ấy không?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_03_S02_A",
+          "dialogue_id": "HG_TL_03_S02",
+          "label": "A",
+          "player_text": "Có thể. Ta sẽ nghe lời kể mà chưa vội quyết đúng sai.",
+          "npc_reply": "Nghe đã là bước đầu để nhận ra bờ xa.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_03_lore_ben_kia_troi"
+        },
+        {
+          "choice_id": "HG_TL_03_S02_B",
+          "dialogue_id": "HG_TL_03_S02",
+          "label": "B",
+          "player_text": "Ta muốn biết người ấy mang theo vật gì từ quê nhà.",
+          "npc_reply": "Một vật nhỏ thôi, mà người ấy giữ chặt hơn kiếm.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_03_S02_C",
+          "dialogue_id": "HG_TL_03_S02",
+          "label": "C",
+          "player_text": "Không có linh khí thì chẳng đáng gọi là thế giới.",
+          "npc_reply": "Cá dưới sông cũng tưởng nước là cả trời.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_03_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_03_S03",
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "faction": "Trung lập",
+      "role": "Người chèo đò",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Con thuyền đi ngược nước",
+      "min_affection": 50,
+      "prerequisite": "HG_TL_03_S02_completed",
+      "npc_text": "Hai bờ đều có người gọi. Ta chỉ chở một chuyến trước khi lũ về. Ngươi chọn bờ nào?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_03_S03_A",
+          "dialogue_id": "HG_TL_03_S03",
+          "label": "A",
+          "player_text": "Xét bờ nào nguy cấp hơn, báo người còn lại và tìm thêm thuyền.",
+          "npc_reply": "Chọn một bờ mà không quên bờ kia. Khó lắm.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_03_S03_B",
+          "dialogue_id": "HG_TL_03_S03",
+          "label": "B",
+          "player_text": "Hỏi ông về dòng chảy, thời gian và sức chở.",
+          "npc_reply": "Biết hỏi dòng nước trước khi định đường là tốt.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_03_S03_C",
+          "dialogue_id": "HG_TL_03_S03",
+          "label": "C",
+          "player_text": "Ai trả nhiều tiền hơn thì đi trước.",
+          "npc_reply": "Sông không báo giá khi dâng lên.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_03_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_03_S04",
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "faction": "Trung lập",
+      "role": "Người chèo đò",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Bóng người trên mặt nước",
+      "min_affection": 80,
+      "prerequisite": "HG_TL_03_S03_completed",
+      "npc_text": "Nếu soi xuống sông thấy chính mình của một ngày chưa đến, ngươi tin ảnh hay tin người?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_03_S04_A",
+          "dialogue_id": "HG_TL_03_S04",
+          "label": "A",
+          "player_text": "Ta coi đó là manh mối, không phải số phận chắc chắn.",
+          "npc_reply": "Mặt nước biết phản chiếu, không biết hứa hẹn.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_03_lore_bong_thoi_gian"
+        },
+        {
+          "choice_id": "HG_TL_03_S04_B",
+          "dialogue_id": "HG_TL_03_S04",
+          "label": "B",
+          "player_text": "Ta quan sát xem ảnh đổi khi mình đổi quyết định không.",
+          "npc_reply": "Ngươi muốn hỏi lại dòng sông. Cứ thử bằng lòng nhẹ.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_03_S04_C",
+          "dialogue_id": "HG_TL_03_S04",
+          "label": "C",
+          "player_text": "Ảnh đã hiện thì mọi lựa chọn đều vô nghĩa.",
+          "npc_reply": "Thế sao ngươi còn tự bước xuống thuyền?",
+          "affection_delta": -10,
+          "trust_delta": -5,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_03_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_03_S05",
+      "npc_id": "HG_TL_03",
+      "npc_name": "Ông Lão Vô Danh",
+      "faction": "Trung lập",
+      "role": "Người chèo đò",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Bờ sông không tên",
+      "min_affection": 100,
+      "prerequisite": "HG_TL_03_S04_completed",
+      "npc_text": "Ngày ngươi rời Hạ Giới, có thể không gặp lại ông già chèo đò này. Ngươi muốn hỏi tên ta không?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_03_S05_A",
+          "dialogue_id": "HG_TL_03_S05",
+          "label": "A",
+          "player_text": "Nếu ông không muốn nói, ta chỉ cảm ơn vì những chuyến đò.",
+          "npc_reply": "Tên gọi trôi theo nước. Lời cảm ơn thì theo người.",
+          "affection_delta": 10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_03_lore_ben_do_ket"
+        },
+        {
+          "choice_id": "HG_TL_03_S05_B",
+          "dialogue_id": "HG_TL_03_S05",
+          "label": "B",
+          "player_text": "Ta muốn nhớ câu chuyện để kể lại cho người khác.",
+          "npc_reply": "Kể đi, nhưng nhớ nói đó là chuyện ngươi nghe.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": "hg_tl_03_lore_chuyen_ke"
+        },
+        {
+          "choice_id": "HG_TL_03_S05_C",
+          "dialogue_id": "HG_TL_03_S05",
+          "label": "C",
+          "player_text": "Không có tên thì chắc ông chẳng quan trọng.",
+          "npc_reply": "Có bến đò không tên mà ai qua sông cũng cần.",
+          "affection_delta": -10,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_04_S01",
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "faction": "Trung lập",
+      "role": "Người Trái Đất, thủ lĩnh nhóm tự trị",
+      "realm": "Hạ Giới",
+      "scene_index": 1,
+      "stage": "Gặp gỡ",
+      "title": "Luật mới của kẻ mạnh",
+      "min_affection": 0,
+      "prerequisite": "npc_met",
+      "npc_text": "Ở Trái Đất ta phải tuân luật. Ở đây sức mạnh tự đặt luật. Ngươi thấy đây là cơ hội hay tai họa?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_04_S01_A",
+          "dialogue_id": "HG_TL_04_S01",
+          "label": "A",
+          "player_text": "Là cơ hội xây cộng đồng an toàn, nếu quyền lực có giới hạn.",
+          "npc_reply": "Ngươi nói như một người quản trị. Ta sẽ nghe thêm.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_04_S01_B",
+          "dialogue_id": "HG_TL_04_S01",
+          "label": "B",
+          "player_text": "Kẻ mạnh nên được quyền lãnh đạo nếu chứng minh được năng lực.",
+          "npc_reply": "Ha! Cuối cùng có kẻ thực tế.",
+          "affection_delta": 10,
+          "trust_delta": 0,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_04_S01_C",
+          "dialogue_id": "HG_TL_04_S01",
+          "label": "C",
+          "player_text": "Cứ thống trị hết, ai phản đối thì xử.",
+          "npc_reply": "Nhiệt tình đấy, nhưng kẻ nóng đầu thường phá kế hoạch.",
+          "affection_delta": 5,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_04_S02",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_04_S02",
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "faction": "Trung lập",
+      "role": "Người Trái Đất, thủ lĩnh nhóm tự trị",
+      "realm": "Hạ Giới",
+      "scene_index": 2,
+      "stage": "Làm quen",
+      "title": "Kho dự trữ của người lạc giới",
+      "min_affection": 20,
+      "prerequisite": "HG_TL_04_S01_completed",
+      "npc_text": "Nhóm ta có lương thực và linh thạch dự trữ. Người ngoài xin cứu tế. Ta phải lấy phí không?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_04_S02_A",
+          "dialogue_id": "HG_TL_04_S02",
+          "label": "A",
+          "player_text": "Có định mức minh bạch và quỹ khẩn cấp, tránh người yếu chết đói.",
+          "npc_reply": "Một tổ chức sống lâu cần sổ sách. Ngươi có ích.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_04_quest_quy_du_tru"
+        },
+        {
+          "choice_id": "HG_TL_04_S02_B",
+          "dialogue_id": "HG_TL_04_S02",
+          "label": "B",
+          "player_text": "Thu phí với người có khả năng, hỗ trợ người khó khăn.",
+          "npc_reply": "Cách ấy còn giữ được kho. Ta chấp nhận.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_04_S02_C",
+          "dialogue_id": "HG_TL_04_S02",
+          "label": "C",
+          "player_text": "Ép họ ký khế ước làm nô bộc rồi mới phát lương.",
+          "npc_reply": "Hiệu quả trước mắt, nhưng ta sẽ phải nuôi cả cuộc phản loạn.",
+          "affection_delta": 5,
+          "trust_delta": -10,
+          "story_flag": null
+        }
+      ],
+      "next_dialogue_id": "HG_TL_04_S03",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_04_S03",
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "faction": "Trung lập",
+      "role": "Người Trái Đất, thủ lĩnh nhóm tự trị",
+      "realm": "Hạ Giới",
+      "scene_index": 3,
+      "stage": "Vết thương",
+      "title": "Danh sách của Trần Minh",
+      "min_affection": 50,
+      "prerequisite": "HG_TL_04_S02_completed",
+      "npc_text": "Trần Minh có thông tin người Trái Đất. Nếu trao danh sách cho ta, ta có thể tập hợp họ thành lực lượng mạnh. Ngươi giúp thuyết phục chứ?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_04_S03_A",
+          "dialogue_id": "HG_TL_04_S03",
+          "label": "A",
+          "player_text": "Không được lấy dữ liệu khi họ chưa đồng ý; hãy đề nghị hợp tác tự nguyện.",
+          "npc_reply": "Khó nhằn thật. Nhưng ngươi nhìn thấy rủi ro mà ta đã tính thấp.",
+          "affection_delta": -5,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_04_route_hop_tac_tu_nguyen"
+        },
+        {
+          "choice_id": "HG_TL_04_S03_B",
+          "dialogue_id": "HG_TL_04_S03",
+          "label": "B",
+          "player_text": "Ta sẽ chuyển lời đề nghị, không ép Trần Minh.",
+          "npc_reply": "Cũng được. Ít nhất cửa thương lượng chưa đóng.",
+          "affection_delta": 5,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_04_S03_C",
+          "dialogue_id": "HG_TL_04_S03",
+          "label": "C",
+          "player_text": "Cứ cướp danh sách, người ta cần bị dẫn dắt.",
+          "npc_reply": "Cách nhanh nhất thường cũng tạo ra nhiều kẻ thù nhất.",
+          "affection_delta": 10,
+          "trust_delta": -10,
+          "story_flag": "hg_tl_04_route_cuong_che"
+        }
+      ],
+      "next_dialogue_id": "HG_TL_04_S04",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_04_S04",
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "faction": "Trung lập",
+      "role": "Người Trái Đất, thủ lĩnh nhóm tự trị",
+      "realm": "Hạ Giới",
+      "scene_index": 4,
+      "stage": "Lựa chọn",
+      "title": "Mỏ linh thạch tranh chấp",
+      "min_affection": 80,
+      "prerequisite": "HG_TL_04_S03_completed",
+      "npc_text": "Có mỏ linh thạch gần làng phàm nhân. Nhóm ta đủ sức chiếm. Ngươi tính chuyện ấy thế nào?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_04_S04_A",
+          "dialogue_id": "HG_TL_04_S04",
+          "label": "A",
+          "player_text": "Đàm phán quyền khai thác, bồi thường và giữ đường sống của làng.",
+          "npc_reply": "Đắt hơn ta muốn, nhưng ít nguy cơ bị bao vây.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_04_route_hop_dong_mo"
+        },
+        {
+          "choice_id": "HG_TL_04_S04_B",
+          "dialogue_id": "HG_TL_04_S04",
+          "label": "B",
+          "player_text": "Mua quyền khai thác có thời hạn, chia nguồn thu.",
+          "npc_reply": "Một hợp đồng tốt có thể mạnh hơn trăm lưỡi kiếm.",
+          "affection_delta": 10,
+          "trust_delta": 5,
+          "story_flag": null
+        },
+        {
+          "choice_id": "HG_TL_04_S04_C",
+          "dialogue_id": "HG_TL_04_S04",
+          "label": "C",
+          "player_text": "Đuổi dân đi ngay trong đêm để khỏi chia lời.",
+          "npc_reply": "Ngươi muốn cho cả vùng lý do hợp lực giết chúng ta?",
+          "affection_delta": 5,
+          "trust_delta": -10,
+          "story_flag": "hg_tl_04_route_chiem_mo"
+        }
+      ],
+      "next_dialogue_id": "HG_TL_04_S05",
+      "one_time_per_life": true
+    },
+    {
+      "dialogue_id": "HG_TL_04_S05",
+      "npc_id": "HG_TL_04",
+      "npc_name": "Cao Thành",
+      "faction": "Trung lập",
+      "role": "Người Trái Đất, thủ lĩnh nhóm tự trị",
+      "realm": "Hạ Giới",
+      "scene_index": 5,
+      "stage": "Kết cục/mở tuyến",
+      "title": "Vương quốc của kẻ lạc giới",
+      "min_affection": 100,
+      "prerequisite": "HG_TL_04_S04_completed",
+      "npc_text": "Nếu ta xây được một thế lực cai trị Hạ Giới, ngươi sẽ đứng bên ta hay Trần Minh?",
+      "choices": [
+        {
+          "choice_id": "HG_TL_04_S05_A",
+          "dialogue_id": "HG_TL_04_S05",
+          "label": "A",
+          "player_text": "Ta đứng về quyền tự quyết của mọi người, kể cả khi chống lại ngươi.",
+          "npc_reply": "Vậy ít ra ta biết ngươi sẽ không bán lời vì chức tước.",
+          "affection_delta": -10,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_04_ending_doi_trong_cao_thanh"
+        },
+        {
+          "choice_id": "HG_TL_04_S05_B",
+          "dialogue_id": "HG_TL_04_S05",
+          "label": "B",
+          "player_text": "Ta hợp tác nếu người dân được rời đi và có cơ chế giám sát.",
+          "npc_reply": "Một cộng sự đặt điều kiện. Ta phải cân nhắc ngươi nghiêm túc.",
+          "affection_delta": 5,
+          "trust_delta": 10,
+          "story_flag": "hg_tl_04_ending_hop_tac_dieu_kien"
+        },
+        {
+          "choice_id": "HG_TL_04_S05_C",
+          "dialogue_id": "HG_TL_04_S05",
+          "label": "C",
+          "player_text": "Ta theo ngươi nếu được chia quyền và nguồn thu.",
+          "npc_reply": "Tốt. Nhưng nhớ, kẻ chia quyền hôm nay có thể bị thay ngày mai.",
+          "affection_delta": 10,
+          "trust_delta": -10,
+          "story_flag": "hg_tl_04_ending_theo_cao_thanh"
+        }
+      ],
+      "next_dialogue_id": null,
+      "one_time_per_life": true
+    }
+  ]
+}

@@ -11,6 +11,19 @@ export class ApiError extends Error {
 }
 
 const TEXT = {
+  npc_unavailable: "NPC hiện không có mặt tại Hạ Giới hoặc đã bị khóa theo cốt truyện.",
+  npc_not_found: "Không tìm thấy nhân vật.",
+  daily_limit: "Hôm nay đã tương tác loại này. Lượt mới mở lúc 00:00 UTC (07:00 Việt Nam).",
+  gift_cooldown: "Cùng món quà chỉ được tặng lại sau 3 ngày reset.",
+  insufficient_gift: "Trong túi không có món quà này.",
+  relationship_required: "Chưa đủ thiện cảm để mở cảnh tiếp theo. Hãy trò chuyện hằng ngày.",
+  story_complete: "Bạn đã xem hết các cảnh của nhân vật trong kiếp này.",
+  story_locked: "Chưa hoàn thành cảnh trước.",
+  offer_expired: "Cuộc gặp đã qua ngày reset. Hãy mở lại cuộc gặp.",
+  offer_not_found: "Cuộc gặp không còn tồn tại. Hãy tải lại.",
+  invalid_choice: "Lựa chọn không thuộc cuộc gặp này.",
+  already_completed: "Tương tác này đã hoàn tất.",
+
   unauthorized: "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
   rate_limited: "Bạn thao tác quá nhanh, hãy đợi vài giây.",
   network: "Không kết nối được máy chủ. Hãy kiểm tra mạng.",
@@ -69,6 +82,8 @@ export function createApi(o) {
   }
 
   return {
+    social: () => req("GET", "/social"),
+    socialAction: (body) => req("POST", "/social/action", body),
     state: () => req("GET", "/state"),
     startLife: () => req("POST", "/life/start", {}),
     prepareBreakthrough: () => req("POST", "/breakthrough/prepare", {}),

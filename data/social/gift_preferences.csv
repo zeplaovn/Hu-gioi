@@ -1,0 +1,96 @@
+﻿npc_id,npc_name,gift_id,preference,affection_delta,trust_delta,npc_reply
+HG_TVT_01,Lục Thanh Huyền,GFT-HG-001,favorite,6,2,Quà hữu dụng cho tông môn. Ta nhận lòng thành của ngươi.
+HG_TVT_01,Lục Thanh Huyền,GFT-HG-030,favorite,6,2,Quà hữu dụng cho tông môn. Ta nhận lòng thành của ngươi.
+HG_TVT_01,Lục Thanh Huyền,GFT-HG-002,liked,4,1,Ngươi để tâm những việc nhỏ. Cảm ơn.
+HG_TVT_01,Lục Thanh Huyền,GFT-HG-005,liked,4,1,Ngươi để tâm những việc nhỏ. Cảm ơn.
+HG_TVT_01,Lục Thanh Huyền,GFT-HG-032,disliked,-4,-2,Thứ này không hợp đại điện. Đừng tốn công nữa.
+HG_TVT_02,Tô Nhược Vân,GFT-HG-004,favorite,6,2,Ngươi nhớ cả những thứ ta dùng để luyện kiếm. Ta rất quý.
+HG_TVT_02,Tô Nhược Vân,GFT-HG-010,favorite,6,2,Ngươi nhớ cả những thứ ta dùng để luyện kiếm. Ta rất quý.
+HG_TVT_02,Tô Nhược Vân,GFT-HG-029,liked,4,1,"Buổi tập sau sẽ dùng đến, đa tạ."
+HG_TVT_02,Tô Nhược Vân,GFT-HG-034,liked,4,1,"Buổi tập sau sẽ dùng đến, đa tạ."
+HG_TVT_02,Tô Nhược Vân,GFT-HG-021,disliked,-4,-2,Ta không có lòng dạ để dùng món này.
+HG_TVT_03,Mạc Trường Phong,GFT-HG-003,favorite,6,2,Ha ha! Quà hợp với một lão già trông sách như ta.
+HG_TVT_03,Mạc Trường Phong,GFT-HG-005,favorite,6,2,Ha ha! Quà hợp với một lão già trông sách như ta.
+HG_TVT_03,Mạc Trường Phong,GFT-HG-023,liked,4,1,Để vào thư phòng được. Cảm ơn tiểu tử.
+HG_TVT_03,Mạc Trường Phong,GFT-HG-001,liked,4,1,Để vào thư phòng được. Cảm ơn tiểu tử.
+HG_TVT_03,Mạc Trường Phong,GFT-HG-032,disliked,-4,-2,Ngươi muốn ta đem món ấy vào thư khố làm gì?
+HG_TVT_04,Hàn Thiên Minh,GFT-HG-004,favorite,6,2,Khá lắm! Thứ này giúp ta luyện thêm một bậc.
+HG_TVT_04,Hàn Thiên Minh,GFT-HG-034,favorite,6,2,Khá lắm! Thứ này giúp ta luyện thêm một bậc.
+HG_TVT_04,Hàn Thiên Minh,GFT-HG-010,liked,4,1,"Được. Ta nhận, lần đấu tới đừng mong ta nương tay."
+HG_TVT_04,Hàn Thiên Minh,GFT-HG-025,liked,4,1,"Được. Ta nhận, lần đấu tới đừng mong ta nương tay."
+HG_TVT_04,Hàn Thiên Minh,GFT-HG-012,disliked,-4,-2,Ta không cần món này để phân tâm khỏi kiếm đạo.
+HG_TVT_05,Vũ Tiểu Thanh,GFT-HG-012,favorite,6,2,Ngươi khiến ta nhớ lại quê nhà một chút. Cảm ơn thật lòng.
+HG_TVT_05,Vũ Tiểu Thanh,GFT-HG-013,favorite,6,2,Ngươi khiến ta nhớ lại quê nhà một chút. Cảm ơn thật lòng.
+HG_TVT_05,Vũ Tiểu Thanh,GFT-HG-011,liked,4,1,Thứ này giúp ích cho việc tìm người lắm.
+HG_TVT_05,Vũ Tiểu Thanh,GFT-HG-028,liked,4,1,Thứ này giúp ích cho việc tìm người lắm.
+HG_TVT_05,Vũ Tiểu Thanh,GFT-HG-021,disliked,-4,-2,Ta cần ghi tên người hơn là quản tiền.
+HG_HSM_01,Huyết Vô Nhai,GFT-HG-009,favorite,6,2,Tốt! Vật này dùng được để giúp môn nhân mạnh lên.
+HG_HSM_01,Huyết Vô Nhai,GFT-HG-034,favorite,6,2,Tốt! Vật này dùng được để giúp môn nhân mạnh lên.
+HG_HSM_01,Huyết Vô Nhai,GFT-HG-010,liked,4,1,Ngươi hiểu Huyết Sát cần thứ gì thiết thực.
+HG_HSM_01,Huyết Vô Nhai,GFT-HG-025,liked,4,1,Ngươi hiểu Huyết Sát cần thứ gì thiết thực.
+HG_HSM_01,Huyết Vô Nhai,GFT-HG-026,disliked,-4,-2,Mùi hương không khiến ta quên lời thề.
+HG_HSM_02,Diệp Hồng Y,GFT-HG-032,favorite,6,2,Ngươi không nhìn ta như lời đồn. Ta nhận món này.
+HG_HSM_02,Diệp Hồng Y,GFT-HG-028,favorite,6,2,Ngươi không nhìn ta như lời đồn. Ta nhận món này.
+HG_HSM_02,Diệp Hồng Y,GFT-HG-006,liked,4,1,Được. Ta sẽ để dành cho người thật sự cần.
+HG_HSM_02,Diệp Hồng Y,GFT-HG-033,liked,4,1,Được. Ta sẽ để dành cho người thật sự cần.
+HG_HSM_02,Diệp Hồng Y,GFT-HG-035,disliked,-4,-2,Hôm nay ta không có lòng dạ với trò giải trí.
+HG_HSM_03,A Cửu,GFT-HG-014,favorite,6,2,Thật sao? Món này giúp ta có thể luyện tập và tìm em.
+HG_HSM_03,A Cửu,GFT-HG-025,favorite,6,2,Thật sao? Món này giúp ta có thể luyện tập và tìm em.
+HG_HSM_03,A Cửu,GFT-HG-011,liked,4,1,Cảm ơn. Ta sẽ giữ gìn cẩn thận.
+HG_HSM_03,A Cửu,GFT-HG-033,liked,4,1,Cảm ơn. Ta sẽ giữ gìn cẩn thận.
+HG_HSM_03,A Cửu,GFT-HG-035,disliked,-4,-2,"Ta không biết dùng thứ đó, xin ngươi đừng giận."
+HG_HSM_04,Tần Vô Sinh,GFT-HG-021,favorite,6,2,Một món có thể ghi chép thành khế ước rõ ràng. Tốt.
+HG_HSM_04,Tần Vô Sinh,GFT-HG-030,favorite,6,2,Một món có thể ghi chép thành khế ước rõ ràng. Tốt.
+HG_HSM_04,Tần Vô Sinh,GFT-HG-003,liked,4,1,Ngươi biết người làm sổ cần gì.
+HG_HSM_04,Tần Vô Sinh,GFT-HG-035,liked,4,1,Ngươi biết người làm sổ cần gì.
+HG_HSM_04,Tần Vô Sinh,GFT-HG-012,disliked,-4,-2,Đừng dùng chuyện quê nhà để mua lòng ta.
+HG_HSM_05,Hắc Đồng,GFT-HG-009,favorite,6,2,Tiếng vật liệu này tốt. Ta nhận bằng cả hai tay.
+HG_HSM_05,Hắc Đồng,GFT-HG-010,favorite,6,2,Tiếng vật liệu này tốt. Ta nhận bằng cả hai tay.
+HG_HSM_05,Hắc Đồng,GFT-HG-029,liked,4,1,Đúng thứ xưởng rèn cần. Đặt bên trái cho ta.
+HG_HSM_05,Hắc Đồng,GFT-HG-018,liked,4,1,Đúng thứ xưởng rèn cần. Đặt bên trái cho ta.
+HG_HSM_05,Hắc Đồng,GFT-HG-032,disliked,-4,-2,Màu đẹp không thay được sức chịu nhiệt.
+HG_VDC_01,Dược Vô Trần,GFT-HG-017,favorite,6,2,Món này sẽ giúp dược viện cứu người cẩn thận hơn.
+HG_VDC_01,Dược Vô Trần,GFT-HG-016,favorite,6,2,Món này sẽ giúp dược viện cứu người cẩn thận hơn.
+HG_VDC_01,Dược Vô Trần,GFT-HG-015,liked,4,1,Ta nhận. Nhớ rằng công dụng vẫn phải được kiểm tra.
+HG_VDC_01,Dược Vô Trần,GFT-HG-006,liked,4,1,Ta nhận. Nhớ rằng công dụng vẫn phải được kiểm tra.
+HG_VDC_01,Dược Vô Trần,GFT-HG-032,disliked,-4,-2,Vật này không giúp ích việc chữa bệnh lúc này.
+HG_VDC_02,Linh Nhi,GFT-HG-016,favorite,6,2,A! Muội thích lắm! Lần này học dược sẽ đỡ sai rồi.
+HG_VDC_02,Linh Nhi,GFT-HG-022,favorite,6,2,A! Muội thích lắm! Lần này học dược sẽ đỡ sai rồi.
+HG_VDC_02,Linh Nhi,GFT-HG-015,liked,4,1,Đẹp quá. Muội sẽ hỏi thầy cách dùng cho đúng.
+HG_VDC_02,Linh Nhi,GFT-HG-031,liked,4,1,Đẹp quá. Muội sẽ hỏi thầy cách dùng cho đúng.
+HG_VDC_02,Linh Nhi,GFT-HG-032,disliked,-4,-2,"Muội không biết dùng món ấy, huynh giữ lại nhé."
+HG_VDC_03,Tạ Thiên Cơ,GFT-HG-018,favorite,6,2,Đúng thứ ta đang thiếu! Trận mô phỏng sắp hoàn chỉnh.
+HG_VDC_03,Tạ Thiên Cơ,GFT-HG-008,favorite,6,2,Đúng thứ ta đang thiếu! Trận mô phỏng sắp hoàn chỉnh.
+HG_VDC_03,Tạ Thiên Cơ,GFT-HG-002,liked,4,1,Được. Nhớ đặt xa bản vẽ và bát cơm nhé.
+HG_VDC_03,Tạ Thiên Cơ,GFT-HG-023,liked,4,1,Được. Nhớ đặt xa bản vẽ và bát cơm nhé.
+HG_VDC_03,Tạ Thiên Cơ,GFT-HG-032,disliked,-4,-2,Món ấy không sửa được một nét cổ văn nào.
+HG_VDC_04,Bạch Tử Yên,GFT-HG-017,favorite,6,2,Một công cụ giúp ghi và kiểm chứng y án. Tốt.
+HG_VDC_04,Bạch Tử Yên,GFT-HG-019,favorite,6,2,Một công cụ giúp ghi và kiểm chứng y án. Tốt.
+HG_VDC_04,Bạch Tử Yên,GFT-HG-016,liked,4,1,Ta nhận sau khi kiểm tra tính an toàn.
+HG_VDC_04,Bạch Tử Yên,GFT-HG-002,liked,4,1,Ta nhận sau khi kiểm tra tính an toàn.
+HG_VDC_04,Bạch Tử Yên,GFT-HG-032,disliked,-4,-2,Dược phòng đang cần vật dụng khác thiết thực hơn.
+HG_VDC_05,Hứa Mặc,GFT-HG-013,favorite,6,2,Cảm ơn. Đây là thứ tôi từng dùng cứu người ở Trái Đất.
+HG_VDC_05,Hứa Mặc,GFT-HG-017,favorite,6,2,Cảm ơn. Đây là thứ tôi từng dùng cứu người ở Trái Đất.
+HG_VDC_05,Hứa Mặc,GFT-HG-019,liked,4,1,Dùng được cho hồ sơ và chăm sóc bệnh nhân.
+HG_VDC_05,Hứa Mặc,GFT-HG-011,liked,4,1,Dùng được cho hồ sơ và chăm sóc bệnh nhân.
+HG_VDC_05,Hứa Mặc,GFT-HG-032,disliked,-4,-2,Phòng bệnh không phải chỗ cất món này.
+HG_TL_01,Trần Minh,GFT-HG-030,favorite,6,2,Một công cụ giúp Hội Quy Hương ghi được thêm nhiều cái tên.
+HG_TL_01,Trần Minh,GFT-HG-013,favorite,6,2,Một công cụ giúp Hội Quy Hương ghi được thêm nhiều cái tên.
+HG_TL_01,Trần Minh,GFT-HG-002,liked,4,1,Ta sẽ dùng món này cho nhóm tìm người.
+HG_TL_01,Trần Minh,GFT-HG-014,liked,4,1,Ta sẽ dùng món này cho nhóm tìm người.
+HG_TL_01,Trần Minh,GFT-HG-032,disliked,-4,-2,Hội còn nhiều việc khẩn hơn quà đẹp.
+HG_TL_02,Bạch Tiểu Ngư,GFT-HG-021,favorite,6,2,Hay! Món này làm việc buôn bán rõ ràng hơn.
+HG_TL_02,Bạch Tiểu Ngư,GFT-HG-030,favorite,6,2,Hay! Món này làm việc buôn bán rõ ràng hơn.
+HG_TL_02,Bạch Tiểu Ngư,GFT-HG-014,liked,4,1,"Hàng hữu dụng, ta sẽ đưa vào chuyến đi tới."
+HG_TL_02,Bạch Tiểu Ngư,GFT-HG-035,liked,4,1,"Hàng hữu dụng, ta sẽ đưa vào chuyến đi tới."
+HG_TL_02,Bạch Tiểu Ngư,GFT-HG-006,disliked,-4,-2,Ta không định kinh doanh thứ này đâu.
+HG_TL_03,Ông Lão Vô Danh,GFT-HG-001,favorite,6,2,Một món quà dễ thương như tiếng gió sông. Đa tạ khách.
+HG_TL_03,Ông Lão Vô Danh,GFT-HG-027,favorite,6,2,Một món quà dễ thương như tiếng gió sông. Đa tạ khách.
+HG_TL_03,Ông Lão Vô Danh,GFT-HG-020,liked,4,1,"Giữ bên thuyền cũng được, miễn đừng vướng mái chèo."
+HG_TL_03,Ông Lão Vô Danh,GFT-HG-026,liked,4,1,"Giữ bên thuyền cũng được, miễn đừng vướng mái chèo."
+HG_TL_03,Ông Lão Vô Danh,GFT-HG-030,disliked,-4,-2,Ông già chèo đò chẳng biết dùng món đó.
+HG_TL_04,Cao Thành,GFT-HG-021,favorite,6,2,Ngươi hiểu một tổ chức cần những gì để vận hành.
+HG_TL_04,Cao Thành,GFT-HG-030,favorite,6,2,Ngươi hiểu một tổ chức cần những gì để vận hành.
+HG_TL_04,Cao Thành,GFT-HG-035,liked,4,1,Khá thực tế. Ta có thể tận dụng.
+HG_TL_04,Cao Thành,GFT-HG-008,liked,4,1,Khá thực tế. Ta có thể tận dụng.
+HG_TL_04,Cao Thành,GFT-HG-012,disliked,-4,-2,"Ta đang xây tương lai ở đây, không sưu tầm hoài niệm."

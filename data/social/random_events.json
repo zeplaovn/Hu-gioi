@@ -1,0 +1,1522 @@
+[
+  {
+    "scene_id": "HG_TVT_01_E01",
+    "npc_id": "HG_TVT_01",
+    "npc_name": "Lục Thanh Huyền",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Chuông báo thú triều",
+    "npc_text": "[Sự kiện] Chuông báo vang giữa bữa ăn, đoàn dân dưới núi chưa kịp vào cổng.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_01_E01_A",
+        "label": "A",
+        "player_text": "Ta tổ chức hàng cứu trợ và chỉ đường sơ tán.",
+        "npc_reply": "Có người biết giữ trật tự, dân sẽ bớt giẫm đạp nhau.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_01_E01_B",
+        "label": "B",
+        "player_text": "Ta nhận nhiệm vụ hộ tống người già yếu về phía sau.",
+        "npc_reply": "Ngươi làm đúng phần sức mình. Ta ghi nhận.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_01_E01_C",
+        "label": "C",
+        "player_text": "Cứ đóng cổng mặc họ, an toàn tông môn trên hết.",
+        "npc_reply": "Ta không lập Thanh Vân để khóa cửa trước người cầu cứu.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_01_E02",
+    "npc_id": "HG_TVT_01",
+    "npc_name": "Lục Thanh Huyền",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Thư khiếu nại không ký tên",
+    "npc_text": "[Sự kiện] Một lá thư tố trưởng lão thiên vị được đưa lên đại điện nhưng không có tên người viết.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_01_E02_A",
+        "label": "A",
+        "player_text": "Giữ kín người tố giác nếu tìm được và kiểm chứng sự việc độc lập.",
+        "npc_reply": "Ta cần người bảo vệ chứng cứ, không phải người đốt thư.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_01_E02_B",
+        "label": "B",
+        "player_text": "Cho người rà soát sổ công huân, chưa vội kết tội.",
+        "npc_reply": "Thận trọng. Làm đúng theo sổ trước.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_01_E02_C",
+        "label": "C",
+        "player_text": "Đốt thư, ai không ký tên thì không đáng nghe.",
+        "npc_reply": "Có lúc họ giấu tên vì sợ, không phải vì nói dối.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_02_E01",
+    "npc_id": "HG_TVT_02",
+    "npc_name": "Tô Nhược Vân",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Đệ tử trượt chân",
+    "npc_text": "[Sự kiện] Trong buổi luyện, một đệ tử ngã sát mép đài, còn đối thủ đang lao tới.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_02_E01_A",
+        "label": "A",
+        "player_text": "Ta hô dừng trận, đỡ đệ tử và kiểm tra thương tích.",
+        "npc_reply": "Phản xạ bảo vệ đồng môn của ngươi nhanh hơn xuất kiếm.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_02_E01_B",
+        "label": "B",
+        "player_text": "Ta chặn đường kiếm rồi gọi người cứu hộ.",
+        "npc_reply": "Được, miễn không biến mình thành nạn nhân thứ hai.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_02_E01_C",
+        "label": "C",
+        "player_text": "Cứ để họ tự xử, thua trận phải chịu.",
+        "npc_reply": "Sân tập không phải nơi chọn người sống.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_02_E02",
+    "npc_id": "HG_TVT_02",
+    "npc_name": "Tô Nhược Vân",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Mảnh giấy trong bao kiếm",
+    "npc_text": "[Sự kiện] Một mảnh giấy cũ rơi khỏi bao kiếm của nàng. Trên đó là chữ viết của sư phụ.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_02_E02_A",
+        "label": "A",
+        "player_text": "Ta nhặt lên và hỏi nàng có muốn tự cất không.",
+        "npc_reply": "Cảm ơn vì không đọc trước khi hỏi.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_02_E02_B",
+        "label": "B",
+        "player_text": "Ta giữ giấy khỏi gió, chờ nàng nhận lại.",
+        "npc_reply": "Được. Đưa ta, tay ngươi đừng dính nước.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_02_E02_C",
+        "label": "C",
+        "player_text": "Ta mở ra đọc ngay, biết đâu có bí mật.",
+        "npc_reply": "Trả lại. Có giới hạn mà bằng hữu phải hiểu.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_03_E01",
+    "npc_id": "HG_TVT_03",
+    "npc_name": "Mạc Trường Phong",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Mọt sách lan thư các",
+    "npc_text": "[Sự kiện] Một ngăn thẻ tre bị mọt, mực đang nhòe trước mắt.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_03_E01_A",
+        "label": "A",
+        "player_text": "Cách ly thẻ bị hỏng, chụp/chép nguyên văn trước khi xử lý.",
+        "npc_reply": "Tốt. Cứu chữ trước, rồi cứu gỗ.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_03_E01_B",
+        "label": "B",
+        "player_text": "Ta mang dụng cụ khô và gọi người bảo quản.",
+        "npc_reply": "Không biết hết mà biết tìm người, rất được.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_03_E01_C",
+        "label": "C",
+        "player_text": "Đốt cả ngăn cho sạch mọt.",
+        "npc_reply": "Ngươi vừa định đốt lịch sử để diệt sâu!",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_03_E02",
+    "npc_id": "HG_TVT_03",
+    "npc_name": "Mạc Trường Phong",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Khách lạ dò trang cuối",
+    "npc_text": "[Sự kiện] Người lạ hỏi mua trang cuối của cổ sử rồi kín đáo để túi linh thạch lên bàn.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_03_E02_A",
+        "label": "A",
+        "player_text": "Ta từ chối, ghi lại dấu hiệu khách và báo trưởng lão.",
+        "npc_reply": "Ngươi giữ được cửa khi ta chưa lên tiếng.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_03_E02_B",
+        "label": "B",
+        "player_text": "Ta hỏi họ muốn nghiên cứu gì, không nhận tiền.",
+        "npc_reply": "Có thêm đầu mối cũng tốt, miễn đừng lộ thứ cấm.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_03_E02_C",
+        "label": "C",
+        "player_text": "Ta nhận tiền rồi tìm cách lấy trang ấy.",
+        "npc_reply": "Một đồng tiền bẩn làm nhòe cả chữ ngàn năm.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_04_E01",
+    "npc_id": "HG_TVT_04",
+    "npc_name": "Hàn Thiên Minh",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Tỷ thí thiếu công bằng",
+    "npc_text": "[Sự kiện] Đối thủ của Hàn Thiên Minh bị người ngoài lén thay kiếm gỗ nặng hơn.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_04_E01_A",
+        "label": "A",
+        "player_text": "Ta báo trọng tài, kiểm tra dụng cụ và cho đấu lại.",
+        "npc_reply": "Ta muốn thắng bằng kiếm, không phải trò hèn.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_04_E01_B",
+        "label": "B",
+        "player_text": "Ta bí mật đổi lại đúng trọng lượng rồi báo sau.",
+        "npc_reply": "Không hoàn hảo, nhưng ngươi đã ngăn một trận bẩn.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_04_E01_C",
+        "label": "C",
+        "player_text": "Cứ để vậy, miễn Hàn Thiên Minh thắng.",
+        "npc_reply": "Ngươi khinh kiếm đạo của ta đến thế sao?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_04_E02",
+    "npc_id": "HG_TVT_04",
+    "npc_name": "Hàn Thiên Minh",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Lời đồn về Thiên Ngoại Khách",
+    "npc_text": "[Sự kiện] Một đệ tử vu người Trái Đất gây nên mọi mất mát trong thú triều.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_04_E02_A",
+        "label": "A",
+        "player_text": "Ta đề nghị đối chiếu hồ sơ và để người bị buộc tội được nói.",
+        "npc_reply": "Ta không dễ bỏ oán, nhưng bằng chứng phải được nghe.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_04_E02_B",
+        "label": "B",
+        "player_text": "Ta tách hai bên trước khi ẩu đả.",
+        "npc_reply": "Ít nhất ngươi ngăn máu đổ khi chưa biết thật giả.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_04_E02_C",
+        "label": "C",
+        "player_text": "Ta hùa theo để được hắn quý.",
+        "npc_reply": "Ta không cần kẻ xu nịnh bôi bẩn nỗi đau của ta.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_05_E01",
+    "npc_id": "HG_TVT_05",
+    "npc_name": "Vũ Tiểu Thanh",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Người nhận nhầm con",
+    "npc_text": "[Sự kiện] Một người mẹ nhận nhầm đệ tử khác là con. Đệ tử ấy không biết phải làm sao.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_05_E01_A",
+        "label": "A",
+        "player_text": "Ta nhẹ nhàng xác minh, trấn an cả hai và liên hệ Hội Quy Hương.",
+        "npc_reply": "Cảm ơn. Đừng để hy vọng của họ thành chuyện để người khác cười.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_05_E01_B",
+        "label": "B",
+        "player_text": "Ta đưa họ đến nơi yên tĩnh rồi tìm người quen xác nhận.",
+        "npc_reply": "Rất tốt, nơi đông người khiến họ càng hoảng.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_05_E01_C",
+        "label": "C",
+        "player_text": "Ta kéo người mẹ đi và bảo bà nhầm lẫn ngu ngốc.",
+        "npc_reply": "Đau lòng không đáng bị sỉ nhục.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TVT_05_E02",
+    "npc_id": "HG_TVT_05",
+    "npc_name": "Vũ Tiểu Thanh",
+    "faction": "Thanh Vân Tông",
+    "kind": "event",
+    "title": "Cuốn sổ rơi ở bến xe ngựa",
+    "npc_text": "[Sự kiện] Một trang danh sách có địa điểm ẩn náu của người lạc giới bị gió cuốn ra chợ.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TVT_05_E02_A",
+        "label": "A",
+        "player_text": "Ta thu hồi trang và không đọc to thông tin nhạy cảm.",
+        "npc_reply": "May quá, những người ấy đã đủ sợ rồi.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TVT_05_E02_B",
+        "label": "B",
+        "player_text": "Ta nhờ người giữ chợ chặn gió, rồi cất trang lại.",
+        "npc_reply": "Nhanh tay, nhưng nhớ đừng phô tên họ.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TVT_05_E02_C",
+        "label": "C",
+        "player_text": "Ta đọc danh sách lớn lên để mọi người cùng tìm.",
+        "npc_reply": "Như vậy kẻ xấu cũng sẽ tìm thấy họ.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_01_E01",
+    "npc_id": "HG_HSM_01",
+    "npc_name": "Huyết Vô Nhai",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Môn nhân phát cuồng",
+    "npc_text": "[Sự kiện] Một môn nhân mang Huyết Ấn run rẩy mất kiểm soát gần khu luyện tập.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_01_E01_A",
+        "label": "A",
+        "player_text": "Sơ tán, khống chế không gây chết người rồi tìm y tu và trận sư.",
+        "npc_reply": "Ta cần người biết cứu môn nhân, không phải lấy đầu đổi công.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_01_E01_B",
+        "label": "B",
+        "player_text": "Ta đóng cửa khu tập, báo hộ pháp tới hỗ trợ.",
+        "npc_reply": "Đúng. Không ôm hết việc khi chưa đủ sức.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_01_E01_C",
+        "label": "C",
+        "player_text": "Giết ngay trước mặt mọi người để thị uy.",
+        "npc_reply": "Một kẻ chỉ biết giết đồng môn không đáng cầm đao.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_01_E02",
+    "npc_id": "HG_HSM_01",
+    "npc_name": "Huyết Vô Nhai",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Đại trưởng lão đòi bắt người",
+    "npc_text": "[Sự kiện] Tần Vô Sinh ra lệnh bắt một đệ tử mà không đưa bằng chứng.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_01_E02_A",
+        "label": "A",
+        "player_text": "Ta yêu cầu lệnh rõ ràng, bảo vệ người bị bắt khỏi tra khảo tùy tiện.",
+        "npc_reply": "Ngươi dám hỏi lệnh giữa đại điện. Ta sẽ nhớ.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_01_E02_B",
+        "label": "B",
+        "player_text": "Ta báo môn chủ và xin kiểm tra sổ tội.",
+        "npc_reply": "Ít nhất còn có sổ để lần.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_01_E02_C",
+        "label": "C",
+        "player_text": "Ta bắt thêm thân nhân hắn cho chắc.",
+        "npc_reply": "Định biến môn này thành chợ bán thù sao?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_02_E01",
+    "npc_id": "HG_HSM_02",
+    "npc_name": "Diệp Hồng Y",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Trẻ lạc ở cổng thành",
+    "npc_text": "[Sự kiện] Một đứa trẻ chạy theo áo đỏ của Diệp Hồng Y, tưởng là người thân.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_02_E01_A",
+        "label": "A",
+        "player_text": "Ta hỏi tên và đưa trẻ đến nhóm tìm thân nhân, không tách nó một mình.",
+        "npc_reply": "Ngươi hiểu rằng tìm người không phải kéo trẻ đi khắp nơi.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_02_E01_B",
+        "label": "B",
+        "player_text": "Ta ở bên đứa trẻ, để nàng liên hệ người chăm sóc.",
+        "npc_reply": "Cảm ơn. Ta sẽ quay lại ngay.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_02_E01_C",
+        "label": "C",
+        "player_text": "Ta quát nó tránh xa sát thủ.",
+        "npc_reply": "Nếu còn nói vậy với nó, tránh xa ta trước.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_02_E02",
+    "npc_id": "HG_HSM_02",
+    "npc_name": "Diệp Hồng Y",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Kẻ bị truy đuổi đầu hàng",
+    "npc_text": "[Sự kiện] Người bị nghi liên quan thảm án cũ quỳ xuống xin được đưa tới nơi đối chất.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_02_E02_A",
+        "label": "A",
+        "player_text": "Ta bảo vệ hắn khỏi đám đông, giữ nguyên chứng cứ và để nàng quyết có nghe.",
+        "npc_reply": "Ta không thích, nhưng ta sẽ cho hắn nói.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_02_E02_B",
+        "label": "B",
+        "player_text": "Ta yêu cầu một nhân chứng trung lập có mặt.",
+        "npc_reply": "Tốt. Lần này ký ức của ta không là bằng chứng duy nhất.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_02_E02_C",
+        "label": "C",
+        "player_text": "Giết hắn ngay để nàng vui.",
+        "npc_reply": "Ngươi muốn làm ta nhẹ lòng bằng một cái chết chưa rõ tội?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_03_E01",
+    "npc_id": "HG_HSM_03",
+    "npc_name": "A Cửu",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Bọn cướp chặn đường",
+    "npc_text": "[Sự kiện] A Cửu bị ba đệ tử khác chặn trước cổng, đòi giao túi lương khô.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_03_E01_A",
+        "label": "A",
+        "player_text": "Ta đưa người chứng kiến tới, ngăn đánh nhau và báo quản sự.",
+        "npc_reply": "Lần đầu ta không phải chịu đòn một mình.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_03_E01_B",
+        "label": "B",
+        "player_text": "Ta đứng cùng cậu và đề nghị giải quyết trước người phụ trách.",
+        "npc_reply": "Có người đứng cạnh đã đủ khiến họ chùn bước.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_03_E01_C",
+        "label": "C",
+        "player_text": "Ta lấy túi của A Cửu đưa họ cho xong.",
+        "npc_reply": "Vậy khác gì ngươi cướp giúp họ?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_03_E02",
+    "npc_id": "HG_HSM_03",
+    "npc_name": "A Cửu",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Mảnh tin chưa rõ nguồn",
+    "npc_text": "[Sự kiện] Một người bán tin nói biết em gái A Cửu ở đâu, nhưng đòi cậu thử cấm pháp trước.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_03_E02_A",
+        "label": "A",
+        "player_text": "Ta ngăn giao dịch, kiểm chứng tin bằng Hội Quy Hương và giữ cậu an toàn.",
+        "npc_reply": "Ta đã suýt đồng ý. Cảm ơn ngươi kéo ta lại.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_03_E02_B",
+        "label": "B",
+        "player_text": "Ta hỏi chứng cứ riêng không liên quan cấm pháp.",
+        "npc_reply": "Đúng, tin thật chẳng cần bắt ta bán thần trí.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_03_E02_C",
+        "label": "C",
+        "player_text": "Bảo A Cửu thử ngay, cơ hội không quay lại.",
+        "npc_reply": "Đừng đẩy ta đến chỗ không còn nhận ra em mình.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_04_E01",
+    "npc_id": "HG_HSM_04",
+    "npc_name": "Tần Vô Sinh",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Túi linh thạch bị tráo",
+    "npc_text": "[Sự kiện] Sổ thu chi của Tần Vô Sinh lệch một khoản lớn; một đệ tử bị đổ tội vội vàng.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_04_E01_A",
+        "label": "A",
+        "player_text": "Ta niêm sổ, kiểm người ra vào rồi đối chiếu chứng từ.",
+        "npc_reply": "Ngươi giữ bình tĩnh. Thứ ấy có giá hơn lời buộc tội.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_04_E01_B",
+        "label": "B",
+        "player_text": "Ta hỏi đệ tử và quản kho riêng trước khi lập biên bản.",
+        "npc_reply": "Được. Ta ghét sự bất cẩn làm mất tài sản.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_04_E01_C",
+        "label": "C",
+        "player_text": "Cứ ép hắn đền vì hắn yếu nhất.",
+        "npc_reply": "Ngươi sẽ khiến mọi thủ kho giấu lỗi thay vì báo.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_04_E02",
+    "npc_id": "HG_HSM_04",
+    "npc_name": "Tần Vô Sinh",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Mật thư gọi theo phe",
+    "npc_text": "[Sự kiện] Một mật thư mời người chơi hỗ trợ Tần Vô Sinh đổi cán cân quyền lực nội môn.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_04_E02_A",
+        "label": "A",
+        "player_text": "Ta yêu cầu biết mục tiêu và giới hạn, không nhận việc gây hại dân thường.",
+        "npc_reply": "Ngươi đặt điều kiện với ta. Ta sẽ không quên.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_04_E02_B",
+        "label": "B",
+        "player_text": "Ta xin thời gian đánh giá rủi ro và bằng chứng.",
+        "npc_reply": "Được. Kẻ cân nhắc thường khó mua hơn.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_04_E02_C",
+        "label": "C",
+        "player_text": "Ta ký ngay mọi điều chưa đọc để lấy lợi lộc.",
+        "npc_reply": "Một kẻ dễ dụ còn khiến ta nghi ngờ.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_05_E01",
+    "npc_id": "HG_HSM_05",
+    "npc_name": "Hắc Đồng",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Lò rèn sắp nổ",
+    "npc_text": "[Sự kiện] Một ống khí lò rèn tắc nghẽn, nhiệt tăng bất thường khi học trò còn đứng gần.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_05_E01_A",
+        "label": "A",
+        "player_text": "Ta cho mọi người rời khỏi, khóa nguồn cấp an toàn và gọi thợ có kinh nghiệm.",
+        "npc_reply": "Tốt. Vật liệu mất còn kiếm lại, mạng người thì không.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_05_E01_B",
+        "label": "B",
+        "player_text": "Ta cảnh báo mọi người, đợi Hắc Đồng chỉ cách xử lý.",
+        "npc_reply": "Biết nghe lệnh lúc nguy hiểm là tốt.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_05_E01_C",
+        "label": "C",
+        "player_text": "Ta đập mạnh vào ống đang nóng cho nó thông.",
+        "npc_reply": "Muốn chết thì đừng kéo cả xưởng theo.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_HSM_05_E02",
+    "npc_id": "HG_HSM_05",
+    "npc_name": "Hắc Đồng",
+    "faction": "Huyết Sát Môn",
+    "kind": "event",
+    "title": "Khế ước khắc sai",
+    "npc_text": "[Sự kiện] Một học trò khắc nhầm ký hiệu ràng buộc lên phôi Đoạn Khế Nhận.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_HSM_05_E02_A",
+        "label": "A",
+        "player_text": "Ta ngừng cấp linh lực, cách ly phôi và ghi lại ký hiệu sai.",
+        "npc_reply": "Ta cần người biết dừng tay đúng lúc như ngươi.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_HSM_05_E02_B",
+        "label": "B",
+        "player_text": "Ta gọi Hắc Đồng kiểm tra trước khi phá phôi.",
+        "npc_reply": "Được. Đừng tự kích hoạt thứ chưa hiểu.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_HSM_05_E02_C",
+        "label": "C",
+        "player_text": "Ta thử dùng nó lên người mang Ấn cho nhanh.",
+        "npc_reply": "Xưởng ta không thử đồ bằng mạng đồng môn.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_01_E01",
+    "npc_id": "HG_VDC_01",
+    "npc_name": "Dược Vô Trần",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Bệnh nhân không đủ tiền",
+    "npc_text": "[Sự kiện] Một người bệnh nghèo bị chặn ngoài cửa vì thiếu Linh Thạch hạ phẩm.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_01_E01_A",
+        "label": "A",
+        "player_text": "Ta báo Cốc chủ, tìm quỹ cứu trợ và phân loại mức nguy cấp.",
+        "npc_reply": "Ngươi không để một cái túi rỗng quyết định mạng người.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_01_E01_B",
+        "label": "B",
+        "player_text": "Ta giúp họ lập đơn hỗ trợ và đợi bác sĩ trực.",
+        "npc_reply": "Được. Đừng để họ nằm ngoài mưa.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_01_E01_C",
+        "label": "C",
+        "player_text": "Không có tiền thì không xứng dùng thuốc.",
+        "npc_reply": "Y đạo không sinh ra vì câu nói ấy.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_01_E02",
+    "npc_id": "HG_VDC_01",
+    "npc_name": "Dược Vô Trần",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Đan phương bị rao bán lậu",
+    "npc_text": "[Sự kiện] Một gian hàng bán đan phương ghi tên Dược Vô Trần nhưng thiếu cảnh báo tác dụng phụ.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_01_E02_A",
+        "label": "A",
+        "player_text": "Ta thu thập bằng chứng, cảnh báo người mua và báo kiểm định.",
+        "npc_reply": "Cảm ơn. Một dòng thiếu có thể gây trăm ca bệnh.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_01_E02_B",
+        "label": "B",
+        "player_text": "Ta hỏi người bán nguồn gốc, không dùng thuốc thử.",
+        "npc_reply": "Tốt. Đừng tự thử đan không rõ nguồn.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_01_E02_C",
+        "label": "C",
+        "player_text": "Mua rồi bán lại kiếm lời, ai chịu tác dụng phụ mặc họ.",
+        "npc_reply": "Ngươi định biến tên ta thành một thứ độc sao?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_02_E01",
+    "npc_id": "HG_VDC_02",
+    "npc_name": "Linh Nhi",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Giỏ thảo dược đổ",
+    "npc_text": "[Sự kiện] Linh Nhi vấp bậc thềm, trộn hai loại thảo dược dễ nhầm vào nhau.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_02_E01_A",
+        "label": "A",
+        "player_text": "Ta gom riêng phần xác định được, đánh dấu phần không rõ và xin kiểm định.",
+        "npc_reply": "May mà huynh không bảo muội nhặt đại.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_02_E01_B",
+        "label": "B",
+        "player_text": "Ta giữ người tránh giẫm lên, gọi dược đồng khác hỗ trợ.",
+        "npc_reply": "Muội sẽ kiểm từng lá lại.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_02_E01_C",
+        "label": "C",
+        "player_text": "Nhét hết vào một lọ cho khỏi tốn.",
+        "npc_reply": "Thế thì muội có thể làm hại bệnh nhân!",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_02_E02",
+    "npc_id": "HG_VDC_02",
+    "npc_name": "Linh Nhi",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Ca ca co giật trong đêm",
+    "npc_text": "[Sự kiện] Người anh của Linh Nhi đột ngột có dấu hiệu thần hồn bất ổn.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_02_E02_A",
+        "label": "A",
+        "player_text": "Ta gọi đan sư trực và Hứa Mặc, giữ an toàn cho bệnh nhân, không tự tăng liều.",
+        "npc_reply": "Muội hoảng quá... Cảm ơn huynh nhắc làm đúng việc.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_02_E02_B",
+        "label": "B",
+        "player_text": "Ta đi tìm hồ sơ dùng thuốc mới nhất cho thầy thuốc.",
+        "npc_reply": "Có ghi chép chắc họ sẽ biết cần làm gì.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_02_E02_C",
+        "label": "C",
+        "player_text": "Cho uống hết Thanh Hồn Quả để chữa dứt điểm.",
+        "npc_reply": "Không! Quả ấy chỉ giúp ổn định thần hồn.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_03_E01",
+    "npc_id": "HG_VDC_03",
+    "npc_name": "Tạ Thiên Cơ",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Mô hình trận tự xoay",
+    "npc_text": "[Sự kiện] Một mô hình trận bàn cũ tự phát sáng, học trò tò mò định chạm vào.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_03_E01_A",
+        "label": "A",
+        "player_text": "Ta cách ly khu vực, cắt nguồn cấp được phép và gọi Tạ Thiên Cơ.",
+        "npc_reply": "Phản xạ tốt. Đừng để tay tò mò đi trước đầu.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_03_E01_B",
+        "label": "B",
+        "player_text": "Ta ghi thứ tự điểm sáng từ khoảng cách an toàn.",
+        "npc_reply": "Có dữ liệu rồi ta mới xét được.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_03_E01_C",
+        "label": "C",
+        "player_text": "Ta thử cắm tay vào luồng sáng xem có cơ duyên.",
+        "npc_reply": "Ngươi xem thân thể như que thử trận sao?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_03_E02",
+    "npc_id": "HG_VDC_03",
+    "npc_name": "Tạ Thiên Cơ",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Khối đá cổ rạn nứt",
+    "npc_text": "[Sự kiện] Mảnh đá ghi cổ văn rơi xuống đất, một góc ký hiệu bị mẻ.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_03_E02_A",
+        "label": "A",
+        "player_text": "Ta ghi hình dạng, giữ mảnh vỡ và không đoán ký tự còn thiếu.",
+        "npc_reply": "Nhớ kỹ: vết mẻ cũng là dữ liệu.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_03_E02_B",
+        "label": "B",
+        "player_text": "Ta đặt vào hộp mềm, đưa ông đối chiếu bản chép.",
+        "npc_reply": "Tốt. Ít nhất còn có bản ghi hôm qua.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_03_E02_C",
+        "label": "C",
+        "player_text": "Ta đục tiếp cho dễ nhìn chữ.",
+        "npc_reply": "Đừng! Ngươi đang sửa quá khứ bằng búa.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_04_E01",
+    "npc_id": "HG_VDC_04",
+    "npc_name": "Bạch Tử Yên",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Đệ tử giấu tác dụng phụ",
+    "npc_text": "[Sự kiện] Một đệ tử giấu bệnh nhân bị chóng mặt sau dùng đan để bảo toàn thành tích.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_04_E01_A",
+        "label": "A",
+        "player_text": "Ta chăm sóc bệnh nhân, giữ chứng cứ và báo giám sát dược phẩm.",
+        "npc_reply": "Ngươi đã chọn người bệnh trước bảng thành tích.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_04_E01_B",
+        "label": "B",
+        "player_text": "Ta yêu cầu ghi lại triệu chứng ngay và dừng lô thuốc.",
+        "npc_reply": "Được. Ta sẽ đích thân xem bệnh án.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_04_E01_C",
+        "label": "C",
+        "player_text": "Khuyên đệ tử giấu tiếp để khỏi mất mặt Cốc.",
+        "npc_reply": "Một lời khuyên tệ có thể làm bệnh nặng hơn.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_04_E02",
+    "npc_id": "HG_VDC_04",
+    "npc_name": "Bạch Tử Yên",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Lệnh niêm phong bị xé",
+    "npc_text": "[Sự kiện] Một người lén gỡ niêm phong khu luyện đan đang điều tra.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_04_E02_A",
+        "label": "A",
+        "player_text": "Ta ngăn tiếp cận, giữ hiện trường và báo người có thẩm quyền.",
+        "npc_reply": "Phải bảo vệ cả người và chứng cứ.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_04_E02_B",
+        "label": "B",
+        "player_text": "Ta ghi tên người ra vào rồi đi tìm trưởng lão.",
+        "npc_reply": "Tốt, đừng tự đối đầu một mình.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_04_E02_C",
+        "label": "C",
+        "player_text": "Mở hết cửa, để họ tự thử xem có nguy hiểm không.",
+        "npc_reply": "Ngươi định dùng thân người khác chứng minh một nguy cơ sao?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_05_E01",
+    "npc_id": "HG_VDC_05",
+    "npc_name": "Hứa Mặc",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Bệnh nhân cấp cứu giữa chợ",
+    "npc_text": "[Sự kiện] Người bán hàng bất tỉnh ở chợ, xung quanh có đám đông tụ tập.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_05_E01_A",
+        "label": "A",
+        "player_text": "Ta bảo đảm hiện trường an toàn, gọi cứu trợ, kiểm tra đáp ứng và hô hấp.",
+        "npc_reply": "Ngươi nhớ đúng thứ tự. Hãy hỗ trợ ta giữ lối đi.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_05_E01_B",
+        "label": "B",
+        "player_text": "Ta dẹp khoảng trống để Hứa Mặc tiếp cận và hỏi người chứng kiến.",
+        "npc_reply": "Cảm ơn. Đám đông đang cản chúng ta.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_05_E01_C",
+        "label": "C",
+        "player_text": "Ta ép bệnh nhân uống thuốc lạ ngay.",
+        "npc_reply": "Đừng cho người bất tỉnh uống bất cứ thứ gì tùy tiện!",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_VDC_05_E02",
+    "npc_id": "HG_VDC_05",
+    "npc_name": "Hứa Mặc",
+    "faction": "Vạn Dược Cốc",
+    "kind": "event",
+    "title": "Một trang bệnh án thất lạc",
+    "npc_text": "[Sự kiện] Hồ sơ ca bệnh biến mất khỏi Đan viện và xuất hiện ở quầy mua bán tin.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_VDC_05_E02_A",
+        "label": "A",
+        "player_text": "Ta thu hồi hợp lệ, tìm lỗ hổng lưu trữ và thông báo người bị ảnh hưởng.",
+        "npc_reply": "Đúng. Quyền riêng tư của họ đã bị hại rồi.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_VDC_05_E02_B",
+        "label": "B",
+        "player_text": "Ta yêu cầu quầy ngừng công bố và báo hội đồng.",
+        "npc_reply": "Cần hành động ngay, trước khi bị chép thêm.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_VDC_05_E02_C",
+        "label": "C",
+        "player_text": "Ta bán thêm bản sao để lấy kinh phí cứu người.",
+        "npc_reply": "Không ai trao cho ngươi quyền ấy.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_01_E01",
+    "npc_id": "HG_TL_01",
+    "npc_name": "Trần Minh",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Gia đình tìm được một nửa",
+    "npc_text": "[Sự kiện] Hai anh em gặp lại, nhưng người em còn lại mất tích; cả hội ùn tới chúc mừng.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_01_E01_A",
+        "label": "A",
+        "player_text": "Ta giữ không gian riêng cho gia đình, hỏi họ muốn công khai đến đâu.",
+        "npc_reply": "Cảm ơn. Một cuộc đoàn tụ không phải buổi biểu diễn.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_01_E01_B",
+        "label": "B",
+        "player_text": "Ta giúp cập nhật phần đã xác minh, giữ hồ sơ người còn mất tích.",
+        "npc_reply": "Tốt. Công việc tìm người chưa kết thúc.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_01_E01_C",
+        "label": "C",
+        "player_text": "Ta công bố mọi chi tiết địa chỉ cho mọi người biết.",
+        "npc_reply": "Ngươi có thể khiến họ gặp nguy hiểm lần nữa.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_01_E02",
+    "npc_id": "HG_TL_01",
+    "npc_name": "Trần Minh",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Bản đăng ký bị sao chép",
+    "npc_text": "[Sự kiện] Một người lạ sao chép danh sách tìm thân nhân để tuyển người cho phe vũ trang.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_01_E02_A",
+        "label": "A",
+        "player_text": "Ta ngừng chia dữ liệu, thu hồi bản sao được phép và cảnh báo người bị ảnh hưởng.",
+        "npc_reply": "Ta sẽ siết quyền xem danh sách ngay.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_01_E02_B",
+        "label": "B",
+        "player_text": "Ta lập quy trình xác minh người xin truy cập.",
+        "npc_reply": "Cần làm, dù hơi muộn.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_01_E02_C",
+        "label": "C",
+        "player_text": "Ta bán thêm bản sao cho phe khác để cân bằng.",
+        "npc_reply": "Người mất nhà đã đủ khổ, đừng biến họ thành tài sản.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_02_E01",
+    "npc_id": "HG_TL_02",
+    "npc_name": "Bạch Tiểu Ngư",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Xe hàng lún bùn",
+    "npc_text": "[Sự kiện] Xe thuốc của Bạch Tiểu Ngư sa lầy, một số lọ dễ vỡ đang nghiêng.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_02_E01_A",
+        "label": "A",
+        "player_text": "Ta chống xe, cách ly lọ nguy hiểm rồi cùng người vận chuyển kéo lên.",
+        "npc_reply": "Đúng, cứu hàng mà không đè người dưới bánh.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_02_E01_B",
+        "label": "B",
+        "player_text": "Ta gọi thêm tay kéo và che mưa cho hộp thuốc.",
+        "npc_reply": "Được. Ta sẽ trả công đúng người.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_02_E01_C",
+        "label": "C",
+        "player_text": "Ta lén lấy vài lọ lúc cô bận cứu xe.",
+        "npc_reply": "Ta nhớ mặt kẻ trộm còn kỹ hơn tên khách sộp.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_02_E02",
+    "npc_id": "HG_TL_02",
+    "npc_name": "Bạch Tiểu Ngư",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Khách dùng tiền giả",
+    "npc_text": "[Sự kiện] Một người mua thuốc mang Linh Thạch giả, nhưng nói nhà có người ốm nặng.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_02_E02_A",
+        "label": "A",
+        "player_text": "Ta xác minh hoàn cảnh, tách hỗ trợ thuốc khẩn với xử lý tiền giả.",
+        "npc_reply": "Không vì đồng tiền giả mà để bệnh nhân chịu phạt thay.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_02_E02_B",
+        "label": "B",
+        "player_text": "Ta báo quầy kiểm tiền và giới thiệu quỹ cứu trợ.",
+        "npc_reply": "Hợp lý, giúp người mà sổ vẫn sạch.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_02_E02_C",
+        "label": "C",
+        "player_text": "Ta dùng vụ này làm cớ tăng giá cho mọi khách.",
+        "npc_reply": "Hại khách tốt để trả thù khách xấu à?",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_03_E01",
+    "npc_id": "HG_TL_03",
+    "npc_name": "Ông Lão Vô Danh",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Đèn thuyền tắt giữa sương",
+    "npc_text": "[Sự kiện] Đèn đầu thuyền tắt khi sương dày. Ông lão dừng mái chèo.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_03_E01_A",
+        "label": "A",
+        "player_text": "Ta giúp giữ thăng bằng, đợi xác định bờ và điều kiện an toàn.",
+        "npc_reply": "Chậm một khắc có khi về sớm hơn một đời.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_03_E01_B",
+        "label": "B",
+        "player_text": "Ta che gió cho đèn và nghe ông chỉ dẫn.",
+        "npc_reply": "Tốt, đừng tự nghiêng người quá mạn.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_03_E01_C",
+        "label": "C",
+        "player_text": "Ta ép ông chèo hết sức dù chẳng thấy bờ.",
+        "npc_reply": "Người vội thường quên sông có đá.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_03_E02",
+    "npc_id": "HG_TL_03",
+    "npc_name": "Ông Lão Vô Danh",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Người khách bỏ quên một đồng xu",
+    "npc_text": "[Sự kiện] Một đồng xu cũ nằm trên ghế thuyền, mặt khắc ký hiệu lạ nhưng không có dấu phép.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_03_E02_A",
+        "label": "A",
+        "player_text": "Ta giữ giúp và hỏi ông có biết người khách vừa xuống bến không.",
+        "npc_reply": "Giữ hộ là được. Đồng tiền có chủ, câu chuyện cũng thế.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_03_E02_B",
+        "label": "B",
+        "player_text": "Ta đặt xu trong hộp đồ thất lạc ở bến.",
+        "npc_reply": "Cũng tốt, người quay lại sẽ có chỗ hỏi.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_03_E02_C",
+        "label": "C",
+        "player_text": "Ta tuyên bố nó là cổ vật Hỗn Độn và đem bán.",
+        "npc_reply": "Đồng xu chỉ là đồng xu. Người đặt tên mới là kẻ muốn giá cao.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_04_E01",
+    "npc_id": "HG_TL_04",
+    "npc_name": "Cao Thành",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Đội trưởng lạm quyền",
+    "npc_text": "[Sự kiện] Một đội trưởng của Cao Thành tự thu phí bảo vệ ngoài quy định khiến dân phản đối.",
+    "min_affection": 20,
+    "pool_index": 1,
+    "choices": [
+      {
+        "choice_id": "HG_TL_04_E01_A",
+        "label": "A",
+        "player_text": "Ta ghi lời khai, kiểm sổ rồi yêu cầu hoàn trả và xử lý công bằng.",
+        "npc_reply": "Một kẻ lạm quyền có thể phá hết uy tín ta xây.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_04_E01_B",
+        "label": "B",
+        "player_text": "Ta ngừng thu phí tạm thời để rà soát.",
+        "npc_reply": "Được. Nhưng phải nói rõ với dân vì sao.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_04_E01_C",
+        "label": "C",
+        "player_text": "Ta cho hắn thu thêm rồi chia phần với mình.",
+        "npc_reply": "Ngươi tham đến mức không nhìn ra cuộc phản loạn sắp tới.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  },
+  {
+    "scene_id": "HG_TL_04_E02",
+    "npc_id": "HG_TL_04",
+    "npc_name": "Cao Thành",
+    "faction": "Trung lập",
+    "kind": "event",
+    "title": "Lời mời liên minh với Hội Quy Hương",
+    "npc_text": "[Sự kiện] Trần Minh từ chối giao danh sách nhưng đồng ý trao đổi tin tự nguyện. Cao Thành hỏi người chơi có nên ký hợp tác.",
+    "min_affection": 50,
+    "pool_index": 2,
+    "choices": [
+      {
+        "choice_id": "HG_TL_04_E02_A",
+        "label": "A",
+        "player_text": "Ký thỏa thuận giới hạn dữ liệu, cho phép rút lui và giám sát lẫn nhau.",
+        "npc_reply": "Một hiệp ước không hoàn hảo vẫn hơn một cuộc săn người.",
+        "affection_delta": 9,
+        "trust_delta": 5
+      },
+      {
+        "choice_id": "HG_TL_04_E02_B",
+        "label": "B",
+        "player_text": "Ta đề nghị thử hợp tác một tháng trước.",
+        "npc_reply": "Nghe giống một dự án có đánh giá. Tốt.",
+        "affection_delta": 4,
+        "trust_delta": 2
+      },
+      {
+        "choice_id": "HG_TL_04_E02_C",
+        "label": "C",
+        "player_text": "Lợi dụng gặp mặt để cướp sổ của Trần Minh.",
+        "npc_reply": "Ta không muốn khởi đầu bằng cách làm mọi người Trái Đất chống ta.",
+        "affection_delta": -6,
+        "trust_delta": -3
+      }
+    ],
+    "repeatable": false,
+    "one_time_per_life": true,
+    "story_reward": false
+  }
+]

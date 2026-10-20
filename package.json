@@ -2,21 +2,21 @@
   "name": "hu-gioi",
   "private": true,
   "version": "2.0.0-alpha.0",
-  "description": "Thiên Vân Đại Lục — HTML/CSS/JS thuần + Supabase (Edge Functions + pgSQL)",
+  "description": "Thi\u00ean V\u00e2n \u0110\u1ea1i L\u1ee5c \u2014 HTML/CSS/JS thu\u1ea7n + Supabase (Edge Functions + pgSQL)",
   "type": "module",
   "packageManager": "pnpm@10.0.0",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "gen": "node tools/gen-static.mjs && node tools/gen-content.mjs",
-    "gen:check": "node tools/gen-static.mjs --check && node tools/gen-content.mjs --check",
+    "gen": "node tools/gen-static.mjs && node tools/gen-content.mjs && node tools/gen-social.mjs",
+    "gen:check": "node tools/gen-static.mjs --check && node tools/gen-content.mjs --check && node tools/gen-social.mjs --check",
     "db:test": "node tools/db-test.mjs",
     "test": "pnpm gen:check && pnpm test:content && pnpm -r --if-present test && pnpm test:edge && pnpm db:test",
     "dev:web": "pnpm --filter web dev",
     "build:web": "pnpm --filter web build",
     "test:edge": "vitest run tests/edge/handler.test.ts",
-    "test:content": "node --experimental-strip-types --test tests/content.test.mjs"
+    "test:content": "node --experimental-transform-types --test tests/content.test.mjs tests/social.test.mjs tests/social-api.test.mjs"
   },
   "devDependencies": {
     "postgres": "^3.4.0",
