@@ -21,10 +21,9 @@ export function creditSeconds(elapsedS: number): number {
 }
 
 /** Số giây tu luyện (tốc độ 1.0) cho một tầng của giai đoạn. */
-export function tangSeconds(stageIdx: number): number {
-  const s = STAGES[stageIdx];
-  if (!s) throw new RangeError("stage " + stageIdx);
-  return ((s.day_end - s.day_start) * 86400) / TANG_PER_STAGE;
+export function tangSeconds(stageIdx: number, tier = 9): number {
+  if (!Number.isInteger(stageIdx) || !Number.isInteger(tier) || tier < 1 || tier > 9 || !RULES.tier_seconds[stageIdx]) throw new RangeError("stage/tier");
+  return RULES.tier_seconds[stageIdx][tier - 1];
 }
 
 /** Thọ nguyên tối đa khi đang ở giai đoạn này. */

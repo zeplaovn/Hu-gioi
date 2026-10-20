@@ -1,0 +1,12 @@
+﻿id,name,mode,players,dead_at_0,afk,rewards,confirmations,refund
+MODE-01,PvE huấn luyện,safe,1,Không,Không auto death,Thấp,0,Không áp dụng
+MODE-02,Dã ngoại thường,zone_based,1,Theo khu vực,Không auto death,Drop từ v1.3,2 nếu lethal,Không
+MODE-03,Bí cảnh an toàn,safe,1-4,Không,Timeout hủy,Thường,0,Không
+MODE-04,Bí cảnh Sinh Tử,lethal,1-4,Có,"Pause 120s, hủy không thưởng",Rủi ro cao,2,Không
+MODE-05,Boss có lethal flag,lethal,1-4,Có,"Pause 120s, hủy không thưởng",Boss table,2,Không
+MODE-06,Luận Đạo,safe,1v1,Không,Thua trận không mất kiếp,Điểm Luận Đạo,1,Không
+MODE-07,PvP Sinh Tử,lethal,1v1,Có khi HP=0,30s: xử thua không chết,"Thưởng bậc, không loot xác",2,Không
+MODE-08,Tầng nhỏ 1-8,safe,1,Không,Auto tu luyện nhưng dừng trước tầng9,+1 TM nếu thành công,1,Thất bại có giữ tu vi
+MODE-09,Đại đột phá tầng9,lethal_proposal,1,Có thể,Không tự kích hoạt,+1 TM nếu thành công,2,Tử vong khi roll death riêng
+MODE-10,Độ Kiếp / Phi Thăng,lethal_proposal,1,Có thể,Không tự kích hoạt,Chuyển map cùng kiếp,2,Thất bại không phải luôn chết
+MODE-11,Không Gian Hỗn Độn,lethal,Đúng 6 người thật,Có,"Tách rule nội bộ, chưa chốt",Thưởng biểu tượng/ẩn,2,Lần sau tập hợp lại

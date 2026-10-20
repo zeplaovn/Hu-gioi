@@ -1,6 +1,6 @@
 {
-  "version": "1.3",
-  "target_endgame_days": 60,
+  "version": "1.6-review",
+  "target_endgame_days": 38,
   "maps": [
     "Hạ Giới",
     "Linh Giới",
@@ -31,7 +31,8 @@
       0.75
     ],
     "pity_increment": 0.08,
-    "guarantee_attempt": 5
+    "guarantee_attempt": 5,
+    "third_failure_bonus": 0.15
   },
   "stat_item_cap": 40,
   "gear_cultivation_cap_pct": 35,
@@ -86,7 +87,7 @@
   "guardrails": {
     "speed_cap": 1.25,
     "risk_floor": 0.5,
-    "later_life_clean_days_min": 45
+    "later_life_clean_days_min": 24.75
   },
   "pvp": {
     "matchmaking_bp_tolerance": 0.1,
@@ -109,7 +110,7 @@
     "start_years": 100,
     "use_years_per_credited_day": 10,
     "grant_years_per_target_day": 20,
-    "table": "data/tho_nguyen.csv",
+    "table": "tho_nguyen.csv",
     "aging_only_with_credited_time": true,
     "status": "proposed v1.3"
   },
@@ -151,20 +152,72 @@
       "14": 0.04
     }
   },
-  "simulation_v1_3": {
-    "hazard_scale": 1.0,
-    "p10_days": 50.91,
-    "p25_days": 56.53,
-    "median_days": 64.52,
-    "p75_days": 79.83,
-    "p90_days": 113.5,
-    "mean_days": 74.33,
-    "first_life_clear_pct": 70.44,
-    "mean_deaths": 0.412,
-    "p90_lives": 2.0,
-    "median_tm_earned": 135.0,
-    "median_tm_spent": 0.0,
-    "later_life_clean_days_median": 58.78,
-    "later_life_samples": 5913
-  }
+  "target_endgame_range_days": [
+    30,
+    45
+  ],
+  "clean_life_progression_days": 33,
+  "main_route_time_by_map_days": {
+    "Hạ Giới": 8.25,
+    "Linh Giới": 11.0,
+    "Tiên Giới": 13.75
+  },
+  "progression_table": "progression_45_days.csv",
+  "economy_table": "economy_45_days.csv",
+  "xp_threshold_multiplier_from_v1_4_1": 0.55,
+  "simulation_v1_5": {
+    "0.5": {
+      "hazard_scale": 0.5,
+      "p10_days": 27.62,
+      "p25_days": 30.39,
+      "median_days": 34.07,
+      "p75_days": 39.07,
+      "p90_days": 49.33,
+      "mean_days": 36.87,
+      "first_life_clear_pct": 84.1,
+      "mean_deaths": 0.189,
+      "p90_lives": 2.0,
+      "median_tm_earned": 135.0,
+      "median_tm_spent": 0.0,
+      "later_life_clean_days_median": 32.29,
+      "later_life_samples": 3180
+    },
+    "1.0": {
+      "hazard_scale": 1.0,
+      "p10_days": 28.0,
+      "p25_days": 31.09,
+      "median_days": 35.49,
+      "p75_days": 43.91,
+      "p90_days": 62.43,
+      "mean_days": 40.88,
+      "first_life_clear_pct": 70.44,
+      "mean_deaths": 0.412,
+      "p90_lives": 2.0,
+      "median_tm_earned": 135.0,
+      "median_tm_spent": 0.0,
+      "later_life_clean_days_median": 32.33,
+      "later_life_samples": 5913
+    },
+    "1.5": {
+      "hazard_scale": 1.5,
+      "p10_days": 28.48,
+      "p25_days": 31.84,
+      "median_days": 37.05,
+      "p75_days": 51.89,
+      "p90_days": 72.15,
+      "mean_days": 45.03,
+      "first_life_clear_pct": 59.62,
+      "mean_deaths": 0.664,
+      "p90_lives": 3.0,
+      "median_tm_earned": 135.0,
+      "median_tm_spent": 0.0,
+      "later_life_clean_days_median": 32.22,
+      "later_life_samples": 8076
+    }
+  },
+  "progression_reference": {
+    "effective_hours_per_day": 16.8,
+    "note": "XP reference assumes one collection per 24h; two evenly spaced collections yield 21.6h before other bonuses. Calendar completion must be validated separately."
+  },
+  "release_status": "DESIGN_REVIEW_NOT_PRODUCTION_BALANCED"
 }

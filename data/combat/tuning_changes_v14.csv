@@ -1,0 +1,31 @@
+﻿monster_id,name,world,role,stage_id,target_ref_win_pct,tuning_factor,hp_old,hp_new,atk_old,atk_new,def_old,def_new,hp_change_pct,atk_change_pct,stat_change_note
+MON-001,Hắc Lang,Hạ Giới,Thường,HG00,99.5,0.45,135,154,18,19,11,11,14.1,5.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-002,Độc Xà,Hạ Giới,Thường,HG00,99.0,0.45,135,154,18,19,11,11,14.1,5.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-003,Hoang Thử Yêu,Hạ Giới,Thường,HG01,99.0,0.45,237,271,32,34,20,21,14.3,6.2,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-004,Thiết Giáp Hùng,Hạ Giới,Tinh anh,HG02,92,ELITE_SHORT,716,1110,72,175,42,51,55.0,143.1,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-005,Huyết Điêu,Hạ Giới,Tinh anh,HG02,91,ELITE_SHORT,716,1110,72,177,42,51,55.0,145.8,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-006,Kiếm Xỉ Hổ,Hạ Giới,Tinh anh,HG03,91,ELITE_SHORT,1251,1939,125,239,73,89,55.0,91.2,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-007,Ma Hầu,Hạ Giới,Boss nhỏ,HG03,86,1.7256,2060,3198,162,210,90,101,55.2,29.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-008,Thanh Giao,Hạ Giới,Boss,HG04,84,0.9287,4526,5871,287,332,167,178,29.7,15.7,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-009,Hỏa Lân Thú,Hạ Giới,Boss,HG04,83,0.3955,4526,5099,287,306,167,172,12.7,6.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-010,Cửu Vĩ Hồ,Hạ Giới,Boss,HG05,84,0.8877,7925,10176,501,577,291,309,28.4,15.2,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-011,Kim Dực Bằng,Hạ Giới,Boss,HG05,84,0.7178,7925,9745,501,562,291,306,23.0,12.2,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-012,Huyền Quy,Hạ Giới,Boss cuối map,HG05,77,0.1118,9540,9881,527,537,323,326,3.6,1.9,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-013,Hư Không Thú,Linh Giới,Thường,LG01,99,0.45,3883,4442,516,555,312,322,14.4,7.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-014,Tinh Hồn Lang,Linh Giới,Tinh anh,LG01,93,ELITE_SHORT,6706,10394,675,1549,389,475,55.0,129.5,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-015,Vô Tướng Ma Khôi,Linh Giới,Tinh anh,LG02,92,ELITE_SHORT,11736,18191,1182,2780,682,832,55.0,135.2,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-016,Pháp Tướng Cự Linh,Linh Giới,Boss,LG02,85,0.8818,24267,31115,1537,1767,892,947,28.2,15.0,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-017,Giới Ngoại Dị Trùng,Linh Giới,Tinh anh,LG03,91,ELITE_SHORT,20538,31834,2067,5732,1194,1457,55.0,177.3,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-018,Cổ Kiếm Linh,Linh Giới,Boss,LG03,81,0.1143,42467,44020,2689,2741,1560,1572,3.7,1.9,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-019,Sát Hồn Vương,Linh Giới,Boss,LG03,83,0.8877,42467,54530,2689,3095,1560,1657,28.4,15.1,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-020,Giới Kiếp Lôi Linh,Linh Giới,Boss cuối map,LG04,74,0.2097,89451,95454,4955,5132,3027,3071,6.7,3.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-021,Tiên Linh Hạc,Tiên Giới,Thường,TG02,99,0.45,63723,72899,8472,9120,5129,5291,14.4,7.6,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-022,Kim Giáp Tiên Vệ,Tiên Giới,Tinh anh,TG02,92,ELITE_SHORT,110066,170602,11079,21091,6396,7803,55.0,90.4,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-023,Sát Suy Ma Ảnh,Tiên Giới,Tinh anh,TG03,90,ELITE_SHORT,192616,298555,19388,43907,11194,13657,55.0,126.5,Tinh anh: ấn định HP 1.55x và tìm ATK để giữ 12–16 vòng; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-024,Thời Sa Cổ Thú,Tiên Giới,Boss,TG03,85,0.7061,398281,488268,25224,28252,14628,15351,22.6,12.0,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-025,Hư Không Long Ảnh,Tiên Giới,Boss,TG03,85,0.7295,398281,491255,25224,28352,14628,15375,23.3,12.4,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-026,Luân Hồi Hồn Tướng,Tiên Giới,Boss,TG04,84,0.7354,696989,860999,44143,49661,25600,26918,23.5,12.5,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-027,Đạo Tắc Hóa Thân,Tiên Giới,Boss,TG04,83,0.6475,696989,841396,44143,49002,25600,26760,20.7,11.0,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-028,Cửu Tiêu Phản Tiên,Tiên Giới,Boss,TG04,84,0.7119,696989,855772,44143,49485,25600,26876,22.8,12.1,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-029,Đại La Tàn Ảnh,Tiên Giới,Boss endgame,TG05,61,-0.1314,1671481,1601200,82670,80823,53834,53339,-4.2,-2.2,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element
+MON-030,Đài Quy Hương Thủ Ảnh,Tiên Giới,Boss cốt truyện,TG05,82,0.0484,1558543,1582676,71150,71735,49317,49484,1.5,0.8,HP/ATK/DEF điều chỉnh cùng hệ số k; giữ nguyên SPD/ACC/EVA/RES/PEN/element

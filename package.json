@@ -9,13 +9,14 @@
     "node": ">=22"
   },
   "scripts": {
-    "gen": "node tools/gen-static.mjs",
-    "gen:check": "node tools/gen-static.mjs --check",
+    "gen": "node tools/gen-static.mjs && node tools/gen-content.mjs",
+    "gen:check": "node tools/gen-static.mjs --check && node tools/gen-content.mjs --check",
     "db:test": "node tools/db-test.mjs",
-    "test": "pnpm gen:check && pnpm -r --if-present test && pnpm test:edge && pnpm db:test",
+    "test": "pnpm gen:check && pnpm test:content && pnpm -r --if-present test && pnpm test:edge && pnpm db:test",
     "dev:web": "pnpm --filter web dev",
     "build:web": "pnpm --filter web build",
-    "test:edge": "vitest run tests/edge/handler.test.ts"
+    "test:edge": "vitest run tests/edge/handler.test.ts",
+    "test:content": "node --experimental-strip-types --test tests/content.test.mjs"
   },
   "devDependencies": {
     "postgres": "^3.4.0",

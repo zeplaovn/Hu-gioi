@@ -1,0 +1,451 @@
+﻿monster_id,monster,attack_element,resistance_pct,note
+MON-001,Hắc Lang,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-001,Hắc Lang,Vật lý,20.0,Âm = yếu; dương = kháng
+MON-002,Độc Xà,Kim,-10.0,Âm = yếu; dương = kháng
+MON-002,Độc Xà,Mộc,20.0,Âm = yếu; dương = kháng
+MON-002,Độc Xà,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Thổ,8.0,Âm = yếu; dương = kháng
+MON-002,Độc Xà,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-002,Độc Xà,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Mộc,-10.0,Âm = yếu; dương = kháng
+MON-003,Hoang Thử Yêu,Thủy,8.0,Âm = yếu; dương = kháng
+MON-003,Hoang Thử Yêu,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Thổ,20.0,Âm = yếu; dương = kháng
+MON-003,Hoang Thử Yêu,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-003,Hoang Thử Yêu,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Mộc,-10.0,Âm = yếu; dương = kháng
+MON-004,Thiết Giáp Hùng,Thủy,8.0,Âm = yếu; dương = kháng
+MON-004,Thiết Giáp Hùng,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Thổ,20.0,Âm = yếu; dương = kháng
+MON-004,Thiết Giáp Hùng,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-004,Thiết Giáp Hùng,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Phong,20.0,Âm = yếu; dương = kháng
+MON-005,Huyết Điêu,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-005,Huyết Điêu,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Kim,20.0,Âm = yếu; dương = kháng
+MON-006,Kiếm Xỉ Hổ,Mộc,8.0,Âm = yếu; dương = kháng
+MON-006,Kiếm Xỉ Hổ,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Hỏa,-10.0,Âm = yếu; dương = kháng
+MON-006,Kiếm Xỉ Hổ,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-006,Kiếm Xỉ Hổ,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Ám,24.0,Âm = yếu; dương = kháng
+MON-007,Ma Hầu,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-007,Ma Hầu,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Thủy,24.0,Âm = yếu; dương = kháng
+MON-008,Thanh Giao,Hỏa,8.0,Âm = yếu; dương = kháng
+MON-008,Thanh Giao,Thổ,-10.0,Âm = yếu; dương = kháng
+MON-008,Thanh Giao,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-008,Thanh Giao,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Kim,8.0,Âm = yếu; dương = kháng
+MON-009,Hỏa Lân Thú,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Thủy,-10.0,Âm = yếu; dương = kháng
+MON-009,Hỏa Lân Thú,Hỏa,24.0,Âm = yếu; dương = kháng
+MON-009,Hỏa Lân Thú,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-009,Hỏa Lân Thú,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Ám,24.0,Âm = yếu; dương = kháng
+MON-010,Cửu Vĩ Hồ,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-010,Cửu Vĩ Hồ,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Phong,24.0,Âm = yếu; dương = kháng
+MON-011,Kim Dực Bằng,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-011,Kim Dực Bằng,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Mộc,-10.0,Âm = yếu; dương = kháng
+MON-012,Huyền Quy,Thủy,8.0,Âm = yếu; dương = kháng
+MON-012,Huyền Quy,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Thổ,24.0,Âm = yếu; dương = kháng
+MON-012,Huyền Quy,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-012,Huyền Quy,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Không Gian,20.0,Âm = yếu; dương = kháng
+MON-013,Hư Không Thú,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-013,Hư Không Thú,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Quang,20.0,Âm = yếu; dương = kháng
+MON-014,Tinh Hồn Lang,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-014,Tinh Hồn Lang,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Ám,20.0,Âm = yếu; dương = kháng
+MON-015,Vô Tướng Ma Khôi,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-015,Vô Tướng Ma Khôi,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Mộc,-10.0,Âm = yếu; dương = kháng
+MON-016,Pháp Tướng Cự Linh,Thủy,8.0,Âm = yếu; dương = kháng
+MON-016,Pháp Tướng Cự Linh,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Thổ,24.0,Âm = yếu; dương = kháng
+MON-016,Pháp Tướng Cự Linh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-016,Pháp Tướng Cự Linh,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Kim,-10.0,Âm = yếu; dương = kháng
+MON-017,Giới Ngoại Dị Trùng,Mộc,20.0,Âm = yếu; dương = kháng
+MON-017,Giới Ngoại Dị Trùng,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Thổ,8.0,Âm = yếu; dương = kháng
+MON-017,Giới Ngoại Dị Trùng,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-017,Giới Ngoại Dị Trùng,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Kim,24.0,Âm = yếu; dương = kháng
+MON-018,Cổ Kiếm Linh,Mộc,8.0,Âm = yếu; dương = kháng
+MON-018,Cổ Kiếm Linh,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Hỏa,-10.0,Âm = yếu; dương = kháng
+MON-018,Cổ Kiếm Linh,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-018,Cổ Kiếm Linh,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Ám,24.0,Âm = yếu; dương = kháng
+MON-019,Sát Hồn Vương,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-019,Sát Hồn Vương,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Lôi,24.0,Âm = yếu; dương = kháng
+MON-020,Giới Kiếp Lôi Linh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-020,Giới Kiếp Lôi Linh,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Quang,20.0,Âm = yếu; dương = kháng
+MON-021,Tiên Linh Hạc,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-021,Tiên Linh Hạc,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Kim,20.0,Âm = yếu; dương = kháng
+MON-022,Kim Giáp Tiên Vệ,Mộc,8.0,Âm = yếu; dương = kháng
+MON-022,Kim Giáp Tiên Vệ,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Hỏa,-10.0,Âm = yếu; dương = kháng
+MON-022,Kim Giáp Tiên Vệ,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-022,Kim Giáp Tiên Vệ,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Ám,20.0,Âm = yếu; dương = kháng
+MON-023,Sát Suy Ma Ảnh,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-023,Sát Suy Ma Ảnh,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Thời Gian,24.0,Âm = yếu; dương = kháng
+MON-024,Thời Sa Cổ Thú,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-024,Thời Sa Cổ Thú,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Không Gian,24.0,Âm = yếu; dương = kháng
+MON-025,Hư Không Long Ảnh,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-025,Hư Không Long Ảnh,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Luân Hồi,24.0,Âm = yếu; dương = kháng
+MON-026,Luân Hồi Hồn Tướng,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-026,Luân Hồi Hồn Tướng,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-027,Đạo Tắc Hóa Thân,Ngũ Hành,24.0,Âm = yếu; dương = kháng
+MON-027,Đạo Tắc Hóa Thân,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Lôi,24.0,Âm = yếu; dương = kháng
+MON-028,Cửu Tiêu Phản Tiên,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-028,Cửu Tiêu Phản Tiên,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Quang,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Thời Gian,24.0,Âm = yếu; dương = kháng
+MON-029,Đại La Tàn Ảnh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-029,Đại La Tàn Ảnh,Vật lý,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Kim,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Mộc,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Thủy,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Hỏa,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Thổ,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Băng,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Lôi,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Phong,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Quang,24.0,Âm = yếu; dương = kháng
+MON-030,Đài Quy Hương Thủ Ảnh,Ám,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Không Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Thời Gian,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Luân Hồi,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Ngũ Hành,0.0,Âm = kháng; dương = yếu điểm
+MON-030,Đài Quy Hương Thủ Ảnh,Vật lý,0.0,Âm = kháng; dương = yếu điểm

@@ -20,9 +20,9 @@ describe.skipIf(!url)("parity TS ↔ SQL", () => {
   });
 
   it("tang_seconds và lifespan_cap theo giai đoạn", async () => {
-    for (const s of STAGES) {
-      const [r] = await sql`select game.tang_seconds(${s.idx}::smallint) as t, game.lifespan_cap(${s.idx}::smallint) as c`;
-      expect(Number(r!.t)).toBeCloseTo(tangSeconds(s.idx), 6);
+    for (const s of STAGES) for (let tier = 1; tier <= 9; tier++) {
+      const [r] = await sql`select game.tang_seconds(${s.idx}::smallint, ${tier}::smallint) as t, game.lifespan_cap(${s.idx}::smallint) as c`;
+      expect(Number(r!.t)).toBeCloseTo(tangSeconds(s.idx, tier), 6);
       expect(Number(r!.c)).toBe(lifespanCap(s.idx));
     }
   });

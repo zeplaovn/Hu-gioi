@@ -100,7 +100,7 @@ export function createPlayView({ game }) {
     const idlePanel = h("div", { class: "panel idle-panel" }, h("div", { class: "idle-row" }, idleState, h("span", { class: "spacer" }), idleRate), stageBar.el, idleNote, hintBox);
 
     const clearedNote = h("p", { class: "notice", role: "status", hidden: true, style: { marginTop: "10px" } },
-      "Ngươi đã hoàn tất tuyến chính và đứng tại Đài Quy Hương. Kiếp này kết thúc trong vinh quang; Thiên Mệnh đã được ghi vào Bia.");
+      "Ngươi đã hoàn tất tuyến chính và đứng tại Đài Quy Hương. Thiên Mệnh đã được ghi vào Bia. Kết thúc Quy Phàm và các nhánh hậu truyện chưa mở trong phiên bản này.");
 
     const state = { lastLogId: 0, follow: true };
     const jumpBtn = h("button", { class: "log-jump", type: "button", hidden: true, onclick: () => { state.follow = true; jumpBtn.hidden = true; logEl.scrollTop = logEl.scrollHeight; } }, "↓ Tin mới");

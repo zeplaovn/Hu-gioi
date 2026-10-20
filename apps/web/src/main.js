@@ -11,11 +11,14 @@ import { createLoginView } from "./views/login.js";
 import { createPlayView } from "./views/play.js";
 import { createQuanDinhView } from "./views/quan-dinh.js";
 
+import { createThuVienView } from "./views/thu-vien.js";
+
 const BRAND = "Thiên Vân Đại Lục";
 const auth = createAuth();
 const game = createGame({ api: createApi({ baseUrl: functionUrl(), getToken: auth.token, anonKey: SUPABASE_ANON_KEY }) });
 
 const ROUTES = {
+  "/thu-vien": { label: "Tàng Thư Các", make: () => createThuVienView({ game }) },
   "/play": { label: "Tu luyện", wide: true, make: () => createPlayView({ game }) },
   "/quan-dinh": { label: "Quán Đỉnh", make: () => createQuanDinhView({ game }) },
   "/lich-su": { label: "Bia Thiên Mệnh", make: () => createLichSuView({ game }) },

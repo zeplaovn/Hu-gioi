@@ -16,6 +16,7 @@ const GROUP_ACTIONS = [
   { id: "bag", label: "Túi đồ", cls: "cyan", icon: "charm" },
 ];
 const GROUP_WORLD = [
+  { id: "codex", label: "Tàng Thư Các", cls: "cyan", icon: "scroll", href: "#/thu-vien" },
   { id: "tm", label: "Quán Đỉnh Thiên Mệnh", cls: "gold", icon: "orb_gold", href: "#/quan-dinh" },
   { id: "history", label: "Bia Thiên Mệnh", cls: "gold", icon: "scroll", href: "#/lich-su" },
   { id: "root", label: "Linh căn", cls: "cyan", icon: "orb_green", soon: true },

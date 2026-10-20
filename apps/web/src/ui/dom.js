@@ -1,5 +1,5 @@
 /* Dựng DOM không framework. Chuỗi luôn đi qua createTextNode/textContent nên không bao giờ bị hiểu là HTML (không XSS). */
-import { assetBase } from "../config.js";
+import { assetBase, resolveAssetUrl } from "../config.js";
 
 /** Gắn con: chuỗi/số -> text node; null/false bị bỏ; mảng được làm phẳng. */
 export function append(el, kids) {
@@ -23,6 +23,7 @@ export function h(tag, attrs, ...kids) {
       if (typeof v === "string") el.style.cssText = v;
       else for (const [p, val] of Object.entries(v)) { if (p.startsWith("--")) el.style.setProperty(p, String(val)); else el.style[p] = val; }
     } else if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2), v);
+    else if (k === "src") el.setAttribute(k, resolveAssetUrl(v));
     else if (v === true) el.setAttribute(k, "");
     else el.setAttribute(k, String(v));
   }

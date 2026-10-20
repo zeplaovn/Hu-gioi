@@ -1,0 +1,136 @@
+﻿stage_id,stage_name,stage_index,tier,day_start,day_end,xp_per_effective_hour,xp_required,tm_on_success,auto_trigger_allowed,status
+HG00,Phàm Nhân,0,1,0.0,0.55,100.0,71,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,2,0.0,0.55,100.0,78,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,3,0.0,0.55,100.0,84,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,4,0.0,0.55,100.0,92,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,5,0.0,0.55,100.0,100,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,6,0.0,0.55,100.0,109,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,7,0.0,0.55,100.0,119,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,8,0.0,0.55,100.0,130,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG00,Phàm Nhân,0,9,0.0,0.55,100.0,141,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,1,0.55,1.65,110.0,156,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,2,0.55,1.65,110.0,170,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,3,0.55,1.65,110.0,185,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,4,0.55,1.65,110.0,202,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,5,0.55,1.65,110.0,221,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,6,0.55,1.65,110.0,240,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,7,0.55,1.65,110.0,262,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,8,0.55,1.65,110.0,285,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG01,Luyện Khí,1,9,0.55,1.65,110.0,311,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,1,1.65,3.3,121.0,257,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,2,1.65,3.3,121.0,281,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,3,1.65,3.3,121.0,306,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,4,1.65,3.3,121.0,334,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,5,1.65,3.3,121.0,364,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,6,1.65,3.3,121.0,397,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,7,1.65,3.3,121.0,432,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,8,1.65,3.3,121.0,471,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG02,Trúc Cơ,2,9,1.65,3.3,121.0,513,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,1,3.3,5.5,133.1,378,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,2,3.3,5.5,133.1,412,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,3,3.3,5.5,133.1,449,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,4,3.3,5.5,133.1,490,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,5,3.3,5.5,133.1,534,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,6,3.3,5.5,133.1,581,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,7,3.3,5.5,133.1,634,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,8,3.3,5.5,133.1,691,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG03,Kim Đan,3,9,3.3,5.5,133.1,753,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,1,5.5,7.15,146.41,312,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,2,5.5,7.15,146.41,340,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,3,5.5,7.15,146.41,370,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,4,5.5,7.15,146.41,404,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,5,5.5,7.15,146.41,440,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,6,5.5,7.15,146.41,480,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,7,5.5,7.15,146.41,522,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,8,5.5,7.15,146.41,570,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG04,Nguyên Anh,4,9,5.5,7.15,146.41,621,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,1,7.15,8.25,161.05,229,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,2,7.15,8.25,161.05,249,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,3,7.15,8.25,161.05,272,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,4,7.15,8.25,161.05,296,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,5,7.15,8.25,161.05,323,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,6,7.15,8.25,161.05,351,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,7,7.15,8.25,161.05,383,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,8,7.15,8.25,161.05,418,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+HG05,Hóa Thần,5,9,7.15,8.25,161.05,455,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,1,8.25,11.0,177.16,629,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,2,8.25,11.0,177.16,685,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,3,8.25,11.0,177.16,747,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,4,8.25,11.0,177.16,814,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,5,8.25,11.0,177.16,887,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,6,8.25,11.0,177.16,967,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,7,8.25,11.0,177.16,1054,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,8,8.25,11.0,177.16,1149,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG01,Luyện Hư,6,9,8.25,11.0,177.16,1252,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,1,11.0,14.85,194.87,968,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,2,11.0,14.85,194.87,1055,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,3,11.0,14.85,194.87,1150,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,4,11.0,14.85,194.87,1253,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,5,11.0,14.85,194.87,1366,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,6,11.0,14.85,194.87,1489,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,7,11.0,14.85,194.87,1624,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,8,11.0,14.85,194.87,1769,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG02,Hợp Thể,7,9,11.0,14.85,194.87,1929,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,1,14.85,18.15,214.36,912,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,2,14.85,18.15,214.36,995,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,3,14.85,18.15,214.36,1085,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,4,14.85,18.15,214.36,1182,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,5,14.85,18.15,214.36,1288,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,6,14.85,18.15,214.36,1404,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,7,14.85,18.15,214.36,1531,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,8,14.85,18.15,214.36,1668,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG03,Đại Thừa,8,9,14.85,18.15,214.36,1818,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,1,18.15,19.25,235.79,334,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,2,18.15,19.25,235.79,365,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,3,18.15,19.25,235.79,398,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,4,18.15,19.25,235.79,433,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,5,18.15,19.25,235.79,472,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,6,18.15,19.25,235.79,515,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,7,18.15,19.25,235.79,561,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,8,18.15,19.25,235.79,612,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+LG04,Độ Kiếp / Phi Thăng,9,9,18.15,19.25,235.79,667,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,1,19.25,21.45,259.37,736,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,2,19.25,21.45,259.37,802,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,3,19.25,21.45,259.37,875,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,4,19.25,21.45,259.37,954,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,5,19.25,21.45,259.37,1040,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,6,19.25,21.45,259.37,1133,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,7,19.25,21.45,259.37,1235,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,8,19.25,21.45,259.37,1346,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG01,Ngụy Tiên,10,9,19.25,21.45,259.37,1467,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,1,21.45,24.75,285.31,1215,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,2,21.45,24.75,285.31,1324,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,3,21.45,24.75,285.31,1443,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,4,21.45,24.75,285.31,1573,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,5,21.45,24.75,285.31,1715,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,6,21.45,24.75,285.31,1869,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,7,21.45,24.75,285.31,2037,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,8,21.45,24.75,285.31,2221,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG02,Chân Tiên,11,9,21.45,24.75,285.31,2421,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,1,24.75,28.05,313.84,1336,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,2,24.75,28.05,313.84,1456,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,3,24.75,28.05,313.84,1588,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,4,24.75,28.05,313.84,1730,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,5,24.75,28.05,313.84,1887,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,6,24.75,28.05,313.84,2056,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,7,24.75,28.05,313.84,2241,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,8,24.75,28.05,313.84,2443,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG03,Kim Tiên,12,9,24.75,28.05,313.84,2663,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,1,28.05,30.8,345.23,1225,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,2,28.05,30.8,345.23,1335,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,3,28.05,30.8,345.23,1455,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,4,28.05,30.8,345.23,1586,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,5,28.05,30.8,345.23,1729,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,6,28.05,30.8,345.23,1885,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,7,28.05,30.8,345.23,2054,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,8,28.05,30.8,345.23,2239,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG04,Thái Ất,13,9,28.05,30.8,345.23,2441,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,1,30.8,33.0,379.75,1078,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,2,30.8,33.0,379.75,1175,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,3,30.8,33.0,379.75,1280,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,4,30.8,33.0,379.75,1396,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,5,30.8,33.0,379.75,1521,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,6,30.8,33.0,379.75,1658,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,7,30.8,33.0,379.75,1808,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,8,30.8,33.0,379.75,1971,1,True,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1
+TG05,Đại La sơ nhập / Đài Quy Hương,14,9,30.8,33.0,379.75,2148,1,False,Đề xuất nhịp 30–45 ngày v1.5; kế thừa công thức combat v1.4.1

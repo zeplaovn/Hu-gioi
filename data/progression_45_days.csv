@@ -1,0 +1,16 @@
+﻿stage_id,stage,world,day_start,day_end,content
+HG00,Phàm Nhân,Hạ Giới,0.0,0.55,Thức tỉnh linh căn; nhập môn
+HG01,Luyện Khí,Hạ Giới,0.55,1.65,Mở nghề phụ; tông môn
+HG02,Trúc Cơ,Hạ Giới,1.65,3.3,Bí cảnh; pháp bảo đầu
+HG03,Kim Đan,Hạ Giới,3.3,5.5,Build nguyên tố; nội tranh tông môn
+HG04,Nguyên Anh,Hạ Giới,5.5,7.15,Thần thức; boss cấp cao
+HG05,Hóa Thần,Hạ Giới,7.15,8.25,Đại tuyến Hạ Giới; phi thăng
+LG01,Luyện Hư,Linh Giới,8.25,11.0,Pháp tướng; Linh Tinh
+LG02,Hợp Thể,Linh Giới,11.0,14.85,Dung linh; chiến trường giới vực
+LG03,Đại Thừa,Linh Giới,14.85,18.15,Boss thế giới; di tích trận đạo
+LG04,Độ Kiếp / Phi Thăng,Linh Giới,18.15,19.25,Giới kiếp; lên Tiên Giới
+TG01,Ngụy Tiên,Tiên Giới,19.25,21.45,Chuyển tiên linh lực
+TG02,Chân Tiên,Tiên Giới,21.45,24.75,Tiên khiếu; pháp tắc
+TG03,Kim Tiên,Tiên Giới,24.75,28.05,Linh Vực; Ngũ Suy
+TG04,Thái Ất,Tiên Giới,28.05,30.8,Pháp tắc nâng cao; boss Tiên Giới
+TG05,Đại La sơ nhập / Đài Quy Hương,Tiên Giới,30.8,33.0,Hoàn tất tuyến chính; Quy Phàm/endgame

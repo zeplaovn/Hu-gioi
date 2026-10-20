@@ -24,6 +24,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Dữ liệu sinh ra khớp data/*.csv
         run: pnpm gen:check
+      - name: Nội dung và mốc XP v1.6.1
+        run: pnpm test:content
       - name: game-core + web (unit test)
         run: |
           pnpm --filter @hu-gioi/game-core test
