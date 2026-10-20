@@ -70,7 +70,7 @@ begin
 end $$;
 
 -- ---- tọa hóa + death transaction idempotent
-do $$ declare u uuid := 'a0000000-0000-0000-0000-00000000000c'; t0 timestamptz := '2026-10-18 00:00:00+00'; v uuid; v2 uuid; v3 uuid; l game.lives; h game.life_history;
+do $$ declare u uuid := 'a0000000-0000-0000-0000-00000000000c'; t0 timestamptz := '2026-10-18 00:00:00+00'; v uuid; v2 uuid; v3 uuid; p jsonb; l game.lives; h game.life_history;
 begin
   insert into auth.users (id) values (u);
   v := game.start_life(u, t0);
@@ -79,7 +79,11 @@ begin
   update game.accounts set tm_balance = 42, tm_earned = 42 where account_id = u;
   perform game.settle_life(v, t0 + interval '1 hour');
   select * into l from game.lives where life_id = v;
-  assert l.status = 'dead' and l.death_cause = 'lifespan', 'phải tọa hóa';
+  assert l.status = 'alive', 'offline không được tọa hóa';
+  p := game.lifespan_prepare(u, t0 + interval '1 hour');
+  perform game.lifespan_confirm(u, (p->>'intent_id')::uuid, t0 + interval '1 hour 1 second');
+  select * into l from game.lives where life_id = v;
+  assert l.status = 'dead' and l.death_cause = 'lifespan', 'chỉ tọa hóa sau xác nhận';
   assert l.ls = 0 and l.lt = 0, 'mất toàn bộ tiền của kiếp';
   assert not exists (select 1 from game.life_items where life_id = v), 'mất toàn bộ vật phẩm';
   select life_id into v2 from game.lives where account_id = u and status = 'alive';
@@ -169,7 +173,7 @@ begin
   assert (select count(*) from game.events where account_id = u and kind = 'ascend') = 2, 'hai lần Phi Thăng';
   assert (select count(*) from game.events where account_id = u and kind = 'death') = 0;
   select * into h from game.life_history where life_id = v;
-  assert h.cause = 'cleared' and abs(h.credited_days - (select sum(b.seconds::double precision) / 86400.0 from jsonb_array_elements(game.rule('tier_seconds')) as a(tiers) cross join lateral jsonb_array_elements_text(a.tiers) as b(seconds))) < 1e-6, 'đường sạch phải khớp 135 mốc XP, got ' || h.credited_days;
+  assert h.cause = 'cleared' and abs(h.credited_days - (select sum(b.seconds::double precision) / 86400.0 from jsonb_array_elements(game.rule('tier_seconds')) as xp(tiers) cross join lateral jsonb_array_elements_text(xp.tiers) as b(seconds))) < 1e-6, 'đường sạch phải khớp 135 mốc XP, got ' || h.credited_days;
   perform pg_temp.expect_err(format('select game.breakthrough_prepare(%L, %L)', u, t), 'no_alive_life');
   v2 := game.start_life(u, t);
   assert v2 <> v and (select life_no from game.lives where life_id = v2) = 2, 'sau khi hoàn tất có thể mở kiếp mới';

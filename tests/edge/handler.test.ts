@@ -92,6 +92,31 @@ describe("api handler", () => {
     await handle(req("/life/start", { method: "POST" }), deps);
     expect(calls.map(c => c[0])).toEqual(["hit_rate_limit", "start_life", "get_state"]);
   });
+  it("tọa hóa: JWT được kiểm, input UUID/rate limit và RPC đúng", async () => {
+    const { deps, calls } = mk();
+    const bad = await handle(req("/lifespan/confirm", { method: "POST", body: '{"intent_id":"bad"}' }), deps);
+    expect(bad.status).toBe(400);
+    expect(calls.filter(c => c[0] === "lifespan_confirm")).toHaveLength(0);
+    const goodId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+    const p = await handle(req("/lifespan/prepare", { method: "POST" }), deps);
+    expect(p.status).toBe(200);
+    const r = await handle(req("/lifespan/confirm", { method: "POST", body: JSON.stringify({ intent_id: goodId, p_account: "evil" }) }), deps);
+    expect(r.status).toBe(200);
+    expect(calls.find(c => c[0] === "lifespan_prepare")![1]).toEqual({ p_account: U });
+    expect(calls.find(c => c[0] === "lifespan_confirm")![1]).toEqual({ p_account: U, p_intent: goodId });
+    expect((await handle(req("/lifespan/prepare", { method: "POST", token: null }), deps)).status).toBe(401);
+    const limited = mk({ rpcImpl: () => ({ data: false, error: null }) });
+    expect((await handle(req("/lifespan/confirm", { method: "POST" }), limited.deps)).status).toBe(429);
+  });
+  it("tọa hóa: lỗi nghiệp vụ có mã HTTP ổn định", async () => {
+    const { deps } = mk({ rpcImpl: fn => fn === "hit_rate_limit"
+      ? { data: true, error: null }
+      : { data: null, error: { code: "GM000", message: "lifespan_not_exhausted" } } });
+    const r = await handle(req("/lifespan/prepare", { method: "POST" }), deps);
+    expect(r.status).toBe(409);
+    expect(await r.json()).toEqual({ error: "lifespan_not_exhausted" });
+  });
+
   it("không cache", async () => {
     const r = await handle(req("/state"), mk().deps);
     expect(r.headers.get("cache-control")).toBe("no-store");

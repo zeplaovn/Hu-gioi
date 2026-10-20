@@ -14,6 +14,7 @@ function mk(states = []) {
   const api = {
     state: vi.fn(async () => queue.length > 1 ? queue.shift() : queue[0]),
     startLife: vi.fn(), prepareBreakthrough: vi.fn(), confirmBreakthrough: vi.fn(), upgradeStat: vi.fn(), buyItem: vi.fn(),
+    prepareLifespan: vi.fn(), confirmLifespan: vi.fn(),
   };
   return { game: createGame({ api }), api };
 }
@@ -44,11 +45,12 @@ describe("game store", () => {
     expect(game.log.some((l) => l.text.includes("Phi Thăng"))).toBe(true);
   });
 
-  it("kiếp kết thúc khi vắng mặt: báo kết quả tử vong theo lịch sử, không lặng lẽ đổi kiếp", async () => {
-    const next = st(life({ life_id: "L2", life_no: 2 }), { history: [{ life_no: 1, cause: "lifespan", stage_idx: 3, tang: 5, credited_days: 9, tm_earned: 30, ended_at: "x" }] });
-    const { game } = mk([st(life()), next]);
+  it("trở lại khi thọ nguyên cạn: server giữ nguyên kiếp, chưa hiện kết quả tử vong", async () => {
+    const capped = life({ lifespan: { used_years: 100, cap_years: 100, exhausted: true } });
+    const { game } = mk([st(life()), st(capped)]);
     await game.refresh(); await game.refresh();
-    expect(game.result).toMatchObject({ outcome: "death", cause: "lifespan", new_life_id: "L2" });
+    expect(game.result).toBeNull();
+    expect(game.state.life.life_id).toBe("L1");
   });
 
   it("chặn bấm đôi: thao tác thứ hai khi đang bận không gọi API", async () => {
@@ -84,6 +86,26 @@ describe("game store", () => {
     expect(game.result).toMatchObject({ outcome: "death" });
     expect(game.log.some((l) => l.tag === "red")).toBe(true);
     expect(game.state.life.life_no).toBe(2);
+  });
+
+  it("chuẩn bị, xác nhận và resume tọa hóa qua API", async () => {
+    const capped = life({ lifespan: { used_years: 100, cap_years: 100, exhausted: true } });
+    const next = life({ life_id: "L2", life_no: 2 });
+    const { game, api } = mk([st(capped), st(next)]);
+    await game.refresh();
+    api.prepareLifespan.mockResolvedValue({ intent_id: "LIFE-1", expires_at: "t", warning: "Mất tài sản kiếp" });
+    api.confirmLifespan.mockResolvedValue({ outcome: "death", cause: "lifespan", new_life_id: "L2" });
+    await game.prepareLifespan();
+    expect(game.lifespanPrepared.intent_id).toBe("LIFE-1");
+    await game.confirmLifespan();
+    expect(api.confirmLifespan).toHaveBeenCalledWith("LIFE-1");
+    expect(game.result).toMatchObject({ outcome: "death", cause: "lifespan" });
+    expect(game.state.life.life_id).toBe("L2");
+    game.state.pending_lifespan_intent = { intent_id: "PENDING", expires_at: "t" };
+    game.resumeLifespan();
+    expect(game.lifespanPrepared.intent_id).toBe("PENDING");
+    game.cancelLifespan();
+    expect(game.lifespanPrepared).toBeNull();
   });
 
   it("resumePending dựng lại hộp thoại từ dữ liệu server", async () => {

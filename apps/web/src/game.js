@@ -18,6 +18,7 @@ export class Game {
     /** Kết quả đột phá vừa xảy ra, để hiện hộp thoại (kể cả khi chết). */
     this.result = null;
     this.prepared = null;
+    this.lifespanPrepared = null;
     /** Nhật ký hiển thị (chỉ đọc): { id, text, tag }. */
     this.log = [];
     /** Tăng mỗi khi có tiến triển để cảnh phát hiệu ứng. */
@@ -105,7 +106,7 @@ export class Game {
   stop() { if (this.timer) clearInterval(this.timer); this.timer = null; }
   reset() {
     this.stop();
-    this.state = null; this.result = null; this.prepared = null; this.error = null; this.log = []; this.pulse = 0;
+    this.state = null; this.result = null; this.prepared = null; this.lifespanPrepared = null; this.error = null; this.log = []; this.pulse = 0;
     this.emit();
   }
 
@@ -142,6 +143,33 @@ export class Game {
     } else this.emit();
   }
 
+  async prepareLifespan() {
+    const p = await this.run((a) => a.prepareLifespan());
+    if (p) { this.lifespanPrepared = p; this.emit(); }
+  }
+
+  resumeLifespan() {
+    const p = this.state?.pending_lifespan_intent;
+    if (!p) return;
+    this.lifespanPrepared = {
+      ...p, warning: "Tọa hóa kết thúc kiếp; mọi tài sản vật lý của kiếp bị mất. Thiên Mệnh và chỉ số vĩnh viễn được giữ.",
+    };
+    this.emit();
+  }
+
+  async confirmLifespan() {
+    const id = this.lifespanPrepared?.intent_id;
+    if (!id) return;
+    const r = await this.run((a) => a.confirmLifespan(id));
+    this.lifespanPrepared = null;
+    if (r) {
+      this.result = r;
+      this.say("Tọa hóa: một kiếp kết thúc. Thiên Mệnh vĩnh viễn vẫn còn.", "red");
+      await this.reload();
+    } else this.emit();
+  }
+
+  cancelLifespan() { this.lifespanPrepared = null; this.emit(); }
   cancelPrepare() { this.prepared = null; this.emit(); }
   dismissResult() { this.result = null; this.emit(); }
 
