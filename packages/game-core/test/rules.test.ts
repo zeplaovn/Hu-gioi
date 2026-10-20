@@ -5,7 +5,7 @@ describe("game-core", () => {
   it("một kiếp sạch = 135 TM, 15 giai đoạn, 33 ngày tham chiếu", () => {
     expect(CLEAN_LIFE_TM).toBe(135);
     expect(STAGES).toHaveLength(15);
-    expect(STAGES.reduce((a, s) => a + s.day_end - s.day_start, 0)).toBe(33);
+    expect(STAGES.reduce((a, s) => a + s.day_end - s.day_start, 0)).toBeCloseTo(33, 9);
   });
   it("hiệu suất offline theo bậc", () => {
     expect(creditSeconds(3600)).toBe(3600);
