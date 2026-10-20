@@ -22,6 +22,8 @@ Quà chưa có nguồn phát hành production do giá chưa duyệt và nghề p
 
 `node tools/gen-social.mjs --check`, `node --test tests/social.test.mjs`, `pnpm db:test`, `pnpm test`, `pnpm build:web`.
 
-Môi trường hiện tại không có PostgreSQL/Supabase CLI; `pnpm install --frozen-lockfile` bị chính sách tải package chặn HTTP 403. Migration dùng quy ước tên hiện có vì không thể chạy CLI. CI trên GitHub phải kiểm tra migration và build trước khi merge. Kết nối Supabase trả danh sách dự án rỗng, nên chưa chạy migration hoặc xóa dữ liệu live.
+Môi trường hiện tại không có PostgreSQL/Supabase CLI; `pnpm install --frozen-lockfile` bị chính sách tải package chặn HTTP 403. Migration dùng quy ước tên hiện có vì không thể chạy CLI. CI trên GitHub đã chạy thành công trên commit `db68821ccc7f8cee6092d18367439abc91daef15`: gen:check, 9 kiểm thử nội dung/API, kiểm thử game-core/web, kiểm thử Edge, 5 bộ SQL, parity và API↔PostgreSQL (gồm thao tác đồng thời), build web. Lần CI đầu tìm được khác biệt payload mở lại offer và đã được sửa. Kết nối Supabase trả danh sách dự án rỗng, nên chưa chạy migration hoặc xóa dữ liệu live.
 
 Dữ liệu/code cũ trong `legacy/` được bỏ khỏi cây hiện hành theo yêu cầu, vẫn truy được trong lịch sử Git. Không sửa migration lịch sử vì chúng là chuỗi phụ thuộc cần thiết cho database mới. Không xóa tài khoản Auth hoặc tiến độ live khi chưa xác định được database đích.
+
+Không chạy được kiểm tra giao diện bằng trình duyệt trong môi trường này vì thiếu binary Chromium.

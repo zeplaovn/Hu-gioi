@@ -9,7 +9,7 @@ HTML/CSS/JS thuần (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (s
 
 - **Server quyết định mọi thứ quan trọng.** Client chỉ gửi ý định ("tôi muốn đột phá"), nhận kết quả.
 - **Luật game nằm trong pgSQL** (một transaction, idempotent). Edge Function là lớp mỏng; `packages/game-core` (TypeScript) chỉ để hiển thị/dự đoán và có test đối chiếu với SQL.
-- Database **làm mới từ đầu** (không còn save cũ). Code và dữ liệu bản cũ đã được bỏ khỏi cây hiện hành; đối chiếu qua lịch sử Git.
+- Schema game mới không nhập save cũ; dữ liệu live chỉ được reset khi triển khai vào đúng dự án. Code và dữ liệu bản cũ đã được bỏ khỏi cây hiện hành; đối chiếu qua lịch sử Git.
 
 ## Cấu trúc
 
