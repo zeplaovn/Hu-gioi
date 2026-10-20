@@ -36,7 +36,7 @@ img { max-width: 100%; }
 .grid { display: grid; gap: 12px; }
 @media (min-width: 760px) { .grid.two { grid-template-columns: 1fr 1fr; } .grid.three { grid-template-columns: repeat(3, 1fr); } }
 
-.card, .panel { background: var(--panel); border: 1px solid var(--line2); border-radius: var(--r); padding: 12px 14px; position: relative; }
+.card, .panel, .auth-card { background: var(--panel); border: 1px solid var(--line2); border-radius: var(--r); padding: 12px 14px; position: relative; }
 .card.gold { border-color: #6b5a2c; }
 .card.danger { border-color: var(--seal); }
 .sec { margin: 14px 0 6px; font-family: var(--serif); font-weight: 700; color: var(--green); font-size: 14px; letter-spacing: .02em; }
@@ -89,10 +89,6 @@ label { display: block; font-size: 13.5px; color: var(--dim); margin-bottom: 4px
 /* ---------- khung ứng dụng ---------- */
 .topbar { display: flex; align-items: center; gap: 12px 22px; background: var(--panel); border-bottom: 1px solid var(--line2); padding: 10px 16px; flex-wrap: wrap; }
 .game-title { color: var(--gold); font-family: var(--serif); font-size: 21px; font-weight: 700; letter-spacing: .06em; text-decoration: none; margin-right: auto; }
-.topnav { display: flex; gap: 4px; flex-wrap: wrap; }
-.topnav a { color: var(--dim); text-decoration: none; padding: 6px 12px; border-radius: var(--r-sm); min-height: 40px; display: inline-flex; align-items: center; font-weight: 600; }
-.topnav a:hover { color: var(--fg); background: var(--hover); }
-.topnav a[aria-current="page"] { color: var(--green); background: var(--panel2); border: 1px solid var(--line); }
 .page { max-width: 1500px; margin: 0 auto; padding: 12px; }
 .page.narrow { max-width: 960px; }
 
@@ -105,7 +101,6 @@ label { display: block; font-size: 13.5px; color: var(--dim); margin-bottom: 4px
 .mini-stat img { width: 22px; height: 22px; image-rendering: pixelated; flex: none; }
 .mini-stat span { width: 84px; flex: none; white-space: nowrap; font-size: 13.5px; }
 .mini-stat .bar { height: 18px; }
-.scene-wrap { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: #0a0f1e; line-height: 0; }
 .scene-cv { width: 100%; height: auto; image-rendering: pixelated; display: block; }
 .log-wrap { position: relative; margin-top: 10px; }
 .log { background: var(--inset); border: 1px solid var(--line2); border-radius: var(--r); padding: 10px 12px; height: clamp(200px, 30vh, 380px); overflow-y: auto; white-space: pre-wrap; word-break: break-word; font-size: 15px; line-height: 1.55; overscroll-behavior: contain; margin: 0; list-style: none; }
@@ -127,14 +122,6 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
 th { color: var(--dim); font-weight: 600; font-size: 13px; }
 .table-wrap { overflow-x: auto; }
 
-@media (max-width: 1100px) { .main { grid-template-columns: 260px minmax(0, 1fr); } .col-right { grid-column: 1 / -1; order: 3; } }
-@media (max-width: 760px) {
-  .main { grid-template-columns: 1fr; gap: 10px; }
-  /* Mobile: cảnh → nhật ký → hành động (Đột phá) → chỉ số. Việc cần làm tiếp theo luôn nằm trong màn hình đầu. */
-  .col-center { order: 1; } .col-right { order: 2; } .col-left { order: 3; }
-  .log { height: clamp(130px, 20vh, 190px); }
-  .game-title { font-size: 18px; }
-}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
 /* ---------- đăng nhập ---------- */
@@ -153,3 +140,99 @@ code { background: var(--panel2); padding: .05rem .35rem; border-radius: 4px; }
 .check input { width: 18px; height: 18px; margin-top: .25rem; }
 .shop h3 { margin: 0 0 .2rem; }
 .shop p.small { margin: 0 0 .6rem; }
+
+/* ================= Vỏ giao diện theo game gốc ================= */
+:root { --dock-h: 0px; }
+.topbar { gap: 10px 14px; padding: 8px 16px; }
+.topbar .acct { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn.sm { min-height: 32px; padding: 3px 10px; font-size: 13px; }
+kbd { font: 600 11px var(--sans); color: var(--dim); border: 1px solid var(--line2); border-radius: 4px; padding: 0 5px; margin-left: auto; }
+.col-right { display: flex; flex-direction: column; gap: 6px; }
+.col-right .sec { margin: 10px 0 0; } .col-right .sec:first-child { margin-top: 0; }
+.btn.act { justify-content: flex-start; width: 100%; text-align: left; }
+.btn.act .btn-label { flex: 1; }
+.btn.act.soon { color: var(--off); background: var(--panel); border-style: dashed; }
+.btn.act.soon .btn-ico { opacity: .45; }
+.soon-tag { font: 600 11px var(--sans); color: var(--dim); border: 1px solid var(--line2); border-radius: 999px; padding: 0 7px; }
+.count-tag { font: 700 12px var(--sans); color: var(--gold); border: 1px solid #6b5a2c; border-radius: 999px; padding: 0 7px; }
+.count-tag[hidden] { display: none; }
+.btn.dimbtn { color: var(--dim); border-color: var(--line2); background: transparent; justify-content: center; }
+.center { text-align: center; justify-content: center; }
+.btn.seal { justify-content: center; margin-top: 0; }
+.btn.seal kbd { position: absolute; right: 10px; color: #f0c9bd; border-color: #a9604f; }
+
+/* khung họa tiết (assets/ui/frame) */
+.scene-wrap, .col-left { position: relative; border: solid transparent; background-origin: border-box; }
+.scene-wrap { border-width: 11px 15px 10px; border-radius: 0; overflow: visible; background-color: transparent; line-height: 0; }
+.scene-wrap canvas, .scene-wrap img { display: block; width: 100%; height: auto; }
+.scene-wrap::after { content: ""; position: absolute; inset: -11px -15px -10px; pointer-events: none; z-index: 2; background-origin: border-box;
+  background: url(/assets/ui/frame/w_tl.png) no-repeat left top / 34.4px 38px, url(/assets/ui/frame/w_tr.png) no-repeat right top / 34.4px 38px,
+    url(/assets/ui/frame/w_bl.png) no-repeat left bottom / 34.4px 22.4px, url(/assets/ui/frame/w_br.png) no-repeat right bottom / 34.4px 22.4px,
+    url(/assets/ui/frame/gem.png) no-repeat center 1.4px / 33.6px 14px, url(/assets/ui/frame/gem.png) no-repeat center bottom 0.2px / 33.6px 14px,
+    url(/assets/ui/frame/w_top.png) repeat-x left top / auto 38px, url(/assets/ui/frame/w_bot.png) repeat-x left bottom / auto 22.4px,
+    url(/assets/ui/frame/w_left.png) repeat-y left top / 34.4px auto, url(/assets/ui/frame/w_right.png) repeat-y right top / 34.4px auto; }
+.col-left { border-width: 12px 14px 12px; padding: 6px 10px 8px; }
+.col-left::after { content: ""; position: absolute; inset: -12px -14px -12px; pointer-events: none; z-index: 2; background-origin: border-box;
+  background: url(/assets/ui/frame/t_tl.png) no-repeat left top / 31.28px 46px, url(/assets/ui/frame/t_tr.png) no-repeat right top / 31.28px 46px,
+    url(/assets/ui/frame/t_bl.png) no-repeat left bottom / 31.28px 32.2px, url(/assets/ui/frame/t_br.png) no-repeat right bottom / 31.28px 32.2px,
+    url(/assets/ui/frame/t_top.png) repeat-x left top / auto 46px, url(/assets/ui/frame/t_bot.png) repeat-x left bottom / auto 32.2px,
+    url(/assets/ui/frame/t_left.png) repeat-y left top / 31.28px auto, url(/assets/ui/frame/t_right.png) repeat-y right top / 31.28px auto; }
+.main { padding: 10px 14px 6px; gap: 22px; }
+.col-center > * + * { margin-top: 12px; }
+.col-center .scene-wrap + * { margin-top: 18px; }
+.stat-fold { margin: 6px 0; }
+.stat-fold summary { cursor: pointer; font-weight: 600; color: var(--green); font-size: 13.5px; min-height: 32px; display: flex; align-items: center; }
+
+/* khung nhập định + gợi ý */
+.idle-panel { display: grid; gap: 8px; }
+.idle-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.hint-box { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid #6b5a2c; background: #221d10; border-radius: var(--r-sm); padding: 6px 10px; }
+.hint-box[hidden] { display: none; }
+.hint-text { flex: 1; min-width: 160px; font-size: 13.5px; }
+.hint-x { min-width: 32px; padding: 0 6px; }
+.t-jade { color: var(--green); }
+
+/* màn nhập thế */
+.create-screen { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; max-width: 1100px; margin: 18px auto 0; align-items: start; }
+.create-screen .banner { border-radius: 2px; }
+.create-screen .story { margin-top: 10px; }
+.create-screen .go { margin: 14px 0 6px; min-height: 48px; font-size: 16px; }
+.info-box { margin-bottom: 12px; }
+
+/* đăng nhập */
+.auth-card { max-width: 420px; margin: 0 auto; border-color: #6b5a2c; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--inset); border: 1px solid var(--line2); border-radius: var(--r-sm); padding: 3px; }
+.seg button { font: 600 14px var(--sans); min-height: 36px; border: 0; border-radius: 5px; background: transparent; color: var(--dim); cursor: pointer; }
+.seg button[aria-selected="true"] { background: var(--panel2); color: var(--green); }
+.auth-card h2 { text-align: center; color: var(--gold); margin: 4px 0 0; }
+.bag-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.dock { display: none; }
+
+@media (max-width: 1150px) {
+  .main { grid-template-columns: minmax(0, 1fr) 280px; }
+  .col-center { grid-column: 1; grid-row: 1 / span 2; order: 1; }
+  .col-right { grid-column: 2; grid-row: 1; order: 2; }
+  .col-left { grid-column: 2; grid-row: 2; order: 3; }
+  .create-screen { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  :root { --dock-h: 64px; }
+  body { padding-bottom: calc(var(--dock-h) + var(--safe-b)); }
+  .topbar { padding: 8px 12px; flex-wrap: nowrap; gap: 8px; } .topbar .game-title { font-size: 15px; white-space: nowrap; } .topbar .chip { white-space: nowrap; } .topbar .btn.ghost.sm { white-space: nowrap; } .topbar .acct { display: none; }
+  .main { grid-template-columns: 1fr; padding: 16px 16px 6px; gap: 22px; }
+  .col-center, .col-right, .col-left { grid-column: 1; grid-row: auto; }
+  .col-left { order: 1; } .col-center { order: 2; } .col-right { order: 3; }
+  .realm { font-size: 21px; }
+  .log { height: clamp(130px, 20vh, 190px); }
+  .col-right { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .col-right .sec, .col-right .small, .col-right .btn.seal { grid-column: 1 / -1; }
+  .col-right .btn.seal { display: none; }
+  .btn.act { font-size: 13.5px; padding-left: 8px; } .btn.act kbd { display: none; }
+  .soon-tag { display: none; }
+  dialog { width: 100vw; max-width: 100vw; margin: auto 0 0; border-radius: 14px 14px 0 0; max-height: 92dvh; padding-bottom: calc(16px + var(--safe-b)); }
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 8px calc(8px + var(--safe-b)); background: rgba(11, 17, 21, .96); border-top: 1px solid var(--line); }
+  .dock .btn { flex-direction: column; gap: 2px; min-height: 48px; padding: 4px 2px; font-size: 12px; width: 100%; margin: 0; text-decoration: none; }
+  .dock .btn .btn-label { flex: none; text-align: center; }
+  .dock .btn.seal { font-size: 12.5px; }
+  .dock .btn-ico { width: 20px; height: 20px; }
+}

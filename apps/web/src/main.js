@@ -39,11 +39,12 @@ function drawTopbar(signedIn) {
   const route = currentRoute();
   clear(topbar,
     h("a", { class: "game-title", href: "#/play" }, BRAND),
-    h("nav", { class: "topnav", "aria-label": "Chính" },
-      Object.entries(ROUTES).map(([path, r]) => h("a", { href: `#${path}`, "aria-current": route === path ? "page" : null }, r.label))),
+    route !== "/play" && h("a", { class: "btn ghost sm", href: "#/play", style: { textDecoration: "none" } }, "← Về Tu luyện"),
+    h("span", { class: "spacer" }),
     game.state && h("span", { class: "chip gold", title: "Điểm Thiên Mệnh" },
       icon("orb_gold", "btn-ico", { width: "16px", height: "16px" }), " Thiên Mệnh ", h("b", { class: "num" }, num(game.state.account.tm_balance))),
-    h("button", { class: "btn ghost", onclick: () => auth.signOut() }, "Thoát"));
+    auth.session?.user?.email && h("span", { class: "dim small acct", title: auth.session.user.email }, auth.session.user.email),
+    h("button", { class: "btn ghost sm", onclick: () => auth.signOut() }, "Thoát"));
 }
 
 function renderShell() {
