@@ -23,21 +23,28 @@ export function createLoginView({ auth }) {
   const title = h("h2");
   const note = h("p", { class: "notice", role: "status", hidden: true });
   const submit = h("button", { class: "btn" });
-  const toggle = h("button", { type: "button", class: "btn ghost", onclick: () => { mode = mode === "in" ? "up" : "in"; msg = null; sync(); } });
+  const tabIn = h("button", { type: "button", role: "tab", onclick: () => setMode("in") }, "Đăng nhập");
+  const tabUp = h("button", { type: "button", role: "tab", onclick: () => setMode("up") }, "Đăng ký");
+  const tabs = h("div", { class: "seg", role: "tablist" }, tabIn, tabUp);
+  const setMode = (m) => { mode = m; msg = null; sync(); };
+  const showPw = h("input", { type: "checkbox", id: "showpw", onchange: (e) => { password.type = e.target.checked ? "text" : "password"; } });
 
-  const form = h("form", { class: "card gold stack", onsubmit: onSubmit },
+  const form = h("form", { class: "auth-card stack", onsubmit: onSubmit },
+    tabs,
     title,
     h("div", null, h("label", { for: "email" }, "Email"), email),
-    h("div", null, h("label", { for: "pw" }, "Mật khẩu"), password),
+    h("div", null, h("label", { for: "pw" }, "Mật khẩu"), password,
+      h("label", { class: "check small", for: "showpw", style: { marginTop: "6px" } }, showPw, "Hiện mật khẩu")),
     note,
-    h("div", { class: "row between" }, submit, toggle),
+    submit.classList.add("wide", "gold") || submit,
   );
   el.append(form);
 
   function sync() {
     title.textContent = mode === "in" ? "Nhập đạo" : "Lập đạo hiệu";
     submit.textContent = mode === "in" ? "Đăng nhập" : "Đăng ký";
-    toggle.textContent = mode === "in" ? "Chưa có tài khoản?" : "Đã có tài khoản?";
+    tabIn.setAttribute("aria-selected", String(mode === "in"));
+    tabUp.setAttribute("aria-selected", String(mode === "up"));
     password.setAttribute("autocomplete", mode === "in" ? "current-password" : "new-password");
     submit.disabled = busy;
     note.hidden = !msg;
