@@ -1,0 +1,61 @@
+﻿monster_id,name,role,world,gear_profile,trials,win_old_pct,win_new_pct,difference_pp,median_rounds_new,new_death_pct,new_ko_pct
+MON-001,Hắc Lang,Thường,Hạ Giới,tham_chieu,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-001,Hắc Lang,Thường,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-002,Độc Xà,Thường,Hạ Giới,tham_chieu,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-002,Độc Xà,Thường,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-003,Hoang Thử Yêu,Thường,Hạ Giới,tham_chieu,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-003,Hoang Thử Yêu,Thường,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-004,Thiết Giáp Hùng,Tinh anh,Hạ Giới,tham_chieu,420,100.0,93.81,-6.19,14.0,0.0,6.19
+MON-004,Thiết Giáp Hùng,Tinh anh,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,13.0,0.0,0.0
+MON-005,Huyết Điêu,Tinh anh,Hạ Giới,tham_chieu,420,100.0,87.14,-12.86,14.0,0.0,12.86
+MON-005,Huyết Điêu,Tinh anh,Hạ Giới,chuan_bi,420,100.0,99.76,-0.24,13.0,0.0,0.24
+MON-006,Kiếm Xỉ Hổ,Tinh anh,Hạ Giới,tham_chieu,420,100.0,93.81,-6.19,17.0,0.0,6.19
+MON-006,Kiếm Xỉ Hổ,Tinh anh,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,15.0,0.0,0.0
+MON-007,Ma Hầu,Boss nhỏ,Hạ Giới,tham_chieu,420,100.0,82.38,-17.62,24.0,17.62,0.0
+MON-007,Ma Hầu,Boss nhỏ,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,22.0,0.0,0.0
+MON-008,Thanh Giao,Boss,Hạ Giới,tham_chieu,420,100.0,84.52,-15.48,24.0,15.48,0.0
+MON-008,Thanh Giao,Boss,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,22.0,0.0,0.0
+MON-009,Hỏa Lân Thú,Boss,Hạ Giới,tham_chieu,420,99.52,81.43,-18.09,23.0,18.57,0.0
+MON-009,Hỏa Lân Thú,Boss,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,22.0,0.0,0.0
+MON-010,Cửu Vĩ Hồ,Boss,Hạ Giới,tham_chieu,420,100.0,86.19,-13.81,24.0,13.81,0.0
+MON-010,Cửu Vĩ Hồ,Boss,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,22.0,0.0,0.0
+MON-011,Kim Dực Bằng,Boss,Hạ Giới,tham_chieu,420,100.0,82.14,-17.86,23.0,17.86,0.0
+MON-011,Kim Dực Bằng,Boss,Hạ Giới,chuan_bi,420,100.0,99.76,-0.24,21.0,0.24,0.0
+MON-012,Huyền Quy,Boss cuối map,Hạ Giới,tham_chieu,420,90.48,78.33,-12.15,26.0,21.67,0.0
+MON-012,Huyền Quy,Boss cuối map,Hạ Giới,chuan_bi,420,100.0,100.0,0.0,24.0,0.0,0.0
+MON-013,Hư Không Thú,Thường,Linh Giới,tham_chieu,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-013,Hư Không Thú,Thường,Linh Giới,chuan_bi,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-014,Tinh Hồn Lang,Tinh anh,Linh Giới,tham_chieu,420,100.0,96.43,-3.57,13.0,0.0,3.57
+MON-014,Tinh Hồn Lang,Tinh anh,Linh Giới,chuan_bi,420,100.0,100.0,0.0,12.0,0.0,0.0
+MON-015,Vô Tướng Ma Khôi,Tinh anh,Linh Giới,tham_chieu,420,100.0,87.38,-12.62,14.0,0.0,12.62
+MON-015,Vô Tướng Ma Khôi,Tinh anh,Linh Giới,chuan_bi,420,100.0,100.0,0.0,12.0,0.0,0.0
+MON-016,Pháp Tướng Cự Linh,Boss,Linh Giới,tham_chieu,420,100.0,81.9,-18.1,23.0,18.1,0.0
+MON-016,Pháp Tướng Cự Linh,Boss,Linh Giới,chuan_bi,420,100.0,100.0,0.0,22.0,0.0,0.0
+MON-017,Giới Ngoại Dị Trùng,Tinh anh,Linh Giới,tham_chieu,420,100.0,93.33,-6.67,12.0,0.0,6.67
+MON-017,Giới Ngoại Dị Trùng,Tinh anh,Linh Giới,chuan_bi,420,100.0,100.0,0.0,11.0,0.0,0.0
+MON-018,Cổ Kiếm Linh,Boss,Linh Giới,tham_chieu,420,90.48,83.81,-6.67,24.0,16.19,0.0
+MON-018,Cổ Kiếm Linh,Boss,Linh Giới,chuan_bi,420,100.0,99.76,-0.24,22.0,0.24,0.0
+MON-019,Sát Hồn Vương,Boss,Linh Giới,tham_chieu,420,100.0,79.29,-20.71,23.0,20.71,0.0
+MON-019,Sát Hồn Vương,Boss,Linh Giới,chuan_bi,420,100.0,100.0,0.0,22.0,0.0,0.0
+MON-020,Giới Kiếp Lôi Linh,Boss cuối map,Linh Giới,tham_chieu,420,92.86,74.29,-18.57,24.0,25.71,0.0
+MON-020,Giới Kiếp Lôi Linh,Boss cuối map,Linh Giới,chuan_bi,420,100.0,99.52,-0.48,22.0,0.48,0.0
+MON-021,Tiên Linh Hạc,Thường,Tiên Giới,tham_chieu,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-021,Tiên Linh Hạc,Thường,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,4.0,0.0,0.0
+MON-022,Kim Giáp Tiên Vệ,Tinh anh,Tiên Giới,tham_chieu,420,100.0,90.48,-9.52,16.0,0.0,9.52
+MON-022,Kim Giáp Tiên Vệ,Tinh anh,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,14.0,0.0,0.0
+MON-023,Sát Suy Ma Ảnh,Tinh anh,Tiên Giới,tham_chieu,420,100.0,85.48,-14.52,13.0,0.0,14.52
+MON-023,Sát Suy Ma Ảnh,Tinh anh,Tiên Giới,chuan_bi,420,100.0,99.76,-0.24,12.0,0.0,0.24
+MON-024,Thời Sa Cổ Thú,Boss,Tiên Giới,tham_chieu,420,100.0,85.48,-14.52,22.0,14.52,0.0
+MON-024,Thời Sa Cổ Thú,Boss,Tiên Giới,chuan_bi,420,100.0,99.76,-0.24,20.0,0.24,0.0
+MON-025,Hư Không Long Ảnh,Boss,Tiên Giới,tham_chieu,420,100.0,83.81,-16.19,22.0,16.19,0.0
+MON-025,Hư Không Long Ảnh,Boss,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,20.0,0.0,0.0
+MON-026,Luân Hồi Hồn Tướng,Boss,Tiên Giới,tham_chieu,420,100.0,80.24,-19.76,22.0,19.76,0.0
+MON-026,Luân Hồi Hồn Tướng,Boss,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,19.0,0.0,0.0
+MON-027,Đạo Tắc Hóa Thân,Boss,Tiên Giới,tham_chieu,420,100.0,84.29,-15.71,22.0,15.71,0.0
+MON-027,Đạo Tắc Hóa Thân,Boss,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,19.0,0.0,0.0
+MON-028,Cửu Tiêu Phản Tiên,Boss,Tiên Giới,tham_chieu,420,100.0,84.76,-15.24,22.0,15.24,0.0
+MON-028,Cửu Tiêu Phản Tiên,Boss,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,19.0,0.0,0.0
+MON-029,Đại La Tàn Ảnh,Boss endgame,Tiên Giới,tham_chieu,420,45.95,68.1,22.15,24.0,31.9,0.0
+MON-029,Đại La Tàn Ảnh,Boss endgame,Tiên Giới,chuan_bi,420,99.05,100.0,0.95,22.0,0.0,0.0
+MON-030,Đài Quy Hương Thủ Ảnh,Boss cốt truyện,Tiên Giới,tham_chieu,420,92.14,84.05,-8.09,25.0,15.95,0.0
+MON-030,Đài Quy Hương Thủ Ảnh,Boss cốt truyện,Tiên Giới,chuan_bi,420,100.0,100.0,0.0,23.0,0.0,0.0

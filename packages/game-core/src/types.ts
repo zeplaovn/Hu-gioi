@@ -6,7 +6,7 @@ export interface LifeItem { item_id: string; catalog_id: string; name: string; u
 export interface Life {
   life_id: string; life_no: number; status: "alive" | "cleared";
   stage: StageRef; tang: number; progress_s: number; need_s: number; ready_for_major: boolean;
-  lifespan: { used_years: number; cap_years: number };
+  lifespan: { used_years: number; cap_years: number; exhausted: boolean };
   wallet: { ls: number; lt: number; tn: number };
   tm_earned_life: number; born_at: string; speed_mult: number; risk_mult: number; items: LifeItem[];
 }
@@ -17,6 +17,7 @@ export interface GameState {
   account: { tm_balance: number; tm_earned: number; tm_spent: number; life_count: number; stats: Record<StatKey, StatState> };
   life: Life | null;
   pending_intent: { intent_id: string; death_prob: number; expires_at: string } | null;
+  pending_lifespan_intent: { intent_id: string; expires_at: string } | null;
   history: HistoryEntry[];
 }
 export interface PrepareResult { intent_id: string; stage_idx: number; death_prob: number; success_prob: number; lethal: boolean; expires_at: string; warning: string }
@@ -24,4 +25,6 @@ export type ConfirmResult =
   | { outcome: "success"; stage_idx: number; stage_id: string; world: string; ascended: boolean }
   | { outcome: "cleared" }
   | { outcome: "death"; cause: string; new_life_id: string | null };
+export interface LifespanPrepareResult { intent_id: string; expires_at: string; warning: string }
+export interface LifespanConfirmResult { outcome: "death"; cause: "lifespan"; new_life_id: string | null }
 export interface ApiError { error: string; message?: string }

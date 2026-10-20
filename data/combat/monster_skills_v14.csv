@@ -1,0 +1,107 @@
+﻿id,owner_id,slot,name,coefficient,cooldown,element,status_id,status_chance,cast_turns,telegraph,target,special_rule
+SKL-001-01,MON-001,basic,Thường Kích,1,0,Vật lý,,0,0,Không,single,
+SKL-001-02,MON-001,signature,Vồ Bất Ngờ,1.24,3,Vật lý,BLEED,0.25,0,Động tác,single,
+SKL-002-01,MON-002,basic,Thường Kích,1,0,Mộc,,0,0,Không,single,
+SKL-002-02,MON-002,signature,Nanh Độc,1.24,3,Mộc,POISON,0.25,0,Động tác,single,
+SKL-003-01,MON-003,basic,Thường Kích,1,0,Thổ,,0,0,Không,single,
+SKL-003-02,MON-003,signature,Đào Địa Độn,1.27,3,Thổ,BLIND,0.25,0,Động tác,single,
+SKL-004-01,MON-004,basic,Thường Kích,1,0,Thổ,,0,0,Không,single,
+SKL-004-02,MON-004,signature,Thiết Hùng Trấn Địa,1.32,3,Thổ,WEAKEN,0.25,0,Động tác,single,
+SKL-004-03,MON-004,secondary,Trọng Giáp Phản Kích,1.13,4,Thổ,WEAKEN,0.12,0,Dư lực,single,
+SKL-005-01,MON-005,basic,Thường Kích,1,0,Phong,,0,0,Không,single,
+SKL-005-02,MON-005,signature,Huyết Vũ Liên Kích,1.3,3,Phong,BLEED,0.25,0,Động tác,single,
+SKL-005-03,MON-005,secondary,Huyết Vũ Hoành Không,1.13,4,Phong,BLEED,0.12,0,Dư lực,single,
+SKL-006-01,MON-006,basic,Thường Kích,1,0,Kim,,0,0,Không,single,
+SKL-006-02,MON-006,signature,Liệt Nha Đột Kích,1.3,3,Kim,BLEED,0.25,0,Động tác,single,
+SKL-006-03,MON-006,secondary,Kiếm Nha Toái Giáp,1.13,4,Kim,BLEED,0.12,0,Dư lực,single,
+SKL-007-01,MON-007,basic,Thường Kích,1,0,Ám,,0,0,Không,single,
+SKL-007-02,MON-007,signature,Ma Hầu Loạn Kích,1.42,3,Ám,WEAKEN,0.35,0,Hào quang,single,
+SKL-007-03,MON-007,secondary,Ma Hầu Huyền Kích,1.21,4,Ám,WEAKEN,0.12,0,Dư lực,single,
+SKL-007-04,MON-007,ultimate,Ma Hầu — Diệt Giới Thức,1.82,5,Ám,WEAKEN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-008-01,MON-008,basic,Thường Kích,1,0,Thủy,,0,0,Không,single,
+SKL-008-02,MON-008,signature,Thanh Giao Phệ Hải,1.42,3,Thủy,SLOW,0.35,0,Hào quang,single,
+SKL-008-03,MON-008,secondary,Thanh Giao Huyền Kích,1.21,4,Thủy,SLOW,0.12,0,Dư lực,single,
+SKL-008-04,MON-008,ultimate,Thanh Giao — Diệt Giới Thức,1.82,5,Thủy,SLOW,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-009-01,MON-009,basic,Thường Kích,1,0,Hỏa,,0,0,Không,single,
+SKL-009-02,MON-009,signature,Viêm Lân Bạo Diệm,1.42,3,Hỏa,BURN,0.35,0,Hào quang,single,
+SKL-009-03,MON-009,secondary,Hỏa Lân Thú Huyền Kích,1.21,4,Hỏa,BURN,0.12,0,Dư lực,single,
+SKL-009-04,MON-009,ultimate,Hỏa Lân Thú — Diệt Giới Thức,1.82,5,Hỏa,BURN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-010-01,MON-010,basic,Thường Kích,1,0,Ám,,0,0,Không,single,
+SKL-010-02,MON-010,signature,Cửu Vĩ Huyễn Tâm,1.42,3,Ám,SILENCE,0.35,0,Hào quang,single,Boss CC hard giảm thành SLOW
+SKL-010-03,MON-010,secondary,Cửu Vĩ Hồ Huyền Kích,1.21,4,Ám,SILENCE,0.12,0,Dư lực,single,
+SKL-010-04,MON-010,ultimate,Cửu Vĩ Hồ — Diệt Giới Thức,1.82,5,Ám,SILENCE,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-011-01,MON-011,basic,Thường Kích,1,0,Phong,,0,0,Không,single,
+SKL-011-02,MON-011,signature,Kim Dực Thiên Phong,1.42,3,Phong,SLOW,0.35,0,Hào quang,single,
+SKL-011-03,MON-011,secondary,Kim Dực Bằng Huyền Kích,1.21,4,Phong,SLOW,0.12,0,Dư lực,single,
+SKL-011-04,MON-011,ultimate,Kim Dực Bằng — Diệt Giới Thức,1.82,5,Phong,SLOW,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-012-01,MON-012,basic,Thường Kích,1,0,Thổ,,0,0,Không,single,
+SKL-012-02,MON-012,signature,Huyền Giáp Phản Chấn,1.42,3,Thổ,WEAKEN,0.35,0,Hào quang,single,
+SKL-012-03,MON-012,secondary,Huyền Quy Huyền Kích,1.21,4,Thổ,WEAKEN,0.12,0,Dư lực,single,
+SKL-012-04,MON-012,ultimate,Huyền Quy — Diệt Giới Thức,1.95,5,Thổ,WEAKEN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-012-05,MON-012,phase_shift,Trận Thế Chuyển Đổi,0.0,99,Thổ,,0,0,Thông báo chuyển pha,self,Chỉ kích hoạt theo phase; không tự gây sát thương
+SKL-013-01,MON-013,basic,Thường Kích,1,0,Không Gian,,0,0,Không,single,
+SKL-013-02,MON-013,signature,Hư Không Trảo,1.27,3,Không Gian,BLIND,0.25,0,Động tác,single,
+SKL-014-01,MON-014,basic,Thường Kích,1,0,Quang,,0,0,Không,single,
+SKL-014-02,MON-014,signature,Tinh Hồn Liên Kết,1.32,3,Quang,SLOW,0.25,0,Động tác,single,
+SKL-014-03,MON-014,secondary,Tinh Hồn Lang Huyền Kích,1.13,4,Quang,SLOW,0.12,0,Dư lực,single,
+SKL-015-01,MON-015,basic,Thường Kích,1,0,Ám,,0,0,Không,single,
+SKL-015-02,MON-015,signature,Ma Khôi Đoạt Mệnh,1.32,3,Ám,WEAKEN,0.25,0,Động tác,single,
+SKL-015-03,MON-015,secondary,Vô Tướng Ma Khôi Huyền Kích,1.13,4,Ám,WEAKEN,0.12,0,Dư lực,single,
+SKL-016-01,MON-016,basic,Thường Kích,1,0,Thổ,,0,0,Không,single,
+SKL-016-02,MON-016,signature,Pháp Tướng Diệt Sơn,1.42,3,Thổ,STUN,0.35,0,Hào quang,single,Boss CC hard giảm thành SLOW
+SKL-016-03,MON-016,secondary,Pháp Tướng Cự Linh Huyền Kích,1.21,4,Thổ,STUN,0.12,0,Dư lực,single,
+SKL-016-04,MON-016,ultimate,Pháp Tướng Cự Linh — Diệt Giới Thức,1.82,5,Thổ,STUN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-017-01,MON-017,basic,Thường Kích,1,0,Mộc,,0,0,Không,single,
+SKL-017-02,MON-017,signature,Giới Ngoại Toan Dịch,1.3,3,Mộc,POISON,0.25,0,Động tác,single,
+SKL-017-03,MON-017,secondary,Giới Ngoại Dị Trùng Huyền Kích,1.13,4,Mộc,POISON,0.12,0,Dư lực,single,
+SKL-018-01,MON-018,basic,Thường Kích,1,0,Kim,,0,0,Không,single,
+SKL-018-02,MON-018,signature,Vạn Kiếm Quy Tông,1.4,3,Kim,BLEED,0.35,0,Hào quang,single,
+SKL-018-03,MON-018,secondary,Cổ Kiếm Linh Huyền Kích,1.21,4,Kim,BLEED,0.12,0,Dư lực,single,
+SKL-018-04,MON-018,ultimate,Cổ Kiếm Linh — Diệt Giới Thức,1.82,5,Kim,BLEED,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-019-01,MON-019,basic,Thường Kích,1,0,Ám,,0,0,Không,single,
+SKL-019-02,MON-019,signature,Sát Hồn Vọng Âm,1.42,3,Ám,SILENCE,0.35,0,Hào quang,single,Boss CC hard giảm thành SLOW
+SKL-019-03,MON-019,secondary,Sát Hồn Vương Huyền Kích,1.21,4,Ám,SILENCE,0.12,0,Dư lực,single,
+SKL-019-04,MON-019,ultimate,Sát Hồn Vương — Diệt Giới Thức,1.82,5,Ám,SILENCE,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-020-01,MON-020,basic,Thường Kích,1,0,Lôi,,0,0,Không,single,
+SKL-020-02,MON-020,signature,Cửu Trọng Thiên Lôi,1.42,3,Lôi,BURN,0.35,0,Hào quang,single,
+SKL-020-03,MON-020,secondary,Lôi Kiếp Tán Hồn,1.21,4,Lôi,BURN,0.12,0,Dư lực,single,
+SKL-020-04,MON-020,ultimate,Giới Kiếp Lôi Linh — Diệt Giới Thức,1.95,5,Lôi,BURN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-020-05,MON-020,phase_shift,Trận Thế Chuyển Đổi,0.0,99,Lôi,,0,0,Thông báo chuyển pha,self,Chỉ kích hoạt theo phase; không tự gây sát thương
+SKL-021-01,MON-021,basic,Thường Kích,1,0,Quang,,0,0,Không,single,
+SKL-021-02,MON-021,signature,Tiên Hạc Linh Vũ,1.27,3,Quang,BLIND,0.25,0,Động tác,single,
+SKL-022-01,MON-022,basic,Thường Kích,1,0,Kim,,0,0,Không,single,
+SKL-022-02,MON-022,signature,Thiên Binh Trấn Tà,1.32,3,Kim,WEAKEN,0.25,0,Động tác,single,
+SKL-022-03,MON-022,secondary,Kim Giáp Tiên Vệ Huyền Kích,1.13,4,Kim,WEAKEN,0.12,0,Dư lực,single,
+SKL-023-01,MON-023,basic,Thường Kích,1,0,Ám,,0,0,Không,single,
+SKL-023-02,MON-023,signature,Sát Suy Xâm Thực,1.32,3,Ám,RES_DOWN,0.25,0,Động tác,single,
+SKL-023-03,MON-023,secondary,Sát Suy Ma Ảnh Huyền Kích,1.13,4,Ám,RES_DOWN,0.12,0,Dư lực,single,
+SKL-024-01,MON-024,basic,Thường Kích,1,0,Thời Gian,,0,0,Không,single,
+SKL-024-02,MON-024,signature,Thời Sa Nghịch Hành,1.42,3,Thời Gian,SLOW,0.35,0,Hào quang,single,
+SKL-024-03,MON-024,secondary,Thời Sa Cổ Thú Huyền Kích,1.21,4,Thời Gian,SLOW,0.12,0,Dư lực,single,
+SKL-024-04,MON-024,ultimate,Thời Sa Cổ Thú — Diệt Giới Thức,1.82,5,Thời Gian,SLOW,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-025-01,MON-025,basic,Thường Kích,1,0,Không Gian,,0,0,Không,single,
+SKL-025-02,MON-025,signature,Hư Không Long Tức,1.42,3,Không Gian,BLIND,0.35,0,Hào quang,single,
+SKL-025-03,MON-025,secondary,Hư Không Long Ảnh Huyền Kích,1.21,4,Không Gian,BLIND,0.12,0,Dư lực,single,
+SKL-025-04,MON-025,ultimate,Hư Không Long Ảnh — Diệt Giới Thức,1.82,5,Không Gian,BLIND,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-026-01,MON-026,basic,Thường Kích,1,0,Luân Hồi,,0,0,Không,single,
+SKL-026-02,MON-026,signature,Hồn Hà Tái Diễn,1.42,3,Luân Hồi,SILENCE,0.35,0,Hào quang,single,Boss CC hard giảm thành SLOW
+SKL-026-03,MON-026,secondary,Luân Hồi Hồn Tướng Huyền Kích,1.21,4,Luân Hồi,SILENCE,0.12,0,Dư lực,single,
+SKL-026-04,MON-026,ultimate,Luân Hồi Hồn Tướng — Diệt Giới Thức,1.82,5,Luân Hồi,SILENCE,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-027-01,MON-027,basic,Thường Kích,1,0,Ngũ Hành,,0,0,Không,single,
+SKL-027-02,MON-027,signature,Ngũ Hành Luân Chuyển,1.42,3,Ngũ Hành,BURN,0.35,0,Hào quang,single,
+SKL-027-03,MON-027,secondary,Đạo Tắc Hóa Thân Huyền Kích,1.21,4,Ngũ Hành,BURN,0.12,0,Dư lực,single,
+SKL-027-04,MON-027,ultimate,Đạo Tắc Hóa Thân — Diệt Giới Thức,1.82,5,Ngũ Hành,BURN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-028-01,MON-028,basic,Thường Kích,1,0,Lôi,,0,0,Không,single,
+SKL-028-02,MON-028,signature,Cửu Tiêu Phản Thiên,1.42,3,Lôi,WEAKEN,0.35,0,Hào quang,single,
+SKL-028-03,MON-028,secondary,Cửu Tiêu Phản Tiên Huyền Kích,1.21,4,Lôi,WEAKEN,0.12,0,Dư lực,single,
+SKL-028-04,MON-028,ultimate,Cửu Tiêu Phản Tiên — Diệt Giới Thức,1.82,5,Lôi,WEAKEN,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-029-01,MON-029,basic,Thường Kích,1,0,Thời Gian,,0,0,Không,single,
+SKL-029-02,MON-029,signature,Đại La Tàn Hưởng,1.42,3,Thời Gian,SLOW,0.35,0,Hào quang,single,
+SKL-029-03,MON-029,secondary,Đại La Tàn Ảnh Huyền Kích,1.21,4,Thời Gian,SLOW,0.12,0,Dư lực,single,
+SKL-029-04,MON-029,ultimate,Đại La Tàn Ảnh — Diệt Giới Thức,1.95,5,Thời Gian,SLOW,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-029-05,MON-029,phase_shift,Trận Thế Chuyển Đổi,0.0,99,Thời Gian,,0,0,Thông báo chuyển pha,self,Chỉ kích hoạt theo phase; không tự gây sát thương
+SKL-030-01,MON-030,basic,Thường Kích,1,0,Quang,,0,0,Không,single,
+SKL-030-02,MON-030,signature,Nhất Niệm Quy Phàm,1.42,3,Quang,SILENCE,0.35,0,Hào quang,single,Boss CC hard giảm thành SLOW
+SKL-030-03,MON-030,secondary,Đài Quy Hương Thủ Ảnh Huyền Kích,1.21,4,Quang,SILENCE,0.12,0,Dư lực,single,
+SKL-030-04,MON-030,ultimate,Đài Quy Hương Thủ Ảnh — Diệt Giới Thức,1.86,5,Quang,SILENCE,0.45,1,BOSS tích lực 1 lượt — thủ/né trước lượt tiếp theo,single,Không one-shot nếu người chơi đạt ngưỡng recommended; sát thương không vượt 55% max HP cho ultimate đầu tiên
+SKL-030-05,MON-030,phase_shift,Cổ Môn Biến Tướng,0.0,99,Quang,,0,0,Thông báo chuyển pha,self,Chỉ kích hoạt theo phase; không tự gây sát thương

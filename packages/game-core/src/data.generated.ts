@@ -8,9 +8,9 @@ export const STAGES: readonly Stage[] = [
     "name": "Phàm Nhân",
     "world": "Hạ Giới",
     "day_start": 0,
-    "day_end": 1,
-    "lifespan_cap_after": 120,
-    "clean_consumed_years": 10,
+    "day_end": 0.55,
+    "lifespan_cap_after": 111,
+    "clean_consumed_years": 5.5,
     "p_death_tang9": 0
   },
   {
@@ -18,10 +18,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "HG01",
     "name": "Luyện Khí",
     "world": "Hạ Giới",
-    "day_start": 1,
-    "day_end": 3,
-    "lifespan_cap_after": 160,
-    "clean_consumed_years": 30,
+    "day_start": 0.55,
+    "day_end": 1.65,
+    "lifespan_cap_after": 133,
+    "clean_consumed_years": 16.5,
     "p_death_tang9": 0.005
   },
   {
@@ -29,10 +29,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "HG02",
     "name": "Trúc Cơ",
     "world": "Hạ Giới",
-    "day_start": 3,
-    "day_end": 6,
-    "lifespan_cap_after": 220,
-    "clean_consumed_years": 60,
+    "day_start": 1.65,
+    "day_end": 3.3,
+    "lifespan_cap_after": 166,
+    "clean_consumed_years": 33,
     "p_death_tang9": 0.008
   },
   {
@@ -40,10 +40,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "HG03",
     "name": "Kim Đan",
     "world": "Hạ Giới",
-    "day_start": 6,
-    "day_end": 10,
-    "lifespan_cap_after": 300,
-    "clean_consumed_years": 100,
+    "day_start": 3.3,
+    "day_end": 5.5,
+    "lifespan_cap_after": 210,
+    "clean_consumed_years": 55,
     "p_death_tang9": 0.01
   },
   {
@@ -51,10 +51,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "HG04",
     "name": "Nguyên Anh",
     "world": "Hạ Giới",
-    "day_start": 10,
-    "day_end": 13,
-    "lifespan_cap_after": 360,
-    "clean_consumed_years": 130,
+    "day_start": 5.5,
+    "day_end": 7.15,
+    "lifespan_cap_after": 243,
+    "clean_consumed_years": 71.5,
     "p_death_tang9": 0.012
   },
   {
@@ -62,10 +62,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "HG05",
     "name": "Hóa Thần",
     "world": "Hạ Giới",
-    "day_start": 13,
-    "day_end": 15,
-    "lifespan_cap_after": 400,
-    "clean_consumed_years": 150,
+    "day_start": 7.15,
+    "day_end": 8.25,
+    "lifespan_cap_after": 265,
+    "clean_consumed_years": 82.5,
     "p_death_tang9": 0.03
   },
   {
@@ -73,10 +73,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "LG01",
     "name": "Luyện Hư",
     "world": "Linh Giới",
-    "day_start": 15,
-    "day_end": 20,
-    "lifespan_cap_after": 500,
-    "clean_consumed_years": 200,
+    "day_start": 8.25,
+    "day_end": 11,
+    "lifespan_cap_after": 320,
+    "clean_consumed_years": 110,
     "p_death_tang9": 0.01
   },
   {
@@ -84,10 +84,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "LG02",
     "name": "Hợp Thể",
     "world": "Linh Giới",
-    "day_start": 20,
-    "day_end": 27,
-    "lifespan_cap_after": 640,
-    "clean_consumed_years": 270,
+    "day_start": 11,
+    "day_end": 14.85,
+    "lifespan_cap_after": 397,
+    "clean_consumed_years": 148.5,
     "p_death_tang9": 0.012
   },
   {
@@ -95,10 +95,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "LG03",
     "name": "Đại Thừa",
     "world": "Linh Giới",
-    "day_start": 27,
-    "day_end": 33,
-    "lifespan_cap_after": 760,
-    "clean_consumed_years": 330,
+    "day_start": 14.85,
+    "day_end": 18.15,
+    "lifespan_cap_after": 463,
+    "clean_consumed_years": 181.5,
     "p_death_tang9": 0.015
   },
   {
@@ -106,10 +106,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "LG04",
     "name": "Độ Kiếp / Phi Thăng",
     "world": "Linh Giới",
-    "day_start": 33,
-    "day_end": 35,
-    "lifespan_cap_after": 800,
-    "clean_consumed_years": 350,
+    "day_start": 18.15,
+    "day_end": 19.25,
+    "lifespan_cap_after": 485,
+    "clean_consumed_years": 192.5,
     "p_death_tang9": 0.06
   },
   {
@@ -117,10 +117,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "TG01",
     "name": "Ngụy Tiên",
     "world": "Tiên Giới",
-    "day_start": 35,
-    "day_end": 39,
-    "lifespan_cap_after": 880,
-    "clean_consumed_years": 390,
+    "day_start": 19.25,
+    "day_end": 21.45,
+    "lifespan_cap_after": 529,
+    "clean_consumed_years": 214.5,
     "p_death_tang9": 0.01
   },
   {
@@ -128,10 +128,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "TG02",
     "name": "Chân Tiên",
     "world": "Tiên Giới",
-    "day_start": 39,
-    "day_end": 45,
-    "lifespan_cap_after": 1000,
-    "clean_consumed_years": 450,
+    "day_start": 21.45,
+    "day_end": 24.75,
+    "lifespan_cap_after": 595,
+    "clean_consumed_years": 247.5,
     "p_death_tang9": 0.012
   },
   {
@@ -139,10 +139,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "TG03",
     "name": "Kim Tiên",
     "world": "Tiên Giới",
-    "day_start": 45,
-    "day_end": 51,
-    "lifespan_cap_after": 1120,
-    "clean_consumed_years": 510,
+    "day_start": 24.75,
+    "day_end": 28.05,
+    "lifespan_cap_after": 661,
+    "clean_consumed_years": 280.5,
     "p_death_tang9": 0.015
   },
   {
@@ -150,10 +150,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "TG04",
     "name": "Thái Ất",
     "world": "Tiên Giới",
-    "day_start": 51,
-    "day_end": 56,
-    "lifespan_cap_after": 1220,
-    "clean_consumed_years": 560,
+    "day_start": 28.05,
+    "day_end": 30.8,
+    "lifespan_cap_after": 716,
+    "clean_consumed_years": 308,
     "p_death_tang9": 0.02
   },
   {
@@ -161,10 +161,10 @@ export const STAGES: readonly Stage[] = [
     "stage_id": "TG05",
     "name": "Đại La sơ nhập / Đài Quy Hương",
     "world": "Tiên Giới",
-    "day_start": 56,
-    "day_end": 60,
-    "lifespan_cap_after": 1300,
-    "clean_consumed_years": 600,
+    "day_start": 30.8,
+    "day_end": 33,
+    "lifespan_cap_after": 760,
+    "clean_consumed_years": 330,
     "p_death_tang9": 0.025
   }
 ] as const;
@@ -375,6 +375,178 @@ export const TM_CATALOG: readonly CatalogEntry[] = [
   }
 ] as const;
 export const RULES = {
+  "design_version": "1.6.1",
+  "tier_seconds": [
+    [
+      2556,
+      2808,
+      3024,
+      3312,
+      3600,
+      3924.0000000000005,
+      4284,
+      4680,
+      5076
+    ],
+    [
+      5105.454545454546,
+      5563.636363636363,
+      6054.545454545455,
+      6610.909090909091,
+      7232.727272727273,
+      7854.545454545454,
+      8574.545454545454,
+      9327.272727272726,
+      10178.181818181818
+    ],
+    [
+      7646.280991735536,
+      8360.330578512398,
+      9104.13223140496,
+      9937.190082644629,
+      10829.752066115703,
+      11811.570247933883,
+      12852.892561983472,
+      14013.223140495867,
+      15262.809917355371
+    ],
+    [
+      10223.89181066867,
+      11143.501126972202,
+      12144.252441773104,
+      13253.193087903832,
+      14443.27573253193,
+      15714.500375657402,
+      17148.00901577761,
+      18689.706987227648,
+      20366.641622839972
+    ],
+    [
+      7671.6071306604745,
+      8360.084693668465,
+      9097.739225462743,
+      9933.747694829588,
+      10818.93313298272,
+      11802.472508708423,
+      12835.188853220408,
+      14015.436104091252,
+      15269.44880814152
+    ],
+    [
+      5118.907171685812,
+      5565.973300217323,
+      6080.099348028562,
+      6616.578702266376,
+      7220.117975783918,
+      7846.010555728034,
+      8561.316361378453,
+      9343.682086308598,
+      10170.754424091896
+    ],
+    [
+      12781.666290358997,
+      13919.620681869495,
+      15179.498758184693,
+      16540.97990517047,
+      18024.38473696094,
+      19650.03386769022,
+      21417.92729735832,
+      23348.385640099346,
+      25441.4088959133
+    ],
+    [
+      17882.691024785756,
+      19489.91635449274,
+      21244.932519115308,
+      23147.739518653463,
+      25235.285061836097,
+      27507.56914866321,
+      30001.539487863705,
+      32680.248370708676,
+      35636.06506902038
+    ],
+    [
+      15316.290352677737,
+      16710.207128195558,
+      18221.68314984139,
+      19850.718417615226,
+      21630.901287553646,
+      23579.025937674938,
+      25711.886545997386,
+      28012.688934502705,
+      30531.815637245756
+    ],
+    [
+      5099.452903006913,
+      5572.755417956657,
+      6076.59357903219,
+      6610.967386233513,
+      7206.412485686416,
+      7862.928877390898,
+      8565.248738284066,
+      9343.90771449171,
+      10183.637982950931
+    ],
+    [
+      10215.522226934494,
+      11131.588078806339,
+      12144.812430119135,
+      13241.315495238461,
+      14434.977059798744,
+      15725.797123799977,
+      17141.53525851101,
+      18682.191463931835,
+      20361.64552569688
+    ],
+    [
+      15330.692930496654,
+      16706.03904524903,
+      18207.563702639232,
+      19847.884756931056,
+      21639.62006238828,
+      23582.7696190109,
+      25702.56913532649,
+      28024.254319862604,
+      30547.825172619254
+    ],
+    [
+      15325.006372673977,
+      16701.503951057864,
+      18215.651287280143,
+      19844.506755034414,
+      21645.42442008667,
+      23583.991842977313,
+      25706.092276319145,
+      28023.19653326536,
+      30546.77542696916
+    ],
+    [
+      12774.092633896242,
+      13921.154013266518,
+      15172.493699852272,
+      16538.539524375054,
+      18029.71931755641,
+      19656.460910117894,
+      21418.764302059495,
+      23347.912985545867,
+      25454.334791298556
+    ],
+    [
+      10219.354838709678,
+      11138.907175773535,
+      12134.29888084266,
+      13233.969716919026,
+      14418.959842001317,
+      15717.709019091506,
+      17139.697169190254,
+      18684.924292297565,
+      20362.87030941409
+    ]
+  ],
+  "progression_reference": {
+    "effective_hours_per_day": 16.8,
+    "note": "XP reference assumes one collection per 24h; two evenly spaced collections yield 21.6h before other bonuses. Calendar completion must be validated separately."
+  },
   "offline": {
     "full_hours": 8,
     "mid_efficiency": 0.7,

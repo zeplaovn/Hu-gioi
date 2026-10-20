@@ -28,10 +28,13 @@ describe("api client", () => {
     await api.confirmBreakthrough("abc");
     await api.upgradeStat("CanCot");
     await api.buyItem("TMITEM-004");
-    expect(calls.map((c) => c.url.split("/api")[1])).toEqual(["/breakthrough/confirm", "/tm/stat", "/tm/item"]);
+    await api.prepareLifespan();
+    await api.confirmLifespan("intent-1");
+    expect(calls.map((c) => c.url.split("/api")[1])).toEqual(["/breakthrough/confirm", "/tm/stat", "/tm/item", "/lifespan/prepare", "/lifespan/confirm"]);
     expect(JSON.parse(calls[0].init.body)).toEqual({ intent_id: "abc" });
     expect(JSON.parse(calls[1].init.body)).toEqual({ stat: "CanCot" });
     expect(JSON.parse(calls[2].init.body)).toEqual({ item_id: "TMITEM-004" });
+    expect(JSON.parse(calls[4].init.body)).toEqual({ intent_id: "intent-1" });
   });
   it("không có token: 401 và KHÔNG gọi mạng", async () => {
     const { api, calls } = mk(() => ok({}), null);

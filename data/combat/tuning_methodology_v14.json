@@ -1,0 +1,20 @@
+{
+  "source": "combat data FINAL v1.3 (unmodified snapshots); newly balanced v1.4 data only",
+  "target_role": {
+    "Thường": 99,
+    "Tinh anh": 95,
+    "Boss nhỏ": 96,
+    "Boss": 93,
+    "Boss cuối map": 87,
+    "Boss endgame": 78,
+    "Boss cốt truyện": 92
+  },
+  "n_holdout_seeds_per_monster_gear": 420,
+  "seed_distribution": "1000000 + monster_index*5000 + j*11",
+  "gear_profiles": {
+    "tham_chieu": 1.3,
+    "chuan_bi": 1.45,
+    "thieu_do": 1.18
+  },
+  "note": "Win percent only applies to deterministic demo bot and enabled mechanics. Cannot claim production outcomes or 60-day SLA."
+}

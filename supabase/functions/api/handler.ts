@@ -23,6 +23,8 @@ const STATUS: Record<string, number> = {
   intent_consumed: 409, intent_expired: 409, intent_stale: 409,
   insufficient_tm: 409, max_level: 409, limit_reached: 409,
   intent_not_found: 404, stat_not_found: 404, item_not_found: 404, life_not_found: 404,
+  lifespan_not_exhausted: 409, lifespan_intent_consumed: 409, lifespan_intent_expired: 409,
+  lifespan_intent_not_found: 404,
 };
 
 class HttpError extends Error { constructor(readonly status: number, readonly code: string) { super(code); } }
@@ -77,6 +79,18 @@ const ROUTES: Record<string, Route> = {
       const id = body.intent_id;
       if (typeof id !== "string" || !UUID.test(id)) throw new HttpError(400, "invalid_intent_id");
       return call(rpc, "breakthrough_confirm", { p_account: uid, p_intent: id });
+    },
+  },
+  "/lifespan/prepare": {
+    method: "POST", limit: ["lifespan", 6, 60],
+    run: ({ uid, rpc }) => call(rpc, "lifespan_prepare", { p_account: uid }),
+  },
+  "/lifespan/confirm": {
+    method: "POST", limit: ["lifespan", 6, 60],
+    run: ({ uid, body, rpc }) => {
+      const id = body.intent_id;
+      if (typeof id !== "string" || !UUID.test(id)) throw new HttpError(400, "invalid_intent_id");
+      return call(rpc, "lifespan_confirm", { p_account: uid, p_intent: id });
     },
   },
   "/tm/stat": {

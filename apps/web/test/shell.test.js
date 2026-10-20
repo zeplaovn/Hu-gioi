@@ -35,6 +35,7 @@ describe("shell: trạng thái và gợi ý", () => {
     expect(idleStatus(life({ tang: 9 })).text).toContain("tích tụ");
     expect(idleStatus(life({ tang: 9, ready_for_major: true })).tone).toBe("gold");
     expect(idleStatus(life({ status: "cleared" })).text).toContain("hoàn tất");
+    expect(idleStatus(life({ lifespan: { used_years: 300, cap_years: 300, exhausted: true } })).text).toContain("chờ xác nhận");
   });
   it("cheapestUpgrade bỏ stat đã tối đa", () => {
     expect(cheapestUpgrade(stats())).toEqual({ key: "TuongMao", cost: 6 });

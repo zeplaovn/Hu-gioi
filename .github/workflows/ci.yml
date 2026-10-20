@@ -18,12 +18,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: 10 }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - name: Dữ liệu sinh ra khớp data/*.csv
         run: pnpm gen:check
+      - name: Nội dung và mốc XP v1.6.1
+        run: pnpm test:content
       - name: game-core + web (unit test)
         run: |
           pnpm --filter @hu-gioi/game-core test

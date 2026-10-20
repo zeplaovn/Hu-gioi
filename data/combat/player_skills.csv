@@ -1,0 +1,31 @@
+﻿id,name,element,tier,coefficient,cooldown,qi_cost_pct,unlock,special_effect,effect_chance,is_game_canon,design_status
+PSK-01-1,Kiếm Khí Trảm,Kim,1,1.2,2,12,Hạ Giới / Luyện Khí,PEN,0.25,False,Combat v1.3 đề xuất
+PSK-01-2,Xuyên Phong Kiếm,Kim,2,1.48,3,18,Linh Giới / Luyện Hư,PEN,0.32,False,Combat v1.3 đề xuất
+PSK-01-3,Kiếm Ý Vô Song,Kim,3,1.82,5,26,Tiên Giới / Chân Tiên,PEN,0.4,False,Combat v1.3 đề xuất
+PSK-02-1,Mộc Linh Thứ,Mộc,1,1.2,2,12,Hạ Giới / Luyện Khí,HEAL,0.25,False,Combat v1.3 đề xuất
+PSK-02-2,Thanh Mộc Hồi Xuân,Mộc,2,1.48,3,18,Linh Giới / Luyện Hư,HEAL,0.32,False,Combat v1.3 đề xuất
+PSK-02-3,Vạn Mộc Triều Tông,Mộc,3,1.82,5,26,Tiên Giới / Chân Tiên,HEAL,0.4,False,Combat v1.3 đề xuất
+PSK-03-1,Thủy Tiễn Thuật,Thủy,1,1.2,2,12,Hạ Giới / Luyện Khí,SLOW,0.25,False,Combat v1.3 đề xuất
+PSK-03-2,Hàn Triều Tỏa,Thủy,2,1.48,3,18,Linh Giới / Luyện Hư,SLOW,0.32,False,Combat v1.3 đề xuất
+PSK-03-3,Thương Hải Lưu Chuyển,Thủy,3,1.82,5,26,Tiên Giới / Chân Tiên,SLOW,0.4,False,Combat v1.3 đề xuất
+PSK-04-1,Hỏa Cầu Thuật,Hỏa,1,1.2,2,12,Hạ Giới / Luyện Khí,BURN,0.25,False,Combat v1.3 đề xuất
+PSK-04-2,Liệt Diễm Trảm,Hỏa,2,1.48,3,18,Linh Giới / Luyện Hư,BURN,0.32,False,Combat v1.3 đề xuất
+PSK-04-3,Phần Thiên Đạo Hỏa,Hỏa,3,1.82,5,26,Tiên Giới / Chân Tiên,BURN,0.4,False,Combat v1.3 đề xuất
+PSK-05-1,Địa Thứ Thuật,Thổ,1,1.2,2,12,Hạ Giới / Luyện Khí,GUARD,0.25,False,Combat v1.3 đề xuất
+PSK-05-2,Thổ Thuẫn Hộ Thân,Thổ,2,1.48,3,18,Linh Giới / Luyện Hư,GUARD,0.32,False,Combat v1.3 đề xuất
+PSK-05-3,Sơn Hà Trấn Ngục,Thổ,3,1.82,5,26,Tiên Giới / Chân Tiên,GUARD,0.4,False,Combat v1.3 đề xuất
+PSK-06-1,Hàn Ngưng Kích,Băng,1,1.2,2,12,Hạ Giới / Luyện Khí,SLOW,0.25,False,Combat v1.3 đề xuất
+PSK-06-2,Băng Phong Trận,Băng,2,1.48,3,18,Linh Giới / Luyện Hư,SLOW,0.32,False,Combat v1.3 đề xuất
+PSK-06-3,Cửu U Hàn Vực,Băng,3,1.82,5,26,Tiên Giới / Chân Tiên,SLOW,0.4,False,Combat v1.3 đề xuất
+PSK-07-1,Lôi Kích Thuật,Lôi,1,1.2,2,12,Hạ Giới / Luyện Khí,PEN,0.25,False,Combat v1.3 đề xuất
+PSK-07-2,Thiên Lôi Chưởng,Lôi,2,1.48,3,18,Linh Giới / Luyện Hư,PEN,0.32,False,Combat v1.3 đề xuất
+PSK-07-3,Cửu Lôi Diệt Kiếp,Lôi,3,1.82,5,26,Tiên Giới / Chân Tiên,PEN,0.4,False,Combat v1.3 đề xuất
+PSK-08-1,Phong Nhận Thuật,Phong,1,1.2,2,12,Hạ Giới / Luyện Khí,EVA,0.25,False,Combat v1.3 đề xuất
+PSK-08-2,Tật Phong Liên Trảm,Phong,2,1.48,3,18,Linh Giới / Luyện Hư,EVA,0.32,False,Combat v1.3 đề xuất
+PSK-08-3,Cửu Thiên Phong Vực,Phong,3,1.82,5,26,Tiên Giới / Chân Tiên,EVA,0.4,False,Combat v1.3 đề xuất
+PSK-09-1,Thanh Quang Kích,Quang,1,1.2,2,12,Hạ Giới / Luyện Khí,HEAL,0.25,False,Combat v1.3 đề xuất
+PSK-09-2,Ngọc Dương Phổ Chiếu,Quang,2,1.48,3,18,Linh Giới / Luyện Hư,HEAL,0.32,False,Combat v1.3 đề xuất
+PSK-09-3,Đại Nhật Thanh Tâm,Quang,3,1.82,5,26,Tiên Giới / Chân Tiên,HEAL,0.4,False,Combat v1.3 đề xuất
+PSK-10-1,Ám Ảnh Thích,Ám,1,1.2,2,12,Hạ Giới / Luyện Khí,SILENCE,0.25,False,Combat v1.3 đề xuất
+PSK-10-2,U Minh Hấp Hồn,Ám,2,1.48,3,18,Linh Giới / Luyện Hư,SILENCE,0.32,False,Combat v1.3 đề xuất
+PSK-10-3,Thập Phương Diệt Niệm,Ám,3,1.82,5,26,Tiên Giới / Chân Tiên,SILENCE,0.4,False,Combat v1.3 đề xuất

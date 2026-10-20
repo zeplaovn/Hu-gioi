@@ -1,0 +1,55 @@
+{
+  "runs": 20000,
+  "seed": 20261017,
+  "note": "Design-level model; hazards are ASSUMPTIONS, not telemetry.",
+  "sensitivity": [
+    {
+      "hazard_scale": 0.5,
+      "p10_days": 27.62,
+      "p25_days": 30.39,
+      "median_days": 34.07,
+      "p75_days": 39.07,
+      "p90_days": 49.33,
+      "mean_days": 36.87,
+      "first_life_clear_pct": 84.1,
+      "mean_deaths": 0.189,
+      "p90_lives": 2.0,
+      "median_tm_earned": 135.0,
+      "median_tm_spent": 0.0,
+      "later_life_clean_days_median": 32.29,
+      "later_life_samples": 3180
+    },
+    {
+      "hazard_scale": 1.0,
+      "p10_days": 28.0,
+      "p25_days": 31.09,
+      "median_days": 35.49,
+      "p75_days": 43.91,
+      "p90_days": 62.43,
+      "mean_days": 40.88,
+      "first_life_clear_pct": 70.44,
+      "mean_deaths": 0.412,
+      "p90_lives": 2.0,
+      "median_tm_earned": 135.0,
+      "median_tm_spent": 0.0,
+      "later_life_clean_days_median": 32.33,
+      "later_life_samples": 5913
+    },
+    {
+      "hazard_scale": 1.5,
+      "p10_days": 28.48,
+      "p25_days": 31.84,
+      "median_days": 37.05,
+      "p75_days": 51.89,
+      "p90_days": 72.15,
+      "mean_days": 45.03,
+      "first_life_clear_pct": 59.62,
+      "mean_deaths": 0.664,
+      "p90_lives": 3.0,
+      "median_tm_earned": 135.0,
+      "median_tm_spent": 0.0,
+      "later_life_clean_days_median": 32.22,
+      "later_life_samples": 8076
+    }
+  ]
+}

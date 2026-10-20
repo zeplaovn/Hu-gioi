@@ -28,9 +28,10 @@ export function createPlayView({ game }) {
   const dismissed = new Set();                      // gợi ý đã tắt trong phiên này
 
   const confirmDlg = createDialog({ title: "Xác nhận đại đột phá", onclose: () => { if (game.prepared) game.cancelPrepare(); } });
+  const lifespanDlg = createDialog({ title: "Xác nhận tọa hóa", onclose: () => { if (game.lifespanPrepared) game.cancelLifespan(); } });
   const resultDlg = createDialog({ title: "", onclose: () => { if (game.result) game.dismissResult(); } });
   const bagDlg = createDialog({ title: "Túi đồ", onclose: () => { bagOpen = false; } });
-  const el = h("div", null, errBox, stage, confirmDlg.el, resultDlg.el, bagDlg.el);
+  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el);
 
   let mode = null, ui = null, scene = null, menu = null;
 
@@ -97,10 +98,16 @@ export function createPlayView({ game }) {
     const hintCta = h("span", { class: "hint-cta" });
     const hintClose = h("button", { type: "button", class: "btn ghost sm hint-x", "aria-label": "Tắt gợi ý", title: "Tắt gợi ý" }, "✕");
     const hintBox = h("div", { class: "hint-box", role: "status", hidden: true }, h("span", { "aria-hidden": "true" }, "💡"), hintText, hintCta, hintClose);
-    const idlePanel = h("div", { class: "panel idle-panel" }, h("div", { class: "idle-row" }, idleState, h("span", { class: "spacer" }), idleRate), stageBar.el, idleNote, hintBox);
+    const lifespanNote = h("div", { class: "notice error", role: "status", hidden: true },
+      h("p", null, "Thọ nguyên đã cạn. Tu vi dừng lại; ngươi vẫn sống. Chỉ tọa hóa khi tự xác nhận hai bước."),
+      h("button", { class: "btn danger sm", type: "button", onclick: () => {
+        if (game.state?.pending_lifespan_intent) game.resumeLifespan();
+        else void game.prepareLifespan();
+      } }, "Chuẩn bị tọa hóa"));
+    const idlePanel = h("div", { class: "panel idle-panel" }, h("div", { class: "idle-row" }, idleState, h("span", { class: "spacer" }), idleRate), stageBar.el, idleNote, lifespanNote, hintBox);
 
     const clearedNote = h("p", { class: "notice", role: "status", hidden: true, style: { marginTop: "10px" } },
-      "Ngươi đã hoàn tất tuyến chính và đứng tại Đài Quy Hương. Kiếp này kết thúc trong vinh quang; Thiên Mệnh đã được ghi vào Bia.");
+      "Ngươi đã hoàn tất tuyến chính và đứng tại Đài Quy Hương. Thiên Mệnh đã được ghi vào Bia. Kết thúc Quy Phàm và các nhánh hậu truyện chưa mở trong phiên bản này.");
 
     const state = { lastLogId: 0, follow: true };
     const jumpBtn = h("button", { class: "log-jump", type: "button", hidden: true, onclick: () => { state.follow = true; jumpBtn.hidden = true; logEl.scrollTop = logEl.scrollHeight; } }, "↓ Tin mới");
@@ -119,7 +126,7 @@ export function createPlayView({ game }) {
       menu.dock);
 
     ui = { realm, pname, sub, expBar, ageBar, statBars, kv, clearedNote, logEl, jumpBtn, state,
-      idleState, idleRate, stageBar, idleNote, hintBox, hintText, hintCta, hintClose, hintId: null };
+      idleState, idleRate, stageBar, idleNote, lifespanNote, hintBox, hintText, hintCta, hintClose, hintId: null };
   }
 
   function syncLog() {
@@ -183,6 +190,7 @@ export function createPlayView({ game }) {
     ui.idleNote.textContent = life.status === "cleared"
       ? "Kiếp đã viên mãn."
       : `Thọ nguyên còn ${num(lifespanLeft(life))} năm. Vắng mặt không gây tử vong: tầng 1–8 vẫn tự tiến, tới tầng 9 game dừng chờ ngươi.`;
+    ui.lifespanNote.hidden = !(life.status === "alive" && life.lifespan.exhausted);
     drawHint(s);
 
     scene.update({ world: w.id, season, color: w.color, pulse: game.pulse, label: `${life.stage.world} · mùa ${SEASON_NAME[season]}` });
@@ -219,6 +227,23 @@ export function createPlayView({ game }) {
           h("div", { class: "row" }, confirmBtn, h("button", { class: "btn ghost", onclick: () => game.cancelPrepare() }, "Để sau"))));
       confirmDlg.show();
     } else { understood = false; confirmDlg.hide(); }
+
+    const lp = game.lifespanPrepared;
+    if (lp) {
+      let acknowledged = false;
+      const confirm = h("button", { class: "btn danger", type: "button", disabled: true, onclick: () => game.confirmLifespan() }, "Tọa hóa và trùng sinh");
+      const understand = h("input", { type: "checkbox", onchange: (e) => {
+        acknowledged = e.target.checked;
+        confirm.disabled = game.busy || !acknowledged;
+      } });
+      clear(lifespanDlg.body, h("div", { class: "stack" },
+        h("p", null, lp.warning),
+        h("p", { class: "dim" }, "Lời xác nhận có hiệu lực 120 giây. Không bấm xác nhận thì nhân vật vẫn sống."),
+        h("label", { class: "check" }, understand, " Ta hiểu: chết thật mất toàn bộ tài sản của kiếp, giữ Thiên Mệnh."),
+        h("div", { class: "row" }, confirm,
+          h("button", { class: "btn ghost", type: "button", onclick: () => game.cancelLifespan() }, "Để sau"))));
+      lifespanDlg.show();
+    } else lifespanDlg.hide();
 
     const r = game.result;
     if (r) {
@@ -267,7 +292,7 @@ export function createPlayView({ game }) {
     el, render,
     destroy() {
       window.removeEventListener("keydown", onKey);
-      scene?.destroy(); confirmDlg.hide(); resultDlg.hide(); bagDlg.hide();
+      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide();
     },
   };
 }

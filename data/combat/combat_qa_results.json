@@ -1,0 +1,402 @@
+{
+  "schema": "COMBAT v1.3 QA report",
+  "checks_passed": 77,
+  "checks_failed": 0,
+  "warnings": [],
+  "pvp_400_equal_build_A_win_pct": 50.75,
+  "benchmarks": {
+    "n_monsters": 30,
+    "gear_levels": [
+      1.3,
+      1.45
+    ],
+    "seeds_per_monster_gear": 120
+  },
+  "checks": [
+    {
+      "result": "PASS",
+      "name": "15 progression stages",
+      "detail": 15
+    },
+    {
+      "result": "PASS",
+      "name": "Exactly 30 source monsters retained",
+      "detail": 30
+    },
+    {
+      "result": "PASS",
+      "name": "Source identity untouched: id",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Source identity untouched: name",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Source identity untouched: world",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Source identity untouched: realm",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Source identity untouched: type",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "106 monster skills",
+      "detail": 106
+    },
+    {
+      "result": "PASS",
+      "name": "30 player skills",
+      "detail": 30
+    },
+    {
+      "result": "PASS",
+      "name": "50 boss phases",
+      "detail": 50
+    },
+    {
+      "result": "PASS",
+      "name": "450 monster elemental resistances",
+      "detail": 450
+    },
+    {
+      "result": "PASS",
+      "name": "30 encounter presets",
+      "detail": 30
+    },
+    {
+      "result": "PASS",
+      "name": "11 battle modes",
+      "detail": 11
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: monster",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: skills",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: player",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: phases",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: res",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: enc",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Unique identifiers: stage",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Every skill references an existing monster",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Every phase references an existing monster",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Every elemental RES row references a monster",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Every encounter references a monster",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Every monster references valid progression stage",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Monster stats are strictly positive",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Monster stat caps respected",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Monster minor_tier within 1..9",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Damage coefficients valid",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Element resistance caps valid",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "No fourth main map in monsters",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Monster has complete elemental RES coverage",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "phase_count matches boss_phases.csv",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "No ambiguous mode enums",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Secret final boss is not in public monster CSV",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "TM shop exclusives absent from normal drops",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage HG00",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage HG01",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage HG02",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage HG03",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage HG04",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage HG05",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage LG01",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage LG02",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage LG03",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage LG04",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage TG01",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage TG02",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage TG03",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage TG04",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Reference stats stage TG05",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "HG03 reference stat reproducibility",
+      "detail": "(1669, 235, 127, 161)"
+    },
+    {
+      "result": "PASS",
+      "name": "MON-007 reference stats",
+      "detail": "(2060, 162, 90)"
+    },
+    {
+      "result": "PASS",
+      "name": "Identical seed yields identical battle replay",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Battle log populated",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "HP zero mode=False: KO_SAFE",
+      "detail": "KO_SAFE"
+    },
+    {
+      "result": "PASS",
+      "name": "HP zero mode=True: DEATH",
+      "detail": "DEATH"
+    },
+    {
+      "result": "PASS",
+      "name": "TM +1 unique milestone per life",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Ascension same life, preserves items and TM",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Real death resets all life assets",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Real death preserves TM/meta permanent stats",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Repeat death event cannot duplicate life_count/reward",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Minor breakthroughs cannot kill",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Fifth attempt guaranteed (provided prerequisites)",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Final ascension success awards only +1 TM",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Correct ascension map flag",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Luận Đạo KO is nonlethal",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Sinh Tử confirmed HP=0 is lethal",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Disconnect forfeit is not death (proposal v1.3)",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "No corpse looting in PvP (proposal v1.3)",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "TM stat scaling 100% PvE vs 50% ranked PvP",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "PvP symmetry 400 seeded identical builds ±10% tolerance",
+      "detail": "A wins 203/400"
+    },
+    {
+      "result": "PASS",
+      "name": "All 30 monsters benchmarked at 2 gear levels",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Benchmark outcomes sum to 100%",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "User-provided FINAL v1.3 ZIP CRC integrity",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Original canonical plan kept as immutable source",
+      "detail": ""
+    },
+    {
+      "result": "PASS",
+      "name": "Chaos final boss details segregated internally",
+      "detail": ""
+    }
+  ]
+}

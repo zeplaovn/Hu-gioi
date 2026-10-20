@@ -1,10 +1,11 @@
 /* Cảnh động (canvas) port từ scene.js của bản cũ: nền parallax theo map + mùa, hạt mùa, nhân vật ngồi thiền, hào quang đột phá.
    Chỉ vẽ; không giữ trạng thái game. Tôn trọng prefers-reduced-motion. */
-import { assetBase } from "../config.js";
+import { assetBase, resolveAssetUrl } from "../config.js";
 import { h } from "./dom.js";
 
 const cache = new Map();
 function load(src) {
+  src = resolveAssetUrl(src);
   let im = cache.get(src);
   if (!im) { im = new Image(); im.decoding = "async"; im.src = src; cache.set(src, im); }
   return im;

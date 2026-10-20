@@ -1,0 +1,51 @@
+﻿monster_id,phase,hp_pct_range,name,effect,counterplay,ultimate_skill_id,trigger_once
+MON-007,1,100-50,Cuồng Nộ,"ATK +6% mỗi 2 vòng, tối đa +18%",Chuyển sang guard khi vượt hai vòng rage,SKL-007-04,True
+MON-007,2,50-0,Huyết Cuồng,Chảy máu +1 lượt,Dùng giải trạng thái,SKL-007-04,True
+MON-008,1,100-65,Triều Khởi,Đòn thủy đơn mục tiêu,Kháng thủy và né,SKL-008-04,True
+MON-008,2,65-30,Thủy Lao,Slow 1 vòng,Kháng/giải trạng thái,SKL-008-04,True
+MON-008,3,30-0,Giao Long Hống,Ultimate có báo trước,Thủ trong lượt tích lực,SKL-008-04,True
+MON-009,1,100-65,Hỏa Tinh,Burn trên kỹ năng,Kháng hỏa,SKL-009-04,True
+MON-009,2,65-30,Phần Thiên,Tích hỏa cộng dồn,Giải burn,SKL-009-04,True
+MON-009,3,30-0,Lân Hỏa Bạo,Ultimate báo trước,Thủ/tạo khiên,SKL-009-04,True
+MON-010,1,100-65,Cửu Ảnh,Debuff giảm chính xác,Trang bị ACC,SKL-010-04,True
+MON-010,2,65-30,Huyễn Cảnh,1 lượt câm lặng,Đợi hoặc giải trạng thái,SKL-010-04,True
+MON-010,3,30-0,Vọng Tâm,Ultimate báo trước,Giữ bình tĩnh/guard,SKL-010-04,True
+MON-011,1,100-65,Phong Liệt,Tăng tốc 8%,Trói/giảm tốc,SKL-011-04,True
+MON-011,2,65-30,Kim Dực,EVA +8 điểm,Tăng ACC,SKL-011-04,True
+MON-011,3,30-0,Thiên Phong,Ultimate báo trước,Guard,SKL-011-04,True
+MON-012,1,100-70,Huyền Giáp,Giảm sát thương nhận 12%,Xuyên giáp/skill hệ phù hợp,SKL-012-04,True
+MON-012,2,70-40,Hóa Sơn,SHIELD 12% max HP một lần,Phá khiên rồi tấn công,SKL-012-04,True
+MON-012,3,40-0,Địa Trấn,Ultimate báo trước,"Thủ, giữ thuốc hồi phục",SKL-012-04,True
+MON-016,1,100-65,Tụ Linh,ATK +8%,Giảm damage nhận,SKL-016-04,True
+MON-016,2,65-30,Pháp Tướng,Giảm DEF mục tiêu,Giải debuff,SKL-016-04,True
+MON-016,3,30-0,Diệt Sơn,Ultimate báo trước,Guard,SKL-016-04,True
+MON-018,1,100-65,Đoạn Kiếm,Liên kích,Giữ phòng thủ,SKL-018-04,True
+MON-018,2,65-30,Kiếm Trận,Phá giáp,Dùng RES/giải debuff,SKL-018-04,True
+MON-018,3,30-0,Vạn Kiếm,Ultimate báo trước,Guard,SKL-018-04,True
+MON-019,1,100-65,Sát Ý,Thần hồn công kích,Dưỡng thần,SKL-019-04,True
+MON-019,2,65-30,Hồn Vọng,Silence 1 lượt,Giải trạng thái,SKL-019-04,True
+MON-019,3,30-0,Ma Âm,Ultimate báo trước,Guard,SKL-019-04,True
+MON-020,1,100-70,Lôi Trùng,Lôi điện tăng dần,Chuẩn bị chống lôi,SKL-020-04,True
+MON-020,2,70-40,Giới Kiếp,Tích lôi/giảm RES,"Giải suy, guard",SKL-020-04,True
+MON-020,3,40-0,Cửu Lôi,Ultimate tích lực,Guard + buff kháng lôi,SKL-020-04,True
+MON-024,1,100-65,Sa Hành,Slow,Giải trạng thái,SKL-024-04,True
+MON-024,2,65-30,Thời Đình,SPD -15%,Sử dụng kháng,SKL-024-04,True
+MON-024,3,30-0,Nghịch Sa,Ultimate,Guard,SKL-024-04,True
+MON-025,1,100-65,Hư Liệt,Giảm chính xác,Tăng ACC,SKL-025-04,True
+MON-025,2,65-30,Đoạn Không,PEN +10%,Tăng HP,SKL-025-04,True
+MON-025,3,30-0,Long Tức,Ultimate tích lực,Guard,SKL-025-04,True
+MON-026,1,100-65,Hồi Ức,SPIRIT +10%,Dưỡng hồn,SKL-026-04,True
+MON-026,2,65-30,Mệnh Hà,Silence,Giải trạng thái,SKL-026-04,True
+MON-026,3,30-0,Tái Diễn,Ultimate,Guard,SKL-026-04,True
+MON-027,1,100-65,Kim Mộc,Kháng ngũ hành,Đổi hệ,SKL-027-04,True
+MON-027,2,65-30,Thủy Hỏa,Burn tăng,Giải burn,SKL-027-04,True
+MON-027,3,30-0,Thổ Không,Ultimate,Guard,SKL-027-04,True
+MON-028,1,100-65,Phản Tiên,Phản 5% damage không vượt 5% HP player mỗi đòn,Đánh an toàn,SKL-028-04,True
+MON-028,2,65-30,Lôi Phạt,PEN +12%,Guard,SKL-028-04,True
+MON-028,3,30-0,Cửu Tiêu,Ultimate,Guard,SKL-028-04,True
+MON-029,1,100-70,Đại La Hình,Đòn thời gian,Kháng pháp,SKL-029-04,True
+MON-029,2,70-40,Đạo Ảnh,Đổi hiệu ứng mỗi 3 lượt,Quan sát điện văn,SKL-029-04,True
+MON-029,3,40-0,Tàn Hưởng,"Ultimate, báo trước",Guard trong lượt tích lực,SKL-029-04,True
+MON-030,1,100-70,Ký Ức,Thử thách tránh bạo kích,Không tấn công vô nghĩa,SKL-030-04,True
+MON-030,2,70-40,Hương Giới,Khiên + lời nhắc Quy Phàm,Phá khiên có kiểm soát,SKL-030-04,True
+MON-030,3,40-0,Quy Hương,Ultimate có ngưỡng công bố,Guard/bảo hộ thần hồn,SKL-030-04,True

@@ -1,6 +1,6 @@
 # Thiên Vân Đại Lục
 
-Game tu tiên idle theo **thời gian thật**. Thiết kế canonical: **v1.3** (`docs/design/`).
+Game tu tiên idle theo **thời gian thật**. Thiết kế canonical: **v1.6.1** (`docs/design/`).
 
 ```text
 HTML/CSS/JS thuần (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (schema `game`) trên Supabase PostgreSQL
@@ -21,9 +21,9 @@ supabase/
   functions/api/      Edge Function (handler.ts thuần, index.ts là entry Deno)
   tests/              test SQL trên Postgres thật (lifecycle, Thiên Mệnh, bảo mật/RLS)
   seed.sql            CHỈ local: tăng tốc thời gian ×2000
-data/                 dữ liệu cân bằng v1.3 (nguồn của migration dữ liệu tĩnh)
-tools/                gen-static (CSV → SQL/TS), db-test, simulator + qa_check của gói v1.3
-docs/                 design/ (tài liệu v1.3) và ARCHITECTURE.md
+data/                 dữ liệu cân bằng v1.6.1 (nguồn của migration dữ liệu tĩnh)
+tools/                gen-static (CSV → SQL/TS), db-test, simulator thiết kế và bộ kiểm tra nội dung
+docs/                 design/ (tài liệu v1.6.1) và ARCHITECTURE.md
 legacy/               mã bản cũ, không còn chạy
 ```
 
@@ -55,11 +55,11 @@ DB test cần Postgres server (`initdb`) hoặc biến `DATABASE_URL` trỏ tớ
 `data/*.csv` + `data/balance_config.json` là nguồn. Sau khi sửa:
 
 ```bash
-pnpm gen          # sinh lại supabase/migrations/*_v2_static_data.sql và packages/game-core/src/data.generated.ts
+pnpm gen          # sinh migration nâng cấp design_v161 và dữ liệu nội dung và packages/game-core/src/data.generated.ts
 pnpm gen:check    # CI dùng để chắc chắn file sinh ra khớp nguồn
 ```
 
-Chưa phát hành: sửa thẳng migration dữ liệu tĩnh. Sau khi đã có database thật, mọi thay đổi dùng migration mới.
+Các migration lịch sử giữ nguyên. Bản nâng cấp dùng migration mới; sau khi migration này đã được áp dụng, các đợt cân bằng tiếp theo phải tạo migration mới.
 
 ## Triển khai (tóm tắt)
 
@@ -67,3 +67,7 @@ Chưa phát hành: sửa thẳng migration dữ liệu tĩnh. Sau khi đã có d
 2. **Web** (Vercel): Root Directory `apps/web`, Framework Preset **Vite** (build `pnpm build`, output `dist`), bật "Include source files outside of Root Directory"; env `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY` (Vite nhúng vào bản build: đổi giá trị phải Redeploy). Router theo hash (`#/play`) nên không cần rewrite. Nếu dự án Vercel đang đặt framework là SvelteKit, đổi sang Vite.
 
 Chi tiết thiết kế, mô hình bảo mật và các điểm cần duyệt: `docs/ARCHITECTURE.md`.
+
+## Nâng cấp v1.6.1
+
+Xem [phạm vi, kiểm tra và việc còn lại](docs/UPGRADE_v1.6.1.md). Tàng Thư Các mở tại `#/thu-vien`: truyện theo cảnh giới, Bách Quái Chí và danh mục vật phẩm. Nội dung tra cứu chưa thay thế hệ thống nhiệm vụ/combat.

@@ -24,6 +24,7 @@ export const lifespanLeft = (life) => Math.max(0, Math.round(life.lifespan.cap_y
 /** Trạng thái nhập định cho khung trạng thái. tone khớp lớp màu t-*. */
 export function idleStatus(life) {
   if (life.status === "cleared") return { text: "★ Đã hoàn tất tuyến chính", tone: "gold" };
+  if (life.lifespan?.exhausted) return { text: "⚠ Thọ nguyên cạn — chờ xác nhận", tone: "red" };
   if (life.ready_for_major) return { text: "◆ Tu vi viên mãn - hãy đại đột phá", tone: "gold" };
   if (life.tang >= 9) return { text: "● Đang tích tụ tu vi đại đột phá", tone: "green" };
   return { text: "● Đang nhập định", tone: "green" };
