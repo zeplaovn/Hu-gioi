@@ -107,3 +107,27 @@ dialog > h2 { margin:0 0 12px; font-size:16px; }
 .creation-stat { display:grid; grid-template-columns:1fr 35px 22px; gap:12px; align-items:center; margin:5px 0; }
 .creation-stat > span { text-align:right; font-weight:600; }
 .creation-stat > b { text-align:center; }
+
+/* Tạo nhân vật: đạo hiệu, giới tính, xúc xắc, linh căn */
+.creation-fields dd.with-dice { display:flex; align-items:center; gap:6px; margin:0; }
+.creation-fields dd.with-dice .field { flex:1; min-width:0; }
+.creation-val { flex:1; font-weight:600; color:var(--green); }
+.creation-val.roots b { color:var(--cyan); }
+.btn.dice { min-height:30px; min-width:34px; padding:2px 6px; }
+.btn.pill[aria-pressed="true"] { border-color:#2bf46f; color:#2bf46f; background:#10341f; }
+.el { display:inline-block; margin:1px 2px; padding:0 8px; border:1px solid currentColor; border-radius:99px; font-size:12px; }
+.el-kim { color:#ffe27a; } .el-moc { color:#7fffa0; } .el-thuy { color:#7fdcff; } .el-hoa { color:#ff8a6b; } .el-tho { color:#d9a35f; } .el-bien { color:#d980ff; }
+.name-in[aria-invalid="true"] { border-color:#ff6b6b; }
+
+/* Hội thoại NPC trong hộp thoại (Lịch luyện / Tông môn / Bí cảnh) */
+dialog.social-dialog { width:min(720px, calc(100vw - 32px)); }
+.social-dialog .social-layout { grid-template-columns:minmax(150px, 210px) 1fr; gap:14px; margin-top:8px; }
+.social-dialog .social-roster { max-height:46vh; }
+.social-dialog .sect-card.on { border-color:#2bf46f; }
+.social-dialog .social-dialogue { padding:12px; margin:10px 0; }
+.social-dialog h4 { margin:10px 0 6px; color:var(--gold); }
+@media (max-width:640px) { .social-dialog .social-layout { grid-template-columns:1fr; } .social-dialog .social-roster { max-height:170px; } }
+
+/* Cài đặt */
+.settings .row { align-items:center; gap:10px; } .settings input[type="range"] { flex:1; }
+.settings-tracks { border:1px solid var(--line2); border-radius:4px; padding:6px 10px; display:grid; gap:4px; }

@@ -19,7 +19,7 @@ Việc tạo lại 89 khung hoạt ảnh còn tồn đọng phải giữ nhất 
 ## Kiểm tra và triển khai
 
 - `pnpm gen:check`: kiểm tra SQL/TS/nội dung sinh ra đúng nguồn.
-- `pnpm test:content`: kiểm tra đủ 135 ngưỡng, 12 chương/30 quái, 268 vật phẩm và 842 đường dẫn ảnh.
+- `pnpm test:content`: kiểm tra đủ 135 ngưỡng, bộ phân tích CSV, 842 đường dẫn ảnh, cùng test hội thoại NPC. Tàng Thư Các đã chuyển sang repo `Hu-gioi-wiki` nên không còn trong game.
 - `pnpm test` và `pnpm build:web`: chạy đầy đủ trước merge/deploy, gồm SQL trên PostgreSQL và đối chiếu TS↔SQL.
 - Môi trường soạn thay đổi bị chặn tải npm (HTTP 403), chưa có Supabase CLI/PostgreSQL; chưa chạy local đầy đủ unit test/build/DB. Smoke test giao diện cũng bị chặn vì thiếu Chromium trong môi trường. Hai file migration được soạn theo cấu trúc migration hiện có do CLI không cài được. CI của PR phải là cổng kiểm tra trước khi triển khai.
 - Chưa áp dụng migration lên database thật. Sao lưu database rồi áp dụng migration mới trước khi phát hành web tương ứng. Giữ nguyên `time_scale` và `hazard_scale` đang cấu hình ở server.

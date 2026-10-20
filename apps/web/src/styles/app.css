@@ -238,15 +238,6 @@ kbd { font: 600 11px var(--sans); color: var(--dim); border: 1px solid var(--lin
 }
 
 /* Tàng Thư Các: keyboard-accessible reading and searchable content. */
-.codex-tabs,.codex-controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
-.codex-tabs [aria-pressed="true"]{border-color:#d9bd76;color:#ffe3a2;background:#273b3b}
-.codex-controls input,.codex-controls select{background:#101c27;color:#e4eadf;border:1px solid #4a625c;border-radius:8px;padding:10px;font:inherit;max-width:100%}
-.codex-controls input{flex:1;min-width:180px}
-.codex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
-.codex-card{padding:18px;overflow-wrap:anywhere}.codex-card h2{font-size:1.1rem}.codex-card p{line-height:1.65}
-.codex-art{width:96px;height:96px;object-fit:contain;float:right;margin:0 0 10px 12px}
-.codex-chapter{margin:12px 0;padding:18px 22px}.codex-chapter summary{cursor:pointer;color:#f2d9a5;font-weight:600}
-.codex-chapter p{line-height:1.9;max-width:70ch}.codex-locked{margin:10px 0;padding:14px;opacity:.65}
 
 /* NPC conversations: stacked cards on mobile, roster and dialogue on desktop. */
 .social-page { max-width: 1100px; margin: auto; }

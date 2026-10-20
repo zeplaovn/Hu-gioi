@@ -7,7 +7,9 @@ import { SEASON_NAME, idleStatus, lifespanLeft, nextHint, progressOf, seasonOf }
 import { createBar } from "../ui/bar.js";
 import { createDialog } from "../ui/dialog.js";
 import { clear, h, icon } from "../ui/dom.js";
-import { createCharacterDialog, createSectDialog } from "../ui/character.js";
+import { createCharacterDialog } from "../ui/character.js";
+import { createSocialDialog } from "../ui/social.js";
+import { NAME_MAX, cleanName, randomName } from "../names.js";
 import { createMenu } from "../ui/menu.js";
 import { createScene } from "../ui/scene.js";
 
@@ -17,10 +19,12 @@ const WORLD = {
   "Tiên Giới": { id: "tien_gioi", color: "#ffe27a" },
 };
 const ICON = { TuongMao: "portrait", PhucDuyen: "clover", CanCot: "sword", NgoTinh: "brain", VanKhi: "charm" };
+const EL_CLASS = { Kim: "kim", Mộc: "moc", Thủy: "thuy", Hỏa: "hoa", Thổ: "tho" };
+const elClass = (e) => EL_CLASS[e] ?? "bien";
 const dec = (x) => x.toFixed(3).replace(".", ",");
 const isTyping = (t) => t instanceof HTMLElement && (/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName) || t.isContentEditable);
 
-export function createPlayView({ game }) {
+export function createPlayView({ game, onSettings = () => {} }) {
   const errBox = h("p", { class: "notice error", role: "alert", hidden: true, style: { marginBottom: "12px" } });
   const stage = h("div");
   const waitP = h("p", { class: "dim" }, "Đang đọc thiên cơ…");
@@ -33,8 +37,10 @@ export function createPlayView({ game }) {
   const resultDlg = createDialog({ title: "", onclose: () => { if (game.result) game.dismissResult(); } });
   const bagDlg = createDialog({ title: "Túi đồ", onclose: () => { bagOpen = false; } });
   const characterDlg = createCharacterDialog({ game });
-  const sectDlg = createSectDialog();
-  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, sectDlg.el);
+  const exploreDlg = createSocialDialog({ game, kind: "explore" });
+  const sectDlg = createSocialDialog({ game, kind: "sect" });
+  const secretDlg = createSocialDialog({ game, kind: "secret" });
+  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el);
 
   let mode = null, ui = null, scene = null, menu = null;
 
@@ -49,12 +55,39 @@ export function createPlayView({ game }) {
   }
   window.addEventListener("keydown", onKey);
 
-  /* ---------- chưa có kiếp: màn "nhập thế" (bố cục như màn tạo nhân vật của bản gốc) ---------- */
+  /* ---------- chưa có kiếp: màn tạo nhân vật (đạo hiệu, giới tính; chủng tộc + linh căn do server gieo) ---------- */
   function buildNone() {
-    const startBtn = h("button", { class: "btn gold wide go", onclick: () => game.startLife() }, icon("orb_gold"), h("span", { class: "btn-label" }, "Bắt đầu tu tiên"));
+    let gender = "Nam";
     const lives = h("h2", { class: "center" });
     const tm = h("p", { class: "dim small center" });
     const creationStats = h("div", { class: "creation-stats" });
+    const note = h("p", { class: "notice error", role: "alert", hidden: true });
+    const dice = (label, onclick) => h("button", { type: "button", class: "btn dice", "aria-label": label, title: label, onclick }, "🎲");
+    const nameIn = h("input", { class: "field name-in", id: "dao-hieu", type: "text", maxlength: NAME_MAX, autocomplete: "off", spellcheck: "false", value: randomName(gender), "aria-label": "Đạo hiệu" });
+    const nameDice = dice("Gieo đạo hiệu ngẫu nhiên", () => { nameIn.value = randomName(gender); sync(); });
+    const raceVal = h("span", { class: "creation-val" }, "…");
+    const rootVal = h("span", { class: "creation-val roots" }, "…");
+    const rootNote = h("p", { class: "small dim" });
+    const genderBtns = ["Nam", "Nữ"].map((g) => h("button", { type: "button", class: "btn pill", "aria-pressed": String(g === gender), onclick: () => {
+      const wasRandom = nameIn.value === "" || nameIn.dataset.auto === "1";
+      gender = g; if (wasRandom || !nameIn.value) nameIn.value = randomName(gender);
+      sync();
+    } }, g));
+    nameIn.addEventListener("input", () => { nameIn.dataset.auto = "0"; sync(); });
+    nameIn.dataset.auto = "1";
+    const startBtn = h("button", { type: "button", class: "btn gold wide go", onclick: async () => {
+      const dao_hieu = cleanName(nameIn.value);
+      if (!dao_hieu) { sync(); return; }
+      await game.startLife({ dao_hieu, gender });
+    } }, icon("orb_gold"), h("span", { class: "btn-label" }, "Bắt đầu tu tiên"));
+    const sync = () => {
+      genderBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.textContent === gender)));
+      const bad = nameIn.value.length > 0 && !cleanName(nameIn.value);
+      note.hidden = !bad;
+      note.textContent = bad ? `Đạo hiệu cần 2–${NAME_MAX} ký tự, không chứa < > & " ' \` [ ].` : "";
+      nameIn.setAttribute("aria-invalid", String(bad));
+      startBtn.disabled = game.busy || !cleanName(nameIn.value);
+    };
     clear(stage,
       h("div", { class: "create-screen" },
         h("div", null,
@@ -64,18 +97,22 @@ export function createPlayView({ game }) {
           h("p", { class: "dim small story" }, "Tu vi tự tăng theo thời gian thật, kể cả khi ngươi đóng game. Tầng 1–8 không có nguy cơ tử vong; tới tầng 9 game dừng chờ ngươi xác nhận đại đột phá.")),
         h("div", { class: "creation-options" },
           h("h2", { class: "center" }, "Chào mừng đến Thiên Vân Đại Lục"),
+          h("div", { class: "seg center", role: "group", "aria-label": "Giới tính" }, genderBtns),
           h("dl", { class: "creation-fields" },
-            h("dt", null, "Đạo hiệu"), h("dd", null, "Chưa mở tùy chỉnh"),
+            h("dt", null, h("label", { for: "dao-hieu" }, "Đạo hiệu")), h("dd", { class: "with-dice" }, nameIn, nameDice),
+            h("dt", null, "Chủng tộc"), h("dd", { class: "with-dice" }, raceVal, dice("Gieo lại chủng tộc", () => game.rollCharacter(["race"]))),
+            h("dt", null, "Linh căn"), h("dd", { class: "with-dice" }, rootVal, dice("Gieo lại linh căn", () => game.rollCharacter(["linh_can"]))),
             h("dt", null, "Đại giới"), h("dd", null, "Hạ Giới"),
-            h("dt", null, "Cảnh giới"), h("dd", null, STAGES[0].name),
-            h("dt", null, "Linh căn"), h("dd", { class: "dim" }, "Chưa mở")),
+            h("dt", null, "Cảnh giới"), h("dd", null, STAGES[0].name)),
+          note, rootNote,
           creationStats,
           h("a", { class: "btn gold wide", href: "#/quan-dinh" }, "Thiên Đạo Các · Thiên Mệnh"),
           h("div", { class: "panel info-box" }, h("b", null, "Luật của kiếp"),
             h("p", { class: "small" }, "Kiếp chỉ kết thúc khi tọa hóa, đại đột phá thất bại hoặc chết trong nội dung sinh tử. Chết thật là mất toàn bộ tài sản của kiếp; Điểm Thiên Mệnh và chỉ số vĩnh viễn được giữ lại.")),
-          h("p", { class: "small dim" }, "Nhân vật khởi đầu ở Hạ Giới với tay trắng. Việc chọn đạo hiệu, chủng tộc và linh căn chưa mở trong bản v2."),
+          h("p", { class: "small dim" }, "Đạo hiệu do ngươi đặt. Chủng tộc và linh căn do máy chủ gieo ngẫu nhiên (bấm 🎲 để gieo lại trước khi bắt đầu). Chúng là danh tính của kiếp, chưa làm đổi tốc độ tu luyện trong bản này."),
           startBtn, tm)));
-    ui = { startBtn, lives, tm, creationStats };
+    ui = { startBtn, lives, tm, creationStats, raceVal, rootVal, rootNote, sync, rolled: false };
+    sync();
   }
 
   /* ---------- đang sống ---------- */
@@ -129,7 +166,7 @@ export function createPlayView({ game }) {
     });
 
     menu = createMenu({ game, onBag: () => { bagOpen = true; drawBag(); },
-      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.show(),
+      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.open(), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings,
       onCultivate: () => idlePanel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }) });
 
     clear(stage,
@@ -178,8 +215,8 @@ export function createPlayView({ game }) {
 
     ui.realm.textContent = `${life.stage.name} tầng ${life.tang}`;
     ui.realm.style.color = "var(--cyan)";
-    ui.pname.textContent = `Kiếp thứ ${life.life_no}`;
-    ui.sub.textContent = `${life.stage.world} · tầng ${life.tang}/9`;
+    ui.pname.textContent = life.profile?.dao_hieu ?? `Kiếp thứ ${life.life_no}`;
+    ui.sub.textContent = life.profile?.race ? `${life.profile.gender} · ${life.profile.race} · ${life.profile.linh_can.name}` : `${life.stage.world} · tầng ${life.tang}/9`;
     ui.expBar.el.hidden = life.status !== "alive";
     ui.expBar.setLabel(`Tu vi tầng ${life.tang}`);
     ui.expBar.set(prog, pct(prog, 0));
@@ -295,10 +332,15 @@ export function createPlayView({ game }) {
     if (!s) { ensureMode("wait"); waitP.hidden = !game.loading; }
     else if (!life) {
       ensureMode("none");
-      ui.startBtn.disabled = game.busy;
+      ui.sync();
       const n = s.account.life_count ?? 0;
       ui.lives.textContent = n > 0 ? `Đây là kiếp thứ ${n + 1} của ngươi` : "Kiếp đầu tiên của ngươi";
       ui.tm.textContent = `Điểm Thiên Mệnh đang giữ: ${num(s.account.tm_balance)}`;
+      const roll = s.pending_roll;
+      ui.raceVal.textContent = roll ? roll.race : "…";
+      clear(ui.rootVal, roll ? [h("b", null, roll.linh_can.name), " ", roll.linh_can.elements.map((e) => h("span", { class: ["el", `el-${elClass(e)}`] }, e))] : "…");
+      ui.rootNote.textContent = roll ? `${roll.linh_can.elements.length} hệ · tỉ lệ xuất hiện theo tài liệu cân bằng v1.6.1.` : "";
+      if (!roll && !ui.rolled && !game.busy) { ui.rolled = true; void game.rollCharacter(); }   // lần gieo đầu tiên
       clear(ui.creationStats, h("h3", { class: "center t-green" }, "Chỉ số vĩnh viễn"), STAT_KEYS.map(k => h("div", { class: "creation-stat" }, h("span", null, STAT_LABEL[k]), h("b", null, s.account.stats[k].level), icon(ICON[k]))));
     } else { ensureMode("alive"); updateAlive(s, life); }
     drawDialogs();
@@ -308,7 +350,7 @@ export function createPlayView({ game }) {
     el, render,
     destroy() {
       window.removeEventListener("keydown", onKey);
-      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide(); characterDlg.hide(); sectDlg.hide();
+      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide(); characterDlg.hide(); exploreDlg.destroy(); sectDlg.destroy(); secretDlg.destroy();
     },
   };
 }

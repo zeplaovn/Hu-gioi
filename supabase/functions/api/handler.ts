@@ -25,6 +25,7 @@ const STATUS: Record<string, number> = {
   intent_not_found: 404, stat_not_found: 404, item_not_found: 404, life_not_found: 404,
   lifespan_not_exhausted: 409, lifespan_intent_consumed: 409, lifespan_intent_expired: 409,
   lifespan_intent_not_found: 404,
+  invalid_dao_hieu: 400, invalid_gender: 400, life_already_started: 409,
 };
 
 class HttpError extends Error { constructor(readonly status: number, readonly code: string) { super(code); } }
@@ -84,7 +85,28 @@ const ROUTES: Record<string, Route> = {
   "/heartbeat": { method: "POST", limit: ["read", 120, 60], run: async ({ uid, rpc }) => ({ now: await call(rpc, "heartbeat", { p_account: uid }) }) },
   "/life/start": {
     method: "POST", limit: ["write", 30, 60],
-    run: async ({ uid, rpc }) => { await call(rpc, "start_life", { p_account: uid }); return call(rpc, "get_state", { p_account: uid }); },
+    run: async ({ uid, body, rpc }) => {
+      // Không gửi hồ sơ = kiếp không hồ sơ (tương thích cũ). Có hồ sơ: chỉ nhận đạo hiệu + giới tính; chủng tộc/linh căn do server gieo.
+      let profile: Record<string, string> | undefined;
+      if (body.dao_hieu !== undefined || body.gender !== undefined) {
+        if (typeof body.dao_hieu !== "string" || body.dao_hieu.length > 60) throw new HttpError(400, "invalid_dao_hieu");
+        if (body.gender !== "Nam" && body.gender !== "Nữ") throw new HttpError(400, "invalid_gender");
+        profile = { dao_hieu: body.dao_hieu, gender: body.gender };
+      }
+      await call(rpc, "start_life", profile ? { p_account: uid, p_profile: profile } : { p_account: uid });
+      return call(rpc, "get_state", { p_account: uid });
+    },
+  },
+  "/life/roll": {
+    method: "POST", limit: ["roll", 40, 60],
+    run: ({ uid, body, rpc }) => {
+      const allowed = ["race", "linh_can"];
+      const fields = body.fields === undefined ? allowed : body.fields;
+      if (!Array.isArray(fields) || fields.length === 0 || fields.length > 2 || !fields.every((f) => typeof f === "string" && allowed.includes(f))) {
+        throw new HttpError(400, "invalid_roll_fields");
+      }
+      return call(rpc, "roll_character", { p_account: uid, p_fields: fields });
+    },
   },
   "/breakthrough/prepare": { method: "POST", limit: ["bt", 12, 60], run: ({ uid, rpc }) => call(rpc, "breakthrough_prepare", { p_account: uid }) },
   "/breakthrough/confirm": {

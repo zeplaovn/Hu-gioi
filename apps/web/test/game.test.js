@@ -14,7 +14,7 @@ function mk(states = []) {
   const api = {
     state: vi.fn(async () => queue.length > 1 ? queue.shift() : queue[0]),
     startLife: vi.fn(), prepareBreakthrough: vi.fn(), confirmBreakthrough: vi.fn(), upgradeStat: vi.fn(), buyItem: vi.fn(),
-    prepareLifespan: vi.fn(), confirmLifespan: vi.fn(),
+    prepareLifespan: vi.fn(), confirmLifespan: vi.fn(), rollCharacter: vi.fn(),
   };
   return { game: createGame({ api }), api };
 }
@@ -136,5 +136,23 @@ describe("game store", () => {
     expect(game.state).toBeNull();
     expect(game.log).toEqual([]);
     expect(game.pulse).toBe(0);
+  });
+
+  it("gieo nhân vật: lưu kết quả server vào state khi chưa có kiếp, gửi đúng trường", async () => {
+    const { game, api } = mk([st(null)]);
+    await game.refresh();
+    const roll = { race: "Ma", linh_can: { id: "ROOT-003", name: "Tam Linh Căn", elements: ["Kim", "Mộc", "Thủy"] } };
+    api.rollCharacter.mockResolvedValue(roll);
+    expect(await game.rollCharacter(["race"])).toEqual(roll);
+    expect(api.rollCharacter).toHaveBeenCalledWith(["race"]);
+    expect(game.state.pending_roll).toEqual(roll);
+  });
+  it("bắt đầu kiếp gửi hồ sơ (đạo hiệu + giới tính) cho server", async () => {
+    const { game, api } = mk([st(null)]);
+    await game.refresh();
+    api.startLife.mockResolvedValue(st(life({ profile: { dao_hieu: "Hàn Thiên Sơn", gender: "Nam", race: "Ma", linh_can: {} } })));
+    expect(await game.startLife({ dao_hieu: "Hàn Thiên Sơn", gender: "Nam" })).toBe(true);
+    expect(api.startLife).toHaveBeenCalledWith({ dao_hieu: "Hàn Thiên Sơn", gender: "Nam" });
+    expect(game.state.life.profile.dao_hieu).toBe("Hàn Thiên Sơn");
   });
 });

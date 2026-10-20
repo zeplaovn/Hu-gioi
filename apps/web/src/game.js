@@ -110,9 +110,17 @@ export class Game {
     this.emit();
   }
 
-  async startLife() {
-    const s = await this.run((a) => a.startLife());
+  async startLife(profile) {
+    const s = await this.run((a) => a.startLife(profile));
     if (s) { this.diff(this.state, s); this.state = s; this.emit(); }
+    return !!s;
+  }
+
+  /** Xin server gieo (lại) chủng tộc / linh căn cho kiếp sắp bắt đầu. fields ⊆ ["race", "linh_can"]; bỏ trống = cả hai. */
+  async rollCharacter(fields) {
+    const r = await this.run((a) => a.rollCharacter(fields));
+    if (r && this.state && !this.state.life) { this.state = { ...this.state, pending_roll: r }; this.emit(); }
+    return r;
   }
 
   async prepare() {

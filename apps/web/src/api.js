@@ -24,6 +24,11 @@ const TEXT = {
   invalid_choice: "Lựa chọn không thuộc cuộc gặp này.",
   already_completed: "Tương tác này đã hoàn tất.",
 
+  invalid_dao_hieu: "Đạo hiệu cần 2–20 ký tự, không chứa ký tự đặc biệt (< > & \" ' ` [ ]).",
+  invalid_gender: "Hãy chọn giới tính.",
+  invalid_roll_fields: "Yêu cầu gieo không hợp lệ.",
+  life_already_started: "Kiếp này đã bắt đầu, không thể gieo lại.",
+
   unauthorized: "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
   rate_limited: "Bạn thao tác quá nhanh, hãy đợi vài giây.",
   network: "Không kết nối được máy chủ. Hãy kiểm tra mạng.",
@@ -85,7 +90,9 @@ export function createApi(o) {
     social: () => req("GET", "/social"),
     socialAction: (body) => req("POST", "/social/action", body),
     state: () => req("GET", "/state"),
-    startLife: () => req("POST", "/life/start", {}),
+    /** profile = { dao_hieu, gender }; chủng tộc và linh căn do server gieo (rollCharacter). Bỏ trống = kiếp không hồ sơ. */
+    startLife: (profile) => req("POST", "/life/start", profile ?? {}),
+    rollCharacter: (fields) => req("POST", "/life/roll", fields ? { fields } : {}),
     prepareBreakthrough: () => req("POST", "/breakthrough/prepare", {}),
     confirmBreakthrough: (intentId) => req("POST", "/breakthrough/confirm", { intent_id: intentId }),
     prepareLifespan: () => req("POST", "/lifespan/prepare", {}),

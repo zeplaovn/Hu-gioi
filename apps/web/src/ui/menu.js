@@ -6,7 +6,7 @@ import { h, icon } from "./dom.js";
 /** Nhóm "Tu hành" và "Nhân vật & thế giới". `soon: true` = chưa có ở backend v2. */
 const GROUP_ACTIONS = [
   { id: "cultivate", label: "Tu luyện", icon: "orb_green", scroll: true },
-  { id: "explore", label: "Lịch luyện", kbd: "L", icon: "sword", soon: true },
+  { id: "explore", label: "Lịch luyện", icon: "sword" },
   { id: "rest", label: "Nghỉ ngơi", kbd: "N", icon: "peach", soon: true },
   { id: "break", seal: true },
   { id: "stone", label: "Luyện hóa linh thạch", icon: "crystal", soon: true },
@@ -18,15 +18,13 @@ const GROUP_ACTIONS = [
 ];
 const GROUP_WORLD = [
   { id: "character", label: "Chỉ số nhân vật", cls: "cyan", icon: "portrait" },
-  { id: "npc", label: "Nhân duyên Hạ Giới", cls: "cyan", icon: "portrait", href: "#/nhan-duyen" },
-  { id: "codex", label: "Tàng Thư Các", cls: "cyan", icon: "scroll", href: "#/thu-vien" },
   { id: "tm", label: "Quán Đỉnh Thiên Mệnh", cls: "gold", icon: "orb_gold", href: "#/quan-dinh" },
   { id: "history", label: "Bia Thiên Mệnh", cls: "gold", icon: "scroll", href: "#/lich-su" },
   { id: "root", label: "Linh căn", cls: "cyan", icon: "orb_green", soon: true },
-  { id: "secret", label: "Bí cảnh", cls: "orange", icon: "crystal", soon: true },
-  { id: "enc", label: "Kỳ ngộ", cls: "gold", icon: "clover", href: "#/nhan-duyen" },
+  { id: "secret", label: "Bí cảnh", cls: "orange", icon: "crystal" },
   { id: "board", label: "Bảng xếp hạng", cls: "gold", icon: "bagua", soon: true },
   { id: "map", label: "Thiên Vân Địa Đồ", cls: "cyan", icon: "portrait", soon: true },
+  { id: "settings", label: "Cài đặt", cls: "cyan", icon: "bagua" },
 ];
 const SOON_TITLE = "Chưa mở trong bản v2";
 
@@ -53,7 +51,7 @@ function sealButton({ onclick, kbd, showKbd = true }) {
     showKbd && h("kbd", null, kbd));
 }
 
-function item(spec, { onBag, onCharacter, onSect, onCultivate }) {
+function item(spec, handlers) {
   const kids = [icon(spec.icon), h("span", { class: "btn-label" }, spec.label)];
   if (spec.soon) {
     return h("button", { type: "button", class: ["btn", "act", "soon", spec.cls], disabled: true, title: SOON_TITLE },
@@ -61,21 +59,22 @@ function item(spec, { onBag, onCharacter, onSect, onCultivate }) {
   }
   if (spec.href) return h("a", { class: ["btn", "act", spec.cls], href: spec.href, style: { textDecoration: "none" } }, ...kids);
   const count = h("span", { class: "count-tag", hidden: true });
-  return Object.assign(h("button", { type: "button", class: ["btn", "act", spec.cls], onclick: spec.id === "character" ? onCharacter : spec.id === "sect" ? onSect : spec.scroll ? onCultivate : onBag }, ...kids, count), { countEl: count });
+  return Object.assign(h("button", { type: "button", class: ["btn", "act", spec.cls], onclick: handlers[spec.id] ?? (spec.scroll ? handlers.cultivate : handlers.bag) }, ...kids, count), { countEl: count });
 }
 
 /**
  * @param {{ game: any, onBag: () => void }} o
  * @returns {{ el: HTMLElement, dock: HTMLElement, update(state: any, life: any, prog: number): void }}
  */
-export function createMenu({ game, onBag, onCharacter, onSect, onCultivate }) {
+export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings }) {
+  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings };
   const breakSeal = sealButton({ onclick: () => game.prepare(), kbd: "D" });
   const dockSeal = sealButton({ onclick: () => game.prepare(), kbd: "D", showKbd: false });
   let bagBtn = null;
 
   const build = (spec) => {
     if (spec.seal) return breakSeal;
-    const b = item(spec, { onBag, onCharacter, onSect, onCultivate });
+    const b = item(spec, handlers);
     if (spec.id === "bag") bagBtn = b;
     return b;
   };

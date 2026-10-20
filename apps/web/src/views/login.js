@@ -2,7 +2,7 @@
 import { assetBase, configured } from "../config.js";
 import { h } from "../ui/dom.js";
 
-export function createLoginView({ auth }) {
+export function createLoginView({ auth, onSettings }) {
   const art = h("div", { class: "welcome-art" },
     h("div", { class: "scene-wrap" }, h("img", { src: `${assetBase()}/parallax/title.png`, alt: "Thiên Vân Đại Lục", class: "banner" })),
     h("h2", { class: "center" }, "Một kiếp tu sĩ, ba đại giới"),
@@ -10,6 +10,7 @@ export function createLoginView({ auth }) {
     h("p", { class: "dim small" }, "Tu vi tích lũy theo thời gian thật, kể cả khi ngươi đóng game. Thiên Mệnh theo ngươi qua những kiếp sau."));
   const entry = h("div", { class: "welcome-entry" }, h("h2", { class: "center" }, "Chào mừng đến Thiên Vân Đại Lục"));
   const el = h("section", { class: "hero welcome-screen" }, art, entry);
+  if (onSettings) entry.append(h("button", { type: "button", class: "btn ghost sm", onclick: onSettings }, "⚙ Cài đặt"));
 
   if (!configured()) {
     entry.append(h("p", { class: "notice error", role: "alert" },

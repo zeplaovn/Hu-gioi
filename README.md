@@ -69,8 +69,8 @@ Chi tiết thiết kế, mô hình bảo mật và các điểm cần duyệt: `
 
 ## Nâng cấp v1.6.1
 
-Xem [phạm vi, kiểm tra và việc còn lại](docs/UPGRADE_v1.6.1.md). Tàng Thư Các mở tại `#/thu-vien`: truyện theo cảnh giới, Bách Quái Chí và danh mục vật phẩm. Nội dung tra cứu chưa thay thế hệ thống nhiệm vụ/combat.
+Xem [phạm vi, kiểm tra và việc còn lại](docs/UPGRADE_v1.6.1.md). Tàng Thư Các (truyện, Bách Quái Chí, danh mục vật phẩm) nằm ở repo `Hu-gioi-wiki`, không còn trong game.
 
 ## Nhân duyên Hạ Giới v1.1
 
-Mở `#/nhan-duyen` để trò chuyện với 19 NPC, tiếp tục 95 cảnh chính và gặp kỳ ngộ. Máy chủ kiểm soát reset UTC, điểm quan hệ, quà và chống thưởng lặp. [Phạm vi đã làm, kiểm thử và phần còn thiếu](docs/social/IMPLEMENTATION.md). Đây chưa phải bản hoàn thiện toàn bộ thiết kế game.
+Hội thoại nằm trong game: **Lịch luyện** (NPC trung lập), **Tông môn** (3 tông môn Hạ Giới) và **Bí cảnh** (kỳ ngộ ngẫu nhiên): 19 NPC, 95 cảnh chính, 38 sự kiện. Máy chủ kiểm soát reset UTC, điểm quan hệ, quà và chống thưởng lặp. [Phạm vi đã làm, kiểm thử và phần còn thiếu](docs/social/IMPLEMENTATION.md). Đây chưa phải bản hoàn thiện toàn bộ thiết kế game.

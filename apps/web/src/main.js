@@ -12,18 +12,15 @@ import { createLoginView } from "./views/login.js";
 import { createPlayView } from "./views/play.js";
 import { createQuanDinhView } from "./views/quan-dinh.js";
 
-import { createThuVienView } from "./views/thu-vien.js";
-
-import { createNpcView } from "./views/nhan-duyen.js";
+import { createAudioManager } from "./audio.js";
+import { createSettingsDialog } from "./ui/settings.js";
 
 const BRAND = "Thiên Vân Đại Lục";
 const auth = createAuth();
 const game = createGame({ api: createApi({ baseUrl: functionUrl(), getToken: auth.token, anonKey: SUPABASE_ANON_KEY }) });
 
 const ROUTES = {
-  "/nhan-duyen": { label: "Nhân duyên Hạ Giới", make: () => createNpcView({ game }) },
-  "/thu-vien": { label: "Tàng Thư Các", make: () => createThuVienView({ game }) },
-  "/play": { label: "Tu luyện", wide: true, make: () => createPlayView({ game }) },
+  "/play": { label: "Tu luyện", wide: true, make: () => createPlayView({ game, onSettings: () => settings.open() }) },
   "/quan-dinh": { label: "Quán Đỉnh", make: () => createQuanDinhView({ game }) },
   "/lich-su": { label: "Bia Thiên Mệnh", make: () => createLichSuView({ game }) },
 };
@@ -33,10 +30,15 @@ const currentRoute = () => {
   return p in ROUTES ? p : DEFAULT_ROUTE;
 };
 
+const audio = createAudioManager();
+const settings = createSettingsDialog({ audio });
+audio.subscribe(() => settings.refresh());
+audio.start();
+
 const root = document.getElementById("app");
 const topbar = h("header", { class: "topbar" });
 const main = h("main", { class: "page" });
-root.append(main);
+root.append(main, settings.el);
 
 let active = null;   // { key, view }
 
@@ -53,6 +55,7 @@ function drawTopbar(signedIn) {
     game.state && h("span", { class: "chip gold", title: "Điểm Thiên Mệnh" },
       icon("orb_gold", "btn-ico", { width: "16px", height: "16px" }), " Thiên Mệnh ", h("b", { class: "num" }, num(game.state.account.tm_balance))),
     auth.session?.user?.email && h("span", { class: "dim small acct", title: auth.session.user.email }, auth.session.user.email),
+    h("button", { class: "btn ghost sm", onclick: () => settings.open(), "aria-label": "Cài đặt" }, "⚙ Cài đặt"),
     h("button", { class: "btn ghost sm", onclick: () => auth.signOut() }, "Thoát"));
 }
 
@@ -66,7 +69,7 @@ function renderShell() {
   const key = signedIn ? currentRoute() : "login";
   if (active?.key !== key) {
     active?.view.destroy();
-    const view = key === "login" ? createLoginView({ auth }) : ROUTES[key].make();
+    const view = key === "login" ? createLoginView({ auth, onSettings: () => settings.open() }) : ROUTES[key].make();
     active = { key, view };
     main.className = key === "/play" || key === "login" ? "page" : "page narrow";
     clear(main, view.el);                                    // phải gắn vào DOM trước khi render (hộp thoại cần isConnected)

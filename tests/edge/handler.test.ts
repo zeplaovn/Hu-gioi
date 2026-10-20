@@ -92,6 +92,24 @@ describe("api handler", () => {
     await handle(req("/life/start", { method: "POST" }), deps);
     expect(calls.map(c => c[0])).toEqual(["hit_rate_limit", "start_life", "get_state"]);
   });
+  it("life/start với hồ sơ chỉ nhận đạo hiệu + giới tính, bỏ chủng tộc/linh căn do client gửi", async () => {
+    const { deps, calls } = mk();
+    const body = JSON.stringify({ dao_hieu: "Hàn Thiên Sơn", gender: "Nam", race: "Tiên Duệ", linh_can: "x" });
+    const r = await handle(req("/life/start", { method: "POST", body }), deps);
+    expect(r.status).toBe(200);
+    expect(calls[1]).toEqual(["start_life", { p_account: U, p_profile: { dao_hieu: "Hàn Thiên Sơn", gender: "Nam" } }]);
+    for (const bad of ['{"dao_hieu":"A","gender":"Khác"}', '{"gender":"Nam"}', '{"dao_hieu":5,"gender":"Nữ"}']) {
+      expect((await handle(req("/life/start", { method: "POST", body: bad }), deps)).status).toBe(400);
+    }
+  });
+  it("life/roll chỉ nhận race/linh_can", async () => {
+    const { deps, calls } = mk();
+    expect((await handle(req("/life/roll", { method: "POST", body: '{"fields":["race"]}' }), deps)).status).toBe(200);
+    expect(calls.at(-1)).toEqual(["roll_character", { p_account: U, p_fields: ["race"] }]);
+    expect((await handle(req("/life/roll", { method: "POST", body: '{"fields":["tm"]}' }), deps)).status).toBe(400);
+    expect((await handle(req("/life/roll", { method: "POST", body: '{"fields":[]}' }), deps)).status).toBe(400);
+    expect((await handle(req("/life/roll", { method: "POST" }), deps)).status).toBe(200);
+  });
   it("tọa hóa: JWT được kiểm, input UUID/rate limit và RPC đúng", async () => {
     const { deps, calls } = mk();
     const bad = await handle(req("/lifespan/confirm", { method: "POST", body: '{"intent_id":"bad"}' }), deps);

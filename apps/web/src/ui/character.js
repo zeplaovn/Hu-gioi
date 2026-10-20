@@ -1,5 +1,5 @@
 import { STAT_KEYS, STAT_LABEL } from '@hu-gioi/game-core';
-import { h, clear, icon } from './dom.js';
+import { h, clear } from './dom.js';
 import { createDialog } from './dialog.js';
 import { num, pct } from '../format.js';
 
@@ -13,7 +13,10 @@ export function createCharacterDialog({ game }) {
     clear(dlg.body,
       h('h3', { class: 't-green center' }, 'Thông tin'),
       h('table', { class: 'character-table' }, h('tbody', null,
-        row('Kiếp hiện tại', `Kiếp thứ ${l.life_no}`, 't-gold'),
+        row('Đạo hiệu', l.profile?.dao_hieu ?? 'Chưa đặt', 't-gold'),
+        row('Giới tính · Chủng tộc', l.profile?.race ? `${l.profile.gender} · ${l.profile.race}` : 'Chưa có'),
+        row('Linh căn', l.profile?.linh_can ? `${l.profile.linh_can.name} (${l.profile.linh_can.elements.join(', ')})` : 'Chưa có'),
+        row('Kiếp hiện tại', `Kiếp thứ ${l.life_no}`),
         row('Cảnh giới', `${l.stage.name} tầng ${l.tang}`, 't-cyan'),
         row('Đại giới', l.stage.world),
         row('Tu vi', pct(l.need_s > 0 ? l.progress_s / l.need_s : 0, 1)),
@@ -24,27 +27,9 @@ export function createCharacterDialog({ game }) {
         row('Thiên Mệnh', num(s.account.tm_balance), 't-gold'))),
       h('h3', { class: 't-green center' }, '— Chỉ số vĩnh viễn —'),
       h('table', { class: 'character-table' }, h('tbody', null, STAT_KEYS.map(k => row(STAT_LABEL[k], `${s.account.stats[k].level} / ${s.account.stats[k].cap}`)))),
-      h('p', { class: 'small dim' }, 'Đạo hiệu, chủng tộc, linh căn và khí huyết sẽ hiển thị khi hệ thống nhân vật được mở.'),
+      h('p', { class: 'small dim' }, 'Chủng tộc và linh căn là danh tính của kiếp; chưa làm đổi tốc độ tu luyện trong bản này.'),
       h('div', { class: 'row center' }, h('a', { class: 'btn gold', href: '#/quan-dinh' }, 'Quán Đỉnh Thiên Mệnh'),
         h('button', { class: 'btn ghost', onclick: () => dlg.hide() }, 'Đóng')));
   }
   return { ...dlg, open() { render(); dlg.show(); }, refresh() { if (dlg.isOpen) render(); } };
-}
-
-export function createSectDialog() {
-  const dlg = createDialog({ title: 'Tông môn' });
-  const sects = [
-    ['Thanh Vân Tông', 'Chính đạo', 'scroll'],
-    ['Huyết Sát Môn', 'Ma đạo', 'sword'],
-    ['Vạn Dược Cốc', 'Đan đạo', 'ginseng'],
-  ];
-  clear(dlg.body,
-    h('p', { class: 'center t-cyan' }, 'Các tông môn Hạ Giới'),
-    h('div', { class: 'sect-list' }, sects.map(([name, desc, img]) => h('div', { class: 'sect-card' },
-      icon(img, 'sect-icon'), h('div', null, h('strong', null, name), h('p', { class: 'small dim' }, desc)),
-      h('button', { class: 'btn sm', disabled: true, title: 'Hệ thống gia nhập tông môn chưa mở' }, 'Chưa mở')))),
-    h('p', { class: 'small dim' }, 'Gia nhập tông môn chưa mở. Bạn có thể gặp các nhân vật trong Nhân duyên Hạ Giới.'),
-    h('div', { class: 'row center' }, h('a', { class: 'btn cyan', href: '#/nhan-duyen' }, 'Gặp môn nhân'),
-      h('button', { class: 'btn ghost', onclick: () => dlg.hide() }, 'Đóng')));
-  return dlg;
 }
