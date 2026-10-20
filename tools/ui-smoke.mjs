@@ -15,16 +15,16 @@ try {
  const page=await browser.newPage({viewport:{width:1366,height:768}});
  const errors=[];page.on('pageerror',e=>errors.push(String(e)));
  await page.goto('http://127.0.0.1:5179/__classic_preview.html');
- await page.getByText('Chỉ số nhân vật',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'Chỉ số nhân vật',exact:true}).waitFor();
  // Wait for the actual scene images to finish loading, then allow one canvas render.
  await page.waitForLoadState('networkidle');
  await page.screenshot({path:'ui-screenshots/desktop.png',fullPage:true});
- await page.getByText('Tông môn',{exact:true}).click();
+ await page.getByRole('button',{name:'Tông môn',exact:true}).click();
  await page.locator('dialog[open]').waitFor();
  assert.equal(await page.locator('dialog[open] .sect-card').count(),3);
  await page.screenshot({path:'ui-screenshots/sect.png'});
  await page.keyboard.press('Escape');assert.equal(await page.locator('dialog[open]').count(),0);
- await page.getByText('Chỉ số nhân vật',{exact:true}).click();
+ await page.getByRole('button',{name:'Chỉ số nhân vật',exact:true}).click();
  await page.getByRole('heading',{name:'Chỉ số nhân vật'}).waitFor();
  await page.screenshot({path:'ui-screenshots/character.png'});
  await page.getByRole('button',{name:'Đóng',exact:true}).click();
@@ -41,7 +41,7 @@ try {
  await page.evaluate(()=>window.demo('alive'));
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile horizontal overflow');
  await page.screenshot({path:'ui-screenshots/mobile.png',fullPage:true});
- await page.getByText('Chỉ số nhân vật',{exact:true}).click();
+ await page.getByRole('button',{name:'Chỉ số nhân vật',exact:true}).click();
  const box=await page.locator('dialog[open]').boundingBox();
  assert(box.x>=0 && box.x+box.width<=390,'mobile dialog fits viewport');
  await page.keyboard.press('Escape');

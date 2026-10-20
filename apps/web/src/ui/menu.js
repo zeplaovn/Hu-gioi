@@ -60,7 +60,7 @@ function item(spec, { onBag, onCharacter, onSect, onCultivate }) {
       ...kids, h("span", { class: "soon-tag" }, "Sắp mở"));
   }
   if (spec.href) return h("a", { class: ["btn", "act", spec.cls], href: spec.href, style: { textDecoration: "none" } }, ...kids);
-  const count = h("span", { class: "count-tag" });
+  const count = h("span", { class: "count-tag", hidden: true });
   return Object.assign(h("button", { type: "button", class: ["btn", "act", spec.cls], onclick: spec.id === "character" ? onCharacter : spec.id === "sect" ? onSect : spec.scroll ? onCultivate : onBag }, ...kids, count), { countEl: count });
 }
 

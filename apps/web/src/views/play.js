@@ -54,6 +54,7 @@ export function createPlayView({ game }) {
     const startBtn = h("button", { class: "btn gold wide go", onclick: () => game.startLife() }, icon("orb_gold"), h("span", { class: "btn-label" }, "Bắt đầu tu tiên"));
     const lives = h("h2", { class: "center" });
     const tm = h("p", { class: "dim small center" });
+    const creationStats = h("div", { class: "creation-stats" });
     clear(stage,
       h("div", { class: "create-screen" },
         h("div", null,
@@ -68,12 +69,13 @@ export function createPlayView({ game }) {
             h("dt", null, "Đại giới"), h("dd", null, "Hạ Giới"),
             h("dt", null, "Cảnh giới"), h("dd", null, STAGES[0].name),
             h("dt", null, "Linh căn"), h("dd", { class: "dim" }, "Chưa mở")),
+          creationStats,
           h("a", { class: "btn gold wide", href: "#/quan-dinh" }, "Thiên Đạo Các · Thiên Mệnh"),
           h("div", { class: "panel info-box" }, h("b", null, "Luật của kiếp"),
             h("p", { class: "small" }, "Kiếp chỉ kết thúc khi tọa hóa, đại đột phá thất bại hoặc chết trong nội dung sinh tử. Chết thật là mất toàn bộ tài sản của kiếp; Điểm Thiên Mệnh và chỉ số vĩnh viễn được giữ lại.")),
           h("p", { class: "small dim" }, "Nhân vật khởi đầu ở Hạ Giới với tay trắng. Việc chọn đạo hiệu, chủng tộc và linh căn chưa mở trong bản v2."),
           startBtn, tm)));
-    ui = { startBtn, lives, tm };
+    ui = { startBtn, lives, tm, creationStats };
   }
 
   /* ---------- đang sống ---------- */
@@ -297,6 +299,7 @@ export function createPlayView({ game }) {
       const n = s.account.life_count ?? 0;
       ui.lives.textContent = n > 0 ? `Đây là kiếp thứ ${n + 1} của ngươi` : "Kiếp đầu tiên của ngươi";
       ui.tm.textContent = `Điểm Thiên Mệnh đang giữ: ${num(s.account.tm_balance)}`;
+      clear(ui.creationStats, h("h3", { class: "center t-green" }, "Chỉ số vĩnh viễn"), STAT_KEYS.map(k => h("div", { class: "creation-stat" }, h("span", null, STAT_LABEL[k]), h("b", null, s.account.stats[k].level), icon(ICON[k]))));
     } else { ensureMode("alive"); updateAlive(s, life); }
     drawDialogs();
   }
