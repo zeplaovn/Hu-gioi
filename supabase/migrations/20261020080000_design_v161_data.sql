@@ -3,6 +3,11 @@ begin;
 -- Forward-only upgrade. Historical migrations stay immutable.
 -- Preserve stage/tier, fraction of lifespan used, wallet, TM and fraction of current tier.
 lock table game.lives in share row exclusive mode;
+-- v1.3 used integral days; v1.6.1 has fractional day/year milestones.
+alter table game.stages
+  alter column day_start type numeric(10,4),
+  alter column day_end type numeric(10,4),
+  alter column clean_consumed_years type numeric(12,4);
 create temporary table v161_progress on commit drop as
 select life_id, least(1.0, greatest(0.0, progress_s / nullif(game.tang_seconds(stage_idx), 0))) fraction,
        credited_s / nullif(game.lifespan_cap(stage_idx)::double precision, 0) age_per_cap
