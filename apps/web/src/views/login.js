@@ -1,17 +1,18 @@
 /* Trang đăng nhập / đăng ký. Form dựng một lần để không mất nội dung ô nhập khi đổi chế độ hoặc báo lỗi. */
-import { configured } from "../config.js";
+import { assetBase, configured } from "../config.js";
 import { h } from "../ui/dom.js";
 
 export function createLoginView({ auth }) {
-  const el = h("section", { class: "hero" },
-    h("div", { class: "hanzi", "aria-hidden": "true" }, "天"),
-    h("p", { class: "dim eyebrow" }, "Sau Thiên Biến, nhân loại bị dịch chuyển khỏi Trái Đất…"),
-    h("h1", null, "Thiên Vân Đại Lục"),
-    h("p", { class: "lede" }, "Một kiếp tu sĩ, ba đại giới. Tu luyện theo thời gian thật, vượt Hạ Giới, Linh Giới, Tiên Giới. Chết thật là mất tất cả, chỉ còn Thiên Mệnh theo ngươi qua kiếp sau."),
-  );
+  const art = h("div", { class: "welcome-art" },
+    h("div", { class: "scene-wrap" }, h("img", { src: `${assetBase()}/parallax/title.png`, alt: "Thiên Vân Đại Lục", class: "banner" })),
+    h("h2", { class: "center" }, "Một kiếp tu sĩ, ba đại giới"),
+    h("p", null, "Sau Thiên Biến, nhân loại bị dịch chuyển khỏi Trái Đất tới Thiên Vân Đại Lục. Bắt đầu hành trình tu luyện của ngươi."),
+    h("p", { class: "dim small" }, "Tu vi tích lũy theo thời gian thật, kể cả khi ngươi đóng game. Thiên Mệnh theo ngươi qua những kiếp sau."));
+  const entry = h("div", { class: "welcome-entry" }, h("h2", { class: "center" }, "Chào mừng đến Thiên Vân Đại Lục"));
+  const el = h("section", { class: "hero welcome-screen" }, art, entry);
 
   if (!configured()) {
-    el.append(h("p", { class: "notice error", role: "alert" },
+    entry.append(h("p", { class: "notice error", role: "alert" },
       "Chưa cấu hình Supabase. Đặt ", h("code", null, "PUBLIC_SUPABASE_URL"), " và ", h("code", null, "PUBLIC_SUPABASE_ANON_KEY"),
       " trong ", h("code", null, "apps/web/.env"), " (xem README)."));
     return { el, render() {}, destroy() {} };
@@ -38,7 +39,7 @@ export function createLoginView({ auth }) {
     note,
     submit.classList.add("wide", "gold") || submit,
   );
-  el.append(form);
+  entry.append(form);
 
   function sync() {
     title.textContent = mode === "in" ? "Nhập đạo" : "Lập đạo hiệu";

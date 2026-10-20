@@ -7,6 +7,7 @@ import { SEASON_NAME, idleStatus, lifespanLeft, nextHint, progressOf, seasonOf }
 import { createBar } from "../ui/bar.js";
 import { createDialog } from "../ui/dialog.js";
 import { clear, h, icon } from "../ui/dom.js";
+import { createCharacterDialog, createSectDialog } from "../ui/character.js";
 import { createMenu } from "../ui/menu.js";
 import { createScene } from "../ui/scene.js";
 
@@ -31,7 +32,9 @@ export function createPlayView({ game }) {
   const lifespanDlg = createDialog({ title: "Xác nhận tọa hóa", onclose: () => { if (game.lifespanPrepared) game.cancelLifespan(); } });
   const resultDlg = createDialog({ title: "", onclose: () => { if (game.result) game.dismissResult(); } });
   const bagDlg = createDialog({ title: "Túi đồ", onclose: () => { bagOpen = false; } });
-  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el);
+  const characterDlg = createCharacterDialog({ game });
+  const sectDlg = createSectDialog();
+  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, sectDlg.el);
 
   let mode = null, ui = null, scene = null, menu = null;
 
@@ -48,7 +51,7 @@ export function createPlayView({ game }) {
 
   /* ---------- chưa có kiếp: màn "nhập thế" (bố cục như màn tạo nhân vật của bản gốc) ---------- */
   function buildNone() {
-    const startBtn = h("button", { class: "btn gold wide go", onclick: () => game.startLife() }, icon("orb_gold"), h("span", { class: "btn-label" }, "Nhập thế"));
+    const startBtn = h("button", { class: "btn gold wide go", onclick: () => game.startLife() }, icon("orb_gold"), h("span", { class: "btn-label" }, "Bắt đầu tu tiên"));
     const lives = h("h2", { class: "center" });
     const tm = h("p", { class: "dim small center" });
     clear(stage,
@@ -58,7 +61,14 @@ export function createPlayView({ game }) {
           lives,
           h("p", { class: "story" }, "Sau Thiên Biến, toàn bộ nhân loại bị dịch chuyển khỏi Trái Đất tới Thiên Vân Đại Lục. Ngươi bắt đầu một kiếp tu sĩ: sống sót, tu luyện và đi xuyên ba đại giới — Hạ Giới, Linh Giới, Tiên Giới — trong cùng một kiếp."),
           h("p", { class: "dim small story" }, "Tu vi tự tăng theo thời gian thật, kể cả khi ngươi đóng game. Tầng 1–8 không có nguy cơ tử vong; tới tầng 9 game dừng chờ ngươi xác nhận đại đột phá.")),
-        h("div", null,
+        h("div", { class: "creation-options" },
+          h("h2", { class: "center" }, "Chào mừng đến Thiên Vân Đại Lục"),
+          h("dl", { class: "creation-fields" },
+            h("dt", null, "Đạo hiệu"), h("dd", null, "Chưa mở tùy chỉnh"),
+            h("dt", null, "Đại giới"), h("dd", null, "Hạ Giới"),
+            h("dt", null, "Cảnh giới"), h("dd", null, STAGES[0].name),
+            h("dt", null, "Linh căn"), h("dd", { class: "dim" }, "Chưa mở")),
+          h("a", { class: "btn gold wide", href: "#/quan-dinh" }, "Thiên Đạo Các · Thiên Mệnh"),
           h("div", { class: "panel info-box" }, h("b", null, "Luật của kiếp"),
             h("p", { class: "small" }, "Kiếp chỉ kết thúc khi tọa hóa, đại đột phá thất bại hoặc chết trong nội dung sinh tử. Chết thật là mất toàn bộ tài sản của kiếp; Điểm Thiên Mệnh và chỉ số vĩnh viễn được giữ lại.")),
           h("p", { class: "small dim" }, "Nhân vật khởi đầu ở Hạ Giới với tay trắng. Việc chọn đạo hiệu, chủng tộc và linh căn chưa mở trong bản v2."),
@@ -116,7 +126,9 @@ export function createPlayView({ game }) {
       onscroll: () => { state.follow = logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 40; jumpBtn.hidden = state.follow; },
     });
 
-    menu = createMenu({ game, onBag: () => { bagOpen = true; drawBag(); } });
+    menu = createMenu({ game, onBag: () => { bagOpen = true; drawBag(); },
+      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.show(),
+      onCultivate: () => idlePanel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }) });
 
     clear(stage,
       h("div", { class: "main" },
@@ -162,8 +174,8 @@ export function createPlayView({ game }) {
     const prog = progressOf(life);
     const st = idleStatus(life);
 
-    ui.realm.textContent = life.stage.name;
-    ui.realm.style.color = w.color;
+    ui.realm.textContent = `${life.stage.name} tầng ${life.tang}`;
+    ui.realm.style.color = "var(--cyan)";
     ui.pname.textContent = `Kiếp thứ ${life.life_no}`;
     ui.sub.textContent = `${life.stage.world} · tầng ${life.tang}/9`;
     ui.expBar.el.hidden = life.status !== "alive";
@@ -263,6 +275,7 @@ export function createPlayView({ game }) {
       resultDlg.show();
     } else resultDlg.hide();
     drawBag();
+    characterDlg.refresh();
   }
 
   function ensureMode(m) {
@@ -292,7 +305,7 @@ export function createPlayView({ game }) {
     el, render,
     destroy() {
       window.removeEventListener("keydown", onKey);
-      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide();
+      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide(); characterDlg.hide(); sectDlg.hide();
     },
   };
 }

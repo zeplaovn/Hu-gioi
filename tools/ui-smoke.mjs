@@ -1,0 +1,50 @@
+import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
+import assert from 'node:assert/strict';
+const { chromium } = await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE).href);
+const html='apps/web/__classic_preview.html', js='apps/web/__classic_fixture.js';
+writeFileSync(html,'<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Classic UI fixture</title><body><script type="module" src="/__classic_fixture.js"></script></body></html>');
+writeFileSync(js,readFileSync('tests/ui/classic.fixture.js'));
+mkdirSync('ui-screenshots',{recursive:true});
+const server=spawn('pnpm',['--filter','web','exec','vite','--host','127.0.0.1','--port','5179'],{stdio:'inherit',env:{...process.env,PUBLIC_SUPABASE_URL:'https://fixture.invalid',PUBLIC_SUPABASE_ANON_KEY:'fixture-public-key-for-ui-only'}});
+let browser;
+try {
+ for(let n=0;n<100;n++){try{if((await fetch('http://127.0.0.1:5179/__classic_preview.html')).ok)break;}catch{} if(n===99)throw Error('Vite unavailable');await new Promise(r=>setTimeout(r,200));}
+ browser=await chromium.launch({headless:true});
+ const page=await browser.newPage({viewport:{width:1366,height:768}});
+ const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+ await page.goto('http://127.0.0.1:5179/__classic_preview.html');
+ await page.getByText('Chỉ số nhân vật',{exact:true}).waitFor();
+ // Wait for the actual scene images to finish loading, then allow one canvas render.
+ await page.waitForLoadState('networkidle');
+ await page.screenshot({path:'ui-screenshots/desktop.png',fullPage:true});
+ await page.getByText('Tông môn',{exact:true}).click();
+ await page.locator('dialog[open]').waitFor();
+ assert.equal(await page.locator('dialog[open] .sect-card').count(),3);
+ await page.screenshot({path:'ui-screenshots/sect.png'});
+ await page.keyboard.press('Escape');assert.equal(await page.locator('dialog[open]').count(),0);
+ await page.getByText('Chỉ số nhân vật',{exact:true}).click();
+ await page.getByRole('heading',{name:'Chỉ số nhân vật'}).waitFor();
+ await page.screenshot({path:'ui-screenshots/character.png'});
+ await page.getByRole('button',{name:'Đóng',exact:true}).click();
+ await page.evaluate(()=>window.demo('none'));
+ await page.getByRole('button',{name:'Bắt đầu tu tiên'}).waitFor();
+ await page.screenshot({path:'ui-screenshots/creation.png',fullPage:true});
+ await page.evaluate(()=>window.demo('login'));
+ await page.getByLabel('Email',{exact:true}).fill('player@example.com');
+ await page.getByLabel('Mật khẩu',{exact:true}).fill('testpassword');
+ await page.getByRole('tab',{name:'Đăng ký'}).click();
+ assert.equal(await page.getByLabel('Email',{exact:true}).inputValue(),'player@example.com');
+ await page.screenshot({path:'ui-screenshots/login.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ await page.evaluate(()=>window.demo('alive'));
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile horizontal overflow');
+ await page.screenshot({path:'ui-screenshots/mobile.png',fullPage:true});
+ await page.getByText('Chỉ số nhân vật',{exact:true}).click();
+ const box=await page.locator('dialog[open]').boundingBox();
+ assert(box.x>=0 && box.x+box.width<=390,'mobile dialog fits viewport');
+ await page.keyboard.press('Escape');
+ assert.deepEqual(errors,[],'browser runtime errors');
+ console.log('Classic UI: desktop/mobile layout, modals, Escape and login form passed.');
+} finally {await browser?.close();server.kill('SIGTERM');rmSync(html,{force:true});rmSync(js,{force:true});}

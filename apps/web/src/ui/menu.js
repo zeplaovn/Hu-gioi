@@ -5,17 +5,19 @@ import { h, icon } from "./dom.js";
 
 /** Nhóm "Tu hành" và "Nhân vật & thế giới". `soon: true` = chưa có ở backend v2. */
 const GROUP_ACTIONS = [
+  { id: "cultivate", label: "Tu luyện", icon: "orb_green", scroll: true },
   { id: "explore", label: "Lịch luyện", kbd: "L", icon: "sword", soon: true },
   { id: "rest", label: "Nghỉ ngơi", kbd: "N", icon: "peach", soon: true },
   { id: "break", seal: true },
   { id: "stone", label: "Luyện hóa linh thạch", icon: "crystal", soon: true },
   { id: "shop", label: "Cửa hàng đan dược", cls: "cyan", icon: "orb_green", soon: true },
   { id: "skills", label: "Công pháp", cls: "cyan", icon: "scroll", soon: true },
-  { id: "sect", label: "Tông môn", cls: "orange", icon: "bagua", soon: true },
+  { id: "sect", label: "Tông môn", cls: "orange", icon: "bagua" },
   { id: "crafts", label: "Nghề phụ", cls: "cyan", icon: "ginseng", soon: true },
   { id: "bag", label: "Túi đồ", cls: "cyan", icon: "charm" },
 ];
 const GROUP_WORLD = [
+  { id: "character", label: "Chỉ số nhân vật", cls: "cyan", icon: "portrait" },
   { id: "npc", label: "Nhân duyên Hạ Giới", cls: "cyan", icon: "portrait", href: "#/nhan-duyen" },
   { id: "codex", label: "Tàng Thư Các", cls: "cyan", icon: "scroll", href: "#/thu-vien" },
   { id: "tm", label: "Quán Đỉnh Thiên Mệnh", cls: "gold", icon: "orb_gold", href: "#/quan-dinh" },
@@ -51,7 +53,7 @@ function sealButton({ onclick, kbd, showKbd = true }) {
     showKbd && h("kbd", null, kbd));
 }
 
-function item(spec, { onBag }) {
+function item(spec, { onBag, onCharacter, onSect, onCultivate }) {
   const kids = [icon(spec.icon), h("span", { class: "btn-label" }, spec.label)];
   if (spec.soon) {
     return h("button", { type: "button", class: ["btn", "act", "soon", spec.cls], disabled: true, title: SOON_TITLE },
@@ -59,21 +61,21 @@ function item(spec, { onBag }) {
   }
   if (spec.href) return h("a", { class: ["btn", "act", spec.cls], href: spec.href, style: { textDecoration: "none" } }, ...kids);
   const count = h("span", { class: "count-tag" });
-  return Object.assign(h("button", { type: "button", class: ["btn", "act", spec.cls], onclick: onBag }, ...kids, count), { countEl: count });
+  return Object.assign(h("button", { type: "button", class: ["btn", "act", spec.cls], onclick: spec.id === "character" ? onCharacter : spec.id === "sect" ? onSect : spec.scroll ? onCultivate : onBag }, ...kids, count), { countEl: count });
 }
 
 /**
  * @param {{ game: any, onBag: () => void }} o
  * @returns {{ el: HTMLElement, dock: HTMLElement, update(state: any, life: any, prog: number): void }}
  */
-export function createMenu({ game, onBag }) {
+export function createMenu({ game, onBag, onCharacter, onSect, onCultivate }) {
   const breakSeal = sealButton({ onclick: () => game.prepare(), kbd: "D" });
   const dockSeal = sealButton({ onclick: () => game.prepare(), kbd: "D", showKbd: false });
   let bagBtn = null;
 
   const build = (spec) => {
     if (spec.seal) return breakSeal;
-    const b = item(spec, { onBag });
+    const b = item(spec, { onBag, onCharacter, onSect, onCultivate });
     if (spec.id === "bag") bagBtn = b;
     return b;
   };
