@@ -2,7 +2,7 @@
 import { clamp01 } from "../format.js";
 import { h } from "./dom.js";
 
-export const TONE = { jade: "#2fb86a", gold: "#d9a21f", cinnabar: "#c8452e", cyan: "#3aa7d6" };
+export const TONE = { jade: "#00e832", gold: "#dbb600", cinnabar: "#d20d42", cyan: "#7775cf" };
 
 /**
  * @param {{ label: string, tone?: keyof typeof TONE, showLabel?: boolean }} o

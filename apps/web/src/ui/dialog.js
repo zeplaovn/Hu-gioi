@@ -6,7 +6,7 @@ let seq = 0;
 export function createDialog({ title, onclose } = {}) {
   const id = `dlg-title-${++seq}`;
   const heading = h("h2", { id }, title ?? "");
-  const body = h("div");
+  const body = h("div", { class: "dialog-body" });
   const el = h("dialog", { "aria-labelledby": id }, heading, body);
   el.addEventListener("close", () => onclose?.());
   return {

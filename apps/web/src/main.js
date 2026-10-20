@@ -1,5 +1,6 @@
 /* Điểm vào: ghép auth + game store + router theo hash (#/play, #/quan-dinh, #/lich-su). Không framework; static host nào cũng chạy được. */
 import "./styles/app.css";
+import "./styles/classic.css";
 import { createApi } from "./api.js";
 import { createAuth } from "./auth.js";
 import { SUPABASE_ANON_KEY, functionUrl } from "./config.js";
@@ -47,6 +48,8 @@ function drawTopbar(signedIn) {
     h("a", { class: "game-title", href: "#/play" }, BRAND),
     route !== "/play" && h("a", { class: "btn ghost sm", href: "#/play", style: { textDecoration: "none" } }, "← Về Tu luyện"),
     h("span", { class: "spacer" }),
+    h("span", { class: ["sync-status", game.error ? "t-red" : "t-green"] }, game.error ? "● Mất kết nối" : game.loading || game.busy ? "● Đang đồng bộ" : "● Đã đồng bộ"),
+    game.state?.life && h("span", { class: "top-wallet t-cyan" }, icon("crystal"), `Linh thạch: ${num(game.state.life.wallet.ls)}`),
     game.state && h("span", { class: "chip gold", title: "Điểm Thiên Mệnh" },
       icon("orb_gold", "btn-ico", { width: "16px", height: "16px" }), " Thiên Mệnh ", h("b", { class: "num" }, num(game.state.account.tm_balance))),
     auth.session?.user?.email && h("span", { class: "dim small acct", title: auth.session.user.email }, auth.session.user.email),
@@ -65,7 +68,7 @@ function renderShell() {
     active?.view.destroy();
     const view = key === "login" ? createLoginView({ auth }) : ROUTES[key].make();
     active = { key, view };
-    main.className = key === "/play" ? "page" : "page narrow";
+    main.className = key === "/play" || key === "login" ? "page" : "page narrow";
     clear(main, view.el);                                    // phải gắn vào DOM trước khi render (hộp thoại cần isConnected)
     document.title = key === "login" ? BRAND : `${ROUTES[key].label} · ${BRAND}`;
   }
