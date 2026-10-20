@@ -129,7 +129,7 @@ begin
   select x.key,x.value into oid,offer from jsonb_each(st->'offers') x
    where x.value->>'npc_id'=npc and x.value->>'kind'=k and x.value->>'day'=today and not (x.value ? 'result') limit 1;
   if oid is not null and k<>'gift' then
-   return jsonb_build_object('offer_id',oid,'kind',k,'npc_id',npc,'scene',game.social_scene(offer->>'scene_id'));
+   return jsonb_build_object('offer_id',oid,'kind',k,'npc_id',npc,'scene',game.social_scene(offer->>'scene_id'),'gift_id',offer->>'gift_id');
   end if;
   if k='daily' then
    seen:=n->'seen';
@@ -178,6 +178,9 @@ begin
    select x into s from jsonb_array_elements(content->'scenes') x where x->>'scene_id'=scene_id;
    select x into c from jsonb_array_elements(s->'choices') x where x->>'choice_id'=p_choice;
    if c is null then raise exception 'invalid_choice' using errcode='GM000'; end if;
+   if k='story' and (n->>'affection')::int < (s->>'min_affection')::int then
+    raise exception 'relationship_required' using errcode='GM000';
+   end if;
    if k='daily' then
     if n->>'daily_day'=today then raise exception 'daily_limit' using errcode='GM000'; end if;
     n:=jsonb_set(n,'{daily_day}',to_jsonb(today));
