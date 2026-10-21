@@ -28,8 +28,7 @@ export function createCharacterDialog({ game }) {
       h('h3', { class: 't-green center' }, '— Chỉ số vĩnh viễn —'),
       h('table', { class: 'character-table' }, h('tbody', null, STAT_KEYS.map(k => row(STAT_LABEL[k], `${s.account.stats[k].level} / ${s.account.stats[k].cap}`)))),
       h('p', { class: 'small dim' }, 'Chủng tộc và linh căn là danh tính của kiếp; chưa làm đổi tốc độ tu luyện trong bản này.'),
-      h('div', { class: 'row center' }, h('a', { class: 'btn gold', href: '#/quan-dinh' }, 'Quán Đỉnh Thiên Mệnh'),
-        h('button', { class: 'btn ghost', onclick: () => dlg.hide() }, 'Đóng')));
+      h('div', { class: 'row center' }, h('button', { class: 'btn ghost', onclick: () => dlg.hide() }, 'Đóng')));
   }
   return { ...dlg, open() { render(); dlg.show(); }, refresh() { if (dlg.isOpen) render(); } };
 }

@@ -60,6 +60,8 @@ begin
   assert (select tm_balance from game.accounts where account_id = u) = 10, 'không hoàn TM';
   assert (game.get_state(u, t0 + interval '1 hour')->'history'->0->>'cause') = 'pvp';
   update game.accounts set tm_balance = 100 where account_id = u;
+  assert v2 is null, 'chết không tự mở kiếp mới';
+  v2 := game.start_life(u, t0 + interval '2 hour');
   perform game.buy_tm_item(u, 'TMITEM-004');                                                                    -- kiếp mới: hạn mức làm lại
   assert (select count(*) from game.life_items where life_id = v2) = 1;
 end $$;

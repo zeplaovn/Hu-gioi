@@ -57,10 +57,12 @@ begin
   assert not exists(select 1 from game.life_items where life_id = v);
   assert (select tm_balance from game.accounts where account_id = u) = before_tm;
   assert (select count(*) from game.life_history where account_id = u and cause = 'lifespan') = 1;
-  assert (select count(*) from game.lives where account_id = u and status = 'alive') = 1;
+  assert (select count(*) from game.lives where account_id = u and status = 'alive') = 0, 'không tự mở kiếp mới';
 
   -- Replay không mở kiếp thứ ba / không trừ thêm tài sản.
-  perform pg_temp.expect_err_lifespan(format('select game.lifespan_confirm(%L, %L, %L)', u, (p->>'intent_id')::uuid, t0 + interval '2 days 134 seconds'), 'lifespan_intent_not_found');
+  perform pg_temp.expect_err_lifespan(format('select game.lifespan_confirm(%L, %L, %L)', u, (p->>'intent_id')::uuid, t0 + interval '2 days 134 seconds'), 'no_alive_life');
+  perform game.start_life(u, t0 + interval '2 days 135 seconds');
+  perform pg_temp.expect_err_lifespan(format('select game.lifespan_confirm(%L, %L, %L)', u, (p->>'intent_id')::uuid, t0 + interval '2 days 136 seconds'), 'lifespan_intent_not_found');
   assert (select life_count from game.accounts where account_id = u) = 1;
   assert (select count(*) from game.life_history where account_id = u) = 1;
 end $$;

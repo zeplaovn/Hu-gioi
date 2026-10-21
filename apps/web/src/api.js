@@ -29,6 +29,17 @@ const TEXT = {
   invalid_roll_fields: "Yêu cầu gieo không hợp lệ.",
   life_already_started: "Kiếp này đã bắt đầu, không thể gieo lại.",
 
+  invalid_craft_action: "Thao tác nghề phụ không hợp lệ.",
+  invalid_craft_input: "Dữ liệu thao tác không hợp lệ.",
+  plot_locked: "Ô đất này còn bị khóa.", plot_busy: "Ô đất đang có cây.", plot_unlocked: "Ô đất đã mở rồi.",
+  plot_order: "Hãy mở các ô theo thứ tự từ trái sang phải, từ trên xuống.", realm_too_low: "Cảnh giới chưa đủ để mở ô này.",
+  craft_level_too_low: "Cấp Linh điền chưa đủ để gieo loại hạt này.",
+  insufficient_ls: "Không đủ Linh Thạch.", insufficient_tn: "Không đủ Tiên Ngọc.", insufficient_goods: "Trong kho không đủ vật phẩm này.",
+  not_ready: "Cây chưa chín.", water_max: "Ô này đã tưới đủ số lần.", water_cooldown: "Vừa tưới xong, hãy chờ một lát.",
+  nothing_to_water: "Không có cây đang lớn để tưới.", nothing_to_fertilize: "Không có cây đang lớn để bón phân.",
+  already_fertilized: "Ô này đã bón phân.", no_pest: "Không có sâu để bắt.",
+  daily_limit: "Hôm nay đã vẽ hết số lần. Lượt mới mở lúc 00:00 UTC (07:00 Việt Nam).", no_paper: "Hết Giấy Phù, hãy mua thêm ở Vạn Bảo Các.",
+  not_sellable: "Vật phẩm này không bán được.", not_for_sale: "Cửa hàng không bán vật phẩm này.", invalid_qty: "Số lượng không hợp lệ.",
   unauthorized: "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
   rate_limited: "Bạn thao tác quá nhanh, hãy đợi vài giây.",
   network: "Không kết nối được máy chủ. Hãy kiểm tra mạng.",
@@ -87,6 +98,8 @@ export function createApi(o) {
   }
 
   return {
+    crafts: () => req("GET", "/crafts"),
+    craftsAction: (body) => req("POST", "/crafts/action", body),
     social: () => req("GET", "/social"),
     socialAction: (body) => req("POST", "/social/action", body),
     state: () => req("GET", "/state"),

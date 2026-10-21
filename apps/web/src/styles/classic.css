@@ -131,3 +131,24 @@ dialog.social-dialog { width:min(720px, calc(100vw - 32px)); }
 /* Cài đặt */
 .settings .row { align-items:center; gap:10px; } .settings input[type="range"] { flex:1; }
 .settings-tracks { border:1px solid var(--line2); border-radius:4px; padding:6px 10px; display:grid; gap:4px; }
+
+/* Nghề phụ + Vạn Bảo Các */
+dialog.craft-dialog { width:min(640px, calc(100vw - 32px)); }
+.craft-exp { display:grid; gap:4px; font-size:12px; }
+.plot-grid { display:grid; gap:6px; margin:10px 0; }
+.plot { position:relative; min-height:78px; padding:6px 4px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; text-align:center;
+  background:var(--panel); border:1px solid var(--line2); border-radius:4px; color:var(--fg); font:inherit; cursor:pointer; }
+.plot b { font-size:12px; } .plot .small { font-size:11px; }
+.plot-no { position:absolute; top:2px; left:5px; font-size:10px; opacity:.55; }
+.plot-tags { font-size:11px; letter-spacing:1px; }
+.plot.st-locked { opacity:.55; background:#15191c; } .plot.st-growing { border-color:#2d8f55; } .plot.st-ready { border-color:#dbb600; background:#2a2813; }
+.plot.pest { border-color:#d20d42; } .plot.on { outline:2px solid #2bf46f; outline-offset:1px; }
+.plot-panel { padding:10px; border:1px solid var(--line2); border-radius:4px; background:#10161c; display:grid; gap:8px; }
+.plot-panel h4 { margin:0; color:var(--gold); } .plot-panel select { background:#101c27; color:#e4eadf; border:1px solid #4a625c; border-radius:6px; padding:8px; font:inherit; }
+.slots { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+.slot { min-height:64px; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; font-size:12px; border:1px dashed var(--line2); border-radius:4px; opacity:.6; }
+.slot.boost { grid-column:1 / -1; border-color:#dbb600; color:#ffe27a; }
+.shop-row { grid-template-columns:34px 1fr auto; }
+.creation-links { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.creation-links .btn { display:flex; justify-content:center; align-items:center; gap:6px; text-decoration:none; }
+@media (max-width:640px) { .plot { min-height:68px; } .creation-links { grid-template-columns:1fr; } }

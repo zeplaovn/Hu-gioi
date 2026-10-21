@@ -102,6 +102,8 @@ begin
  assert not exists(select 1 from game.social_lives where life_id=life);
  assert not exists(select 1 from game.npc_presence where life_id=life);
  assert (select lore from game.social_accounts where account_id=u)<>'{}';
+ perform pg_temp.social_error(format('select game.social_state(%L)',u),'no_alive_life');
+ next_life:=game.start_life(u);
  assert (game.social_state(u)->'npcs'->0->>'affection')='0';
  perform pg_temp.social_error(format('select game.social_action(%L,%L,''daily'',%L)',u,life,npc),'life_ended');
  assert not has_function_privilege('authenticated','game.social_action(uuid,uuid,text,text,text,text)','EXECUTE');
