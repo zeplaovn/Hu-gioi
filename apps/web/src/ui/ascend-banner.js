@@ -12,12 +12,18 @@ function sparks() {
     "--t": `${((i * 13) % 20) / 10}s`, "--dx": `${((i % 7) - 3) * 18}px` } }));
 }
 
+/** Sao rơi: vệt sáng chéo từ trên xuống, giá trị cố định theo chỉ số. */
+function stars() {
+  return Array.from({ length: 22 }, (_, i) => h("i", { style: {
+    "--x": `${(i * 29) % 90 - 10}%`, "--l": `${70 + (i % 5) * 28}px`, "--d": `${1.4 + (i % 4) * 0.45}s`, "--t": `${((i * 17) % 30) / 10}s` } }));
+}
+
 export function createAscendBanner() {
   let timer = null;
   const title = h("div", { class: "asc-title" }, "PHI THĂNG");
   const sub = h("div", { class: "asc-sub" });
   const el = h("div", { class: "ascend-banner", role: "status", "aria-live": "assertive", hidden: true, onclick: () => hide() },
-    h("div", { class: "asc-rays" }), h("div", { class: "asc-beam" }), h("div", { class: "asc-sparks" }, sparks()),
+    h("div", { class: "asc-rays" }), h("div", { class: "asc-beam" }), h("div", { class: "asc-stars" }, stars()), h("div", { class: "asc-sparks" }, sparks()),
     h("div", { class: "asc-ring" }), h("div", { class: "asc-ring r2" }), h("div", { class: "asc-ring r3" }), h("div", { class: "asc-flash" }),
     h("div", { class: "asc-card" }, title, sub));
   const onKey = (e) => { if (e.key === "Escape") hide(); };
@@ -32,7 +38,7 @@ export function createAscendBanner() {
       sub.textContent = `${fromWorld} → ${nextWorldName(fromWorld)}`;
       el.hidden = false; el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
       document.addEventListener("keydown", onKey);
-      timer = setTimeout(hide, 5400);
+      timer = setTimeout(hide, 6200);
     },
     hide,
   };
