@@ -26,6 +26,12 @@ try {
  assert.equal(await page.locator('dialog[open]').getByText(/Đất trống/).count(),2);
  assert.equal(await page.locator('dialog[open]').getByText(/· Khóa/).count(),14);
  await page.screenshot({path:'ui-screenshots/garden.png'});
+ await page.locator('dialog[open]').getByRole('button',{name:'Hành trang',exact:true}).click();
+ assert.equal(await page.locator('dialog[open]').getByRole('button',{name:'Dùng ngoài trận',exact:true}).count(),1,'only fully supported outside-battle items get a use button');
+ assert.equal(await page.locator('dialog[open]').getByText(/Hộ Thân Đan · \+8% HP/).count(),1,'active timed buff is visible');
+ assert.equal(await page.locator('dialog[open]').getByText(/Tăng Thọ Đan · \+1% HP/).count(),0,'expired timed buffs are hidden');
+ await page.screenshot({path:'ui-screenshots/consumables.png'});
+
  await page.keyboard.press('Escape');assert.equal(await page.locator('dialog[open]').count(),0);
  await page.getByRole('button',{name:'Lịch luyện',exact:true}).click();
  await page.locator('dialog[open] .social-roster button').first().waitFor();
