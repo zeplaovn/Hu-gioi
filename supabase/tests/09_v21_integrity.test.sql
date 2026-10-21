@@ -27,3 +27,45 @@ declare u uuid:=gen_random_uuid();l uuid;r jsonb;s jsonb;t uuid;closed uuid;ok b
  assert (select status='dead' and death_cause='return_home' from game.lives where life_id=l),'return home closes life explicitly';
  assert exists(select 1 from game.life_history where life_id=l and cause='return_home'),'ending history retained';
 end$$;
+-- Timed consumables use server clocks and immutable combat bases; combat enforces the same quotas.
+do $$
+declare u uuid:=gen_random_uuid();l uuid;s jsonb;r jsonb;b jsonb;id text;req uuid;ver bigint;ok boolean;hp numeric;shield numeric;begin
+ insert into auth.users(id) values(u);l:=game.start_life(u);perform game.play_state(u);
+ update game.lives set stage_idx=2,last_settle_at=now() where life_id=l;
+ select state into s from game.play_lives where life_id=l;s:=game.play_give(s,'PILL-017',3);s:=game.play_give(s,'PILL-006',2);s:=game.play_give(s,'TAL-002',1);update game.play_lives set state=s where life_id=l;
+ select key into id from jsonb_each(s->'inventory') where value->>'item_id'='PILL-017';
+ req:=gen_random_uuid();select version into ver from game.play_lives where life_id=l;
+ r:=game.play_action(u,l,req,'item_use',jsonb_build_object('id',id),ver);
+ assert r=game.play_action(u,l,req,'item_use',jsonb_build_object('id',id),ver),'buff retry does not consume twice';
+ perform pg_temp.act(u,l,'item_use',jsonb_build_object('id',id));
+ assert (select (state->'inventory'->id->>'quantity')::int=1 from game.play_lives where life_id=l),'one item per accepted use';
+ assert (select count(*)=1 from game.play_lives cross join lateral jsonb_each(state->'buffs') where life_id=l),'refresh does not stack another buff';
+ r:=pg_temp.act(u,l,'battle_prepare','{"id":"MON-001"}');perform pg_temp.act(u,l,'battle_start',jsonb_build_object('id','MON-001','token',r->'data'->>'token'));
+ select state->'battle' into b from game.play_lives where life_id=l;
+ assert (b->'player'->>'maxhp')::numeric=(b->'player_base'->>'maxhp')::numeric*1.08,'HP buff applies once at battle start';
+ assert (game.play_phase(b)->'player'->>'maxhp')::numeric=(b->'player'->>'maxhp')::numeric,'phase refresh never compounds';
+ b:=jsonb_set(b,ARRAY['buffs','PILL-017:stat_percent:HP','expires_at'],'0');b:=game.play_phase(b);
+ assert b->'player'->>'maxhp'=b->'player_base'->>'maxhp','expired buff removed in existing battle';
+ assert (b->'player'->>'hp')::numeric<=(b->'player'->>'maxhp')::numeric,'expiry clamps HP';
+ update game.play_lives set state=jsonb_set(state,'{battle}',b) where life_id=l;
+ select key into id from jsonb_each(s->'inventory') where value->>'item_id'='PILL-006';
+ insert into game.play_quotas values(u,'consume:PILL-006',game.play_day(),5);
+ ok:=false;begin perform pg_temp.act(u,l,'battle_turn',jsonb_build_object('move','item','instance_id',id));exception when sqlstate 'GM000' then ok:=sqlerrm='daily_limit';end;assert ok,'combat cannot bypass5/day healing limit';
+ assert (select (state->'inventory'->id->>'quantity')::int=2 and (state->'battle'->>'turn')::int=1 from game.play_lives where life_id=l),'failed combat use rolls back inventory and turn';
+ update game.play_quotas set used=4 where account_id=u and group_code='consume:PILL-006';
+ update game.lives set stage_idx=1 where life_id=l;
+ ok:=false;begin perform pg_temp.act(u,l,'battle_turn',jsonb_build_object('move','item','instance_id',id));exception when sqlstate 'GM000' then ok:=sqlerrm='item_unavailable';end;assert ok,'combat checks minimum major realm';
+ update game.lives set stage_idx=2 where life_id=l;
+ perform pg_temp.act(u,l,'battle_turn',jsonb_build_object('move','item','instance_id',id));
+ assert (select used=5 from game.play_quotas where account_id=u and group_code='consume:PILL-006'),'successful healing consumes account daily quota';
+ -- A damage talisman must pass the target shield, even when it is a guaranteed miss.
+ select key into id from jsonb_each(s->'inventory') where value->>'item_id'='TAL-002';
+ update game.play_lives set state=jsonb_set(jsonb_set(state,'{battle,enemy,shield}','99999999'),'{battle,enemy,hp}',state->'battle'->'enemy'->'maxhp') where life_id=l;
+ select (state->'battle'->'enemy'->>'hp')::numeric into hp from game.play_lives where life_id=l;
+ perform pg_temp.act(u,l,'battle_turn',jsonb_build_object('move','item','instance_id',id));
+ assert (select (state->'battle'->'enemy'->>'hp')::numeric=hp from game.play_lives where life_id=l),'damage talisman never bypasses shield';
+ assert not game.play_consumable_mode(game.play_find('item_effects','PILL-004'),'outside'),'unimplemented lifespan effect stays closed';
+ assert game.play_consumable_mode(game.play_find('item_effects','PILL-057'),'outside'),'multi-stat timed pill supported atomically';
+ perform game.end_life(l,'test');
+ assert (select not(state ? 'buffs') from game.play_lives where life_id=l),'timed buffs lost on death';
+end$$;

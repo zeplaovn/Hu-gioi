@@ -70,6 +70,34 @@ declare c jsonb;n int;v bool;key text:=p_node->'filters'->>'distinct_resource_ke
  return n>=coalesce((p_node->>'required_count')::int,1);
 end$$;
 
+-- Shared capability and quota checks keep UI, inventory use and combat use consistent.
+create function game.play_consumable_mode(p_item jsonb,p_mode text) returns boolean language sql immutable set search_path='' as $$
+ select p_item is not null and jsonb_array_length(p_item->'effects')>0 and
+ case when p_mode='outside' then p_item->>'activation'='consume' and not exists(select 1 from jsonb_array_elements(p_item->'effects') e where not(e->>'op' in('cultivation_progress','breakthrough_bonus') or e->>'op'='stat_percent' and e->>'stat' in('HP','ATK','DEF','SPIRIT','PEN','RES') and (e->>'duration_seconds')::int>0))
+ when p_mode='battle' then p_item->>'activation' in('consume','consume_in_battle') and not exists(select 1 from jsonb_array_elements(p_item->'effects') e where e->>'op' not in('heal_hp','cleanse','shield','shield_hp','damage_taken_reduce','damage','survive_lethal')) else false end
+$$;
+create function game.play_consume_limit(p_account uuid,p_life uuid,p_stage int,p_item jsonb) returns void language plpgsql set search_path='' as $$
+declare lim int:=(p_item->'restrictions'->'usage_limit'->>'count')::int;period text;begin
+ if lim is null then return;end if;
+ period:=case p_item->'restrictions'->'usage_limit'->>'period' when 'day' then game.play_day() when 'week' then game.play_period('weekly') when 'major_realm' then p_life::text||':'||p_stage::text when 'life' then p_life::text else null end;
+ if period is null then raise exception 'unsupported_usage_period' using errcode='GM000';end if;
+ perform game.play_quota(p_account,'consume:'||(p_item->>'item_id'),lim,period);
+end$$;
+create function game.play_buff_actor(p_actor jsonb,p_base jsonb,p_buffs jsonb) returns jsonb language plpgsql stable set search_path='' as $$
+declare e jsonb;stat text;a jsonb:=p_actor;delta numeric;begin
+ for stat in select unnest(array['maxhp','atk','defense','spirit','pen','res']) loop a:=jsonb_set(a,array[stat],p_base->stat);end loop;
+ for e in select value from jsonb_each(coalesce(p_buffs,'{}')) where (value->>'expires_at')::numeric>extract(epoch from now()) loop
+  stat:=case e->>'stat' when 'HP' then 'maxhp' when 'ATK' then 'atk' when 'DEF' then 'defense' when 'SPIRIT' then 'spirit' when 'PEN' then 'pen' when 'RES' then 'res' end;
+  if stat is null then continue;end if;
+  delta:=case when stat in('pen','res') then (e->>'amount_bp')::numeric/10000 else (p_base->>stat)::numeric*(e->>'amount_bp')::numeric/10000 end;
+  a:=jsonb_set(a,array[stat],to_jsonb((a->>stat)::numeric+delta));
+ end loop;
+ return jsonb_set(a,'{hp}',to_jsonb(least((a->>'hp')::numeric,(a->>'maxhp')::numeric)));
+end$$;
+create function game.play_enemy_reduction(p_battle jsonb,p_element text) returns numeric language sql immutable set search_path='' as $$
+ select least(.65,coalesce(sum((e->>'amount_bp')::numeric/10000),0)) from jsonb_array_elements(p_battle->'ops') e where e->>'op'='damage_reduction' or e->>'op'='element_resistance' and e->'elements' ? p_element
+$$;
+
 create function game.play_state(p_account uuid) returns jsonb language plpgsql set search_path='' as $$
 #variable_conflict use_column
 declare l game.lives%rowtype;st jsonb;ver bigint;k jsonb;w text;begin
@@ -80,7 +108,7 @@ declare l game.lives%rowtype;st jsonb;ver bigint;k jsonb;w text;begin
  select state,version into st,ver from game.play_lives where life_id=l.life_id;select knowledge into k from game.play_accounts where account_id=p_account;select world into w from game.stages where idx=l.stage_idx;
  -- Never disclose private craft RNG before completion.
  st:=jsonb_set(st,'{jobs}',coalesce((select jsonb_object_agg(key,value-'success'-'quality') from jsonb_each(st->'jobs')),'{}'));
- return jsonb_build_object('version',ver,'life_id',l.life_id,'state',st,'knowledge',k,'server_day',game.play_day(),'wallet',jsonb_build_object('LT_HP',l.ls::text,'LT_TP',l.lt::text,'TN',l.tn::text),
+ return jsonb_build_object('item_use_modes',(select jsonb_object_agg(x->>'item_id',jsonb_build_object('outside',game.play_consumable_mode(x,'outside'),'battle',game.play_consumable_mode(x,'battle'))) from jsonb_array_elements(game.play_data('item_effects')) x),'version',ver,'life_id',l.life_id,'state',st,'knowledge',k,'server_day',game.play_day(),'wallet',jsonb_build_object('LT_HP',l.ls::text,'LT_TP',l.lt::text,'TN',l.tn::text),
  'acquisition',game.play_data('acquisition_rules'),'encounters',game.play_data('combat')->'encounters','skills',game.play_data('combat')->'player_skills','catalog',game.play_data('item_catalog'),'prices',game.play_data('price_book'),'recipes',game.play_data('crafting_recipes'),'seeds',game.play_data('planting_recipes'),'plots',game.play_data('garden_plots'),'venues',game.play_data('venues'),'stock',game.play_data('venue_stock'),'quests',game.play_data('quests'),'interactions',game.play_data('quest_interactions'),'nodes',game.play_data('world_nodes'),'sect_shop',game.play_data('sect_shop'),
  'auctions',coalesce((select jsonb_agg(to_jsonb(a)||jsonb_build_object('opening',a.opening::text,'price',a.price::text,'buyout',a.buyout::text)) from (select * from game.server_auctions where state='OPEN' order by ends_at limit 100) a),'[]'));
 end$$;
@@ -160,6 +188,7 @@ declare b jsonb:=p_battle;row jsonb;o jsonb;p jsonb:=b->'player';e jsonb:=b->'en
  -- Monotonic phase: healing never re-enters an earlier phase.
  if nextphase<phase then nextphase:=phase;select x->'ops' into active from jsonb_array_elements(game.play_data('combat')->'phase_effects') x where x->>'monster_id'=b->>'monster_id' and (x->>'phase')::int=phase;end if;
  for stat in select unnest(array['atk','defense','spirit','spd','acc','eva','crit','pen','res','crit_damage']) loop e:=jsonb_set(e,array[stat],b->'enemy_base'->stat);p:=jsonb_set(p,array[stat],b->'player_base'->stat);end loop;
+ p:=game.play_buff_actor(p,b->'player_base',b->'buffs');
  for o in select value from jsonb_array_elements(active) loop
   stat:=o->>'stat';
   if o->>'op'='stat_percent' then delta:=case when stat in('crit','pen','res') then (o->>'amount_bp')::numeric/10000 else (e->>stat)::numeric*(o->>'amount_bp')::numeric/10000 end;e:=jsonb_set(e,array[stat],to_jsonb((e->>stat)::numeric+delta));
@@ -385,7 +414,8 @@ begin
    end loop;
   end loop;v:=jsonb_set(v,'{hp}',v->'maxhp');
   j:=jsonb_build_object('id',gen_random_uuid(),'monster_id',id,'mode',r->>'default_mode','turn',1,'phase',0,'player',v,'enemy',c,'player_base',v,'enemy_base',c,'ops','[]'::jsonb,'log','[]'::jsonb,'potion_ready',1,'talisman_used',false,'qi',100,'outcome','ACTIVE');
-  st:=jsonb_set(st,'{battle}',game.play_phase(j));st:=st-'battle_intent';
+  j:=jsonb_set(j,'{buffs}',coalesce(st->'buffs','{}'));j:=game.play_phase(j);j:=jsonb_set(j,'{player,hp}',j->'player'->'maxhp');
+  st:=jsonb_set(st,'{battle}',j);st:=st-'battle_intent';
  elsif p_action='battle_turn' then
   j:=st->'battle';if j is null or j->>'outcome'<>'ACTIVE' then raise exception 'no_battle' using errcode='GM000';end if;
   j:=game.play_phase(j);v:=game.play_dots(j->'player');c:=game.play_dots(j->'enemy');lv:=(j->>'turn')::int;code:=coalesce(p_args->>'move','attack');cost:=1;out:='{}';
@@ -396,7 +426,8 @@ begin
    cost:=(r->>'coefficient')::numeric;v:=jsonb_set(v,array['cooldowns',r->>'id'],to_jsonb(lv+(r->>'cooldown')::int+1));j:=jsonb_set(j,'{qi}',to_jsonb((j->>'qi')::numeric-(r->>'qi_cost_pct')::numeric));
   elsif code='item' then
    id:=p_args->>'instance_id';inst:=st->'inventory'->id;i:=game.play_find('item_effects',inst->>'item_id');
-   if i is null or i->'restrictions'->>'use_world'<>w or i->>'activation' not in('consume','consume_in_battle') then raise exception 'item_unavailable' using errcode='GM000';end if;
+   if not game.play_consumable_mode(i,'battle') or i->'restrictions'->>'use_world'<>w or game.play_stage(i->'restrictions'->>'min_stage_id')>l.stage_idx then raise exception 'item_unavailable' using errcode='GM000';end if;
+   perform game.play_consume_limit(p_account,p_life,l.stage_idx,i);
    if (inst->>'item_id') like 'TAL-%' then if (j->>'talisman_used')::boolean then raise exception 'daily_limit' using errcode='GM000';end if;j:=jsonb_set(j,'{talisman_used}','true');
    elsif lv<(j->>'potion_ready')::int then raise exception 'item_cooldown' using errcode='GM000';else j:=jsonb_set(j,'{potion_ready}',to_jsonb(lv+3));end if;
    shift:=case inst->>'quality' when 'fine' then 10500 when 'superior' then 11000 when 'supreme' then 11500 else 10000 end;
@@ -406,7 +437,9 @@ begin
      for input in select jsonb_build_object('key',key) from jsonb_each(v->'statuses') where (not(k ? 'status_ids') or k->'status_ids' ? key) and not coalesce((value->>'boss_mechanic')::boolean,false) order by key limit coalesce((k->>'count')::int,99) loop v:=v #- array['statuses',input->>'key'];end loop;
     elsif k->>'op' in('shield','shield_hp') then v:=jsonb_set(v,'{shield}',to_jsonb(floor((v->>'maxhp')::numeric*(k->>'amount_bp')::numeric*shift/100000000)));j:=jsonb_set(j,'{shield_until}',to_jsonb(lv+coalesce((k->>'duration_turns')::int,2)-1));
     elsif k->>'op'='damage_taken_reduce' then j:=jsonb_set(j,'{reduce}',jsonb_build_object('bp',k->'amount_bp','until',lv+(k->>'duration_turns')::int-1));
-    elsif k->>'op'='damage' then c:=jsonb_set(c,'{hp}',to_jsonb(greatest(0,(c->>'hp')::numeric-(v->>'atk')::numeric*coalesce((k->>'coefficient_bp')::numeric,10000)*shift/100000000)));
+    elsif k->>'op'='damage' then
+     amount:=game.play_enemy_reduction(j,k->>'element');out:=game.play_strike(v,c,coalesce((k->>'coefficient_bp')::numeric,10000)*shift/100000000,(v->>'atk')::numeric,false,amount);c:=out->'target';
+     for input in select value from jsonb_array_elements(j->'ops') loop if input->>'op'='reflect' then v:=jsonb_set(v,'{hp}',to_jsonb(greatest(0,(v->>'hp')::numeric-least((out->>'damage')::numeric*(input->>'amount_bp')::numeric/10000,(v->>'maxhp')::numeric*(input->>'player_hp_cap_bp')::numeric/10000))));end if;end loop;
     elsif k->>'op'='survive_lethal' then j:=jsonb_set(j,'{survive}','true');
     else raise exception 'effect_not_available_in_battle' using errcode='GM000';end if;
    end loop;st:=game.play_take(st,id,1);
@@ -414,7 +447,7 @@ begin
   if code='flee' then j:=jsonb_set(j,'{outcome}','"FLED"');
   else
    if code in('attack','skill') and (v->>'hp')::numeric>0 then
-    amount:=0;for k in select value from jsonb_array_elements(j->'ops') loop if k->>'op'='damage_reduction' then amount:=amount+(k->>'amount_bp')::numeric/10000;elsif k->>'op'='element_resistance' and k->'elements' ? (v->>'element') then amount:=amount+(k->>'amount_bp')::numeric/10000;end if;end loop;
+    amount:=game.play_enemy_reduction(j,case when code='skill' then r->>'element' else v->>'element' end);
     out:=game.play_strike(v,c,cost,(v->>'atk')::numeric,false,least(.65,amount));c:=out->'target';
     for k in select value from jsonb_array_elements(j->'ops') loop if k->>'op'='reflect' then v:=jsonb_set(v,'{hp}',to_jsonb(greatest(0,(v->>'hp')::numeric-least((out->>'damage')::numeric*(k->>'amount_bp')::numeric/10000,(v->>'maxhp')::numeric*(k->>'player_hp_cap_bp')::numeric/10000))));end if;end loop;
    end if;
@@ -459,7 +492,7 @@ begin
   out:=jsonb_build_object('battle',j);if j->>'outcome'<>'ACTIVE' then st:=jsonb_set(st,'{last_battle}',j);st:=st-'battle';else st:=jsonb_set(st,'{battle}',j);end if;
  elsif p_action='item_use' then
   inst:=st->'inventory'->id;i:=game.play_find('item_effects',inst->>'item_id');
-  if i is null or i->>'activation'<>'consume' or i->'restrictions'->>'use_world'<>w or game.play_stage(i->'restrictions'->>'min_stage_id')>l.stage_idx then raise exception 'item_unavailable' using errcode='GM000';end if;
+  if not game.play_consumable_mode(i,'outside') or i->'restrictions'->>'use_world'<>w or game.play_stage(i->'restrictions'->>'min_stage_id')>l.stage_idx then raise exception 'item_unavailable' using errcode='GM000';end if;
   for k in select value from jsonb_array_elements(i->'effects') loop
    if k->>'op'='cultivation_progress' then
     if l.progress_s>=game.tang_seconds(l.stage_idx,l.tang)*.99 then raise exception 'progress_cap' using errcode='GM000';end if;
@@ -467,10 +500,14 @@ begin
    elsif k->>'op'='breakthrough_bonus' then
     if k ? 'only_stage' and k->>'only_stage'<>(select stage_id from game.stages where idx=l.stage_idx) then raise exception 'realm_locked' using errcode='GM000';end if;
     st:=jsonb_set(st,'{flags,breakthrough_bonus}',to_jsonb(greatest(coalesce((st->'flags'->>'breakthrough_bonus')::int,0),(k->>'amount_bp')::int)));
+   elsif k->>'op'='stat_percent' then
+    st:=jsonb_set(st,'{buffs}',coalesce(st->'buffs','{}'));
+    v:=st->'buffs'->(k->>'stack_group');
+    amount:=greatest((k->>'amount_bp')::numeric,case when (v->>'expires_at')::numeric>now_s then coalesce((v->>'amount_bp')::numeric,0) else 0 end);
+    st:=jsonb_set(st,array['buffs',k->>'stack_group'],k||jsonb_build_object('amount_bp',amount,'expires_at',now_s+(k->>'duration_seconds')::int,'item_id',inst->>'item_id'));
    else raise exception 'effect_not_available_outside_battle' using errcode='GM000';end if;
   end loop;
-  qty:=(i->'restrictions'->'usage_limit'->>'count')::int;
-  if qty is not null then period:=case i->'restrictions'->'usage_limit'->>'period' when 'major_realm' then p_life::text||':'||l.stage_idx::text when 'day' then game.play_day() else p_life::text end;perform game.play_quota(p_account,'consume:'||(inst->>'item_id'),qty,period);end if;
+  perform game.play_consume_limit(p_account,p_life,l.stage_idx,i);
   st:=game.play_take(st,id,1);
  elsif p_action='ending_prepare' then
   if st->'quests'->'Q-TG-04'->>'status' is distinct from 'CLAIMED' then raise exception 'main_quest_required' using errcode='GM000';end if;
