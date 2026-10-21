@@ -12,6 +12,9 @@ import { createCraftsDialog, createCraftsStore, createShopDialog } from "../ui/c
 import { createSocialDialog } from "../ui/social.js";
 import { NAME_MAX, cleanName, randomName } from "../names.js";
 import { createMenu } from "../ui/menu.js";
+import { createFrameDialog } from "../ui/frames.js";
+import { createWorldMapDialog } from "../ui/world-map.js";
+import { effectiveWorld, worldById } from "../world.js";
 import { createScene } from "../ui/scene.js";
 
 const WORLD = {
@@ -41,10 +44,15 @@ export function createPlayView({ game, onSettings = () => {} }) {
   const exploreDlg = createSocialDialog({ game, kind: "explore" });
   const sectDlg = createSocialDialog({ game, kind: "sect" });
   const secretDlg = createSocialDialog({ game, kind: "secret" });
+  const frameKinds = ["skills", "root", "sectCreate", "auction", "pvp", "board"];
+  const frames = Object.fromEntries(frameKinds.map((k) => [k, createFrameDialog({ kind: k })]));
+  let realWorld = "Hạ Giới";
+  const mapDlg = createWorldMapDialog({ getRealWorldName: () => realWorld, onChange: () => applyWorld() });
+  const applyWorld = () => { const id = effectiveWorld(realWorld); menu?.setWorld(id); const w = worldById(id); scene?.update({ world: w.id, color: w.color, label: `${w.name} (xem trước)` }); };
   const craftsStore = createCraftsStore(game);
   const craftsDlg = createCraftsDialog({ store: craftsStore });
   const shopDlg = createShopDialog({ store: craftsStore });
-  const el = h("div", null, errBox, stage, craftsDlg.el, shopDlg.el, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el);
+  const el = h("div", null, errBox, stage, craftsDlg.el, shopDlg.el, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el, mapDlg.el, ...frameKinds.map((k) => frames[k].el));
 
   let mode = null, ui = null, scene = null, menu = null, prevWorld = null;
 
@@ -172,7 +180,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
     });
 
     menu = createMenu({ game, onBag: () => { bagOpen = true; drawBag(); },
-      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.open(), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings, onCrafts: () => craftsDlg.open(), onShop: () => shopDlg.open(),
+      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.open(), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings, onCrafts: () => craftsDlg.open(), onShop: () => shopDlg.open(), onMap: () => mapDlg.open(), onFrame: (k) => frames[k].open(effectiveWorld(realWorld)),
       onCultivate: () => idlePanel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }) });
 
     clear(stage,
@@ -254,6 +262,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
     scene.update({ world: w.id, season, color: w.color, pulse: game.pulse, ascend, thunder: !!game.prepared, label: `${life.stage.world} · mùa ${SEASON_NAME[season]}` });
     ui.clearedNote.hidden = life.status !== "cleared";
     syncLog();
+    realWorld = life.stage.world; menu.setWorld(effectiveWorld(realWorld));
     menu.update(s, life, prog);
   }
 

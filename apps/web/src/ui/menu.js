@@ -2,6 +2,7 @@
    Mục nào backend v2 chưa có thì hiện "Sắp mở" và bị khóa: không giả vờ chạy. Chỉ gửi ý định, mọi quyết định do server. */
 import { pct } from "../format.js";
 import { h, icon } from "./dom.js";
+import { availableIn } from "../world.js";
 
 /** Nhóm "Tu hành" và "Nhân vật & thế giới". `soon: true` = chưa có ở backend v2. */
 const GROUP_ACTIONS = [
@@ -11,17 +12,20 @@ const GROUP_ACTIONS = [
   { id: "break", seal: true },
   { id: "stone", label: "Luyện hóa linh thạch", icon: "crystal", soon: true },
   { id: "shop", label: "Vạn Bảo Các", cls: "cyan", icon: "orb_green" },
-  { id: "skills", label: "Công pháp", cls: "cyan", icon: "scroll", soon: true },
+  { id: "skills", label: "Công pháp", cls: "cyan", icon: "scroll", frame: true },
   { id: "sect", label: "Tông môn", cls: "orange", icon: "bagua" },
   { id: "crafts", label: "Nghề phụ", cls: "cyan", icon: "ginseng" },
   { id: "bag", label: "Túi đồ", cls: "cyan", icon: "charm" },
 ];
 const GROUP_WORLD = [
   { id: "character", label: "Chỉ số nhân vật", cls: "cyan", icon: "portrait" },
-  { id: "root", label: "Linh căn", cls: "cyan", icon: "orb_green", soon: true },
+  { id: "root", label: "Linh căn", cls: "cyan", icon: "orb_green", frame: true },
   { id: "secret", label: "Bí cảnh", cls: "orange", icon: "crystal" },
-  { id: "board", label: "Bảng xếp hạng", cls: "gold", icon: "bagua", soon: true },
-  { id: "map", label: "Thiên Vân Địa Đồ", cls: "cyan", icon: "portrait", soon: true },
+  { id: "sectCreate", label: "Lập tông môn", cls: "orange", icon: "bagua", frame: true },
+  { id: "auction", label: "Đấu giá", cls: "gold", icon: "crystal", frame: true },
+  { id: "pvp", label: "PvP · Đấu trường", cls: "danger", icon: "sword", frame: true },
+  { id: "board", label: "Bảng xếp hạng", cls: "gold", icon: "bagua", frame: true },
+  { id: "map", label: "Thiên Vân Địa Đồ", cls: "cyan", icon: "portrait" },
   { id: "settings", label: "Cài đặt", cls: "cyan", icon: "bagua" },
 ];
 const SOON_TITLE = "Chưa mở trong bản v2";
@@ -64,8 +68,10 @@ function item(spec, handlers) {
  * @param {{ game: any, onBag: () => void }} o
  * @returns {{ el: HTMLElement, dock: HTMLElement, update(state: any, life: any, prog: number): void }}
  */
-export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings, onCrafts, onShop }) {
-  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings, crafts: onCrafts, shop: onShop };
+export function createMenu({ game, onFrame, onMap, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings, onCrafts, onShop }) {
+  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings, crafts: onCrafts, shop: onShop, map: onMap };
+  for (const id of ["skills", "root", "sectCreate", "auction", "pvp", "board"]) handlers[id] = () => onFrame(id);
+  const buttons = new Map();
   const breakSeal = sealButton({ onclick: () => game.prepare(), kbd: "D" });
   const dockSeal = sealButton({ onclick: () => game.prepare(), kbd: "D", showKbd: false });
   let bagBtn = null;
@@ -73,6 +79,7 @@ export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onEx
   const build = (spec) => {
     if (spec.seal) return breakSeal;
     const b = item(spec, handlers);
+    buttons.set(spec.id, b);
     if (spec.id === "bag") bagBtn = b;
     return b;
   };
@@ -97,6 +104,8 @@ export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onEx
 
   return {
     el, dock,
+    /** Ẩn mục không có ở giới đang hiển thị (Tông môn Hạ Giới chỉ ở Hạ Giới; Lập tông môn/Đấu giá/PvP chỉ ở Linh & Tiên). */
+    setWorld(worldId) { for (const [id, b] of buttons) b.hidden = !availableIn(id, worldId) && ["sect", "sectCreate", "auction", "pvp"].includes(id); },
     update(state, life, prog) {
       const busy = game.busy;
       paintSeal(breakSeal, { life, prog, busy });
