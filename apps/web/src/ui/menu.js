@@ -10,6 +10,7 @@ const GROUP_ACTIONS = [
   { id: "explore", label: "Lịch luyện", icon: "sword" },
   { id: "rest", label: "Nghỉ ngơi", kbd: "N", icon: "peach", soon: true },
   { id: "break", seal: true },
+  { id: "ascend", label: "Phi thăng", cls: "gold", icon: "orb_gold" },
   { id: "stone", label: "Luyện hóa linh thạch", icon: "crystal", soon: true },
   { id: "shop", label: "Vạn Bảo Các", cls: "cyan", icon: "orb_green" },
   { id: "skills", label: "Công pháp", cls: "cyan", icon: "scroll", frame: true },
@@ -68,8 +69,8 @@ function item(spec, handlers) {
  * @param {{ game: any, onBag: () => void }} o
  * @returns {{ el: HTMLElement, dock: HTMLElement, update(state: any, life: any, prog: number): void }}
  */
-export function createMenu({ game, onFrame, onMap, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings, onCrafts, onShop }) {
-  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings, crafts: onCrafts, shop: onShop, map: onMap };
+export function createMenu({ game, onAscend, onFrame, onMap, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings, onCrafts, onShop }) {
+  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings, crafts: onCrafts, shop: onShop, map: onMap, ascend: onAscend };
   for (const id of ["skills", "root", "sectCreate", "auction", "pvp", "board"]) handlers[id] = () => onFrame(id);
   const buttons = new Map();
   const breakSeal = sealButton({ onclick: () => game.prepare(), kbd: "D" });
