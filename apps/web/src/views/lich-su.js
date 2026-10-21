@@ -3,7 +3,7 @@ import { STAGES } from "@hu-gioi/game-core";
 import { causeLabel, dateTime, num } from "../format.js";
 import { clear, h } from "../ui/dom.js";
 
-const where = (idx, tang) => `${STAGES[idx]?.name ?? "?"} · tầng ${tang}`;
+const where = (idx, tang) => `${STAGES.find(s=>s.idx===idx)?.name ?? (idx===0?"Phàm Nhân (lịch sử)":"?")} · tầng ${tang}`;
 
 export function createLichSuView({ game }) {
   const body = h("div");

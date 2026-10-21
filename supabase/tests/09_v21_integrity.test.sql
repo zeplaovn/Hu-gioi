@@ -5,6 +5,10 @@ declare u uuid:=gen_random_uuid();l uuid;r jsonb;s jsonb;t uuid;closed uuid;ok b
  insert into auth.users(id) values(u);l:=game.start_life(u);perform game.play_state(u);
  assert exists(select 1 from game.money_ledger where life_id=l and reason='new_life_grant' and delta=3),'new life source ledger';
  ok:=false;begin update game.money_ledger set delta=999 where life_id=l;exception when others then ok:=sqlerrm='immutable_ledger';end;assert ok,'ledger is immutable';
+ execute 'set local role service_role';
+ r:=game.play_action(u,l,gen_random_uuid(),'refine','{}',0);
+ execute 'reset role';
+ assert (select ls=0 from game.lives where life_id=l),'Edge service role can mutate atomically';
  assert not has_function_privilege('anon','game.play_action(uuid,uuid,uuid,text,jsonb,bigint)','EXECUTE'),'no anonymous mutation RPC';
  assert not has_table_privilege('authenticated','game.play_lives','SELECT'),'no direct state reads';
  assert game.play_tradeable(game.play_find('item_catalog','SEED-HERB-001')),'boolean trade true normalized';

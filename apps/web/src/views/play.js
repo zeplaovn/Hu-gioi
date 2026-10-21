@@ -303,7 +303,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
       resultDlg.setTitle(r.outcome === "death" ? "Vẫn lạc" : r.outcome === "cleared" ? "Viên mãn" : "Đột phá thành công");
       let content;
       if (r.outcome === "success") {
-        const name = STAGES[r.stage_idx]?.name ?? r.stage_id;
+        const name = STAGES.find(s=>s.idx===r.stage_idx)?.name ?? r.stage_id;
         content = [h("p", null, "Ngươi bước vào ", h("b", null, name), ` ở ${r.world}.`),
           r.ascended && h("p", { class: "t-gold" }, "Phi Thăng: ngươi rời đại giới cũ nhưng vẫn là một kiếp, không mất gì.")];
       } else if (r.outcome === "cleared") {

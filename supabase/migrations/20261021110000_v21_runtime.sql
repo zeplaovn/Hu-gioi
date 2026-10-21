@@ -1,3 +1,4 @@
+begin;
 -- v2.1 playable systems. All mutations run inside one RPC transaction.
 create table game.play_lives(life_id uuid primary key references game.lives on delete cascade,state jsonb not null default '{"inventory":{},"plots":{"1":{},"2":{}},"xp":{},"jobs":{},"quests":{},"events":[],"equipment":{},"flags":{},"sect":"","contribution":0,"node":"HG.SECT"}',version bigint not null default 0);
 create table game.play_accounts(account_id uuid primary key references game.accounts on delete cascade,knowledge jsonb not null default '{}');
@@ -664,3 +665,12 @@ do $$declare p record;t text;begin
  for p in select oid::regprocedure::text sig from pg_proc where pronamespace='game'::regnamespace loop execute 'revoke all on function '||p.sig||' from public,anon,authenticated';execute 'grant execute on function '||p.sig||' to service_role';end loop;
  grant usage,select on all sequences in schema game to service_role;
 end$$;
+
+-- Hot-path indexes: open listings, death cleanup, daily reservations and audit history.
+create index server_auctions_open_end on game.server_auctions(ends_at) where state='OPEN';
+create index server_auctions_open_seller on game.server_auctions(seller) where state='OPEN';
+create index server_auctions_open_bidder on game.server_auctions(bidder) where state='OPEN' and bidder is not null;
+create index trade_holds_daily on game.trade_holds(account_id,day);
+create index money_ledger_life on game.money_ledger(life_id,id);
+create index auction_history_auction on game.auction_history(auction_id,id);
+commit;

@@ -1,3 +1,4 @@
+begin;
 -- Preserve original19-NPC saves for audit; only mapped active relationships are displayed.
 create table game.social_v11_archive as select * from game.social_lives;
 alter table game.social_v11_archive enable row level security;
@@ -234,3 +235,5 @@ insert into game.play_quotas(account_id,group_code,period,used)
  select l.account_id,'social:'||g.kind||':'||n.key,game.play_day(),1 from game.social_lives s join game.lives l using(life_id),jsonb_each(s.state->'npcs') n cross join lateral (values('daily'),('gift')) g(kind)
  where n.key like 'NPC-%' and n.value->>(g.kind||'_day')>=to_char(now() at time zone 'UTC','YYYY-MM-DD') on conflict do nothing;
 do $$declare p record;begin for p in select oid::regprocedure::text sig from pg_proc where pronamespace='game'::regnamespace loop execute 'revoke all on function '||p.sig||' from public,anon,authenticated';execute 'grant execute on function '||p.sig||' to service_role';end loop;end$$;
+
+commit;
