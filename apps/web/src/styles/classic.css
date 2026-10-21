@@ -168,3 +168,22 @@ dialog.frame-dialog, dialog.worldmap-dialog { width:min(820px, calc(100vw - 32px
 .frame-form { display:grid; gap:8px; margin:6px 0; }
 .frame-emblems, .frame-tabs, .frame-actions { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
 .frame-emblem { width:36px; height:36px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.25); border-radius:6px; font-size:1.2em; }
+
+/* Banner phi thăng */
+.ascend-banner { position:fixed; inset:0; z-index:200; display:grid; place-items:center; background:radial-gradient(circle, rgba(255,226,122,.28), rgba(0,0,0,.72) 70%); cursor:pointer; }
+.ascend-banner[hidden] { display:none; }
+.ascend-banner.show { animation:asc-fade 4.8s ease both; }
+.asc-beam { position:absolute; left:50%; top:0; bottom:0; width:min(260px,40vw); transform:translateX(-50%) scaleY(0); transform-origin:bottom; background:linear-gradient(to top, transparent, rgba(255,240,180,.55), rgba(255,255,255,.9) 50%, transparent); filter:blur(6px); }
+.show .asc-beam { animation:asc-beam 2.6s ease-out both; }
+.asc-ring { position:absolute; width:120px; height:120px; border-radius:50%; border:3px solid #ffe27a; opacity:0; }
+.show .asc-ring { animation:asc-ring 2.4s ease-out both; }
+.asc-ring.r2 { animation-delay:.5s !important; }
+.asc-card { position:relative; text-align:center; padding:24px 40px; border-block:2px solid #ffe27a; background:rgba(10,8,0,.55); backdrop-filter:blur(3px); }
+.asc-title { font-size:clamp(2rem,9vw,4.5rem); letter-spacing:.3em; padding-left:.3em; font-weight:700; color:#ffe27a; text-shadow:0 0 18px #ffb400, 0 0 42px #ff9a00; }
+.show .asc-card { animation:asc-card 1.4s .5s cubic-bezier(.2,.9,.2,1) both; }
+.asc-sub { margin-top:6px; font-size:clamp(1rem,3.5vw,1.5rem); color:#fff; letter-spacing:.12em; }
+@keyframes asc-fade { 0% { opacity:0 } 8% { opacity:1 } 85% { opacity:1 } 100% { opacity:0 } }
+@keyframes asc-beam { to { transform:translateX(-50%) scaleY(1); } }
+@keyframes asc-ring { 0% { opacity:.9; transform:scale(.3) } 100% { opacity:0; transform:scale(9) } }
+@keyframes asc-card { from { opacity:0; transform:scale(.6); letter-spacing:1em } to { opacity:1; transform:none } }
+@media (prefers-reduced-motion: reduce) { .show .asc-beam, .show .asc-ring, .show .asc-card { animation:none !important; } .asc-beam { transform:translateX(-50%) scaleY(1); opacity:.5; } .asc-ring { display:none; } }
