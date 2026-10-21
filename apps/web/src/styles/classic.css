@@ -152,3 +152,19 @@ dialog.craft-dialog { width:min(640px, calc(100vw - 32px)); }
 .creation-links { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .creation-links .btn { display:flex; justify-content:center; align-items:center; gap:6px; text-decoration:none; }
 @media (max-width:640px) { .plot { min-height:68px; } .creation-links { grid-template-columns:1fr; } }
+
+/* Khung giao diện ba giới (chưa có backend) */
+dialog.frame-dialog, dialog.worldmap-dialog { width:min(820px, calc(100vw - 32px)); }
+.frame-note { font-size:.85em; opacity:.75; border-left:3px solid currentColor; padding-left:8px; }
+.frame-table { width:100%; border-collapse:collapse; font-size:.9em; display:block; overflow-x:auto; }
+.frame-table th, .frame-table td { padding:4px 8px; text-align:left; border-bottom:1px solid rgba(255,255,255,.12); white-space:nowrap; }
+.frame-kv { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; margin:6px 0; }
+.frame-kv dd { margin:0; }
+.frame-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin:8px 0; }
+.frame-card { border:1px solid rgba(255,255,255,.2); border-radius:8px; padding:10px; }
+.frame-card.current { box-shadow:0 0 0 2px currentColor inset; }
+.frame-features { list-style:none; padding:0; margin:6px 0; font-size:.88em; }
+.frame-features li.off { opacity:.45; }
+.frame-form { display:grid; gap:8px; margin:6px 0; }
+.frame-emblems, .frame-tabs, .frame-actions { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+.frame-emblem { width:36px; height:36px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.25); border-radius:6px; font-size:1.2em; }
