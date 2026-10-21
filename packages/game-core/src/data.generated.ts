@@ -1,24 +1,13 @@
-// SINH TỰ ĐỘNG bởi tools/gen-static.mjs từ data/*.csv. KHÔNG sửa tay.
+// SINH TỰ ĐỘNG bởi tools/gen-static.mjs từ data/v21/*.json. KHÔNG sửa tay.
 export interface Stage { idx: number; stage_id: string; name: string; world: "Hạ Giới" | "Linh Giới" | "Tiên Giới"; day_start: number; day_end: number; lifespan_cap_after: number; clean_consumed_years: number; p_death_tang9: number }
 export interface CatalogEntry { id: string; name: string; kind: "stat" | "item"; stat_key: string | null; base_cost: number | null; step_cost: number | null; level_cap: number | null; cost: number | null; per_life_limit: number | null; effect: string }
 export const STAGES: readonly Stage[] = [
-  {
-    "idx": 0,
-    "stage_id": "HG00",
-    "name": "Phàm Nhân",
-    "world": "Hạ Giới",
-    "day_start": 0,
-    "day_end": 0.55,
-    "lifespan_cap_after": 111,
-    "clean_consumed_years": 5.5,
-    "p_death_tang9": 0
-  },
   {
     "idx": 1,
     "stage_id": "HG01",
     "name": "Luyện Khí",
     "world": "Hạ Giới",
-    "day_start": 0.55,
+    "day_start": 0,
     "day_end": 1.65,
     "lifespan_cap_after": 133,
     "clean_consumed_years": 16.5,
@@ -375,29 +364,29 @@ export const TM_CATALOG: readonly CatalogEntry[] = [
   }
 ] as const;
 export const RULES = {
-  "design_version": "1.6.1",
+  "design_version": "2.1",
   "tier_seconds": [
     [
-      2556,
-      2808,
-      3024,
-      3312,
-      3600,
-      3924.0000000000005,
-      4284,
-      4680,
+      5076,
+      5076,
+      5076,
+      5076,
+      5076,
+      5076,
+      5076,
+      5076,
       5076
     ],
     [
-      5105.454545454546,
-      5563.636363636363,
-      6054.545454545455,
-      6610.909090909091,
-      7232.727272727273,
-      7854.545454545454,
-      8574.545454545454,
-      9327.272727272726,
-      10178.181818181818
+      7658.181818181819,
+      8345.454545454546,
+      9098.181818181818,
+      9916.363636363636,
+      10865.454545454546,
+      11781.818181818182,
+      12861.818181818182,
+      14007.272727272728,
+      15250.90909090909
     ],
     [
       7646.280991735536,

@@ -1,0 +1,692 @@
+[
+  {
+    "seed_item_id": "SEED-HERB-001",
+    "harvest_item_id": "HERB-001",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 7200,
+    "min_stage_id": "HG01",
+    "min_profession_level": 1,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-002",
+    "harvest_item_id": "HERB-002",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 7200,
+    "min_stage_id": "HG01",
+    "min_profession_level": 1,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-003",
+    "harvest_item_id": "HERB-003",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 7200,
+    "min_stage_id": "HG01",
+    "min_profession_level": 1,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-004",
+    "harvest_item_id": "HERB-004",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "HG03",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-005",
+    "harvest_item_id": "HERB-005",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "HG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-006",
+    "harvest_item_id": "HERB-006",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "HG02",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-007",
+    "harvest_item_id": "HERB-007",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "HG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-008",
+    "harvest_item_id": "HERB-008",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "HG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-009",
+    "harvest_item_id": "HERB-009",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-010",
+    "harvest_item_id": "HERB-010",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-011",
+    "harvest_item_id": "HERB-011",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-012",
+    "harvest_item_id": "HERB-012",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "HG04",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-013",
+    "harvest_item_id": "HERB-013",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "HG01",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-014",
+    "harvest_item_id": "HERB-014",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "HG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-015",
+    "harvest_item_id": "HERB-015",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-016",
+    "harvest_item_id": "HERB-016",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-017",
+    "harvest_item_id": "HERB-017",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-018",
+    "harvest_item_id": "HERB-018",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-019",
+    "harvest_item_id": "HERB-019",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG04",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-020",
+    "harvest_item_id": "HERB-020",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "HG05",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-021",
+    "harvest_item_id": "HERB-021",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-022",
+    "harvest_item_id": "HERB-022",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG04",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-023",
+    "harvest_item_id": "HERB-023",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-024",
+    "harvest_item_id": "HERB-024",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "HG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-025",
+    "harvest_item_id": "HERB-025",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "LG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-026",
+    "harvest_item_id": "HERB-026",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-027",
+    "harvest_item_id": "HERB-027",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-028",
+    "harvest_item_id": "HERB-028",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-029",
+    "harvest_item_id": "HERB-029",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-030",
+    "harvest_item_id": "HERB-030",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-031",
+    "harvest_item_id": "HERB-031",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "LG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-032",
+    "harvest_item_id": "HERB-032",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-033",
+    "harvest_item_id": "HERB-033",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "LG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-034",
+    "harvest_item_id": "HERB-034",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-035",
+    "harvest_item_id": "HERB-035",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-036",
+    "harvest_item_id": "HERB-036",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG04",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-037",
+    "harvest_item_id": "HERB-037",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-038",
+    "harvest_item_id": "HERB-038",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-039",
+    "harvest_item_id": "HERB-039",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-040",
+    "harvest_item_id": "HERB-040",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-041",
+    "harvest_item_id": "HERB-041",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "LG02",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-042",
+    "harvest_item_id": "HERB-042",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-043",
+    "harvest_item_id": "HERB-043",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-044",
+    "harvest_item_id": "HERB-044",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-045",
+    "harvest_item_id": "HERB-045",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-046",
+    "harvest_item_id": "HERB-046",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "LG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-047",
+    "harvest_item_id": "HERB-047",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-048",
+    "harvest_item_id": "HERB-048",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "LG04",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-049",
+    "harvest_item_id": "HERB-049",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "TG01",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-050",
+    "harvest_item_id": "HERB-050",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-051",
+    "harvest_item_id": "HERB-051",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-052",
+    "harvest_item_id": "HERB-052",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-053",
+    "harvest_item_id": "HERB-053",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-054",
+    "harvest_item_id": "HERB-054",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-055",
+    "harvest_item_id": "HERB-055",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG01",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-056",
+    "harvest_item_id": "HERB-056",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 14400,
+    "min_stage_id": "TG02",
+    "min_profession_level": 3,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-057",
+    "harvest_item_id": "HERB-057",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG02",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-058",
+    "harvest_item_id": "HERB-058",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-059",
+    "harvest_item_id": "HERB-059",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-060",
+    "harvest_item_id": "HERB-060",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-061",
+    "harvest_item_id": "HERB-061",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-062",
+    "harvest_item_id": "HERB-062",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG04",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-063",
+    "harvest_item_id": "HERB-063",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-064",
+    "harvest_item_id": "HERB-064",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG02",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-065",
+    "harvest_item_id": "HERB-065",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG01",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-067",
+    "harvest_item_id": "HERB-067",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-068",
+    "harvest_item_id": "HERB-068",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 28800,
+    "min_stage_id": "TG02",
+    "min_profession_level": 6,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-069",
+    "harvest_item_id": "HERB-069",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG02",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  },
+  {
+    "seed_item_id": "SEED-HERB-070",
+    "harvest_item_id": "HERB-070",
+    "quantity_per_sow": 1,
+    "base_yield": 3,
+    "grow_seconds": 64800,
+    "min_stage_id": "TG03",
+    "min_profession_level": 10,
+    "max_quality": "supreme"
+  }
+]

@@ -1,0 +1,114 @@
+[
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "day_start": "0.0",
+    "day_end": "1.65",
+    "content": "Thức tỉnh linh căn; hướng dẫn; chọn tông môn; mở nghề phụ"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "day_start": "1.65",
+    "day_end": "3.3",
+    "content": "Bí cảnh; pháp bảo đầu"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "day_start": "3.3",
+    "day_end": "5.5",
+    "content": "Build nguyên tố; nội tranh tông môn"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "day_start": "5.5",
+    "day_end": "7.15",
+    "content": "Thần thức; boss cấp cao"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "day_start": "7.15",
+    "day_end": "8.25",
+    "content": "Đại tuyến Hạ Giới; phi thăng"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "day_start": "8.25",
+    "day_end": "11.0",
+    "content": "Pháp tướng; Linh Thạch thượng phẩm"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "day_start": "11.0",
+    "day_end": "14.85",
+    "content": "Dung linh; chiến trường giới vực"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "day_start": "14.85",
+    "day_end": "18.15",
+    "content": "Boss thế giới; di tích trận đạo"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "day_start": "18.15",
+    "day_end": "19.25",
+    "content": "Giới kiếp; lên Tiên Giới"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "day_start": "19.25",
+    "day_end": "21.45",
+    "content": "Chuyển tiên linh lực"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "day_start": "21.45",
+    "day_end": "24.75",
+    "content": "Tiên khiếu; pháp tắc"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "day_start": "24.75",
+    "day_end": "28.05",
+    "content": "Linh Vực; Ngũ Suy"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "day_start": "28.05",
+    "day_end": "30.8",
+    "content": "Pháp tắc nâng cao; boss Tiên Giới"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "day_start": "30.8",
+    "day_end": "33.0",
+    "content": "Hoàn tất tuyến chính; Quy Phàm/endgame"
+  }
+]

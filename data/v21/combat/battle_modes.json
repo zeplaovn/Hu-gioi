@@ -1,0 +1,123 @@
+[
+  {
+    "id": "MODE-01",
+    "name": "PvE huấn luyện",
+    "mode": "safe",
+    "players": "1",
+    "dead_at_0": "Không",
+    "afk": "Không auto death",
+    "rewards": "Thấp",
+    "confirmations": "0",
+    "refund": "Không áp dụng"
+  },
+  {
+    "id": "MODE-02",
+    "name": "Dã ngoại thường",
+    "mode": "zone_based",
+    "players": "1",
+    "dead_at_0": "Theo khu vực",
+    "afk": "Không auto death",
+    "rewards": "Drop từ v1.3",
+    "confirmations": "2 nếu lethal",
+    "refund": "Không"
+  },
+  {
+    "id": "MODE-03",
+    "name": "Bí cảnh an toàn",
+    "mode": "safe",
+    "players": "1-4",
+    "dead_at_0": "Không",
+    "afk": "Timeout hủy",
+    "rewards": "Thường",
+    "confirmations": "0",
+    "refund": "Không"
+  },
+  {
+    "id": "MODE-04",
+    "name": "Bí cảnh Sinh Tử",
+    "mode": "lethal",
+    "players": "1-4",
+    "dead_at_0": "Có",
+    "afk": "Pause 120s, hủy không thưởng",
+    "rewards": "Rủi ro cao",
+    "confirmations": "2",
+    "refund": "Không"
+  },
+  {
+    "id": "MODE-05",
+    "name": "Boss có lethal flag",
+    "mode": "lethal",
+    "players": "1-4",
+    "dead_at_0": "Có",
+    "afk": "Pause 120s, hủy không thưởng",
+    "rewards": "Boss table",
+    "confirmations": "2",
+    "refund": "Không"
+  },
+  {
+    "id": "MODE-06",
+    "name": "Luận Đạo",
+    "mode": "safe",
+    "players": "1v1",
+    "dead_at_0": "Không",
+    "afk": "Thua trận không mất kiếp",
+    "rewards": "Điểm Luận Đạo",
+    "confirmations": "1",
+    "refund": "Không"
+  },
+  {
+    "id": "MODE-07",
+    "name": "PvP Sinh Tử",
+    "mode": "lethal",
+    "players": "1v1",
+    "dead_at_0": "Có khi HP=0",
+    "afk": "30s: xử thua không chết",
+    "rewards": "Thưởng bậc, không loot xác",
+    "confirmations": "2",
+    "refund": "Không"
+  },
+  {
+    "id": "MODE-08",
+    "name": "Tầng nhỏ 1-8",
+    "mode": "safe",
+    "players": "1",
+    "dead_at_0": "Không",
+    "afk": "Auto tu luyện nhưng dừng trước tầng9",
+    "rewards": "+1 TM nếu thành công",
+    "confirmations": "1",
+    "refund": "Thất bại có giữ tu vi"
+  },
+  {
+    "id": "MODE-09",
+    "name": "Đại đột phá tầng9",
+    "mode": "lethal_proposal",
+    "players": "1",
+    "dead_at_0": "Có thể",
+    "afk": "Không tự kích hoạt",
+    "rewards": "+1 TM nếu thành công",
+    "confirmations": "2",
+    "refund": "Tử vong khi roll death riêng"
+  },
+  {
+    "id": "MODE-10",
+    "name": "Độ Kiếp / Phi Thăng",
+    "mode": "lethal_proposal",
+    "players": "1",
+    "dead_at_0": "Có thể",
+    "afk": "Không tự kích hoạt",
+    "rewards": "Chuyển map cùng kiếp",
+    "confirmations": "2",
+    "refund": "Thất bại không phải luôn chết"
+  },
+  {
+    "id": "MODE-11",
+    "name": "Không Gian Hỗn Độn",
+    "mode": "lethal",
+    "players": "Đúng 6 người thật",
+    "dead_at_0": "Có",
+    "afk": "Tách rule nội bộ, chưa chốt",
+    "rewards": "Thưởng biểu tượng/ẩn",
+    "confirmations": "2",
+    "refund": "Lần sau tập hợp lại"
+  }
+]

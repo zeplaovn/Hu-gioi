@@ -1,0 +1,19 @@
+{
+  "version": "2.1",
+  "unlock_quest": "Q-HG-02",
+  "initial_level": 1,
+  "initial_exp": 0,
+  "starter_free_recipes": [
+    "REC-PILL-001",
+    "REC-EQ-001",
+    "REC-TAL-001"
+  ],
+  "other_recipes": "purchase knowledge at recipe.knowledge_unlock venue after stage/level prerequisites",
+  "garden_seed_unlock": "quest complete and item source accessible",
+  "all_professions_can_coexist": true,
+  "raw_gather_requires_profession": false,
+  "craft_queue_one_per_profession": true,
+  "all_learnt_recipes_persist_as_account_knowledge": true,
+  "skill_exp_resets_on_real_death": true,
+  "learn_prices_are_proposals": true
+}

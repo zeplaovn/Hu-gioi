@@ -20,11 +20,18 @@ try {
  await page.waitForLoadState('networkidle');
  await page.screenshot({path:'ui-screenshots/desktop.png',fullPage:true});
  await page.getByRole('button',{name:'Tông môn',exact:true}).click();
- await page.locator('dialog[open] .sect-card').first().waitFor();
- assert.equal(await page.locator('dialog[open] .sect-card').count(),3);
- await page.locator('dialog[open] .social-roster button').first().waitFor();
- assert.match(await page.locator('dialog[open] .social-roster').innerText(),/Lục Thanh Huyền/);
- await page.screenshot({path:'ui-screenshots/sect.png'});
+ await page.getByRole('button',{name:'Nhiệm vụ',exact:true}).last().waitFor();
+ await page.getByRole('button',{name:'Linh điền',exact:true}).last().click();
+ assert.equal(await page.locator('dialog[open] .garden-grid .play-card').count(),16);
+ assert.equal(await page.locator('dialog[open]').getByText(/Đất trống/).count(),2);
+ assert.equal(await page.locator('dialog[open]').getByText(/· Khóa/).count(),14);
+ await page.screenshot({path:'ui-screenshots/garden.png'});
+ await page.locator('dialog[open]').getByRole('button',{name:'Hành trang',exact:true}).click();
+ assert.equal(await page.locator('dialog[open]').getByRole('button',{name:'Dùng ngoài trận',exact:true}).count(),1,'only fully supported outside-battle items get a use button');
+ assert.equal(await page.locator('dialog[open]').getByText(/Hộ Thân Đan · \+8% HP/).count(),1,'active timed buff is visible');
+ assert.equal(await page.locator('dialog[open]').getByText(/Tăng Thọ Đan · \+1% HP/).count(),0,'expired timed buffs are hidden');
+ await page.screenshot({path:'ui-screenshots/consumables.png'});
+
  await page.keyboard.press('Escape');assert.equal(await page.locator('dialog[open]').count(),0);
  await page.getByRole('button',{name:'Lịch luyện',exact:true}).click();
  await page.locator('dialog[open] .social-roster button').first().waitFor();

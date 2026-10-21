@@ -11,9 +11,40 @@ export class ApiError extends Error {
 }
 
 const TEXT = {
-  npc_unavailable: "NPC hiện không có mặt tại Hạ Giới hoặc đã bị khóa theo cốt truyện.",
+  main_quest_required: "Hãy nhận thưởng nhiệm vụ chính trước khi vượt giới hoặc kết thúc.",
+  trade_age_locked: "Tài khoản cần đủ 72 giờ để giao dịch đấu giá.",
+  trade_budget: "Đã vượt ngân sách giao dịch 20% tài sản trong ngày.",
+  bid_too_low: "Giá đặt cần đạt mức khởi điểm hoặc tăng ít nhất 5% (tối thiểu 1).",
+  auction_closed: "Phiên đấu giá đã đóng.",
+  item_cooldown: "Thuốc hồi phục đang hồi lượt. Hãy thực hiện thao tác khác.",
+  effect_not_available_outside_battle: "Hiệu ứng này chưa mở ngoài trận; vật phẩm không bị trừ.",
+  effect_not_available_in_battle: "Hiệu ứng này chưa dùng được trong trận; vật phẩm không bị trừ.",
+  battle_active: "Hãy kết thúc trận trước khi đổi trang bị hoặc giao dịch.",
+  skill_unavailable: "Kỹ năng chưa mở, đang hồi lượt, thiếu linh lực hoặc bị câm lặng.",
+  item_unavailable: "Vật phẩm không phù hợp với giới hoặc thao tác hiện tại.",
+  invalid_fertilizer: "Hãy chọn một loại phân bón trong túi.",
+  no_pests: "Chưa thấy sâu ở vụ này.",
+  already_done: "Bạn đã thực hiện thao tác chăm sóc này.",
+  prerequisite_locked: "Hãy nhận thưởng nhiệm vụ trước đó.",
+  invalid_recipe: "Nguyên liệu cần khớp đúng công thức, tối đa 3 ô.",
+  invalid_multiple: "Số tiền đổi cần là bội số phù hợp với tỷ giá 1.000.",
+  progress_cap: "Đã đạt giới hạn 99%; cần tự hoàn thành tu luyện và xác nhận đột phá.",
+
+  state_stale: "Trạng thái đã đổi. Hãy tải lại trước khi thao tác.",
+  insufficient_currency: "Không đủ loại tiền cần dùng. Hãy đổi tiền trước khi mua.",
+  insufficient_item: "Không đủ nguyên liệu trong túi đồ.",
+  realm_locked: "Cảnh giới hiện tại chưa mở nội dung này.",
+  job_busy: "Đang có công việc chờ hoàn thành.",
+  profession_locked: "Hoàn thành nhiệm vụ Chọn đường tu để mở nghề.",
+  objective_incomplete: "Chưa hoàn thành đủ điều kiện nhiệm vụ.",
+  wrong_location: "Hãy di chuyển tới địa điểm được yêu cầu.",
+  recipe_locked: "Chưa mở công thức, cấp nghề hoặc cảnh giới.",
+  item_bound: "Vật phẩm khóa không thể mua bán.",
+  inventory_full: "Túi đã đầy; hãy dọn chỗ trước khi nhận đồ.",
+
+  npc_unavailable: "NPC hiện không có mặt tại giới hiện tại hoặc đã bị khóa theo cốt truyện.",
   npc_not_found: "Không tìm thấy nhân vật.",
-  daily_limit: "Hôm nay đã tương tác loại này. Lượt mới mở lúc 00:00 UTC (07:00 Việt Nam).",
+  daily_limit: "Hôm nay đã tương tác loại này. Lượt mới mở lúc 00:00 giờ Việt Nam.",
   gift_cooldown: "Cùng món quà chỉ được tặng lại sau 3 ngày reset.",
   insufficient_gift: "Trong túi không có món quà này.",
   relationship_required: "Chưa đủ thiện cảm để mở cảnh tiếp theo. Hãy trò chuyện hằng ngày.",
@@ -87,6 +118,8 @@ export function createApi(o) {
   }
 
   return {
+    play: () => req("GET", "/play"),
+    playAction: (body) => req("POST", "/play/action", body),
     social: () => req("GET", "/social"),
     socialAction: (body) => req("POST", "/social/action", body),
     state: () => req("GET", "/state"),
@@ -101,3 +134,4 @@ export function createApi(o) {
     buyItem: (itemId) => req("POST", "/tm/item", { item_id: itemId }),
   };
 }
+

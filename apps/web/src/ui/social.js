@@ -14,12 +14,12 @@ const isSect = (faction) => SECTS.some((s) => s.name === faction);
 export const SOCIAL_KINDS = {
   explore: {
     title: "Lịch luyện",
-    intro: "Rời sơn môn đi khắp Hạ Giới, gặp lữ khách và người trên đường. Mỗi người: 1 cuộc trò chuyện và 1 món quà mỗi ngày.",
+    intro: "Rời sơn môn đi khắp tam giới, gặp lữ khách và người trên đường. Mỗi người: 1 cuộc trò chuyện và 1 món quà mỗi ngày.",
     pick: (n) => !isSect(n.faction),
   },
   sect: {
     title: "Tông môn",
-    intro: "Ba tông môn Hạ Giới. Gặp chưởng môn, trưởng lão và đệ tử; gia nhập tông môn chưa mở trong bản này.",
+    intro: "Ba tông môn Hạ Giới. Gặp chưởng môn, trưởng lão và đệ tử; Nhận nhiệm vụ gia nhập ở mục Tông môn.",
     pick: (n, faction) => n.faction === faction,
   },
   secret: {
@@ -92,7 +92,7 @@ export function createSocialDialog({ game, kind }) {
     const nameOf = (id) => state.npcs.find((n) => n.id === id)?.name ?? "";
     const npc = state.npcs.find((n) => n.id === selected);
     return [
-      events.length === 0 && !offer && !reply && h("p", { class: "dim center" }, "Hôm nay bí cảnh chưa mở kỳ ngộ nào. Kỳ ngộ mới có thể xuất hiện sau reset 00:00 UTC (07:00 Việt Nam)."),
+      events.length === 0 && !offer && !reply && h("p", { class: "dim center" }, "Hôm nay bí cảnh chưa mở kỳ ngộ nào. Kỳ ngộ mới có thể xuất hiện sau reset 00:00 giờ Việt Nam."),
       h("div", { class: "social-actions" }, events.map((o) => btn(`${o.scene.title} · ${nameOf(o.npc_id)}`, () => { selected = o.npc_id; offer = o; reply = null; render(); }, false, "gold"))),
       npc && (offer || reply) && detail(npc)];
   }
@@ -116,7 +116,7 @@ export function createSocialDialog({ game, kind }) {
     if (destroyed || !dlg.isOpen) return;
     clear(dlg.body, h("div", { class: "stack" },
       h("p", { class: "dim small center" }, cfg.intro),
-      kind !== "secret" && h("p", { class: "small dim center" }, "Reset 00:00 UTC · 07:00 Việt Nam."),
+      kind !== "secret" && h("p", { class: "small dim center" }, "Reset 00:00 giờ Việt Nam."),
       error && h("p", { class: "notice error", role: "alert" }, error),
       busy && h("p", { class: "small dim center", role: "status" }, "Đang đồng bộ…"),
       state && (kind === "secret" ? renderSecret() : renderPeople()),

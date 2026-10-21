@@ -1,0 +1,104 @@
+[
+  {
+    "item_id": "PILL-048",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "PILL-048"
+  },
+  {
+    "item_id": "PILL-049",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "PILL-049"
+  },
+  {
+    "item_id": "PILL-050",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "PILL-050"
+  },
+  {
+    "item_id": "PILL-051",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "PILL-051"
+  },
+  {
+    "item_id": "PILL-060",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "PILL-060"
+  },
+  {
+    "item_id": "EQ-071",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-071"
+  },
+  {
+    "item_id": "EQ-072",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-072"
+  },
+  {
+    "item_id": "EQ-073",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-073"
+  },
+  {
+    "item_id": "EQ-074",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-074"
+  },
+  {
+    "item_id": "EQ-075",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-075"
+  },
+  {
+    "item_id": "EQ-076",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-076"
+  },
+  {
+    "item_id": "EQ-077",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-077"
+  },
+  {
+    "item_id": "EQ-078",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-078"
+  },
+  {
+    "item_id": "EQ-079",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-079"
+  },
+  {
+    "item_id": "EQ-080",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-080"
+  },
+  {
+    "item_id": "EQ-081",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-081"
+  },
+  {
+    "item_id": "EQ-082",
+    "craftable": false,
+    "reason": "Unique story/boss reward; keep acquisition identity and binding",
+    "acquisition_rule": "EQ-082"
+  }
+]

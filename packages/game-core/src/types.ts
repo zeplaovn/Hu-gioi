@@ -7,7 +7,7 @@ export interface Life {
   life_id: string; life_no: number; status: "alive" | "cleared";
   stage: StageRef; tang: number; progress_s: number; need_s: number; ready_for_major: boolean;
   lifespan: { used_years: number; cap_years: number; exhausted: boolean };
-  wallet: { ls: number; lt: number; tn: number };
+  wallet: { ls: string; lt: string; tn: string };
   tm_earned_life: number; born_at: string; speed_mult: number; risk_mult: number; items: LifeItem[];
 }
 export interface StatState { level: number; cap: number; next_cost: number | null }
@@ -28,3 +28,4 @@ export type ConfirmResult =
 export interface LifespanPrepareResult { intent_id: string; expires_at: string; warning: string }
 export interface LifespanConfirmResult { outcome: "death"; cause: "lifespan"; new_life_id: string | null }
 export interface ApiError { error: string; message?: string }
+

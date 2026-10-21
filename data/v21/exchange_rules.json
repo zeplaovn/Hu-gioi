@@ -1,0 +1,77 @@
+{
+  "version": "1.9",
+  "approved": true,
+  "base_unit": "LT_HP",
+  "rates": {
+    "LT_HP": "1",
+    "LT_TP": "1000",
+    "TN": "1000000"
+  },
+  "pairs": [
+    {
+      "from": "LT_HP",
+      "to": "LT_TP",
+      "source_multiple": "1000",
+      "receive_per_multiple": "1",
+      "unlock_stage": "LG01"
+    },
+    {
+      "from": "LT_TP",
+      "to": "LT_HP",
+      "source_multiple": "1",
+      "receive_per_multiple": "1000",
+      "unlock_stage": "LG01"
+    },
+    {
+      "from": "LT_TP",
+      "to": "TN",
+      "source_multiple": "1000",
+      "receive_per_multiple": "1",
+      "unlock_stage": "TG01"
+    },
+    {
+      "from": "TN",
+      "to": "LT_TP",
+      "source_multiple": "1",
+      "receive_per_multiple": "1000",
+      "unlock_stage": "TG01"
+    },
+    {
+      "from": "LT_HP",
+      "to": "TN",
+      "source_multiple": "1000000",
+      "receive_per_multiple": "1",
+      "unlock_stage": "TG01"
+    },
+    {
+      "from": "TN",
+      "to": "LT_HP",
+      "source_multiple": "1",
+      "receive_per_multiple": "1000000",
+      "unlock_stage": "TG01"
+    }
+  ],
+  "fee_bp": 0,
+  "unlock_scope": "current_life",
+  "source_amount": "positive decimal integer string; exact multiple of source_multiple",
+  "auto_exchange_on_purchase": false,
+  "atomic_operations": [
+    "check_alive_and_unlock",
+    "check_wallet_version_and_balance",
+    "debit_source",
+    "credit_destination",
+    "write_single_exchange_receipt_and_two_ledger_entries"
+  ],
+  "idempotency": "account_id/life_id/request_id",
+  "reject_without_consumption": [
+    "not_unlocked",
+    "insufficient_balance",
+    "invalid_multiple",
+    "zero_amount",
+    "negative_amount",
+    "overflow",
+    "same_currency",
+    "stale_quote"
+  ],
+  "no_rounding": true
+}

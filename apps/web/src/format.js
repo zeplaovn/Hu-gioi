@@ -1,6 +1,6 @@
 /** Hiển thị: số, phần trăm, thời gian. Thuần hàm để test được. */
 const nf = new Intl.NumberFormat("vi-VN");
-export const num = (n) => nf.format(n);
+export const num = (n) => nf.format(typeof n === "string" && /^-?\d+$/.test(n) ? BigInt(n) : n);
 
 export const pct = (p, digits = 1) => (p * 100).toFixed(digits).replace(".", ",") + "%";
 
@@ -23,6 +23,8 @@ export const CAUSE_LABEL = {
   breakthrough: "Đại đột phá thất bại",
   lifespan: "Tọa hóa (hết thọ nguyên)",
   cleared: "Hoàn tất tuyến chính",
+  return_home: "Quy Phàm — trở về",
+  combat: "Vẫn lạc trong chiến đấu",
 };
 export const causeLabel = (c) => CAUSE_LABEL[c] ?? c;
 

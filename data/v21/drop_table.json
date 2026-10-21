@@ -1,0 +1,1322 @@
+[
+  {
+    "id": "DROP-001",
+    "enemy_id": "MON-001",
+    "enemy": "Hắc Lang",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "20-40",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-002",
+    "enemy_id": "MON-001",
+    "enemy": "Hắc Lang",
+    "drop_type": "Material",
+    "item": "Hạt Linh Thảo",
+    "chance_pct": "70",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-003",
+    "enemy_id": "MON-001",
+    "enemy": "Hắc Lang",
+    "drop_type": "Herb",
+    "item": "Thanh Linh Thảo",
+    "chance_pct": "25",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-004",
+    "enemy_id": "MON-002",
+    "enemy": "Độc Xà",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "20-40",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-005",
+    "enemy_id": "MON-002",
+    "enemy": "Độc Xà",
+    "drop_type": "Material",
+    "item": "Quặng Linh Thiết",
+    "chance_pct": "70",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-006",
+    "enemy_id": "MON-002",
+    "enemy": "Độc Xà",
+    "drop_type": "Herb",
+    "item": "Ngưng Lộ Thảo",
+    "chance_pct": "25",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-007",
+    "enemy_id": "MON-003",
+    "enemy": "Hoang Thử Yêu",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "20-40",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-008",
+    "enemy_id": "MON-003",
+    "enemy": "Hoang Thử Yêu",
+    "drop_type": "Material",
+    "item": "Giấy Phù",
+    "chance_pct": "70",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-009",
+    "enemy_id": "MON-003",
+    "enemy": "Hoang Thử Yêu",
+    "drop_type": "Herb",
+    "item": "Hàn Nguyệt Diệp",
+    "chance_pct": "25",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-010",
+    "enemy_id": "MON-004",
+    "enemy": "Thiết Giáp Hùng",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "40-80",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-011",
+    "enemy_id": "MON-004",
+    "enemy": "Thiết Giáp Hùng",
+    "drop_type": "Material",
+    "item": "Yêu Đan",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-012",
+    "enemy_id": "MON-004",
+    "enemy": "Thiết Giáp Hùng",
+    "drop_type": "Herb",
+    "item": "Thổ Linh Sâm",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-013",
+    "enemy_id": "MON-004",
+    "enemy": "Thiết Giáp Hùng",
+    "drop_type": "Equipment",
+    "item": "Ngũ Hành Giày II",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-014",
+    "enemy_id": "MON-005",
+    "enemy": "Huyết Điêu",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "40-80",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-015",
+    "enemy_id": "MON-005",
+    "enemy": "Huyết Điêu",
+    "drop_type": "Material",
+    "item": "Kiếm Phôi Thanh Vân",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-016",
+    "enemy_id": "MON-005",
+    "enemy": "Huyết Điêu",
+    "drop_type": "Herb",
+    "item": "Trúc Cơ Quả",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-017",
+    "enemy_id": "MON-005",
+    "enemy": "Huyết Điêu",
+    "drop_type": "Equipment",
+    "item": "Vạn Dược Pháp bảo chính II",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-018",
+    "enemy_id": "MON-006",
+    "enemy": "Kiếm Xỉ Hổ",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "40-80",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-019",
+    "enemy_id": "MON-006",
+    "enemy": "Kiếm Xỉ Hổ",
+    "drop_type": "Material",
+    "item": "Huyết Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-020",
+    "enemy_id": "MON-006",
+    "enemy": "Kiếm Xỉ Hổ",
+    "drop_type": "Herb",
+    "item": "Âm Nguyệt Liên",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-021",
+    "enemy_id": "MON-006",
+    "enemy": "Kiếm Xỉ Hổ",
+    "drop_type": "Equipment",
+    "item": "Ngũ Hành Pháp bào III",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-022",
+    "enemy_id": "MON-007",
+    "enemy": "Ma Hầu",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "80-160",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-023",
+    "enemy_id": "MON-007",
+    "enemy": "Ma Hầu",
+    "drop_type": "Material",
+    "item": "Vạn Dược Lệnh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-024",
+    "enemy_id": "MON-007",
+    "enemy": "Ma Hầu",
+    "drop_type": "Herb",
+    "item": "Thọ Nguyên Quả",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-025",
+    "enemy_id": "MON-007",
+    "enemy": "Ma Hầu",
+    "drop_type": "Equipment",
+    "item": "Vạn Dược Pháp giới III",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-026",
+    "enemy_id": "MON-007",
+    "enemy": "Ma Hầu",
+    "drop_type": "Pill",
+    "item": "Dịch Cân Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-027",
+    "enemy_id": "MON-008",
+    "enemy": "Thanh Giao",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "140-280",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-028",
+    "enemy_id": "MON-008",
+    "enemy": "Thanh Giao",
+    "drop_type": "Material",
+    "item": "Giới Thạch",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-029",
+    "enemy_id": "MON-008",
+    "enemy": "Thanh Giao",
+    "drop_type": "Herb",
+    "item": "Lôi Văn Quả",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-030",
+    "enemy_id": "MON-008",
+    "enemy": "Thanh Giao",
+    "drop_type": "Equipment",
+    "item": "Ngũ Hành Vũ khí IV",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-031",
+    "enemy_id": "MON-008",
+    "enemy": "Thanh Giao",
+    "drop_type": "Pill",
+    "item": "Kim Đan Cố Nguyên",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-032",
+    "enemy_id": "MON-009",
+    "enemy": "Hỏa Lân Thú",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "140-280",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-033",
+    "enemy_id": "MON-009",
+    "enemy": "Hỏa Lân Thú",
+    "drop_type": "Material",
+    "item": "Lôi Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-034",
+    "enemy_id": "MON-009",
+    "enemy": "Hỏa Lân Thú",
+    "drop_type": "Herb",
+    "item": "Tâm Tĩnh Trúc",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-035",
+    "enemy_id": "MON-009",
+    "enemy": "Hỏa Lân Thú",
+    "drop_type": "Equipment",
+    "item": "Vạn Dược Hộ phù IV",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-036",
+    "enemy_id": "MON-009",
+    "enemy": "Hỏa Lân Thú",
+    "drop_type": "Pill",
+    "item": "Hóa Anh Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-037",
+    "enemy_id": "MON-010",
+    "enemy": "Cửu Vĩ Hồ",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "140-280",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-038",
+    "enemy_id": "MON-010",
+    "enemy": "Cửu Vĩ Hồ",
+    "drop_type": "Material",
+    "item": "Hỏa Tủy",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-039",
+    "enemy_id": "MON-010",
+    "enemy": "Cửu Vĩ Hồ",
+    "drop_type": "Herb",
+    "item": "Bách Dược Tâm",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-040",
+    "enemy_id": "MON-010",
+    "enemy": "Cửu Vĩ Hồ",
+    "drop_type": "Equipment",
+    "item": "Huyết Sát Pháp bảo phụ IV",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-041",
+    "enemy_id": "MON-010",
+    "enemy": "Cửu Vĩ Hồ",
+    "drop_type": "Pill",
+    "item": "Dưỡng Hồn Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-042",
+    "enemy_id": "MON-011",
+    "enemy": "Kim Dực Bằng",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "140-280",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-043",
+    "enemy_id": "MON-011",
+    "enemy": "Kim Dực Bằng",
+    "drop_type": "Material",
+    "item": "Hàn Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-044",
+    "enemy_id": "MON-011",
+    "enemy": "Kim Dực Bằng",
+    "drop_type": "Herb",
+    "item": "Cửu Diệp Chi",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-045",
+    "enemy_id": "MON-011",
+    "enemy": "Kim Dực Bằng",
+    "drop_type": "Equipment",
+    "item": "Vạn Dược Giày I",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-046",
+    "enemy_id": "MON-011",
+    "enemy": "Kim Dực Bằng",
+    "drop_type": "Pill",
+    "item": "Tục Mệnh Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-047",
+    "enemy_id": "MON-012",
+    "enemy": "Huyền Quy",
+    "drop_type": "Currency",
+    "item": "LT_HP",
+    "chance_pct": "100",
+    "quantity": "240-480",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-048",
+    "enemy_id": "MON-012",
+    "enemy": "Huyền Quy",
+    "drop_type": "Material",
+    "item": "Phong Thạch",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-049",
+    "enemy_id": "MON-012",
+    "enemy": "Huyền Quy",
+    "drop_type": "Herb",
+    "item": "Hỏa Tủy Liên",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-050",
+    "enemy_id": "MON-012",
+    "enemy": "Huyền Quy",
+    "drop_type": "Equipment",
+    "item": "Huyết Sát Pháp bảo chính I",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-051",
+    "enemy_id": "MON-012",
+    "enemy": "Huyền Quy",
+    "drop_type": "Pill",
+    "item": "Thiên Cơ Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-052",
+    "enemy_id": "MON-013",
+    "enemy": "Hư Không Thú",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "3-6",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-053",
+    "enemy_id": "MON-013",
+    "enemy": "Hư Không Thú",
+    "drop_type": "Material",
+    "item": "Sát Tinh",
+    "chance_pct": "70",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-054",
+    "enemy_id": "MON-013",
+    "enemy": "Hư Không Thú",
+    "drop_type": "Herb",
+    "item": "Tinh Huy Thảo",
+    "chance_pct": "25",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-055",
+    "enemy_id": "MON-014",
+    "enemy": "Tinh Hồn Lang",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "6-12",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-056",
+    "enemy_id": "MON-014",
+    "enemy": "Tinh Hồn Lang",
+    "drop_type": "Material",
+    "item": "Ngũ Hành Linh Tủy",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-057",
+    "enemy_id": "MON-014",
+    "enemy": "Tinh Hồn Lang",
+    "drop_type": "Herb",
+    "item": "Huyền Chỉ Hoa",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-058",
+    "enemy_id": "MON-014",
+    "enemy": "Tinh Hồn Lang",
+    "drop_type": "Equipment",
+    "item": "Thiên Cơ Pháp giới III",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-059",
+    "enemy_id": "MON-015",
+    "enemy": "Vô Tướng Ma Khôi",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "6-12",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-060",
+    "enemy_id": "MON-015",
+    "enemy": "Vô Tướng Ma Khôi",
+    "drop_type": "Material",
+    "item": "Giới Tâm Thạch",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-061",
+    "enemy_id": "MON-015",
+    "enemy": "Vô Tướng Ma Khôi",
+    "drop_type": "Herb",
+    "item": "Hư Không Lan",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-062",
+    "enemy_id": "MON-015",
+    "enemy": "Vô Tướng Ma Khôi",
+    "drop_type": "Equipment",
+    "item": "Thái Hư Vũ khí I",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-063",
+    "enemy_id": "MON-016",
+    "enemy": "Pháp Tướng Cự Linh",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "21-42",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-064",
+    "enemy_id": "MON-016",
+    "enemy": "Pháp Tướng Cự Linh",
+    "drop_type": "Material",
+    "item": "Pháp Tướng Linh Tủy",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-065",
+    "enemy_id": "MON-016",
+    "enemy": "Pháp Tướng Cự Linh",
+    "drop_type": "Herb",
+    "item": "Thái Hư Chi",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-066",
+    "enemy_id": "MON-016",
+    "enemy": "Pháp Tướng Cự Linh",
+    "drop_type": "Equipment",
+    "item": "Tinh Không Hộ phù I",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-067",
+    "enemy_id": "MON-016",
+    "enemy": "Pháp Tướng Cự Linh",
+    "drop_type": "Pill",
+    "item": "Cửu Khúc Linh Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-068",
+    "enemy_id": "MON-017",
+    "enemy": "Giới Ngoại Dị Trùng",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "6-12",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-069",
+    "enemy_id": "MON-017",
+    "enemy": "Giới Ngoại Dị Trùng",
+    "drop_type": "Material",
+    "item": "Linh Văn Mực",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-070",
+    "enemy_id": "MON-017",
+    "enemy": "Giới Ngoại Dị Trùng",
+    "drop_type": "Herb",
+    "item": "Bách Thảo Tinh",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-071",
+    "enemy_id": "MON-017",
+    "enemy": "Giới Ngoại Dị Trùng",
+    "drop_type": "Equipment",
+    "item": "Thiên Cơ Pháp bảo phụ I",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-072",
+    "enemy_id": "MON-018",
+    "enemy": "Cổ Kiếm Linh",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "21-42",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-073",
+    "enemy_id": "MON-018",
+    "enemy": "Cổ Kiếm Linh",
+    "drop_type": "Material",
+    "item": "Cổ Giới Thạch",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-074",
+    "enemy_id": "MON-018",
+    "enemy": "Cổ Kiếm Linh",
+    "drop_type": "Herb",
+    "item": "Tẩy Linh Quả",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-075",
+    "enemy_id": "MON-018",
+    "enemy": "Cổ Kiếm Linh",
+    "drop_type": "Equipment",
+    "item": "Tinh Không Giày II",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-076",
+    "enemy_id": "MON-018",
+    "enemy": "Cổ Kiếm Linh",
+    "drop_type": "Pill",
+    "item": "Thái Hư Kiếm Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-077",
+    "enemy_id": "MON-019",
+    "enemy": "Sát Hồn Vương",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "21-42",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-078",
+    "enemy_id": "MON-019",
+    "enemy": "Sát Hồn Vương",
+    "drop_type": "Material",
+    "item": "Hư Không Tinh Sa",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-079",
+    "enemy_id": "MON-019",
+    "enemy": "Sát Hồn Vương",
+    "drop_type": "Herb",
+    "item": "Không Minh Thảo",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-080",
+    "enemy_id": "MON-019",
+    "enemy": "Sát Hồn Vương",
+    "drop_type": "Equipment",
+    "item": "Thiên Cơ Pháp bảo chính II",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-081",
+    "enemy_id": "MON-019",
+    "enemy": "Sát Hồn Vương",
+    "drop_type": "Pill",
+    "item": "Bách Thảo Hồi Thiên",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-082",
+    "enemy_id": "MON-020",
+    "enemy": "Giới Kiếp Lôi Linh",
+    "drop_type": "Currency",
+    "item": "LT_TP",
+    "chance_pct": "100",
+    "quantity": "36-72",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-083",
+    "enemy_id": "MON-020",
+    "enemy": "Giới Kiếp Lôi Linh",
+    "drop_type": "Material",
+    "item": "Pháp Tướng Linh Tủy",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-084",
+    "enemy_id": "MON-020",
+    "enemy": "Giới Kiếp Lôi Linh",
+    "drop_type": "Herb",
+    "item": "Đại Thừa Kim Liên",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-085",
+    "enemy_id": "MON-020",
+    "enemy": "Giới Kiếp Lôi Linh",
+    "drop_type": "Equipment",
+    "item": "Tinh Không Pháp bào III",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-086",
+    "enemy_id": "MON-020",
+    "enemy": "Giới Kiếp Lôi Linh",
+    "drop_type": "Pill",
+    "item": "Thiên Cơ Minh Tâm",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-087",
+    "enemy_id": "MON-021",
+    "enemy": "Tiên Linh Hạc",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "1-2",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-088",
+    "enemy_id": "MON-021",
+    "enemy": "Tiên Linh Hạc",
+    "drop_type": "Material",
+    "item": "Tiên Khí Phôi",
+    "chance_pct": "70",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-089",
+    "enemy_id": "MON-021",
+    "enemy": "Tiên Linh Hạc",
+    "drop_type": "Herb",
+    "item": "Kim Hồn Tiên Quả",
+    "chance_pct": "25",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-090",
+    "enemy_id": "MON-022",
+    "enemy": "Kim Giáp Tiên Vệ",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "2-4",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-091",
+    "enemy_id": "MON-022",
+    "enemy": "Kim Giáp Tiên Vệ",
+    "drop_type": "Material",
+    "item": "Suy Kiếp Chi Tức",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-092",
+    "enemy_id": "MON-022",
+    "enemy": "Kim Giáp Tiên Vệ",
+    "drop_type": "Herb",
+    "item": "Vân Hạc Tiên Thảo",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-093",
+    "enemy_id": "MON-022",
+    "enemy": "Kim Giáp Tiên Vệ",
+    "drop_type": "Equipment",
+    "item": "Cửu Tiêu Vũ khí I",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-094",
+    "enemy_id": "MON-023",
+    "enemy": "Sát Suy Ma Ảnh",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "2-4",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-095",
+    "enemy_id": "MON-023",
+    "enemy": "Sát Suy Ma Ảnh",
+    "drop_type": "Material",
+    "item": "Đạo Văn",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-096",
+    "enemy_id": "MON-023",
+    "enemy": "Sát Suy Ma Ảnh",
+    "drop_type": "Herb",
+    "item": "Đản Hồn Hoa",
+    "chance_pct": "45",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-097",
+    "enemy_id": "MON-023",
+    "enemy": "Sát Suy Ma Ảnh",
+    "drop_type": "Equipment",
+    "item": "Quy Hương Hộ phù I",
+    "chance_pct": "8",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-098",
+    "enemy_id": "MON-024",
+    "enemy": "Thời Sa Cổ Thú",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "7-14",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-099",
+    "enemy_id": "MON-024",
+    "enemy": "Thời Sa Cổ Thú",
+    "drop_type": "Material",
+    "item": "Tiên Kim",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-100",
+    "enemy_id": "MON-024",
+    "enemy": "Thời Sa Cổ Thú",
+    "drop_type": "Herb",
+    "item": "Thiên Linh Trúc Diệp",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-101",
+    "enemy_id": "MON-024",
+    "enemy": "Thời Sa Cổ Thú",
+    "drop_type": "Equipment",
+    "item": "U Minh Pháp bảo phụ I",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-102",
+    "enemy_id": "MON-024",
+    "enemy": "Thời Sa Cổ Thú",
+    "drop_type": "Pill",
+    "item": "Ngũ Suy Hộ Mệnh",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-103",
+    "enemy_id": "MON-025",
+    "enemy": "Hư Không Long Ảnh",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "7-14",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-104",
+    "enemy_id": "MON-025",
+    "enemy": "Hư Không Long Ảnh",
+    "drop_type": "Material",
+    "item": "Hư Không Tiên Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-105",
+    "enemy_id": "MON-025",
+    "enemy": "Hư Không Long Ảnh",
+    "drop_type": "Herb",
+    "item": "Tinh Huy Tiên Thảo",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-106",
+    "enemy_id": "MON-025",
+    "enemy": "Hư Không Long Ảnh",
+    "drop_type": "Equipment",
+    "item": "Quy Hương Giày II",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-107",
+    "enemy_id": "MON-025",
+    "enemy": "Hư Không Long Ảnh",
+    "drop_type": "Pill",
+    "item": "Huyền Chân Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-108",
+    "enemy_id": "MON-026",
+    "enemy": "Luân Hồi Hồn Tướng",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "7-14",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-109",
+    "enemy_id": "MON-026",
+    "enemy": "Luân Hồi Hồn Tướng",
+    "drop_type": "Material",
+    "item": "Thời Sa",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-110",
+    "enemy_id": "MON-026",
+    "enemy": "Luân Hồi Hồn Tướng",
+    "drop_type": "Herb",
+    "item": "Vạn Hồn Tiên Thảo",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-111",
+    "enemy_id": "MON-026",
+    "enemy": "Luân Hồi Hồn Tướng",
+    "drop_type": "Equipment",
+    "item": "U Minh Pháp bảo chính II",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-112",
+    "enemy_id": "MON-026",
+    "enemy": "Luân Hồi Hồn Tướng",
+    "drop_type": "Pill",
+    "item": "U Thủy Tiên Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-113",
+    "enemy_id": "MON-027",
+    "enemy": "Đạo Tắc Hóa Thân",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "7-14",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-114",
+    "enemy_id": "MON-027",
+    "enemy": "Đạo Tắc Hóa Thân",
+    "drop_type": "Material",
+    "item": "Luân Hồi Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-115",
+    "enemy_id": "MON-027",
+    "enemy": "Đạo Tắc Hóa Thân",
+    "drop_type": "Herb",
+    "item": "Lưỡng Sinh Tiên Quả",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-116",
+    "enemy_id": "MON-027",
+    "enemy": "Đạo Tắc Hóa Thân",
+    "drop_type": "Equipment",
+    "item": "Quy Hương Pháp bào III",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-117",
+    "enemy_id": "MON-027",
+    "enemy": "Đạo Tắc Hóa Thân",
+    "drop_type": "Pill",
+    "item": "Cuồng Diễm Tiên Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-118",
+    "enemy_id": "MON-028",
+    "enemy": "Cửu Tiêu Phản Tiên",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "7-14",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-119",
+    "enemy_id": "MON-028",
+    "enemy": "Cửu Tiêu Phản Tiên",
+    "drop_type": "Material",
+    "item": "Linh Hồn Ngọc",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-120",
+    "enemy_id": "MON-028",
+    "enemy": "Cửu Tiêu Phản Tiên",
+    "drop_type": "Herb",
+    "item": "Khổ Lạc Hoa",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-121",
+    "enemy_id": "MON-028",
+    "enemy": "Cửu Tiêu Phản Tiên",
+    "drop_type": "Equipment",
+    "item": "U Minh Pháp giới III",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-122",
+    "enemy_id": "MON-028",
+    "enemy": "Cửu Tiêu Phản Tiên",
+    "drop_type": "Pill",
+    "item": "Cầu Long Luyện Thể Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-123",
+    "enemy_id": "MON-029",
+    "enemy": "Đại La Tàn Ảnh",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "15-30",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-124",
+    "enemy_id": "MON-029",
+    "enemy": "Đại La Tàn Ảnh",
+    "drop_type": "Material",
+    "item": "Thiên Lôi Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-125",
+    "enemy_id": "MON-029",
+    "enemy": "Đại La Tàn Ảnh",
+    "drop_type": "Herb",
+    "item": "U Thủy Tiên Liên",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-126",
+    "enemy_id": "MON-029",
+    "enemy": "Đại La Tàn Ảnh",
+    "drop_type": "Equipment",
+    "item": "Cửu Tiêu Vũ khí I",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-127",
+    "enemy_id": "MON-029",
+    "enemy": "Đại La Tàn Ảnh",
+    "drop_type": "Pill",
+    "item": "Đản Hồn Tiên Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  },
+  {
+    "id": "DROP-128",
+    "enemy_id": "MON-030",
+    "enemy": "Đài Quy Hương Thủ Ảnh",
+    "drop_type": "Currency",
+    "item": "TN",
+    "chance_pct": "100",
+    "quantity": "10-20",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-129",
+    "enemy_id": "MON-030",
+    "enemy": "Đài Quy Hương Thủ Ảnh",
+    "drop_type": "Material",
+    "item": "Ngũ Hành Đạo Tinh",
+    "chance_pct": "90",
+    "quantity": "1-3",
+    "pity": "Không"
+  },
+  {
+    "id": "DROP-130",
+    "enemy_id": "MON-030",
+    "enemy": "Đài Quy Hương Thủ Ảnh",
+    "drop_type": "Herb",
+    "item": "Không Gian Bồ Đề",
+    "chance_pct": "75",
+    "quantity": "1-2",
+    "pity": "10–20 nếu dùng cho progression"
+  },
+  {
+    "id": "DROP-131",
+    "enemy_id": "MON-030",
+    "enemy": "Đài Quy Hương Thủ Ảnh",
+    "drop_type": "Equipment",
+    "item": "Quy Hương Hộ phù I",
+    "chance_pct": "28",
+    "quantity": "1",
+    "pity": "Pity 12 boss/cùng tier"
+  },
+  {
+    "id": "DROP-132",
+    "enemy_id": "MON-030",
+    "enemy": "Đài Quy Hương Thủ Ảnh",
+    "drop_type": "Pill",
+    "item": "Vô Trần Giải Độc Đan",
+    "chance_pct": "12",
+    "quantity": "1",
+    "pity": "Pity 8 boss"
+  }
+]

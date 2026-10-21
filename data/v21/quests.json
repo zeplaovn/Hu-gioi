@@ -1,0 +1,1463 @@
+[
+  {
+    "id": "Q-HG-01",
+    "title": "Thức tỉnh giữa Lạc Phong",
+    "kind": "main",
+    "stage_id": "HG01",
+    "min_tier": "1",
+    "prerequisite": "",
+    "npc_id": "NPC-01",
+    "sect": "ANY",
+    "objective": "Hoàn thành hướng dẫn; xác minh dấu Thiên Mệnh",
+    "mode": "safe",
+    "reward_currency": "LT_HP",
+    "reward_amount": "0",
+    "reward_item_id": "",
+    "reward_item_qty": "0",
+    "contribution": "0",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "learn",
+          "event_type": "tutorial.step_completed",
+          "target_id": "awakening",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "seal",
+          "event_type": "evidence.verified",
+          "target_id": "heaven_mark",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-HG-02",
+    "title": "Chọn đường tu",
+    "kind": "main",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-01",
+    "npc_id": "NPC-02",
+    "sect": "ANY",
+    "objective": "Chọn một trong TV/HS/VD; hoàn thành một khảo hạch mô phỏng",
+    "mode": "safe",
+    "reward_currency": "LT_HP",
+    "reward_amount": "30",
+    "reward_item_id": "PILL-001",
+    "reward_item_qty": "1",
+    "contribution": "10",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "sect",
+          "event_type": "sect.joined",
+          "target_id": "chosen_lineage",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "allowed_sects": [
+              "TV",
+              "HS",
+              "VD"
+            ]
+          }
+        },
+        {
+          "id": "trial",
+          "event_type": "trial.completed",
+          "target_id": "entry_exam",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    },
+    "giver_by_lineage": {
+      "TV": "NPC-02",
+      "HS": "NPC-03",
+      "VD": "NPC-04"
+    }
+  },
+  {
+    "id": "Q-HG-03",
+    "title": "Bát thuốc và địa mạch",
+    "kind": "main",
+    "stage_id": "HG02",
+    "min_tier": "1",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-04",
+    "sect": "ANY",
+    "objective": "Thu hai mẫu nước bảo đảm; cứu bệnh nhân; đối chiếu dấu trận",
+    "mode": "opt_in_lethal",
+    "reward_currency": "LT_HP",
+    "reward_amount": "60",
+    "reward_item_id": "PILL-003",
+    "reward_item_qty": "1",
+    "contribution": "20",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "water",
+          "event_type": "gather.quest_sample",
+          "target_id": "water",
+          "required_count": 2,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "node_id": "HG.STREAM",
+            "guaranteed": true,
+            "distinct_resource_key": "sample_id"
+          }
+        },
+        {
+          "id": "heal",
+          "event_type": "rescue.completed",
+          "target_id": "water_patient",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "rune",
+          "event_type": "evidence.verified",
+          "target_id": "water_array",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-HG-04",
+    "title": "Người bên kia giới môn",
+    "kind": "main",
+    "stage_id": "HG05",
+    "min_tier": "9",
+    "prerequisite": "Q-HG-03",
+    "npc_id": "NPC-05",
+    "sect": "ANY",
+    "objective": "Vá ba trụ hoặc thắng MON-012; xác nhận vượt giới",
+    "mode": "opt_in_lethal",
+    "reward_currency": "LT_HP",
+    "reward_amount": "100",
+    "reward_item_id": "MAT-008",
+    "reward_item_qty": "1",
+    "contribution": "40",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "seal_or_boss",
+          "operator": "any",
+          "children": [
+            {
+              "id": "repair",
+              "event_type": "array.pillar_repaired",
+              "target_id": "HG.RUINS",
+              "required_count": 3,
+              "distinct_event_ids": true,
+              "mode": "safe",
+              "filters": {
+                "distinct_resource_key": "pillar_id"
+              }
+            },
+            {
+              "id": "boss",
+              "event_type": "combat.won",
+              "target_id": "MON-012",
+              "required_count": 1,
+              "distinct_event_ids": true,
+              "mode": "opt_in_lethal",
+              "filters": {}
+            }
+          ]
+        },
+        {
+          "id": "prepare",
+          "event_type": "tribulation.prepared",
+          "target_id": "HG05",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "online_ack": true
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    },
+    "completion_grants_permission": "ascend_to_LG01",
+    "ascension_material_source": "reward granted before separate ascend request; consume MAT-008/MAT-022 on ascend only",
+    "preparation_supply": {
+      "item_id": "PILL-001",
+      "quantity": 2,
+      "bound_reason": "quest_preparation",
+      "claim_phase": "ACTIVE_OR_READY_before_boss",
+      "per_life_cap": 1,
+      "cash_cost": "0",
+      "cannot_sell_or_trade": true,
+      "claim_key": "account_id/life_id/quest_id/preparation"
+    }
+  },
+  {
+    "id": "Q-LG-01",
+    "title": "Thành giữa tầng mây",
+    "kind": "main",
+    "stage_id": "LG01",
+    "min_tier": "1",
+    "prerequisite": "Q-HG-04",
+    "npc_id": "NPC-05",
+    "sect": "ANY",
+    "objective": "Đăng ký thân phận; trả trận thạch; đối chiếu tọa độ",
+    "mode": "safe",
+    "reward_currency": "LT_TP",
+    "reward_amount": "8",
+    "reward_item_id": "PILL-021",
+    "reward_item_qty": "1",
+    "contribution": "10",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "register",
+          "event_type": "identity.registered",
+          "target_id": "LG.TOWN",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "stone",
+          "event_type": "quest_loan.returned",
+          "target_id": "array_stone",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "coord",
+          "event_type": "evidence.verified",
+          "target_id": "cloud_coordinates",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "LG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    },
+    "loan_evidence": "array_stone issued as quest flag on acceptance; never requires an unavailable physical item"
+  },
+  {
+    "id": "Q-LG-02",
+    "title": "Sổ người bị câm",
+    "kind": "main",
+    "stage_id": "LG02",
+    "min_tier": "1",
+    "prerequisite": "Q-LG-01",
+    "npc_id": "NPC-06",
+    "sect": "ANY",
+    "objective": "Đối chiếu hai bản cổ sử; chọn công bố hoặc đồng quản",
+    "mode": "safe",
+    "reward_currency": "LT_TP",
+    "reward_amount": "12",
+    "reward_item_id": "PILL-022",
+    "reward_item_qty": "1",
+    "contribution": "20",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "history",
+          "event_type": "evidence.compared",
+          "target_id": "ancient_history",
+          "required_count": 2,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "distinct_document_ids": true,
+            "distinct_resource_key": "document_id"
+          }
+        },
+        {
+          "id": "choice",
+          "event_type": "quest.branch_chosen",
+          "target_id": "history_custody",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "allowed_values": [
+              "publish",
+              "joint_custody",
+              "sealed_archive"
+            ]
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "LG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-LG-03",
+    "title": "Qua Giới Nhai",
+    "kind": "main",
+    "stage_id": "LG04",
+    "min_tier": "9",
+    "prerequisite": "Q-LG-02",
+    "npc_id": "NPC-05",
+    "sect": "ANY",
+    "objective": "Thử trận an toàn; chuẩn bị; vượt MON-020 và giới kiếp",
+    "mode": "opt_in_lethal",
+    "reward_currency": "LT_TP",
+    "reward_amount": "20",
+    "reward_item_id": "MAT-022",
+    "reward_item_qty": "1",
+    "contribution": "40",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "trial",
+          "event_type": "trial.completed",
+          "target_id": "LG.array_test",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "boss",
+          "event_type": "combat.won",
+          "target_id": "MON-020",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "opt_in_lethal",
+          "filters": {}
+        },
+        {
+          "id": "prepare",
+          "event_type": "tribulation.prepared",
+          "target_id": "LG04",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "online_ack": true
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "LG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    },
+    "completion_grants_permission": "ascend_to_TG01",
+    "ascension_material_source": "reward granted before separate ascend request; consume MAT-008/MAT-022 on ascend only",
+    "preparation_supply": {
+      "item_id": "PILL-039",
+      "quantity": 2,
+      "bound_reason": "quest_preparation",
+      "claim_phase": "ACTIVE_OR_READY_before_boss",
+      "per_life_cap": 1,
+      "cash_cost": "0",
+      "cannot_sell_or_trade": true,
+      "claim_key": "account_id/life_id/quest_id/preparation"
+    }
+  },
+  {
+    "id": "Q-TG-01",
+    "title": "Tên trong Thiên Sổ",
+    "kind": "main",
+    "stage_id": "TG01",
+    "min_tier": "1",
+    "prerequisite": "Q-LG-03",
+    "npc_id": "NPC-07",
+    "sect": "ANY",
+    "objective": "Đăng ký hồ sơ; đối chiếu bản gốc; dự phiên tranh luận",
+    "mode": "safe",
+    "reward_currency": "TN",
+    "reward_amount": "3",
+    "reward_item_id": "PILL-041",
+    "reward_item_qty": "1",
+    "contribution": "10",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "register",
+          "event_type": "identity.registered",
+          "target_id": "TG.ARCHIVE",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "verify",
+          "event_type": "evidence.verified",
+          "target_id": "original_heaven_record",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "hearing",
+          "event_type": "hearing.completed",
+          "target_id": "heaven_law",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "TG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-TG-02",
+    "title": "Một chiếc đèn",
+    "kind": "main",
+    "stage_id": "TG03",
+    "min_tier": "1",
+    "prerequisite": "Q-TG-01",
+    "npc_id": "NPC-08",
+    "sect": "ANY",
+    "objective": "Khôi phục một ký ức với đồng thuận của chủ nhân",
+    "mode": "opt_in_lethal",
+    "reward_currency": "TN",
+    "reward_amount": "5",
+    "reward_item_id": "PILL-042",
+    "reward_item_qty": "1",
+    "contribution": "20",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "consent",
+          "event_type": "consent.recorded",
+          "target_id": "memory_owner",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "memory",
+          "event_type": "memory.restored",
+          "target_id": "lost_memory",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "consent_id_required": true,
+            "owner_confirmed": true
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "TG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-TG-03",
+    "title": "Cánh cửa không khóa",
+    "kind": "main",
+    "stage_id": "TG04",
+    "min_tier": "1",
+    "prerequisite": "Q-TG-02",
+    "npc_id": "NPC-09",
+    "sect": "ANY",
+    "objective": "Đọc cái giá Quy Phàm; chọn trì hoãn hoặc chuẩn bị",
+    "mode": "safe",
+    "reward_currency": "TN",
+    "reward_amount": "8",
+    "reward_item_id": "",
+    "reward_item_qty": "0",
+    "contribution": "30",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "cost",
+          "event_type": "disclosure.acknowledged",
+          "target_id": "return_mortal_cost",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "choice",
+          "event_type": "quest.branch_chosen",
+          "target_id": "return_preparation",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "allowed_values": [
+              "defer",
+              "prepare"
+            ]
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "TG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-TG-04",
+    "title": "Trang sách chưa viết",
+    "kind": "main",
+    "stage_id": "TG05",
+    "min_tier": "9",
+    "prerequisite": "Q-TG-03",
+    "npc_id": "NPC-09",
+    "sect": "ANY",
+    "objective": "Xác minh danh sách; thắng MON-030; xác nhận về hoặc ở lại",
+    "mode": "opt_in_lethal",
+    "reward_currency": "TN",
+    "reward_amount": "12",
+    "reward_item_id": "MAT-054",
+    "reward_item_qty": "1",
+    "contribution": "50",
+    "repeat": "once_per_life",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id",
+    "claim_key": "account_id/life_id/quest_id",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "names",
+          "event_type": "evidence.verified",
+          "target_id": "return_name_list",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {}
+        },
+        {
+          "id": "boss",
+          "event_type": "combat.won",
+          "target_id": "MON-030",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "opt_in_lethal",
+          "filters": {}
+        },
+        {
+          "id": "choice",
+          "event_type": "quest.branch_chosen",
+          "target_id": "ending",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "allowed_values": [
+              "return_home",
+              "remain"
+            ],
+            "online_ack": true
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/life_id/quest_id",
+    "location_node": "TG.ARCHIVE",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    },
+    "preparation_supply": {
+      "item_id": "PILL-061",
+      "quantity": 2,
+      "bound_reason": "quest_preparation",
+      "claim_phase": "ACTIVE_OR_READY_before_boss",
+      "per_life_cap": 1,
+      "cash_cost": "0",
+      "cannot_sell_or_trade": true,
+      "claim_key": "account_id/life_id/quest_id/preparation"
+    }
+  },
+  {
+    "id": "Q-SECT-TV-1",
+    "title": "Tuần tra tông môn",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-02",
+    "sect": "TV",
+    "objective": "Hoàn thành một lượt tuần tra mô phỏng; không cần vật phẩm",
+    "mode": "safe",
+    "repeat": "daily",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "15",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "2",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "1",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      }
+    ],
+    "quest_group": "SECT-1",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_patrol",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-TV-2",
+    "title": "Việc trong môn",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-02",
+    "sect": "TV",
+    "objective": "Hoàn thành một việc nội vụ; không nộp tiền hoặc vật phẩm",
+    "mode": "safe",
+    "repeat": "daily",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "15",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "2",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "1",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      }
+    ],
+    "quest_group": "SECT-2",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_internal",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-TV-3",
+    "title": "Thử luyện tuần",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-02",
+    "sect": "TV",
+    "objective": "Hoàn thành ba thử luyện mô phỏng; không lethal",
+    "mode": "safe",
+    "repeat": "weekly",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "60",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "8",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "3",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      }
+    ],
+    "quest_group": "SECT-3",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_weekly",
+          "required_count": 3,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-HS-1",
+    "title": "Tuần tra tông môn",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-03",
+    "sect": "HS",
+    "objective": "Hoàn thành một lượt tuần tra mô phỏng; không cần vật phẩm",
+    "mode": "safe",
+    "repeat": "daily",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "15",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "2",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "1",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      }
+    ],
+    "quest_group": "SECT-1",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_patrol",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-HS-2",
+    "title": "Việc trong môn",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-03",
+    "sect": "HS",
+    "objective": "Hoàn thành một việc nội vụ; không nộp tiền hoặc vật phẩm",
+    "mode": "safe",
+    "repeat": "daily",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "15",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "2",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "1",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      }
+    ],
+    "quest_group": "SECT-2",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_internal",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-HS-3",
+    "title": "Thử luyện tuần",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-03",
+    "sect": "HS",
+    "objective": "Hoàn thành ba thử luyện mô phỏng; không lethal",
+    "mode": "safe",
+    "repeat": "weekly",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "60",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "8",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "3",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      }
+    ],
+    "quest_group": "SECT-3",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_weekly",
+          "required_count": 3,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-VD-1",
+    "title": "Tuần tra tông môn",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-04",
+    "sect": "VD",
+    "objective": "Hoàn thành một lượt tuần tra mô phỏng; không cần vật phẩm",
+    "mode": "safe",
+    "repeat": "daily",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "15",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "2",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "1",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      }
+    ],
+    "quest_group": "SECT-1",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_patrol",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-VD-2",
+    "title": "Việc trong môn",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-04",
+    "sect": "VD",
+    "objective": "Hoàn thành một việc nội vụ; không nộp tiền hoặc vật phẩm",
+    "mode": "safe",
+    "repeat": "daily",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "15",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "2",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "1",
+        "contribution": 10,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "day"
+      }
+    ],
+    "quest_group": "SECT-2",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_internal",
+          "required_count": 1,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  },
+  {
+    "id": "Q-SECT-VD-3",
+    "title": "Thử luyện tuần",
+    "kind": "sect",
+    "stage_id": "HG01",
+    "min_tier": "2",
+    "prerequisite": "Q-HG-02",
+    "npc_id": "NPC-04",
+    "sect": "VD",
+    "objective": "Hoàn thành ba thử luyện mô phỏng; không lethal",
+    "mode": "safe",
+    "repeat": "weekly",
+    "guaranteed": "true",
+    "dedup_key": "account_id/life_id/quest_id/calendar_period",
+    "rewards_by_world": [
+      {
+        "world": "Hạ Giới",
+        "currency": "LT_HP",
+        "amount": "60",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      },
+      {
+        "world": "Linh Giới",
+        "currency": "LT_TP",
+        "amount": "8",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      },
+      {
+        "world": "Tiên Giới",
+        "currency": "TN",
+        "amount": "3",
+        "contribution": 50,
+        "reward_item_id": "",
+        "reward_item_quantity": 0,
+        "period": "week"
+      }
+    ],
+    "quest_group": "SECT-3",
+    "reward_lock": "world_at_acceptance",
+    "claim_key": "account_id/quest_group/calendar_period",
+    "objective_tree": {
+      "operator": "all",
+      "children": [
+        {
+          "id": "task",
+          "event_type": "trial.completed",
+          "target_id": "sect_weekly",
+          "required_count": 3,
+          "distinct_event_ids": true,
+          "mode": "safe",
+          "filters": {
+            "lineage_must_match": true,
+            "lethal": false
+          }
+        }
+      ]
+    },
+    "event_scope": "account_id/life_id/quest_instance_id; only after acceptance",
+    "event_authority": "server",
+    "replay_event_policy": "ignore already processed event_id",
+    "repeat_instance_key": "account_id/quest_group/calendar_period",
+    "location_node": "HG.SECT",
+    "completion_policy": {
+      "manual_claim": true,
+      "reward_before_ascension": true,
+      "auto_ascend": false,
+      "rollback_on_partial_failure": true,
+      "ready_quest_survives_disconnect": true,
+      "death_cancels_instance": true
+    }
+  }
+]

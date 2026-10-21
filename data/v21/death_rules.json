@@ -1,0 +1,74 @@
+[
+  {
+    "id": "DEATH-001",
+    "content": "Thọ nguyên cạn",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Mất toàn bộ vật phẩm/tiền/trang bị; giữ TM/meta"
+  },
+  {
+    "id": "DEATH-002",
+    "content": "Thăng cảnh giới tử vong",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Failure không nhất thiết lethal; chỉ khi kết quả death được xác nhận"
+  },
+  {
+    "id": "DEATH-003",
+    "content": "Độ Kiếp tử vong",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Độ Kiếp thất bại dẫn đến death theo encounter rule"
+  },
+  {
+    "id": "DEATH-004",
+    "content": "PvP Luận Đạo",
+    "mode": "Safe",
+    "can_permadeath": "Không",
+    "on_zero_hp": "Kết thúc trận",
+    "notes": "HP 0 không phải death thật"
+  },
+  {
+    "id": "DEATH-005",
+    "content": "PvP Sinh Tử",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Phải xác nhận trước trận"
+  },
+  {
+    "id": "DEATH-006",
+    "content": "Bí cảnh lethal",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Cảnh báo trước khi vào"
+  },
+  {
+    "id": "DEATH-007",
+    "content": "Boss lethal",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Encounter phải gắn cờ lethal"
+  },
+  {
+    "id": "DEATH-008",
+    "content": "Khu an toàn",
+    "mode": "Safe",
+    "can_permadeath": "Không",
+    "on_zero_hp": "Không cho permadeath",
+    "notes": "Không có lethal combat"
+  },
+  {
+    "id": "DEATH-009",
+    "content": "Không Gian Hỗn Độn",
+    "mode": "Lethal",
+    "can_permadeath": "Có",
+    "on_zero_hp": "Kết thúc kiếp",
+    "notes": "Cả đội phải biết đây là sinh tử trước nghi thức"
+  }
+]

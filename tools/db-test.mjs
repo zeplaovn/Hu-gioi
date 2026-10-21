@@ -56,21 +56,30 @@ const run = (label, f) => {
 console.log("Áp dụng schema:");
 const steps = [["stub supabase", join(root, "supabase/tests/_stub_supabase.sql")]];
 for (const f of readdirSync(join(root, "supabase/migrations")).filter(f => f.endsWith(".sql")).sort()) steps.push([f, join(root, "supabase/migrations", f)]);
+const current = steps.filter(([n]) => n.startsWith("202610211"));
+const legacy = steps.filter(([n]) => !n.startsWith("202610211"));
 let schemaOk = true;
-for (const [l, f] of steps) if (!run(l, f)) { schemaOk = false; break; }
+for (const [l, f] of legacy) if (!run(l, f)) { schemaOk = false; break; }
 
 if (schemaOk) {
   console.log("Test SQL:");
-  for (const f of readdirSync(join(root, "supabase/tests")).filter(f => f.endsWith(".test.sql")).sort()) run(f, join(root, "supabase/tests", f));
+  for (const f of readdirSync(join(root, "supabase/tests")).filter(f => f.endsWith(".test.sql") && !/^0[7-9]_/.test(f)).sort()) run(f, join(root, "supabase/tests", f));
+  if (!process.argv.includes("--sql-only")) {
+    const r = sh("pnpm", ["exec", "vitest", "run", "tests/edge/handler.db.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
+    if (r.status !== 0) failed++;
+  }
+  console.log("Upgrade v2.1:");
+  for (const [l,f] of current) if (!run(l,f)) { schemaOk=false; break; }
+  if (schemaOk) for (const f of readdirSync(join(root,"supabase/tests")).filter(f => /^0[7-9]_.*\.test\.sql$/.test(f)).sort()) run(f,join(root,"supabase/tests",f));
   if (existsSync(join(root, "packages/game-core/package.json")) && !process.argv.includes("--sql-only")) {
     console.log("Test parity (game-core ↔ SQL):");
     const r = sh("pnpm", ["--filter", "@hu-gioi/game-core", "exec", "vitest", "run", "test/parity.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
     if (r.status !== 0) failed++;
-    console.log("Test API handler ↔ Postgres:");
-    const r2 = sh("pnpm", ["exec", "vitest", "run", "tests/edge/handler.db.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
-    if (r2.status !== 0) failed++;
+
+    if (schemaOk) { const r3=sh("pnpm",["exec","vitest","run","tests/edge/play.db.test.ts"],{cwd:root,env:{...process.env,DATABASE_URL:url}});if(r3.status!==0)failed++; }
   }
 }
 if (started && !process.env.HU_PG_KEEP) asPg(join(pgBin, "pg_ctl"), ["-D", dataDir, "-m", "fast", "stop"], { stdio: "ignore" });
 console.log(failed ? `\n${failed} bước thất bại` : "\nTất cả test DB đạt");
 process.exit(failed ? 1 : 0);
+

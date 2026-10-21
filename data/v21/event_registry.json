@@ -1,0 +1,305 @@
+[
+  {
+    "event_type": "array.pillar_repaired",
+    "allowed_target_ids": [
+      "HG.RUINS"
+    ],
+    "producer": "server.array",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "combat.won",
+    "allowed_target_ids": [
+      "MON-012",
+      "MON-020",
+      "MON-030"
+    ],
+    "producer": "server.combat",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "consent.recorded",
+    "allowed_target_ids": [
+      "memory_owner"
+    ],
+    "producer": "server.consent",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "disclosure.acknowledged",
+    "allowed_target_ids": [
+      "return_mortal_cost"
+    ],
+    "producer": "server.disclosure",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "evidence.compared",
+    "allowed_target_ids": [
+      "ancient_history"
+    ],
+    "producer": "server.evidence",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "evidence.verified",
+    "allowed_target_ids": [
+      "cloud_coordinates",
+      "heaven_mark",
+      "original_heaven_record",
+      "return_name_list",
+      "water_array"
+    ],
+    "producer": "server.evidence",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "gather.quest_sample",
+    "allowed_target_ids": [
+      "water"
+    ],
+    "producer": "server.gather",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "hearing.completed",
+    "allowed_target_ids": [
+      "heaven_law"
+    ],
+    "producer": "server.hearing",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "identity.registered",
+    "allowed_target_ids": [
+      "LG.TOWN",
+      "TG.ARCHIVE"
+    ],
+    "producer": "server.identity",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "memory.restored",
+    "allowed_target_ids": [
+      "lost_memory"
+    ],
+    "producer": "server.memory",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "quest.branch_chosen",
+    "allowed_target_ids": [
+      "ending",
+      "history_custody",
+      "return_preparation"
+    ],
+    "producer": "server.quest",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "quest_loan.returned",
+    "allowed_target_ids": [
+      "array_stone"
+    ],
+    "producer": "server.quest_loan",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "rescue.completed",
+    "allowed_target_ids": [
+      "water_patient"
+    ],
+    "producer": "server.rescue",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "sect.joined",
+    "allowed_target_ids": [
+      "chosen_lineage"
+    ],
+    "producer": "server.sect",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "trial.completed",
+    "allowed_target_ids": [
+      "LG.array_test",
+      "entry_exam",
+      "sect_internal",
+      "sect_patrol",
+      "sect_weekly"
+    ],
+    "producer": "server.trial",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "tribulation.prepared",
+    "allowed_target_ids": [
+      "HG05",
+      "LG04"
+    ],
+    "producer": "server.tribulation",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  },
+  {
+    "event_type": "tutorial.step_completed",
+    "allowed_target_ids": [
+      "awakening"
+    ],
+    "producer": "server.tutorial",
+    "accept_client_report": false,
+    "required_envelope": [
+      "event_id",
+      "account_id",
+      "life_id",
+      "quest_instance_id",
+      "server_time",
+      "config_version"
+    ],
+    "idempotency": "event_id globally unique plus per-quest processed_event"
+  }
+]

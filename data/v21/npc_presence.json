@@ -1,0 +1,172 @@
+[
+  {
+    "npc_id": "NPC-01",
+    "world": "Hạ Giới",
+    "min_stage_id": "HG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-01",
+    "world": "Linh Giới",
+    "min_stage_id": "LG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-01",
+    "world": "Tiên Giới",
+    "min_stage_id": "TG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-02",
+    "world": "Hạ Giới",
+    "min_stage_id": "HG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-02",
+    "world": "Linh Giới",
+    "min_stage_id": "LG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-03",
+    "world": "Hạ Giới",
+    "min_stage_id": "HG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-03",
+    "world": "Linh Giới",
+    "min_stage_id": "LG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-03",
+    "world": "Tiên Giới",
+    "min_stage_id": "TG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-04",
+    "world": "Hạ Giới",
+    "min_stage_id": "HG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-04",
+    "world": "Linh Giới",
+    "min_stage_id": "LG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-05",
+    "world": "Hạ Giới",
+    "min_stage_id": "HG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-05",
+    "world": "Linh Giới",
+    "min_stage_id": "LG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-05",
+    "world": "Tiên Giới",
+    "min_stage_id": "TG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": false,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-06",
+    "world": "Linh Giới",
+    "min_stage_id": "LG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-07",
+    "world": "Tiên Giới",
+    "min_stage_id": "TG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-08",
+    "world": "Tiên Giới",
+    "min_stage_id": "TG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  },
+  {
+    "npc_id": "NPC-09",
+    "world": "Tiên Giới",
+    "min_stage_id": "TG01",
+    "requires_npc_met": true,
+    "availability_rule": "current_life.active_npc_world[npc_id] == world AND npc_alive AND not_branch_departed",
+    "social_authored_here": true,
+    "fallback": "quest_journal_message_only; no gifts or social rolls if absent",
+    "spawn_duplicate_allowed": false
+  }
+]

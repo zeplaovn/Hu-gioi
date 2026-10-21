@@ -1,0 +1,56 @@
+[
+  {
+    "id": "SET-001",
+    "name": "Thanh Vân Kiếm Tâm",
+    "world": "Hạ Giới",
+    "bonuses": "2: ATK+6%; 4: kiếm kỹ+12%; 6: đỡ 1 đòn chí mạng PvE/180s"
+  },
+  {
+    "id": "SET-002",
+    "name": "Huyết Sát Chiến Thể",
+    "world": "Hạ Giới",
+    "bonuses": "2: HP+8%; 4: ATK+8%; 6: dưới 30% HP hút máu+6%"
+  },
+  {
+    "id": "SET-003",
+    "name": "Vạn Dược Linh Y",
+    "world": "Hạ Giới",
+    "bonuses": "2: heal+10%; 4: đan hiệu quả+8%; 6: hồi phục đội nhẹ"
+  },
+  {
+    "id": "SET-004",
+    "name": "Thái Hư Kiếm Vực",
+    "world": "Linh Giới",
+    "bonuses": "2: PEN+6%; 4: SPIRIT+10%; 6: kiếm trận giảm DEF boss"
+  },
+  {
+    "id": "SET-005",
+    "name": "Vô Tướng Ma Khu",
+    "world": "Linh Giới",
+    "bonuses": "2: HP+10%; 4: damage+8%; 6: đổi 5% HP lấy burst"
+  },
+  {
+    "id": "SET-006",
+    "name": "Thiên Cơ Trận Sư",
+    "world": "Linh Giới",
+    "bonuses": "2: ACC+8%; 4: RES+10%; 6: giảm cooldown pháp bảo 10%"
+  },
+  {
+    "id": "SET-007",
+    "name": "Cửu Tiêu Tiên Uy",
+    "world": "Tiên Giới",
+    "bonuses": "2: tiên lực+8%; 4: pháp tắc+8%; 6: damage boss+10%"
+  },
+  {
+    "id": "SET-008",
+    "name": "Vạn Pháp Quy Nhất",
+    "world": "Tiên Giới",
+    "bonuses": "2: affinity+8%; 4: giảm phạt đổi pháp tắc; 6: cộng hưởng kép"
+  },
+  {
+    "id": "SET-009",
+    "name": "U Minh Bất Diệt",
+    "world": "Tiên Giới",
+    "bonuses": "2: SPIRIT+10%; 4: RES+10%; 6: hồi sinh PvE 1 lần/ngày"
+  }
+]

@@ -8,16 +8,21 @@ import { createAudioManager } from '/src/audio.js';
 import { createSettingsDialog } from '/src/ui/settings.js';
 const stats=Object.fromEntries(STAT_KEYS.map((key,i)=>[key,{level:i+5,cap:20,next_cost:999}]));
 const state={now:'2026-10-20T00:00:00Z',account:{life_count:0,tm_balance:19,stats},history:[],pending_intent:null,
- life:{life_id:'fixture-life',life_no:1,status:'alive',stage:{...STAGES[1],idx:1},tang:8,progress_s:910,need_s:1000,
+ life:{life_id:'fixture-life',life_no:1,status:'alive',stage:{...STAGES[0],idx:1},tang:8,progress_s:910,need_s:1000,
  born_at:'2026-10-01T00:00:00Z',lifespan:{cap_years:253,used_years:44,exhausted:false},wallet:{ls:87,lt:0,tn:0},
  speed_mult:1.6,risk_mult:1,tm_earned_life:12,items:[],ready_for_major:false}};
 const npcs=[['HG_TVT_01','Lục Thanh Huyền','Thanh Vân Tông'],['HG_HSM_01','Huyết Vô Nhai','Huyết Sát Môn'],['HG_VDC_01','Dược Vô Trần','Vạn Dược Cốc'],['HG_TL_01','Trần Minh','Trung lập']].map(([id,name,faction])=>({id,name,faction,affection:0,trust:0,available:true,daily_done:false,gift_done:false}));
 const scene={scene_id:'E1',title:'Chuông báo thú triều',npc_text:'[Sự kiện] Chuông báo vang giữa bữa ăn.',choices:[{choice_id:'E1_A',player_text:'Ta tổ chức hàng cứu trợ.'}]};
 const social={life_id:'fixture-life',npcs,gifts:[],offers:[{offer_id:'o1',kind:'event',npc_id:'HG_TVT_01',scene}]};
 const roll={race:'Ma',linh_can:{id:'ROOT-003',name:'Tam Linh Căn',elements:['Kim','Mộc','Thủy']}};
-const api={social:async()=>social,socialAction:async()=>({})};
+const play={version:0,life_id:'fixture-life',wallet:{LT_HP:'87',LT_TP:'0',TN:'0'},state:{inventory:{},plots:{'1':{},'2':{}},xp:{},jobs:{},quests:{},events:[],equipment:{},sect:'',contribution:0,node:'HG.SECT'},knowledge:{},catalog:[],prices:[],recipes:[],seeds:[],plots:Array.from({length:16},(_,i)=>({slot_id:i+1,min_stage_id:'HG01',stage_id:'HG01',price:i<2?'0':'100',currency:'LT_HP'})),venues:[],stock:[],quests:[],interactions:[],nodes:[{id:'HG.SECT',name:'Sơn môn Hạ Giới',min_stage_id:'HG01'}],sect_shop:[],auctions:[],acquisition:[],encounters:[],skills:[]};
+play.item_use_modes={'PILL-017':{outside:true,battle:false},'PILL-001':{outside:false,battle:true},'PILL-004':{outside:false,battle:false}};
+play.state.inventory={buff:{item_id:'PILL-017',quantity:1,quality:'common',location:'inventory'},heal:{item_id:'PILL-001',quantity:1,quality:'common',location:'inventory'},closed:{item_id:'PILL-004',quantity:1,quality:'common',location:'inventory'}};
+play.catalog=[{id:'PILL-017',name:'Hộ Thân Đan',item_type:'pill'},{id:'PILL-001',name:'Hồi Xuân Đan',item_type:'pill'},{id:'PILL-004',name:'Tăng Thọ Đan',item_type:'pill'}];
+play.state.buffs={active:{item_id:'PILL-017',stat:'HP',amount_bp:800,expires_at:Date.now()/1000+7200},expired:{item_id:'PILL-004',stat:'HP',amount_bp:100,expires_at:0}};
+const api={play:async()=>play,playAction:async()=>({data:{}}),social:async()=>social,socialAction:async()=>({})};
 const game={api,state,log:[{id:1,text:'Ngươi trở lại Thiên Vân Đại Lục.',tag:'gold'},{id:2,text:'Đang nhập định. Tu vi tiếp tục tích lũy.',tag:'green'}],pulse:0,busy:false,error:null,
- startLife(p){window.started=p;game.state={...state,life:{...state.life,profile:{...p,race:roll.race,linh_can:roll.linh_can}}};window.demo('alive',true);return Promise.resolve(true);},rollCharacter(f){window.rolls=[...(window.rolls??[]),f];return Promise.resolve(roll);},refresh(){},prepare(){},cancelPrepare(){},cancelLifespan(){},dismissResult(){}};
+ async reload(){},startLife(p){window.started=p;game.state={...state,life:{...state.life,profile:{...p,race:roll.race,linh_can:roll.linh_can}}};window.demo('alive',true);return Promise.resolve(true);},rollCharacter(f){window.rolls=[...(window.rolls??[]),f];return Promise.resolve(roll);},refresh(){},prepare(){},cancelPrepare(){},cancelLifespan(){},dismissResult(){}};
 let view;
 const audio=createAudioManager({storage:null,target:null,createAudio:()=>({play:async()=>{},pause(){},addEventListener(){}})});
 const settingsDlg=createSettingsDialog({audio});

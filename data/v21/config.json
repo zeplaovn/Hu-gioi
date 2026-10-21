@@ -1,0 +1,662 @@
+{
+  "version": "2.1",
+  "release_status": "CONSOLIDATED_DESIGN_NOT_DEPLOYED_GAME",
+  "core": {
+    "target_endgame_days": 38,
+    "maps": [
+      "Hạ Giới",
+      "Linh Giới",
+      "Tiên Giới"
+    ],
+    "chaos_space_in_sla": false,
+    "offline": {
+      "full_hours": 8,
+      "hours_8_16_efficiency": 0.7,
+      "hours_16_24_efficiency": 0.4,
+      "cap_hours": 24
+    },
+    "breakthrough": {
+      "minor_cap": [
+        0.35,
+        0.95
+      ],
+      "major_cap": [
+        0.15,
+        0.85
+      ],
+      "ascension_cap": [
+        0.1,
+        0.75
+      ],
+      "pity_increment": 0.08,
+      "guarantee_attempt": 5,
+      "third_failure_bonus": 0.15
+    },
+    "stat_item_cap": 40,
+    "gear_cultivation_cap_pct": 35,
+    "auction_tax_pct": [
+      5,
+      10
+    ],
+    "lifecycle": {
+      "ascension_ends_life": false,
+      "permadeath_on_lethal_death": true,
+      "physical_assets_lost_on_death": true,
+      "heaven_mandate_persists": true
+    },
+    "heaven_mandate": {
+      "points_per_tang": 1,
+      "tang_per_realm": 9,
+      "stages": 14,
+      "points_per_clean_life": 126,
+      "persists_across_lives": true,
+      "permanent_stat_cap_each": 20,
+      "stat_costs": {
+        "TuongMao": {
+          "base": 6,
+          "step": 1
+        },
+        "PhucDuyen": {
+          "base": 7,
+          "step": 1
+        },
+        "CanCot": {
+          "base": 8,
+          "step": 2
+        },
+        "NgoTinh": {
+          "base": 8,
+          "step": 2
+        },
+        "VanKhi": {
+          "base": 9,
+          "step": 2
+        }
+      },
+      "stat_total_cost": 2280,
+      "exclusive_items_lost_on_death": true,
+      "exclusive_item_price_range": [
+        20,
+        90
+      ],
+      "status": "v1.3 parameters; tune after closed beta",
+      "table": "heaven_mandate.json"
+    },
+    "technology_stack": "OPEN",
+    "guardrails": {
+      "speed_cap": 1.25,
+      "risk_floor": 0.5,
+      "later_life_clean_days_min": 24.75
+    },
+    "pvp": {
+      "matchmaking_bp_tolerance": 0.1,
+      "tm_stat_effect_ranked_pvp": 0.5,
+      "loot_on_death": false,
+      "disconnect_pvp_sinh_tu_seconds": 30,
+      "disconnect_pve_lethal_pause_seconds": 120,
+      "status": "proposed v1.3"
+    },
+    "offline_rules": {
+      "lethal_events_while_offline": false,
+      "auto_stop_before": [
+        "tang_9_breakthrough",
+        "do_kiep"
+      ],
+      "confirm_online_required": true,
+      "minor_tang_can_kill": false
+    },
+    "tho_nguyen": {
+      "start_years": 100,
+      "use_years_per_credited_day": 10,
+      "grant_years_per_target_day": 20,
+      "table": "lifespan.json",
+      "aging_only_with_credited_time": true,
+      "status": "proposed v1.3"
+    },
+    "luc_menh": {
+      "min_account_age_days": 14,
+      "party_finder": true,
+      "device_ip_signals": "flag_only"
+    },
+    "death_hazard_assumptions": {
+      "note": "ASSUMPTIONS, not telemetry",
+      "stage_pdeath_at_tang9": {
+        "HG01": 0.005,
+        "HG02": 0.008,
+        "HG03": 0.01,
+        "HG04": 0.012,
+        "HG05": 0.03,
+        "LG01": 0.01,
+        "LG02": 0.012,
+        "LG03": 0.015,
+        "LG04": 0.06,
+        "TG01": 0.01,
+        "TG02": 0.012,
+        "TG03": 0.015,
+        "TG04": 0.02,
+        "TG05": 0.025
+      },
+      "risky_after_stage_index": {
+        "4": 0.025,
+        "8": 0.035,
+        "13": 0.04
+      }
+    },
+    "target_endgame_range_days": [
+      30,
+      45
+    ],
+    "clean_life_progression_days": 33,
+    "main_route_time_by_map_days": {
+      "Hạ Giới": 8.25,
+      "Linh Giới": 11.0,
+      "Tiên Giới": 13.75
+    },
+    "progression_reference": {
+      "effective_hours_per_day": 16.8,
+      "note": "33-day XP reference only; not an integrated economy/profession simulation."
+    }
+  },
+  "systems": {
+    "status": "SPECIFICATION_AND_REFERENCE_DATA_NOT_GAME_BACKEND",
+    "user_rules": {
+      "named_venues": true,
+      "auction_scope": "server",
+      "garden_size": [
+        4,
+        4
+      ],
+      "garden_initial_open": 2,
+      "garden_initial_locked": 14,
+      "garden_actions": [
+        "sow",
+        "fertilize",
+        "water",
+        "remove_pests"
+      ],
+      "craft_material_slots": 3,
+      "craft_optional_quality_slot": 1,
+      "talisman_base_daily_attempts": 5,
+      "talisman_daily_attempts_increase_per_major_realm": 1,
+      "talisman_failure_increases_each_profession_level": true,
+      "all_professions_gain_exp": true,
+      "currency_codes": [
+        "LT_HP",
+        "LT_TP",
+        "TN"
+      ],
+      "currency_exchange_ratio_per_adjacent_grade": 1000,
+      "exchange_bidirectional": true,
+      "exchange_fee_bp": 0,
+      "refining_reset_per_major_realm": true,
+      "refining_first_tier_cost": "3"
+    },
+    "currencies": {
+      "LT_HP": {
+        "name": "Linh Thạch hạ phẩm",
+        "base_unit_rate": "1"
+      },
+      "LT_TP": {
+        "name": "Linh Thạch thượng phẩm",
+        "base_unit_rate": "1000"
+      },
+      "TN": {
+        "name": "Tiên Ngọc",
+        "base_unit_rate": "1000000"
+      }
+    },
+    "wallet": {
+      "scope": "life",
+      "integer_encoding": "decimal_string",
+      "max_balance_digits": 78,
+      "negative_balance_allowed": false,
+      "exchange": "bidirectional_exact_integer",
+      "exchange_fee_bp": 0,
+      "world_access_required": true,
+      "transaction_idempotency": true,
+      "auto_exchange_on_purchase": false,
+      "exchange_unlock_scope": "current_life",
+      "exchange_atomic": true
+    },
+    "calendar": {
+      "timezone": "Asia/Ho_Chi_Minh",
+      "reset_local_time": "00:00",
+      "weekly_reset": "Monday 00:00",
+      "authority": "server",
+      "daily_scope": "account_id + action_group + date_key",
+      "level_or_realm_up_resets_used_count": false,
+      "profession_counts_calendar_not_credited_days": true
+    },
+    "trade": {
+      "inherit_min_account_age_hours": 72,
+      "received_trade_lock_hours": 24,
+      "max_net_outflow_pct_per_day": 20,
+      "outflow_budget_basis": "start_of_day_liquid_wallet + start_of_day_listing_reference_value; freeze once at reset; all currencies converted to exact LT_HP",
+      "deceased_assets": "all_owned_physical_assets_including_escrow_mail_and_garden_lost",
+      "account_unlocks": "recipe_knowledge_only; current-life skill required"
+    },
+    "market": {
+      "npc_buyback_basis_bp": 2000,
+      "npc_buyback_eligible": "unbound_standard_items_only",
+      "black_market_price_multiplier_bp": 12500,
+      "black_market_sell_multiplier_bp": 1500,
+      "stock_scope": "per_account_daily; server_rare_stock_optional_later",
+      "stock_roll": "seeded_server_table_not_client_refresh",
+      "refresh_daily_quota": false,
+      "no_random_fake_goods": true,
+      "no_trading_permadeath": true,
+      "shop_bought_seeds_resale": false,
+      "bound_items_resale": false,
+      "buyback_source": "price_book.json npc_buyback_cap; never infer only20% reference for craft outputs"
+    },
+    "auction": {
+      "scope": "server_id",
+      "currencies": [
+        "LT_HP",
+        "LT_TP",
+        "TN"
+      ],
+      "cross_currency_bids": false,
+      "cross_server": false,
+      "currency_unlock": {
+        "LT_HP": "HG01",
+        "LT_TP": "LG01",
+        "TN": "TG01"
+      },
+      "duration_hours": [
+        6,
+        12,
+        24
+      ],
+      "default_duration_hours": 12,
+      "listing_fee_bp": 100,
+      "listing_fee_min_native": "1",
+      "seller_tax_bp": 500,
+      "min_increment_bp": 500,
+      "min_increment_native": "1",
+      "max_active_listings": 5,
+      "anti_snipe_last_seconds": 120,
+      "anti_snipe_extension_seconds": 120,
+      "anti_snipe_max_total_extension_seconds": 600,
+      "price_cap_policy": "max 10x server_reference_price per unit and <= 78 decimal digits; special items require explicit reference price",
+      "deposit": "full_bid_escrow; replacing own bid reserves delta only",
+      "buyout_optional": true,
+      "cancel": "allowed_before_first_bid_only; listing_fee_not_refunded",
+      "self_or_same_account_bids": false,
+      "delivery": "transactional_life_bound_inbox",
+      "delivery_expiry": "none_while_same_life_alive",
+      "death_escrow_policy": "01_THIET_KE/04_Kinh_Te_Nghe_Phu.md section Đấu giá",
+      "auction_rollout": "after atomic trade and death handling pass concurrency acceptance",
+      "leading_bidder_death": "Destroy deceased escrow; clear leading bid; do not reactivate previously refunded bids; restart from starting_price with no leader",
+      "buyout_listing_fee_basis": "total_start_price; taxes use actual total_sale_price"
+    },
+    "garden": {
+      "rows": 4,
+      "columns": 4,
+      "initial_unlocked_slots": [
+        1,
+        2
+      ],
+      "plot_purchase_scope": "life",
+      "higher_realm_is_condition_not_free_unlock": true,
+      "care_actions": [
+        "sow",
+        "fertilize",
+        "water",
+        "remove_pests"
+      ],
+      "initial_seed_grant": {
+        "item_id": "SEED-HERB-001",
+        "quantity": 2,
+        "bound": true,
+        "once_per_life": true
+      },
+      "water_required_to_grow": false,
+      "care_actions_per_cycle": {
+        "fertilize": 1,
+        "water": 1,
+        "remove_pests": 1
+      },
+      "water_time_reduction_bp": 1000,
+      "fertilizer_time_reduction_bp": 1000,
+      "total_time_reduction_cap_bp": 2000,
+      "pest_damage_unhandled_bp": 2000,
+      "pest_event_chance_bp": 2500,
+      "min_harvest_quantity": 1,
+      "base_harvest_quantity": 3,
+      "ready_crops_decay": false,
+      "auto_harvest": false,
+      "offline_growth": true,
+      "growing_uses_wall_clock_not_offline_xp_cap": true,
+      "care_exp": 0,
+      "exp_only_once_on_harvest": true,
+      "cancel_seed_refund": false,
+      "seed_recovery_from_harvest": false,
+      "bulk_actions": "validate_and_commit_independently_per_plot; return each result",
+      "one_crop_cycle_per_plot": true,
+      "old_world_venue_access_after_ascension": true,
+      "excluded_herb_ids": [
+        "HERB-066",
+        "HERB-071",
+        "HERB-072"
+      ],
+      "exclusion_reason": "Unique nontradable herbs with no growth cycle retain original special source; no seeds or vendor stock"
+    },
+    "professions": {
+      "codes": [
+        "garden",
+        "alchemy",
+        "forging",
+        "talisman"
+      ],
+      "level_min": 1,
+      "level_max": 20,
+      "exp_scope": "life",
+      "recipe_knowledge_scope": "account",
+      "next_level_exp_formula": "20 * current_level; max level has no next requirement",
+      "overflow_exp": "carry_to_next_level; stop at level20 cap",
+      "daily_exp_cap": 1000,
+      "craft_exp_on_success": 20,
+      "craft_exp_on_failure": 8,
+      "garden_exp_on_harvest": 10,
+      "exp_scaled_for_trivial_recipes": {
+        "required_profession_level_below_current_level_by_5_or_more_bp": 2500,
+        "minimum_valid_exp": 1
+      },
+      "normal_craft_duration_seconds": 30,
+      "one_job_per_profession": true,
+      "alchemy_forging_attempt_cap": "none; constrained by materials, fees, queue and daily EXP cap",
+      "skill_success_bonus_per_level_bp": 50,
+      "alchemy_forging_success_floor_bp": 2000,
+      "alchemy_forging_success_cap_bp": 9500,
+      "quality_success_conditional": true,
+      "quality_tiers": [
+        "common",
+        "fine",
+        "superior",
+        "supreme"
+      ],
+      "quality_base_weights_bp": [
+        8000,
+        1500,
+        450,
+        50
+      ],
+      "quality_shift_per_level_bp": 100,
+      "quality_shift_target_weights": [
+        70,
+        25,
+        5
+      ],
+      "catalyst_quality_shift_bp": 1000,
+      "max_total_quality_shift_bp": 4000,
+      "quality_effect_caps": {
+        "common": 10000,
+        "fine": 10500,
+        "superior": 11000,
+        "supreme": 11500
+      },
+      "consumable_duration_and_progress_not_quality_scaled": true,
+      "quality_effect_still_subject_to_global_caps": true,
+      "healing_pill_cooldown_turns": 3,
+      "consumables_use_world_only": true
+    },
+    "crafting": {
+      "material_slots": 3,
+      "quality_slot": 1,
+      "optional_quality_slot": true,
+      "material_slot_empty_allowed_if_recipe_uses_less_than_3": true,
+      "recipe_match": "unordered item_id+quantity exact multiset; quality slot not ingredient",
+      "invalid_submit": "no_consumption_no_exp_no_attempt",
+      "valid_failure": "consume_materials_fee_and_catalyst; grant_failure_exp; no_output",
+      "cancel_after_start": "no_refund; finish_or_resolve_death",
+      "success_rng_and_quality_rng": "server_CSPRNG; outcome persisted on start, disclosed on completion",
+      "output_inventory_full": "life_bound_crafting_inbox",
+      "snapshot": "recipe_version, profession_level, realm, rates, inputs, fees, life_id at start",
+      "material_quality_bonus": "weighted mean material quality rank0..3 times100bp, max300bp, adds to quality shift only"
+    },
+    "talisman": {
+      "base_daily_attempts": 5,
+      "increment_per_major_realm": 1,
+      "cap_formula": "5 + zero_based_realm_ordinal; max18 at TG05",
+      "base_failure_bp": 1000,
+      "failure_per_profession_level_bp": 100,
+      "difficulty_failure_per_recipe_tier_bp": 200,
+      "max_failure_bp": 6000,
+      "failure_formula": "min(6000, 1000 + 100*(skill_level-1) + 200*(recipe_tier-1))",
+      "quality_catalyst_reduces_failure": false,
+      "same_recipe_failure_still_rises_with_skill_level": true,
+      "valid_attempt_grants_exp_even_on_failure": true,
+      "attempt_reserved_on_valid_start": true,
+      "attempt_reservation_date": "server local date when started; completion after reset keeps prior date",
+      "failed_attempt_refunded": false,
+      "material_slots": 3,
+      "quality_slot": 1
+    },
+    "death": {
+      "profession_exp_lost": true,
+      "garden_plots_reset_to": [
+        1,
+        2
+      ],
+      "growing_crops_lost": true,
+      "purchased_plots_lost": true,
+      "active_crafts_cancel_and_destroy_reserved_assets": true,
+      "daily_usage_counters_preserved_for_account_date": true,
+      "auction_cancel_and_resolve_escrow_in_same_death_transaction": true,
+      "no_escrow_or_inbox_safe_storage": true
+    },
+    "refining": {
+      "status": "USER_APPROVED_2026_10_21",
+      "base_cost_per_major_realm": "3",
+      "minor_tier_multiplier": 2,
+      "reset_at_major_realm": true,
+      "reset_at_world": true,
+      "cost_formula": "3 * 2 ** (tier - 1) in current-world currency",
+      "currency_by_world": {
+        "Hạ Giới": "LT_HP",
+        "Linh Giới": "LT_TP",
+        "Tiên Giới": "TN"
+      },
+      "per_use_progress_pct": 1,
+      "uses_per_credited_day": 3,
+      "progress_cap_pct": 99,
+      "manual_breakthrough_required": true,
+      "no_auto_currency_exchange": true,
+      "integer_encoding": "decimal_string",
+      "note": "Cost/reset/currency approved; per-use output and daily cap remain v1.7 proposals"
+    },
+    "new_life": {
+      "stage_id": "HG01",
+      "tier": 1,
+      "currency_grant": {
+        "LT_HP": "3"
+      },
+      "starting_garden_slots": [
+        1,
+        2
+      ],
+      "grant_once_per_life": true,
+      "no_grant_on_login_or_migration": true
+    }
+  },
+  "social": {
+    "version": "2.0",
+    "content_realm": "Hạ Giới; Linh Giới; Tiên Giới",
+    "relationship": {
+      "affection_min": -100,
+      "affection_max": 100,
+      "trust_min": -100,
+      "trust_max": 100,
+      "story_milestones": [
+        0,
+        20,
+        50,
+        80,
+        100
+      ],
+      "values_per_life": true,
+      "rebirth_resets_social": true,
+      "ascension_resets_social": false
+    },
+    "daily": {
+      "reset_at": "00:00 Asia/Ho_Chi_Minh",
+      "attempts_per_npc_per_day": 1,
+      "draw_without_replacement_until_cycle_exhausted": true,
+      "choice_reward_once_per_daily_interaction": true,
+      "base_choice_delta": {
+        "A": {
+          "affection": 5,
+          "trust": 1
+        },
+        "B": {
+          "affection": 3,
+          "trust": 2
+        },
+        "C": {
+          "affection": -4,
+          "trust": -2
+        }
+      },
+      "negative_relationship_dialogue_allowed": true,
+      "topic_rotation_scope": "life_id/npc_id"
+    },
+    "gifts": {
+      "max_per_npc_per_day": 1,
+      "same_gift_same_npc_cooldown_days": 3,
+      "consumed_on_successful_offer": true,
+      "currency_for_hg": "LT_HP",
+      "price_authority": "02_DU_LIEU/item_catalog.json",
+      "reaction_points": {
+        "favorite": {
+          "affection": 6,
+          "trust": 2
+        },
+        "liked": {
+          "affection": 4,
+          "trust": 1
+        },
+        "neutral": {
+          "affection": 1,
+          "trust": 0
+        },
+        "disliked": {
+          "affection": -4,
+          "trust": -2
+        }
+      },
+      "taboo_gifts_not_in_normal_catalog": true,
+      "prices_status": "BALANCE_PROPOSAL",
+      "cooldown_scope": "account_id/npc_id/gift_id across life changes; compare server date keys"
+    },
+    "events": {
+      "minimum_affection_by_event_index": [
+        20,
+        50
+      ],
+      "daily_roll_on_first_valid_social_interaction": true,
+      "one_roll_per_account_per_day": true,
+      "base_proc_probability": 0.2,
+      "pity_trigger_after_consecutive_eligible_miss_days": 4,
+      "max_triggers_per_account_per_day": 1,
+      "same_npc_cooldown_days": 3,
+      "one_time_per_life_per_event": true,
+      "npc_weight_if_affection_at_least_50": 1.5,
+      "npc_weight_if_affection_at_least_80": 2.0,
+      "base_choice_delta": {
+        "A": {
+          "affection": 9,
+          "trust": 5
+        },
+        "B": {
+          "affection": 4,
+          "trust": 2
+        },
+        "C": {
+          "affection": -6,
+          "trust": -3
+        }
+      },
+      "eligible_day_defined_by": "at least one available unmet event and a valid social interaction that day",
+      "pending_event_blocks_new_roll_until_resolved": true,
+      "pity_scope": "current_life; no roll/no miss count when no eligible event",
+      "pending_event_life_scope": true
+    },
+    "anti_exploit": {
+      "server_authoritative": true,
+      "transactional_consume_and_reward": true,
+      "idempotency_key_schema": "account_id:life_id:npc_id:server_date_key:interaction_kind[:event_or_gift_id]",
+      "prevent_client_clock_reset": true,
+      "npc_gifts_no_tianming_points": true,
+      "relationship_cannot_bypass_story_quest_flags": true,
+      "daily_account_key_without_life_id": "account_id:npc_id:server_date_key:interaction_kind",
+      "rebirth_does_not_reset_account_day_counters": true
+    },
+    "story": {
+      "scenes_per_authored_npc": 5,
+      "requires_prior_scene": true,
+      "affection_thresholds": [
+        0,
+        20,
+        50,
+        80,
+        100
+      ],
+      "choice_flag_semantics": "intent_only; never auto-completes quest or ascends",
+      "one_time_per_life": true,
+      "does_not_gate_main_route": true
+    },
+    "authored_npcs": 9
+  },
+  "sect": {
+    "version": "2.0",
+    "lineages": {
+      "TV": [
+        "TV",
+        "TH"
+      ],
+      "HS": [
+        "HS",
+        "VT"
+      ],
+      "VD": [
+        "VD",
+        "BT"
+      ]
+    },
+    "shared_access_after_main_quest": {
+      "TC": "Q-LG-01",
+      "CT": "Q-TG-01",
+      "VP": "Q-TG-01",
+      "UM": "Q-TG-02",
+      "QH": "Q-TG-03"
+    },
+    "contribution_scope": "current_life",
+    "transfer_on_ascension": true,
+    "death_clears_contribution": true,
+    "daily_task_reward_cap": 20,
+    "weekly_task_reward_cap": 50,
+    "refresh_resets_daily_cap": false,
+    "free_refresh_resets_daily_cap": false,
+    "shop_unlocks_only_by_stage_and_completed_quest": true,
+    "sect_quests_follow_lineage_across_worlds": true,
+    "quest_reward_item_bound": true,
+    "leave_sect_cooldown_days": 7,
+    "calendar": "Asia/Ho_Chi_Minh; day00:00 weekMonday00:00",
+    "quest_reward_source": "quests.json rewards_by_world; no additional legacy reward"
+  },
+  "authority": {
+    "currencies": "systems.currencies",
+    "exchange": "exchange_rules.json",
+    "refining": "refining_costs.json",
+    "recipes": "crafting_recipes.json; only listed recipes enabled",
+    "items": "item_catalog.json",
+    "quest_rewards": "quests.json; sect rewards_by_world replaces legacy fields",
+    "lifecycle": "core.lifecycle; all physical assets including escrow are life-scoped"
+  },
+  "limits": [
+    "Design, data and local executable references; no deployed authenticated HTTP game server",
+    "Economic simulation uses explicit activity/gear/behavior assumptions; not live telemetry",
+    "New prices, EXP, quality, consumable-world rules and unique-item effect parameters remain balance proposals"
+  ]
+}

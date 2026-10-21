@@ -1,0 +1,202 @@
+[
+  {
+    "id": "AFX-001",
+    "name": "Sinh Mệnh",
+    "stat": "HP",
+    "unit": "%",
+    "min": "3",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-002",
+    "name": "Công Kích",
+    "stat": "ATK",
+    "unit": "%",
+    "min": "2",
+    "max": "15",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-003",
+    "name": "Phòng Ngự",
+    "stat": "DEF",
+    "unit": "%",
+    "min": "2",
+    "max": "15",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-004",
+    "name": "Tật Phong",
+    "stat": "SPD",
+    "unit": "%",
+    "min": "1",
+    "max": "8",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-005",
+    "name": "Tinh Chuẩn",
+    "stat": "ACC",
+    "unit": "%",
+    "min": "2",
+    "max": "12",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-006",
+    "name": "Hư Ảnh",
+    "stat": "EVA",
+    "unit": "%",
+    "min": "2",
+    "max": "10",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-007",
+    "name": "Bạo Kích",
+    "stat": "CRIT",
+    "unit": "điểm %",
+    "min": "1",
+    "max": "7",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-008",
+    "name": "Cuồng Bạo",
+    "stat": "CRIT_DMG",
+    "unit": "%",
+    "min": "5",
+    "max": "30",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-009",
+    "name": "Kháng Tính",
+    "stat": "RES",
+    "unit": "%",
+    "min": "2",
+    "max": "12",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-010",
+    "name": "Phá Giáp",
+    "stat": "PEN",
+    "unit": "%",
+    "min": "2",
+    "max": "12",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-011",
+    "name": "Thần Niệm",
+    "stat": "SPIRIT",
+    "unit": "%",
+    "min": "3",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-012",
+    "name": "Tụ Linh",
+    "stat": "CULTIVATION",
+    "unit": "%",
+    "min": "2",
+    "max": "10",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-013",
+    "name": "Kim Thân",
+    "stat": "KIM_RES",
+    "unit": "%",
+    "min": "4",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-014",
+    "name": "Mộc Linh",
+    "stat": "MOC_RES",
+    "unit": "%",
+    "min": "4",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-015",
+    "name": "Thủy Mạc",
+    "stat": "THUY_RES",
+    "unit": "%",
+    "min": "4",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-016",
+    "name": "Hỏa Giáp",
+    "stat": "HOA_RES",
+    "unit": "%",
+    "min": "4",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-017",
+    "name": "Địa Mạch",
+    "stat": "THO_RES",
+    "unit": "%",
+    "min": "4",
+    "max": "18",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-018",
+    "name": "Linh Căn Cộng Hưởng",
+    "stat": "AFFINITY",
+    "unit": "%",
+    "min": "2",
+    "max": "10",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-019",
+    "name": "Đan Tâm",
+    "stat": "ALCHEMY",
+    "unit": "%",
+    "min": "2",
+    "max": "10",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  },
+  {
+    "id": "AFX-020",
+    "name": "Luyện Khí Tinh Thông",
+    "stat": "FORGE",
+    "unit": "%",
+    "min": "2",
+    "max": "10",
+    "slots": "Trang bị phù hợp",
+    "note": "Tuân thủ cap hệ thống"
+  }
+]

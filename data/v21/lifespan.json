@@ -1,0 +1,114 @@
+[
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "day_end": "1.65",
+    "allowance_years": "133.0",
+    "clean_consumed_years": "16.5",
+    "tolerance_x": "8.06"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "day_end": "3.3",
+    "allowance_years": "166.0",
+    "clean_consumed_years": "33.0",
+    "tolerance_x": "5.03"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "day_end": "5.5",
+    "allowance_years": "210.0",
+    "clean_consumed_years": "55.0",
+    "tolerance_x": "3.82"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "day_end": "7.15",
+    "allowance_years": "243.0",
+    "clean_consumed_years": "71.5",
+    "tolerance_x": "3.4"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "day_end": "8.25",
+    "allowance_years": "265.0",
+    "clean_consumed_years": "82.5",
+    "tolerance_x": "3.21"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "day_end": "11.0",
+    "allowance_years": "320.0",
+    "clean_consumed_years": "110.0",
+    "tolerance_x": "2.91"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "day_end": "14.85",
+    "allowance_years": "397.0",
+    "clean_consumed_years": "148.5",
+    "tolerance_x": "2.67"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "day_end": "18.15",
+    "allowance_years": "463.0",
+    "clean_consumed_years": "181.5",
+    "tolerance_x": "2.55"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "day_end": "19.25",
+    "allowance_years": "485.0",
+    "clean_consumed_years": "192.5",
+    "tolerance_x": "2.52"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "day_end": "21.45",
+    "allowance_years": "529.0",
+    "clean_consumed_years": "214.5",
+    "tolerance_x": "2.47"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "day_end": "24.75",
+    "allowance_years": "595.0",
+    "clean_consumed_years": "247.5",
+    "tolerance_x": "2.4"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "day_end": "28.05",
+    "allowance_years": "661.0",
+    "clean_consumed_years": "280.5",
+    "tolerance_x": "2.36"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "day_end": "30.8",
+    "allowance_years": "716.0",
+    "clean_consumed_years": "308.0",
+    "tolerance_x": "2.32"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "day_end": "33.0",
+    "allowance_years": "760.0",
+    "clean_consumed_years": "330.0",
+    "tolerance_x": "2.3"
+  }
+]

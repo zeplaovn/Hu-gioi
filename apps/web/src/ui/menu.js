@@ -9,14 +9,20 @@ const GROUP_ACTIONS = [
   { id: "explore", label: "Lịch luyện", icon: "sword" },
   { id: "rest", label: "Nghỉ ngơi", kbd: "N", icon: "peach", soon: true },
   { id: "break", seal: true },
-  { id: "stone", label: "Luyện hóa linh thạch", icon: "crystal", soon: true },
-  { id: "shop", label: "Cửa hàng đan dược", cls: "cyan", icon: "orb_green", soon: true },
+  { id: "stone", label: "Luyện hóa", icon: "crystal" },
+  { id: "shop", label: "Thương các", cls: "cyan", icon: "orb_green" },
   { id: "skills", label: "Công pháp", cls: "cyan", icon: "scroll", soon: true },
   { id: "sect", label: "Tông môn", cls: "orange", icon: "bagua" },
-  { id: "crafts", label: "Nghề phụ", cls: "cyan", icon: "ginseng", soon: true },
+  { id: "crafts", label: "Nghề phụ", cls: "cyan", icon: "ginseng" },
   { id: "bag", label: "Túi đồ", cls: "cyan", icon: "charm" },
 ];
 const GROUP_WORLD = [
+  {id:"quests",label:"Nhiệm vụ",icon:"scroll"},
+  {id:"battle",label:"Chiến đấu",icon:"sword"},
+  {id:"auction",label:"Đấu giá server",icon:"crystal"},
+  {id:"garden",label:"Linh điền",icon:"ginseng"},
+  {id:"tmItems",label:"Vật phẩm Thiên Mệnh",icon:"orb_gold"},
+
   { id: "character", label: "Chỉ số nhân vật", cls: "cyan", icon: "portrait" },
   { id: "tm", label: "Quán Đỉnh Thiên Mệnh", cls: "gold", icon: "orb_gold", href: "#/quan-dinh" },
   { id: "history", label: "Bia Thiên Mệnh", cls: "gold", icon: "scroll", href: "#/lich-su" },
@@ -66,8 +72,8 @@ function item(spec, handlers) {
  * @param {{ game: any, onBag: () => void }} o
  * @returns {{ el: HTMLElement, dock: HTMLElement, update(state: any, life: any, prog: number): void }}
  */
-export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings }) {
-  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings };
+export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings, onSystems }) {
+  const handlers = { bag: () => onSystems?.('bag'), tmItems: onBag, stone:()=>onSystems?.('wallet'), shop:()=>onSystems?.('shop'), crafts:()=>onSystems?.('craft'), quests:()=>onSystems?.('quests'), garden:()=>onSystems?.('garden'), battle:()=>onSystems?.('combat'), auction:()=>onSystems?.('auction'), character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings };
   const breakSeal = sealButton({ onclick: () => game.prepare(), kbd: "D" });
   const dockSeal = sealButton({ onclick: () => game.prepare(), kbd: "D", showKbd: false });
   let bagBtn = null;
