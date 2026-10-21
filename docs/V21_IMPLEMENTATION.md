@@ -15,7 +15,7 @@ Các hệ thống mới dùng `play_lives` theo kiếp, `play_accounts` cho côn
 - Giữ nguyên index1–14 của các cảnh giới đang dùng; tài khoản Phàm Nhân còn sống chuyển sang HG01. Index0 chỉ còn để các khóa ngoại lịch sử đọc được, không tạo kiếp mới ở đó.
 - Kiếp mới bắt đầu HG01 tầng1,3 LT_HP; tiền cũ LS/LT/TN lần lượt ánh xạ LT_HP/LT_TP/TN, không xóa ví hoặc TM. Thiên Mệnh đã nhận ở Phàm Nhân trước nâng cấp cũng được giữ; kiếp mới có126 mốc.
 - Dữ liệu19 NPC cũ được chụp vào `social_v11_archive`; các quan hệ của năm NPC còn hoạt động được ánh xạ sang NPC-01..05. Offer cũ bị vô hiệu để tránh chọn sai cảnh. Bốn NPC còn lại dùng nội dung Linh/Tiên Giới mới.
-- Chỉ giờ reset tương lai dùng Asia/Ho_Chi_Minh; quota tương tác hiện tại được chuyển sang khóa tài khoản, không làm mới sau chết.
+- Chỉ giờ reset tương lai dùng Asia/Ho_Chi_Minh; quota tương tác hiện tại được chuyển sang khóa tài khoản, không làm mới sau chết. Bản cũ chỉ lưu ngày UTC, nên ngày chuyển lịch giữ lượt một cách bảo thủ và dịch cooldown quà tối đa1 ngày để tránh phát thêm lượt; từ ngày tiếp theo dùng giờ Việt Nam bình thường.
 - Khi chết, túi, hộp nhận, đất/cây, job, nghề và đấu giá của kiếp được đóng; kiến thức công thức, TM và quota tài khoản giữ lại.
 
 ## Kiểm tra

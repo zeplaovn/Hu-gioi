@@ -231,9 +231,24 @@ declare o jsonb;st jsonb;result jsonb;k text;n text;begin
  end if;
  result:=game.social_action_v11(p_account,p_life,p_kind,p_npc,p_id,p_choice);return result;
 end$$;
-insert into game.play_quotas(account_id,group_code,period,used)
- select l.account_id,'social:'||g.kind||':'||n.key,game.play_day(),1 from game.social_lives s join game.lives l using(life_id),jsonb_each(s.state->'npcs') n cross join lateral (values('daily'),('gift')) g(kind)
- where n.key like 'NPC-%' and n.value->>(g.kind||'_day')>=to_char(now() at time zone 'UTC','YYYY-MM-DD') on conflict do nothing;
+-- Legacy data stores UTC dates, not interaction timestamps. Reserve conservatively
+-- during the calendar transition so changing timezone cannot create an extra daily turn.
+do $$
+declare r record;g record;k text;cutoff date:=((date_trunc('day',now() at time zone 'Asia/Ho_Chi_Minh') at time zone 'Asia/Ho_Chi_Minh') at time zone 'UTC')::date;
+begin
+ for r in select sl.life_id,l.account_id,n.key npc,n.value data from game.social_lives sl join game.lives l using(life_id),jsonb_each(sl.state->'npcs') n where n.key like 'NPC-%' loop
+  foreach k in array array['daily','gift'] loop
+   if (r.data->>(k||'_day'))::date>=cutoff then
+    insert into game.play_quotas values(r.account_id,'social:'||k||':'||r.npc,game.play_day(),1) on conflict do nothing;
+    update game.social_lives set state=jsonb_set(state,array['npcs',r.npc,k||'_day'],to_jsonb(game.play_day())) where life_id=r.life_id;
+   end if;
+  end loop;
+  for g in select * from jsonb_each_text(coalesce(r.data->'gift_days','{}')) loop
+   update game.social_lives set state=jsonb_set(state,array['npcs',r.npc,'gift_days',g.key],to_jsonb(least(g.value::date+1,game.play_day()::date)::text)) where life_id=r.life_id;
+  end loop;
+ end loop;
+ update game.social_accounts set roll_day=game.play_day()::date where roll_day>=cutoff;
+end$$;
 do $$declare p record;begin for p in select oid::regprocedure::text sig from pg_proc where pronamespace='game'::regnamespace loop execute 'revoke all on function '||p.sig||' from public,anon,authenticated';execute 'grant execute on function '||p.sig||' to service_role';end loop;end$$;
 
 commit;
