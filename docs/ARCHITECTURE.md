@@ -1,3 +1,5 @@
+> Bổ sung v2.1: [V21_IMPLEMENTATION.md](V21_IMPLEMENTATION.md) là mô tả hiện hành cho kinh tế, nghề, nhiệm vụ, PvE và đấu giá. Các phần phạm vi v2 cũ bên dưới được giữ để đối chiếu; luật tọa hóa đã thay bằng xác nhận online.
+
 # Kiến trúc v2
 
 ## Luồng một yêu cầu

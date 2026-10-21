@@ -1,6 +1,6 @@
 # Thiên Vân Đại Lục — đặc tả dev kinh tế và nghề phụ v2.1
 
-Ngày cập nhật: 21/10/2026. Nối bản v1.7, giữ 9 NPC tương tác, 14 đại cảnh giới và không có cảnh giới Phàm Nhân. Đây là đặc tả và dữ liệu tham chiếu để phát triển; gói chưa có client/server game hoàn chỉnh. Nguồn import hiện hành duy nhất là JSON trong 02_DU_LIEU và 04_COMBAT. Cấu hình core/nghề/xã hội đã gộp trong 02_DU_LIEU/config.json; không cần chuỗi override lịch sử.
+Ngày cập nhật: 21/10/2026. Nối bản v1.7, giữ 9 NPC tương tác, 14 đại cảnh giới và không có cảnh giới Phàm Nhân. Đây là đặc tả và dữ liệu tham chiếu để phát triển; gói chưa có client/server game hoàn chỉnh. Nguồn import hiện hành duy nhất là JSON trong 02_DU_LIEU và 04_COMBAT. Cấu hình core/nghề/xã hội đã gộp trong data/v21/config.json; không cần chuỗi override lịch sử.
 
 ## 1. Quy tắc người dùng đã chốt và phần đề xuất
 
@@ -28,7 +28,7 @@ Những giá mở ô, EXP, xác suất, thuế, hạn mức và thời gian dư�
 
 | Hoạt động tiêu tiền | Hạ Giới | Linh Giới | Tiên Giới | Quy tắc |
 |---|---|---|---|---|
-| Mua hàng thương các | LT_HP | LT_TP | TN | Giá và hàng cụ thể ở ../02_DU_LIEU/venue_stock.json |
+| Mua hàng thương các | LT_HP | LT_TP | TN | Giá và hàng cụ thể ở ../data/v21/venue_stock.json |
 | Mua/bán tại chợ đen | LT_HP | LT_TP | Không mở trong bản này | Hàng hiếm; giá mua đề xuất 125% giá chuẩn |
 | Mở ô linh điền | LT_HP | LT_HP | TN | Ngoại lệ có chủ ý theo yêu cầu người dùng |
 | Hạt giống, phân, mực, vật liệu tăng phẩm | LT_HP | LT_TP | TN | Chỉ tiêu khi mua hoặc thao tác hợp lệ |
@@ -60,7 +60,7 @@ Chợ đen không lừa hàng giả ngẫu nhiên, không tự gây permadeath v
 
 ## 4. Thưởng nhiệm vụ tông môn
 
-`../02_DU_LIEU/quests.json` chứa khối thưởng hoàn chỉnh; nhiệm vụ sect dùng rewards_by_world, nhiệm vụ chính giữ khối thưởng của chính nó. Chỉ nhận nhóm nhiệm vụ của dòng tu hành đã chọn. Trên Tiên Giới vẫn là nhiệm vụ dòng tu hành đó, không nhân thêm phần thưởng do có nhiều thế lực mở quầy.
+`../data/v21/quests.json` chứa khối thưởng hoàn chỉnh; nhiệm vụ sect dùng rewards_by_world, nhiệm vụ chính giữ khối thưởng của chính nó. Chỉ nhận nhóm nhiệm vụ của dòng tu hành đã chọn. Trên Tiên Giới vẫn là nhiệm vụ dòng tu hành đó, không nhân thêm phần thưởng do có nhiều thế lực mở quầy.
 
 | Chu kỳ | Cống hiến | Hạ Giới | Linh Giới | Tiên Giới |
 |---|---:|---:|---:|---:|
@@ -233,7 +233,7 @@ MVP không cần thêm nhà ở, thú cưng, minigame nghề hoặc tiền mới
 
 ## 12. Import và migration bản gộp
 
-Đọc 02_DU_LIEU/LOAD_ORDER.json. File config.json đã gộp core, systems, social và sect; quests.json đã nhúng thưởng theo giới. Không trả thưởng cống hiến/tiền thêm lần nữa từ dữ liệu nguồn cũ. migration.json giữ ánh xạ mã tiền, bốn nguyên liệu và năm NPC có hội thoại được nhập.
+Đọc data/v21/LOAD_ORDER.json. File config.json đã gộp core, systems, social và sect; quests.json đã nhúng thưởng theo giới. Không trả thưởng cống hiến/tiền thêm lần nữa từ dữ liệu nguồn cũ. migration.json giữ ánh xạ mã tiền, bốn nguyên liệu và năm NPC có hội thoại được nhập.
 
 Import catalog trước các bảng tham chiếu. Không suy ra EXP nghề từ vật tư đang có; không cấp lại tiền/hạt khởi đầu khi đăng nhập. Chỉ khởi tạo tính năng một lần cho life_id đủ điều kiện. Chuyển lịch xã hội từ UTC sang Asia/Ho_Chi_Minh phải hòa giải claim đã trả; giữ khóa hạn mức tài khoản qua trùng sinh. Đọc báo cáo gộp để biết nội dung nào đã loại.
 

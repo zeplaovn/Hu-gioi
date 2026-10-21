@@ -14,4 +14,4 @@ const target = 'supabase/migrations/20261020133000_social_content.sql';
 if (process.argv.includes('--check')) {
  if (readFileSync(target,'utf8') !== sql) throw Error(`${target} is stale`);
 } else writeFileSync(target, sql);
-console.log(`Social: ${npcs.length} NPC, ${scenes.length} scenes, ${gifts.length} gifts`);
+console.log(`Historical social snapshot: ${npcs.length} NPC, ${scenes.length} scenes, ${gifts.length} gifts`);

@@ -13,7 +13,7 @@ Các hệ thống mới dùng `play_lives` theo kiếp, `play_accounts` cho côn
 ## Chuyển dữ liệu
 
 - Giữ nguyên index1–14 của các cảnh giới đang dùng; tài khoản Phàm Nhân còn sống chuyển sang HG01. Index0 chỉ còn để các khóa ngoại lịch sử đọc được, không tạo kiếp mới ở đó.
-- Kiếp mới bắt đầu HG01 tầng1,3 LT_HP; tiền cũ LS/LT/TN lần lượt ánh xạ LT_HP/LT_TP/TN, không xóa ví hoặc TM.
+- Kiếp mới bắt đầu HG01 tầng1,3 LT_HP; tiền cũ LS/LT/TN lần lượt ánh xạ LT_HP/LT_TP/TN, không xóa ví hoặc TM. Thiên Mệnh đã nhận ở Phàm Nhân trước nâng cấp cũng được giữ; kiếp mới có126 mốc.
 - Dữ liệu19 NPC cũ được chụp vào `social_v11_archive`; các quan hệ của năm NPC còn hoạt động được ánh xạ sang NPC-01..05. Offer cũ bị vô hiệu để tránh chọn sai cảnh. Bốn NPC còn lại dùng nội dung Linh/Tiên Giới mới.
 - Chỉ giờ reset tương lai dùng Asia/Ho_Chi_Minh; quota tương tác hiện tại được chuyển sang khóa tài khoản, không làm mới sau chết.
 - Khi chết, túi, hộp nhận, đất/cây, job, nghề và đấu giá của kiếp được đóng; kiến thức công thức, TM và quota tài khoản giữ lại.
@@ -26,4 +26,4 @@ Không áp migration vào database live chỉ để thử nghiệm. Sao lưu, th
 
 ## Phạm vi cần xác nhận trước phát hành rộng
 
-Các hệ thống có test riêng và trạng thái CI trong PR. Thông số cân bằng mới vẫn là đề xuất trong tài liệu; cần beta về tiến độ, nguồn–tiêu tiền và boss. PvP, Lục Mệnh6 người và nội dung Hỗn Độn không thuộc giao diện PvE của bản này. Handler hiệu ứng đặc biệt chỉ được mở khi thực thi đủ; hiệu ứng chưa hỗ trợ phải từ chối trước khi trừ vật phẩm.
+Các hệ thống có test riêng và trạng thái CI trong PR. Thông số cân bằng mới vẫn là đề xuất trong tài liệu; cần beta về tiến độ, nguồn–tiêu tiền và boss. PvP, Lục Mệnh6 người và nội dung Hỗn Độn không thuộc giao diện PvE của bản này. Handler hiệu ứng đặc biệt chỉ được mở khi thực thi đủ; hiệu ứng chưa hỗ trợ bị từ chối trước khi trừ vật phẩm. Hiện dùng ngoài trận có đan tăng tiến độ và đan chuẩn bị đột phá; trong trận có hồi phục, phù giảm sát thương, sát thương, giải trạng thái và khiên. Chưa mở toàn bộ đan tăng thọ/chỉ số, pháp tướng, pháp tắc, affix/set bonus và hiệu ứng độc bản. Combat đã nối giao dịch vào game, nhưng chưa chứng nhận parity toàn bộ với mô hình tham chiếu hoặc cân bằng beta.

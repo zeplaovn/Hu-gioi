@@ -3,7 +3,7 @@ create table game.play_lives(life_id uuid primary key references game.lives on d
 create table game.play_accounts(account_id uuid primary key references game.accounts on delete cascade,knowledge jsonb not null default '{}');
 create table game.play_receipts(account_id uuid references game.accounts on delete cascade,request_id uuid not null,payload jsonb not null,result jsonb not null,primary key(account_id,request_id));
 create table game.play_quotas(account_id uuid references game.accounts on delete cascade,group_code text,period text,used int not null check(used>=0),primary key(account_id,group_code,period));
-create table game.money_ledger(id bigint generated always as identity primary key,life_id uuid references game.lives,request_id uuid,currency text check(currency in('LT_HP','LT_TP','TN')),delta numeric(78,0) not null,balance_after numeric(78,0) not null check(balance_after>=0),reason text not null,created_at timestamptz default now());
+create table game.money_ledger(id bigint generated always as identity primary key,life_id uuid,request_id uuid,currency text check(currency in('LT_HP','LT_TP','TN')),delta numeric(78,0) not null,balance_after numeric(78,0) not null check(balance_after>=0),reason text not null,created_at timestamptz default now());
 create table game.server_auctions(id uuid primary key default gen_random_uuid(),seller uuid not null references game.lives,item jsonb not null,currency text not null,opening numeric(78,0) not null check(opening>0),price numeric(78,0) not null default 0,buyout numeric(78,0),bidder uuid references game.lives,ends_at timestamptz not null,original_end timestamptz not null,state text not null default 'OPEN' check(state in('OPEN','SOLD','EXPIRED','CANCELLED','LOST')),version bigint not null default 0);
 do $$declare t text;begin foreach t in array array['play_lives','play_accounts','play_receipts','play_quotas','money_ledger','server_auctions'] loop execute format('alter table game.%I enable row level security',t);execute format('alter table game.%I force row level security',t);execute format('revoke all on game.%I from public,anon,authenticated',t);execute format('grant select,insert,update,delete on game.%I to service_role',t);end loop;end$$;
 
@@ -13,6 +13,7 @@ create function game.play_day() returns text language sql stable set search_path
 create function game.play_period(p_repeat text) returns text language sql stable set search_path='' as $$select case when p_repeat='weekly' then to_char(now() at time zone 'Asia/Ho_Chi_Minh','IYYY-IW') else game.play_day() end$$;
 create function game.play_currency(p_world text) returns text language sql immutable set search_path='' as $$select case p_world when 'Hạ Giới' then 'LT_HP' when 'Linh Giới' then 'LT_TP' else 'TN' end$$;
 create function game.play_stage(p_id text) returns int language sql stable set search_path='' as $$select idx::int from game.stages where stage_id=p_id$$;
+create function game.play_tradeable(p_item jsonb) returns boolean language sql immutable set search_path='' as $$select p_item is not null and coalesce(p_item->>'trade','Có') not in('Không','false') and p_item->>'item_type'<>'social_gift'$$;
 create function game.play_money(p_life uuid,p_currency text,p_delta numeric,p_request uuid,p_reason text) returns void language plpgsql set search_path='' as $$
 #variable_conflict use_column
 declare n numeric;begin
@@ -40,6 +41,7 @@ end$$;
 create function game.play_give(p_state jsonb,p_item text,p_quantity int,p_bound text default '',p_quality text default 'common') returns jsonb language plpgsql set search_path='' as $$
 #variable_conflict use_column
 declare loc text;id text:=gen_random_uuid()::text;begin
+ if coalesce(p_bound,'')='' and (not game.play_tradeable(game.play_find('item_catalog',p_item)) or game.play_find('acquisition_rules',p_item)->>'trade_policy'='bound') then p_bound:='nontradeable';end if;
  if p_quantity<1 or game.play_find('item_catalog',p_item) is null then raise exception 'invalid_item' using errcode='GM000';end if;
  select case when count(*)>=20 then 'inbox' else 'inventory' end into loc from jsonb_each(p_state->'inventory') x where x.value->>'location'='inventory' and (x.value->>'quantity')::int>0;
  return jsonb_set(p_state,array['inventory',id],jsonb_build_object('item_id',p_item,'quantity',p_quantity,'quality',p_quality,'bound',p_bound,'location',loc,'acquired_at',extract(epoch from now()),'trade_unlock_at',extract(epoch from now())),true);
@@ -220,18 +222,18 @@ begin
   if st ? 'task' then raise exception 'job_busy' using errcode='GM000';end if;
   st:=jsonb_set(st,'{task}',jsonb_build_object('kind','travel','id',id,'ready_at',now_s+(r->>'travel_seconds')::int));
  elsif p_action='buy' then
-  r:=game.play_find('venue_stock',id);v:=game.play_find('venues',r->>'venue_id');
+  r:=game.play_find('venue_stock',id);if p_args ? 'expected_price' and p_args->>'expected_price'<>r->>'price' then raise exception 'quote_changed' using errcode='GM000';end if;v:=game.play_find('venues',r->>'venue_id');
   if r is null or game.play_stage(r->>'min_stage_id')>l.stage_idx or game.play_stage(v->>'min_stage_id')>l.stage_idx then raise exception 'realm_locked' using errcode='GM000';end if;
   qty:=coalesce((p_args->>'quantity')::int,1);if qty<1 or qty>100 then raise exception 'invalid_quantity' using errcode='GM000';end if;
   perform game.play_quota(p_account,'stock:'||id,(r->>'daily_limit')::int,null,qty);perform game.play_money(p_life,r->>'currency',-(r->>'price')::numeric*qty,p_request,'buy');
-  i:=game.play_find('item_catalog',r->>'item_id');bind:=case when i->>'trade'='Có' then '' else 'nontradeable' end;
+  i:=game.play_find('item_catalog',r->>'item_id');if i->>'item_type'='seed' and game.play_level(coalesce((st->'xp'->>'garden')::int,0))<(r->>'min_profession_level')::int then raise exception 'profession_locked' using errcode='GM000';end if;bind:=case when game.play_tradeable(i) then '' else 'nontradeable' end;
   if i->>'item_type'='social_gift' then
    insert into game.social_lives(life_id) values(p_life) on conflict do nothing;
    update game.social_lives set state=jsonb_set(state,array['gifts',i->>'id'],to_jsonb(coalesce((state->'gifts'->>(i->>'id'))::int,0)+qty)) where life_id=p_life;
   else st:=game.play_give(st,r->>'item_id',(r->>'quantity_per_purchase')::int*qty,bind);end if;
  elsif p_action='sell' then
   inst:=st->'inventory'->id;i:=game.play_find('item_catalog',inst->>'item_id');r:=game.play_find('price_book',inst->>'item_id');qty:=coalesce((p_args->>'quantity')::int,1);
-  if coalesce(inst->>'bound','')<>'' or i->>'trade'<>'Có' or coalesce((r->>'npc_buyback_cap')::numeric,0)<=0 then raise exception 'item_bound' using errcode='GM000';end if;
+  if coalesce(inst->>'bound','')<>'' or not game.play_tradeable(i) or coalesce((r->>'npc_buyback_cap')::numeric,0)<=0 then raise exception 'item_bound' using errcode='GM000';end if;
   st:=game.play_take(st,id,qty);perform game.play_money(p_life,r->>'currency',(r->>'npc_buyback_cap')::numeric*qty,p_request,'sell');
  elsif p_action='inbox' then
   inst:=st->'inventory'->id;if inst is null or inst->>'location'<>'inbox' then raise exception 'invalid_item' using errcode='GM000';end if;
@@ -269,7 +271,7 @@ begin
   st:=jsonb_set(st,'{sect}',to_jsonb(id));st:=game.play_event(st,'sect.joined','chosen_lineage',jsonb_build_object('sect',id));
  elsif p_action='sect_buy' then
   r:=game.play_find('sect_shop',id);
-  if r is null or r->>'sect_id'<>st->>'sect' or st->'quests'->(r->>'unlock_quest')->>'status' is distinct from 'CLAIMED' or game.play_stage(r->>'stage_id')>l.stage_idx then raise exception 'sect_locked' using errcode='GM000';end if;
+  if r is null or r->>'sect_id'<>st->>'sect' or st->'quests'->(r->>'unlock_quest')->>'status' is distinct from 'CLAIMED' or game.play_stage(r->>'stage_id')>l.stage_idx or game.play_stage(r->>'stage_id')=l.stage_idx and (r->>'min_tier')::int>l.tang then raise exception 'sect_locked' using errcode='GM000';end if;
   cost:=(r->>'contribution_cost')::numeric;if (st->>'contribution')::numeric<cost then raise exception 'insufficient_contribution' using errcode='GM000';end if;
   perform game.play_quota(p_account,'sectshop:'||id,(r->>'daily_account_limit')::int);perform game.play_quota(p_account,'sectrefresh:'||id,(r->>'stock_per_refresh')::int,floor(now_s/((r->>'refresh_hours')::int*3600))::text);
   if (r->>'life_limit')::int>0 then perform game.play_quota(p_account,'sectlife:'||id,(r->>'life_limit')::int,p_life::text);end if;
@@ -374,9 +376,10 @@ begin
   out:=v;
   for input in select x.value from jsonb_each(st->'equipment') x loop
    inst:=st->'inventory'->(input#>>'{}');i:=game.play_find('item_effects',inst->>'item_id');
+   shift:=case inst->>'quality' when 'fine' then 10500 when 'superior' then 11000 when 'supreme' then 11500 else 10000 end;
    for k in select value from jsonb_array_elements(i->'effects') loop
     if k->>'op'='stat_percent' then code:=case k->>'stat' when 'ATK' then 'atk' when 'DEF' then 'defense' when 'HP' then 'maxhp' when 'SPIRIT' then 'spirit' when 'SPD' then 'spd' when 'PEN' then 'pen' when 'RES' then 'res' else null end;
-     if code is not null then v:=jsonb_set(v,array[code],to_jsonb((v->>code)::numeric+case when code in('pen','res') then (k->>'amount_bp')::numeric/10000 else (out->>code)::numeric*(k->>'amount_bp')::numeric/10000 end));end if;
+     if code is not null then v:=jsonb_set(v,array[code],to_jsonb((v->>code)::numeric+case when code in('pen','res') then (k->>'amount_bp')::numeric*(case when (k->>'quality_scalable')::boolean then shift else 10000 end)/100000000 else (out->>code)::numeric*(k->>'amount_bp')::numeric*(case when (k->>'quality_scalable')::boolean then shift else 10000 end)/100000000 end));end if;
     end if;
    end loop;
   end loop;v:=jsonb_set(v,'{hp}',v->'maxhp');
@@ -446,7 +449,7 @@ begin
     if game.roll()*100<(r->>'chance_pct')::numeric then
      qty:=split_part(r->>'quantity','-',1)::int;if position('-' in r->>'quantity')>0 then qty:=qty+floor(game.roll()*(split_part(r->>'quantity','-',2)::int-qty+1))::int;end if;
      if r->>'item' in('LT_HP','LT_TP','TN') then perform game.play_money(p_life,r->>'item',qty,p_request,'combat_drop');
-     else select x->>'id' into res from jsonb_array_elements(game.play_data('item_catalog')) x where x->>'name'=r->>'item';if res is not null then st:=game.play_give(st,res,qty);end if;end if;
+     else select x->>'id' into res from jsonb_array_elements(game.play_data('item_catalog')) x where x->>'name'=r->>'item';if res is not null and game.play_find('acquisition_rules',res)->>'source_kind' not in('bound_quest_or_boss','weekly_boss_guaranteed','sect_task_bound_reward') then st:=game.play_give(st,res,qty);end if;end if;
     end if;
    end loop;
    select x into r from jsonb_array_elements(game.play_data('activity_rewards')) x where x->>'world'=w and x->>'target_id'='world_patrol';
@@ -481,7 +484,7 @@ begin
  elsif p_action='auction_list' then
   if now()<(select created_at+interval '72 hours' from game.accounts where account_id=p_account) then raise exception 'trade_age_locked' using errcode='GM000';end if;
   inst:=st->'inventory'->id;i:=game.play_find('item_catalog',inst->>'item_id');r:=game.play_find('price_book',inst->>'item_id');qty:=coalesce((p_args->>'quantity')::int,1);
-  if inst is null or coalesce(inst->>'bound','')<>'' or i->>'trade'<>'Có' or now_s<coalesce((inst->>'trade_unlock_at')::numeric,0) then raise exception 'item_bound' using errcode='GM000';end if;
+  if inst is null or coalesce(inst->>'bound','')<>'' or not game.play_tradeable(i) or now_s<coalesce((inst->>'trade_unlock_at')::numeric,0) then raise exception 'item_bound' using errcode='GM000';end if;
   if (select count(*) from game.server_auctions where seller=p_life and state='OPEN')>=5 then raise exception 'listing_limit' using errcode='GM000';end if;
   code:=p_args->>'currency';if code not in('LT_HP','LT_TP','TN') or code='TN' and l.stage_idx<10 or code='LT_TP' and l.stage_idx<6 then raise exception 'realm_locked' using errcode='GM000';end if;
   if coalesce(p_args->>'price','')!~'^[1-9][0-9]{0,77}$' or coalesce(p_args->>'hours','12') not in('6','12','24') then raise exception 'invalid_price' using errcode='GM000';end if;
@@ -542,6 +545,9 @@ create function game.play_on_death() returns trigger language plpgsql set search
 declare a game.server_auctions%rowtype;request uuid:=gen_random_uuid();begin
  if old.status='alive' and new.status='dead' then
   perform pg_advisory_xact_lock(210021);
+  if old.ls>0 then insert into game.money_ledger(life_id,request_id,currency,delta,balance_after,reason) values(new.life_id,request,'LT_HP',-old.ls,0,'death_loss');end if;
+  if old.lt>0 then insert into game.money_ledger(life_id,request_id,currency,delta,balance_after,reason) values(new.life_id,request,'LT_TP',-old.lt,0,'death_loss');end if;
+  if old.tn>0 then insert into game.money_ledger(life_id,request_id,currency,delta,balance_after,reason) values(new.life_id,request,'TN',-old.tn,0,'death_loss');end if;
   for a in select * from game.server_auctions where state='OPEN' and (seller=new.life_id or bidder=new.life_id) order by id for update loop
    if a.seller=new.life_id then
     if a.bidder is not null and exists(select 1 from game.lives where life_id=a.bidder and status='alive') then perform game.play_money(a.bidder,a.currency,a.price,request,'seller_death_refund');end if;
@@ -636,6 +642,22 @@ declare s jsonb:=game.get_state_v161_profile(p_account,p_now);l game.lives%rowty
  if coalesce((select (state->'flags'->>'endgame_ready')::boolean from game.play_lives where life_id=l.life_id),false) then s:=jsonb_set(s,'{life,ready_for_major}','false');end if;
  s:=jsonb_set(s,'{life,wallet}',jsonb_build_object('ls',l.ls::text,'lt',l.lt::text,'tn',l.tn::text));end if;return s;
 end$$;
+-- Wallet opening balances are explicit sources. History is append-only.
+insert into game.money_ledger(life_id,request_id,currency,delta,balance_after,reason)
+ select life_id,gen_random_uuid(),'LT_HP',ls,ls,'migration_opening' from game.lives where ls>0
+ union all select life_id,gen_random_uuid(),'LT_TP',lt,lt,'migration_opening' from game.lives where lt>0
+ union all select life_id,gen_random_uuid(),'TN',tn,tn,'migration_opening' from game.lives where tn>0;
+create function game.play_new_life_ledger() returns trigger language plpgsql set search_path='' as $$begin
+ if new.ls>0 then insert into game.money_ledger(life_id,request_id,currency,delta,balance_after,reason) values(new.life_id,gen_random_uuid(),'LT_HP',new.ls,new.ls,'new_life_grant');end if;return new;
+end$$;
+create trigger play_new_life_ledger after insert on game.lives for each row execute function game.play_new_life_ledger();
+create function game.play_ledger_immutable() returns trigger language plpgsql set search_path='' as $$begin raise exception 'immutable_ledger';end$$;
+create trigger money_ledger_immutable before update or delete on game.money_ledger for each row execute function game.play_ledger_immutable();
+create table game.auction_history(id bigint generated always as identity primary key,auction_id uuid not null,before_row jsonb,after_row jsonb,created_at timestamptz not null default now());
+alter table game.auction_history enable row level security;alter table game.auction_history force row level security;
+revoke all on game.auction_history from public,anon,authenticated;grant select,insert on game.auction_history to service_role;
+create function game.play_auction_audit() returns trigger language plpgsql set search_path='' as $$begin insert into game.auction_history(auction_id,before_row,after_row) values(new.id,case when TG_OP='UPDATE' then to_jsonb(old) else null end,to_jsonb(new));return new;end$$;
+create trigger auction_audit after insert or update on game.server_auctions for each row execute function game.play_auction_audit();
 -- Least privilege: helpers are not public APIs. Only the authenticated Edge adapter calls game.*.
 do $$declare p record;t text;begin
  foreach t in array array['trade_budgets','trade_holds'] loop execute format('alter table game.%I enable row level security',t);execute format('alter table game.%I force row level security',t);execute format('revoke all on game.%I from public,anon,authenticated',t);execute format('grant select,insert,update,delete on game.%I to service_role',t);end loop;

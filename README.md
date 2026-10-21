@@ -1,6 +1,14 @@
 # Thiên Vân Đại Lục
 
-Game tu tiên idle theo **thời gian thật**. Thiết kế canonical: **v1.6.1** (`docs/design/`).
+Game tu tiên idle theo **thời gian thật**. Thiết kế hiện hành: **v2.1** (`docs/v21/`, `data/v21/`).
+
+Bản2.1 bổ sung màn nhiệm vụ/tông môn, thương các, ví và luyện hóa, linh điền, nghề, hành trang, PvE và đấu giá. Chi tiết phạm vi, chuyển save và kiểm tra: [V21_IMPLEMENTATION.md](docs/V21_IMPLEMENTATION.md).
+
+- 14 đại cảnh giới,126 tầng; kiếp mới Luyện Khí tầng1 với3 LT_HP.
+- 9 NPC; Linh Giới dùng LT_TP, Tiên Giới dùng TN; reset00:00 giờ Việt Nam.
+- Nguồn luật mới là JSON trong `data/v21`. CSV và dữ liệu xã hội19 NPC bên dưới chỉ tái lập các migration lịch sử.
+- UI mới dùng `GET /play` và `POST /play/action`; luật và giao dịch chạy PostgreSQL.
+- Bản beta PvE chưa mở PvP/Lục Mệnh6 người. Các hiệu ứng đặc biệt chưa có handler bị từ chối trước khi trừ đồ.
 
 ```text
 HTML/CSS/JS thuần (apps/web)  →  Supabase Edge Function `api`  →  pgSQL (schema `game`) trên Supabase PostgreSQL
@@ -67,10 +75,10 @@ Các migration lịch sử giữ nguyên. Bản nâng cấp dùng migration mớ
 
 Chi tiết thiết kế, mô hình bảo mật và các điểm cần duyệt: `docs/ARCHITECTURE.md`.
 
-## Nâng cấp v1.6.1
+## Lịch sử nâng cấp v1.6.1
 
 Xem [phạm vi, kiểm tra và việc còn lại](docs/UPGRADE_v1.6.1.md). Tàng Thư Các (truyện, Bách Quái Chí, danh mục vật phẩm) nằm ở repo `Hu-gioi-wiki`, không còn trong game.
 
-## Nhân duyên Hạ Giới v1.1
+## Lịch sử nhập Nhân duyên Hạ Giới v1.1
 
 Hội thoại nằm trong game: **Lịch luyện** (NPC trung lập), **Tông môn** (3 tông môn Hạ Giới) và **Bí cảnh** (kỳ ngộ ngẫu nhiên): 19 NPC, 95 cảnh chính, 38 sự kiện. Máy chủ kiểm soát reset UTC, điểm quan hệ, quà và chống thưởng lặp. [Phạm vi đã làm, kiểm thử và phần còn thiếu](docs/social/IMPLEMENTATION.md). Đây chưa phải bản hoàn thiện toàn bộ thiết kế game.

@@ -1,35 +1,19 @@
-# Hợp đồng backend và lưu trữ
+# Backend, API và lưu trữ trong repo v2.1
 
-## Deliverable kỹ thuật
+Runtime dùng PostgreSQL schema `game`, Supabase Edge Function `api` và web hiện có. Đây là triển khai cho repo; SQLite và62 route của gói tham chiếu ban đầu không phải runtime này.
 
-07_BACKEND/openapi.json mô tả62 route; schema.sql tạo được database SQLite tham chiếu với khóa/constraint/index; service_reference.py chạy các giao dịch cốt lõi; error_catalog.json chuẩn hóa lỗi. Đây là mã tham chiếu kiểm được cục bộ, chưa là HTTP server đã triển khai, hệ đăng nhập production hoặc bằng chứng chịu tải.
+| Giao diện | Chức năng |
+|---|---|
+|GET /state|Tu luyện, trạng thái kiếp, Thiên Mệnh, intent đột phá/tọa hóa|
+|GET /play|Ví chính xác, túi, đất/cây, nghề/job, nhiệm vụ, catalog và đấu giá|
+|POST /play/action|Ý định kinh tế/nghề/nhiệm vụ/combat/đấu giá/kết thúc|
+|GET /social, POST /social/action|9 NPC, thoại, thiện cảm, quà và kỳ ngộ|
+|Các route vòng đời/TM|Giữ tương thích API đã triển khai trước2.1|
 
-API lấy account_id/server_id/current_life từ phiên xác thực phía server. Body không nhận balance, reward, rarity, RNG hoặc cờ completed do client tự khai. Session bearer phải được kiểm chữ ký/hết hạn và quyền account trước domain handler; không lấy thông tin tài khoản từ query để quyết định ownership. Không đưa endpoint internal game_events hoặc craft_finish ra mạng công khai.
+Một thao tác ghi có `life_id`, UUID `request_id`, `version`, `action` và `args`. Edge lấy account từ JWT. SQL kiểm sở hữu, kiếp còn sống, điều kiện, quota và phiên bản; trừ/nhận trong một transaction. Retry cùng key+payload trả receipt gốc, payload khác bị từ chối. Client giữ thao tác đang chờ trong sessionStorage để retry sau mất mạng.
 
-## Quote và idempotency
+Tiền dùng numeric(78,0), trả chuỗi thập phân; không tính tiền bằng Number trên client. Sổ tiền bất biến ghi nguồn/tiêu, số dư sau giao dịch, nguồn khởi đầu, số dư chuyển từ bản cũ và mất tài sản khi chết. Lịch sử đấu giá giữ trước/sau mỗi thay đổi. Các bảng bật RLS và chỉ service_role được gọi qua Edge đã xác thực.
 
-Quote sống tối đa300 giây, khóa config_version cùng version ví/item/auction/life. Xác nhận kiểm alive/owner/quota/thời gian và fingerprint payload trong cùng giao dịch. Cùng account+request_id và cùng payload trả biên nhận bất biến; cùng key khác payload là409. Không bỏ guard để retry. Các thao tác có phí/vật tư phải rollback toàn bộ nếu một điều kiện sai.
+Craft khóa nguyên liệu/phí/lượt ở lúc bắt đầu, lưu RNG kín; trả kết quả đúng một lần khi nhận. Job/EXP/cây/đồ/hộp nhận theo kiếp; công thức đã học và quota theo tài khoản. Đấu giá giữ toàn bộ tiền bid, hoàn người bị vượt giá, chống bid sát giờ, thuế/phí và xử lý chết. Xem [triển khai, chuyển save và giới hạn](../V21_IMPLEMENTATION.md).
 
-Lưu quote/outcome riêng; GET job chỉ trả trạng thái, thời điểm xong và thông tin recipe công khai, không trả private_outcome_json trước hoàn tất. Tỷ lệ/RNG do server quản; client không gửi seed. Worker có request_id cố định theo job để chạy lại không nhân output.
-
-## Schema và số lớn
-
-Ví lưu chuỗi thập phân chuẩn tối đa78 chữ số trong schema tham chiếu; mã dùng Python int, tuyệt đối không SUM/CAST sang floating point trong SQL. Database production có thể dùng kiểu số nguyên chính xác tương đương; giữ cùng constraint và giao dịch. Ledger bất biến: không UPDATE/DELETE, điều chỉnh bằng bút toán mới. Item đã tiêu/mất giữ tombstone location consumed/lost để lịch sử đấu giá không bị khóa ngoại gãy.
-
-Một nhân vật sống/tài khoản, một cây hoạt động/ô, một job hoạt động/nghề, một bid HELD/phiên và một escrow HELD/owner được bảo vệ bằng index. Daily/weekly claim theo account; quan hệ, vật phẩm và job theo life. Thông tin tri thức recipe và TM tài khoản giữ riêng khỏi nghề của kiếp.
-
-## Phạm vi mã tham chiếu
-
-service_reference.py thực thi ví/đổi tiền, học recipe, nhận nhiệm vụ, sự kiện nội bộ, trả thưởng, bắt đầu/kết thúc craft và đóng đời không có auction đang hoạt động. Khi có auction, code tham chiếu từ chối đóng đời nếu chưa gọi handler escrow, để không âm thầm mất tiền người khác. Hợp đồng auction/death đầy đủ và ca kiểm bắt buộc nằm trong TRANSACTION_PROTOCOLS.md; không coi phần chưa có HTTP adapter là endpoint đã chạy.
-
-Bản production thực hiện tất cả handler theo OpenAPI và protocol, đồng thời nối auth/session, worker, catalog version, ảnh/icon và client. Những việc đó là triển khai sản phẩm từ đặc tả này; không được ghi PASS production chỉ vì schema hoặc reference tests chạy.
-
-## Đồng thời, lỗi và khôi phục
-
-Thứ tự khóa: quota account→life theo ID tăng→wallet theo currency→item theo ID→auction/plot/job. SQLite reference dùng BEGIN IMMEDIATE để kiểm đúng rollback và idempotency; không dùng đó làm số đo tải server nhiều người. Transaction gửi outbox; worker xử lý at-least-once với unique source_operation. Tránh gọi dịch vụ ngoài giữa lúc giữ khóa DB.
-
-503 retry cùng key;409 version/quote yêu cầu xin quote mới;403 không tự nâng quyền;429 hiện kỳ reset của server. Túi đầy không xóa cây/output; output vật lý ở inbox vẫn mất khi chết. Backup cần giữ balances+ledger+operations+escrow+jobs nhất quán cùng snapshot; phục hồi xong đối chiếu bất biến trước mở giao dịch.
-
-## Quan sát và vận hành
-
-Log operation_id, config_version, lý do cộng/trừ, life, server và thời gian; không log bearer hoặc seed RNG nội bộ. Metric: tiền phát/sink theo từng currency, số bid giữ/hoàn, job quá hạn, outbox pending, duplicate retries, fail recipe, từ chối quota, tỷ lệ mất output và tử vong. Có cờ khóa mutation theo feature khi bảo toàn tài sản bị vi phạm; đọc trạng thái và nhận biên nhận vẫn hoạt động.
+Chạy `pnpm test` và `pnpm build:web` trước khi tích hợp. Kiểm thêm bản sao database thật trước phát hành. Không sửa migration lịch sử hoặc dùng rollback để hồi sinh tài sản đã mất. Bản beta dùng advisory transaction lock cho các giao dịch mới, cần đo tải trước khi mở rộng. Các handler đặc biệt chưa hỗ trợ từ chối trước khi tiêu đồ; hợp đồng đầy đủ nằm trong EFFECT_HANDLERS.md.

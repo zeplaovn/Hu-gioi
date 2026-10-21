@@ -20,7 +20,7 @@ Giữ ba lựa chọn Hạ Giới: Thanh Vân, Huyết Sát, Vạn Dược. Khi 
 
 ## Cách gộp mà không đổi lịch sử
 
-Tô Nhược Vân nhận khảo hạch và kiếm đạo; Diệp Hồng Y nhận thử luyện ma đạo; Bạch Tử Yên nhận cứu trợ và đan viện; Tạ Thiên Cơ nhận trận pháp và giới môn; Cơ Vô Ngôn nhận xác minh tư liệu; Tư Mệnh nhận Thiên Sổ; Mạnh Bà nhận ký ức; Người Gác Đài nhận Quy Phàm; Trần Minh dẫn nhập và Hội Quy Hương. Đây là chuyển chức năng, không đồng nhất những con người cũ. Ánh xạ5 ID hội thoại nhập nằm trong ../02_DU_LIEU/migration.json; các chức năng cũ được ghi ở bảng phân vai trên.
+Tô Nhược Vân nhận khảo hạch và kiếm đạo; Diệp Hồng Y nhận thử luyện ma đạo; Bạch Tử Yên nhận cứu trợ và đan viện; Tạ Thiên Cơ nhận trận pháp và giới môn; Cơ Vô Ngôn nhận xác minh tư liệu; Tư Mệnh nhận Thiên Sổ; Mạnh Bà nhận ký ức; Người Gác Đài nhận Quy Phàm; Trần Minh dẫn nhập và Hội Quy Hương. Đây là chuyển chức năng, không đồng nhất những con người cũ. Ánh xạ5 ID hội thoại nhập nằm trong ../data/v21/migration.json; các chức năng cũ được ghi ở bảng phân vai trên.
 
 ## Tính liên tục qua các kiếp
 
@@ -28,4 +28,4 @@ Trạng thái quan hệ, nhiệm vụ, tồn tại của NPC dùng life_id. NPC 
 
 ## Shop
 
-Dữ liệu chuẩn: ../02_DU_LIEU/sect_shop.json và ../02_DU_LIEU/config.json. Mua bằng cống hiến kiếp hiện tại; 20/ngày và 50/tuần từ nhiệm vụ tông môn. Hàng bảo đảm, làm mới 8 giờ, hạn mức ngày không đặt lại theo lần refresh. Đồ mua khóa giao dịch và bán lại; không bán vật phẩm Thiên Mệnh, cổ vật Lục Mệnh hoặc vật chứng tuyến chính. Cống hiến theo kiếp mất khi chết, giữ khi phi thăng.
+Dữ liệu chuẩn: ../data/v21/sect_shop.json và ../data/v21/config.json. Mua bằng cống hiến kiếp hiện tại; 20/ngày và 50/tuần từ nhiệm vụ tông môn. Hàng bảo đảm, làm mới 8 giờ, hạn mức ngày không đặt lại theo lần refresh. Đồ mua khóa giao dịch và bán lại; không bán vật phẩm Thiên Mệnh, cổ vật Lục Mệnh hoặc vật chứng tuyến chính. Cống hiến theo kiếp mất khi chết, giữ khi phi thăng.
