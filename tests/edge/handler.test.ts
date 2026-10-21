@@ -110,6 +110,20 @@ describe("api handler", () => {
     expect((await handle(req("/life/roll", { method: "POST", body: '{"fields":[]}' }), deps)).status).toBe(400);
     expect((await handle(req("/life/roll", { method: "POST" }), deps)).status).toBe(200);
   });
+  it("crafts: chỉ nhận hành động/ô/số lượng hợp lệ và gọi đúng RPC", async () => {
+    const { deps, calls } = mk();
+    expect((await handle(req("/crafts"), deps)).status).toBe(200);
+    expect(calls.at(-1)![0]).toBe("crafts_state");
+    const ok = await handle(req("/crafts/action", { method: "POST", body: JSON.stringify({ kind: "plant", plot: 3, id: "HERB-001" }) }), deps);
+    expect(ok.status).toBe(200);
+    expect(calls.at(-1)).toEqual(["crafts_action", { p_account: U, p_kind: "plant", p_plot: 3, p_id: "HERB-001", p_tier: 0, p_qty: 1 }]);
+    const n = calls.length;
+    for (const bad of [{ kind: "hack" }, { kind: "plant", plot: 16 }, { kind: "plant", plot: -1 }, { kind: "plant", plot: 1.5 }, { kind: "sell", qty: 0 },
+      { kind: "sell", qty: 1000 }, { kind: "sell", tier: 3 }, { kind: "sell", id: "a b;drop" }, { kind: "sell", id: 5 }]) {
+      expect((await handle(req("/crafts/action", { method: "POST", body: JSON.stringify(bad) }), deps)).status, JSON.stringify(bad)).toBe(400);
+    }
+    expect(calls.slice(n).filter(c => c[0] === "crafts_action")).toHaveLength(0);
+  });
   it("tọa hóa: JWT được kiểm, input UUID/rate limit và RPC đúng", async () => {
     const { deps, calls } = mk();
     const bad = await handle(req("/lifespan/confirm", { method: "POST", body: '{"intent_id":"bad"}' }), deps);

@@ -10,16 +10,14 @@ const GROUP_ACTIONS = [
   { id: "rest", label: "Nghỉ ngơi", kbd: "N", icon: "peach", soon: true },
   { id: "break", seal: true },
   { id: "stone", label: "Luyện hóa linh thạch", icon: "crystal", soon: true },
-  { id: "shop", label: "Cửa hàng đan dược", cls: "cyan", icon: "orb_green", soon: true },
+  { id: "shop", label: "Vạn Bảo Các", cls: "cyan", icon: "orb_green" },
   { id: "skills", label: "Công pháp", cls: "cyan", icon: "scroll", soon: true },
   { id: "sect", label: "Tông môn", cls: "orange", icon: "bagua" },
-  { id: "crafts", label: "Nghề phụ", cls: "cyan", icon: "ginseng", soon: true },
+  { id: "crafts", label: "Nghề phụ", cls: "cyan", icon: "ginseng" },
   { id: "bag", label: "Túi đồ", cls: "cyan", icon: "charm" },
 ];
 const GROUP_WORLD = [
   { id: "character", label: "Chỉ số nhân vật", cls: "cyan", icon: "portrait" },
-  { id: "tm", label: "Quán Đỉnh Thiên Mệnh", cls: "gold", icon: "orb_gold", href: "#/quan-dinh" },
-  { id: "history", label: "Bia Thiên Mệnh", cls: "gold", icon: "scroll", href: "#/lich-su" },
   { id: "root", label: "Linh căn", cls: "cyan", icon: "orb_green", soon: true },
   { id: "secret", label: "Bí cảnh", cls: "orange", icon: "crystal" },
   { id: "board", label: "Bảng xếp hạng", cls: "gold", icon: "bagua", soon: true },
@@ -66,8 +64,8 @@ function item(spec, handlers) {
  * @param {{ game: any, onBag: () => void }} o
  * @returns {{ el: HTMLElement, dock: HTMLElement, update(state: any, life: any, prog: number): void }}
  */
-export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings }) {
-  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings };
+export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onExplore, onSecret, onSettings, onCrafts, onShop }) {
+  const handlers = { bag: onBag, character: onCharacter, sect: onSect, cultivate: onCultivate, explore: onExplore, secret: onSecret, settings: onSettings, crafts: onCrafts, shop: onShop };
   const breakSeal = sealButton({ onclick: () => game.prepare(), kbd: "D" });
   const dockSeal = sealButton({ onclick: () => game.prepare(), kbd: "D", showKbd: false });
   let bagBtn = null;
@@ -90,7 +88,7 @@ export function createMenu({ game, onBag, onCharacter, onSect, onCultivate, onEx
 
   const dock = h("nav", { class: "dock", "aria-label": "Thao tác nhanh" },
     dockSeal,
-    h("a", { class: "btn gold", href: "#/quan-dinh" }, icon("orb_gold"), h("span", { class: "btn-label" }, "Quán Đỉnh")),
+    h("button", { type: "button", class: "btn cyan", onclick: onCrafts }, icon("ginseng"), h("span", { class: "btn-label" }, "Nghề phụ")),
     h("button", { type: "button", class: "btn cyan", onclick: onBag }, icon("charm"), h("span", { class: "btn-label" }, "Túi đồ")),
     h("button", { type: "button", class: "btn dimbtn", onclick: () => {
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;

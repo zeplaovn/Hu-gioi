@@ -55,7 +55,7 @@ export function nextHint(state) {
   }
   const up = cheapestUpgrade(state.account?.stats);
   if (up && state.account.tm_balance >= up.cost) {
-    return { id: "spend-tm", text: `Ngươi có ${state.account.tm_balance} Thiên Mệnh: đủ để nâng một chỉ số vĩnh viễn.`, cta: { label: "Quán Đỉnh", href: "#/quan-dinh" } };
+    return { id: "spend-tm", text: `Ngươi có ${state.account.tm_balance} Thiên Mệnh: khi lập kiếp mới, hãy nâng chỉ số vĩnh viễn ở Quán Đỉnh.` };
   }
   return null;
 }

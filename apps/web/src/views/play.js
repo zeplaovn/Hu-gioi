@@ -8,6 +8,7 @@ import { createBar } from "../ui/bar.js";
 import { createDialog } from "../ui/dialog.js";
 import { clear, h, icon } from "../ui/dom.js";
 import { createCharacterDialog } from "../ui/character.js";
+import { createCraftsDialog, createCraftsStore, createShopDialog } from "../ui/crafts.js";
 import { createSocialDialog } from "../ui/social.js";
 import { NAME_MAX, cleanName, randomName } from "../names.js";
 import { createMenu } from "../ui/menu.js";
@@ -40,9 +41,12 @@ export function createPlayView({ game, onSettings = () => {} }) {
   const exploreDlg = createSocialDialog({ game, kind: "explore" });
   const sectDlg = createSocialDialog({ game, kind: "sect" });
   const secretDlg = createSocialDialog({ game, kind: "secret" });
-  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el);
+  const craftsStore = createCraftsStore(game);
+  const craftsDlg = createCraftsDialog({ store: craftsStore });
+  const shopDlg = createShopDialog({ store: craftsStore });
+  const el = h("div", null, errBox, stage, craftsDlg.el, shopDlg.el, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el);
 
-  let mode = null, ui = null, scene = null, menu = null;
+  let mode = null, ui = null, scene = null, menu = null, prevWorld = null;
 
   /* ---------- phím tắt: D = đại đột phá (chỉ khi server báo sẵn sàng) ---------- */
   function onKey(e) {
@@ -106,7 +110,9 @@ export function createPlayView({ game, onSettings = () => {} }) {
             h("dt", null, "Cảnh giới"), h("dd", null, STAGES[0].name)),
           note, rootNote,
           creationStats,
-          h("a", { class: "btn gold wide", href: "#/quan-dinh" }, "Thiên Đạo Các · Thiên Mệnh"),
+          h("div", { class: "creation-links" },
+            h("a", { class: "btn gold", href: "#/quan-dinh" }, icon("orb_gold"), h("span", { class: "btn-label" }, "Quán Đỉnh Thiên Mệnh")),
+            h("a", { class: "btn gold", href: "#/lich-su" }, icon("scroll"), h("span", { class: "btn-label" }, "Bia Thiên Mệnh"))),
           h("div", { class: "panel info-box" }, h("b", null, "Luật của kiếp"),
             h("p", { class: "small" }, "Kiếp chỉ kết thúc khi tọa hóa, đại đột phá thất bại hoặc chết trong nội dung sinh tử. Chết thật là mất toàn bộ tài sản của kiếp; Điểm Thiên Mệnh và chỉ số vĩnh viễn được giữ lại.")),
           h("p", { class: "small dim" }, "Đạo hiệu do ngươi đặt. Chủng tộc và linh căn do máy chủ gieo ngẫu nhiên (bấm 🎲 để gieo lại trước khi bắt đầu). Chúng là danh tính của kiếp, chưa làm đổi tốc độ tu luyện trong bản này."),
@@ -166,7 +172,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
     });
 
     menu = createMenu({ game, onBag: () => { bagOpen = true; drawBag(); },
-      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.open(), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings,
+      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.open(), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings, onCrafts: () => craftsDlg.open(), onShop: () => shopDlg.open(),
       onCultivate: () => idlePanel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }) });
 
     clear(stage,
@@ -244,7 +250,8 @@ export function createPlayView({ game, onSettings = () => {} }) {
     ui.lifespanNote.hidden = !(life.status === "alive" && life.lifespan.exhausted);
     drawHint(s);
 
-    scene.update({ world: w.id, season, color: w.color, pulse: game.pulse, label: `${life.stage.world} · mùa ${SEASON_NAME[season]}` });
+    const ascend = prevWorld !== null && prevWorld !== life.stage.world; prevWorld = life.stage.world;
+    scene.update({ world: w.id, season, color: w.color, pulse: game.pulse, ascend, thunder: !!game.prepared, label: `${life.stage.world} · mùa ${SEASON_NAME[season]}` });
     ui.clearedNote.hidden = life.status !== "cleared";
     syncLog();
     menu.update(s, life, prog);
@@ -256,12 +263,11 @@ export function createPlayView({ game, onSettings = () => {} }) {
     if (!bagOpen || !life) { bagDlg.hide(); return; }
     clear(bagDlg.body, h("div", { class: "stack" },
       life.items.length === 0
-        ? h("p", { class: "dim" }, "Chưa có gì. Vật phẩm Thiên Mệnh mua ở Quán Đỉnh nằm ở đây và ", h("b", null, "mất khi chết"), ".")
+        ? h("p", { class: "dim" }, "Chưa có gì. Vật phẩm Thiên Mệnh nằm ở đây và ", h("b", null, "mất khi chết"), ".")
         : h("ul", { class: "bag-list" }, life.items.map((it) =>
             h("li", { class: "panel row between" }, h("span", { class: "bold" }, it.name), it.used ? h("span", { class: "chip" }, "đã dùng") : h("span", { class: "chip jade" }, "chưa dùng")))),
       h("p", { class: "dim small" }, "Chết thật là mất toàn bộ vật phẩm trong túi, kể cả vật phẩm Thiên Mệnh chưa dùng (không hoàn Thiên Mệnh)."),
-      h("div", { class: "row center" }, h("a", { class: "btn gold", href: "#/quan-dinh", onclick: () => bagDlg.hide(), style: { textDecoration: "none" } }, icon("orb_gold"), "Quán Đỉnh"),
-        h("button", { class: "btn ghost", onclick: () => bagDlg.hide() }, "Đóng"))));
+      h("div", { class: "row center" }, h("button", { class: "btn ghost", onclick: () => bagDlg.hide() }, "Đóng"))));
     bagDlg.show();
   }
 
@@ -308,7 +314,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
         content = [h("p", null, "Ngươi đã hoàn tất tuyến chính của kiếp này.")];
       } else {
         content = [h("p", null, "Nguyên nhân: ", h("b", null, causeLabel(r.cause)), "."),
-          h("p", { class: "dim" }, "Tài sản của kiếp đã tan biến. Thiên Mệnh và chỉ số vĩnh viễn vẫn còn. Một kiếp mới đã bắt đầu.")];
+          h("p", { class: "dim" }, "Tài sản của kiếp đã tan biến. Thiên Mệnh và chỉ số vĩnh viễn vẫn còn. Hãy lập đạo hiệu cho kiếp mới.")];
       }
       clear(resultDlg.body, h("div", { class: "stack" }, content, h("button", { class: "btn", onclick: () => game.dismissResult() }, "Đã rõ")));
       resultDlg.show();
@@ -319,7 +325,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
 
   function ensureMode(m) {
     if (mode === m) return;
-    scene?.destroy(); scene = null; ui = null; menu = null; mode = m;
+    scene?.destroy(); scene = null; ui = null; menu = null; prevWorld = null; mode = m;
     if (m === "none") buildNone();
     else if (m === "alive") buildAlive();
     else clear(stage, waitP);
@@ -350,7 +356,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
     el, render,
     destroy() {
       window.removeEventListener("keydown", onKey);
-      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide(); characterDlg.hide(); exploreDlg.destroy(); sectDlg.destroy(); secretDlg.destroy();
+      scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide(); characterDlg.hide(); exploreDlg.destroy(); sectDlg.destroy(); secretDlg.destroy(); craftsDlg.destroy(); shopDlg.destroy();
     },
   };
 }

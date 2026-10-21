@@ -86,13 +86,15 @@ begin
   assert l.status = 'dead' and l.death_cause = 'lifespan', 'chỉ tọa hóa sau xác nhận';
   assert l.ls = 0 and l.lt = 0, 'mất toàn bộ tiền của kiếp';
   assert not exists (select 1 from game.life_items where life_id = v), 'mất toàn bộ vật phẩm';
-  select life_id into v2 from game.lives where account_id = u and status = 'alive';
-  assert v2 is not null and (select life_no from game.lives where life_id = v2) = 2, 'tạo kiếp mới';
+  assert not exists (select 1 from game.lives where account_id = u and status = 'alive'), 'chết không tự mở kiếp mới';
+  assert game.get_state(u, t0 + interval '2 hour')->'life' = 'null'::jsonb, 'state không có kiếp: quay lại màn tạo nhân vật';
+  v2 := game.start_life(u, t0 + interval '2 hour');
+  assert (select life_no from game.lives where life_id = v2) = 2, 'kiếp mới chỉ mở khi người chơi bắt đầu';
   assert (select tm_balance from game.accounts where account_id = u) = 42, 'giữ Thiên Mệnh';
   assert (select life_count from game.accounts where account_id = u) = 1;
   select * into h from game.life_history where life_id = v;
   assert h.cause = 'lifespan' and (h.snapshot->'wallet'->>'ls')::int = 700 and jsonb_array_length(h.snapshot->'items') = 1, 'snapshot lịch sử';
-  v3 := game.end_life(v, 'lifespan', t0 + interval '2 hour');
+  v3 := game.end_life(v, 'lifespan', t0 + interval '3 hour');
   assert v3 = v2 and (select life_count from game.accounts where account_id = u) = 1, 'end_life idempotent';
   assert (select count(*) from game.life_history where account_id = u) = 1;
   assert (select count(*) from game.lives where account_id = u and status = 'alive') = 1;

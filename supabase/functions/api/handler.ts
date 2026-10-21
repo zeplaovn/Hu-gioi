@@ -26,6 +26,10 @@ const STATUS: Record<string, number> = {
   lifespan_not_exhausted: 409, lifespan_intent_consumed: 409, lifespan_intent_expired: 409,
   lifespan_intent_not_found: 404,
   invalid_dao_hieu: 400, invalid_gender: 400, life_already_started: 409,
+  plot_locked: 409, plot_busy: 409, plot_unlocked: 409, plot_order: 409, realm_too_low: 409, craft_level_too_low: 409,
+  insufficient_ls: 409, insufficient_tn: 409, insufficient_goods: 409, not_ready: 409, water_max: 409, water_cooldown: 409,
+  nothing_to_water: 409, nothing_to_fertilize: 409, already_fertilized: 409, no_pest: 409, daily_limit: 409, no_paper: 409,
+  not_sellable: 409, not_for_sale: 409,
 };
 
 class HttpError extends Error { constructor(readonly status: number, readonly code: string) { super(code); } }
@@ -115,6 +119,23 @@ const ROUTES: Record<string, Route> = {
       const id = body.intent_id;
       if (typeof id !== "string" || !UUID.test(id)) throw new HttpError(400, "invalid_intent_id");
       return call(rpc, "breakthrough_confirm", { p_account: uid, p_intent: id });
+    },
+  },
+  "/crafts": { method: "GET", limit: ["read", 120, 60], run: ({ uid, rpc }) => call(rpc, "crafts_state", { p_account: uid }) },
+  "/crafts/action": {
+    method: "POST", limit: ["crafts", 60, 60],
+    run: ({ uid, body, rpc }) => {
+      const kinds = ["plant", "water", "fertilize", "pest", "harvest", "unlock", "phu", "sell", "buy"];
+      if (typeof body.kind !== "string" || !kinds.includes(body.kind)) throw new HttpError(400, "invalid_craft_action");
+      const int = (v: unknown, min: number, max: number, d: number) => {
+        if (v === undefined) return d;
+        if (typeof v !== "number" || !Number.isInteger(v) || v < min || v > max) throw new HttpError(400, "invalid_craft_input");
+        return v;
+      };
+      if (body.id !== undefined && (typeof body.id !== "string" || !/^[A-Za-z0-9_-]{0,40}$/.test(body.id))) throw new HttpError(400, "invalid_craft_input");
+      return call(rpc, "crafts_action", {
+        p_account: uid, p_kind: body.kind, p_plot: body.plot === undefined ? null : int(body.plot, 0, 15, 0),
+        p_id: body.id ?? "", p_tier: int(body.tier, 0, 2, 0), p_qty: int(body.qty, 1, 999, 1) });
     },
   },
   "/lifespan/prepare": {

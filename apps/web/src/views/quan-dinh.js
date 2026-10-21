@@ -64,6 +64,7 @@ export function createQuanDinhView({ game }) {
         }))),
       h("section", null,
         h("h2", null, "Thiên Mệnh Các"),
+        !life && h("p", { class: "notice" }, "Chưa có kiếp đang sống: Quán Đỉnh nâng chỉ số vĩnh viễn ngay bây giờ được, còn vật phẩm Thiên Mệnh Các chỉ mua được trong một kiếp."),
         h("p", { class: "notice" }, "Vật phẩm ở đây thuộc về ", h("b", null, "kiếp hiện tại"), ". Chết trước khi dùng thì ", h("b", null, "mất và không hoàn Thiên Mệnh"),
           ". Bản này mới có phần mua và giữ vật phẩm; hiệu ứng sử dụng sẽ được thêm cùng các hệ thống tương ứng."),
         h("div", { class: "grid two" }, ITEMS.map((it) =>
