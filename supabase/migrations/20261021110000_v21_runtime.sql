@@ -51,9 +51,9 @@ declare i jsonb:=p_state->'inventory'->p_instance;begin
  if (i->>'quantity')::int=p_quantity then return p_state #- array['inventory',p_instance];end if;
  return jsonb_set(p_state,array['inventory',p_instance,'quantity'],to_jsonb((i->>'quantity')::int-p_quantity));
 end$$;
-create function game.play_quality(p_level int,p_catalyst boolean default false) returns text language plpgsql volatile set search_path='' as $$
+create function game.play_quality(p_level int,p_catalyst boolean default false,p_bonus int default 0) returns text language plpgsql volatile set search_path='' as $$
 #variable_conflict use_column
-declare shift int:=least(4000,greatest(0,p_level-1)*100+case when p_catalyst then 1000 else 0 end);r int:=floor(game.roll()*10000);begin
+declare shift int:=least(4000,greatest(0,p_level-1)*100+case when p_catalyst then 1000 else 0 end+p_bonus);r int:=floor(game.roll()*10000);begin
  if r<8000-shift then return 'common';elsif r<9500-shift*0.3 then return 'fine';elsif r<9950-shift*0.05 then return 'superior';else return 'supreme';end if;end$$;
 
 -- Trusted events are persisted only by validated gameplay branches below, never from raw client reports.
@@ -79,7 +79,7 @@ declare l game.lives%rowtype;st jsonb;ver bigint;k jsonb;w text;begin
  st:=jsonb_set(st,'{jobs}',coalesce((select jsonb_object_agg(key,value-'success'-'quality') from jsonb_each(st->'jobs')),'{}'));
  return jsonb_build_object('version',ver,'life_id',l.life_id,'state',st,'knowledge',k,'server_day',game.play_day(),'wallet',jsonb_build_object('LT_HP',l.ls::text,'LT_TP',l.lt::text,'TN',l.tn::text),
  'acquisition',game.play_data('acquisition_rules'),'encounters',game.play_data('combat')->'encounters','skills',game.play_data('combat')->'player_skills','catalog',game.play_data('item_catalog'),'prices',game.play_data('price_book'),'recipes',game.play_data('crafting_recipes'),'seeds',game.play_data('planting_recipes'),'plots',game.play_data('garden_plots'),'venues',game.play_data('venues'),'stock',game.play_data('venue_stock'),'quests',game.play_data('quests'),'interactions',game.play_data('quest_interactions'),'nodes',game.play_data('world_nodes'),'sect_shop',game.play_data('sect_shop'),
- 'auctions',coalesce((select jsonb_agg(to_jsonb(a)) from (select * from game.server_auctions where state='OPEN' order by ends_at limit 100) a),'[]'));
+ 'auctions',coalesce((select jsonb_agg(to_jsonb(a)||jsonb_build_object('opening',a.opening::text,'price',a.price::text,'buyout',a.buyout::text)) from (select * from game.server_auctions where state='OPEN' order by ends_at limit 100) a),'[]'));
 end$$;
 create table game.trade_budgets(account_id uuid references game.accounts,day text,limit_hp numeric(78,0) not null,spent_hp numeric(78,0) not null default 0,primary key(account_id,day));
 create table game.trade_holds(auction_id uuid references game.server_auctions,account_id uuid references game.accounts,day text,value_hp numeric(78,0) not null,primary key(auction_id,account_id));
@@ -95,7 +95,7 @@ declare cap numeric;spent numeric;held numeric;begin
 end$$;
 create function game.play_auction_settle(p_auction uuid,p_request uuid,p_buyout boolean default false) returns void language plpgsql set search_path='' as $$
 #variable_conflict use_column
-declare a game.server_auctions%rowtype;st jsonb;lid uuid;aid uuid;delivery text;begin
+declare a game.server_auctions%rowtype;st jsonb;oldinv jsonb;lid uuid;aid uuid;delivery text;begin
  select * into a from game.server_auctions where id=p_auction for update;if not found or a.state<>'OPEN' then return;end if;
  if not p_buyout and now()<a.ends_at then raise exception 'not_ready' using errcode='GM000';end if;
  if not exists(select 1 from game.lives where life_id=a.seller and status='alive') then raise exception 'seller_dead' using errcode='GM000';end if;
@@ -106,8 +106,8 @@ declare a game.server_auctions%rowtype;st jsonb;lid uuid;aid uuid;delivery text;
   update game.trade_budgets b set spent_hp=spent_hp+h.value_hp from game.trade_holds h where h.auction_id=a.id and h.account_id=b.account_id and h.day=b.day;
  end if;
  insert into game.play_lives(life_id) values(lid) on conflict do nothing;select state into st from game.play_lives where life_id=lid for update;
- st:=game.play_give(st,a.item->>'item_id',(a.item->>'quantity')::int,'',a.item->>'quality');
- select x.key into delivery from jsonb_each(st->'inventory') x order by (x.value->>'acquired_at')::numeric desc limit 1;
+ oldinv:=st->'inventory';st:=game.play_give(st,a.item->>'item_id',(a.item->>'quantity')::int,'',a.item->>'quality');
+ select x.key into delivery from jsonb_each(st->'inventory') x where not(oldinv ? x.key) limit 1;
  if a.bidder is not null then st:=jsonb_set(st,array['inventory',delivery,'trade_unlock_at'],to_jsonb(extract(epoch from now()+interval '24 hours')));end if;
  update game.play_lives set state=st,version=version+1 where life_id=lid;
  delete from game.trade_holds where auction_id=a.id;
@@ -170,6 +170,17 @@ declare b jsonb:=p_battle;row jsonb;o jsonb;p jsonb:=b->'player';e jsonb:=b->'en
  return b||jsonb_build_object('player',p,'enemy',e,'phase',nextphase,'ops',active);
 end$$;
 
+create function game.play_sources(p_state jsonb,p_account uuid,p_source text) returns jsonb language plpgsql set search_path='' as $$
+declare st jsonb:=p_state;r jsonb;period text;groupid text;lid uuid;begin
+ select life_id into lid from game.lives where account_id=p_account and status='alive';
+ for r in select x from jsonb_array_elements(game.play_data('acquisition_rules')) x where x->>'source_id'=p_source and x->>'source_kind' in('bound_quest_or_boss','weekly_boss_guaranteed','sect_task_bound_reward') loop
+  if r ? 'requires_lineage' and r->>'requires_lineage'<>st->>'sect' then continue;end if;
+  period:=case when r ? 'per_account_week_cap' then game.play_period('weekly') else lid::text end;groupid:='source:'||(r->>'item_id');
+  if coalesce((select used from game.play_quotas where account_id=p_account and group_code=groupid and game.play_quotas.period=play_sources.period),0)>0 then continue;end if;
+  perform game.play_quota(p_account,groupid,1,period);st:=game.play_give(st,r->>'item_id',1,'unique_source');
+ end loop;return st;
+end$$;
+
 create function game.play_action(p_account uuid,p_life uuid,p_request uuid,p_action text,p_args jsonb,p_version bigint) returns jsonb language plpgsql set search_path='' as $$
 #variable_conflict use_column
 declare
@@ -187,8 +198,10 @@ begin
  insert into game.play_lives(life_id) values(p_life) on conflict do nothing;insert into game.play_accounts(account_id) values(p_account) on conflict do nothing;
  select state,version into st,ver from game.play_lives where life_id=p_life for update;
  if p_version<>ver then raise exception 'state_stale' using errcode='GM000';end if;
+ if st ? 'battle' and p_action<>'battle_turn' then raise exception 'battle_active' using errcode='GM000';end if;
  select world into w from game.stages where idx=l.stage_idx;cur:=game.play_currency(w);
  id:=p_args->>'id';slot:=p_args->>'slot';
+ if p_action not in('refine','exchange','task_claim','battle_turn','ending') and id is null and p_action not in('plot_unlock','water','fertilize','remove_pests','harvest','crop_cancel') then raise exception 'invalid_request' using errcode='GM000';end if;
  if p_action='exchange' then
   if coalesce(p_args->>'amount','')!~'^[1-9][0-9]{0,77}$' then raise exception 'invalid_amount' using errcode='GM000';end if;
   amount:=(p_args->>'amount')::numeric;code:=p_args->>'from';res:=p_args->>'to';
@@ -203,7 +216,8 @@ begin
   update game.lives set progress_s=least(game.tang_seconds(stage_idx,tang)*.99,progress_s+game.tang_seconds(stage_idx,tang)*.01) where life_id=p_life;
  elsif p_action='travel' then
   r:=game.play_find('world_nodes',id);if r is null or game.play_stage(r->>'min_stage_id')>l.stage_idx then raise exception 'realm_locked' using errcode='GM000';end if;
-  st:=jsonb_set(st,'{node}',to_jsonb(id));
+  if st ? 'task' then raise exception 'job_busy' using errcode='GM000';end if;
+  st:=jsonb_set(st,'{task}',jsonb_build_object('kind','travel','id',id,'ready_at',now_s+(r->>'travel_seconds')::int));
  elsif p_action='buy' then
   r:=game.play_find('venue_stock',id);v:=game.play_find('venues',r->>'venue_id');
   if r is null or game.play_stage(r->>'min_stage_id')>l.stage_idx or game.play_stage(v->>'min_stage_id')>l.stage_idx then raise exception 'realm_locked' using errcode='GM000';end if;
@@ -244,7 +258,7 @@ begin
   perform game.play_money(p_life,r->>'currency',(r->>'amount')::numeric,p_request,'quest_reward');
   st:=jsonb_set(st,'{contribution}',to_jsonb((st->>'contribution')::int+coalesce((r->>'contribution')::int,0)));
   if coalesce(r->>'reward_item_id','')<>'' then st:=game.play_give(st,r->>'reward_item_id',(r->>'reward_item_quantity')::int,'quest_reward');end if;
-  st:=jsonb_set(st,array['quests',id,'status'],'"CLAIMED"');
+  st:=game.play_sources(st,p_account,id);st:=jsonb_set(st,array['quests',id,'status'],'"CLAIMED"');
   if id='Q-HG-02' then
    update game.play_accounts set knowledge=knowledge||'{"REC-PILL-001":true,"REC-EQ-001":true,"REC-TAL-001":true}' where account_id=p_account;
    st:=game.play_give(st,'SEED-HERB-001',2,'starter');
@@ -279,9 +293,13 @@ begin
   end if;
  elsif p_action='task_claim' then
   j:=st->'task';if j is null or now_s<(j->>'ready_at')::numeric then raise exception 'not_ready' using errcode='GM000';end if;
-  if j->>'kind'='gather' then
+  if j->>'kind'='travel' then
+   r:=game.play_find('world_nodes',j->>'id');st:=jsonb_set(st,'{node}',j->'id');
+   select x into v from jsonb_array_elements(game.play_data('activity_rewards')) x where x->>'world'=r->>'world' and x->>'event_type'='world.node_discovered';
+   if v is not null and not(st->'flags' ? ('visit:'||(j->>'id'))) and coalesce((select used from game.play_quotas where account_id=p_account and group_code='activity:'||(v->>'id') and period=game.play_day()),0)<(v->>'per_account_day_cap')::int then perform game.play_quota(p_account,'activity:'||(v->>'id'),(v->>'per_account_day_cap')::int);perform game.play_money(p_life,v->>'currency',(v->>'amount_per_event')::numeric,p_request,'explore_reward');st:=jsonb_set(st,array['flags','visit:'||(j->>'id')],'true');end if;
+  elsif j->>'kind'='gather' then
    r:=game.play_find('acquisition_rules',j->>'id');st:=game.play_give(st,j->>'id',coalesce((r->>'gather_yield')::int,1));
-   select x into v from jsonb_array_elements(game.play_data('activity_rewards')) x where x->>'world'=w and x->>'target_id'='world_gather';
+   select x into v from jsonb_array_elements(game.play_data('activity_rewards')) x where x->>'world'=w and x->>'event_type'='gather.completed' and x->>'target_id'=r->>'source_id';
    if v is not null and coalesce((select used from game.play_quotas where account_id=p_account and group_code='activity:'||(v->>'id') and period=game.play_day()),0)<(v->>'per_account_day_cap')::int then perform game.play_quota(p_account,'activity:'||(v->>'id'),(v->>'per_account_day_cap')::int);perform game.play_money(p_life,v->>'currency',(v->>'amount_per_event')::numeric,p_request,'gather_reward');end if;
   else
    r:=game.play_find('quest_interactions',j->>'id');if st->'quests'->(r->>'quest_id')->>'status' is distinct from 'ACTIVE' then raise exception 'quest_not_active' using errcode='GM000';end if;
@@ -324,16 +342,18 @@ begin
   if r is null or not(k ? id) or st->'quests'->'Q-HG-02'->>'status' is distinct from 'CLAIMED' or game.play_stage(r->>'min_stage_id')>l.stage_idx or lv<(r->>'min_level')::int then raise exception 'recipe_locked' using errcode='GM000';end if;
   if st->'jobs' ? prof then raise exception 'job_busy' using errcode='GM000';end if;
   arr:=p_args->'materials';if jsonb_typeof(arr)<>'array' or jsonb_array_length(arr)>3 or jsonb_array_length(arr)<1 then raise exception 'invalid_recipe' using errcode='GM000';end if;
-  have:='{}';
+  have:='{}';shift:=0;n:=0;
   for input in select value from jsonb_array_elements(arr) loop
    inst:=st->'inventory'->(input->>'instance_id');code:=inst->>'item_id';qty:=(input->>'quantity')::int;
    if code is null then raise exception 'invalid_recipe' using errcode='GM000';end if;
+   shift:=shift+qty*case inst->>'quality' when 'fine' then 100 when 'superior' then 200 when 'supreme' then 300 else 0 end;n:=n+qty;
    have:=jsonb_set(have,array[code],to_jsonb(coalesce((have->>code)::int,0)+qty));st:=game.play_take(st,input->>'instance_id',qty);
   end loop;
   select jsonb_object_agg(x->>'item_id',x->'quantity') into expected from jsonb_array_elements(r->'ingredients') x;if have<>expected then raise exception 'invalid_recipe' using errcode='GM000';end if;
   success:=false;bind:=p_args->>'catalyst';if coalesce(bind,'')<>'' then inst:=st->'inventory'->bind;if inst->>'item_id' is distinct from r->>'quality_catalyst_item_id' then raise exception 'invalid_catalyst' using errcode='GM000';end if;st:=game.play_take(st,bind,1);success:=true;end if;
-  if prof='talisman' then perform game.play_quota(p_account,'talisman_attempt',5+l.stage_idx-1);bp:=greatest(2000,least(9500,(r->>'base_success_bp')::int-(lv-1)*100));else bp:=greatest(2000,least(9500,(r->>'base_success_bp')::int+(lv-1)*50));end if;
-  quality:=game.play_quality(lv,success);success:=game.roll()*10000<bp;perform game.play_money(p_life,r->>'fee_currency',-(r->>'fee_amount')::numeric,p_request,'craft');
+  if prof='talisman' then perform game.play_quota(p_account,'talisman_attempt',5+l.stage_idx-1);bp:=10000-least(6000,1000+100*(lv-1)+200*((r->>'tier')::int-1));else bp:=greatest(2000,least(9500,(r->>'base_success_bp')::int+(lv-1)*50));end if;
+  shift:=shift/greatest(1,n);if prof='alchemy' and exists(select 1 from jsonb_each(st->'equipment') eq where st->'inventory'->(eq.value#>>'{}')->>'item_id'='EQ-073') then shift:=shift+500;end if;
+  quality:=game.play_quality(lv,success,shift);success:=game.roll()*10000<bp;perform game.play_money(p_life,r->>'fee_currency',-(r->>'fee_amount')::numeric,p_request,'craft');
   st:=jsonb_set(st,array['jobs',prof],jsonb_build_object('id',gen_random_uuid(),'recipe',id,'ready_at',now_s+(r->>'duration_seconds')::int,'success',success,'quality',quality,'level',lv,'started_day',game.play_day()));
  elsif p_action='craft_claim' then
   prof:=id;j:=st->'jobs'->prof;if j is null or now_s<(j->>'ready_at')::numeric then raise exception 'not_ready' using errcode='GM000';end if;r:=game.play_find('crafting_recipes',j->>'recipe');success:=(j->>'success')::boolean;
@@ -350,11 +370,12 @@ begin
   v:=jsonb_build_object('hp',round((c->>'hp_base')::numeric*(1+.07*(l.tang-1))*1.28),'atk',round((c->>'atk_base')::numeric*(1+.07*(l.tang-1))*1.208),'defense',round((c->>'def_base')::numeric*(1+.07*(l.tang-1))*1.16),'spirit',round((c->>'spirit_base')::numeric*(1+.07*(l.tang-1))*1.24),'spd',c->'spd_base','element',coalesce(l.linh_can->>'element','Kim'));
   v:=game.play_actor('player',v);c:=game.play_actor('monster',r);
   -- Equipped stat effects are summed once against the immutable base.
+  out:=v;
   for input in select x.value from jsonb_each(st->'equipment') x loop
    inst:=st->'inventory'->(input#>>'{}');i:=game.play_find('item_effects',inst->>'item_id');
    for k in select value from jsonb_array_elements(i->'effects') loop
     if k->>'op'='stat_percent' then code:=case k->>'stat' when 'ATK' then 'atk' when 'DEF' then 'defense' when 'HP' then 'maxhp' when 'SPIRIT' then 'spirit' when 'SPD' then 'spd' when 'PEN' then 'pen' when 'RES' then 'res' else null end;
-     if code is not null then v:=jsonb_set(v,array[code],to_jsonb((v->>code)::numeric+case when code in('pen','res') then (k->>'amount_bp')::numeric/10000 else (v->>code)::numeric*(k->>'amount_bp')::numeric/10000 end));end if;
+     if code is not null then v:=jsonb_set(v,array[code],to_jsonb((v->>code)::numeric+case when code in('pen','res') then (k->>'amount_bp')::numeric/10000 else (out->>code)::numeric*(k->>'amount_bp')::numeric/10000 end));end if;
     end if;
    end loop;
   end loop;v:=jsonb_set(v,'{hp}',v->'maxhp');
@@ -366,7 +387,7 @@ begin
   if v->'statuses' ? 'STUN' then code:='stunned';end if;
   if code='skill' then
    select x into r from jsonb_array_elements(game.play_data('combat')->'player_skills') x where x->>'id'=p_args->>'skill';
-   if r is null or v->'statuses' ? 'SILENCE' or coalesce((v->'cooldowns'->>(r->>'id'))::int,0)>lv or (j->>'qi')::numeric<(r->>'qi_cost_pct')::numeric then raise exception 'skill_unavailable' using errcode='GM000';end if;
+   if r is null or (r->>'tier')::int>(case when l.stage_idx<6 then 1 when l.stage_idx<10 then 2 else 3 end) or v->'statuses' ? 'SILENCE' or coalesce((v->'cooldowns'->>(r->>'id'))::int,0)>lv or (j->>'qi')::numeric<(r->>'qi_cost_pct')::numeric then raise exception 'skill_unavailable' using errcode='GM000';end if;
    cost:=(r->>'coefficient')::numeric;v:=jsonb_set(v,array['cooldowns',r->>'id'],to_jsonb(lv+(r->>'cooldown')::int+1));j:=jsonb_set(j,'{qi}',to_jsonb((j->>'qi')::numeric-(r->>'qi_cost_pct')::numeric));
   elsif code='item' then
    id:=p_args->>'instance_id';inst:=st->'inventory'->id;i:=game.play_find('item_effects',inst->>'item_id');
@@ -417,11 +438,12 @@ begin
   if coalesce((j->>'shield_until')::int,999999)<=lv then v:=jsonb_set(v,'{shield}','0');end if;
   j:=j||jsonb_build_object('player',v,'enemy',c,'turn',lv+1,'log',(j->'log')||jsonb_build_array(jsonb_build_object('turn',lv,'move',code,'player_hp',v->'hp','enemy_hp',c->'hp','telegraph',j->>'pending_skill')));
   if j->>'outcome'='WIN' then
-   st:=game.play_event(st,'combat.won',j->>'monster_id');
+   st:=game.play_event(st,'combat.won',j->>'monster_id');st:=game.play_sources(st,p_account,j->>'monster_id');
    for r in select x from jsonb_array_elements(game.play_data('drop_table')) x where x->>'enemy_id'=j->>'monster_id' loop
     if game.roll()*100<(r->>'chance_pct')::numeric then
-     if r->>'item' in('LT_HP','LT_TP','TN') then perform game.play_money(p_life,r->>'item',1,p_request,'combat_drop');
-     else select x->>'id' into res from jsonb_array_elements(game.play_data('item_catalog')) x where x->>'name'=r->>'item';if res is not null then st:=game.play_give(st,res,1);end if;end if;
+     qty:=split_part(r->>'quantity','-',1)::int;if position('-' in r->>'quantity')>0 then qty:=qty+floor(game.roll()*(split_part(r->>'quantity','-',2)::int-qty+1))::int;end if;
+     if r->>'item' in('LT_HP','LT_TP','TN') then perform game.play_money(p_life,r->>'item',qty,p_request,'combat_drop');
+     else select x->>'id' into res from jsonb_array_elements(game.play_data('item_catalog')) x where x->>'name'=r->>'item';if res is not null then st:=game.play_give(st,res,qty);end if;end if;
     end if;
    end loop;
    select x into r from jsonb_array_elements(game.play_data('activity_rewards')) x where x->>'world'=w and x->>'target_id'='world_patrol';
@@ -439,13 +461,13 @@ begin
   if amount>cost or cost<=0 then raise exception 'price_cap' using errcode='GM000';end if;
   if coalesce(p_args->>'buyout','')<>'' and (p_args->>'buyout'!~'^[1-9][0-9]{0,77}$' or (p_args->>'buyout')::numeric<amount or (p_args->>'buyout')::numeric>cost) then raise exception 'invalid_price' using errcode='GM000';end if;
   st:=game.play_take(st,id,qty);perform game.play_money(p_life,code,-greatest(1,ceil(amount*.01)),p_request,'listing_fee');
-  insert into game.server_auctions(seller,item,currency,opening,buyout,ends_at,original_end) values(p_life,jsonb_set(inst,'{quantity}',to_jsonb(qty)),code,amount,nullif(p_args->>'buyout','')::numeric,now()+make_interval(hours=>coalesce((p_args->>'hours')::int,12)),now()+make_interval(hours=>coalesce((p_args->>'hours')::int,12))) returning id::text into res;out:=jsonb_build_object('auction_id',res);
+  insert into game.server_auctions(seller,item,currency,opening,buyout,ends_at,original_end) values(p_life,jsonb_set(inst,'{quantity}',to_jsonb(qty)),code,amount,nullif(p_args->>'buyout','')::numeric,now()+make_interval(hours=>coalesce((p_args->>'hours')::int,12)),now()+make_interval(hours=>coalesce((p_args->>'hours')::int,12))) returning id::text into res;perform game.play_trade_hold(p_account,p_life,res::uuid,(r->>'reference_price')::numeric*qty*game.play_rate(r->>'currency'));out:=jsonb_build_object('auction_id',res);
  elsif p_action in('auction_bid','auction_cancel','auction_settle') then
   select to_jsonb(a) into j from game.server_auctions a where a.id=(p_args->>'id')::uuid for update;
   if j is null or j->>'state'<>'OPEN' then raise exception 'auction_closed' using errcode='GM000';end if;
   if p_action='auction_cancel' then
    if j->>'seller'<>p_life::text or j->>'bidder' is not null then raise exception 'cannot_cancel' using errcode='GM000';end if;
-   st:=game.play_give(st,j->'item'->>'item_id',(j->'item'->>'quantity')::int,'',j->'item'->>'quality');update game.server_auctions set state='CANCELLED',version=version+1 where id=(j->>'id')::uuid;
+   st:=game.play_give(st,j->'item'->>'item_id',(j->'item'->>'quantity')::int,'',j->'item'->>'quality');update game.server_auctions set state='CANCELLED',version=version+1 where id=(j->>'id')::uuid;delete from game.trade_holds where auction_id=(j->>'id')::uuid;
   elsif p_action='auction_settle' then
    if now()<(j->>'ends_at')::timestamptz then raise exception 'not_ready' using errcode='GM000';end if;
    perform game.play_auction_settle((j->>'id')::uuid,p_request);
@@ -463,7 +485,7 @@ begin
    perform game.play_trade_hold(p_account,p_life,(j->>'id')::uuid,amount*game.play_rate(code));
    cost:=amount-case when j->>'bidder'=p_life::text then (j->>'price')::numeric else 0 end;perform game.play_money(p_life,code,-cost,p_request,'bid_escrow');
    if j->>'bidder' is not null and j->>'bidder'<>p_life::text then
-    perform game.play_money((j->>'bidder')::uuid,code,(j->>'price')::numeric,p_request,'bid_refund');delete from game.trade_holds where auction_id=(j->>'id')::uuid and account_id<>p_account;
+    perform game.play_money((j->>'bidder')::uuid,code,(j->>'price')::numeric,p_request,'bid_refund');delete from game.trade_holds where auction_id=(j->>'id')::uuid and account_id=(select account_id from game.lives where life_id=(j->>'bidder')::uuid);
    end if;
    update game.server_auctions set bidder=p_life,price=amount,version=version+1,ends_at=case when now()>ends_at-interval '120 seconds' then least(original_end+interval '600 seconds',ends_at+interval '120 seconds') else ends_at end where id=(j->>'id')::uuid;
    if j->>'buyout' is not null and amount=(j->>'buyout')::numeric then
@@ -481,7 +503,7 @@ begin
  else
   raise exception 'unknown_action' using errcode='GM000';
  end if;
- update game.play_lives set state=st,version=version+1 where life_id=p_life;
+ update game.play_lives set state=st,version=ver+1 where life_id=p_life;
  out:=jsonb_build_object('request_id',p_request,'version',ver+1,'data',out);
  if out->'data'->'battle'->>'outcome'='DEATH' then perform game.end_life(p_life,'combat');end if;
  insert into game.play_receipts values(p_account,p_request,payload,out);return out;

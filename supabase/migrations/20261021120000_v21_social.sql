@@ -206,6 +206,7 @@ begin
  end if;
  return new;
 end $$;
+drop trigger if exists social_death_cleanup on game.lives;
 create trigger social_death_cleanup after update of status on game.lives for each row execute function game.social_death_cleanup();
 
 do $$ declare f record; begin

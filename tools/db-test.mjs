@@ -63,14 +63,14 @@ for (const [l, f] of legacy) if (!run(l, f)) { schemaOk = false; break; }
 
 if (schemaOk) {
   console.log("Test SQL:");
-  for (const f of readdirSync(join(root, "supabase/tests")).filter(f => f.endsWith(".test.sql") && !f.startsWith("07_")).sort()) run(f, join(root, "supabase/tests", f));
+  for (const f of readdirSync(join(root, "supabase/tests")).filter(f => f.endsWith(".test.sql") && !/^0[7-9]_/.test(f)).sort()) run(f, join(root, "supabase/tests", f));
   if (!process.argv.includes("--sql-only")) {
     const r = sh("pnpm", ["exec", "vitest", "run", "tests/edge/handler.db.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
     if (r.status !== 0) failed++;
   }
   console.log("Upgrade v2.1:");
   for (const [l,f] of current) if (!run(l,f)) { schemaOk=false; break; }
-  if (schemaOk) run("07_v21.test.sql",join(root,"supabase/tests/07_v21.test.sql"));
+  if (schemaOk) for (const f of readdirSync(join(root,"supabase/tests")).filter(f => /^0[7-9]_.*\.test\.sql$/.test(f)).sort()) run(f,join(root,"supabase/tests",f));
   if (existsSync(join(root, "packages/game-core/package.json")) && !process.argv.includes("--sql-only")) {
     console.log("Test parity (game-core ↔ SQL):");
     const r = sh("pnpm", ["--filter", "@hu-gioi/game-core", "exec", "vitest", "run", "test/parity.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
