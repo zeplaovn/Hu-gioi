@@ -1,0 +1,189 @@
+[
+  {
+    "id": "TMSTAT-001",
+    "name": "Quán Đỉnh Tướng Mạo",
+    "type": "Permanent Stat",
+    "cost": "6 + 1×level",
+    "currency": "TM",
+    "effect": "+1 Tướng Mạo vĩnh viễn",
+    "limit": "20",
+    "scope": "Account",
+    "death_rule": "Không phải vật phẩm; giữ qua trùng sinh"
+  },
+  {
+    "id": "TMSTAT-002",
+    "name": "Quán Đỉnh Phúc Duyên",
+    "type": "Permanent Stat",
+    "cost": "7 + 1×level",
+    "currency": "TM",
+    "effect": "+1 Phúc Duyên vĩnh viễn",
+    "limit": "20",
+    "scope": "Account",
+    "death_rule": "Không phải vật phẩm; giữ qua trùng sinh"
+  },
+  {
+    "id": "TMSTAT-003",
+    "name": "Quán Đỉnh Căn Cốt",
+    "type": "Permanent Stat",
+    "cost": "8 + 2×level",
+    "currency": "TM",
+    "effect": "+1 Căn Cốt vĩnh viễn",
+    "limit": "20",
+    "scope": "Account",
+    "death_rule": "Không phải vật phẩm; giữ qua trùng sinh"
+  },
+  {
+    "id": "TMSTAT-004",
+    "name": "Quán Đỉnh Ngộ Tính",
+    "type": "Permanent Stat",
+    "cost": "8 + 2×level",
+    "currency": "TM",
+    "effect": "+1 Ngộ Tính vĩnh viễn",
+    "limit": "20",
+    "scope": "Account",
+    "death_rule": "Không phải vật phẩm; giữ qua trùng sinh"
+  },
+  {
+    "id": "TMSTAT-005",
+    "name": "Quán Đỉnh Vận Khí",
+    "type": "Permanent Stat",
+    "cost": "9 + 2×level",
+    "currency": "TM",
+    "effect": "+1 Vận Khí vĩnh viễn",
+    "limit": "20",
+    "scope": "Account",
+    "death_rule": "Không phải vật phẩm; giữ qua trùng sinh"
+  },
+  {
+    "id": "TMITEM-001",
+    "name": "Định Linh Châu",
+    "type": "Exclusive Item",
+    "cost": "20",
+    "currency": "TM",
+    "effect": "Chọn một thuộc tính ưu tiên khi tinh luyện linh căn trong kiếp",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất khi chết; không shop/drop/boss"
+  },
+  {
+    "id": "TMITEM-002",
+    "name": "Thiên Cơ Lệnh",
+    "type": "Exclusive Item",
+    "cost": "25",
+    "currency": "TM",
+    "effect": "Mở một kỳ ngộ Thiên Cơ đặc biệt",
+    "limit": "2/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất khi chết; không shop/drop/boss"
+  },
+  {
+    "id": "TMITEM-003",
+    "name": "Phá Vọng Kính",
+    "type": "Exclusive Item",
+    "cost": "28",
+    "currency": "TM",
+    "effect": "Hiện một đường ẩn/bẫy quan trọng trong bí cảnh",
+    "limit": "2/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất khi chết; không shop/drop/boss"
+  },
+  {
+    "id": "TMITEM-004",
+    "name": "Nghịch Mệnh Phù",
+    "type": "Exclusive Item",
+    "cost": "35",
+    "currency": "TM",
+    "effect": "Một lần chuyển lethal breakthrough failure thành trọng thương; phải kích hoạt trước lần đột phá",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất khi chết; không hoàn TM"
+  },
+  {
+    "id": "TMITEM-005",
+    "name": "Thần Hành Phù",
+    "type": "Exclusive Item",
+    "cost": "30",
+    "currency": "TM",
+    "effect": "Cho phép rút khỏi bí cảnh lethal khi chưa tử vong; không dùng sau HP=0",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất khi chết"
+  },
+  {
+    "id": "TMITEM-006",
+    "name": "Vạn Tượng Phôi",
+    "type": "Exclusive Item",
+    "cost": "40",
+    "currency": "TM",
+    "effect": "Phôi chế tạo trang bị hiếm với affix đặc biệt",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Không có trong drop table"
+  },
+  {
+    "id": "TMITEM-007",
+    "name": "Đạo Văn Mặc",
+    "type": "Exclusive Item",
+    "cost": "45",
+    "currency": "TM",
+    "effect": "Khắc một dòng Đạo Văn hiếm lên trang bị đủ điều kiện",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất cùng trang bị khi chết"
+  },
+  {
+    "id": "TMITEM-008",
+    "name": "Vô Tự Cổ Quyển",
+    "type": "Exclusive Item",
+    "cost": "55",
+    "currency": "TM",
+    "effect": "Mở lựa chọn học một công pháp Thiên Mệnh hiếm trong kiếp",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Công pháp của kiếp mất khi trùng sinh"
+  },
+  {
+    "id": "TMITEM-009",
+    "name": "Tẩy Tủy Thiên Đan",
+    "type": "Exclusive Item",
+    "cost": "60",
+    "currency": "TM",
+    "effect": "+1 chỉ số gốc của kiếp hiện tại, không tính vào permanent TM stat",
+    "limit": "2/kiếp",
+    "scope": "Life",
+    "death_rule": "Item/hiệu ứng của kiếp mất khi chết"
+  },
+  {
+    "id": "TMITEM-010",
+    "name": "Linh Hồn Định Châm",
+    "type": "Exclusive Item",
+    "cost": "65",
+    "currency": "TM",
+    "effect": "Giảm một bậc hình phạt tâm ma trong một lần thử",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Không shop/drop/boss"
+  },
+  {
+    "id": "TMITEM-011",
+    "name": "Thiên Mệnh Trận Kỳ",
+    "type": "Exclusive Item",
+    "cost": "75",
+    "currency": "TM",
+    "effect": "Mở một trận pháp phụ trợ hiếm cho bí cảnh",
+    "limit": "1/kiếp",
+    "scope": "Life",
+    "death_rule": "Mất khi chết"
+  },
+  {
+    "id": "TMITEM-012",
+    "name": "Cổ Ấn Vấn Đạo",
+    "type": "Exclusive Item",
+    "cost": "90",
+    "currency": "TM",
+    "effect": "Mở thử thách account-lore đặc biệt; phần thưởng không phải TM",
+    "limit": "1/account milestone",
+    "scope": "Life",
+    "death_rule": "Vật lý mất khi chết nếu chưa dùng"
+  }
+]

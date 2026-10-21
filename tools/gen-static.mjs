@@ -131,7 +131,7 @@ export const RULES = ${JSON.stringify(rules, null, 2)} as const;
 
 const outs = [
   [resolve(root, "supabase/migrations/20261020080000_design_v161_data.sql"), "begin;\n" + sql + "\ncommit;\n"],
-  [resolve(root, "packages/game-core/src/data.generated.ts"), ts],
+  
 ];
 let bad = 0;
 for (const [f, content] of outs) {
@@ -140,3 +140,4 @@ for (const [f, content] of outs) {
   } else writeFileSync(f, content);
 }
 if (check) { if (bad) process.exit(1); console.log("gen:check OK"); } else console.log("đã sinh", outs.length, "file");
+

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "VEN-HG",
+    "name": "Vạn Bảo Các",
+    "min_stage_id": "HG01",
+    "currency": "LT_HP",
+    "kind": "public",
+    "access": "realm",
+    "npc_identity": null,
+    "ui_service": true,
+    "allows_buy": true,
+    "allows_sell": true,
+    "no_lethal": true
+  },
+  {
+    "id": "VEN-LG",
+    "name": "Linh Thiên Các",
+    "min_stage_id": "LG01",
+    "currency": "LT_TP",
+    "kind": "public",
+    "access": "realm",
+    "npc_identity": null,
+    "ui_service": true,
+    "allows_buy": true,
+    "allows_sell": true,
+    "no_lethal": true
+  },
+  {
+    "id": "VEN-TG",
+    "name": "Vạn Đạo Các",
+    "min_stage_id": "TG01",
+    "currency": "TN",
+    "kind": "public",
+    "access": "realm",
+    "npc_identity": null,
+    "ui_service": true,
+    "allows_buy": true,
+    "allows_sell": true,
+    "no_lethal": true
+  },
+  {
+    "id": "VEN-BH",
+    "name": "Chợ đen Hạ Giới",
+    "min_stage_id": "HG02",
+    "currency": "LT_HP",
+    "kind": "black",
+    "access": "realm",
+    "npc_identity": null,
+    "ui_service": true,
+    "allows_buy": true,
+    "allows_sell": true,
+    "no_lethal": true
+  },
+  {
+    "id": "VEN-BL",
+    "name": "Chợ đen Linh Giới",
+    "min_stage_id": "LG02",
+    "currency": "LT_TP",
+    "kind": "black",
+    "access": "realm",
+    "npc_identity": null,
+    "ui_service": true,
+    "allows_buy": true,
+    "allows_sell": true,
+    "no_lethal": true
+  }
+]

@@ -1,0 +1,3350 @@
+[
+  {
+    "item_id": "HERB-001",
+    "currency": "LT_HP",
+    "reference_price": "10",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-002",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-003",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-004",
+    "currency": "LT_HP",
+    "reference_price": "24",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-005",
+    "currency": "LT_HP",
+    "reference_price": "25",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-006",
+    "currency": "LT_HP",
+    "reference_price": "26",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-007",
+    "currency": "LT_HP",
+    "reference_price": "28",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-008",
+    "currency": "LT_HP",
+    "reference_price": "28",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-009",
+    "currency": "LT_HP",
+    "reference_price": "90",
+    "npc_buyback_cap": "18",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-010",
+    "currency": "LT_HP",
+    "reference_price": "95",
+    "npc_buyback_cap": "19",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-011",
+    "currency": "LT_HP",
+    "reference_price": "100",
+    "npc_buyback_cap": "20",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-012",
+    "currency": "LT_HP",
+    "reference_price": "300",
+    "npc_buyback_cap": "60",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-013",
+    "currency": "LT_HP",
+    "reference_price": "360",
+    "npc_buyback_cap": "72",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-014",
+    "currency": "LT_HP",
+    "reference_price": "420",
+    "npc_buyback_cap": "84",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-015",
+    "currency": "LT_HP",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-016",
+    "currency": "LT_HP",
+    "reference_price": "115",
+    "npc_buyback_cap": "23",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-017",
+    "currency": "LT_HP",
+    "reference_price": "110",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-018",
+    "currency": "LT_HP",
+    "reference_price": "125",
+    "npc_buyback_cap": "25",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-019",
+    "currency": "LT_HP",
+    "reference_price": "130",
+    "npc_buyback_cap": "26",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-020",
+    "currency": "LT_HP",
+    "reference_price": "450",
+    "npc_buyback_cap": "90",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-021",
+    "currency": "LT_HP",
+    "reference_price": "140",
+    "npc_buyback_cap": "28",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-022",
+    "currency": "LT_HP",
+    "reference_price": "135",
+    "npc_buyback_cap": "27",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-023",
+    "currency": "LT_HP",
+    "reference_price": "145",
+    "npc_buyback_cap": "29",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-024",
+    "currency": "LT_HP",
+    "reference_price": "145",
+    "npc_buyback_cap": "29",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-025",
+    "currency": "LT_TP",
+    "reference_price": "5",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-026",
+    "currency": "LT_TP",
+    "reference_price": "22",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-027",
+    "currency": "LT_TP",
+    "reference_price": "24",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-028",
+    "currency": "LT_TP",
+    "reference_price": "95",
+    "npc_buyback_cap": "19",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-029",
+    "currency": "LT_TP",
+    "reference_price": "28",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-030",
+    "currency": "LT_TP",
+    "reference_price": "32",
+    "npc_buyback_cap": "6",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-031",
+    "currency": "LT_TP",
+    "reference_price": "10",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-032",
+    "currency": "LT_TP",
+    "reference_price": "27",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-033",
+    "currency": "LT_TP",
+    "reference_price": "12",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-034",
+    "currency": "LT_TP",
+    "reference_price": "35",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-035",
+    "currency": "LT_TP",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-036",
+    "currency": "LT_TP",
+    "reference_price": "150",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-037",
+    "currency": "LT_TP",
+    "reference_price": "30",
+    "npc_buyback_cap": "6",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-038",
+    "currency": "LT_TP",
+    "reference_price": "40",
+    "npc_buyback_cap": "8",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-039",
+    "currency": "LT_TP",
+    "reference_price": "130",
+    "npc_buyback_cap": "26",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-040",
+    "currency": "LT_TP",
+    "reference_price": "34",
+    "npc_buyback_cap": "6",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-041",
+    "currency": "LT_TP",
+    "reference_price": "13",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-042",
+    "currency": "LT_TP",
+    "reference_price": "38",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-043",
+    "currency": "LT_TP",
+    "reference_price": "110",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-044",
+    "currency": "LT_TP",
+    "reference_price": "36",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-045",
+    "currency": "LT_TP",
+    "reference_price": "125",
+    "npc_buyback_cap": "25",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-046",
+    "currency": "LT_TP",
+    "reference_price": "42",
+    "npc_buyback_cap": "8",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-047",
+    "currency": "LT_TP",
+    "reference_price": "140",
+    "npc_buyback_cap": "28",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-048",
+    "currency": "LT_TP",
+    "reference_price": "180",
+    "npc_buyback_cap": "36",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-049",
+    "currency": "TN",
+    "reference_price": "3",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-050",
+    "currency": "TN",
+    "reference_price": "15",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-051",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-052",
+    "currency": "TN",
+    "reference_price": "16",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-053",
+    "currency": "TN",
+    "reference_price": "14",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-054",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-055",
+    "currency": "TN",
+    "reference_price": "16",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-056",
+    "currency": "TN",
+    "reference_price": "5",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-057",
+    "currency": "TN",
+    "reference_price": "75",
+    "npc_buyback_cap": "15",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-058",
+    "currency": "TN",
+    "reference_price": "82",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-059",
+    "currency": "TN",
+    "reference_price": "95",
+    "npc_buyback_cap": "19",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-060",
+    "currency": "TN",
+    "reference_price": "20",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-061",
+    "currency": "TN",
+    "reference_price": "100",
+    "npc_buyback_cap": "20",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-062",
+    "currency": "TN",
+    "reference_price": "130",
+    "npc_buyback_cap": "26",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-063",
+    "currency": "TN",
+    "reference_price": "115",
+    "npc_buyback_cap": "23",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-064",
+    "currency": "TN",
+    "reference_price": "150",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-065",
+    "currency": "TN",
+    "reference_price": "150",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-066",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-067",
+    "currency": "TN",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-068",
+    "currency": "TN",
+    "reference_price": "28",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-069",
+    "currency": "TN",
+    "reference_price": "90",
+    "npc_buyback_cap": "18",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-070",
+    "currency": "TN",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-071",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "HERB-072",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-001",
+    "currency": "LT_HP",
+    "reference_price": "15",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": "25",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-002",
+    "currency": "LT_HP",
+    "reference_price": "20",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": "25",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-003",
+    "currency": "LT_HP",
+    "reference_price": "90",
+    "npc_buyback_cap": "18",
+    "recipe_cash_inputs_plus_fee": "203",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-004",
+    "currency": "LT_HP",
+    "reference_price": "160",
+    "npc_buyback_cap": "32",
+    "recipe_cash_inputs_plus_fee": "508",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-005",
+    "currency": "LT_HP",
+    "reference_price": "140",
+    "npc_buyback_cap": "28",
+    "recipe_cash_inputs_plus_fee": "123",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-006",
+    "currency": "LT_HP",
+    "reference_price": "70",
+    "npc_buyback_cap": "14",
+    "recipe_cash_inputs_plus_fee": "161",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-007",
+    "currency": "LT_HP",
+    "reference_price": "420",
+    "npc_buyback_cap": "84",
+    "recipe_cash_inputs_plus_fee": "566",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-008",
+    "currency": "LT_HP",
+    "reference_price": "520",
+    "npc_buyback_cap": "104",
+    "recipe_cash_inputs_plus_fee": "266",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-009",
+    "currency": "LT_HP",
+    "reference_price": "650",
+    "npc_buyback_cap": "130",
+    "recipe_cash_inputs_plus_fee": "468",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-010",
+    "currency": "LT_HP",
+    "reference_price": "720",
+    "npc_buyback_cap": "135",
+    "recipe_cash_inputs_plus_fee": "271",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-011",
+    "currency": "LT_HP",
+    "reference_price": "800",
+    "npc_buyback_cap": "160",
+    "recipe_cash_inputs_plus_fee": "700",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-012",
+    "currency": "LT_HP",
+    "reference_price": "1600",
+    "npc_buyback_cap": "305",
+    "recipe_cash_inputs_plus_fee": "610",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-013",
+    "currency": "LT_HP",
+    "reference_price": "3200",
+    "npc_buyback_cap": "375",
+    "recipe_cash_inputs_plus_fee": "750",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-014",
+    "currency": "LT_HP",
+    "reference_price": "5200",
+    "npc_buyback_cap": "405",
+    "recipe_cash_inputs_plus_fee": "810",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-015",
+    "currency": "LT_HP",
+    "reference_price": "9000",
+    "npc_buyback_cap": "510",
+    "recipe_cash_inputs_plus_fee": "1020",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-016",
+    "currency": "LT_HP",
+    "reference_price": "300",
+    "npc_buyback_cap": "60",
+    "recipe_cash_inputs_plus_fee": "225",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-017",
+    "currency": "LT_HP",
+    "reference_price": "260",
+    "npc_buyback_cap": "52",
+    "recipe_cash_inputs_plus_fee": "283",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-018",
+    "currency": "LT_HP",
+    "reference_price": "480",
+    "npc_buyback_cap": "75",
+    "recipe_cash_inputs_plus_fee": "151",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-019",
+    "currency": "LT_HP",
+    "reference_price": "520",
+    "npc_buyback_cap": "85",
+    "recipe_cash_inputs_plus_fee": "170",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-020",
+    "currency": "LT_HP",
+    "reference_price": "1100",
+    "npc_buyback_cap": "162",
+    "recipe_cash_inputs_plus_fee": "325",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-021",
+    "currency": "LT_TP",
+    "reference_price": "25",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": "17",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-022",
+    "currency": "LT_TP",
+    "reference_price": "60",
+    "npc_buyback_cap": "12",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-023",
+    "currency": "LT_TP",
+    "reference_price": "40",
+    "npc_buyback_cap": "8",
+    "recipe_cash_inputs_plus_fee": "58",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-024",
+    "currency": "LT_TP",
+    "reference_price": "180",
+    "npc_buyback_cap": "33",
+    "recipe_cash_inputs_plus_fee": "67",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-025",
+    "currency": "LT_TP",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": "50",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-026",
+    "currency": "LT_TP",
+    "reference_price": "420",
+    "npc_buyback_cap": "84",
+    "recipe_cash_inputs_plus_fee": "276",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-027",
+    "currency": "LT_TP",
+    "reference_price": "1200",
+    "npc_buyback_cap": "195",
+    "recipe_cash_inputs_plus_fee": "390",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-028",
+    "currency": "LT_TP",
+    "reference_price": "800",
+    "npc_buyback_cap": "135",
+    "recipe_cash_inputs_plus_fee": "270",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-029",
+    "currency": "LT_TP",
+    "reference_price": "220",
+    "npc_buyback_cap": "44",
+    "recipe_cash_inputs_plus_fee": "88",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-030",
+    "currency": "LT_TP",
+    "reference_price": "180",
+    "npc_buyback_cap": "35",
+    "recipe_cash_inputs_plus_fee": "71",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-031",
+    "currency": "LT_TP",
+    "reference_price": "160",
+    "npc_buyback_cap": "32",
+    "recipe_cash_inputs_plus_fee": "74",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-032",
+    "currency": "LT_TP",
+    "reference_price": "650",
+    "npc_buyback_cap": "97",
+    "recipe_cash_inputs_plus_fee": "195",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-033",
+    "currency": "LT_TP",
+    "reference_price": "95",
+    "npc_buyback_cap": "19",
+    "recipe_cash_inputs_plus_fee": "46",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-034",
+    "currency": "LT_TP",
+    "reference_price": "980",
+    "npc_buyback_cap": "139",
+    "recipe_cash_inputs_plus_fee": "279",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-035",
+    "currency": "LT_TP",
+    "reference_price": "880",
+    "npc_buyback_cap": "90",
+    "recipe_cash_inputs_plus_fee": "181",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-036",
+    "currency": "LT_TP",
+    "reference_price": "240",
+    "npc_buyback_cap": "48",
+    "recipe_cash_inputs_plus_fee": "149",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-037",
+    "currency": "LT_TP",
+    "reference_price": "110",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "71",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-038",
+    "currency": "LT_TP",
+    "reference_price": "130",
+    "npc_buyback_cap": "15",
+    "recipe_cash_inputs_plus_fee": "30",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-039",
+    "currency": "LT_TP",
+    "reference_price": "75",
+    "npc_buyback_cap": "15",
+    "recipe_cash_inputs_plus_fee": "111",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-040",
+    "currency": "LT_TP",
+    "reference_price": "300",
+    "npc_buyback_cap": "46",
+    "recipe_cash_inputs_plus_fee": "92",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-041",
+    "currency": "TN",
+    "reference_price": "8",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": "9",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-042",
+    "currency": "TN",
+    "reference_price": "10",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": "32",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-043",
+    "currency": "TN",
+    "reference_price": "30",
+    "npc_buyback_cap": "6",
+    "recipe_cash_inputs_plus_fee": "180",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-044",
+    "currency": "TN",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": "171",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-045",
+    "currency": "TN",
+    "reference_price": "160",
+    "npc_buyback_cap": "32",
+    "recipe_cash_inputs_plus_fee": "190",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-046",
+    "currency": "TN",
+    "reference_price": "300",
+    "npc_buyback_cap": "60",
+    "recipe_cash_inputs_plus_fee": "230",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-047",
+    "currency": "TN",
+    "reference_price": "45",
+    "npc_buyback_cap": "9",
+    "recipe_cash_inputs_plus_fee": "126",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-048",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-049",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-050",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-051",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-052",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": "49",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-053",
+    "currency": "TN",
+    "reference_price": "90",
+    "npc_buyback_cap": "18",
+    "recipe_cash_inputs_plus_fee": "220",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-054",
+    "currency": "TN",
+    "reference_price": "220",
+    "npc_buyback_cap": "44",
+    "recipe_cash_inputs_plus_fee": "141",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-055",
+    "currency": "TN",
+    "reference_price": "70",
+    "npc_buyback_cap": "14",
+    "recipe_cash_inputs_plus_fee": "134",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-056",
+    "currency": "TN",
+    "reference_price": "70",
+    "npc_buyback_cap": "14",
+    "recipe_cash_inputs_plus_fee": "142",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-057",
+    "currency": "TN",
+    "reference_price": "55",
+    "npc_buyback_cap": "11",
+    "recipe_cash_inputs_plus_fee": "24",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-058",
+    "currency": "TN",
+    "reference_price": "65",
+    "npc_buyback_cap": "13",
+    "recipe_cash_inputs_plus_fee": "97",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-059",
+    "currency": "TN",
+    "reference_price": "20",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": "35",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-060",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-001",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "59",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-002",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "59",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-003",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "73",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-004",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "58",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-005",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "58",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-006",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "58",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-007",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": "58",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-008",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-009",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-010",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-011",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-012",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-013",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-014",
+    "currency": "LT_HP",
+    "reference_price": "114",
+    "npc_buyback_cap": "22",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-015",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "32",
+    "recipe_cash_inputs_plus_fee": "78",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-016",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "32",
+    "recipe_cash_inputs_plus_fee": "78",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-017",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "32",
+    "recipe_cash_inputs_plus_fee": "78",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-018",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "31",
+    "recipe_cash_inputs_plus_fee": "63",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-019",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "31",
+    "recipe_cash_inputs_plus_fee": "63",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-020",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "31",
+    "recipe_cash_inputs_plus_fee": "63",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-021",
+    "currency": "LT_HP",
+    "reference_price": "161",
+    "npc_buyback_cap": "31",
+    "recipe_cash_inputs_plus_fee": "63",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-022",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "40",
+    "recipe_cash_inputs_plus_fee": "81",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-023",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "40",
+    "recipe_cash_inputs_plus_fee": "81",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-024",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "40",
+    "recipe_cash_inputs_plus_fee": "81",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-025",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "33",
+    "recipe_cash_inputs_plus_fee": "66",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-026",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "33",
+    "recipe_cash_inputs_plus_fee": "66",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-027",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "33",
+    "recipe_cash_inputs_plus_fee": "66",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-028",
+    "currency": "LT_HP",
+    "reference_price": "229",
+    "npc_buyback_cap": "33",
+    "recipe_cash_inputs_plus_fee": "66",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-029",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "29",
+    "recipe_cash_inputs_plus_fee": "58",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-030",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "49",
+    "recipe_cash_inputs_plus_fee": "98",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-031",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "49",
+    "recipe_cash_inputs_plus_fee": "98",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-032",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "25",
+    "recipe_cash_inputs_plus_fee": "50",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-033",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "25",
+    "recipe_cash_inputs_plus_fee": "50",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-034",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "25",
+    "recipe_cash_inputs_plus_fee": "50",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-035",
+    "currency": "LT_TP",
+    "reference_price": "488",
+    "npc_buyback_cap": "25",
+    "recipe_cash_inputs_plus_fee": "50",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-036",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "34",
+    "recipe_cash_inputs_plus_fee": "68",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-037",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "54",
+    "recipe_cash_inputs_plus_fee": "108",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-038",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "54",
+    "recipe_cash_inputs_plus_fee": "108",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-039",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-040",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-041",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-042",
+    "currency": "LT_TP",
+    "reference_price": "693",
+    "npc_buyback_cap": "30",
+    "recipe_cash_inputs_plus_fee": "60",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-043",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "41",
+    "recipe_cash_inputs_plus_fee": "83",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-044",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "61",
+    "recipe_cash_inputs_plus_fee": "123",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-045",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "61",
+    "recipe_cash_inputs_plus_fee": "123",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-046",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "37",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-047",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "37",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-048",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "37",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-049",
+    "currency": "LT_TP",
+    "reference_price": "984",
+    "npc_buyback_cap": "37",
+    "recipe_cash_inputs_plus_fee": "75",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-050",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "68",
+    "recipe_cash_inputs_plus_fee": "136",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-051",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "82",
+    "recipe_cash_inputs_plus_fee": "164",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-052",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "82",
+    "recipe_cash_inputs_plus_fee": "164",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-053",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "59",
+    "recipe_cash_inputs_plus_fee": "118",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-054",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "59",
+    "recipe_cash_inputs_plus_fee": "118",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-055",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "59",
+    "recipe_cash_inputs_plus_fee": "118",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-056",
+    "currency": "TN",
+    "reference_price": "1746",
+    "npc_buyback_cap": "59",
+    "recipe_cash_inputs_plus_fee": "118",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-057",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "86",
+    "recipe_cash_inputs_plus_fee": "172",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-058",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "100",
+    "recipe_cash_inputs_plus_fee": "200",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-059",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "100",
+    "recipe_cash_inputs_plus_fee": "200",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-060",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "77",
+    "recipe_cash_inputs_plus_fee": "154",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-061",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "77",
+    "recipe_cash_inputs_plus_fee": "154",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-062",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "77",
+    "recipe_cash_inputs_plus_fee": "154",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-063",
+    "currency": "TN",
+    "reference_price": "2480",
+    "npc_buyback_cap": "77",
+    "recipe_cash_inputs_plus_fee": "154",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-064",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "112",
+    "recipe_cash_inputs_plus_fee": "225",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-065",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "126",
+    "recipe_cash_inputs_plus_fee": "253",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-066",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "126",
+    "recipe_cash_inputs_plus_fee": "253",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-067",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "103",
+    "recipe_cash_inputs_plus_fee": "207",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-068",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "103",
+    "recipe_cash_inputs_plus_fee": "207",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-069",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "103",
+    "recipe_cash_inputs_plus_fee": "207",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-070",
+    "currency": "TN",
+    "reference_price": "3521",
+    "npc_buyback_cap": "103",
+    "recipe_cash_inputs_plus_fee": "207",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-071",
+    "currency": "LT_HP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-072",
+    "currency": "LT_HP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-073",
+    "currency": "LT_HP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-074",
+    "currency": "LT_HP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-075",
+    "currency": "LT_TP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-076",
+    "currency": "LT_TP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-077",
+    "currency": "LT_TP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-078",
+    "currency": "LT_TP",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-079",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-080",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-081",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "EQ-082",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-001",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-002",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-003",
+    "currency": "LT_HP",
+    "reference_price": "4",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-004",
+    "currency": "LT_HP",
+    "reference_price": "30",
+    "npc_buyback_cap": "6",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-005",
+    "currency": "LT_HP",
+    "reference_price": "45",
+    "npc_buyback_cap": "9",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-006",
+    "currency": "LT_HP",
+    "reference_price": "40",
+    "npc_buyback_cap": "8",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-007",
+    "currency": "LT_HP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-008",
+    "currency": "LT_HP",
+    "reference_price": "120",
+    "npc_buyback_cap": "24",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-009",
+    "currency": "LT_HP",
+    "reference_price": "35",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-010",
+    "currency": "LT_HP",
+    "reference_price": "35",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-011",
+    "currency": "LT_HP",
+    "reference_price": "35",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-012",
+    "currency": "LT_HP",
+    "reference_price": "35",
+    "npc_buyback_cap": "7",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-013",
+    "currency": "LT_HP",
+    "reference_price": "75",
+    "npc_buyback_cap": "15",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-014",
+    "currency": "LT_HP",
+    "reference_price": "15",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-015",
+    "currency": "LT_HP",
+    "reference_price": "15",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-016",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-018",
+    "currency": "LT_HP",
+    "reference_price": "30",
+    "npc_buyback_cap": "6",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-019",
+    "currency": "LT_TP",
+    "reference_price": "4",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-020",
+    "currency": "LT_TP",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-021",
+    "currency": "LT_TP",
+    "reference_price": "16",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-022",
+    "currency": "LT_TP",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-023",
+    "currency": "LT_TP",
+    "reference_price": "20",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-024",
+    "currency": "LT_TP",
+    "reference_price": "28",
+    "npc_buyback_cap": "5",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-025",
+    "currency": "LT_TP",
+    "reference_price": "8",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-026",
+    "currency": "LT_TP",
+    "reference_price": "8",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-027",
+    "currency": "LT_TP",
+    "reference_price": "10",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-028",
+    "currency": "LT_TP",
+    "reference_price": "10",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-029",
+    "currency": "LT_TP",
+    "reference_price": "9",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-031",
+    "currency": "LT_TP",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-032",
+    "currency": "LT_TP",
+    "reference_price": "22",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-035",
+    "currency": "LT_TP",
+    "reference_price": "7",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-036",
+    "currency": "LT_TP",
+    "reference_price": "60",
+    "npc_buyback_cap": "12",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-037",
+    "currency": "TN",
+    "reference_price": "3",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-038",
+    "currency": "TN",
+    "reference_price": "14",
+    "npc_buyback_cap": "2",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-039",
+    "currency": "TN",
+    "reference_price": "60",
+    "npc_buyback_cap": "12",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-040",
+    "currency": "TN",
+    "reference_price": "20",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-041",
+    "currency": "TN",
+    "reference_price": "16",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-042",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-043",
+    "currency": "TN",
+    "reference_price": "6",
+    "npc_buyback_cap": "1",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-044",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-045",
+    "currency": "TN",
+    "reference_price": "65",
+    "npc_buyback_cap": "13",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-046",
+    "currency": "TN",
+    "reference_price": "65",
+    "npc_buyback_cap": "13",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-047",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-048",
+    "currency": "TN",
+    "reference_price": "18",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-049",
+    "currency": "TN",
+    "reference_price": "20",
+    "npc_buyback_cap": "4",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-050",
+    "currency": "TN",
+    "reference_price": "55",
+    "npc_buyback_cap": "11",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-051",
+    "currency": "TN",
+    "reference_price": "16",
+    "npc_buyback_cap": "3",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-052",
+    "currency": "TN",
+    "reference_price": "50",
+    "npc_buyback_cap": "10",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-053",
+    "currency": "TN",
+    "reference_price": "80",
+    "npc_buyback_cap": "16",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "MAT-054",
+    "currency": "TN",
+    "reference_price": "0",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-001",
+    "currency": "LT_HP",
+    "reference_price": "20",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-002",
+    "currency": "LT_HP",
+    "reference_price": "24",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-003",
+    "currency": "LT_HP",
+    "reference_price": "24",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-004",
+    "currency": "LT_HP",
+    "reference_price": "48",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-005",
+    "currency": "LT_HP",
+    "reference_price": "50",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-006",
+    "currency": "LT_HP",
+    "reference_price": "52",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-007",
+    "currency": "LT_HP",
+    "reference_price": "56",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-008",
+    "currency": "LT_HP",
+    "reference_price": "56",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-009",
+    "currency": "LT_HP",
+    "reference_price": "180",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-010",
+    "currency": "LT_HP",
+    "reference_price": "190",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-011",
+    "currency": "LT_HP",
+    "reference_price": "200",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-012",
+    "currency": "LT_HP",
+    "reference_price": "600",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-013",
+    "currency": "LT_HP",
+    "reference_price": "720",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-014",
+    "currency": "LT_HP",
+    "reference_price": "840",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-015",
+    "currency": "LT_HP",
+    "reference_price": "240",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-016",
+    "currency": "LT_HP",
+    "reference_price": "230",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-017",
+    "currency": "LT_HP",
+    "reference_price": "220",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-018",
+    "currency": "LT_HP",
+    "reference_price": "250",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-019",
+    "currency": "LT_HP",
+    "reference_price": "260",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-020",
+    "currency": "LT_HP",
+    "reference_price": "900",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-021",
+    "currency": "LT_HP",
+    "reference_price": "280",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-022",
+    "currency": "LT_HP",
+    "reference_price": "270",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-023",
+    "currency": "LT_HP",
+    "reference_price": "290",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-024",
+    "currency": "LT_HP",
+    "reference_price": "290",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-025",
+    "currency": "LT_TP",
+    "reference_price": "10",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-026",
+    "currency": "LT_TP",
+    "reference_price": "44",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-027",
+    "currency": "LT_TP",
+    "reference_price": "48",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-028",
+    "currency": "LT_TP",
+    "reference_price": "190",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-029",
+    "currency": "LT_TP",
+    "reference_price": "56",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-030",
+    "currency": "LT_TP",
+    "reference_price": "64",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-031",
+    "currency": "LT_TP",
+    "reference_price": "20",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-032",
+    "currency": "LT_TP",
+    "reference_price": "54",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-033",
+    "currency": "LT_TP",
+    "reference_price": "24",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-034",
+    "currency": "LT_TP",
+    "reference_price": "70",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-035",
+    "currency": "LT_TP",
+    "reference_price": "240",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-036",
+    "currency": "LT_TP",
+    "reference_price": "300",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-037",
+    "currency": "LT_TP",
+    "reference_price": "60",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-038",
+    "currency": "LT_TP",
+    "reference_price": "80",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-039",
+    "currency": "LT_TP",
+    "reference_price": "260",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-040",
+    "currency": "LT_TP",
+    "reference_price": "68",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-041",
+    "currency": "LT_TP",
+    "reference_price": "26",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-042",
+    "currency": "LT_TP",
+    "reference_price": "76",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-043",
+    "currency": "LT_TP",
+    "reference_price": "220",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-044",
+    "currency": "LT_TP",
+    "reference_price": "72",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-045",
+    "currency": "LT_TP",
+    "reference_price": "250",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-046",
+    "currency": "LT_TP",
+    "reference_price": "84",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-047",
+    "currency": "LT_TP",
+    "reference_price": "280",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-048",
+    "currency": "LT_TP",
+    "reference_price": "360",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-049",
+    "currency": "TN",
+    "reference_price": "6",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-050",
+    "currency": "TN",
+    "reference_price": "30",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-051",
+    "currency": "TN",
+    "reference_price": "36",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-052",
+    "currency": "TN",
+    "reference_price": "32",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-053",
+    "currency": "TN",
+    "reference_price": "28",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-054",
+    "currency": "TN",
+    "reference_price": "36",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-055",
+    "currency": "TN",
+    "reference_price": "32",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-056",
+    "currency": "TN",
+    "reference_price": "10",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-057",
+    "currency": "TN",
+    "reference_price": "150",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-058",
+    "currency": "TN",
+    "reference_price": "164",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-059",
+    "currency": "TN",
+    "reference_price": "190",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-060",
+    "currency": "TN",
+    "reference_price": "40",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-061",
+    "currency": "TN",
+    "reference_price": "200",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-062",
+    "currency": "TN",
+    "reference_price": "260",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-063",
+    "currency": "TN",
+    "reference_price": "230",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-064",
+    "currency": "TN",
+    "reference_price": "300",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-065",
+    "currency": "TN",
+    "reference_price": "300",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-067",
+    "currency": "TN",
+    "reference_price": "240",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-068",
+    "currency": "TN",
+    "reference_price": "56",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-069",
+    "currency": "TN",
+    "reference_price": "180",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "SEED-HERB-070",
+    "currency": "TN",
+    "reference_price": "240",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "FERT-HG",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "CAT-HG",
+    "currency": "LT_HP",
+    "reference_price": "20",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "INK-HG",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "FERT-LG",
+    "currency": "LT_TP",
+    "reference_price": "2",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "CAT-LG",
+    "currency": "LT_TP",
+    "reference_price": "8",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "INK-LG",
+    "currency": "LT_TP",
+    "reference_price": "2",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "FERT-TG",
+    "currency": "TN",
+    "reference_price": "1",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "CAT-TG",
+    "currency": "TN",
+    "reference_price": "4",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "INK-TG",
+    "currency": "TN",
+    "reference_price": "1",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-001",
+    "currency": "LT_HP",
+    "reference_price": "40",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "11",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-002",
+    "currency": "LT_HP",
+    "reference_price": "50",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "11",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-003",
+    "currency": "LT_HP",
+    "reference_price": "60",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "11",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-002",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-004",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-006",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-008",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-010",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-013",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-014",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-016",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-017",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-018",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-019",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-021",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-023",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-028",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-029",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-030",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-032",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-033",
+    "currency": "LT_HP",
+    "reference_price": "12",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-034",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "GFT-HG-035",
+    "currency": "LT_HP",
+    "reference_price": "5",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": null,
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-004",
+    "currency": "LT_TP",
+    "reference_price": "80",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "11",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-005",
+    "currency": "LT_TP",
+    "reference_price": "90",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "11",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-006",
+    "currency": "LT_TP",
+    "reference_price": "100",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "11",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-007",
+    "currency": "TN",
+    "reference_price": "110",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "22",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-008",
+    "currency": "TN",
+    "reference_price": "120",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "22",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "TAL-009",
+    "currency": "TN",
+    "reference_price": "130",
+    "npc_buyback_cap": "0",
+    "recipe_cash_inputs_plus_fee": "22",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  },
+  {
+    "item_id": "PILL-061",
+    "currency": "TN",
+    "reference_price": "45",
+    "npc_buyback_cap": "9",
+    "recipe_cash_inputs_plus_fee": "20",
+    "rule": "max20%reference and max50%complete recipe cash cost;never negative;quality does not increase NPC price",
+    "design_status": "BALANCE_PROPOSAL"
+  }
+]

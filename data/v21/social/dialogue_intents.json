@@ -1,0 +1,690 @@
+[
+  {
+    "id": "hg_tvt_02_quest_dau_tich_bi_canh",
+    "scope": "life",
+    "source_scene_id": "HG_TVT_02_S02",
+    "npc_id": "NPC-02",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tvt_02_quest_co_kiem",
+    "scope": "life",
+    "source_scene_id": "HG_TVT_02_S03",
+    "npc_id": "NPC-02",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tvt_02_lore_su_phu_chu_dong",
+    "scope": "life",
+    "source_scene_id": "HG_TVT_02_S04",
+    "npc_id": "NPC-02",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tvt_02_route_phi_thang",
+    "scope": "life",
+    "source_scene_id": "HG_TVT_02_S05",
+    "npc_id": "NPC-02",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tvt_02_route_buong_qua_khu",
+    "scope": "life",
+    "source_scene_id": "HG_TVT_02_S05",
+    "npc_id": "NPC-02",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_hsm_02_quest_tre_mat_nha",
+    "scope": "life",
+    "source_scene_id": "HG_HSM_02_S02",
+    "npc_id": "NPC-03",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_hsm_02_quest_nhan_chung",
+    "scope": "life",
+    "source_scene_id": "HG_HSM_02_S03",
+    "npc_id": "NPC-03",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_hsm_02_lore_ky_uc_bi_sua",
+    "scope": "life",
+    "source_scene_id": "HG_HSM_02_S04",
+    "npc_id": "NPC-03",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_hsm_02_route_buong_sat_nghiep",
+    "scope": "life",
+    "source_scene_id": "HG_HSM_02_S05",
+    "npc_id": "NPC-03",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_hsm_02_route_chua_lanh",
+    "scope": "life",
+    "source_scene_id": "HG_HSM_02_S05",
+    "npc_id": "NPC-03",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_hsm_02_route_sat_dao",
+    "scope": "life",
+    "source_scene_id": "HG_HSM_02_S05",
+    "npc_id": "NPC-03",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_03_quest_do_dau_an",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_03_S02",
+    "npc_id": "NPC-05",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_03_lore_gia_toc_cam_tran",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_03_S03",
+    "npc_id": "NPC-05",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_03_quest_sau_ky_hieu",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_03_S04",
+    "npc_id": "NPC-05",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_03_route_linh_gioi_thien_co",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_03_S05",
+    "npc_id": "NPC-05",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_04_lore_no_lo_dan",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_04_S02",
+    "npc_id": "NPC-04",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_04_quest_kiem_toan_dan",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_04_S03",
+    "npc_id": "NPC-04",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_04_route_hoa_giai",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_04_S04",
+    "npc_id": "NPC-04",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_04_route_niem_phong",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_04_S04",
+    "npc_id": "NPC-04",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_04_route_bach_thao_thanh_vien",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_04_S05",
+    "npc_id": "NPC-04",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_vdc_04_route_hoi_dong_y_duoc",
+    "scope": "life",
+    "source_scene_id": "HG_VDC_04_S05",
+    "npc_id": "NPC-04",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tl_01_quest_hoi_quy_huong",
+    "scope": "life",
+    "source_scene_id": "HG_TL_01_S01",
+    "npc_id": "NPC-01",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tl_01_quest_mang_luoi_cuu_tro",
+    "scope": "life",
+    "source_scene_id": "HG_TL_01_S03",
+    "npc_id": "NPC-01",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tl_01_route_doc_lap_cao_thanh",
+    "scope": "life",
+    "source_scene_id": "HG_TL_01_S04",
+    "npc_id": "NPC-01",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tl_01_route_quy_huong_tu_nguyen",
+    "scope": "life",
+    "source_scene_id": "HG_TL_01_S05",
+    "npc_id": "NPC-01",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "hg_tl_01_route_ho_tro_nguoi_ve",
+    "scope": "life",
+    "source_scene_id": "HG_TL_01_S05",
+    "npc_id": "NPC-01",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s01_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC06_S01",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s01_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC06_S01",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s01_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC06_S01",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s02_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC06_S02",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s02_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC06_S02",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s02_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC06_S02",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s03_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC06_S03",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s03_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC06_S03",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s03_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC06_S03",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s04_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC06_S04",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s04_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC06_S04",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s04_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC06_S04",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s05_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC06_S05",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s05_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC06_S05",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc06_s05_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC06_S05",
+    "npc_id": "NPC-06",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s01_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC07_S01",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s01_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC07_S01",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s01_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC07_S01",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s02_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC07_S02",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s02_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC07_S02",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s02_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC07_S02",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s03_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC07_S03",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s03_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC07_S03",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s03_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC07_S03",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s04_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC07_S04",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s04_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC07_S04",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s04_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC07_S04",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s05_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC07_S05",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s05_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC07_S05",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc07_s05_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC07_S05",
+    "npc_id": "NPC-07",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s01_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC08_S01",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s01_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC08_S01",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s01_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC08_S01",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s02_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC08_S02",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s02_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC08_S02",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s02_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC08_S02",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s03_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC08_S03",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s03_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC08_S03",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s03_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC08_S03",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s04_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC08_S04",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s04_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC08_S04",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s04_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC08_S04",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s05_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC08_S05",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s05_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC08_S05",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc08_s05_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC08_S05",
+    "npc_id": "NPC-08",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s01_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC09_S01",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s01_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC09_S01",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s01_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC09_S01",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s02_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC09_S02",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s02_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC09_S02",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s02_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC09_S02",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s03_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC09_S03",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s03_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC09_S03",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s03_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC09_S03",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s04_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC09_S04",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s04_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC09_S04",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s04_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC09_S04",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s05_choice_a",
+    "scope": "life",
+    "source_scene_id": "NPC09_S05",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s05_choice_b",
+    "scope": "life",
+    "source_scene_id": "NPC09_S05",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  },
+  {
+    "id": "npc09_s05_choice_c",
+    "scope": "life",
+    "source_scene_id": "NPC09_S05",
+    "npc_id": "NPC-09",
+    "semantics": "dialogue_intent_only",
+    "quest_completion_requires_server_validation": true
+  }
+]

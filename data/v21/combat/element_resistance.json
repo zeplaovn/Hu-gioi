@@ -1,0 +1,3152 @@
+[
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-001",
+    "monster": "Hắc Lang",
+    "attack_element": "Vật lý",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Kim",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Mộc",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Thổ",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-002",
+    "monster": "Độc Xà",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Mộc",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Thủy",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Thổ",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-003",
+    "monster": "Hoang Thử Yêu",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Mộc",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Thủy",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Thổ",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-004",
+    "monster": "Thiết Giáp Hùng",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Phong",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-005",
+    "monster": "Huyết Điêu",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Kim",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Mộc",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Hỏa",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-006",
+    "monster": "Kiếm Xỉ Hổ",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Ám",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-007",
+    "monster": "Ma Hầu",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Thủy",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Hỏa",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Thổ",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-008",
+    "monster": "Thanh Giao",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Kim",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Thủy",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Hỏa",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-009",
+    "monster": "Hỏa Lân Thú",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Ám",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-010",
+    "monster": "Cửu Vĩ Hồ",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Phong",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-011",
+    "monster": "Kim Dực Bằng",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Mộc",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Thủy",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Thổ",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-012",
+    "monster": "Huyền Quy",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Không Gian",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-013",
+    "monster": "Hư Không Thú",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Quang",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-014",
+    "monster": "Tinh Hồn Lang",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Ám",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-015",
+    "monster": "Vô Tướng Ma Khôi",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Mộc",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Thủy",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Thổ",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-016",
+    "monster": "Pháp Tướng Cự Linh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Kim",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Mộc",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Thổ",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-017",
+    "monster": "Giới Ngoại Dị Trùng",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Kim",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Mộc",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-018",
+    "monster": "Cổ Kiếm Linh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Ám",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-019",
+    "monster": "Sát Hồn Vương",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Lôi",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-020",
+    "monster": "Giới Kiếp Lôi Linh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Quang",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-021",
+    "monster": "Tiên Linh Hạc",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Kim",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Mộc",
+    "resistance_pct": "8.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Hỏa",
+    "resistance_pct": "-10.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-022",
+    "monster": "Kim Giáp Tiên Vệ",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Ám",
+    "resistance_pct": "20.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-023",
+    "monster": "Sát Suy Ma Ảnh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-024",
+    "monster": "Thời Sa Cổ Thú",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-025",
+    "monster": "Hư Không Long Ảnh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-026",
+    "monster": "Luân Hồi Hồn Tướng",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-027",
+    "monster": "Đạo Tắc Hóa Thân",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Lôi",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-028",
+    "monster": "Cửu Tiêu Phản Tiên",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Quang",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-029",
+    "monster": "Đại La Tàn Ảnh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Kim",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Mộc",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Thủy",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Hỏa",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Thổ",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Băng",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Lôi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Phong",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Quang",
+    "resistance_pct": "24.0",
+    "note": "Âm = yếu; dương = kháng"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Ám",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Không Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Thời Gian",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Luân Hồi",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Ngũ Hành",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  },
+  {
+    "monster_id": "MON-030",
+    "monster": "Đài Quy Hương Thủ Ảnh",
+    "attack_element": "Vật lý",
+    "resistance_pct": "0.0",
+    "note": "Âm = kháng; dương = yếu điểm"
+  }
+]

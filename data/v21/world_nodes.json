@@ -1,0 +1,212 @@
+[
+  {
+    "id": "HG.TOWN",
+    "world": "Hạ Giới",
+    "name": "Trấn Lạc Phong",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "HG.SECT",
+    "world": "Hạ Giới",
+    "name": "Sơn môn Hạ Giới",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "HG.STREAM",
+    "world": "Hạ Giới",
+    "name": "Suối Địa Mạch",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "HG.HERB",
+    "world": "Hạ Giới",
+    "name": "Linh thảo viên",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "HG.MINE",
+    "world": "Hạ Giới",
+    "name": "Mỏ Linh Thiết",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "HG.RUINS",
+    "world": "Hạ Giới",
+    "name": "Di tích Huyền Quy",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "HG.GATE",
+    "world": "Hạ Giới",
+    "name": "Giới môn Hạ Giới",
+    "min_stage_id": "HG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.TOWN",
+    "world": "Linh Giới",
+    "name": "Thành Vân Trung",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.SECT",
+    "world": "Linh Giới",
+    "name": "Sơn môn Linh Giới",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.ARCHIVE",
+    "world": "Linh Giới",
+    "name": "Cổ Sử Các",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.HERB",
+    "world": "Linh Giới",
+    "name": "Bách Thảo linh viên",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.MINE",
+    "world": "Linh Giới",
+    "name": "Tinh Không khoáng vực",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.RUINS",
+    "world": "Linh Giới",
+    "name": "Di tích Thiên Cơ",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "LG.GATE",
+    "world": "Linh Giới",
+    "name": "Giới Nhai",
+    "min_stage_id": "LG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.TOWN",
+    "world": "Tiên Giới",
+    "name": "Thiên Sổ thành",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.SECT",
+    "world": "Tiên Giới",
+    "name": "Đạo viện Tiên Giới",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.ARCHIVE",
+    "world": "Tiên Giới",
+    "name": "Thiên Sổ",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.HERB",
+    "world": "Tiên Giới",
+    "name": "Tiên thảo viên",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.MINE",
+    "world": "Tiên Giới",
+    "name": "Tiên Kim khoáng vực",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.MEMORY",
+    "world": "Tiên Giới",
+    "name": "U Minh ký ức điện",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  },
+  {
+    "id": "TG.GATE",
+    "world": "Tiên Giới",
+    "name": "Đài Quy Hương",
+    "min_stage_id": "TG01",
+    "default_mode": "safe",
+    "lethal_requires_explicit_encounter_override": true,
+    "travel_seconds": 10,
+    "same_world_return_allowed": true
+  }
+]

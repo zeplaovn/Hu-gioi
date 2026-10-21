@@ -1,0 +1,101 @@
+[
+  {
+    "id": "NPC-01",
+    "name": "Trần Minh",
+    "worlds": "Hạ Giới; Linh Giới; Tiên Giới",
+    "roles": "Hướng dẫn, Hội Quy Hương, nối tuyến chính",
+    "fallback": "Lạc Phong; liên lạc qua thư sau khi rời giới",
+    "social_content_worlds": [
+      "Hạ Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-02",
+    "name": "Tô Nhược Vân",
+    "worlds": "Hạ Giới; Linh Giới",
+    "roles": "Thanh Vân, Thái Hư, khảo hạch kiếm đạo, shop",
+    "fallback": "Đại diện được ủy quyền; không kiêm chức chưởng môn",
+    "social_content_worlds": [
+      "Hạ Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-03",
+    "name": "Diệp Hồng Y",
+    "worlds": "Hạ Giới; Linh Giới; Tiên Giới",
+    "roles": "Huyết Sát, Vô Tướng, nhánh sát nghiệp, shop",
+    "fallback": "Nhánh chuộc lỗi vẫn có thư ủy nhiệm nếu vắng mặt",
+    "social_content_worlds": [
+      "Hạ Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-04",
+    "name": "Bạch Tử Yên",
+    "worlds": "Hạ Giới; Linh Giới",
+    "roles": "Vạn Dược, Bách Thảo, luyện đan, shop",
+    "fallback": "Cứu trợ có phương án bảo đảm",
+    "social_content_worlds": [
+      "Hạ Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-05",
+    "name": "Tạ Thiên Cơ",
+    "worlds": "Hạ Giới; Linh Giới; Tiên Giới",
+    "roles": "Trận pháp, Thiên Cơ Các, Vạn Pháp, giới môn, shop",
+    "fallback": "Dùng truyền tin khi chưa thể phi thăng",
+    "social_content_worlds": [
+      "Hạ Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-06",
+    "name": "Cơ Vô Ngôn",
+    "worlds": "Linh Giới",
+    "roles": "Sử quan, xác minh chứng cứ",
+    "fallback": "Đối thoại bằng văn tự",
+    "social_content_worlds": [
+      "Linh Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-07",
+    "name": "Tư Mệnh Tiên Quân",
+    "worlds": "Tiên Giới",
+    "roles": "Thiên Sổ, Tiên Đình, tranh luận luật, shop",
+    "fallback": "Vai phản biện về luật; không thay toàn bộ phản diện",
+    "social_content_worlds": [
+      "Tiên Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-08",
+    "name": "Mạnh Bà Vô Diện",
+    "worlds": "Tiên Giới",
+    "roles": "Ký ức, U Minh, shop",
+    "fallback": "Ký ức phải có đồng thuận",
+    "social_content_worlds": [
+      "Tiên Giới"
+    ],
+    "social_content_status": "ready"
+  },
+  {
+    "id": "NPC-09",
+    "name": "Người Gác Đài Quy Hương",
+    "worlds": "Tiên Giới",
+    "roles": "Quy Phàm, lựa chọn cuối, shop",
+    "fallback": "Không tiết lộ hậu truyện trước mở khóa",
+    "social_content_worlds": [
+      "Tiên Giới"
+    ],
+    "social_content_status": "ready"
+  }
+]

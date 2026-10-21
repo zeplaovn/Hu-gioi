@@ -1,0 +1,4577 @@
+[
+  {
+    "id": "REC-PILL-001",
+    "profession": "alchemy",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-002",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-001",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-001",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-002",
+    "profession": "alchemy",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-001",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-003",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-002",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-003",
+    "profession": "alchemy",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-009",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-017",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-003",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-004",
+    "profession": "alchemy",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-013",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-021",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-004",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "8",
+    "base_success_bp": 8000,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "16",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-005",
+    "profession": "alchemy",
+    "tier": 2,
+    "min_level": 2,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-009",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-006",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-005",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "7",
+    "base_success_bp": 8000,
+    "duration_seconds": 35,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "14",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-006",
+    "profession": "alchemy",
+    "tier": 2,
+    "min_level": 2,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-002",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-024",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-006",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "4",
+    "base_success_bp": 8000,
+    "duration_seconds": 35,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-007",
+    "profession": "alchemy",
+    "tier": 4,
+    "min_level": 4,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-018",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-014",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-007",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "21",
+    "base_success_bp": 8000,
+    "duration_seconds": 45,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "42",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-008",
+    "profession": "alchemy",
+    "tier": 4,
+    "min_level": 4,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-010",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-024",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-008",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "26",
+    "base_success_bp": 8000,
+    "duration_seconds": 45,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "52",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-009",
+    "profession": "alchemy",
+    "tier": 5,
+    "min_level": 5,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-012",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-022",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-009",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "33",
+    "base_success_bp": 8000,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "66",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-010",
+    "profession": "alchemy",
+    "tier": 5,
+    "min_level": 5,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-011",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-022",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-010",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "36",
+    "base_success_bp": 8000,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "72",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-011",
+    "profession": "alchemy",
+    "tier": 5,
+    "min_level": 5,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-013",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-012",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-011",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "40",
+    "base_success_bp": 8000,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "80",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-012",
+    "profession": "alchemy",
+    "tier": 6,
+    "min_level": 6,
+    "min_stage_id": "HG05",
+    "ingredients": [
+      {
+        "item_id": "HERB-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-017",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-012",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "80",
+    "base_success_bp": 8000,
+    "duration_seconds": 55,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "160",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-013",
+    "profession": "alchemy",
+    "tier": 6,
+    "min_level": 6,
+    "min_stage_id": "HG05",
+    "ingredients": [
+      {
+        "item_id": "HERB-020",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-021",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-013",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "160",
+    "base_success_bp": 8000,
+    "duration_seconds": 55,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "320",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-014",
+    "profession": "alchemy",
+    "tier": 6,
+    "min_level": 6,
+    "min_stage_id": "HG05",
+    "ingredients": [
+      {
+        "item_id": "HERB-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-019",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-014",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "260",
+    "base_success_bp": 8000,
+    "duration_seconds": 55,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "520",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-015",
+    "profession": "alchemy",
+    "tier": 6,
+    "min_level": 6,
+    "min_stage_id": "HG05",
+    "ingredients": [
+      {
+        "item_id": "HERB-020",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-015",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-015",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "450",
+    "base_success_bp": 8000,
+    "duration_seconds": 55,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "900",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-016",
+    "profession": "alchemy",
+    "tier": 2,
+    "min_level": 2,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-017",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-011",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-016",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "15",
+    "base_success_bp": 8000,
+    "duration_seconds": 35,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "30",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-017",
+    "profession": "alchemy",
+    "tier": 2,
+    "min_level": 2,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-024",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-018",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-017",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "13",
+    "base_success_bp": 8000,
+    "duration_seconds": 35,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "26",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-018",
+    "profession": "alchemy",
+    "tier": 4,
+    "min_level": 4,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-016",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-003",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-018",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "24",
+    "base_success_bp": 8000,
+    "duration_seconds": 45,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "48",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-019",
+    "profession": "alchemy",
+    "tier": 4,
+    "min_level": 4,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-015",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-019",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "26",
+    "base_success_bp": 8000,
+    "duration_seconds": 45,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "52",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-020",
+    "profession": "alchemy",
+    "tier": 5,
+    "min_level": 5,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-019",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-021",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "PILL-020",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "55",
+    "base_success_bp": 8000,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "110",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-021",
+    "profession": "alchemy",
+    "tier": 8,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-031",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-025",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-021",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "2",
+    "base_success_bp": 8000,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-022",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-038",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-030",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-022",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-023",
+    "profession": "alchemy",
+    "tier": 8,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-040",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-023",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "2",
+    "base_success_bp": 8000,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-024",
+    "profession": "alchemy",
+    "tier": 8,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-029",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-037",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-024",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "9",
+    "base_success_bp": 8000,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-025",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-030",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-033",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-025",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "6",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-026",
+    "profession": "alchemy",
+    "tier": 10,
+    "min_level": 10,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-039",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-045",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-026",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "21",
+    "base_success_bp": 8000,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "42",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-027",
+    "profession": "alchemy",
+    "tier": 12,
+    "min_level": 12,
+    "min_stage_id": "LG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-048",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-036",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-027",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "60",
+    "base_success_bp": 8000,
+    "duration_seconds": 85,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "120",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-028",
+    "profession": "alchemy",
+    "tier": 8,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-035",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-043",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-028",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "40",
+    "base_success_bp": 8000,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "80",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-029",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-046",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-034",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-029",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "11",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "22",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-030",
+    "profession": "alchemy",
+    "tier": 10,
+    "min_level": 10,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-027",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-030",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "9",
+    "base_success_bp": 8000,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-031",
+    "profession": "alchemy",
+    "tier": 8,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-044",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-037",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-031",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "8",
+    "base_success_bp": 8000,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "16",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-032",
+    "profession": "alchemy",
+    "tier": 10,
+    "min_level": 10,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-047",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-026",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-032",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "33",
+    "base_success_bp": 8000,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "66",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-033",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-041",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-033",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "5",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "10",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-034",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-043",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-035",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-034",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "49",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "98",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-035",
+    "profession": "alchemy",
+    "tier": 10,
+    "min_level": 10,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-028",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-046",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-035",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "44",
+    "base_success_bp": 8000,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "88",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-036",
+    "profession": "alchemy",
+    "tier": 10,
+    "min_level": 10,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-045",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-033",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-036",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "12",
+    "base_success_bp": 8000,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-037",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-032",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-042",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-037",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "6",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-038",
+    "profession": "alchemy",
+    "tier": 9,
+    "min_level": 9,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-031",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-041",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-038",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "7",
+    "base_success_bp": 8000,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "14",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-039",
+    "profession": "alchemy",
+    "tier": 8,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-033",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-028",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-039",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "4",
+    "base_success_bp": 8000,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-040",
+    "profession": "alchemy",
+    "tier": 10,
+    "min_level": 10,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-034",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-046",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "PILL-040",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "15",
+    "base_success_bp": 8000,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "30",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-041",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-049",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-056",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-041",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "1",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "2",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-042",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-068",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-049",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-042",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "1",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "2",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-043",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-064",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-068",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-043",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "2",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-044",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-069",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-057",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-044",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "6",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-045",
+    "profession": "alchemy",
+    "tier": 16,
+    "min_level": 16,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-061",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-058",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-045",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "8",
+    "base_success_bp": 8000,
+    "duration_seconds": 105,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "16",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-046",
+    "profession": "alchemy",
+    "tier": 16,
+    "min_level": 16,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-070",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-059",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-046",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "15",
+    "base_success_bp": 8000,
+    "duration_seconds": 105,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "30",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-047",
+    "profession": "alchemy",
+    "tier": 17,
+    "min_level": 17,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-070",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-049",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-047",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-052",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-068",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-060",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-052",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "1",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "2",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-053",
+    "profession": "alchemy",
+    "tier": 16,
+    "min_level": 16,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-059",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-067",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-053",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "5",
+    "base_success_bp": 8000,
+    "duration_seconds": 105,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "10",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-054",
+    "profession": "alchemy",
+    "tier": 17,
+    "min_level": 17,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "HERB-062",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-071",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-054",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "11",
+    "base_success_bp": 8000,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "22",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-055",
+    "profession": "alchemy",
+    "tier": 16,
+    "min_level": 16,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-063",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-050",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-055",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "4",
+    "base_success_bp": 8000,
+    "duration_seconds": 105,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-056",
+    "profession": "alchemy",
+    "tier": 16,
+    "min_level": 16,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-054",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-067",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-056",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "4",
+    "base_success_bp": 8000,
+    "duration_seconds": 105,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-057",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-052",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-056",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-057",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-058",
+    "profession": "alchemy",
+    "tier": 16,
+    "min_level": 16,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "HERB-051",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-057",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-058",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "4",
+    "base_success_bp": 8000,
+    "duration_seconds": 105,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-059",
+    "profession": "alchemy",
+    "tier": 15,
+    "min_level": 15,
+    "min_stage_id": "TG02",
+    "ingredients": [
+      {
+        "item_id": "HERB-053",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-060",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-059",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "1",
+    "base_success_bp": 8000,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "2",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-001",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-015",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-001",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "5",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "10",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-002",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-015",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-002",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "5",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "10",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-003",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-003",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "4",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-004",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-004",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "4",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-005",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-005",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "4",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-006",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-006",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "4",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-007",
+    "profession": "forging",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-007",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "4",
+    "base_success_bp": 7500,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "8",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-008",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-008",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-009",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-009",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-010",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-010",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-011",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-011",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-012",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-012",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-013",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-013",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-014",
+    "profession": "forging",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-014",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "6",
+    "base_success_bp": 7500,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "12",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-015",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-015",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-016",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-016",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-017",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-017",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-018",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-018",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-019",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-019",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-020",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-020",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-021",
+    "profession": "forging",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-021",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "9",
+    "base_success_bp": 7500,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "18",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-022",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-022",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-023",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-023",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-024",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-016",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-014",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-024",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-025",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-025",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-026",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-026",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-027",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-027",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-028",
+    "profession": "forging",
+    "tier": 4,
+    "min_level": 7,
+    "min_stage_id": "HG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-002",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-004",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "EQ-028",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "12",
+    "base_success_bp": 7500,
+    "duration_seconds": 60,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "24",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-029",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-029",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-030",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-024",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-030",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-031",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-024",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-031",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-032",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-032",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-033",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-033",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-034",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-034",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-035",
+    "profession": "forging",
+    "tier": 5,
+    "min_level": 9,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-035",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "25",
+    "base_success_bp": 7500,
+    "duration_seconds": 70,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "50",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-036",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-036",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-037",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-024",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-037",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-038",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-024",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-038",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-039",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-039",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-040",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-040",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-041",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-041",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-042",
+    "profession": "forging",
+    "tier": 6,
+    "min_level": 11,
+    "min_stage_id": "LG02",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-042",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "35",
+    "base_success_bp": 7500,
+    "duration_seconds": 80,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "70",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-043",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-043",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-044",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-024",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-044",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-045",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-024",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-026",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-045",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-046",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-046",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-047",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-047",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-048",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-048",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-049",
+    "profession": "forging",
+    "tier": 7,
+    "min_level": 13,
+    "min_stage_id": "LG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-025",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-029",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "EQ-049",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "50",
+    "base_success_bp": 7500,
+    "duration_seconds": 90,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "100",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-050",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-050",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-051",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-040",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-051",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-052",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-040",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-052",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-053",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-053",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-054",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-054",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-055",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-055",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-056",
+    "profession": "forging",
+    "tier": 8,
+    "min_level": 15,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-056",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "88",
+    "base_success_bp": 7500,
+    "duration_seconds": 100,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "176",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-057",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-057",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-058",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-040",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-058",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-059",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-040",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-059",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-060",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-060",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-061",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-061",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-062",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-062",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-063",
+    "profession": "forging",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG03",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-063",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "124",
+    "base_success_bp": 7500,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "248",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-064",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-064",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-065",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-040",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-065",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-066",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-040",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-066",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-067",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-067",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-068",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-068",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-069",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-069",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-EQ-070",
+    "profession": "forging",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG04",
+    "ingredients": [
+      {
+        "item_id": "MAT-043",
+        "quantity": 2
+      },
+      {
+        "item_id": "MAT-047",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "EQ-070",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "177",
+    "base_success_bp": 7500,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "354",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-001",
+    "profession": "talisman",
+    "tier": 1,
+    "min_level": 1,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-003",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-HG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "TAL-001",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "2",
+    "base_success_bp": null,
+    "duration_seconds": 30,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-002",
+    "profession": "talisman",
+    "tier": 2,
+    "min_level": 3,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-003",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-HG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "TAL-002",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "2",
+    "base_success_bp": null,
+    "duration_seconds": 40,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-003",
+    "profession": "talisman",
+    "tier": 3,
+    "min_level": 5,
+    "min_stage_id": "HG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-003",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-HG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-HG",
+    "output_item_id": "TAL-003",
+    "output_quantity": 1,
+    "fee_currency": "LT_HP",
+    "fee_amount": "2",
+    "base_success_bp": null,
+    "duration_seconds": 50,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-HG",
+      "fee_currency": "LT_HP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-004",
+    "profession": "talisman",
+    "tier": 4,
+    "min_level": 8,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-035",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-LG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "TAL-004",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "2",
+    "base_success_bp": null,
+    "duration_seconds": 65,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-005",
+    "profession": "talisman",
+    "tier": 5,
+    "min_level": 10,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-035",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-LG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "TAL-005",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "2",
+    "base_success_bp": null,
+    "duration_seconds": 75,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-006",
+    "profession": "talisman",
+    "tier": 6,
+    "min_level": 12,
+    "min_stage_id": "LG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-035",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-LG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-LG",
+    "output_item_id": "TAL-006",
+    "output_quantity": 1,
+    "fee_currency": "LT_TP",
+    "fee_amount": "2",
+    "base_success_bp": null,
+    "duration_seconds": 85,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-LG",
+      "fee_currency": "LT_TP",
+      "fee_amount": "4",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-007",
+    "profession": "talisman",
+    "tier": 7,
+    "min_level": 14,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-TG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "TAL-007",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "3",
+    "base_success_bp": null,
+    "duration_seconds": 95,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-008",
+    "profession": "talisman",
+    "tier": 9,
+    "min_level": 17,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-TG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "TAL-008",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "3",
+    "base_success_bp": null,
+    "duration_seconds": 110,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-TAL-009",
+    "profession": "talisman",
+    "tier": 10,
+    "min_level": 19,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "MAT-042",
+        "quantity": 1
+      },
+      {
+        "item_id": "INK-TG",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "TAL-009",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "3",
+    "base_success_bp": null,
+    "duration_seconds": 120,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  },
+  {
+    "id": "REC-PILL-061",
+    "profession": "alchemy",
+    "tier": 14,
+    "min_level": 14,
+    "min_stage_id": "TG01",
+    "ingredients": [
+      {
+        "item_id": "HERB-049",
+        "quantity": 1
+      },
+      {
+        "item_id": "HERB-053",
+        "quantity": 1
+      }
+    ],
+    "quality_catalyst_item_id": "CAT-TG",
+    "output_item_id": "PILL-061",
+    "output_quantity": 1,
+    "fee_currency": "TN",
+    "fee_amount": "3",
+    "base_success_bp": 8000,
+    "duration_seconds": 95,
+    "knowledge_unlock": {
+      "method": "learn_at_venue",
+      "venue_id": "VEN-TG",
+      "fee_currency": "TN",
+      "fee_amount": "6",
+      "knowledge_scope": "account",
+      "craft_requires_current_life_profession_level": true
+    },
+    "design_status": "PROPOSED_RECIPE"
+  }
+]

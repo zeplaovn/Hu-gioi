@@ -1,0 +1,1010 @@
+[
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 1,
+    "currency": "LT_HP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 2,
+    "currency": "LT_HP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 3,
+    "currency": "LT_HP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 4,
+    "currency": "LT_HP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 5,
+    "currency": "LT_HP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 6,
+    "currency": "LT_HP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 7,
+    "currency": "LT_HP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 8,
+    "currency": "LT_HP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "HG01",
+    "stage": "Luyện Khí",
+    "world": "Hạ Giới",
+    "tier": 9,
+    "currency": "LT_HP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 1,
+    "currency": "LT_HP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 2,
+    "currency": "LT_HP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 3,
+    "currency": "LT_HP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 4,
+    "currency": "LT_HP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 5,
+    "currency": "LT_HP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 6,
+    "currency": "LT_HP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 7,
+    "currency": "LT_HP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 8,
+    "currency": "LT_HP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "HG02",
+    "stage": "Trúc Cơ",
+    "world": "Hạ Giới",
+    "tier": 9,
+    "currency": "LT_HP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 1,
+    "currency": "LT_HP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 2,
+    "currency": "LT_HP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 3,
+    "currency": "LT_HP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 4,
+    "currency": "LT_HP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 5,
+    "currency": "LT_HP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 6,
+    "currency": "LT_HP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 7,
+    "currency": "LT_HP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 8,
+    "currency": "LT_HP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "HG03",
+    "stage": "Kim Đan",
+    "world": "Hạ Giới",
+    "tier": 9,
+    "currency": "LT_HP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 1,
+    "currency": "LT_HP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 2,
+    "currency": "LT_HP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 3,
+    "currency": "LT_HP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 4,
+    "currency": "LT_HP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 5,
+    "currency": "LT_HP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 6,
+    "currency": "LT_HP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 7,
+    "currency": "LT_HP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 8,
+    "currency": "LT_HP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "HG04",
+    "stage": "Nguyên Anh",
+    "world": "Hạ Giới",
+    "tier": 9,
+    "currency": "LT_HP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 1,
+    "currency": "LT_HP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 2,
+    "currency": "LT_HP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 3,
+    "currency": "LT_HP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 4,
+    "currency": "LT_HP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 5,
+    "currency": "LT_HP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 6,
+    "currency": "LT_HP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 7,
+    "currency": "LT_HP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 8,
+    "currency": "LT_HP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "HG05",
+    "stage": "Hóa Thần",
+    "world": "Hạ Giới",
+    "tier": 9,
+    "currency": "LT_HP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 1,
+    "currency": "LT_TP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 2,
+    "currency": "LT_TP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 3,
+    "currency": "LT_TP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 4,
+    "currency": "LT_TP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 5,
+    "currency": "LT_TP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 6,
+    "currency": "LT_TP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 7,
+    "currency": "LT_TP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 8,
+    "currency": "LT_TP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "LG01",
+    "stage": "Luyện Hư",
+    "world": "Linh Giới",
+    "tier": 9,
+    "currency": "LT_TP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 1,
+    "currency": "LT_TP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 2,
+    "currency": "LT_TP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 3,
+    "currency": "LT_TP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 4,
+    "currency": "LT_TP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 5,
+    "currency": "LT_TP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 6,
+    "currency": "LT_TP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 7,
+    "currency": "LT_TP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 8,
+    "currency": "LT_TP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "LG02",
+    "stage": "Hợp Thể",
+    "world": "Linh Giới",
+    "tier": 9,
+    "currency": "LT_TP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 1,
+    "currency": "LT_TP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 2,
+    "currency": "LT_TP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 3,
+    "currency": "LT_TP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 4,
+    "currency": "LT_TP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 5,
+    "currency": "LT_TP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 6,
+    "currency": "LT_TP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 7,
+    "currency": "LT_TP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 8,
+    "currency": "LT_TP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "LG03",
+    "stage": "Đại Thừa",
+    "world": "Linh Giới",
+    "tier": 9,
+    "currency": "LT_TP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 1,
+    "currency": "LT_TP",
+    "amount": "3"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 2,
+    "currency": "LT_TP",
+    "amount": "6"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 3,
+    "currency": "LT_TP",
+    "amount": "12"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 4,
+    "currency": "LT_TP",
+    "amount": "24"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 5,
+    "currency": "LT_TP",
+    "amount": "48"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 6,
+    "currency": "LT_TP",
+    "amount": "96"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 7,
+    "currency": "LT_TP",
+    "amount": "192"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 8,
+    "currency": "LT_TP",
+    "amount": "384"
+  },
+  {
+    "stage_id": "LG04",
+    "stage": "Độ Kiếp / Phi Thăng",
+    "world": "Linh Giới",
+    "tier": 9,
+    "currency": "LT_TP",
+    "amount": "768"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 1,
+    "currency": "TN",
+    "amount": "3"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 2,
+    "currency": "TN",
+    "amount": "6"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 3,
+    "currency": "TN",
+    "amount": "12"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 4,
+    "currency": "TN",
+    "amount": "24"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 5,
+    "currency": "TN",
+    "amount": "48"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 6,
+    "currency": "TN",
+    "amount": "96"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 7,
+    "currency": "TN",
+    "amount": "192"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 8,
+    "currency": "TN",
+    "amount": "384"
+  },
+  {
+    "stage_id": "TG01",
+    "stage": "Ngụy Tiên",
+    "world": "Tiên Giới",
+    "tier": 9,
+    "currency": "TN",
+    "amount": "768"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 1,
+    "currency": "TN",
+    "amount": "3"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 2,
+    "currency": "TN",
+    "amount": "6"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 3,
+    "currency": "TN",
+    "amount": "12"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 4,
+    "currency": "TN",
+    "amount": "24"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 5,
+    "currency": "TN",
+    "amount": "48"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 6,
+    "currency": "TN",
+    "amount": "96"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 7,
+    "currency": "TN",
+    "amount": "192"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 8,
+    "currency": "TN",
+    "amount": "384"
+  },
+  {
+    "stage_id": "TG02",
+    "stage": "Chân Tiên",
+    "world": "Tiên Giới",
+    "tier": 9,
+    "currency": "TN",
+    "amount": "768"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 1,
+    "currency": "TN",
+    "amount": "3"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 2,
+    "currency": "TN",
+    "amount": "6"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 3,
+    "currency": "TN",
+    "amount": "12"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 4,
+    "currency": "TN",
+    "amount": "24"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 5,
+    "currency": "TN",
+    "amount": "48"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 6,
+    "currency": "TN",
+    "amount": "96"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 7,
+    "currency": "TN",
+    "amount": "192"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 8,
+    "currency": "TN",
+    "amount": "384"
+  },
+  {
+    "stage_id": "TG03",
+    "stage": "Kim Tiên",
+    "world": "Tiên Giới",
+    "tier": 9,
+    "currency": "TN",
+    "amount": "768"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 1,
+    "currency": "TN",
+    "amount": "3"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 2,
+    "currency": "TN",
+    "amount": "6"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 3,
+    "currency": "TN",
+    "amount": "12"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 4,
+    "currency": "TN",
+    "amount": "24"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 5,
+    "currency": "TN",
+    "amount": "48"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 6,
+    "currency": "TN",
+    "amount": "96"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 7,
+    "currency": "TN",
+    "amount": "192"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 8,
+    "currency": "TN",
+    "amount": "384"
+  },
+  {
+    "stage_id": "TG04",
+    "stage": "Thái Ất",
+    "world": "Tiên Giới",
+    "tier": 9,
+    "currency": "TN",
+    "amount": "768"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 1,
+    "currency": "TN",
+    "amount": "3"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 2,
+    "currency": "TN",
+    "amount": "6"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 3,
+    "currency": "TN",
+    "amount": "12"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 4,
+    "currency": "TN",
+    "amount": "24"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 5,
+    "currency": "TN",
+    "amount": "48"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 6,
+    "currency": "TN",
+    "amount": "96"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 7,
+    "currency": "TN",
+    "amount": "192"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 8,
+    "currency": "TN",
+    "amount": "384"
+  },
+  {
+    "stage_id": "TG05",
+    "stage": "Đại La sơ nhập / Đài Quy Hương",
+    "world": "Tiên Giới",
+    "tier": 9,
+    "currency": "TN",
+    "amount": "768"
+  }
+]

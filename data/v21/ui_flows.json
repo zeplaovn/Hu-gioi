@@ -1,0 +1,642 @@
+[
+  {
+    "id": "HOME",
+    "title": "Động phủ",
+    "fields": [
+      "realm",
+      "tier",
+      "progress",
+      "wallet",
+      "offline_claim"
+    ],
+    "actions": [
+      "collect_offline",
+      "open_quest",
+      "open_world"
+    ],
+    "next_screens": [
+      "WORLD",
+      "QUESTS",
+      "INVENTORY",
+      "CULTIVATION",
+      "PROFESSIONS"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "offline_cap_reached",
+      "life_dead"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "WORLD",
+    "title": "Bản đồ ba giới",
+    "fields": [
+      "unlocked_worlds",
+      "node_id",
+      "travel_time",
+      "safe_or_lethal"
+    ],
+    "actions": [
+      "travel",
+      "inspect_encounter"
+    ],
+    "next_screens": [
+      "HOME",
+      "NPC",
+      "BATTLE"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "realm_locked",
+      "lethal_confirmation_required"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "QUESTS",
+    "title": "Nhiệm vụ",
+    "fields": [
+      "available",
+      "active",
+      "ready",
+      "claimed",
+      "objective_counts",
+      "rewards"
+    ],
+    "actions": [
+      "accept",
+      "track",
+      "claim"
+    ],
+    "next_screens": [
+      "HOME",
+      "NPC",
+      "WORLD"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "prerequisite_locked",
+      "already_claimed"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "NPC",
+    "title": "Nhân vật",
+    "fields": [
+      "presence",
+      "affection",
+      "trust",
+      "daily_remaining",
+      "gift_cooldown"
+    ],
+    "actions": [
+      "daily_dialogue",
+      "story_scene",
+      "gift",
+      "event_response"
+    ],
+    "next_screens": [
+      "DIALOGUE",
+      "GIFT_QUOTE",
+      "QUESTS"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "npc_absent",
+      "not_authored_here"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "DIALOGUE",
+    "title": "Hội thoại",
+    "fields": [
+      "scene_text",
+      "choices",
+      "relationship_preview"
+    ],
+    "actions": [
+      "choose_once",
+      "close_without_consuming"
+    ],
+    "next_screens": [
+      "NPC"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "choice_already_committed",
+      "previous_scene_locked"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "INVENTORY",
+    "title": "Hành trang",
+    "fields": [
+      "items",
+      "quality",
+      "binding",
+      "quantity",
+      "capacity",
+      "inbox_count"
+    ],
+    "actions": [
+      "inspect",
+      "use",
+      "equip",
+      "sell"
+    ],
+    "next_screens": [
+      "ITEM_QUOTE",
+      "EQUIPMENT",
+      "DELIVERIES"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "inventory_full",
+      "trade_locked"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "EQUIPMENT",
+    "title": "Trang bị",
+    "fields": [
+      "seven_slots",
+      "base_stats",
+      "effective_stats",
+      "caps"
+    ],
+    "actions": [
+      "equip",
+      "unequip",
+      "compare"
+    ],
+    "next_screens": [
+      "INVENTORY"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "wrong_slot",
+      "realm_locked"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "CULTIVATION",
+    "title": "Tu luyện",
+    "fields": [
+      "xp",
+      "tier",
+      "refining_cost",
+      "daily_uses",
+      "breakthrough_chance"
+    ],
+    "actions": [
+      "refine_quote",
+      "breakthrough_quote",
+      "exchange"
+    ],
+    "next_screens": [
+      "CONFIRM",
+      "HOME"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "insufficient_currency",
+      "99_percent_cap",
+      "online_ack_required"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "SHOP",
+    "title": "Thương các/chợ đen/tông môn",
+    "fields": [
+      "venue",
+      "stock",
+      "price",
+      "currency",
+      "quota",
+      "binding"
+    ],
+    "actions": [
+      "buy_quote",
+      "sell_quote",
+      "exchange"
+    ],
+    "next_screens": [
+      "CONFIRM",
+      "INVENTORY"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "wrong_currency",
+      "daily_limit"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "EXCHANGE",
+    "title": "Đổi tiền",
+    "fields": [
+      "source",
+      "destination",
+      "exact_input",
+      "exact_output",
+      "world_unlock"
+    ],
+    "actions": [
+      "quote_exchange",
+      "confirm"
+    ],
+    "next_screens": [
+      "CONFIRM",
+      "SHOP",
+      "CULTIVATION"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "invalid_multiple",
+      "realm_locked"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "GARDEN",
+    "title": "Linh điền",
+    "fields": [
+      "4x4_slots",
+      "crop_timer",
+      "care_flags",
+      "pest_state",
+      "seed_inventory"
+    ],
+    "actions": [
+      "unlock_quote",
+      "sow",
+      "water",
+      "fertilize",
+      "pest",
+      "harvest"
+    ],
+    "next_screens": [
+      "CONFIRM",
+      "INVENTORY"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "locked_slot",
+      "not_ready",
+      "no_pest",
+      "inventory_full"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "PROFESSIONS",
+    "title": "Nghề phụ",
+    "fields": [
+      "four_levels",
+      "exp",
+      "next_level",
+      "recipe_list",
+      "known_blueprints"
+    ],
+    "actions": [
+      "learn_quote",
+      "choose_recipe"
+    ],
+    "next_screens": [
+      "CRAFT",
+      "GARDEN"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "profession_locked",
+      "recipe_unknown"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "CRAFT",
+    "title": "Luyện đan/luyện khí/vẽ phù",
+    "fields": [
+      "three_material_slots",
+      "optional_quality_slot",
+      "success_pct",
+      "conditional_quality_pct",
+      "fee",
+      "remaining_attempts"
+    ],
+    "actions": [
+      "fill_recipe",
+      "quote",
+      "start_job",
+      "inspect_job"
+    ],
+    "next_screens": [
+      "CONFIRM",
+      "DELIVERIES"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "invalid_recipe",
+      "queue_busy",
+      "daily_limit"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "AUCTION",
+    "title": "Đấu giá server",
+    "fields": [
+      "currency_book",
+      "lot_quantity",
+      "unit_price",
+      "gross",
+      "tax",
+      "time_left",
+      "my_escrow"
+    ],
+    "actions": [
+      "list_quote",
+      "bid_quote",
+      "buyout_quote",
+      "cancel"
+    ],
+    "next_screens": [
+      "CONFIRM",
+      "DELIVERIES"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "outbid",
+      "expired",
+      "own_listing",
+      "wrong_server"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "BATTLE",
+    "title": "Chiến đấu",
+    "fields": [
+      "hp",
+      "shield",
+      "phase",
+      "telegraph",
+      "status_duration",
+      "turn_version"
+    ],
+    "actions": [
+      "attack",
+      "guard",
+      "skill",
+      "item",
+      "retreat"
+    ],
+    "next_screens": [
+      "DEATH",
+      "HOME"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "turn_conflict",
+      "stun_skip",
+      "silenced",
+      "lethal_ack"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "CONFIRM",
+    "title": "Xác nhận giao dịch",
+    "fields": [
+      "quote_id",
+      "expiry",
+      "total_cost",
+      "currency",
+      "items_consumed",
+      "effects",
+      "risks"
+    ],
+    "actions": [
+      "confirm_once",
+      "cancel"
+    ],
+    "next_screens": [
+      "previous_screen"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "quote_expired",
+      "version_conflict",
+      "network_pending"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "DELIVERIES",
+    "title": "Hộp nhận",
+    "fields": [
+      "life_owner",
+      "unclaimed_outputs",
+      "inventory_space"
+    ],
+    "actions": [
+      "claim_once"
+    ],
+    "next_screens": [
+      "INVENTORY"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "life_dead",
+      "inventory_full"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "ENDING",
+    "title": "Đài Quy Hương",
+    "fields": [
+      "return_cost",
+      "irreversible_assets",
+      "remain_or_defer",
+      "optional_reflection_timer"
+    ],
+    "actions": [
+      "preview",
+      "explicit_confirm",
+      "defer"
+    ],
+    "next_screens": [
+      "HOME",
+      "DEATH"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "not_ready",
+      "disclosure_missing"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  },
+  {
+    "id": "DEATH",
+    "title": "Kết thúc kiếp",
+    "fields": [
+      "reason",
+      "lost_assets",
+      "retained_account_progress",
+      "claim_quota_notice"
+    ],
+    "actions": [
+      "inspect_receipt",
+      "start_new_life"
+    ],
+    "next_screens": [
+      "HOME"
+    ],
+    "required_states": [
+      "loading",
+      "empty",
+      "ready",
+      "pending",
+      "error",
+      "recovered",
+      "death_transaction_pending"
+    ],
+    "mobile_primary_action_limit": 1,
+    "currency_labels": "full Vietnamese names; internal codes only in dev debug",
+    "mutations_require_operation_receipt": true
+  }
+]

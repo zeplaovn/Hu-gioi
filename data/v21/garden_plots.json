@@ -1,0 +1,162 @@
+[
+  {
+    "slot_id": 1,
+    "row": 1,
+    "column": 1,
+    "initially_open": true,
+    "stage_id": "HG01",
+    "currency": "NONE",
+    "price": "0",
+    "requires_previous_slot": null
+  },
+  {
+    "slot_id": 2,
+    "row": 1,
+    "column": 2,
+    "initially_open": true,
+    "stage_id": "HG01",
+    "currency": "NONE",
+    "price": "0",
+    "requires_previous_slot": null
+  },
+  {
+    "slot_id": 3,
+    "row": 1,
+    "column": 3,
+    "initially_open": false,
+    "stage_id": "HG02",
+    "currency": "LT_HP",
+    "price": "50",
+    "requires_previous_slot": 2
+  },
+  {
+    "slot_id": 4,
+    "row": 1,
+    "column": 4,
+    "initially_open": false,
+    "stage_id": "HG03",
+    "currency": "LT_HP",
+    "price": "100",
+    "requires_previous_slot": 3
+  },
+  {
+    "slot_id": 5,
+    "row": 2,
+    "column": 1,
+    "initially_open": false,
+    "stage_id": "HG04",
+    "currency": "LT_HP",
+    "price": "200",
+    "requires_previous_slot": 4
+  },
+  {
+    "slot_id": 6,
+    "row": 2,
+    "column": 2,
+    "initially_open": false,
+    "stage_id": "HG05",
+    "currency": "LT_HP",
+    "price": "400",
+    "requires_previous_slot": 5
+  },
+  {
+    "slot_id": 7,
+    "row": 2,
+    "column": 3,
+    "initially_open": false,
+    "stage_id": "LG01",
+    "currency": "LT_HP",
+    "price": "800",
+    "requires_previous_slot": 6
+  },
+  {
+    "slot_id": 8,
+    "row": 2,
+    "column": 4,
+    "initially_open": false,
+    "stage_id": "LG02",
+    "currency": "LT_HP",
+    "price": "1600",
+    "requires_previous_slot": 7
+  },
+  {
+    "slot_id": 9,
+    "row": 3,
+    "column": 1,
+    "initially_open": false,
+    "stage_id": "LG03",
+    "currency": "LT_HP",
+    "price": "3200",
+    "requires_previous_slot": 8
+  },
+  {
+    "slot_id": 10,
+    "row": 3,
+    "column": 2,
+    "initially_open": false,
+    "stage_id": "LG04",
+    "currency": "LT_HP",
+    "price": "6400",
+    "requires_previous_slot": 9
+  },
+  {
+    "slot_id": 11,
+    "row": 3,
+    "column": 3,
+    "initially_open": false,
+    "stage_id": "TG01",
+    "currency": "TN",
+    "price": "1",
+    "requires_previous_slot": 10
+  },
+  {
+    "slot_id": 12,
+    "row": 3,
+    "column": 4,
+    "initially_open": false,
+    "stage_id": "TG02",
+    "currency": "TN",
+    "price": "2",
+    "requires_previous_slot": 11
+  },
+  {
+    "slot_id": 13,
+    "row": 4,
+    "column": 1,
+    "initially_open": false,
+    "stage_id": "TG03",
+    "currency": "TN",
+    "price": "4",
+    "requires_previous_slot": 12
+  },
+  {
+    "slot_id": 14,
+    "row": 4,
+    "column": 2,
+    "initially_open": false,
+    "stage_id": "TG04",
+    "currency": "TN",
+    "price": "8",
+    "requires_previous_slot": 13
+  },
+  {
+    "slot_id": 15,
+    "row": 4,
+    "column": 3,
+    "initially_open": false,
+    "stage_id": "TG05",
+    "currency": "TN",
+    "price": "16",
+    "requires_previous_slot": 14
+  },
+  {
+    "slot_id": 16,
+    "row": 4,
+    "column": 4,
+    "initially_open": false,
+    "stage_id": "TG05",
+    "currency": "TN",
+    "price": "32",
+    "requires_previous_slot": 15
+  }
+]

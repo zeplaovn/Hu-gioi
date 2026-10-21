@@ -1,0 +1,100 @@
+[
+  {
+    "root_element": "Kim",
+    "technique": "Thanh Phong Kiếm Pháp",
+    "recommended_laws": "Kim / Không Gian / Hủy Diệt",
+    "combat_focus": "ATK/PEN",
+    "synergy": "+8% sát thương cùng hệ ở purity 70; +20% ở 100"
+  },
+  {
+    "root_element": "Mộc",
+    "technique": "Đông Ất Sinh Mệnh Quyết",
+    "recommended_laws": "Mộc / Sinh Mệnh / Độc",
+    "combat_focus": "Heal/DoT",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Thủy",
+    "technique": "Hắc Hải Trọng Thủy Kinh",
+    "recommended_laws": "Thủy / Băng / Thời Gian",
+    "combat_focus": "CC/RES",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Hỏa",
+    "technique": "Đại Viêm Phần Thiên Quyết",
+    "recommended_laws": "Hỏa / Hủy Diệt / Thời Gian",
+    "combat_focus": "Burst/Crit",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Thổ",
+    "technique": "Hỗn Nguyên Luyện Thổ Quyết",
+    "recommended_laws": "Thổ / Không Gian / Giam Cầm",
+    "combat_focus": "HP/DEF",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Băng",
+    "technique": "Tiêu Sơn Hàn Băng Quyết",
+    "recommended_laws": "Băng / Thời Gian",
+    "combat_focus": "CC/DEF",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Lôi",
+    "technique": "Ngũ Lôi Chính Pháp",
+    "recommended_laws": "Lôi / Hủy Diệt",
+    "combat_focus": "Burst/PEN",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Phong",
+    "technique": "Phong Vân Độn Pháp",
+    "recommended_laws": "Phong / Không Gian",
+    "combat_focus": "SPD/EVA",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Quang",
+    "technique": "Cửu Dương Thanh Tâm Kinh",
+    "recommended_laws": "Quang / Nhân Quả",
+    "combat_focus": "Heal/RES",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Ám",
+    "technique": "Huyền Sát Minh Linh Công",
+    "recommended_laws": "Ám / Linh Hồn",
+    "combat_focus": "DoT/ACC",
+    "synergy": "+8%/+20% (sát thương cùng hệ)"
+  },
+  {
+    "root_element": "Kim+Hỏa",
+    "technique": "Cửu Thiên Lôi Pháp",
+    "recommended_laws": "Lôi / Hủy Diệt",
+    "combat_focus": "Hybrid burst",
+    "synergy": "Đề xuất +6% mỗi hệ phù hợp; chưa có trong demo"
+  },
+  {
+    "root_element": "Thủy+Mộc",
+    "technique": "Vạn Mộc Hồi Xuân Kinh",
+    "recommended_laws": "Sinh Mệnh / Thủy",
+    "combat_focus": "Hybrid sustain",
+    "synergy": "Đề xuất +6% mỗi hệ phù hợp; chưa có trong demo"
+  },
+  {
+    "root_element": "Thổ+Kim",
+    "technique": "Kim Cang Trấn Ngục Thể",
+    "recommended_laws": "Thổ / Kim",
+    "combat_focus": "Hybrid tank",
+    "synergy": "Đề xuất +6% mỗi hệ phù hợp; chưa có trong demo"
+  },
+  {
+    "root_element": "Phong+Lôi",
+    "technique": "Phong Lôi Thiên Dực",
+    "recommended_laws": "Không Gian / Lôi",
+    "combat_focus": "Hybrid speed",
+    "synergy": "Đề xuất +6% mỗi hệ phù hợp; chưa có trong demo"
+  }
+]

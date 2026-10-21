@@ -1,0 +1,502 @@
+[
+  {
+    "monster_id": "MON-007",
+    "phase": "1",
+    "hp_pct_range": "100-50",
+    "name": "Cuồng Nộ",
+    "effect": "ATK +6% mỗi 2 vòng, tối đa +18%",
+    "counterplay": "Chuyển sang guard khi vượt hai vòng rage",
+    "ultimate_skill_id": "SKL-007-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-007",
+    "phase": "2",
+    "hp_pct_range": "50-0",
+    "name": "Huyết Cuồng",
+    "effect": "Chảy máu +1 lượt",
+    "counterplay": "Dùng giải trạng thái",
+    "ultimate_skill_id": "SKL-007-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-008",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Triều Khởi",
+    "effect": "Đòn thủy đơn mục tiêu",
+    "counterplay": "Kháng thủy và né",
+    "ultimate_skill_id": "SKL-008-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-008",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Thủy Lao",
+    "effect": "Slow 1 vòng",
+    "counterplay": "Kháng/giải trạng thái",
+    "ultimate_skill_id": "SKL-008-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-008",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Giao Long Hống",
+    "effect": "Ultimate có báo trước",
+    "counterplay": "Thủ trong lượt tích lực",
+    "ultimate_skill_id": "SKL-008-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-009",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Hỏa Tinh",
+    "effect": "Burn trên kỹ năng",
+    "counterplay": "Kháng hỏa",
+    "ultimate_skill_id": "SKL-009-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-009",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Phần Thiên",
+    "effect": "Tích hỏa cộng dồn",
+    "counterplay": "Giải burn",
+    "ultimate_skill_id": "SKL-009-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-009",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Lân Hỏa Bạo",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Thủ/tạo khiên",
+    "ultimate_skill_id": "SKL-009-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-010",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Cửu Ảnh",
+    "effect": "Debuff giảm chính xác",
+    "counterplay": "Trang bị ACC",
+    "ultimate_skill_id": "SKL-010-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-010",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Huyễn Cảnh",
+    "effect": "1 lượt câm lặng",
+    "counterplay": "Đợi hoặc giải trạng thái",
+    "ultimate_skill_id": "SKL-010-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-010",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Vọng Tâm",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Giữ bình tĩnh/guard",
+    "ultimate_skill_id": "SKL-010-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-011",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Phong Liệt",
+    "effect": "Tăng tốc 8%",
+    "counterplay": "Trói/giảm tốc",
+    "ultimate_skill_id": "SKL-011-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-011",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Kim Dực",
+    "effect": "EVA +8 điểm",
+    "counterplay": "Tăng ACC",
+    "ultimate_skill_id": "SKL-011-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-011",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Thiên Phong",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-011-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-012",
+    "phase": "1",
+    "hp_pct_range": "100-70",
+    "name": "Huyền Giáp",
+    "effect": "Giảm sát thương nhận 12%",
+    "counterplay": "Xuyên giáp/skill hệ phù hợp",
+    "ultimate_skill_id": "SKL-012-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-012",
+    "phase": "2",
+    "hp_pct_range": "70-40",
+    "name": "Hóa Sơn",
+    "effect": "SHIELD 12% max HP một lần",
+    "counterplay": "Phá khiên rồi tấn công",
+    "ultimate_skill_id": "SKL-012-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-012",
+    "phase": "3",
+    "hp_pct_range": "40-0",
+    "name": "Địa Trấn",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Thủ, giữ thuốc hồi phục",
+    "ultimate_skill_id": "SKL-012-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-016",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Tụ Linh",
+    "effect": "ATK +8%",
+    "counterplay": "Giảm damage nhận",
+    "ultimate_skill_id": "SKL-016-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-016",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Pháp Tướng",
+    "effect": "Giảm DEF mục tiêu",
+    "counterplay": "Giải debuff",
+    "ultimate_skill_id": "SKL-016-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-016",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Diệt Sơn",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-016-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-018",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Đoạn Kiếm",
+    "effect": "Liên kích",
+    "counterplay": "Giữ phòng thủ",
+    "ultimate_skill_id": "SKL-018-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-018",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Kiếm Trận",
+    "effect": "Phá giáp",
+    "counterplay": "Dùng RES/giải debuff",
+    "ultimate_skill_id": "SKL-018-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-018",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Vạn Kiếm",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-018-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-019",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Sát Ý",
+    "effect": "Thần hồn công kích",
+    "counterplay": "Dưỡng thần",
+    "ultimate_skill_id": "SKL-019-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-019",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Hồn Vọng",
+    "effect": "Silence 1 lượt",
+    "counterplay": "Giải trạng thái",
+    "ultimate_skill_id": "SKL-019-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-019",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Ma Âm",
+    "effect": "Ultimate báo trước",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-019-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-020",
+    "phase": "1",
+    "hp_pct_range": "100-70",
+    "name": "Lôi Trùng",
+    "effect": "Lôi điện tăng dần",
+    "counterplay": "Chuẩn bị chống lôi",
+    "ultimate_skill_id": "SKL-020-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-020",
+    "phase": "2",
+    "hp_pct_range": "70-40",
+    "name": "Giới Kiếp",
+    "effect": "Tích lôi/giảm RES",
+    "counterplay": "Giải suy, guard",
+    "ultimate_skill_id": "SKL-020-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-020",
+    "phase": "3",
+    "hp_pct_range": "40-0",
+    "name": "Cửu Lôi",
+    "effect": "Ultimate tích lực",
+    "counterplay": "Guard + buff kháng lôi",
+    "ultimate_skill_id": "SKL-020-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-024",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Sa Hành",
+    "effect": "Slow",
+    "counterplay": "Giải trạng thái",
+    "ultimate_skill_id": "SKL-024-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-024",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Thời Đình",
+    "effect": "SPD -15%",
+    "counterplay": "Sử dụng kháng",
+    "ultimate_skill_id": "SKL-024-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-024",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Nghịch Sa",
+    "effect": "Ultimate",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-024-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-025",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Hư Liệt",
+    "effect": "Giảm chính xác",
+    "counterplay": "Tăng ACC",
+    "ultimate_skill_id": "SKL-025-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-025",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Đoạn Không",
+    "effect": "PEN +10%",
+    "counterplay": "Tăng HP",
+    "ultimate_skill_id": "SKL-025-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-025",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Long Tức",
+    "effect": "Ultimate tích lực",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-025-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-026",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Hồi Ức",
+    "effect": "SPIRIT +10%",
+    "counterplay": "Dưỡng hồn",
+    "ultimate_skill_id": "SKL-026-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-026",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Mệnh Hà",
+    "effect": "Silence",
+    "counterplay": "Giải trạng thái",
+    "ultimate_skill_id": "SKL-026-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-026",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Tái Diễn",
+    "effect": "Ultimate",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-026-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-027",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Kim Mộc",
+    "effect": "Kháng ngũ hành",
+    "counterplay": "Đổi hệ",
+    "ultimate_skill_id": "SKL-027-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-027",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Thủy Hỏa",
+    "effect": "Burn tăng",
+    "counterplay": "Giải burn",
+    "ultimate_skill_id": "SKL-027-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-027",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Thổ Không",
+    "effect": "Ultimate",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-027-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-028",
+    "phase": "1",
+    "hp_pct_range": "100-65",
+    "name": "Phản Tiên",
+    "effect": "Phản 5% damage không vượt 5% HP player mỗi đòn",
+    "counterplay": "Đánh an toàn",
+    "ultimate_skill_id": "SKL-028-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-028",
+    "phase": "2",
+    "hp_pct_range": "65-30",
+    "name": "Lôi Phạt",
+    "effect": "PEN +12%",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-028-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-028",
+    "phase": "3",
+    "hp_pct_range": "30-0",
+    "name": "Cửu Tiêu",
+    "effect": "Ultimate",
+    "counterplay": "Guard",
+    "ultimate_skill_id": "SKL-028-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-029",
+    "phase": "1",
+    "hp_pct_range": "100-70",
+    "name": "Đại La Hình",
+    "effect": "Đòn thời gian",
+    "counterplay": "Kháng pháp",
+    "ultimate_skill_id": "SKL-029-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-029",
+    "phase": "2",
+    "hp_pct_range": "70-40",
+    "name": "Đạo Ảnh",
+    "effect": "Đổi hiệu ứng mỗi 3 lượt",
+    "counterplay": "Quan sát điện văn",
+    "ultimate_skill_id": "SKL-029-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-029",
+    "phase": "3",
+    "hp_pct_range": "40-0",
+    "name": "Tàn Hưởng",
+    "effect": "Ultimate, báo trước",
+    "counterplay": "Guard trong lượt tích lực",
+    "ultimate_skill_id": "SKL-029-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-030",
+    "phase": "1",
+    "hp_pct_range": "100-70",
+    "name": "Ký Ức",
+    "effect": "Thử thách tránh bạo kích",
+    "counterplay": "Không tấn công vô nghĩa",
+    "ultimate_skill_id": "SKL-030-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-030",
+    "phase": "2",
+    "hp_pct_range": "70-40",
+    "name": "Hương Giới",
+    "effect": "Khiên + lời nhắc Quy Phàm",
+    "counterplay": "Phá khiên có kiểm soát",
+    "ultimate_skill_id": "SKL-030-04",
+    "trigger_once": "True"
+  },
+  {
+    "monster_id": "MON-030",
+    "phase": "3",
+    "hp_pct_range": "40-0",
+    "name": "Quy Hương",
+    "effect": "Ultimate có ngưỡng công bố",
+    "counterplay": "Guard/bảo hộ thần hồn",
+    "ultimate_skill_id": "SKL-030-04",
+    "trigger_once": "True"
+  }
+]

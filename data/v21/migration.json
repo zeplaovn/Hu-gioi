@@ -1,0 +1,83 @@
+{
+  "version": "2.0",
+  "run_once_per_save": true,
+  "migration_key": "currency_refining_v1_9",
+  "currency_id_mapping": {
+    "LS": "LT_HP",
+    "LT": "LT_TP",
+    "TN": "TN"
+  },
+  "amount_mapping": "1:1 quantity; no currency-value multiplication on rename",
+  "wallet_collision": "sum legacy and new keys once inside guarded migration; remove old writable aliases",
+  "read_only_legacy_ledger": "retain immutable old entries; use currency alias adapter when reading",
+  "update_currency_fields": [
+    "wallet",
+    "item_catalog_prices",
+    "shop_stock",
+    "quest_rewards",
+    "auction_listing",
+    "bid_escrow",
+    "delivery",
+    "craft_recipe_fee",
+    "garden_plot_price",
+    "new_life_currency_grant",
+    "trade_reference_prices",
+    "economy_import"
+  ],
+  "historical_baseline_import": "adapt old currency keys before importing; do not run old balance_config refining/exchange policy",
+  "new_life_grant": {
+    "LT_HP": "3"
+  },
+  "existing_accounts": "keep balances; do not regrant starting currency",
+  "active_auction": "rename currency unit while preserving amounts, bids and ownership",
+  "active_craft": "keep quoted fee and recipe snapshot; currency adapter only",
+  "refining_activation": "new quotes use per-major-realm reset table; stale old quote rejected and shown again without debit",
+  "completed_refining": "no rollback of completed operations or automatic retroactive refunds",
+  "manual_exchange": "explicit quote and confirmation, never auto-convert at purchase",
+  "accepted_policy": "bidirectional zero fee with world unlock; 1000 per adjacent grade; refining 3..768 per realm",
+  "item_merges": [
+    {
+      "old_id": "MAT-017",
+      "old_name": "Tinh Huyết",
+      "new_id": "MAT-006",
+      "new_name": "Huyết Tinh",
+      "quantity_multiplier": "1",
+      "policy": "merge_no_currency_refund"
+    },
+    {
+      "old_id": "MAT-030",
+      "old_name": "Hồn Sa",
+      "new_id": "MAT-021",
+      "new_name": "Vạn Hồn Tinh",
+      "quantity_multiplier": "1",
+      "policy": "merge_no_currency_refund"
+    },
+    {
+      "old_id": "MAT-033",
+      "old_name": "Giới Lực Kết Tinh",
+      "new_id": "MAT-022",
+      "new_name": "Giới Tâm Thạch",
+      "quantity_multiplier": "1",
+      "policy": "merge_no_currency_refund"
+    },
+    {
+      "old_id": "MAT-034",
+      "old_name": "Pháp Tướng Mảnh",
+      "new_id": "MAT-020",
+      "new_name": "Pháp Tướng Linh Tủy",
+      "quantity_multiplier": "1",
+      "policy": "merge_no_currency_refund"
+    }
+  ],
+  "social_npc_aliases": {
+    "HG_TVT_02": "NPC-02",
+    "HG_HSM_02": "NPC-03",
+    "HG_VDC_03": "NPC-05",
+    "HG_VDC_04": "NPC-04",
+    "HG_TL_01": "NPC-01"
+  },
+  "dialogue_scene_ids": "preserved from source; npc_id mapped to active9; scene prerequisites stay within retained NPC",
+  "source_14_inactive_npc_content": "not imported; no machine relabeling into another person",
+  "source_to_current_calendar": "00:00 UTC -> 00:00 Asia/Ho_Chi_Minh; reconcile rewarded day before enabling new social schedule",
+  "new_data_layout": "all authoritative data is JSON; do not import historical CSV/Excel"
+}

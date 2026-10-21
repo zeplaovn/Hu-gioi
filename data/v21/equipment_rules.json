@@ -1,0 +1,46 @@
+{
+  "slots": [
+    "Vũ khí",
+    "Pháp bào",
+    "Giày",
+    "Hộ phù",
+    "Pháp giới",
+    "Pháp bảo chính",
+    "Pháp bảo phụ"
+  ],
+  "one_item_per_slot": true,
+  "one_unique_item_per_id_per_loadout": true,
+  "min_stage_by_tier": {
+    "1": "HG01",
+    "2": "HG02",
+    "3": "HG03",
+    "4": "HG04",
+    "5": "LG01",
+    "6": "LG02",
+    "7": "LG03",
+    "8": "TG01",
+    "9": "TG03",
+    "10": "TG04"
+  },
+  "quality_scales_only_marked_ops": true,
+  "stat_percent_stacking": "add same-stat modifiers against immutable base; then global caps",
+  "affix_counts_by_quality": {
+    "common": 0,
+    "fine": 1,
+    "superior": 2,
+    "supreme": 3
+  },
+  "affix_pick": "uniform without replacement among matching-slot affixes; unknown generic slot entry means any equipment; no reroll endpoint in MVP",
+  "affix_value": "server integer uniform in configured min/max increments; recorded on instance at creation",
+  "affix_group_duplicate": false,
+  "gear_cultivation_total_cap_bp": 3500,
+  "crit_cap_bp": 7500,
+  "penetration_cap_bp": 6000,
+  "cdr_cap_bp": 3500,
+  "evade_cap_pve_bp": 5000,
+  "evade_cap_pvp_bp": 3500,
+  "buff_scope": "life unless unique account_echo explicitly consumed",
+  "breakthrough_bonus_stacking": "highest single item bonus; add pity then apply breakthrough cap",
+  "durability": "none; no unspecified repair currency sink",
+  "upgrade": "replace with higher-tier craft/drop; no extra enhancement/merge system in MVP"
+}

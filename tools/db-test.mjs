@@ -56,21 +56,29 @@ const run = (label, f) => {
 console.log("Áp dụng schema:");
 const steps = [["stub supabase", join(root, "supabase/tests/_stub_supabase.sql")]];
 for (const f of readdirSync(join(root, "supabase/migrations")).filter(f => f.endsWith(".sql")).sort()) steps.push([f, join(root, "supabase/migrations", f)]);
+const current = steps.filter(([n]) => n.startsWith("202610211"));
+const legacy = steps.filter(([n]) => !n.startsWith("202610211"));
 let schemaOk = true;
-for (const [l, f] of steps) if (!run(l, f)) { schemaOk = false; break; }
+for (const [l, f] of legacy) if (!run(l, f)) { schemaOk = false; break; }
 
 if (schemaOk) {
   console.log("Test SQL:");
-  for (const f of readdirSync(join(root, "supabase/tests")).filter(f => f.endsWith(".test.sql")).sort()) run(f, join(root, "supabase/tests", f));
+  for (const f of readdirSync(join(root, "supabase/tests")).filter(f => f.endsWith(".test.sql") && !f.startsWith("07_")).sort()) run(f, join(root, "supabase/tests", f));
+  if (!process.argv.includes("--sql-only")) {
+    const r = sh("pnpm", ["exec", "vitest", "run", "tests/edge/handler.db.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
+    if (r.status !== 0) failed++;
+  }
+  console.log("Upgrade v2.1:");
+  for (const [l,f] of current) if (!run(l,f)) { schemaOk=false; break; }
+  if (schemaOk) run("07_v21.test.sql",join(root,"supabase/tests/07_v21.test.sql"));
   if (existsSync(join(root, "packages/game-core/package.json")) && !process.argv.includes("--sql-only")) {
     console.log("Test parity (game-core ↔ SQL):");
     const r = sh("pnpm", ["--filter", "@hu-gioi/game-core", "exec", "vitest", "run", "test/parity.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
     if (r.status !== 0) failed++;
-    console.log("Test API handler ↔ Postgres:");
-    const r2 = sh("pnpm", ["exec", "vitest", "run", "tests/edge/handler.db.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
-    if (r2.status !== 0) failed++;
+
   }
 }
 if (started && !process.env.HU_PG_KEEP) asPg(join(pgBin, "pg_ctl"), ["-D", dataDir, "-m", "fast", "stop"], { stdio: "ignore" });
 console.log(failed ? `\n${failed} bước thất bại` : "\nTất cả test DB đạt");
 process.exit(failed ? 1 : 0);
+

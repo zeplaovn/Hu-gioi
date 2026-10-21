@@ -5,18 +5,18 @@ import { parseCsv } from '../tools/csv.mjs';
 import { STAGES, RULES, TM_CATALOG, tangSeconds, creditSeconds } from '../packages/game-core/src/index.ts';
 const read = p => readFileSync(new URL('../'+p, import.meta.url), 'utf8');
 
-test('all 135 runtime thresholds match the audited Excel-source CSV', () => {
-  const xp = parseCsv(read('data/xp_thresholds_45_days.csv'));
-  assert.equal(xp.length, 135);
+test('all126 current runtime thresholds match canonical v2.1 JSON', () => {
+  const xp = JSON.parse(read('data/v21/xp_thresholds.json'));
+  assert.equal(xp.length, 126);
   const seen = new Set();
   for (const r of xp) {
     const key = r.stage_id+':'+r.tier;
     assert(!seen.has(key)); seen.add(key);
-    const stage = STAGES.findIndex(s => s.stage_id === r.stage_id);
+    const stage = STAGES.find(s => s.stage_id === r.stage_id).idx;
     assert(Math.abs(tangSeconds(stage,+r.tier) - +r.xp_required/+r.xp_per_effective_hour*3600) < 1e-7);
   }
   assert.throws(() => tangSeconds(0,0)); assert.throws(() => tangSeconds(0,10));
-  const days = RULES.tier_seconds.flat().reduce((a,b)=>a+b,0)/creditSeconds(86400);
+  const days = RULES.tier_seconds.slice(1).flat().reduce((a,b)=>a+b,0)/creditSeconds(86400);
   assert(Math.abs(days-33)<.01, `reference duration ${days}`);
   assert.equal(STAGES.at(-1).day_end,33);
   assert.equal(TM_CATALOG.filter(x=>x.kind==='stat').reduce((sum,x)=>sum+x.level_cap*x.base_cost+x.step_cost*x.level_cap*(x.level_cap-1)/2,0),2280);
@@ -29,3 +29,4 @@ test('842 image destinations are unique and the manifest keeps its audited quali
   assert.equal(a.length,842);assert.equal(new Set(a.map(x=>x.path)).size,842);
   assert.equal(a.filter(x=>x.quality==='da_tao_lai').length,3);
 });
+

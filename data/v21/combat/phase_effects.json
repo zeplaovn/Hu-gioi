@@ -1,0 +1,920 @@
+[
+  {
+    "monster_id": "MON-007",
+    "phase": 1,
+    "hp_pct_range": "100-50",
+    "name": "Cuồng Nộ",
+    "ops": [
+      {
+        "op": "ramp",
+        "stat": "atk",
+        "step_bp": 600,
+        "every_turns": 2,
+        "cap_bp": 1800
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-007",
+    "phase": 2,
+    "hp_pct_range": "50-0",
+    "name": "Huyết Cuồng",
+    "ops": [
+      {
+        "op": "status_duration_bonus",
+        "status": "BLEED",
+        "turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-008",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Triều Khởi",
+    "ops": [
+      {
+        "op": "attack_element",
+        "element": "Thủy"
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-008",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Thủy Lao",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "SLOW",
+        "turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-008",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Giao Long Hống",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-009",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Hỏa Tinh",
+    "ops": [
+      {
+        "op": "on_hit_status",
+        "status": "BURN",
+        "chance_bp": 2500
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-009",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Phần Thiên",
+    "ops": [
+      {
+        "op": "ramp",
+        "stat": "atk",
+        "step_bp": 400,
+        "every_turns": 1,
+        "cap_bp": 1200
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-009",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Lân Hỏa Bạo",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-010",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Cửu Ảnh",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "BLIND",
+        "turns": 2
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-010",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Huyễn Cảnh",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "SILENCE",
+        "turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-010",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Vọng Tâm",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-011",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Phong Liệt",
+    "ops": [
+      {
+        "op": "stat_percent",
+        "stat": "spd",
+        "amount_bp": 800
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-011",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Kim Dực",
+    "ops": [
+      {
+        "op": "stat_flat",
+        "stat": "eva",
+        "amount": 8
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-011",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Thiên Phong",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-012",
+    "phase": 1,
+    "hp_pct_range": "100-70",
+    "name": "Huyền Giáp",
+    "ops": [
+      {
+        "op": "damage_reduction",
+        "amount_bp": 1200
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-012",
+    "phase": 2,
+    "hp_pct_range": "70-40",
+    "name": "Hóa Sơn",
+    "ops": [
+      {
+        "op": "enter_shield",
+        "amount_bp": 1200
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-012",
+    "phase": 3,
+    "hp_pct_range": "40-0",
+    "name": "Địa Trấn",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-016",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Tụ Linh",
+    "ops": [
+      {
+        "op": "stat_percent",
+        "stat": "atk",
+        "amount_bp": 800
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-016",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Pháp Tướng",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "WEAKEN",
+        "turns": 2
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-016",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Diệt Sơn",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-018",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Đoạn Kiếm",
+    "ops": [
+      {
+        "op": "multihit",
+        "hits": 2,
+        "coefficient_per_hit_bp": 6000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-018",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Kiếm Trận",
+    "ops": [
+      {
+        "op": "stat_percent",
+        "stat": "pen",
+        "amount_bp": 1000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-018",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Vạn Kiếm",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-019",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Sát Ý",
+    "ops": [
+      {
+        "op": "attack_from_spirit"
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-019",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Hồn Vọng",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "SILENCE",
+        "turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-019",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Ma Âm",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-020",
+    "phase": 1,
+    "hp_pct_range": "100-70",
+    "name": "Lôi Trùng",
+    "ops": [
+      {
+        "op": "ramp",
+        "stat": "atk",
+        "step_bp": 300,
+        "every_turns": 1,
+        "cap_bp": 1500
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-020",
+    "phase": 2,
+    "hp_pct_range": "70-40",
+    "name": "Giới Kiếp",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "RES_DOWN",
+        "turns": 2
+      },
+      {
+        "op": "stat_percent",
+        "stat": "pen",
+        "amount_bp": 600
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-020",
+    "phase": 3,
+    "hp_pct_range": "40-0",
+    "name": "Cửu Lôi",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-024",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Sa Hành",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "SLOW",
+        "turns": 2
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-024",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Thời Đình",
+    "ops": [
+      {
+        "op": "target_stat_percent",
+        "stat": "spd",
+        "amount_bp": -1500
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-024",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Nghịch Sa",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-025",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Hư Liệt",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "BLIND",
+        "turns": 2
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-025",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Đoạn Không",
+    "ops": [
+      {
+        "op": "stat_percent",
+        "stat": "pen",
+        "amount_bp": 1000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-025",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Long Tức",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-026",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Hồi Ức",
+    "ops": [
+      {
+        "op": "stat_percent",
+        "stat": "spirit",
+        "amount_bp": 1000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-026",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Mệnh Hà",
+    "ops": [
+      {
+        "op": "enter_status",
+        "status": "SILENCE",
+        "turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-026",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Tái Diễn",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-027",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Kim Mộc",
+    "ops": [
+      {
+        "op": "element_resistance",
+        "elements": [
+          "Kim",
+          "Mộc",
+          "Thủy",
+          "Hỏa",
+          "Thổ"
+        ],
+        "amount_bp": 1000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-027",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Thủy Hỏa",
+    "ops": [
+      {
+        "op": "status_duration_bonus",
+        "status": "BURN",
+        "turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-027",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Thổ Không",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-028",
+    "phase": 1,
+    "hp_pct_range": "100-65",
+    "name": "Phản Tiên",
+    "ops": [
+      {
+        "op": "reflect",
+        "amount_bp": 500,
+        "player_hp_cap_bp": 500
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-028",
+    "phase": 2,
+    "hp_pct_range": "65-30",
+    "name": "Lôi Phạt",
+    "ops": [
+      {
+        "op": "stat_percent",
+        "stat": "pen",
+        "amount_bp": 1200
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-028",
+    "phase": 3,
+    "hp_pct_range": "30-0",
+    "name": "Cửu Tiêu",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-029",
+    "phase": 1,
+    "hp_pct_range": "100-70",
+    "name": "Đại La Hình",
+    "ops": [
+      {
+        "op": "on_hit_status",
+        "status": "SLOW",
+        "chance_bp": 10000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-029",
+    "phase": 2,
+    "hp_pct_range": "70-40",
+    "name": "Đạo Ảnh",
+    "ops": [
+      {
+        "op": "rotate_status",
+        "statuses": [
+          "WEAKEN",
+          "BLIND",
+          "SILENCE"
+        ],
+        "every_turns": 3
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-029",
+    "phase": 3,
+    "hp_pct_range": "40-0",
+    "name": "Tàn Hưởng",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-030",
+    "phase": 1,
+    "hp_pct_range": "100-70",
+    "name": "Ký Ức",
+    "ops": [
+      {
+        "op": "target_crit_cap",
+        "cap_bp": 1000
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-030",
+    "phase": 2,
+    "hp_pct_range": "70-40",
+    "name": "Hương Giới",
+    "ops": [
+      {
+        "op": "enter_shield",
+        "amount_bp": 1200
+      },
+      {
+        "op": "lore_notice",
+        "key": "return_choice_still_optional"
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  },
+  {
+    "monster_id": "MON-030",
+    "phase": 3,
+    "hp_pct_range": "40-0",
+    "name": "Quy Hương",
+    "ops": [
+      {
+        "op": "telegraph_ultimate",
+        "first_hit_max_hp_bp": 5500,
+        "charge_turns": 1
+      }
+    ],
+    "active_scope": "current_phase",
+    "enter_once_per_battle": true,
+    "phase_can_only_advance": true,
+    "large_hp_drop": "run entry effects for each crossed phase; active modifiers from final phase only",
+    "design_status": "SOURCE_NORMALIZED_AND_PROPOSED_NUMBERS_WHERE_SOURCE_UNSPECIFIED"
+  }
+]

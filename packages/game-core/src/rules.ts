@@ -10,7 +10,7 @@ export const STAT_LABEL: Record<StatKey, string> = {
 
 export const TANG_PER_STAGE = RULES.tang_per_stage;
 export const STAGE_COUNT = STAGES.length;
-/** TM cho một kiếp hoàn tất: 15 giai đoạn × 9 tầng × 1 TM/tầng = 135. */
+/** TM cho một kiếp hoàn tất: 14 giai đoạn × 9 tầng × 1 TM/tầng = 126. */
 export const CLEAN_LIFE_TM = STAGE_COUNT * TANG_PER_STAGE;
 
 /** Giây được tính từ khoảng vắng mặt: 8h đầu 100%, 8–16h 70%, 16–24h 40%, quá 24h không tính. */
@@ -30,8 +30,8 @@ export function tangSeconds(stageIdx: number, tier = 9): number {
 
 /** Thọ nguyên tối đa khi đang ở giai đoạn này. */
 export function lifespanCap(stageIdx: number): number {
-  if (stageIdx === 0) return RULES.tho_nguyen.start_years;
-  const prev = STAGES[stageIdx - 1];
+  if (stageIdx <= 1) return RULES.tho_nguyen.start_years;
+  const prev = STAGES.find(s => s.idx === stageIdx - 1);
   if (!prev) throw new RangeError("stage " + stageIdx);
   return prev.lifespan_cap_after;
 }
@@ -58,7 +58,8 @@ export function statCost(stat: StatKey, level: number): number | null {
 
 /** Xác suất chết khi đại đột phá (đã làm tròn 6 chữ số như SQL). Xác suất gốc là GIẢ ĐỊNH chưa đo. */
 export function deathProb(stageIdx: number, risk: number, hazardScale: number = RULES.hazard_scale): number {
-  const s = STAGES[stageIdx];
+  const s = STAGES.find(s => s.idx === stageIdx);
   if (!s) throw new RangeError("stage " + stageIdx);
   return Math.round(Math.min(1, s.p_death_tang9 * hazardScale * risk) * 1e6) / 1e6;
 }
+

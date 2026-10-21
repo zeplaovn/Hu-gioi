@@ -1,0 +1,740 @@
+[
+  {
+    "id": "Q-HG-01:learn",
+    "quest_id": "Q-HG-01",
+    "objective_id": "learn",
+    "target_id": "awakening",
+    "server_event": "tutorial.step_completed",
+    "resource_ids": [
+      "awakening"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-01:seal",
+    "quest_id": "Q-HG-01",
+    "objective_id": "seal",
+    "target_id": "heaven_mark",
+    "server_event": "evidence.verified",
+    "resource_ids": [
+      "heaven_mark"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-02:sect",
+    "quest_id": "Q-HG-02",
+    "objective_id": "sect",
+    "target_id": "chosen_lineage",
+    "server_event": "sect.joined",
+    "resource_ids": [
+      "chosen_lineage"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "allowed_sects": [
+        "TV",
+        "HS",
+        "VD"
+      ]
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-02:trial",
+    "quest_id": "Q-HG-02",
+    "objective_id": "trial",
+    "target_id": "entry_exam",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "entry_exam"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-03:water",
+    "quest_id": "Q-HG-03",
+    "objective_id": "water",
+    "target_id": "water",
+    "server_event": "gather.quest_sample",
+    "resource_ids": [
+      "water-1",
+      "water-2"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "node_id": "HG.STREAM",
+      "guaranteed": true,
+      "distinct_resource_key": "sample_id"
+    },
+    "resource_count": 2,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-03:heal",
+    "quest_id": "Q-HG-03",
+    "objective_id": "heal",
+    "target_id": "water_patient",
+    "server_event": "rescue.completed",
+    "resource_ids": [
+      "water_patient"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-03:rune",
+    "quest_id": "Q-HG-03",
+    "objective_id": "rune",
+    "target_id": "water_array",
+    "server_event": "evidence.verified",
+    "resource_ids": [
+      "water_array"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-04:repair",
+    "quest_id": "Q-HG-04",
+    "objective_id": "repair",
+    "target_id": "HG.RUINS",
+    "server_event": "array.pillar_repaired",
+    "resource_ids": [
+      "HG.RUINS-1",
+      "HG.RUINS-2",
+      "HG.RUINS-3"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "distinct_resource_key": "pillar_id"
+    },
+    "resource_count": 3,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-04:boss",
+    "quest_id": "Q-HG-04",
+    "objective_id": "boss",
+    "target_id": "MON-012",
+    "server_event": "combat.won",
+    "resource_ids": [
+      "MON-012"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "battle_result_only",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-HG-04:prepare",
+    "quest_id": "Q-HG-04",
+    "objective_id": "prepare",
+    "target_id": "HG05",
+    "server_event": "tribulation.prepared",
+    "resource_ids": [
+      "HG05"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "online_ack": true
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-01:register",
+    "quest_id": "Q-LG-01",
+    "objective_id": "register",
+    "target_id": "LG.TOWN",
+    "server_event": "identity.registered",
+    "resource_ids": [
+      "LG.TOWN"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-01:stone",
+    "quest_id": "Q-LG-01",
+    "objective_id": "stone",
+    "target_id": "array_stone",
+    "server_event": "quest_loan.returned",
+    "resource_ids": [
+      "array_stone"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-01:coord",
+    "quest_id": "Q-LG-01",
+    "objective_id": "coord",
+    "target_id": "cloud_coordinates",
+    "server_event": "evidence.verified",
+    "resource_ids": [
+      "cloud_coordinates"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-02:history",
+    "quest_id": "Q-LG-02",
+    "objective_id": "history",
+    "target_id": "ancient_history",
+    "server_event": "evidence.compared",
+    "resource_ids": [
+      "ancient_history-1",
+      "ancient_history-2"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "distinct_document_ids": true,
+      "distinct_resource_key": "document_id"
+    },
+    "resource_count": 2,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-02:choice",
+    "quest_id": "Q-LG-02",
+    "objective_id": "choice",
+    "target_id": "history_custody",
+    "server_event": "quest.branch_chosen",
+    "resource_ids": [
+      "history_custody"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "choice",
+    "filters": {
+      "allowed_values": [
+        "publish",
+        "joint_custody",
+        "sealed_archive"
+      ]
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-03:trial",
+    "quest_id": "Q-LG-03",
+    "objective_id": "trial",
+    "target_id": "LG.array_test",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "LG.array_test"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-03:boss",
+    "quest_id": "Q-LG-03",
+    "objective_id": "boss",
+    "target_id": "MON-020",
+    "server_event": "combat.won",
+    "resource_ids": [
+      "MON-020"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "battle_result_only",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-LG-03:prepare",
+    "quest_id": "Q-LG-03",
+    "objective_id": "prepare",
+    "target_id": "LG04",
+    "server_event": "tribulation.prepared",
+    "resource_ids": [
+      "LG04"
+    ],
+    "location_node": "LG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "online_ack": true
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-01:register",
+    "quest_id": "Q-TG-01",
+    "objective_id": "register",
+    "target_id": "TG.ARCHIVE",
+    "server_event": "identity.registered",
+    "resource_ids": [
+      "TG.ARCHIVE"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-01:verify",
+    "quest_id": "Q-TG-01",
+    "objective_id": "verify",
+    "target_id": "original_heaven_record",
+    "server_event": "evidence.verified",
+    "resource_ids": [
+      "original_heaven_record"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-01:hearing",
+    "quest_id": "Q-TG-01",
+    "objective_id": "hearing",
+    "target_id": "heaven_law",
+    "server_event": "hearing.completed",
+    "resource_ids": [
+      "heaven_law"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-02:consent",
+    "quest_id": "Q-TG-02",
+    "objective_id": "consent",
+    "target_id": "memory_owner",
+    "server_event": "consent.recorded",
+    "resource_ids": [
+      "memory_owner"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-02:memory",
+    "quest_id": "Q-TG-02",
+    "objective_id": "memory",
+    "target_id": "lost_memory",
+    "server_event": "memory.restored",
+    "resource_ids": [
+      "lost_memory"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {
+      "consent_id_required": true,
+      "owner_confirmed": true
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-03:cost",
+    "quest_id": "Q-TG-03",
+    "objective_id": "cost",
+    "target_id": "return_mortal_cost",
+    "server_event": "disclosure.acknowledged",
+    "resource_ids": [
+      "return_mortal_cost"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-03:choice",
+    "quest_id": "Q-TG-03",
+    "objective_id": "choice",
+    "target_id": "return_preparation",
+    "server_event": "quest.branch_chosen",
+    "resource_ids": [
+      "return_preparation"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "choice",
+    "filters": {
+      "allowed_values": [
+        "defer",
+        "prepare"
+      ]
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-04:names",
+    "quest_id": "Q-TG-04",
+    "objective_id": "names",
+    "target_id": "return_name_list",
+    "server_event": "evidence.verified",
+    "resource_ids": [
+      "return_name_list"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "world_interact",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-04:boss",
+    "quest_id": "Q-TG-04",
+    "objective_id": "boss",
+    "target_id": "MON-030",
+    "server_event": "combat.won",
+    "resource_ids": [
+      "MON-030"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "battle_result_only",
+    "filters": {},
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-TG-04:choice",
+    "quest_id": "Q-TG-04",
+    "objective_id": "choice",
+    "target_id": "ending",
+    "server_event": "quest.branch_chosen",
+    "resource_ids": [
+      "ending"
+    ],
+    "location_node": "TG.ARCHIVE",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "choice",
+    "filters": {
+      "allowed_values": [
+        "return_home",
+        "remain"
+      ],
+      "online_ack": true
+    },
+    "resource_count": 1,
+    "duration_seconds": 10,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-TV-1:task",
+    "quest_id": "Q-SECT-TV-1",
+    "objective_id": "task",
+    "target_id": "sect_patrol",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_patrol"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-TV-2:task",
+    "quest_id": "Q-SECT-TV-2",
+    "objective_id": "task",
+    "target_id": "sect_internal",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_internal"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-TV-3:task",
+    "quest_id": "Q-SECT-TV-3",
+    "objective_id": "task",
+    "target_id": "sect_weekly",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_weekly"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 3,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-HS-1:task",
+    "quest_id": "Q-SECT-HS-1",
+    "objective_id": "task",
+    "target_id": "sect_patrol",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_patrol"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-HS-2:task",
+    "quest_id": "Q-SECT-HS-2",
+    "objective_id": "task",
+    "target_id": "sect_internal",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_internal"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-HS-3:task",
+    "quest_id": "Q-SECT-HS-3",
+    "objective_id": "task",
+    "target_id": "sect_weekly",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_weekly"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 3,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-VD-1:task",
+    "quest_id": "Q-SECT-VD-1",
+    "objective_id": "task",
+    "target_id": "sect_patrol",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_patrol"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-VD-2:task",
+    "quest_id": "Q-SECT-VD-2",
+    "objective_id": "task",
+    "target_id": "sect_internal",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_internal"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 1,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  },
+  {
+    "id": "Q-SECT-VD-3:task",
+    "quest_id": "Q-SECT-VD-3",
+    "objective_id": "task",
+    "target_id": "sect_weekly",
+    "server_event": "trial.completed",
+    "resource_ids": [
+      "sect_weekly"
+    ],
+    "location_node": "HG.SECT",
+    "requires_active_quest": true,
+    "server_evidence_required": true,
+    "method": "server_trial",
+    "filters": {
+      "lineage_must_match": true,
+      "lethal": false
+    },
+    "resource_count": 3,
+    "duration_seconds": 60,
+    "guaranteed_source": true
+  }
+]

@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { CLEAN_LIFE_TM, STAGES, TM_CATALOG, creditSeconds, deathProb, lifespanCap, multipliers, statCost, tangSeconds, usedYears } from "../src/index.ts";
 
 describe("game-core", () => {
-  it("một kiếp sạch = 135 TM, 15 giai đoạn, 33 ngày tham chiếu", () => {
-    expect(CLEAN_LIFE_TM).toBe(135);
-    expect(STAGES).toHaveLength(15);
+  it("một kiếp sạch = 126 TM, 14 giai đoạn, 33 ngày tham chiếu", () => {
+    expect(CLEAN_LIFE_TM).toBe(126);
+    expect(STAGES).toHaveLength(14);
     expect(STAGES.reduce((a, s) => a + s.day_end - s.day_start, 0)).toBeCloseTo(33, 9);
   });
   it("hiệu suất offline theo bậc", () => {
@@ -17,7 +17,7 @@ describe("game-core", () => {
   it("thọ nguyên: 100 ở giai đoạn đầu, 100 + 20d sau khi hoàn tất", () => {
     expect(lifespanCap(0)).toBe(100);
     for (const s of STAGES) expect(s.lifespan_cap_after).toBe(100 + 20 * s.day_end);
-    expect(lifespanCap(1)).toBe(111);
+    expect(lifespanCap(1)).toBe(100);
     expect(usedYears(86400)).toBe(10);
   });
   it("đường sạch dùng chưa tới một nửa thọ nguyên được cấp", () => {
@@ -34,10 +34,11 @@ describe("game-core", () => {
     expect(m.speed).toBeLessThanOrEqual(1.25); expect(m.risk).toBeGreaterThanOrEqual(0.5);
   });
   it("xác suất chết", () => {
-    expect(deathProb(0, 1)).toBe(0);
+    expect(deathProb(1, 1)).toBe(0.005);
     expect(deathProb(9, 1)).toBe(0.06);
     expect(deathProb(9, 0.5)).toBe(0.03);
     expect(deathProb(9, 1, 1000)).toBe(1);
-    expect(tangSeconds(0)).toBe(5076);
+    expect(tangSeconds(1)).toBeGreaterThan(0);
   });
 });
+

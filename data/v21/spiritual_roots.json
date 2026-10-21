@@ -1,0 +1,65 @@
+[
+  {
+    "id": "ROOT-001",
+    "name": "Ngũ Linh Căn",
+    "type": "Ngũ hành",
+    "spawn_pct": "30.0",
+    "cultivation_mult": "0.9",
+    "structure": "5 hệ",
+    "identity": "Linh hoạt; nhiều công pháp"
+  },
+  {
+    "id": "ROOT-002",
+    "name": "Tứ Linh Căn",
+    "type": "Ngũ hành",
+    "spawn_pct": "27.0",
+    "cultivation_mult": "0.96",
+    "structure": "4 hệ",
+    "identity": "Linh hoạt"
+  },
+  {
+    "id": "ROOT-003",
+    "name": "Tam Linh Căn",
+    "type": "Ngũ hành",
+    "spawn_pct": "22.0",
+    "cultivation_mult": "1.02",
+    "structure": "3 hệ",
+    "identity": "Cân bằng"
+  },
+  {
+    "id": "ROOT-004",
+    "name": "Song Linh Căn",
+    "type": "Ngũ hành",
+    "spawn_pct": "14.0",
+    "cultivation_mult": "1.08",
+    "structure": "2 hệ",
+    "identity": "Chuyên môn hóa"
+  },
+  {
+    "id": "ROOT-005",
+    "name": "Đơn Linh Căn",
+    "type": "Ngũ hành",
+    "spawn_pct": "6.0",
+    "cultivation_mult": "1.14",
+    "structure": "1 hệ",
+    "identity": "Chuyên hệ mạnh"
+  },
+  {
+    "id": "ROOT-006",
+    "name": "Thiên Linh Căn",
+    "type": "Ngũ hành",
+    "spawn_pct": "0.9",
+    "cultivation_mult": "1.2",
+    "structure": "1 hệ cực thuần",
+    "identity": "Cộng hưởng cao; không bán"
+  },
+  {
+    "id": "ROOT-007",
+    "name": "Biến Dị Linh Căn",
+    "type": "Biến dị",
+    "spawn_pct": "0.1",
+    "cultivation_mult": "1.16",
+    "structure": "Băng/Lôi/Phong/Quang/Ám",
+    "identity": "Bộ kỹ năng riêng; là tổng bucket 0.1%"
+  }
+]

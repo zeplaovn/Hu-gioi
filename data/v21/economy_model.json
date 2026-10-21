@@ -1,0 +1,112 @@
+{
+  "version": "2.1",
+  "status": "BALANCE_PROPOSAL_REFERENCE_SIMULATION",
+  "seed": 20261021,
+  "target_calendar_days": [
+    30,
+    45
+  ],
+  "max_days": 90,
+  "runs_per_profile": 200,
+  "daily_activity_currency": {
+    "Hạ Giới": "400",
+    "Linh Giới": "120",
+    "Tiên Giới": "600"
+  },
+  "currency_source_definition": "sum of activity_rewards.json event amounts under each profile.activity_plan; no free daily click grant",
+  "profiles": {
+    "light": {
+      "income_factor": 0.65,
+      "progress_factor": 0.8,
+      "collects_per_day": 1,
+      "gather_units_per_day": 6,
+      "crafts_per_profession_per_day": 1,
+      "refining_uses_per_day": 0,
+      "gift_uses_per_day": 1,
+      "auction_sale_chance": 0.05,
+      "gate_gear": 1.3,
+      "activity_plan": {
+        "patrol": 2,
+        "gather": 6,
+        "explore": 2,
+        "elite": 0
+      },
+      "catalyst_probability": 0.0
+    },
+    "regular": {
+      "income_factor": 1.0,
+      "progress_factor": 1.0,
+      "collects_per_day": 2,
+      "gather_units_per_day": 12,
+      "crafts_per_profession_per_day": 2,
+      "refining_uses_per_day": 1,
+      "gift_uses_per_day": 2,
+      "auction_sale_chance": 0.15,
+      "gate_gear": 1.45,
+      "activity_plan": {
+        "patrol": 4,
+        "gather": 6,
+        "explore": 4,
+        "elite": 0
+      },
+      "catalyst_probability": 0.2
+    },
+    "active": {
+      "income_factor": 1.35,
+      "progress_factor": 1.1,
+      "collects_per_day": 3,
+      "gather_units_per_day": 11,
+      "crafts_per_profession_per_day": 3,
+      "refining_uses_per_day": 3,
+      "gift_uses_per_day": 3,
+      "auction_sale_chance": 0.25,
+      "gate_gear": 1.45,
+      "activity_plan": {
+        "patrol": 4,
+        "gather": 6,
+        "explore": 4,
+        "elite": 1
+      },
+      "catalyst_probability": 0.5
+    }
+  },
+  "world_stage_order_source": "progression.json",
+  "profession_exp_source": "config.json systems.professions; 20*level, daily1000 cap, trivial recipes25%",
+  "garden_source": "planting_recipes.json; simulated collection at fixed daily intervals; correct seed costs/caps, care20% time reduction and pest25% with80%handled chance",
+  "plot_purchase_source": "garden_plots.json; realm condition, sequential purchase, manual exchange only if model policy explicitly invokes it",
+  "craft_source": "crafting_recipes.json; actual ingredients/fees, learning price, native currency, success rate and failure EXP",
+  "source_priority": [
+    "main_quest_reward",
+    "sect_daily_reward",
+    "guaranteed_activity_budget"
+  ],
+  "expense_priority": [
+    "claim_bound_main_quest_preparation_supplies",
+    "affordable_plot",
+    "crop_seed",
+    "recipe_learning_and_crafting",
+    "refining",
+    "gifts",
+    "auction_fees"
+  ],
+  "auction_model": "matched counterparty wallet; bid transfer never counted as system currency creation; listing fees1% and seller tax5% counted as sink",
+  "boss_checks": [
+    "MON-012",
+    "MON-020",
+    "MON-030"
+  ],
+  "combat_model": "actual reference fight at profile.gate_gear; failures with lethal death reset life assets, garden and profession XP; recipe knowledge remains",
+  "major_quest_timing": "scripted expected completion when stage threshold reached; not a replacement for quest-engine event validation",
+  "progression_assumption": "XP progress follows configured stage durations; no extra speed benefit credited from craft/pills to avoid unverified compounding",
+  "spend_safety": "do not force optional spending if it would make wallet negative; main quest route has guaranteed evidence and no mandatory paid item",
+  "unmodeled": [
+    "player market pricing behavior",
+    "live adversarial multiaccount play",
+    "skillful combat decisions beyond scripted AI",
+    "whole skill-tree/affix combat effectiveness; gear profile is an explicit scenario input",
+    "raw ingredient quality assumed common; actual handler adds0..300bp quality shift from raw-item grades"
+  ],
+  "metric_basis": "report each currency separately and exact LT_HP-equivalent; never sum raw units across currencies",
+  "combat_consumables": "2 bound preparation pills granted once per life by Q-HG-04/Q-LG-03/Q-TG-04 before boss; no sale/trade; additional doses may be bought explicitly; actual uses consumed",
+  "active_minutes_included": "raw gather3min/unit + craft30sec/attempt + task5min/day + gift15sec + bulk collection30sec"
+}

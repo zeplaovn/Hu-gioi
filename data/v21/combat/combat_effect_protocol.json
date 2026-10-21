@@ -1,0 +1,33 @@
+{
+  "version": "2.1",
+  "order": [
+    "start_round_expire_modifiers",
+    "advance_boss_phase_and_enter_once",
+    "apply_current_phase_modifiers_from_base_stats",
+    "order_actions_by_effective_spd",
+    "skip_stunned_actor_before_items_or_skills",
+    "telegraph_or_execute_action",
+    "resolve_hit_armor_resist_guard_shield",
+    "apply_damage_and_bounded_reflect",
+    "apply_status_and_one_hit_survival",
+    "aggregate_end_round_DoT_then_global_cap",
+    "expire_status_at_owner_action_boundary",
+    "evaluate_player_death_before_enemy_win"
+  ],
+  "cooldown": "ability used at turnT with cooldownC available again at T+C+1; charge turn does not start cooldown; release does",
+  "STUN": "prevents all actions including potion, guard and item; consume at next owner action boundary",
+  "SILENCE": "prevents active skill/talisman; permits basic attack/guard/potion",
+  "SLOW": "effective SPD*0.85 (status table), replaces old fixed12SPD demo shortcut",
+  "WEAKEN": "effective DEF*0.84",
+  "RES_DOWN": "RES minus0.12, clamp0..0.85",
+  "duration": "1-turn control survives until affected actor action or skipped action; never disappears before that actor can be affected",
+  "doubled_status": "same group refresh longest duration,DoT max2 stacks; all DoT combined under3%maxHP/roundPvE or8%PvP",
+  "phase_buff_recompute": "modifiers use immutable base every round; do not multiply current stats repeatedly",
+  "reflect": "does not reflect reflected damage; cap5%player maxHP per hit; absorbed shield damage does not count",
+  "equipment": "apply typed equip effects once from base loadout, then timed buffs, then global caps",
+  "quality": "only quality_scalable operations multiply1/1.05/1.10/1.15; no scaling progress,breakthrough,permanent stat,duration",
+  "talisman": "one shared use per actor/battle, PvE only; consumption occurs when action actually commits",
+  "control_boss": "STUN/SILENCE targeting boss converts to SLOW",
+  "lethal": "death on HP0;LưỡngSinh excludes tribulation and PvP; same atomic battle/death/escrow lifecycle handler",
+  "timeout": "UNRESOLVED_TIMEOUT retains battle/life; not an automatic escape or refund"
+}

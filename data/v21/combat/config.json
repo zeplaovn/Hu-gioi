@@ -1,0 +1,137 @@
+{
+  "name": "Thiên Vân Đại Lục Combat Extension",
+  "version": "2.0-reference",
+  "derived_from": "Thien_Van_Dai_Luc_FINAL_v1.3_2026-10-17(1).zip",
+  "source_canonical": "../02_DU_LIEU/config.json",
+  "technology_stack": "OPEN",
+  "lifecycle": {
+    "ascension_ends_life": false,
+    "permadeath_on_lethal_death": true,
+    "physical_assets_lost_on_death": true,
+    "heaven_mandate_persists": true
+  },
+  "heaven_mandate": {
+    "per_minor_breakthrough": 1,
+    "max_earned_per_clean_life": 126,
+    "meta_stat_cap": 20,
+    "ranked_pvp_meta_scaling": 0.5
+  },
+  "progression": {
+    "realms": 14,
+    "minor_tiers_per_realm": 9,
+    "map_order": [
+      "Hạ Giới",
+      "Linh Giới",
+      "Tiên Giới"
+    ],
+    "target_account_days": 38,
+    "target_account_range_days": [
+      30,
+      45
+    ],
+    "clean_life_days": 33
+  },
+  "stat_baseline": {
+    "referential_can_cot": 8,
+    "referential_ngo_tinh": 8,
+    "referential_van_khi": 8,
+    "referential_root_purity": 70,
+    "minor_tier_multiplier": "1+0.07*(minor_tier-1)",
+    "realm_base_multiplier": 1.75,
+    "monster_stats_source": "monsters.json"
+  },
+  "calculation": {
+    "hit_chance_min": 0.35,
+    "hit_chance_max": 0.99,
+    "accuracy_base": 0.9,
+    "accuracy_slope": 0.002,
+    "damage_variance_low": 0.95,
+    "damage_variance_high": 1.05,
+    "armor_k_attack_mult": 1.5,
+    "crit_chance_cap": 0.75,
+    "crit_damage_base": 1.5,
+    "crit_damage_cap": 2.75,
+    "pen_cap": 0.6,
+    "evade_cap_pve": 0.5,
+    "evade_cap_pvp": 0.35,
+    "pvp_damage_modifier": 0.83,
+    "boss_ultimate_first_hit_max_hp_pct": 0.55,
+    "defend_damage_reduction": 0.45,
+    "overlevel_min_damage": 1,
+    "root_skill_affinity_formula": "clamp(0,0.20,(purity-50)*0.004) IF same element",
+    "dot_cap_per_tick_of_max_hp_pve": 0.03,
+    "dot_cap_per_tick_of_max_hp_pvp": 0.08,
+    "status_duration_boss_hard_cc": "hard CC converts into SLOW 1 round",
+    "max_combat_rounds": 35,
+    "max_skill_cooldown_rounds": 8,
+    "slow_speed_order_penalty": 12,
+    "boss_phase_thresholds_source": "boss_phases.json; no generic fallback",
+    "boss_phase_effect_coverage": "PARTIAL (generic ATK+5%; shields MON-012, MON-030 only); remaining narrative effects not executed"
+  },
+  "mode_rules": {
+    "Luận Đạo": {
+      "lethal": false,
+      "ranked": true,
+      "meta_effect": 0.5,
+      "reward": "nondeath"
+    },
+    "PvP Sinh Tử": {
+      "lethal": true,
+      "ranked": true,
+      "meta_effect": 0.5,
+      "disconnect_30s": "forfeit_nonlethal",
+      "corpse_loot": false
+    },
+    "Bí cảnh lethal": {
+      "lethal": true,
+      "requires_two_confirmations": true,
+      "disconnect_pause_seconds": 120
+    },
+    "Boss lethal": {
+      "lethal": true,
+      "requires_two_confirmations": true,
+      "disconnect_pause_seconds": 120
+    },
+    "Độ Kiếp": {
+      "lethal": true,
+      "confirm_online": true,
+      "failure_not_always_death": true
+    },
+    "PvE tuần tra": {
+      "lethal": "zone_based",
+      "requires_two_confirmations_if_lethal": true
+    },
+    "Offline idle": {
+      "lethal": false,
+      "no_automatic_tier9_or_tribulation": true
+    },
+    "Không Gian Hỗn Độn": {
+      "lethal": true,
+      "party_size": 6,
+      "all_online_required": true,
+      "separate_secret_data": true
+    }
+  },
+  "battle_rng": {
+    "algorithm": "PCG64/ChaCha20 or deterministic audited RNG service; sample Python engine uses random.Random only for offline tests",
+    "client_must_not_supply_seed": true,
+    "event_idempotency": true
+  },
+  "caveats": [
+    "All scalars, enemy numbers, boss skills are proposed additions, not present in FINAL v1.3.",
+    "v1.3 only defines identity/classification of 30 monsters, not stats.",
+    "PvP ranked meta scaling and disconnect rules are marked proposal in v1.3 itself.",
+    "Chaos 6-player boss detailed skill numbers belong only in internal secret file."
+  ],
+  "rebalanced_from": "FINAL v1.3 + Combat Extension v1.3",
+  "tuning_model": {
+    "trials_per_profile": 420,
+    "monsters": 30,
+    "roles": "standard k fit except elites fixed HP1.55/DEF1.22; ATK searched",
+    "gear_profiles": [
+      1.18,
+      1.3,
+      1.45
+    ]
+  }
+}
