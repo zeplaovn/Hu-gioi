@@ -78,7 +78,7 @@ declare l game.lives%rowtype;st jsonb;ver bigint;k jsonb;w text;begin
  -- Never disclose private craft RNG before completion.
  st:=jsonb_set(st,'{jobs}',coalesce((select jsonb_object_agg(key,value-'success'-'quality') from jsonb_each(st->'jobs')),'{}'));
  return jsonb_build_object('version',ver,'life_id',l.life_id,'state',st,'knowledge',k,'server_day',game.play_day(),'wallet',jsonb_build_object('LT_HP',l.ls::text,'LT_TP',l.lt::text,'TN',l.tn::text),
- 'catalog',game.play_data('item_catalog'),'prices',game.play_data('price_book'),'recipes',game.play_data('crafting_recipes'),'seeds',game.play_data('planting_recipes'),'plots',game.play_data('garden_plots'),'venues',game.play_data('venues'),'stock',game.play_data('venue_stock'),'quests',game.play_data('quests'),'interactions',game.play_data('quest_interactions'),'nodes',game.play_data('world_nodes'),'sect_shop',game.play_data('sect_shop'),
+ 'acquisition',game.play_data('acquisition_rules'),'encounters',game.play_data('combat')->'encounters','skills',game.play_data('combat')->'player_skills','catalog',game.play_data('item_catalog'),'prices',game.play_data('price_book'),'recipes',game.play_data('crafting_recipes'),'seeds',game.play_data('planting_recipes'),'plots',game.play_data('garden_plots'),'venues',game.play_data('venues'),'stock',game.play_data('venue_stock'),'quests',game.play_data('quests'),'interactions',game.play_data('quest_interactions'),'nodes',game.play_data('world_nodes'),'sect_shop',game.play_data('sect_shop'),
  'auctions',coalesce((select jsonb_agg(to_jsonb(a)) from (select * from game.server_auctions where state='OPEN' order by ends_at limit 100) a),'[]'));
 end$$;
 create table game.trade_budgets(account_id uuid references game.accounts,day text,limit_hp numeric(78,0) not null,spent_hp numeric(78,0) not null default 0,primary key(account_id,day));
@@ -458,7 +458,7 @@ begin
    if coalesce(p_args->>'amount','')!~'^[1-9][0-9]{0,77}$' then raise exception 'invalid_price' using errcode='GM000';end if;
    amount:=(p_args->>'amount')::numeric;
    if p_args->>'buyout'='true' then if j->>'buyout' is null then raise exception 'no_buyout' using errcode='GM000';end if;amount:=(j->>'buyout')::numeric;
-   elsif amount<case when j->>'bidder' is null then (j->>'opening')::numeric else (j->>'price')::numeric+greatest(1,ceil((j->>'price')::numeric*.05)) end then raise exception 'bid_too_low' using errcode='GM000';end if;
+   elsif amount<(case when j->>'bidder' is null then (j->>'opening')::numeric else (j->>'price')::numeric+greatest(1,ceil((j->>'price')::numeric*.05)) end) then raise exception 'bid_too_low' using errcode='GM000';end if;
    if j->>'buyout' is not null and amount>=(j->>'buyout')::numeric then amount:=(j->>'buyout')::numeric;end if;
    perform game.play_trade_hold(p_account,p_life,(j->>'id')::uuid,amount*game.play_rate(code));
    cost:=amount-case when j->>'bidder'=p_life::text then (j->>'price')::numeric else 0 end;perform game.play_money(p_life,code,-cost,p_request,'bid_escrow');

@@ -10,6 +10,7 @@ import { clear, h, icon } from "../ui/dom.js";
 import { createCharacterDialog } from "../ui/character.js";
 import { createSocialDialog } from "../ui/social.js";
 import { NAME_MAX, cleanName, randomName } from "../names.js";
+import { createPlaySystems } from "../ui/play-systems.js";
 import { createMenu } from "../ui/menu.js";
 import { createScene } from "../ui/scene.js";
 
@@ -37,10 +38,11 @@ export function createPlayView({ game, onSettings = () => {} }) {
   const resultDlg = createDialog({ title: "", onclose: () => { if (game.result) game.dismissResult(); } });
   const bagDlg = createDialog({ title: "Túi đồ", onclose: () => { bagOpen = false; } });
   const characterDlg = createCharacterDialog({ game });
+  const systemsDlg = createPlaySystems({game});
   const exploreDlg = createSocialDialog({ game, kind: "explore" });
   const sectDlg = createSocialDialog({ game, kind: "sect" });
   const secretDlg = createSocialDialog({ game, kind: "secret" });
-  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el);
+  const el = h("div", null, errBox, stage, confirmDlg.el, lifespanDlg.el, resultDlg.el, bagDlg.el, characterDlg.el, exploreDlg.el, sectDlg.el, secretDlg.el, systemsDlg.el);
 
   let mode = null, ui = null, scene = null, menu = null;
 
@@ -136,7 +138,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
     const kvRow = (key, label, cls) => [h("dt", null, label), (kv[key] = h("dd", { class: ["num", cls] }))];
     const dl = h("dl", { class: "kv small" },
       kvRow("speed", "Tốc độ tu luyện"), kvRow("risk", "Hệ số rủi ro"), kvRow("tm", "Thiên Mệnh kiếp này", "t-gold"),
-      kvRow("ls", "Linh Thạch"), kvRow("lt", "Linh Tinh"), kvRow("tn", "Tiên Ngọc"));
+      kvRow("ls", "Linh Thạch"), kvRow("lt", "Linh Thạch thượng phẩm"), kvRow("tn", "Tiên Ngọc"));
 
     /* khung nhập định */
     const idleState = h("span", { class: "bold" });
@@ -165,8 +167,8 @@ export function createPlayView({ game, onSettings = () => {} }) {
       onscroll: () => { state.follow = logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 40; jumpBtn.hidden = state.follow; },
     });
 
-    menu = createMenu({ game, onBag: () => { bagOpen = true; drawBag(); },
-      onCharacter: () => characterDlg.open(), onSect: () => sectDlg.open(), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings,
+    menu = createMenu({ game, onSystems: which=>systemsDlg.open(which), onBag: () => { bagOpen = true; drawBag(); },
+      onCharacter: () => characterDlg.open(), onSect: () => systemsDlg.open("quests"), onExplore: () => exploreDlg.open(), onSecret: () => secretDlg.open(), onSettings,
       onCultivate: () => idlePanel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }) });
 
     clear(stage,
@@ -349,7 +351,7 @@ export function createPlayView({ game, onSettings = () => {} }) {
   return {
     el, render,
     destroy() {
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keydown", onKey); systemsDlg.destroy();
       scene?.destroy(); confirmDlg.hide(); lifespanDlg.hide(); resultDlg.hide(); bagDlg.hide(); characterDlg.hide(); exploreDlg.destroy(); sectDlg.destroy(); secretDlg.destroy();
     },
   };
