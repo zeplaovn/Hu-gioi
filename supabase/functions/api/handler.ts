@@ -19,6 +19,7 @@ const MAX_BODY = 2048;
 
 /** code lỗi nghiệp vụ (raise exception ... errcode GM000) -> HTTP status */
 const STATUS: Record<string, number> = {
+ state_stale:409,idempotency_conflict:409,bid_too_low:409,auction_closed:409,main_quest_required:409,inventory_full:409,insufficient_currency:409,insufficient_item:409,trade_budget:409,
   no_alive_life: 409, not_major_stage: 409, not_ready: 409, life_ended: 409,
   intent_consumed: 409, intent_expired: 409, intent_stale: 409,
   insufficient_tm: 409, max_level: 409, limit_reached: 409,
@@ -70,7 +71,7 @@ const ROUTES: Record<string, Route> = {
   "/play": { method: "GET", limit: ["read", 120, 60], run: ({ uid, rpc }) => call(rpc, "play_state", { p_account: uid }) },
   "/play/action": { method: "POST", limit: ["play", 60, 60], run: ({ uid, body, rpc }) => {
     if (typeof body.life_id !== "string" || !UUID.test(body.life_id) || typeof body.request_id !== "string" || !UUID.test(body.request_id)) throw new HttpError(400, "invalid_request");
-    const actions = ["exchange","refine","travel","buy","sell","inbox","quest_accept","quest_supply","quest_claim","sect_join","sect_buy","interact_start","gather_start","task_claim","plot_unlock","sow","water","fertilize","remove_pests","harvest","crop_cancel","learn","craft_start","craft_claim","equip","unequip","auction_list","auction_bid","auction_cancel","auction_settle","battle_prepare","battle_start","battle_turn","item_use","ending"];
+    const actions = ["exchange","refine","travel","buy","sell","inbox","quest_accept","quest_supply","quest_claim","sect_join","sect_buy","interact_start","gather_start","task_claim","plot_unlock","sow","water","fertilize","remove_pests","harvest","crop_cancel","learn","craft_start","craft_claim","equip","unequip","auction_list","auction_bid","auction_cancel","auction_settle","battle_prepare","battle_start","battle_turn","item_use","ending_prepare","ending"];
     if (typeof body.action !== "string" || !actions.includes(body.action) || !Number.isSafeInteger(body.version) || (body.version as number) < 0 || !body.args || typeof body.args !== "object" || Array.isArray(body.args)) throw new HttpError(400, "invalid_request");
     return call(rpc,"play_action",{p_account:uid,p_life:body.life_id,p_request:body.request_id,p_action:body.action,p_args:body.args,p_version:body.version});
   } },

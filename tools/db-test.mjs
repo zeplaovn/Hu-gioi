@@ -76,6 +76,7 @@ if (schemaOk) {
     const r = sh("pnpm", ["--filter", "@hu-gioi/game-core", "exec", "vitest", "run", "test/parity.test.ts"], { cwd: root, env: { ...process.env, DATABASE_URL: url } });
     if (r.status !== 0) failed++;
 
+    if (schemaOk) { const r3=sh("pnpm",["exec","vitest","run","tests/edge/play.db.test.ts"],{cwd:root,env:{...process.env,DATABASE_URL:url}});if(r3.status!==0)failed++; }
   }
 }
 if (started && !process.env.HU_PG_KEEP) asPg(join(pgBin, "pg_ctl"), ["-D", dataDir, "-m", "fast", "stop"], { stdio: "ignore" });

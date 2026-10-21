@@ -115,9 +115,9 @@ declare a game.server_auctions%rowtype;st jsonb;oldinv jsonb;lid uuid;aid uuid;d
 end$$;
 
 create function game.play_actor(p_kind text,p_source jsonb) returns jsonb language sql immutable set search_path='' as $$select jsonb_build_object('kind',p_kind,'maxhp',(p_source->>'hp')::numeric,'hp',(p_source->>'hp')::numeric,'atk',(p_source->>'atk')::numeric,'defense',(p_source->>'defense')::numeric,'spirit',(p_source->>'spirit')::numeric,'spd',(p_source->>'spd')::numeric,'acc',coalesce((p_source->>'acc')::numeric,100),'eva',coalesce((p_source->>'eva')::numeric,100),'crit',coalesce((p_source->>'crit')::numeric,.05),'pen',coalesce((p_source->>'pen')::numeric,0),'res',coalesce((p_source->>'res')::numeric,0),'crit_damage',coalesce((p_source->>'crit_damage')::numeric,1.5),'element',p_source->>'element','shield',0,'statuses','{}'::jsonb,'cooldowns','{}'::jsonb)$$;
-create function game.play_status(p_actor jsonb,p_status text,p_turns int) returns jsonb language plpgsql immutable set search_path='' as $$declare sid text:=p_status;old jsonb;begin
+create function game.play_status(p_actor jsonb,p_status text,p_turns int,p_mechanic boolean default false) returns jsonb language plpgsql immutable set search_path='' as $$declare sid text:=p_status;old jsonb;begin
  if p_actor->>'kind'='monster' and sid in('STUN','SILENCE') then sid:='SLOW';end if;old:=p_actor->'statuses'->sid;
- return jsonb_set(p_actor,array['statuses',sid],jsonb_build_object('stacks',least(case when sid in('BLEED','POISON','BURN') then 2 else 1 end,coalesce((old->>'stacks')::int,0)+1),'turns',greatest(coalesce((old->>'turns')::int,0),p_turns)));
+ return jsonb_set(p_actor,array['statuses',sid],jsonb_build_object('boss_mechanic',p_mechanic or coalesce((old->>'boss_mechanic')::boolean,false),'stacks',least(case when sid in('BLEED','POISON','BURN') then 2 else 1 end,coalesce((old->>'stacks')::int,0)+1),'turns',greatest(coalesce((old->>'turns')::int,0),p_turns)));
 end$$;
 create function game.play_dots(p_actor jsonb) returns jsonb language plpgsql immutable set search_path='' as $$declare e record;d numeric:=0;a jsonb:=p_actor;begin
  for e in select * from jsonb_each(a->'statuses') loop
@@ -127,7 +127,7 @@ end$$;
 create function game.play_status_tick(p_actor jsonb) returns jsonb language plpgsql immutable set search_path='' as $$declare e record;a jsonb:=p_actor;begin
  for e in select * from jsonb_each(a->'statuses') loop if (e.value->>'turns')::int<=1 then a:=a #- array['statuses',e.key];else a:=jsonb_set(a,array['statuses',e.key,'turns'],to_jsonb((e.value->>'turns')::int-1));end if;end loop;return a;
 end$$;
-create function game.play_strike(p_att jsonb,p_def jsonb,p_coefficient numeric,p_baseline numeric,p_guard boolean default false,p_reduction numeric default 0,p_element_res numeric default 0) returns jsonb language plpgsql volatile set search_path='' as $$
+create function game.play_strike(p_att jsonb,p_def jsonb,p_coefficient numeric,p_baseline numeric,p_guard boolean default false,p_reduction numeric default 0,p_element_res numeric default 0,p_hp_cap numeric default null) returns jsonb language plpgsql volatile set search_path='' as $$
 #variable_conflict use_column
 declare hit numeric;damage numeric;defense numeric;crit boolean;shield numeric;begin
  hit:=least(.99,greatest(.35,.90+.002*((p_att->>'acc')::numeric-case when p_att->'statuses' ? 'BLIND' then 16 else 0 end-(p_def->>'eva')::numeric)));
@@ -135,6 +135,7 @@ declare hit numeric;damage numeric;defense numeric;crit boolean;shield numeric;b
  defense:=(p_def->>'defense')::numeric*(1-least(.60,(p_att->>'pen')::numeric))*case when p_def->'statuses' ? 'WEAKEN' then .84 else 1 end;
  crit:=game.roll()<least(.75,(p_att->>'crit')::numeric);
  damage:=greatest(1,round((p_att->>'atk')::numeric*p_coefficient*(1-defense/(defense+greatest(1,p_baseline*1.5)))*(1-least(.65,greatest(-.25,p_element_res)))*(0.95+game.roll()*.1)*case when crit then least(2.75,(p_att->>'crit_damage')::numeric) else 1 end*(1-p_reduction)*case when p_guard then .55 else 1 end));
+ if p_hp_cap is not null then damage:=least(damage,floor((p_def->>'maxhp')::numeric*p_hp_cap));end if;
  shield:=least(damage,(p_def->>'shield')::numeric);p_def:=jsonb_set(p_def,'{shield}',to_jsonb((p_def->>'shield')::numeric-shield));damage:=damage-shield;
  return jsonb_build_object('target',jsonb_set(p_def,'{hp}',to_jsonb(greatest(0,(p_def->>'hp')::numeric-damage))),'damage',damage,'hit',true,'crit',crit);
 end$$;
@@ -148,7 +149,7 @@ declare b jsonb:=p_battle;row jsonb;o jsonb;p jsonb:=b->'player';e jsonb:=b->'en
    if nextphase>phase then
     for o in select value from jsonb_array_elements(active) loop
      if o->>'op'='enter_shield' then e:=jsonb_set(e,'{shield}',to_jsonb((e->>'shield')::numeric+floor((e->>'maxhp')::numeric*(o->>'amount_bp')::numeric/10000)));
-     elsif o->>'op'='enter_status' then p:=game.play_status(p,o->>'status',(o->>'turns')::int);end if;
+     elsif o->>'op'='enter_status' then p:=game.play_status(p,o->>'status',(o->>'turns')::int,true);end if;
     end loop;b:=jsonb_set(b,'{phase_start}',to_jsonb(turn));
    end if;
   end if;
@@ -164,7 +165,7 @@ declare b jsonb:=p_battle;row jsonb;o jsonb;p jsonb:=b->'player';e jsonb:=b->'en
   elsif o->>'op'='attack_from_spirit' then e:=jsonb_set(e,'{atk}',e->'spirit');
   elsif o->>'op'='target_stat_percent' then p:=jsonb_set(p,array[stat],to_jsonb((p->>stat)::numeric*(1+(o->>'amount_bp')::numeric/10000)));
   elsif o->>'op'='target_crit_cap' then p:=jsonb_set(p,'{crit}',to_jsonb(least((p->>'crit')::numeric,(o->>'cap_bp')::numeric/10000)));
-  elsif o->>'op'='rotate_status' and (turn-coalesce((b->>'phase_start')::int,turn))%(o->>'every_turns')::int=0 then p:=game.play_status(p,o->'statuses'->>((turn-coalesce((b->>'phase_start')::int,turn))/(o->>'every_turns')::int)%jsonb_array_length(o->'statuses'),1);
+  elsif o->>'op'='rotate_status' and (turn-coalesce((b->>'phase_start')::int,turn))%(o->>'every_turns')::int=0 then p:=game.play_status(p,o->'statuses'->>((turn-coalesce((b->>'phase_start')::int,turn))/(o->>'every_turns')::int)%jsonb_array_length(o->'statuses'),1,true);
   elsif o->>'op'='attack_element' then e:=jsonb_set(e,'{element}',o->'element');end if;
  end loop;
  return b||jsonb_build_object('player',p,'enemy',e,'phase',nextphase,'ops',active);
@@ -201,7 +202,7 @@ begin
  if st ? 'battle' and p_action<>'battle_turn' then raise exception 'battle_active' using errcode='GM000';end if;
  select world into w from game.stages where idx=l.stage_idx;cur:=game.play_currency(w);
  id:=p_args->>'id';slot:=p_args->>'slot';
- if p_action not in('refine','exchange','task_claim','battle_turn','ending') and id is null and p_action not in('plot_unlock','water','fertilize','remove_pests','harvest','crop_cancel') then raise exception 'invalid_request' using errcode='GM000';end if;
+ if p_action not in('refine','exchange','task_claim','battle_turn','ending','ending_prepare') and id is null and p_action not in('plot_unlock','water','fertilize','remove_pests','harvest','crop_cancel') then raise exception 'invalid_request' using errcode='GM000';end if;
  if p_action='exchange' then
   if coalesce(p_args->>'amount','')!~'^[1-9][0-9]{0,77}$' then raise exception 'invalid_amount' using errcode='GM000';end if;
   amount:=(p_args->>'amount')::numeric;code:=p_args->>'from';res:=p_args->>'to';
@@ -367,7 +368,7 @@ begin
   j:=st->'battle_intent';if j is null or j->>'token'<>p_args->>'token' or now_s>(j->>'expires_at')::numeric or j->>'monster_id'<>id then raise exception 'intent_expired' using errcode='GM000';end if;
   select x into r from jsonb_array_elements(game.play_data('combat')->'monsters') x where x->>'id'=id;
   select x into c from jsonb_array_elements(game.play_data('realm_scalars')) x where x->>'index'=l.stage_idx::text;
-  v:=jsonb_build_object('hp',round((c->>'hp_base')::numeric*(1+.07*(l.tang-1))*1.28),'atk',round((c->>'atk_base')::numeric*(1+.07*(l.tang-1))*1.208),'defense',round((c->>'def_base')::numeric*(1+.07*(l.tang-1))*1.16),'spirit',round((c->>'spirit_base')::numeric*(1+.07*(l.tang-1))*1.24),'spd',c->'spd_base','element',coalesce(l.linh_can->>'element','Kim'));
+  v:=jsonb_build_object('hp',round((c->>'hp_base')::numeric*(1+.07*(l.tang-1))*1.28),'atk',round((c->>'atk_base')::numeric*(1+.07*(l.tang-1))*1.208),'defense',round((c->>'def_base')::numeric*(1+.07*(l.tang-1))*1.16),'spirit',round((c->>'spirit_base')::numeric*(1+.07*(l.tang-1))*1.24),'spd',c->'spd_base','element',coalesce(l.linh_can->'elements'->>0,'Kim'));
   v:=game.play_actor('player',v);c:=game.play_actor('monster',r);
   -- Equipped stat effects are summed once against the immutable base.
   out:=v;
@@ -397,10 +398,11 @@ begin
    shift:=case inst->>'quality' when 'fine' then 10500 when 'superior' then 11000 when 'supreme' then 11500 else 10000 end;
    for k in select value from jsonb_array_elements(i->'effects') loop
     if k->>'op'='heal_hp' then v:=jsonb_set(v,'{hp}',to_jsonb(least((v->>'maxhp')::numeric,(v->>'hp')::numeric+floor((v->>'maxhp')::numeric*(k->>'amount_bp')::numeric*shift/100000000))));
-    elsif k->>'op'='cleanse' then v:=jsonb_set(v,'{statuses}','{}');
-    elsif k->>'op'='shield' then v:=jsonb_set(v,'{shield}',to_jsonb(floor((v->>'maxhp')::numeric*(k->>'amount_bp')::numeric*shift/100000000)));j:=jsonb_set(j,'{shield_until}',to_jsonb(lv+coalesce((k->>'duration_turns')::int,2)));
-    elsif k->>'op'='damage_taken_reduce' then j:=jsonb_set(j,'{reduce}',jsonb_build_object('bp',k->'amount_bp','until',lv+(k->>'duration_turns')::int));
-    elsif k->>'op'='damage' then c:=jsonb_set(c,'{hp}',to_jsonb(greatest(0,(c->>'hp')::numeric-(v->>'atk')::numeric*coalesce((k->>'coefficient_bp')::numeric,10000)/10000)));
+    elsif k->>'op'='cleanse' then
+     for input in select jsonb_build_object('key',key) from jsonb_each(v->'statuses') where (not(k ? 'status_ids') or k->'status_ids' ? key) and not coalesce((value->>'boss_mechanic')::boolean,false) order by key limit coalesce((k->>'count')::int,99) loop v:=v #- array['statuses',input->>'key'];end loop;
+    elsif k->>'op' in('shield','shield_hp') then v:=jsonb_set(v,'{shield}',to_jsonb(floor((v->>'maxhp')::numeric*(k->>'amount_bp')::numeric*shift/100000000)));j:=jsonb_set(j,'{shield_until}',to_jsonb(lv+coalesce((k->>'duration_turns')::int,2)-1));
+    elsif k->>'op'='damage_taken_reduce' then j:=jsonb_set(j,'{reduce}',jsonb_build_object('bp',k->'amount_bp','until',lv+(k->>'duration_turns')::int-1));
+    elsif k->>'op'='damage' then c:=jsonb_set(c,'{hp}',to_jsonb(greatest(0,(c->>'hp')::numeric-(v->>'atk')::numeric*coalesce((k->>'coefficient_bp')::numeric,10000)*shift/100000000)));
     elsif k->>'op'='survive_lethal' then j:=jsonb_set(j,'{survive}','true');
     else raise exception 'effect_not_available_in_battle' using errcode='GM000';end if;
    end loop;st:=game.play_take(st,id,1);
@@ -423,8 +425,8 @@ begin
      cost:=coalesce((r->>'coefficient')::numeric,1);cut:=1;for k in select value from jsonb_array_elements(j->'ops') loop if k->>'op'='multihit' then cut:=(k->>'hits')::int;cost:=(k->>'coefficient_per_hit_bp')::numeric/10000;end if;end loop;
      amount:=case when coalesce((j->'reduce'->>'until')::int,0)>=lv then coalesce((j->'reduce'->>'bp')::numeric,0)/10000 else 0 end;
      for n in 1..cut loop
-      out:=game.play_strike(c,v,cost,(c->>'atk')::numeric,code='guard',amount);v:=out->'target';
-      if coalesce(r->>'status_id','')<>'' and game.roll()<(r->>'status_chance')::numeric*(1-least(.85,(v->>'res')::numeric)) then v:=game.play_status(v,r->>'status_id',case when r->>'status_id' in('STUN','SILENCE') then 1 else 2 end);end if;
+      out:=game.play_strike(c,v,cost,(c->>'atk')::numeric,code='guard',amount,0,case when r->>'slot'='ultimate' and not coalesce((j->>'first_ultimate_used')::boolean,false) then .55 else null end);v:=out->'target';if r->>'slot'='ultimate' then j:=jsonb_set(j,'{first_ultimate_used}','true');end if;
+      if coalesce(r->>'status_id','')<>'' and game.roll()<(r->>'status_chance')::numeric*(1-least(.85,(v->>'res')::numeric)) then qty:=case when r->>'status_id' in('STUN','SILENCE') then 1 else 2 end;for k in select value from jsonb_array_elements(j->'ops') loop if k->>'op'='status_duration_bonus' and k->>'status'=r->>'status_id' then qty:=qty+(k->>'turns')::int;end if;end loop;v:=game.play_status(v,r->>'status_id',qty);end if;
       for k in select value from jsonb_array_elements(j->'ops') loop if k->>'op'='on_hit_status' and (out->>'hit')::boolean and game.roll()*10000<(k->>'chance_bp')::numeric then v:=game.play_status(v,k->>'status',1);end if;end loop;
      end loop;
      if r is not null then c:=jsonb_set(c,array['cooldowns',r->>'id'],to_jsonb(lv+coalesce((r->>'cooldown')::int,0)+1));end if;
@@ -436,6 +438,7 @@ begin
    elsif lv>=50 then j:=jsonb_set(j,'{outcome}','"TIMEOUT"');end if;
   end if;
   if coalesce((j->>'shield_until')::int,999999)<=lv then v:=jsonb_set(v,'{shield}','0');end if;
+  if code in('attack','guard') then j:=jsonb_set(j,'{qi}',to_jsonb(least(100,(j->>'qi')::int+10)));end if;
   j:=j||jsonb_build_object('player',v,'enemy',c,'turn',lv+1,'log',(j->'log')||jsonb_build_array(jsonb_build_object('turn',lv,'move',code,'player_hp',v->'hp','enemy_hp',c->'hp','telegraph',j->>'pending_skill')));
   if j->>'outcome'='WIN' then
    st:=game.play_event(st,'combat.won',j->>'monster_id');st:=game.play_sources(st,p_account,j->>'monster_id');
@@ -450,6 +453,31 @@ begin
    if r is not null and coalesce((select used from game.play_quotas where account_id=p_account and group_code='activity:'||(r->>'id') and period=game.play_day()),0)<(r->>'per_account_day_cap')::int then perform game.play_quota(p_account,'activity:'||(r->>'id'),(r->>'per_account_day_cap')::int);perform game.play_money(p_life,r->>'currency',(r->>'amount_per_event')::numeric,p_request,'patrol_reward');end if;
   end if;
   out:=jsonb_build_object('battle',j);if j->>'outcome'<>'ACTIVE' then st:=jsonb_set(st,'{last_battle}',j);st:=st-'battle';else st:=jsonb_set(st,'{battle}',j);end if;
+ elsif p_action='item_use' then
+  inst:=st->'inventory'->id;i:=game.play_find('item_effects',inst->>'item_id');
+  if i is null or i->>'activation'<>'consume' or i->'restrictions'->>'use_world'<>w or game.play_stage(i->'restrictions'->>'min_stage_id')>l.stage_idx then raise exception 'item_unavailable' using errcode='GM000';end if;
+  for k in select value from jsonb_array_elements(i->'effects') loop
+   if k->>'op'='cultivation_progress' then
+    if l.progress_s>=game.tang_seconds(l.stage_idx,l.tang)*.99 then raise exception 'progress_cap' using errcode='GM000';end if;
+    update game.lives set progress_s=least(game.tang_seconds(stage_idx,tang)*.99,progress_s+game.tang_seconds(stage_idx,tang)*(k->>'amount_bp')::numeric/10000) where life_id=p_life;
+   elsif k->>'op'='breakthrough_bonus' then
+    if k ? 'only_stage' and k->>'only_stage'<>(select stage_id from game.stages where idx=l.stage_idx) then raise exception 'realm_locked' using errcode='GM000';end if;
+    st:=jsonb_set(st,'{flags,breakthrough_bonus}',to_jsonb(greatest(coalesce((st->'flags'->>'breakthrough_bonus')::int,0),(k->>'amount_bp')::int)));
+   else raise exception 'effect_not_available_outside_battle' using errcode='GM000';end if;
+  end loop;
+  qty:=(i->'restrictions'->'usage_limit'->>'count')::int;
+  if qty is not null then period:=case i->'restrictions'->'usage_limit'->>'period' when 'major_realm' then p_life::text||':'||l.stage_idx::text when 'day' then game.play_day() else p_life::text end;perform game.play_quota(p_account,'consume:'||(inst->>'item_id'),qty,period);end if;
+  st:=game.play_take(st,id,1);
+ elsif p_action='ending_prepare' then
+  if st->'quests'->'Q-TG-04'->>'status' is distinct from 'CLAIMED' then raise exception 'main_quest_required' using errcode='GM000';end if;
+  res:=gen_random_uuid()::text;st:=jsonb_set(st,'{ending_intent}',jsonb_build_object('token',res,'expires_at',now_s+120));out:=jsonb_build_object('token',res,'warning','Quy Phàm kết thúc kiếp, mất tu vi và toàn bộ tài sản vật lý. Thiên Mệnh và chỉ số tài khoản được giữ. Bạn cũng có thể ở lại.');
+ elsif p_action='ending' then
+  if st->'quests'->'Q-TG-04'->>'status' is distinct from 'CLAIMED' then raise exception 'main_quest_required' using errcode='GM000';end if;
+  if p_args->>'choice' in('remain','defer') then st:=jsonb_set(st,'{flags,ending_choice}',p_args->'choice');
+  elsif p_args->>'choice'='return_home' then
+   j:=st->'ending_intent';if j is null or j->>'token'<>p_args->>'token' or now_s>(j->>'expires_at')::numeric or p_args->>'ack'<>'true' then raise exception 'confirmation_required' using errcode='GM000';end if;
+   perform game.claim_milestone(p_life,l.stage_idx,9::smallint);out:=jsonb_build_object('return_home',true);st:=st-'ending_intent';
+  else raise exception 'invalid_choice' using errcode='GM000';end if;
  elsif p_action='auction_list' then
   if now()<(select created_at+interval '72 hours' from game.accounts where account_id=p_account) then raise exception 'trade_age_locked' using errcode='GM000';end if;
   inst:=st->'inventory'->id;i:=game.play_find('item_catalog',inst->>'item_id');r:=game.play_find('price_book',inst->>'item_id');qty:=coalesce((p_args->>'quantity')::int,1);
@@ -505,6 +533,7 @@ begin
  end if;
  update game.play_lives set state=st,version=ver+1 where life_id=p_life;
  out:=jsonb_build_object('request_id',p_request,'version',ver+1,'data',out);
+ if out->'data'->>'return_home'='true' then perform game.end_life(p_life,'return_home');end if;
  if out->'data'->'battle'->>'outcome'='DEATH' then perform game.end_life(p_life,'combat');end if;
  insert into game.play_receipts values(p_account,p_request,payload,out);return out;
 end$$;
@@ -526,7 +555,66 @@ declare a game.server_auctions%rowtype;request uuid:=gen_random_uuid();begin
 end$$;
 create trigger play_death after update of status on game.lives for each row execute function game.play_on_death();
 
+create or replace function game.breakthrough_confirm(p_account uuid, p_intent uuid, p_now timestamptz default now()) returns jsonb
+language plpgsql set search_path = '' as $$
+declare l game.lives%rowtype; i game.breakthrough_intents%rowtype; s game.stages%rowtype; v_new uuid; v_next game.stages%rowtype; v_roll double precision;
+begin
+  select * into l from game.lives where account_id = p_account and status = 'alive' for update;
+  if not found then raise exception 'no_alive_life' using errcode = 'GM000'; end if;
+  select * into i from game.breakthrough_intents where intent_id = p_intent and life_id = l.life_id for update;
+  if not found then raise exception 'intent_not_found' using errcode = 'GM000'; end if;
+  if i.consumed_at is not null then raise exception 'intent_consumed' using errcode = 'GM000'; end if;
+  if p_now > i.expires_at then
+    update game.breakthrough_intents set consumed_at = p_now, outcome = 'expired' where intent_id = i.intent_id;
+    raise exception 'intent_expired' using errcode = 'GM000';
+  end if;
+
+  perform game.settle_life(l.life_id, p_now);
+  select * into l from game.lives where life_id = l.life_id;
+  if l.status <> 'alive' then
+    -- tọa hóa trong lúc chờ xác nhận: intent mất hiệu lực, không tính là kết quả đột phá
+    update game.breakthrough_intents set consumed_at = p_now, outcome = 'superseded' where intent_id = i.intent_id;
+    return jsonb_build_object('outcome', 'death', 'cause', 'lifespan', 'new_life_id', (select life_id from game.lives where account_id = p_account and status = 'alive'));
+  end if;
+  if l.stage_idx <> i.stage_idx or l.tang <> 9 then raise exception 'intent_stale' using errcode = 'GM000'; end if;
+
+  select * into s from game.stages where idx = l.stage_idx;
+  v_roll := game.roll();
+  if v_roll < i.death_prob then
+    update game.breakthrough_intents set consumed_at = p_now, outcome = 'death' where intent_id = i.intent_id;
+    v_new := game.end_life(l.life_id, 'breakthrough', p_now);
+    return jsonb_build_object('outcome', 'death', 'cause', 'breakthrough', 'new_life_id', v_new);
+  end if;
+
+  update game.breakthrough_intents set consumed_at = p_now, outcome = 'success' where intent_id = i.intent_id;
+  perform game.claim_milestone(l.life_id, l.stage_idx, 9::smallint);
+
+  if l.stage_idx = 14 then
+    insert into game.play_lives(life_id) values(l.life_id) on conflict do nothing;
+    update game.play_lives set state=jsonb_set(state,'{flags,endgame_ready}','true') where life_id=l.life_id;
+    return jsonb_build_object('outcome','success','stage_idx',14,'stage_id','TG05','world',s.world,'ascended',false);
+  end if;
+
+  select * into v_next from game.stages where idx = l.stage_idx + 1;
+  update game.lives set stage_idx = v_next.idx, tang = 1, progress_s = 0 where life_id = l.life_id;
+  perform game.log_event(l.account_id, l.life_id, 'breakthrough_success', jsonb_build_object('from', s.stage_id, 'to', v_next.stage_id));
+  if v_next.world <> s.world then
+    -- Phi Thăng: chỉ chuyển map, KHÔNG kết thúc kiếp, không thưởng riêng.
+    perform game.log_event(l.account_id, l.life_id, 'ascend', jsonb_build_object('from_world', s.world, 'to_world', v_next.world));
+  end if;
+  return jsonb_build_object('outcome', 'success', 'stage_idx', v_next.idx, 'stage_id', v_next.stage_id, 'world', v_next.world, 'ascended', v_next.world <> s.world);
+end $$;
+
 -- Legacy lethal paths acquire the same lock before taking a life lock.
+alter function game.breakthrough_prepare(uuid,timestamptz) rename to breakthrough_prepare_v161;
+create function game.breakthrough_prepare(p_account uuid,p_now timestamptz default now()) returns jsonb language plpgsql set search_path='' as $$
+declare r jsonb;l uuid;bonus int;p numeric;begin
+ r:=game.breakthrough_prepare_v161(p_account,p_now);select life_id into l from game.lives where account_id=p_account and status='alive';
+ select (state->'flags'->>'breakthrough_bonus')::int into bonus from game.play_lives where life_id=l;
+ p:=greatest(0,(r->>'death_prob')::numeric-coalesce(bonus,0)::numeric/10000);
+ update game.breakthrough_intents set death_prob=p where intent_id=(r->>'intent_id')::uuid;
+ return r||jsonb_build_object('death_prob',p,'success_prob',1-p,'lethal',p>0);
+end$$;
 alter function game.breakthrough_confirm(uuid,uuid,timestamptz) rename to breakthrough_confirm_v161;
 create function game.breakthrough_confirm(p_account uuid,p_intent uuid,p_now timestamptz default now()) returns jsonb language plpgsql set search_path='' as $$
 declare l game.lives%rowtype;st jsonb;q text;begin
@@ -534,6 +622,7 @@ declare l game.lives%rowtype;st jsonb;q text;begin
  select state into st from game.play_lives where life_id=l.life_id;
  q:=case l.stage_idx when 5 then 'Q-HG-04' when 9 then 'Q-LG-03' when 14 then 'Q-TG-04' else null end;
  if q is not null and st->'quests'->q->>'status' is distinct from 'CLAIMED' then raise exception 'main_quest_required' using errcode='GM000';end if;
+ update game.play_lives set state=state #- '{flags,breakthrough_bonus}' where life_id=l.life_id;
  return game.breakthrough_confirm_v161(p_account,p_intent,p_now);
 end$$;
 alter function game.lifespan_confirm(uuid,uuid,timestamptz) rename to lifespan_confirm_v161;
@@ -544,6 +633,7 @@ alter function game.get_state(uuid,timestamptz) rename to get_state_v161_profile
 create function game.get_state(p_account uuid,p_now timestamptz default now()) returns jsonb language plpgsql set search_path='' as $$
 declare s jsonb:=game.get_state_v161_profile(p_account,p_now);l game.lives%rowtype;begin
  if s->'life'<>'null'::jsonb then select * into l from game.lives where life_id=(s->'life'->>'life_id')::uuid;
+ if coalesce((select (state->'flags'->>'endgame_ready')::boolean from game.play_lives where life_id=l.life_id),false) then s:=jsonb_set(s,'{life,ready_for_major}','false');end if;
  s:=jsonb_set(s,'{life,wallet}',jsonb_build_object('ls',l.ls::text,'lt',l.lt::text,'tn',l.tn::text));end if;return s;
 end$$;
 -- Least privilege: helpers are not public APIs. Only the authenticated Edge adapter calls game.*.
