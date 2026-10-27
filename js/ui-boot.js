@@ -203,8 +203,8 @@
     if (s.realm !== before.realm) row('gold', 'Cảnh giới: ' + F.REALMS[before.realm] + ' → ' + F.REALMS[s.realm]);
     if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
-    const lifeLeft = Math.floor(H.raceLife(s.race, s.realm) + s.extraLife - s.age);
-    if (lifeLeft <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.max(0, lifeLeft) + ' năm: hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
+    const life = g.lifeInfo();
+    if (life.left <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' nhân vật sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
 
     if (r.encounters?.length) {
       section('Kỳ ngộ (' + r.encounters.length + ')');
@@ -232,6 +232,49 @@
       null, 'Tiếp tục tu luyện', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_khi'] });
   }
 
+  /* ======================================================================
+     TỌA HÓA · hết thọ nguyên
+     Engine dừng đồng hồ đúng lúc thọ nguyên cạn (advance trả về died). Hộp thoại này bắt buộc:
+     người chơi phải chuyển thế (dùng lại cơ chế trọng sinh) mới chơi tiếp.
+     ====================================================================== */
+  let deathOpen = false;
+  UI.onDeath = function (r) {
+    if (deathOpen) return;
+    const s = UI.s(), g = UI.g();
+    deathOpen = true;
+    const reward = F.dao_van(s.totalRunExp), points = Math.max(1, Math.floor(reward / 5)) + Math.floor(s.realm / 2);
+    const lead = r && r.seconds >= 20
+      ? 'Trong lúc bế quan, thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Thân xác tan thành linh khí giữa đất trời.'
+      : 'Thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Bạn ngồi hóa giữa đất trời, thân xác tan thành linh khí.';
+    UI.modal('Tọa hóa',
+      '<p>' + lead + '</p>' +
+      '<div class="offline-list">' +
+        '<div><span>Hưởng thọ</span><b>' + num(Math.floor(s.age)) + ' tuổi</b></div>' +
+        '<div><span>Cảnh giới đạt được</span><b>' + esc(g.realmLabel()) + '</b></div>' +
+        '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
+        '<div><span>Đạo vận nhận được</span><b>+' + num(reward) + '</b></div>' +
+        '<div><span>Điểm Thiên mệnh</span><b>+' + num(points) + '</b></div>' +
+      '</div>' +
+      '<p class="info-note">Công pháp, thiên phú, nâng cấp bế quan, Thiên mệnh và cài đặt được giữ lại. Cảnh giới, túi đồ và linh thạch đặt lại.</p>' +
+      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="reincarnate">Chuyển thế</button></div>',
+      null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
+    document.querySelector('[data-act="reincarnate"]')?.focus();
+  };
+  UI.reincarnate = function () {
+    if (!deathOpen) return;
+    const reward = F.dao_van(UI.s().totalRunExp);
+    UI.closeModal(true);
+    deathOpen = false;
+    UI.g().prestige(true, 'Tọa hóa');
+    store.write();
+    UI.windows?.closeAll();
+    UI.toast('Đã chuyển thế · nhận ' + num(reward) + ' Đạo vận. Một kiếp mới bắt đầu.', { type: 'gold', title: 'Tọa hóa' });
+    UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(140px,22vw,240px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
+    const avatar = $('avatar');
+    if (avatar) avatar.src = A.heroPortrait(UI.s().gender, UI.s().realm);
+    UI.go('idle');
+  };
+
   function start() {
     const s = UI.s();
     s.created = true;
@@ -247,7 +290,7 @@
     UI.applySettings();
     const avatar = $('avatar');
     if (avatar) avatar.src = A.heroPortrait(s.gender, s.realm);
-    if (r && r.seconds >= 20) showOfflineReport(r, before, awaySeconds);
+    if (r && r.seconds >= 20 && !r.died) showOfflineReport(r, before, awaySeconds);
     UI.windows?.closeAll();
     UI.buildShell?.();
     const hash = String(root.location && root.location.hash || '').replace(/^#\/?/, '').split('/');

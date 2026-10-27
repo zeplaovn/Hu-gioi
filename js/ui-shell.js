@@ -1398,6 +1398,7 @@
   }
 
   function run(name, el) {
+    if (name === 'reincarnate') { if (UI.reincarnate) safe(() => UI.reincarnate()); return; }
     if (name === 'modalClose') { closeModal(); return; }
     if (name === 'modalConfirm') {
       if ($('modalLayer').hidden) return;

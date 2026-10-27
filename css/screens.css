@@ -362,3 +362,6 @@ body.in-tribulation{overflow:hidden}
 .report-lines .danger{color:var(--danger)}
 .report-lines .dim{color:var(--dim)}
 .report-lines .small{font-size:13px}
+
+.death-actions{display:flex;justify-content:center;margin-top:14px}
+.death-actions .btn{min-width:200px}

@@ -179,7 +179,9 @@
     catchUp(now = Date.now(), offline = false) {
       const s = game.s;
       if (!s.created || locked || busy()) return null;
-      return game.advance(now, offline || now - s.lastUpdate > 15000);
+      const r = game.advance(now, offline || now - s.lastUpdate > 15000);
+      if (r && r.died && UI.onDeath) UI.onDeath(r);
+      return r;
     },
     exportJson() {
       store.write();
