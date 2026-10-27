@@ -1,0 +1,30 @@
+/* ===== HƯ GIỚI · màn loading tài nguyên: logo ở trên, thanh tiến độ ở dưới ===== */
+#loading{
+  position:fixed;inset:0;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:clamp(24px,7vh,64px) 20px calc(clamp(28px,8vh,64px) + env(safe-area-inset-bottom,0px));
+  background:#0a1218;color:#e9f1f3;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  transition:opacity .55s ease,visibility .55s;
+}
+#loading.done{opacity:0;visibility:hidden;pointer-events:none}
+.loading-scene{position:absolute;inset:0;background:url('../media/assets/world/bg/idle_ha_gioi.webp') center/cover no-repeat;opacity:0;transition:opacity .8s ease}
+#loading.scene-ready .loading-scene{opacity:1}
+/* Lớp phủ: sáng nhẹ phía trên để logo mực đen nổi rõ, tối dần xuống đáy nơi đặt thanh tiến độ. */
+.loading-veil{position:absolute;inset:0;background:
+  linear-gradient(to bottom,#e9eef0 0,#e9eef066 34%,#0a121800 52%,#0a1218d9 82%,#0a1218 100%),
+  radial-gradient(ellipse at 50% 30%,transparent 40%,#0a121866 100%)}
+.loading-logo{position:relative;width:min(640px,88vw);max-height:46vh;object-fit:contain;margin-top:2vh;filter:drop-shadow(0 6px 18px #ffffffaa);animation:loadingFloat 5s ease-in-out infinite}
+.loading-foot{position:relative;width:min(560px,90vw);display:flex;flex-direction:column;gap:10px}
+.loading-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;letter-spacing:.04em;color:#c9d8de}
+.loading-row b{font-size:15px;color:#e6c164;font-variant-numeric:tabular-nums}
+.loading-track{height:12px;border-radius:99px;background:#050b11cc;border:1px solid #5a6f79;overflow:hidden;box-shadow:0 0 0 3px #0a121866,inset 0 1px 3px #000a}
+.loading-fill{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);border-radius:99px;
+  background:linear-gradient(90deg,#8a6a22,#e6c164 55%,#fff0b0);transition:transform .25s ease-out;position:relative;overflow:hidden}
+.loading-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffff66 50%,transparent 70%);transform:translateX(-100%);animation:loadingShine 1.6s linear infinite}
+.loading-tip{min-height:1.3em;text-align:center;font-size:13px;color:#9fb6c0}
+@keyframes loadingShine{to{transform:translateX(100%)}}
+@keyframes loadingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(max-height:520px){.loading-logo{max-height:38vh}}
+@media(prefers-reduced-motion:reduce){
+  #loading,.loading-scene,.loading-fill{transition:none}
+  .loading-logo,.loading-fill::after{animation:none}
+}

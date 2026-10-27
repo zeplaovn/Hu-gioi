@@ -349,3 +349,16 @@ body.in-tribulation{overflow:hidden}
   .meta-ach-grid{grid-template-columns:1fr}
   .meta-points b{font-size:30px}
 }
+
+/* ---- Hộp "Bế quan trở về": bố cục theo bản Hu-gioi ---- */
+.report-lines{display:flex;flex-direction:column;gap:7px;text-align:left;margin:12px 0;max-height:min(52vh,420px);overflow:auto;padding-right:4px;scrollbar-width:thin}
+.report-lines>div{font-size:14px;line-height:1.5;color:#c6d8df}
+.report-lines .report-center{text-align:center}
+.report-lines .report-center b{color:var(--gold)}
+.report-lines .report-sec{margin-top:6px;padding-top:8px;border-top:1px solid #2b404a;text-align:center;font-weight:700;color:var(--jade);letter-spacing:.04em}
+.report-lines .cyan{color:var(--cyan)}
+.report-lines .green{color:var(--jade)}
+.report-lines .gold{color:var(--gold);font-weight:700}
+.report-lines .danger{color:var(--danger)}
+.report-lines .dim{color:var(--dim)}
+.report-lines .small{font-size:13px}

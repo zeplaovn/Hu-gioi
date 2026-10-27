@@ -16,7 +16,6 @@
 .info-box .small{font-size:13.5px}
 .info-box.root-box{display:flex;flex-direction:column;gap:7px}
 .root-box .root-rate{color:#a9c4cd;font:400 13px var(--font);white-space:nowrap}
-.roots-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
 .root-cell{height:44px;border:1px solid #2e434f;background:#121e25;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#829aa4}
 .root-cell.on{color:#ffe08b;border-color:#b99b4e;background:#292b22}
 .root-cell b{font-size:13px;text-shadow:0 0 6px currentColor,0 0 12px #ffffff33}

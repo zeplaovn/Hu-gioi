@@ -9,6 +9,7 @@
 <meta name="description" content="Hư Giới — game idle tu tiên một người chơi, chạy hoàn toàn trong trình duyệt.">
 <title>Hư Giới · Tiên Lộ Vô Tận</title>
 <link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/loading.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/welcome.css">
 <link rel="stylesheet" href="css/shell.css">
@@ -17,6 +18,17 @@
 <script src="js/content-guard.js"></script>
 </head>
 <body>
+<div id="loading" aria-busy="true" aria-label="Đang tải tài nguyên">
+  <div class="loading-scene" aria-hidden="true"></div>
+  <div class="loading-veil" aria-hidden="true"></div>
+  <img class="loading-logo" src="media/assets/world/bg/logo.webp" alt="Hư Giới" fetchpriority="high" decoding="async">
+  <div class="loading-foot">
+    <div class="loading-row"><span>Đang tải tài nguyên</span><b class="loading-pct">0%</b></div>
+    <div class="loading-track" role="progressbar" aria-label="Tiến độ tải tài nguyên" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i class="loading-fill"></i></div>
+    <p class="loading-tip">Triệu hồi linh khí…</p>
+  </div>
+</div>
+<noscript><style>#loading{display:none}</style></noscript>
 <noscript><p class="no-js">Trò chơi cần JavaScript để hoạt động.</p></noscript>
 
 <section id="welcome" class="welcome" aria-labelledby="welcomeTitle">
@@ -34,7 +46,6 @@
       <div id="raceInfo" class="info-box" aria-live="polite"></div>
       <div id="rootBox" class="info-box root-box" aria-live="polite">
         <div id="rootDescription"></div>
-        <div id="rootsPreview" class="roots-grid" aria-label="Ngũ hành linh căn"></div>
       </div>
     </div>
     <form id="createForm" class="create-right" autocomplete="off" novalidate>
@@ -276,6 +287,8 @@
 <div id="itemTip" class="item-tip" role="tooltip" aria-hidden="true" hidden></div>
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 
+<script src="js/preload-manifest.js"></script>
+<script src="js/loader.js"></script>
 <script src="js/balance-data.js"></script>
 <script src="js/items-data.js"></script>
 <script src="js/formulas.js"></script>

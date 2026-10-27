@@ -151,10 +151,6 @@
       ? active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('')
       : '<span class="chip">…</span>';
     $('rootDescription').innerHTML = rootInfoHtml();
-    $('rootsPreview').innerHTML = ELEMENTS.map(([name, color], i) =>
-      '<div class="root-cell ' + (creation.roots[i] >= 50 ? 'on' : '') + '">' +
-        '<b style="color:' + color + '">' + name + '</b></div>'
-    ).join('');
     renderStats();
     syncName();
   }
@@ -181,6 +177,61 @@
     step();
   }
 
+  /** Danh sách "việc nên làm tiếp" sau khi bế quan: chỉ đọc trạng thái, không ghi gì vào save. */
+  function nextSteps(s, g) {
+    const out = [], st = g.stats ? g.stats() : null;
+    if (st && s.hp < st.HP * .5) out.push('Sinh lực còn thấp: nghỉ ngơi hoặc dùng đan hồi phục trước khi đột phá hay vào bí cảnh.');
+    if (!s.dungeon?.active && !s.sect?.mission) out.push('Bí cảnh và nhiệm vụ tông môn đang trống: cả hai đều chạy cả khi bạn vắng mặt.');
+    if (s.sect?.mission && s.sect.mission.end <= Date.now()) out.push('Nhiệm vụ tông môn đã xong, vào Tông môn để nhận thưởng.');
+    return out.slice(0, 3);
+  }
+
+  /** Hộp thoại "Bế quan trở về": cùng bố cục với bản Hu-gioi (vắng mặt, thời gian tính, tuổi, kết quả, các mục kỳ ngộ/bí cảnh/tông môn). */
+  function showOfflineReport(r, before, awaySeconds) {
+    const s = UI.s(), g = UI.g();
+    const cap = F.offline_cap(s.offlineCap), eff = F.offline_efficiency(s.offlineEff);
+    const capped = awaySeconds > cap;
+    const months = Math.max(0, Math.round((s.age - before.age) * 12));
+    const L = [];
+    const row = (cls, html) => L.push('<div class="' + cls + '">' + html + '</div>');
+    const section = title => row('report-sec', '— ' + title + ' —');
+
+    row('report-center', 'Bạn đã vắng mặt <b>' + duration(awaySeconds) + '</b>. Thời gian bế quan được tính: <b>' + duration(r.seconds) + '</b>' + (capped ? ' (đã đạt mức tối đa)' : '') + '.');
+    row('report-center dim small', 'Hiệu suất ' + pct(eff) + ', tối đa ' + duration(cap) + ' mỗi lần. Linh điền vẫn lớn đến lúc chín.');
+    row('cyan', 'Thời gian trong game: +' + months + ' tháng (tuổi ' + Math.floor(before.age) + ' → ' + Math.floor(s.age) + ')');
+    row('green', 'Tu vi: +' + num(r.exp) + '&nbsp;&nbsp;&nbsp; Linh thạch: ' + (r.stone < 0 ? '−' : '+') + moneyHTML(Math.abs(r.stone)));
+    if (s.realm !== before.realm) row('gold', 'Cảnh giới: ' + F.REALMS[before.realm] + ' → ' + F.REALMS[s.realm]);
+    if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
+    if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
+    const lifeLeft = Math.floor(H.raceLife(s.race, s.realm) + s.extraLife - s.age);
+    if (lifeLeft <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.max(0, lifeLeft) + ' năm: hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
+
+    if (r.encounters?.length) {
+      section('Kỳ ngộ (' + r.encounters.length + ')');
+      r.encounters.slice(0, 8).forEach(e => {
+        const d = H.ENCOUNTERS.find(x => x.id === e.id);
+        const rar = d && H.ENCOUNTER_RARITIES[d.rarity];
+        row('small', '<span style="color:' + (rar ? rar.color : 'inherit') + '">✦ [' + esc(rar ? rar.name : '') + '] ' + esc(d ? d.name : '') + '</span>: ' + esc(e.text));
+      });
+      if (r.encounters.length > 8) row('dim small', '… và ' + (r.encounters.length - 8) + ' kỳ ngộ khác.');
+    }
+    if (r.dungeon) {
+      section('Bí cảnh');
+      row('small', esc(r.dungeon.text));
+    }
+    if (r.sect) {
+      section('Nhiệm vụ tông môn');
+      row('small', esc(r.sect.text));
+    }
+    const tips = nextSteps(s, g);
+    if (tips.length) {
+      section('Việc nên làm tiếp');
+      tips.forEach(x => row('small', '→ ' + esc(x)));
+    }
+    UI.modal('Bế quan trở về', '<div class="report-lines">' + L.join('') + '</div>',
+      null, 'Tiếp tục tu luyện', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_khi'] });
+  }
+
   function start() {
     const s = UI.s();
     s.created = true;
@@ -189,22 +240,14 @@
     $('game').hidden = false;
     document.body.classList.add('in-game');
     store.ready = true;
-    const r = store.catchUp(Date.now(), true);
+    const awayStart = Date.now(), awaySeconds = Math.max(0, (awayStart - s.lastUpdate) / 1000);
+    const before = { age: s.age, realm: s.realm, stone: s.stone, hp: s.hp };
+    const r = store.catchUp(awayStart, true);
     store.write();
     UI.applySettings();
     const avatar = $('avatar');
     if (avatar) avatar.src = A.heroPortrait(s.gender, s.realm);
-    if (r && r.seconds >= 20) {
-      const extra = (r.batches ? '<div><span>Mẻ nghề phụ hoàn tất</span><b>' + r.batches + '</b></div>' : '') +
-        (r.encounters?.length ? '<div><span>Kỳ ngộ tự động</span><b>' + r.encounters.length + ' lần</b></div>' : '') +
-        (r.dungeon ? '<div><span>Bí cảnh</span><b>' + r.dungeon.floors + ' tầng' + (r.dungeon.first ? ' · thông quan đầu' : '') + '</b></div>' : '') +
-        (r.sect ? '<div><span>Tông môn</span><b>+' + r.sect.contribution + ' cống hiến</b></div>' : r.sectReady ? '<div><span>Tông môn</span><b>Nhiệm vụ chờ nhận thưởng</b></div>' : '');
-      UI.modal('Bế quan trở về', '<p>Đã tích lũy <b>' + duration(r.seconds) + '</b> với hiệu suất ' + pct(F.offline_efficiency(s.offlineEff)) + '.</p>' +
-        '<div class="offline-list"><div><span>Tu vi thực nhận</span><b>+' + num(r.exp) + '</b></div><div><span>Linh thạch</span><b>' + (r.stone < 0 ? '−' : '+') + moneyHTML(Math.abs(r.stone)) + '</b></div>' + extra +
-        '<div><span>Giới hạn bế quan</span><b>' + duration(F.offline_cap(s.offlineCap)) + '</b></div></div>' +
-        '<p class="info-note">Tu vi dừng ở ngưỡng đột phá. Bí cảnh, kỳ ngộ và nghề phụ ghi chi tiết trong nhật ký. Tông môn không tự nhận chuyến mới khi offline.</p>',
-        null, 'Tiếp tục', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_khi'] });
-    }
+    if (r && r.seconds >= 20) showOfflineReport(r, before, awaySeconds);
     UI.windows?.closeAll();
     UI.buildShell?.();
     const hash = String(root.location && root.location.hash || '').replace(/^#\/?/, '').split('/');
