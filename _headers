@@ -7,3 +7,6 @@
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
   Cache-Control: no-store
+
+/media/audio/*
+  Cache-Control: public, max-age=31536000, immutable

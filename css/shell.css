@@ -463,6 +463,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .settings-row label{flex:1;font-size:14px;color:#c6d8df}
 .settings-row select{padding:8px}
 .settings-row input[type=checkbox]{width:20px;height:20px;accent-color:#d9ae4e}
+.settings-row input[type=range]{flex:0 1 220px;accent-color:#d9ae4e}
 .save-preview{background:#09131a;padding:10px;border:1px solid #344855;border-radius:8px;color:#a7c2d0;font:13px ui-monospace,monospace;word-break:break-all;max-height:120px;overflow:auto}
 .modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .modal-actions .btn{flex:1;min-width:130px}

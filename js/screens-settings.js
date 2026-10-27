@@ -8,6 +8,7 @@
 
   const TABS = [
     { id: 'season', label: 'Tứ thời', icon: '✿' },
+    { id: 'audio', label: 'Âm thanh', icon: '♪' },
     { id: 'save', label: 'Bản lưu', icon: '⛁' },
     { id: 'guide', label: 'Hướng dẫn', icon: '?' }
   ];
@@ -34,6 +35,21 @@
         <p class="info-note" id="motionStatus">${UI.isReduced() ? 'Đang giảm chuyển động: lá, linh khí và hiệu ứng khung hình ở trạng thái tĩnh.' : 'Đang bật đầy đủ: lá rơi, linh khí và hiệu ứng chiến đấu chuyển động.'}</p>`, { eyebrow: 'CẢNH SẮC' })}
       ${card('Hiệu năng', `<p>Nếu máy yếu hoặc trình duyệt chạy chậm, hãy chọn <b>Giảm chuyển động</b>. Logic tu luyện và nghề phụ vẫn chạy đủ.</p>
         <p class="info-note">Bản dựng này dùng ảnh sprite và hiệu ứng CSS, không cần WebGL. Toàn bộ tiến trình nằm trong localStorage của trình duyệt.</p>`, { eyebrow: 'THIẾT BỊ' })}
+    </div>`;
+  }
+
+  function audio() {
+    const st = UI.s().settings;
+    const tracks = (UI.audio && UI.audio.tracks) || [];
+    const volume = Number.isFinite(st.musicVolume) ? st.musicVolume : 40;
+    return `<div class="screen-grid">
+      ${card('Nhạc nền', `
+        <p>Nhạc phát lần lượt các bản trong bộ nhạc nền của Hư Giới và tự tạm dừng khi bạn chuyển sang tab khác.</p>
+        <div class="settings-row"><label for="musicSetting">Bật nhạc nền</label><input type="checkbox" id="musicSetting" ${st.music !== false ? 'checked' : ''}></div>
+        <div class="settings-row"><label for="musicVolumeSetting">Âm lượng <b id="musicVolumeValue">${volume}%</b></label><input type="range" id="musicVolumeSetting" min="0" max="100" step="5" value="${volume}"></div>
+        <div class="settings-row"><label for="musicTrackSetting">Bản nhạc</label>${select('musicTrackSetting', st.musicTrack || 'auto', [['auto', 'Lần lượt tất cả'], ...tracks.map(t => [t.id, t.title])])}</div>
+        ${UI.kit.row('Đang phát', '<span id="musicNowPlaying">—</span>')}
+        <p class="info-note">Trình duyệt chỉ cho phát nhạc sau khi bạn chạm hoặc bấm phím lần đầu trên trang.</p>`, { eyebrow: 'ÂM THANH' })}
     </div>`;
   }
 
@@ -96,7 +112,7 @@
     </div>`;
   }
 
-  const body = { season, save, guide };
+  const body = { season, audio, save, guide };
   UI.register({
     id: 'settings', label: 'Cài đặt', icon: 'ICON-MENU-006', eyebrow: 'HỆ THỐNG', nav: false, tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">HỆ THỐNG</span><h2>Cài đặt</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
