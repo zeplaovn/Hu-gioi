@@ -1,0 +1,53 @@
+/* ===== BỘ PHÁT VFX KHUNG HÌNH ===== */
+.vfx-sprite{position:absolute;pointer-events:none;user-select:none;-webkit-user-drag:none;object-fit:contain;z-index:1}
+.stage-vfx{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none}
+.stage-vfx-sprite{position:absolute;object-fit:contain;filter:drop-shadow(0 0 12px #0007)}
+.trib-stage-vfx{position:absolute;inset:0;z-index:3;overflow:hidden;pointer-events:none}
+.trib-stage-vfx-sprite{position:absolute;object-fit:contain;filter:drop-shadow(0 0 16px #0008)}
+.trib-vfx-sprite{position:absolute;object-fit:contain;filter:drop-shadow(0 0 24px #0008);opacity:.95}
+.vfx-flash{position:absolute;inset:0;z-index:5;pointer-events:none;mix-blend-mode:screen;animation:vfxFlash .55s ease-out forwards}
+.vfx-flash.flash-gold{background:radial-gradient(ellipse at 50% 40%,#ffe6a3cc,transparent 68%)}
+.vfx-flash.flash-blue{background:radial-gradient(ellipse at 50% 30%,#d6f3ffd9,transparent 70%)}
+.vfx-flash.flash-red{background:radial-gradient(ellipse at 50% 50%,#ff6a4fb8,transparent 70%)}
+@keyframes vfxFlash{0%{opacity:0}12%{opacity:.4}100%{opacity:0}}
+.vfx-ring{position:absolute;border:2px solid currentColor;border-radius:50%;pointer-events:none;animation:vfxRing .85s ease-out forwards;box-shadow:0 0 12px currentColor}
+@keyframes vfxRing{from{transform:translate(-50%,-50%) scale(.5);opacity:.8}to{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+.vfx-particle{position:absolute;width:3px;height:3px;border-radius:50%;pointer-events:none;box-shadow:0 0 6px currentColor;animation:vfxParticle .7s ease-out forwards}
+@keyframes vfxParticle{from{transform:translate(0,0);opacity:1}to{transform:translate(var(--dx),var(--dy));opacity:0}}
+body.reduced-motion .vfx-sprite{display:none}
+
+/* ===== HIỆU ỨNG ===== */
+.fx-leaves{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.leaf{position:absolute;top:-8%;width:10px;height:14px;border-radius:70% 10% 70% 10%;background:linear-gradient(135deg,#e8c56a,#9b6b2c);opacity:.55;animation:leafFall linear infinite;filter:blur(.2px)}
+.leaf.green{background:linear-gradient(135deg,#89d49a,#2e7d54)}
+.leaf.blue{background:linear-gradient(135deg,#9fe8ff,#3b84b8)}
+.leaf.pink{background:linear-gradient(135deg,#ffc6d8,#b45a7a)}
+@keyframes leafFall{
+  0%{transform:translate3d(0,-10px,0) rotate(0deg);opacity:0}
+  10%{opacity:.6}
+  50%{transform:translate3d(40px,45vh,0) rotate(180deg)}
+  100%{transform:translate3d(-20px,105vh,0) rotate(360deg);opacity:0}
+}
+.spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffe9a8;box-shadow:0 0 10px #ffe9a8;animation:sparkFloat 5s ease-in-out infinite;opacity:.7}
+@keyframes sparkFloat{0%,100%{transform:translateY(0) scale(.8);opacity:.2}50%{transform:translateY(-28px) scale(1.2);opacity:.9}}
+.float-text{position:absolute;z-index:8;pointer-events:none;font:900 clamp(28px,3.4vmin,42px) var(--serif);letter-spacing:.01em;color:#ffe0d6;white-space:nowrap;-webkit-text-stroke:.7px #4a160d;text-shadow:0 2px 0 #2a0805,0 4px 12px #000,0 0 16px #ff6d4a,0 0 34px #ff4b2b88;animation:floatUp 1.05s ease-out forwards}
+.float-text.won{color:#b6ffd2;text-shadow:0 2px 0 #062b16,0 4px 12px #000,0 0 16px #55d98a,0 0 34px #39c97a88;font-size:clamp(30px,3.8vmin,46px)}
+.float-text.skill{color:#fff1b8;text-shadow:0 2px 0 #3a2503,0 4px 12px #000,0 0 18px #ffd45c,0 0 38px #e5b13f99;font-size:clamp(32px,4.2vmin,50px)}
+.float-text.heal{color:#b8f2ff;text-shadow:0 2px 0 #062b38,0 4px 12px #000,0 0 16px #5cd6ff,0 0 32px #3fa9d899;font-size:clamp(28px,3.4vmin,42px)}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,12px) scale(.72)}18%{opacity:1;transform:translate(-50%,0) scale(1.16)}38%{transform:translate(-50%,-8px) scale(1)}100%{opacity:0;transform:translate(-50%,-58px) scale(1.12)}}
+.hero-wrap.attack{animation:heroAttack .36s ease-in-out}
+@keyframes heroAttack{0%,100%{translate:0 0}45%{translate:clamp(18px,3vw,48px) -6px}}
+@keyframes auraRing{0%{transform:translate(-50%,-50%) scale(.85);opacity:.7}50%{opacity:.25}100%{transform:translate(-50%,-50%) scale(1.2);opacity:0}}
+.break-btn.ready{animation:pulse 1.5s ease-in-out infinite}
+.top-qi.ready{animation:pulse 1.6s ease-in-out infinite}
+.enemy-wrap.hit{animation:shake .32s ease-in-out}
+.hero-wrap.hurt{animation:shake .32s ease-in-out}
+.screen{animation:screenIn .22s ease-out}
+.scene-bg{transition:background-image .4s}
+@media(prefers-reduced-motion:reduce){
+  body:not(.motion-full) *,body:not(.motion-full) *::before,body:not(.motion-full) *::after{animation:none!important;transition:none!important}
+}
+body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after{animation:none!important;transition:none!important}
+body.reduced-motion .leaf,body.reduced-motion .spark{display:none}
+body.effects-off .trib-rain,body.reduced-motion .trib-rain{display:none}
+body.effects-off .trib-aura{animation:none}

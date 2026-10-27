@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080d12">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'none'; media-src 'self' file:; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="description" content="Hư Giới — game idle tu tiên một người chơi, chạy hoàn toàn trong trình duyệt.">
+<title>Hư Giới · Tiên Lộ Vô Tận</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/welcome.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/screens.css">
+<link rel="stylesheet" href="css/vfx.css">
+</head>
+<body>
+<noscript><p class="no-js">Trò chơi cần JavaScript để hoạt động.</p></noscript>
+
+<section id="welcome" class="welcome" aria-labelledby="welcomeTitle">
+  <div class="welcome-bg" aria-hidden="true"></div>
+  <div class="welcome-veil" aria-hidden="true"></div>
+  <div class="welcome-card create-screen">
+    <div class="create-left">
+      <div class="create-scene" aria-hidden="true">
+        <img class="scene-logo" src="media/assets/world/bg/logo.webp" alt="" decoding="async">
+        <span class="scene-caption">Thanh Vân Sơn · Tiên cảnh</span>
+      </div>
+      <h2 id="welcomeRebirth" class="create-rebirth center">Đây là lần trùng sinh thứ 1 của bạn</h2>
+      <p class="story">Bạn vốn là một người bình thường nơi trần thế, nhưng một lần mưa gió đã đưa bạn xuyên vào <b class="gold">Hư Giới</b> — nơi tiên nhân, yêu ma và thiên kiếp cùng tranh đấu. Từ đây, bạn bắt đầu một hành trình tu hành theo cách của riêng mình.</p>
+      <p class="story dim small">Chọn đạo hiệu, tuổi, chủng tộc và linh căn rồi nhập định: tu vi tự tăng theo thời gian, kể cả khi bạn đóng game. Kỳ ngộ sẽ tìm đến, bí cảnh chờ bạn thám hiểm.</p>
+      <div id="raceInfo" class="info-box" aria-live="polite"></div>
+      <div id="rootBox" class="info-box root-box" aria-live="polite">
+        <div id="rootDescription"></div>
+        <div id="rootsPreview" class="roots-grid" aria-label="Ngũ hành linh căn"></div>
+      </div>
+    </div>
+    <form id="createForm" class="create-right" autocomplete="off" novalidate>
+      <div class="create-heading">
+        <span class="eyebrow">THIÊN MỆNH KHỞI NGUYÊN</span>
+        <h1 id="welcomeTitle">Chào mừng đến Hư Giới</h1>
+      </div>
+      <div class="seg-row" role="group" aria-label="Giới tính">
+        <button type="button" class="seg active" data-gender="nam" aria-pressed="true">Nam</button>
+        <button type="button" class="seg" data-gender="nu" aria-pressed="false">Nữ</button>
+      </div>
+      <div class="form-grid">
+        <label for="nameInput">Đạo hiệu :</label>
+        <input id="nameInput" class="field name-in" maxlength="20" placeholder="Nhập đạo hiệu" aria-describedby="nameNote">
+        <button type="button" id="randomName" class="dice" title="Gieo đạo hiệu ngẫu nhiên" aria-label="Gieo đạo hiệu ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
+        <label>Tuổi :</label>
+        <div id="ageValue" class="field">…</div>
+        <button type="button" id="rollAge" class="dice" title="Gieo tuổi ngẫu nhiên" aria-label="Gieo tuổi ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
+        <label>Chủng tộc :</label>
+        <div id="raceValue" class="field">…</div>
+        <button type="button" id="rollRace" class="dice" title="Gieo chủng tộc ngẫu nhiên" aria-label="Gieo chủng tộc ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
+        <label>Linh căn :</label>
+        <div id="rootValue" class="field root-field">…</div>
+        <button type="button" id="rollRoot" class="dice" title="Gieo linh căn ngẫu nhiên" aria-label="Gieo linh căn ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
+        <p id="nameNote" class="name-note form-note" role="alert" hidden></p>
+      </div>
+      <p id="pointsValue" class="points">Số điểm còn lại: 8</p>
+      <div id="statGrid" class="stat-grid" aria-label="Phân bổ thiên phú"></div>
+      <p id="statHint" class="hint" aria-live="polite">Rê chuột hoặc chạm vào tên thiên phú để xem mô tả.</p>
+      <div class="create-actions">
+        <button id="startNew" class="btn btn-gold btn-wide" type="submit">Bắt đầu tu tiên</button>
+        <button type="button" class="btn btn-outline btn-wide" id="continueGame" hidden>Tiếp tục hành trình đã lưu</button>
+        <p class="foot-note">Điểm còn dư sẽ được phân ngẫu nhiên khi bắt đầu. Dữ liệu được lưu trên thiết bị này.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<div id="game" class="app" data-layout="wide" data-stage="idle" hidden>
+  <section id="status" class="box status-panel" aria-label="Trạng thái tu hành">
+    <div class="status-head">
+      <button class="status-avatar" data-window="character" aria-label="Mở bảng nhân vật">
+        <img id="avatar" src="media/assets/chars/player/nam/ha_gioi/portrait.png" alt="" decoding="async">
+      </button>
+      <div class="status-title">
+        <span class="eyebrow gold" id="playerRoot">LINH CĂN</span>
+        <h2 id="playerRealm">Luyện Khí</h2>
+        <p class="status-name" id="playerName">…</p>
+      </div>
+    </div>
+    <button class="status-progress" data-window="idle" aria-label="Mở chi tiết tu luyện">
+      <span class="status-progress-head"><span>TU VI</span><b id="topQiHint">0%</b></span>
+      <span class="bar"><i id="topQiFill"></i></span>
+      <span class="status-exp" id="topQiText">0 / 0</span>
+    </button>
+    <div class="status-vitals" id="statusVitals" aria-label="Sinh lực và linh khí">
+      <div class="vital-row">
+        <span class="vital-label">Sinh lực</span>
+        <div class="meter"><i class="hp" id="hpFill"></i></div>
+        <small id="hpValue">0 / 0</small>
+      </div>
+      <div class="vital-row">
+        <span class="vital-label">Linh khí</span>
+        <div class="meter"><i class="mp" id="mpFill"></i></div>
+        <small id="mpValue">0 / 0</small>
+      </div>
+    </div>
+    <div class="info">
+      <div class="row"><span>Tốc độ</span><b id="topRate">+0/giây</b></div>
+      <div class="row"><span>Linh thạch</span><b id="moneyTop">0</b></div>
+      <div class="row"><span>Địa giới</span><b id="topWorld">Hạ Giới</b></div>
+      <div class="row"><span>Đạo vận</span><b id="topDaoVan">0</b></div>
+    </div>
+    <p class="status-place" id="playerPlace">Hạ Giới · Thanh Vân Sơn</p>
+    <button id="btn-break" class="btn-break" data-act="break" disabled>
+      <span id="breakLabel">Đột phá</span>
+      <small id="breakHint">Chưa đủ tu vi</small>
+    </button>
+    <div class="status-foot">
+      <span class="save-state" id="saveState" role="status">Tự động lưu</span>
+      <button class="status-settings" data-window="settings" aria-label="Cài đặt">⚙</button>
+    </div>
+  </section>
+
+  <section id="stage" class="box stage" tabindex="-1" aria-label="Sân khấu tu hành">
+    <div class="scene stage-scene" id="scene">
+      <div class="scene-bg" id="sceneBackdrop"></div>
+      <div class="scene-shade"></div>
+      <div class="fx-leaves" aria-hidden="true"></div>
+      <div class="stage-hud">
+        <span class="stage-tag" id="stageTag">Hạ Giới · Thanh Vân Sơn</span>
+        <span class="stage-rate" id="rateText">+0 tu vi/giây</span>
+      </div>
+      <div class="idle-aura" id="idleAura" aria-hidden="true"></div>
+      <div class="hero-wrap idle" id="heroActor">
+        <div class="hero-particles" id="heroParticles" aria-hidden="true"></div>
+        <img id="heroSprite" src="media/assets/chars/player/nam/ha_gioi/dung_yen/1.png" alt="Đạo sĩ đang nhập định" decoding="async" fetchpriority="high">
+        <span class="hero-name" id="stageHeroName">…</span>
+      </div>
+      <div id="enemyActor" class="enemy-wrap" aria-live="polite" hidden>
+        <img id="enemySprite" src="" alt="Yêu thú đang đối đầu">
+        <span class="enemy-label"><b id="enemyName">—</b> <span id="enemyLevel">—</span></span>
+        <div class="enemy-health"><i id="enemyBar"></i></div>
+      </div>
+      <div id="stageVfx" class="stage-vfx" aria-hidden="true"></div>
+      <div class="scene-bottom">
+        <div class="stage-mode">
+          <div class="mode-switch glass" id="idleModeSwitch" role="group" aria-label="Chế độ nền">
+            <button data-act="mode" data-mode="meditate" id="modeMeditate">☯ Nhập định</button>
+            <button data-act="mode" data-mode="fight" id="modeFight">⚔ Tự chiến</button>
+          </div>
+          <button id="autoCombatToggle" class="mode-chip" data-act="auto" aria-pressed="false" hidden>⚔ Tự chiến: tắt</button>
+        </div>
+      </div>
+      <div class="idle-quote" id="idleQuote"></div>
+    </div>
+  </section>
+
+  <section id="logPanel" class="box log-panel" aria-labelledby="logTitle">
+    <header class="log-head">
+      <div class="log-title"><span class="eyebrow gold">THIÊN MỆNH</span><b id="logTitle">Nhật ký thông báo</b></div>
+      <div class="log-tools">
+        <span class="log-count" id="logCount" aria-live="polite">0</span>
+        <button type="button" id="logToggle" class="log-toggle" aria-expanded="true" aria-controls="logFeed" title="Thu gọn nhật ký" aria-label="Thu gọn nhật ký">▾</button>
+      </div>
+    </header>
+    <div class="log-wrap" id="logWrap">
+      <div class="log" id="logFeed" role="log" aria-live="polite" aria-relevant="additions" aria-label="Nhật ký thông báo tu hành" tabindex="0"></div>
+      <button type="button" class="log-jump" id="logJump" hidden>↓ Tin mới</button>
+    </div>
+  </section>
+
+  <nav id="menu" class="box" aria-label="Màn chơi"></nav>
+  <div id="moreMenu" class="more-menu glass" role="menu" aria-labelledby="moreMenuBtn" hidden>
+    <div class="more-menu-head"><span class="eyebrow gold">GIAO DU</span><b>Thêm</b></div>
+    <button type="button" role="menuitem" data-more-go="more:friends">
+      <span class="more-ico" aria-hidden="true">♡</span><span><b>Tri kỷ</b><small>Bạn đạo thân thiết</small></span>
+    </button>
+    <button type="button" role="menuitem" data-more-go="more:dao">
+      <span class="more-ico" aria-hidden="true">✧</span><span><b>Đạo hữu</b><small>Đồng đạo bốn phương</small></span>
+    </button>
+    <button type="button" role="menuitem" data-more-go="world:sect">
+      <span class="more-ico" aria-hidden="true">⌂</span><span><b>Tông môn</b><small>Thanh Vân Tông</small></span>
+    </button>
+    <button type="button" role="menuitem" data-more-go="more:pvp">
+      <span class="more-ico" aria-hidden="true">⚔</span><span><b>PvP</b><small>Luận kiếm tranh phong</small></span>
+    </button>
+    <button type="button" role="menuitem" data-more-go="more:ranking">
+      <span class="more-ico" aria-hidden="true">♛</span><span><b>Bảng xếp hạng</b><small>Anh hùng ba giới</small></span>
+    </button>
+  </div>
+  <div id="wins" class="wins" aria-live="polite"></div>
+</div>
+
+<section id="tribulationFx" class="tribulation-fx trib-page" hidden aria-labelledby="tribTitle">
+  <div class="trib-stage" id="tribStage">
+    <div class="trib-sky" aria-hidden="true"></div>
+    <div class="trib-clouds" aria-hidden="true"></div>
+    <div class="trib-rain" aria-hidden="true"></div>
+    <div class="trib-aura" aria-hidden="true"></div>
+    <div class="trib-actor" id="tribActor">
+      <img id="tribHero" class="trib-hero" src="media/assets/chars/player/nam/ha_gioi/dung_yen/1.png" alt="Nhân vật nhập định giữa độ kiếp đài" decoding="async">
+    </div>
+    <div class="trib-stage-vfx" id="tribStageVfx" aria-hidden="true"></div>
+    <div class="trib-vfx" id="tribVfxLayer" aria-hidden="true"></div>
+  </div>
+  <div class="trib-page-shell">
+    <header class="trib-page-bar">
+      <button type="button" class="trib-back" id="tribBack" data-act="tribBack" aria-label="Trở về tiên sơn">‹ <span>Trở về</span></button>
+      <div class="trib-brand"><span class="eyebrow gold">THIÊN ĐẠO · LÔI KIẾP</span><b>Độ kiếp đài</b></div>
+      <span class="trib-realm-chip" id="tribRealmChip">—</span>
+    </header>
+    <main class="trib-content" aria-label="Độ kiếp đài">
+      <header class="trib-head">
+        <span class="eyebrow gold" id="tribEyebrow">THIÊN ĐẠO · ĐẠI CẢNH GIỚI</span>
+        <h2 id="tribTitle">Độ kiếp đài</h2>
+        <p id="tribSubtitle"></p>
+        <div class="trib-head-tags" id="tribHeadTags"></div>
+      </header>
+      <div class="trib-dock">
+        <div class="trib-result" id="tribResult" tabindex="-1" hidden></div>
+        <div class="trib-dock-grid">
+          <section class="trib-vitals" aria-label="Trạng thái hộ kiếp">
+            <div class="trib-meter-label"><span>Sinh lực</span><b id="tribHpText">—</b></div>
+            <div class="meter-bar trib-hp"><i id="tribHpFill"></i></div>
+            <div class="trib-meter-label"><span>Hộ thuẫn</span><b id="tribShieldText">—</b></div>
+            <div class="meter-bar trib-shield"><i id="tribShieldFill"></i></div>
+            <div class="trib-meter-label"><span>Tu vi</span><b id="tribQiText">—</b></div>
+            <div class="meter-bar"><i id="tribQiFill"></i></div>
+          </section>
+          <div class="trib-readout">
+            <b class="trib-counter" id="tribCounter"></b>
+            <p class="trib-stage-hint" id="tribStageHint"></p>
+            <div class="trib-progress" role="progressbar" aria-label="Tiến trình độ kiếp" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="tribProgressBar"><i id="tribProgress"></i></div>
+            <p class="trib-status" id="tribStatus" role="status" aria-live="polite"></p>
+          </div>
+          <div class="trib-actions">
+            <button class="btn btn-gold" id="tribStart" data-act="tribStart">Dẫn động lôi kiếp</button>
+            <button class="btn btn-outline" id="tribClose" data-act="tribClose">Về tu luyện</button>
+            <button class="btn btn-gold" id="tribReturn" data-act="tribReturn" hidden>Trở về tiên sơn</button>
+          </div>
+        </div>
+        <p class="trib-eligibility" id="tribEligibility"></p>
+        <details class="trib-details" id="tribDetails">
+          <summary>Chuẩn bị độ kiếp <span>Đan / phù · xác suất · dự báo lôi kiếp</span></summary>
+          <div class="trib-details-body">
+          <div class="trib-summary">
+            <div><span>Xác suất đột phá</span><b id="tribOverlayChance">—</b></div>
+            <div><span>Giảm sát thương</span><b id="tribReduction">—</b></div>
+            <div><span>Hộ thuẫn</span><b id="tribShieldSummary">—</b></div>
+            <div><span>Bảo hiểm</span><b id="tribPitySummary">—</b></div>
+          </div>
+          <div class="trib-info-section">
+            <div class="trib-info-head"><span class="eyebrow">DỰ BÁO LÔI KIẾP</span><b id="tribEventCount">—</b></div>
+            <ol class="trib-events" id="tribEvents"></ol>
+            <p class="info-note">Dự báo dùng sinh lực tối đa và hộ kiếp hiện có. Hóa Thần có thêm một đợt Phi Thăng Lôi Kiếp; hồi đầy sinh lực giữa hai đợt.</p>
+          </div>
+          <section class="trib-prep" id="tribPrep" aria-label="Chuẩn bị độ kiếp"></section>
+          </div>
+        </details>
+      </div>
+    </main>
+  </div>
+</section>
+
+<div id="modalLayer" class="modal-layer" hidden>
+  <div class="modal-shade"></div>
+  <section class="game-modal glass" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <button type="button" class="modal-x" data-act="modalClose" aria-label="Đóng hộp thoại">✕</button>
+    <div class="modal-vfx" id="modalVfx" aria-hidden="true"></div>
+    <div class="modal-symbol" id="modalSymbol" aria-hidden="true">✦</div>
+    <span class="eyebrow gold" id="modalEyebrow">THIÊN MỆNH</span>
+    <h2 id="modalTitle">Thông báo</h2>
+    <div id="modalBody"></div>
+    <div id="modalButtons" class="modal-buttons"></div>
+  </section>
+</div>
+<div id="toast" class="toasts" role="status" aria-live="polite" aria-atomic="false" aria-relevant="additions"></div>
+<div id="itemTip" class="item-tip" role="tooltip" aria-hidden="true" hidden></div>
+<input id="importFile" type="file" accept=".json,application/json" hidden>
+
+<script src="js/balance-data.js"></script>
+<script src="js/items-data.js"></script>
+<script src="js/formulas.js"></script>
+<script src="js/adventure-data.js"></script>
+<script src="js/adventures.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/asset-index.js"></script>
+<script src="js/assets.js"></script>
+<script src="js/ui-core.js"></script>
+<script src="js/vfx.js"></script>
+<script src="js/ui-shell.js"></script>
+<script src="js/screens-idle.js"></script>
+<script src="js/screens-combat.js"></script>
+<script src="js/screens-craft.js"></script>
+<script src="js/screens-tribulation.js"></script>
+<script src="js/screens-adventures.js"></script>
+<script src="js/screens-character.js"></script>
+<script src="js/screens-world.js"></script>
+<script src="js/screens-settings.js"></script>
+<script src="js/screens-more.js"></script>
+<script src="js/screens-meta.js"></script>
+<script src="js/ui-boot.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
