@@ -372,6 +372,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .catalog-controls{display:flex;flex-wrap:wrap;gap:9px;align-items:end;margin:12px 0}
 .catalog-controls label{display:grid;gap:5px;flex:1;min-width:125px;color:#b2c9d0;font-size:13px}
 .catalog-controls input,.catalog-controls select{width:100%;padding:9px 10px;font-size:15px}
+.catalog-controls select{padding-right:32px}
 .pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
 .pagination span{font-size:13px;color:#b2c9d0}
 .shop-list,.skill-list,.quest-list{display:flex;flex-direction:column;gap:9px}
@@ -461,7 +462,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 /* ===== CÀI ĐẶT ===== */
 .settings-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid #2b404a}
 .settings-row label{flex:1;font-size:14px;color:#c6d8df}
-.settings-row select{padding:8px}
+.settings-row select{padding:8px 32px 8px 10px;min-width:0;max-width:62%;text-overflow:ellipsis}
 .settings-row input[type=checkbox]{width:20px;height:20px;accent-color:#d9ae4e}
 .settings-row input[type=range]{flex:0 1 220px;accent-color:#d9ae4e}
 .save-preview{background:#09131a;padding:10px;border:1px solid #344855;border-radius:8px;color:#a7c2d0;font:13px ui-monospace,monospace;word-break:break-all;max-height:120px;overflow:auto}
@@ -542,4 +543,14 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   .win .portrait{width:50px;height:58px}
   .card-head h3{font-size:18px}
   .stat-line{font-size:13px;padding:4px 0}
+}
+
+/* ---- UX polish: vùng chạm đủ lớn trên thiết bị cảm ứng ---- */
+@media(pointer:coarse){
+  .log-toggle{width:32px;height:32px}
+  .status-settings{width:36px;height:36px}
+  .status-settings,.win-close,.text-btn{position:relative}
+  .status-settings::after,.win-close::after,.text-btn::after{content:"";position:absolute;inset:-6px}
+  .text-btn::after{inset:-10px -6px}
+  .stat-pm{height:38px}
 }

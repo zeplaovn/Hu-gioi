@@ -1,7 +1,7 @@
 /* ===== HƯ GIỚI · nền tảng ===== */
 :root{
   --bg:#080d12; --bg2:#0b1219; --panel:#111c25; --panel2:#0d1720; --panel3:#16242f;
-  --line:#273b47; --line2:#34505e; --text:#e9f1f3; --muted:#94a9b5; --dim:#6f8592;
+  --line:#273b47; --line2:#34505e; --text:#e9f1f3; --muted:#94a9b5; --dim:#8097a4;
   --gold:#e6c164; --gold2:#b58a32; --jade:#63d6a3; --cyan:#70d4e8; --danger:#e8745f;
   --shadow:0 10px 30px #0007; --font:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   --serif:Georgia,"Times New Roman",serif;
@@ -14,7 +14,8 @@ body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 15% 0%,#14
 button,input,select,textarea{font:inherit}
 button{cursor:pointer;touch-action:manipulation}
 button:disabled{cursor:not-allowed;opacity:.42;filter:grayscale(.55)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible,[tabindex]:not([tabindex="-1"]):focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.win:focus-visible,.game-modal:focus-visible{outline:0}
 img{max-width:100%;display:block}
 a{color:var(--cyan)}
 [hidden]{display:none!important}

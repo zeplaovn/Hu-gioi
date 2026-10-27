@@ -436,6 +436,8 @@
       el.className = 'win';
       el.dataset.window = id;
       el.tabIndex = -1;
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-label', def.label);
       const icon = def.icon && /^ICON-/.test(def.icon)
         ? '<img src="media/assets/ui/icon/menu/' + esc(def.icon) + '-40.png" alt="" decoding="async">'
         : '<span aria-hidden="true">' + esc(def.icon || '◈') + '</span>';
@@ -530,6 +532,13 @@
       } else {
         x = (W - width) / 2;
         y = (H - height) / 2;
+      }
+      // Điện thoại: cửa sổ chiếm trọn khoảng trống giữa bảng trạng thái và thanh menu,
+      // thay vì bị bó trong sân khấu (chỉ cao ~370px nên nội dung bị cắt sớm).
+      const status = $('status')?.getBoundingClientRect(), menu = $('menu')?.getBoundingClientRect();
+      if (layout === 'portrait' && W < 600 && status && menu && menu.top - status.bottom > 260) {
+        const top = status.bottom + 8;
+        return this.clampRect({ x: 8, y: top, w: W - 16, h: menu.top - 8 - top });
       }
       return this.clampRect({ x, y, w: width, h: height });
     },

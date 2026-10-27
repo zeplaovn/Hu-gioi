@@ -111,6 +111,12 @@
   .create-scene{aspect-ratio:16/8.5}
   .scene-logo{width:min(310px,56%)}
 }
+@media(max-width:1100px){
+  /* Một cột: giữ nút bắt đầu luôn trong tầm tay thay vì bắt người chơi cuộn hết trang. */
+  .welcome,.welcome-card{overflow:clip}
+  .create-actions{display:contents}
+  #startNew{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:6;box-shadow:0 10px 28px #000c,0 0 0 6px #0b141bcc}
+}
 @media(max-width:620px){
   .create-left{padding:16px 14px}
   .create-scene{aspect-ratio:16/10;border-radius:10px}
