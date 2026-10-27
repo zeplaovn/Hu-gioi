@@ -430,7 +430,11 @@
       const def = UI.screens[id];
       if (!def) return null;
       closeMoreMenu();
-      if (this.map.has(id)) { this.focus(id); return this.map.get(id).el; }
+      if (this.map.has(id)) {
+        const w = this.map.get(id);
+        if (w.tab !== tabOf(def)) this.render(id);
+        this.focus(id); return w.el;
+      }
       this.closeOthers(id);
       const el = document.createElement('section');
       el.className = 'win';
@@ -508,6 +512,7 @@
       const content = def.panel ? def.panel(tab) : def.render(tab);
       w.body.innerHTML = (id === 'idle' ? '<p class="screen-lead">Tu vi tự tăng khi nhập định. Mở các bảng bên dưới để tăng tốc, xem công pháp và mục tiêu gần.</p>' : '') + content;
       w.body.scrollTop = y;
+      w.tab = tab;
       def.mount?.(tab);
       def.update?.(tab);
       updateTimers();

@@ -17,6 +17,11 @@ button:disabled{cursor:not-allowed;opacity:.42;filter:grayscale(.55)}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible,[tabindex]:not([tabindex="-1"]):focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .win:focus-visible,.game-modal:focus-visible{outline:0}
 img{max-width:100%;display:block}
+/* Hạn chế chọn chữ và giữ/kéo ảnh; các ô nhập vẫn thao tác bình thường. */
+.content-protected body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.content-protected img{-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
+.content-protected input,.content-protected textarea,.content-protected [contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+@media print{html.content-protected body{display:none!important}}
 a{color:var(--cyan)}
 [hidden]{display:none!important}
 h1,h2,h3,p,dl,dd,dt,ol,ul{margin:0}
