@@ -29,3 +29,6 @@ body.loading-game{overflow:hidden}
   #loading,#gameLoading,.loading-scene,.loading-fill{transition:none}
   .loading-logo,.loading-fill::after{animation:none}
 }
+
+.loading-track{background:var(--inset,#0b1015);border:1px solid var(--bar-age,#d9a21b);border-radius:4px;box-shadow:none}
+.loading-fill{border-radius:3px;background:var(--bar-age,#d9a21b);opacity:.9}

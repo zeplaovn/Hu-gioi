@@ -386,3 +386,11 @@ body.in-tribulation{overflow:hidden}
 .root-chip{display:inline-block;padding:2px 9px;border:1px solid #34505e;border-radius:99px;font-size:13px;color:#b9cbd3;background:#101c25}
 .root-chip.is-current{border-color:var(--gold);color:#ffe08b;background:#2a2417;font-weight:700}
 .root-sep{margin:0 5px;color:var(--dim)}
+
+/* Thanh lôi kiếp / việc nền theo Hu-gioi */
+.trib-progress{background:var(--inset);border:1px solid var(--bar-mp);border-radius:4px}
+.trib-progress i{background:var(--bar-mp);opacity:.88}
+.adventure-progress{border-radius:4px;accent-color:var(--bar-job);background:var(--inset)}
+.adventure-progress::-webkit-progress-bar{background:var(--inset);border-radius:4px}
+.adventure-progress::-webkit-progress-value{background:var(--bar-job);border-radius:4px;opacity:.88}
+.adventure-progress::-moz-progress-bar{background:var(--bar-job)}

@@ -610,7 +610,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   #game[data-layout="wide"] .status-progress-head,#game[data-layout="wide"] .status-exp{font-size:10px}
   #game[data-layout="wide"] .status-progress .bar{height:7px}
   #game[data-layout="wide"] .status-vitals{gap:2px}
-  #game[data-layout="wide"] .vital-row{grid-template-columns:66px minmax(0,1fr) auto;gap:3px;font-size:11px}
+  #game[data-layout="wide"] .vital-row{grid-template-columns:60px minmax(0,1fr);gap:3px;font-size:11px}
   #game[data-layout="wide"] .vital-row small{font-size:10px}
   #game[data-layout="wide"] .status-talents{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;padding:5px 0}
   #game[data-layout="wide"] .status-talent{grid-template-columns:1fr auto;font-size:10px;gap:1px 3px}
@@ -628,3 +628,29 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   #game[data-layout="wide"] #stage .idle-quote{display:none}
   #game[data-layout="wide"] .stage-tag,#game[data-layout="wide"] .stage-rate{font-size:11px;padding:4px 6px}
 }
+
+/* ===== THANH TRẠNG THÁI (theo Hu-gioi) ===== */
+.status-progress .bar{--c:var(--bar-qi);height:18px}
+.status-progress .bar>i{background:var(--c)}
+.status-progress:hover .bar{border-color:var(--gold)}
+.status-progress .bar .bar-text{margin:0;font-size:12px}
+.vital-row{grid-template-columns:54px minmax(0,1fr)}
+.vital-row .meter{height:16px;border-radius:4px}
+.vital-row .meter.hp{--c:var(--bar-hp)}
+.vital-row .meter.mp{--c:var(--bar-mp)}
+.vital-row .meter>i.hp,.vital-row .meter>i.mp{background:var(--c)}
+.vital-row .meter .bar-text{font-size:11.5px}
+.vital-row .vital-label{color:var(--bar-hp)}
+.vital-row:nth-child(2) .vital-label{color:var(--bar-mp)}
+#stage .enemy-health{height:10px;border:1px solid var(--bar-hp);background:var(--inset);border-radius:4px}
+#stage .enemy-health i{background:var(--bar-hp);opacity:.88}
+#game:not([data-layout="wide"]) .vital-row{grid-template-columns:48px minmax(0,1fr)}
+#game:not([data-layout="wide"]) .vital-row .meter{height:14px}
+#game:not([data-layout="wide"]) .status-progress .bar{height:14px}
+#game:not([data-layout="wide"]) .status-progress .bar .bar-text{display:flex}
+#game:not([data-layout="wide"]) .vital-row .meter .bar-text{font-size:10.5px}
+/* Màn hẹp: cửa sổ phủ gần hết sân khấu, nên thanh kỹ năng nổi thành một hàng phía trên thanh điều hướng. */
+#game:not([data-layout="wide"]) .skill-dock{position:fixed;left:50%;top:auto;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:900}
+#game:not([data-layout="wide"]) .skill-dock .skillbar{flex-direction:row;padding:5px;gap:6px}
+#game:not([data-layout="wide"]) .skill-dock .skill-btn,#game:not([data-layout="wide"]) .skill-dock .strike-btn{width:46px;height:46px}
+#game:not([data-layout="wide"]) .skill-dock .skill-btn img{width:32px;height:32px}

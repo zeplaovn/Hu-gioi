@@ -1,10 +1,15 @@
 /* ===== HƯ GIỚI · nền tảng ===== */
 :root{
-  --bg:#080d12; --bg2:#0b1219; --panel:#111c25; --panel2:#0d1720; --panel3:#16242f;
-  --line:#273b47; --line2:#34505e; --text:#e9f1f3; --muted:#94a9b5; --dim:#8097a4;
-  --gold:#e6c164; --gold2:#b58a32; --jade:#63d6a3; --cyan:#70d4e8; --danger:#e8745f;
-  --shadow:0 10px 30px #0007; --font:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
-  --serif:Georgia,"Times New Roman",serif;
+  /* Bảng màu và phông chữ theo dự án Hu-gioi (mực núi + ngọc bích + giấy dó, điểm nhấn ấn chu sa). */
+  --bg:#10161c; --bg2:#0b1015; --panel:#16202a; --panel2:#1c2a37; --panel3:#22313f;
+  --line:#2a4a3a; --line2:#2c3d4d; --text:#e8e8e8; --muted:#8a9aa8; --dim:#8a9aa8;
+  --gold:#ffd24a; --gold2:#b98a1a; --jade:#3cff3c; --cyan:#7fdcff; --danger:#ff5c5c;
+  --inset:#0b1015; --hover:#22313f; --off:#4a5560; --green:#3cff3c; --red:#ff5c5c; --orange:#ff9f43;
+  --seal:#c8452e; --seal-deep:#a93520; --paper:#fff4e6;
+  --bar-hp:#d63a3a; --bar-mp:#3f9bd6; --bar-qi:#3cff3c; --bar-age:#d9a21b; --bar-job:#3f8f6a;
+  --shadow:0 10px 30px #0007;
+  --font:"Be Vietnam Pro","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Noto Serif","Source Serif 4","Iowan Old Style","Palatino Linotype",Georgia,"Times New Roman",serif;
   /* Sprite chuẩn: tools/player-sprites.json. Chân tại (256,352) trên ảnh 512×384. */
   --player-frame-w:512;--player-frame-h:384;--player-standing:236;--player-seated:198;--player-ground-shift:8.333333%;
 }
@@ -220,3 +225,17 @@ body.modal-open{overflow:hidden}
 @keyframes flash{0%,100%{opacity:0}12%,26%{opacity:.9}20%{opacity:.25}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ===== THANH TIẾN ĐỘ (theo Hu-gioi): nền lõm, viền màu theo loại, ruột phẳng độ đục .88, chữ nằm giữa thanh ===== */
+.meter-bar,.status-progress .bar,.vital-row .meter{position:relative;background:var(--inset);border:1px solid var(--c,var(--bar-job));border-radius:4px;overflow:hidden}
+.meter-bar>i,.status-progress .bar>i,.vital-row .meter>i{background:var(--c,var(--bar-job));opacity:.88;transition:width .35s}
+.meter-bar>i{background:var(--c,var(--gold))}
+.meter-bar{--c:var(--bar-job);height:10px}
+.meter-bar.qi{--c:var(--bar-qi);height:16px}
+.meter-bar.hp{--c:var(--bar-hp)}
+.meter-bar.mp{--c:var(--bar-mp)}
+.meter-bar.job{--c:var(--bar-job)}
+.bar-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000;line-height:1;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums}
+.bar.full>i,.meter-bar.full>i{animation:barPulse 1.2s ease-in-out infinite}
+@keyframes barPulse{50%{opacity:1;filter:brightness(1.25)}}
+@media(prefers-reduced-motion:reduce){.bar.full>i,.meter-bar.full>i{animation:none}}

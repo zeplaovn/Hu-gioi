@@ -100,19 +100,16 @@
     </div>
     <button class="status-progress" data-window="idle" aria-label="Mở chi tiết tu luyện">
       <span class="status-progress-head"><span>TU VI</span><b id="topQiHint">0%</b></span>
-      <span class="bar"><i id="topQiFill"></i></span>
-      <span class="status-exp" id="topQiText">0 / 0</span>
+      <span class="bar"><i id="topQiFill"></i><span class="bar-text status-exp" id="topQiText">0 / 0</span></span>
     </button>
     <div class="status-vitals" id="statusVitals" aria-label="Sinh lực và linh khí">
       <div class="vital-row">
         <span class="vital-label">Sinh lực</span>
-        <div class="meter"><i class="hp" id="hpFill"></i></div>
-        <small id="hpValue">0 / 0</small>
+        <div class="meter hp"><i class="hp" id="hpFill"></i><small class="bar-text" id="hpValue">0 / 0</small></div>
       </div>
       <div class="vital-row">
         <span class="vital-label">Linh khí</span>
-        <div class="meter"><i class="mp" id="mpFill"></i></div>
-        <small id="mpValue">0 / 0</small>
+        <div class="meter mp"><i class="mp" id="mpFill"></i><small class="bar-text" id="mpValue">0 / 0</small></div>
       </div>
       <div class="vital-row vital-life" id="lifeRow">
         <span class="vital-label">Thọ nguyên</span>

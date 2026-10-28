@@ -792,6 +792,7 @@
     $('topWorld').textContent = F.realm_map(s.zone);
     $('topDaoVan').textContent = num(s.daoVan);
     $('topQiFill').style.width = p + '%';
+    $('topQiFill').parentElement.classList.toggle('full', p >= 100);
     $('topQiText').textContent = num(s.qi) + ' / ' + num(need);
     $('topQiHint').textContent = s.completed ? 'Đã chứng đạo' : readyQi ? 'Đã đầy' : Math.floor(p) + '%';
     const st = g.stats(), maxMp = g.maxMp(), hpPct = clamp(s.hp / st.HP * 100, 0, 100), mpPct = clamp(s.mp / maxMp * 100, 0, 100);
