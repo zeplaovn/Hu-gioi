@@ -259,12 +259,6 @@ body.in-tribulation{overflow:hidden}
 .season-settings .settings-row{gap:10px}
 @media(max-width:560px){.key-grid{grid-template-columns:1fr}}
 
-/* ===== SẮC MÙA ===== */
-.leaf.green{background:linear-gradient(135deg,#89d49a,#2e7d54)}
-.leaf.blue{background:linear-gradient(135deg,#b9ecff,#4a89b5)}
-.leaf.pink{background:linear-gradient(135deg,#ffc6d8,#b45a7a)}
-.leaf.gold{background:linear-gradient(135deg,#f0d486,#9f6d27)}
-
 /* ===== TÔNG MÔN · NHIỆM VỤ ===== */
 .sect-mission{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #243a45;min-width:0}
 .sect-mission:last-of-type{border-bottom:0}
@@ -355,6 +349,10 @@ body.in-tribulation{overflow:hidden}
 .report-lines>div{font-size:14px;line-height:1.5;color:#c6d8df}
 .report-lines .report-center{text-align:center}
 .report-lines .report-center b{color:var(--gold)}
+.report-rewards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:5px 0}
+.report-rewards>div{padding:12px;border:1px solid #37544f;border-radius:10px;background:#10251f99;min-width:0}
+.report-rewards>div>span{display:block;font-size:12px;color:var(--dim)}
+.report-rewards b{display:flex;align-items:center;gap:.2em;color:var(--jade);font-size:20px;overflow-wrap:anywhere}
 .report-lines .report-sec{margin-top:6px;padding-top:8px;border-top:1px solid #2b404a;text-align:center;font-weight:700;color:var(--jade);letter-spacing:.04em}
 .report-lines .cyan{color:var(--cyan)}
 .report-lines .green{color:var(--jade)}

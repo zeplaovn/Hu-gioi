@@ -1,0 +1,24 @@
+/* ===== KHỞI NGUYÊN · INTRO VÀ DẪN ĐƯỜNG ===== */
+body.intro-open{overflow:hidden}
+#storyIntro{position:fixed;inset:0;z-index:4600;background:#070c14;color:#fff;opacity:1;transition:opacity .5s ease;isolation:isolate}
+#storyIntro.leaving{opacity:0}
+.intro-images,.intro-shade{position:absolute;inset:0;z-index:-1;overflow:hidden}
+.intro-image{position:absolute;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.2s ease}
+.intro-image.active{opacity:1}
+.intro-shade{background:linear-gradient(180deg,#02070ca8,transparent 27%,#03091255 52%,#030912ed 88%,#030912)}
+.intro-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:calc(22px + env(safe-area-inset-top,0px)) clamp(18px,5vw,70px);font-size:12px;letter-spacing:.2em;color:#f5dd9a}
+.intro-top .btn{letter-spacing:0;background:#08131bbd}
+.intro-bottom{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(1040px,100%);padding:28px clamp(22px,5vw,64px) calc(36px + env(safe-area-inset-bottom,0px))}
+.intro-caption{font:500 clamp(19px,2.3vw,28px)/1.75 var(--serif);text-shadow:0 2px 12px #000;min-height:5.3em;margin:14px 0 26px}
+.intro-controls{display:flex;align-items:center;justify-content:space-between;gap:18px}
+#introDots{display:flex;gap:8px}#introDots i{display:block;width:24px;height:3px;background:#ffffff44;transition:background .5s}#introDots i.on{background:var(--gold);box-shadow:0 0 12px #e6c16477}
+#tutorialLayer{position:fixed;inset:0;z-index:4200;overflow:hidden}
+#tutorialLayer.no-target{background:#020710b8}
+#tutorialSpot{position:fixed;border:2px solid var(--gold);border-radius:12px;box-shadow:0 0 0 200vmax #020710b8,0 0 24px #e6c16499;pointer-events:none;animation:tutorialPulse 1.8s ease-in-out infinite;transition:top .2s,left .2s,width .2s,height .2s}
+#tutorialCard{position:fixed;width:min(390px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:22px;border:1px solid #9c8348;border-radius:16px;background:linear-gradient(150deg,#21343e,#0d1822);box-shadow:0 16px 60px #000b}
+#tutorialCard h2{font-size:25px;margin:10px 0;color:#f3e3b6}#tutorialCard p{font-size:14px;line-height:1.75;color:#c7dce6}
+#tutorialCount{font-size:10px}.tutorial-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}.tutorial-actions .text-btn{margin-right:auto;font-size:13px}.tutorial-actions .btn{font-size:13px;padding:9px 11px}
+@keyframes tutorialPulse{50%{border-color:#fff1bf;box-shadow:0 0 0 200vmax #020710b8,0 0 36px #e6c164cc}}
+@media(max-width:600px){.intro-top{font-size:10px;letter-spacing:.12em}.intro-top .btn{font-size:12px;padding:8px 10px}.intro-bottom{padding-top:18px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}.intro-caption{font-size:18px;line-height:1.7;margin:12px 0 20px}.intro-controls{align-items:flex-start;flex-direction:column}.intro-controls .action-group{width:100%;justify-content:space-between}#tutorialCard{padding:16px}#tutorialCard h2{font-size:22px}}
+@media(max-height:500px){.intro-top{padding:10px 20px}.intro-bottom{padding:10px 24px;width:100%}.intro-caption{font-size:16px;line-height:1.5;min-height:0;margin:8px 0 12px}.intro-controls{flex-direction:row}.intro-controls .btn{font-size:12px;padding:7px 12px}}
+@media(max-height:500px){#tutorialCard{width:min(340px,calc(100vw - 24px));padding:14px}#tutorialCard h2{font-size:20px;margin:8px 0}#tutorialCard p{font-size:13px;line-height:1.6}.tutorial-actions{margin-top:12px}}

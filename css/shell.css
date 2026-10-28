@@ -45,13 +45,23 @@ body.in-game{overflow:hidden}
 .status-progress .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8a6d2b,var(--gold));transition:width .35s}
 .status-exp{display:block;font-size:12.5px;color:#9fb4c0;text-align:right;margin-top:2px;font-variant-numeric:tabular-nums}
 .status-vitals{display:grid;gap:5px;min-width:0}
-.vital-row{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;font-size:12.5px;color:var(--dim)}
-.vital-row .vital-label{font-weight:750;color:#f0a091;letter-spacing:.01em}
+.vital-row{display:grid;grid-template-columns:68px minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;font-size:12.5px;color:var(--dim)}
+.vital-row .vital-label{font-weight:750;color:#f0a091;letter-spacing:.01em;white-space:nowrap}
 .vital-row:nth-child(2) .vital-label{color:#7fd7f2}
 .vital-row .meter{height:7px;border:1px solid #35434b;background:#05090c;border-radius:12px;overflow:hidden;min-width:0}
 .vital-row .meter i{display:block;height:100%;width:0;transition:width .4s}
 .vital-row .meter i.hp{background:linear-gradient(90deg,#ed624b,#ff997d)}
 .vital-row .meter i.mp{background:linear-gradient(90deg,#3684bf,#76ddfa)}
+.vital-life .vital-label{color:var(--gold)}
+.vital-row .meter i.life{background:linear-gradient(90deg,#a87921,#f2d679)}
+.vital-life.low-life .meter i.life{background:linear-gradient(90deg,#bd4d36,#ff9879)}
+.vital-life.low-life small{color:#ffb19b}
+.status-talents{display:grid;gap:6px;padding:8px 0;border-top:1px solid #293e47;border-bottom:1px solid #293e47}
+.status-talent{display:grid;grid-template-columns:20px 1fr auto;gap:0 7px;align-items:center;font-size:12px;color:#b4cad3}
+.status-talent img{width:18px;height:18px;grid-row:1 / span 2;object-fit:contain}
+.status-talent b{color:#e5d49c;font-variant-numeric:tabular-nums}
+.status-talent meter{grid-column:2 / 4;width:100%;height:6px;appearance:none;border:0;border-radius:5px;background:#0a151c;overflow:hidden}
+.status-talent meter::-webkit-meter-bar{background:#0a151c;border:0}.status-talent meter::-webkit-meter-optimum-value{background:linear-gradient(90deg,#387b6b,#86dfb7)}.status-talent meter::-moz-meter-bar{background:#86dfb7}
 .vital-row small{font-size:11.5px;line-height:1.2;color:#9fb4c0;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 #status .info{display:flex;flex-direction:column;gap:4px;min-width:0}
 #status .row{display:flex;justify-content:space-between;gap:8px;color:var(--dim);font-size:13.5px;line-height:1.45}
@@ -71,13 +81,17 @@ body.in-game{overflow:hidden}
 #game:not([data-layout="wide"]) .status-head{grid-column:1;grid-row:1}
 #game:not([data-layout="wide"]) .status-progress{grid-column:1;grid-row:2}
 #game:not([data-layout="wide"]) .status-vitals{grid-column:1;grid-row:3;gap:2px}
-#game:not([data-layout="wide"]) .vital-row{grid-template-columns:48px minmax(0,1fr) auto;gap:4px;font-size:11.5px}
+#game:not([data-layout="wide"]) .vital-row{grid-template-columns:70px minmax(0,1fr) auto;gap:4px;font-size:11.5px}
 #game:not([data-layout="wide"]) .vital-row .meter{height:6px}
 #game:not([data-layout="wide"]) .vital-row small{font-size:11px}
-#game:not([data-layout="wide"]) .info{grid-column:1;grid-row:4;display:flex;flex-direction:row;flex-wrap:wrap;gap:1px 12px}
+#game:not([data-layout="wide"]) .status-talents{grid-column:1 / -1;grid-row:4;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:5px 0;margin-top:3px}
+#game:not([data-layout="wide"]) .status-talent{grid-template-columns:1fr auto;gap:2px;font-size:10px}
+#game:not([data-layout="wide"]) .status-talent img{display:none}
+#game:not([data-layout="wide"]) .status-talent meter{grid-column:1 / -1}
+#game:not([data-layout="wide"]) .info{grid-column:1 / -1;grid-row:5;display:flex;flex-direction:row;flex-wrap:wrap;gap:1px 12px}
 #game:not([data-layout="wide"]) .info .row{gap:4px;font-size:12.5px;line-height:1.35}
 #game:not([data-layout="wide"]) .status-place{display:none}
-#game:not([data-layout="wide"]) .btn-break{grid-column:2;grid-row:1 / span 4;align-self:center;width:auto;min-width:104px;min-height:50px;padding:4px 10px;font-size:14.5px}
+#game:not([data-layout="wide"]) .btn-break{grid-column:2;grid-row:1 / span 3;align-self:center;width:auto;min-width:90px;min-height:50px;padding:4px 8px;font-size:14.5px}
 #game:not([data-layout="wide"]) .btn-break small{font-size:11.5px}
 #game:not([data-layout="wide"]) .status-foot{display:none}
 #game:not([data-layout="wide"]) .status-avatar{width:32px;height:38px}
@@ -410,8 +424,8 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .detail-title{font:700 24px var(--serif);text-align:center;margin-bottom:8px}
 .detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
 .detail-actions .btn{padding:9px 7px;font-size:14px}
-.gear-row{display:flex;gap:8px;flex-wrap:wrap}
-.gear-slot{width:64px;height:70px;border:1px solid #304655;background:#0d171e;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#b7cbd4;padding:3px}
+.gear-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:280px}
+.gear-slot{width:100%;min-width:0;height:70px;border:1px solid #304655;background:#0d171e;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#b7cbd4;padding:3px}
 .gear-slot img{width:46px;height:46px;object-fit:contain}
 .gear-slot small{font-size:11px;line-height:1.2;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .gear-slot.empty{color:#526675;font-size:22px}
@@ -495,7 +509,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   .status-progress .bar{height:10px}
   .status-exp{font-size:11.5px}
   .status-vitals{gap:4px}
-  .vital-row{grid-template-columns:56px minmax(0,1fr) auto;font-size:12px}
+  .vital-row{grid-template-columns:66px minmax(0,1fr) auto;font-size:12px}
   .vital-row small{font-size:11.5px}
   #status .row{font-size:13px}
   .btn-break{min-height:44px;font-size:14.5px}
@@ -532,7 +546,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   .status-avatar{width:36px;height:42px}
   .status-title h2{font-size:17px}
   .status-progress .bar{height:9px}
-  .vital-row{grid-template-columns:56px minmax(0,1fr) auto;font-size:11.5px}
+  .vital-row{grid-template-columns:64px minmax(0,1fr) auto;font-size:11.5px}
   .vital-row small{font-size:10.5px}
   #status .row{font-size:12px;line-height:1.3}
   .btn-break{min-height:38px;font-size:13px}
@@ -568,3 +582,45 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .skill-dock .skill-btn kbd{display:block;position:absolute;right:2px;bottom:1px;margin:0;border:0;padding:0 2px;background:#07111acc;font-size:11px}
 .skill-dock .strike-btn{min-width:0;width:52px;padding:8px 0;font-size:0}
 .skill-dock .strike-btn::before{content:"⚔";font-size:22px}
+
+/* Màn hình thấp: dành chỗ cho đạo thân sau khi thêm thọ nguyên và thiên phú. */
+@media(max-width:600px) and (max-height:700px){
+  :root{--log-h:clamp(64px,12vh,90px)}
+  #game[data-layout="portrait"] #stage .hero-wrap{--hero-unit:clamp(65px,13vh,90px);bottom:30%}
+  #game[data-layout="portrait"] #stage .stage-hud{top:6px;left:6px;right:6px;gap:4px}
+  #game[data-layout="portrait"] .stage-tag,#game[data-layout="portrait"] .stage-rate{font-size:10.5px;padding:3px 5px}
+  #game[data-layout="portrait"] #stage .scene-bottom{bottom:6px;left:6px;right:6px}
+  #game[data-layout="portrait"] #stage .mode-switch button{font-size:11px;padding:5px 7px}
+}
+@media(max-width:360px){
+  #game[data-layout="portrait"] .status-head{grid-column:1 / -1}
+  #game[data-layout="portrait"] .btn-break{grid-row:2 / span 2}
+}
+@media(min-width:700px) and (max-height:520px){
+  :root{--gap:5px;--status-w:210px;--menu-w:82px;--log-h:92px}
+  #game[data-layout="wide"] #status{padding:7px;gap:5px}
+  #game[data-layout="wide"] .status-avatar{width:32px;height:36px}
+  #game[data-layout="wide"] .status-title h2{font-size:15px}
+  #game[data-layout="wide"] .status-title .eyebrow,#game[data-layout="wide"] .status-place,#game[data-layout="wide"] .status-foot{display:none}
+  #game[data-layout="wide"] .status-name{font-size:11px}
+  #game[data-layout="wide"] .status-progress-head,#game[data-layout="wide"] .status-exp{font-size:10px}
+  #game[data-layout="wide"] .status-progress .bar{height:7px}
+  #game[data-layout="wide"] .status-vitals{gap:2px}
+  #game[data-layout="wide"] .vital-row{grid-template-columns:66px minmax(0,1fr) auto;gap:3px;font-size:11px}
+  #game[data-layout="wide"] .vital-row small{font-size:10px}
+  #game[data-layout="wide"] .status-talents{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;padding:5px 0}
+  #game[data-layout="wide"] .status-talent{grid-template-columns:1fr auto;font-size:10px;gap:1px 3px}
+  #game[data-layout="wide"] .status-talent img{display:none}
+  #game[data-layout="wide"] .status-talent meter{grid-column:1 / -1}
+  #game[data-layout="wide"] #status .info{gap:1px}
+  #game[data-layout="wide"] #status .row{font-size:10.5px;line-height:1.3}
+  #game[data-layout="wide"] .btn-break{min-height:36px;font-size:13px;padding:4px}
+  #game[data-layout="wide"] .btn-break small{font-size:10px}
+  #game[data-layout="wide"] #menu{gap:2px;padding:3px}
+  #game[data-layout="wide"] #menu button{min-height:40px;font-size:10.5px;padding:2px}
+  #game[data-layout="wide"] #menu button img{width:22px;height:22px}
+  #game[data-layout="wide"] #menu button .ico{font-size:20px}
+  #game[data-layout="wide"] #stage .hero-wrap{--hero-unit:clamp(90px,27vh,135px)}
+  #game[data-layout="wide"] #stage .idle-quote{display:none}
+  #game[data-layout="wide"] .stage-tag,#game[data-layout="wide"] .stage-rate{font-size:11px;padding:4px 6px}
+}

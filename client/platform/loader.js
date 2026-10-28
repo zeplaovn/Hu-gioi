@@ -1,6 +1,7 @@
 /* HƯ GIỚI · NẠP TÀI NGUYÊN
    Nạp trước các ảnh chính (danh sách ở preload-manifest.js) và hiện tiến độ thật trên #loading.
-   Nạp xong thì mờ dần màn loading; mọi lỗi tải đều được bỏ qua để không kẹt ở màn này. */
+   Nạp xong thì mờ dần màn loading; mọi lỗi tải đều được bỏ qua để không kẹt ở màn này.
+   HU_LOADER.enter dùng lại giao diện khi người chơi bắt đầu tu tiên. */
 (function (root) {
   'use strict';
   const doc = root.document;
@@ -21,6 +22,80 @@
   const now = () => ((root.performance && performance.now()) || Date.now()) - started;
   let done = 0, shown = 0, finished = false;
   const keep = [];   // giữ tham chiếu để ảnh không bị thu hồi trước khi vào bộ nhớ đệm
+
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  // Mỗi lần vào game dùng một lớp riêng: timer của lần tải trang không thể đóng nhầm lớp này.
+  async function enter(urls, start) {
+    const screen = el.cloneNode(true), startedAt = Date.now();
+    const previousFocus = doc.activeElement;
+    const panels = ['welcome', 'game'].map(id => doc.getElementById(id)).filter(Boolean);
+    const inert = panels.map(panel => panel.inert);
+    screen.id = 'gameLoading';
+    screen.classList.remove('done');
+    screen.classList.add('scene-ready');
+    screen.setAttribute('aria-busy', 'true');
+    screen.setAttribute('aria-label', 'Đang bước vào Hư Giới');
+    screen.tabIndex = -1;
+    screen.addEventListener('keydown', event => {
+      if (event.key === 'Tab') event.preventDefault();
+      event.stopPropagation();
+    });
+    screen.querySelector('.loading-row span').textContent = 'Đang bước vào Hư Giới';
+    const fill = screen.querySelector('.loading-fill'), pct = screen.querySelector('.loading-pct');
+    const track = screen.querySelector('.loading-track'), tip = screen.querySelector('.loading-tip');
+    track.setAttribute('aria-label', 'Tiến độ chuẩn bị hành trình');
+    tip.setAttribute('role', 'status');
+    const update = (p, text) => {
+      fill.style.transform = 'scaleX(' + p + ')';
+      pct.textContent = Math.round(p * 100) + '%';
+      track.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+      tip.textContent = text;
+    };
+    update(0, 'Chuẩn bị hành trình tu tiên…');
+    doc.body.appendChild(screen);
+    doc.body.classList.add('loading-game');
+    panels.forEach(panel => { panel.inert = true; });
+    screen.focus({ preventScroll: true });
+    try {
+      // Cho trình duyệt vẽ màn loading trước các bước khởi tạo đồng bộ.
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const images = [...new Set(urls)];
+      let loaded = 0;
+      update(.1, 'Dệt tiên cảnh, triệu hồi đạo thân…');
+      await Promise.all(images.map(url => new Promise(resolve => {
+        const image = new Image();
+        let settled = false;
+        const end = () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          image.onload = image.onerror = null;
+          update(.1 + .7 * ++loaded / images.length, 'Dệt tiên cảnh, triệu hồi đạo thân…');
+          resolve();
+        };
+        const timer = setTimeout(end, MAX_MS);
+        image.onload = () => image.decode ? image.decode().catch(() => {}).then(end) : end();
+        image.onerror = end;
+        image.decoding = 'async';
+        image.src = url;
+      })));
+      update(.85, 'Khai mở linh căn, chuẩn bị nhập định…');
+      await start();
+      await delay(Math.max(0, MIN_MS - (Date.now() - startedAt)));
+      update(1, 'Tiên lộ đã mở, bắt đầu tu luyện!');
+      await delay(200);
+    } finally {
+      screen.setAttribute('aria-busy', 'false');
+      screen.classList.add('done');
+      await delay(550);
+      screen.remove();
+      doc.body.classList.remove('loading-game');
+      panels.forEach((panel, i) => { panel.inert = inert[i] || (panel.id === 'welcome' && !!root.HU_UI?.intro?.active); });
+      if (previousFocus?.isConnected && previousFocus.getClientRects().length) previousFocus.focus({ preventScroll: true });
+    }
+  }
+  root.HU_LOADER = { enter };
 
   function paint(p) {
     p = Math.max(0, Math.min(1, p));

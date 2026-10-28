@@ -82,12 +82,13 @@
     return `<div class="screen-grid">
       ${card('Vòng chơi cơ bản', `
         <p><b>1.</b> Ở <b>Tu luyện</b>, nhân vật tự nhập định và tích tu vi theo thời gian thật. Nâng cấp tốc tu và dùng đan để tăng nhanh.</p>
-        <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Quyết có sẵn rồi vận hành công pháp.</p>
+        <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Quyết có sẵn. Công pháp tự vận hành nếu còn ô trống; quản lý trong tab <b>Công pháp</b>.</p>
         <p><b>3.</b> Ở <b>Lịch luyện</b>, chọn khu vực, đổi loại đối thủ, dùng bốn kỹ năng hoặc bật tự chiến để farm linh thạch, linh thảo và yêu đan.</p>
         <p><b>4.</b> <b>Nghề phụ</b> chạy nền: luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Kết quả vẫn được nhận khi offline.</p>
         <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký thông báo; đại cảnh giới mở Độ kiếp đài.</p>
         <p><b>6.</b> <b>Thế giới → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Kỳ ngộ</b> tự xuất hiện khi tu luyện, có sổ khám phá riêng.</p>
-        <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Thiên mệnh</b> từ Nhân vật hoặc Thế giới → Trọng sinh để xem thành tựu và nâng cấp vĩnh viễn.</p>`, { eyebrow: 'TIÊN LỘ' })}
+        <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Thiên mệnh</b> để xem thành tựu, nâng cấp vĩnh viễn và tab Trọng sinh.</p>
+        <button class="btn btn-gold" data-act="tutorial">Xem lại hướng dẫn từng bước</button>`, { eyebrow: 'TIÊN LỘ' })}
       ${card('Phím tắt', `
         <div class="key-grid">
           <span><kbd>T</kbd> Tu luyện</span><span><kbd>L</kbd> Lịch luyện</span>
@@ -97,7 +98,7 @@
           <span><kbd>Esc</kbd> Đóng hộp thoại</span>
         </div>
         <p class="info-note">Phím kỹ năng chỉ có tác dụng ở màn Lịch luyện. Khi hộp thoại mở, phím tắt toàn cục tạm khóa. Thiên kiếp mở từ nút Đột phá khi đủ duyên, không có phím tắt riêng.</p>
-        <div class="action-group"><button class="btn btn-outline" data-go="world:catalog">Tra cứu vật phẩm</button><button class="btn btn-outline" data-go="world:quests">Nhiệm vụ</button></div>`, { eyebrow: 'ĐIỀU KHIỂN' })}
+        <div class="action-group"><button class="btn btn-outline" data-go="character:bag">Hành trang</button><button class="btn btn-outline" data-go="world:quests">Nhiệm vụ</button></div>`, { eyebrow: 'ĐIỀU KHIỂN' })}
       ${card('Nhật ký & tiến trình xuyên kiếp', `
         <p>• Nhật ký thông báo dưới sân khấu nhận cả log tu hành và toast. Dòng mới gõ dần; cuộn lên để đọc cũ, bấm <b>↓ Tin mới</b> để về cuối.</p>
         <p>• Nút thu gọn nhật ký được ghi nhớ trên thiết bị. Chế độ giảm chuyển động hiển thị ngay, không gõ chữ.</p>

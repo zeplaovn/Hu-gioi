@@ -18,10 +18,9 @@ body.reduced-motion .vfx-sprite{display:none}
 
 /* ===== HIỆU ỨNG ===== */
 .fx-leaves{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
-.leaf{position:absolute;top:-8%;width:10px;height:14px;border-radius:70% 10% 70% 10%;background:linear-gradient(135deg,#e8c56a,#9b6b2c);opacity:.55;animation:leafFall linear infinite;filter:blur(.2px)}
-.leaf.green{background:linear-gradient(135deg,#89d49a,#2e7d54)}
-.leaf.blue{background:linear-gradient(135deg,#9fe8ff,#3b84b8)}
-.leaf.pink{background:linear-gradient(135deg,#ffc6d8,#b45a7a)}
+.leaf{position:absolute;top:-8%;width:26px;height:auto;object-fit:contain;background:none;opacity:.7;animation:leafFall linear infinite;filter:drop-shadow(0 1px 3px #0004)}
+.leaf.firefly{top:45%;animation-name:fireflyDrift;filter:drop-shadow(0 0 7px #d7ff8e)}
+@keyframes fireflyDrift{0%,100%{transform:translate3d(-20px,8vh,0);opacity:0}25%{opacity:.9}50%{transform:translate3d(35px,-14vh,0);opacity:.35}75%{opacity:.8}}
 @keyframes leafFall{
   0%{transform:translate3d(0,-10px,0) rotate(0deg);opacity:0}
   10%{opacity:.6}
@@ -34,6 +33,7 @@ body.reduced-motion .vfx-sprite{display:none}
 .float-text.won{color:#b6ffd2;text-shadow:0 2px 0 #062b16,0 4px 12px #000,0 0 16px #55d98a,0 0 34px #39c97a88;font-size:clamp(30px,3.8vmin,46px)}
 .float-text.skill{color:#fff1b8;text-shadow:0 2px 0 #3a2503,0 4px 12px #000,0 0 18px #ffd45c,0 0 38px #e5b13f99;font-size:clamp(32px,4.2vmin,50px)}
 .float-text.heal{color:#b8f2ff;text-shadow:0 2px 0 #062b38,0 4px 12px #000,0 0 16px #5cd6ff,0 0 32px #3fa9d899;font-size:clamp(28px,3.4vmin,42px)}
+.float-text.cultivation-gain{font:750 clamp(17px,2.4vmin,25px) var(--font);color:#bdf8ff;-webkit-text-stroke:0;text-shadow:0 2px 5px #071b28,0 0 12px #60d9ff;animation:floatUp 1.6s ease-out forwards}
 @keyframes floatUp{0%{opacity:0;transform:translate(-50%,12px) scale(.72)}18%{opacity:1;transform:translate(-50%,0) scale(1.16)}38%{transform:translate(-50%,-8px) scale(1)}100%{opacity:0;transform:translate(-50%,-58px) scale(1.12)}}
 .hero-wrap.attack{animation:heroAttack .36s ease-in-out}
 @keyframes heroAttack{0%,100%{translate:0 0}45%{translate:clamp(18px,3vw,48px) -6px}}

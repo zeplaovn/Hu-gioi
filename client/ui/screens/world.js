@@ -14,9 +14,7 @@
     { id: 'sect', label: 'Tông môn', icon: '⌂' },
     { id: 'encounter', label: 'Kỳ ngộ', icon: '❂' },
     { id: 'shop', label: 'Cửa hàng', icon: '◈' },
-    { id: 'auction', label: 'Đấu giá', icon: '⚖' },
-    { id: 'catalog', label: 'Tra cứu', icon: '☰' },
-    { id: 'prestige', label: 'Trọng sinh', icon: '☯' }
+    { id: 'auction', label: 'Đấu giá', icon: '⚖' }
   ];
 
   const map = () => {
@@ -57,21 +55,7 @@
       <div class="auction-lots">${g.lots().map(x => `<section class="auction-lot">${img(x.code)}<h3>${esc(x.name)}</h3><p>${moneyHTML(g.price(x.code))}</p>${btn(s.auction.offers[x.code] ? 'Đã đặt' : 'Đặt giá', 'bid', codeAttr(x.code), !!s.auction.offers[x.code])}</section>`).join('')}</div>`;
   };
 
-  const catalog = () => {
-    const xs = H.ITEMS.filter(lists.matches);
-    return `<p class="screen-lead">493 mã vật phẩm · 61 đan dược · 80 linh thảo. Tìm bằng tên mới, tên cũ hoặc ID.</p>${lists.controls()}${lists.pager(xs.length)}
-      <div class="shop-list">${lists.slice(xs).map(x => `<article class="shop-item">${img(x.code)}<div><h3>${esc(x.name)}</h3><p>${x.code} · ${x.category} · ${x.realm} · ${F.SUBPHAM[x.sub]}</p><p>${esc(x.description)}</p><small>Tên cũ: ${esc(x.originalName)}</small></div></article>`).join('')}</div>`;
-  };
-
-  const prestige = () => {
-    const s = UI.s(), reward = F.dao_van(s.totalRunExp), remaining = Math.max(0, F.exp_for_dao_van(Math.max(10, reward + 1)) - s.totalRunExp);
-    return `<p class="screen-lead">Mở từ 10 Đạo vận nhận được. Giữ công pháp đã lĩnh ngộ, thiên phú, nâng cấp offline và cài đặt.</p><div class="screen-grid">
-      ${card('Chuyển thế', `${row('Tu vi thực nhận vòng này', num(s.totalRunExp))}${row('Phần thưởng', num(reward) + ' Đạo vận')}${row('Tu vi tới mốc kế tiếp', num(remaining))}${row('Số lần trọng sinh', s.rebirths)}${btn('Trọng sinh', 'prestige', '', reward < 10)}<p class="info-note">Đặt lại cảnh giới, tiền, túi đồ, nâng cấp thường và nhiệm vụ. Tu vi tràn ngưỡng đột phá không tính Đạo vận.</p>`)}
-      ${card('Bế quan vĩnh viễn', `${row('Đạo vận', num(s.daoVan))}${row('Giới hạn offline', duration(F.offline_cap(s.offlineCap)))}${btn('+2 giờ · ' + (2 + s.offlineCap) + ' Đạo vận', 'offlineCap', '', s.offlineCap >= 8)}${row('Hiệu suất offline', pct(F.offline_efficiency(s.offlineEff)))}${btn('+5 điểm % · ' + (2 + s.offlineEff) + ' Đạo vận', 'offlineEff', '', s.offlineEff >= 8)}<p class="info-note">Tối đa 24 giờ và 100%. Tiêu Đạo vận sẽ giảm hệ số tốc tu tương ứng.</p>`)}
-      ${card('Thiên mệnh', `${row('Điểm khả dụng', num(s.meta?.points || 0))}${row('Thành tựu', Object.keys(s.meta?.achievements || {}).length + '/' + H.META_ACHIEVEMENTS.length)}${row('Kiếp trước', num(s.meta?.history?.length || 0))}<button class="btn btn-outline" data-go="meta">Mở Thiên mệnh ›</button><p class="info-note">Thành tựu và nâng cấp vĩnh viễn được giữ qua trọng sinh.</p>`, { eyebrow: 'XUYÊN KIẾP' })}</div>`;
-  };
-
-  const body = { map, dungeons, quests, sect, encounter, shop, auction, catalog, prestige };
+  const body = { map, dungeons, quests, sect, encounter, shop, auction };
   UI.register({
     id: 'world', label: 'Thế giới', icon: 'ICON-MENU-007', eyebrow: 'BA GIỚI', tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">BA GIỚI</span><h2>Thế giới</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
@@ -146,25 +130,5 @@
       UI.toast('Đạo Tổ kỳ ngộ · nhận ' + part.name + '.', { type: 'gold', title: 'Kỳ ngộ' });
     }
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
-  });
-  UI.action('prestige', () => {
-    const reward = F.dao_van(UI.s().totalRunExp);
-    UI.modal('Xác nhận trọng sinh', `<p>Nhận <b>${num(reward)} Đạo vận</b>. Cảnh giới, túi đồ và tiền thường đặt lại.</p>`, () => {
-      UI.command('prestige');
-      UI.toast('Đã chuyển thế · nhận ' + num(reward) + ' Đạo vận.', { type: 'gold', title: 'Trọng sinh' });
-      UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(140px,22vw,240px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
-      UI.go('idle');
-    }, 'Trọng sinh', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_phu'] });
-    return UI.KEEP;
-  });
-  UI.action('offlineCap', () => {
-    UI.command('upgradeOffline', { type: 'cap' });
-    UI.toast('Giới hạn bế quan · ' + duration(F.offline_cap(UI.s().offlineCap)) + '.', { type: 'success', title: 'Bế quan' });
-    UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
-  });
-  UI.action('offlineEff', () => {
-    UI.command('upgradeOffline', { type: 'eff' });
-    UI.toast('Hiệu suất offline · ' + pct(F.offline_efficiency(UI.s().offlineEff)) + '.', { type: 'success', title: 'Bế quan' });
-    UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
 })(typeof window !== 'undefined' ? window : globalThis);

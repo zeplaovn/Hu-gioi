@@ -1,13 +1,14 @@
 /* ===== HƯ GIỚI · màn loading tài nguyên: logo ở trên, thanh tiến độ ở dưới ===== */
-#loading{
+#loading,#gameLoading{
   position:fixed;inset:0;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
   padding:clamp(24px,7vh,64px) 20px calc(clamp(28px,8vh,64px) + env(safe-area-inset-bottom,0px));
   background:#0a1218;color:#e9f1f3;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   transition:opacity .55s ease,visibility .55s;
 }
-#loading.done{opacity:0;visibility:hidden;pointer-events:none}
+#loading.done,#gameLoading.done{opacity:0;visibility:hidden;pointer-events:none}
+body.loading-game{overflow:hidden}
 .loading-scene{position:absolute;inset:0;background:url('../media/assets/world/bg/idle_ha_gioi.webp') center/cover no-repeat;opacity:0;transition:opacity .8s ease}
-#loading.scene-ready .loading-scene{opacity:1}
+#loading.scene-ready .loading-scene,#gameLoading.scene-ready .loading-scene{opacity:1}
 /* Lớp phủ: sáng nhẹ phía trên để logo mực đen nổi rõ, tối dần xuống đáy nơi đặt thanh tiến độ. */
 .loading-veil{position:absolute;inset:0;background:
   linear-gradient(to bottom,#e9eef0 0,#e9eef066 34%,#0a121800 52%,#0a1218d9 82%,#0a1218 100%),
@@ -25,6 +26,6 @@
 @keyframes loadingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-height:520px){.loading-logo{max-height:38vh}}
 @media(prefers-reduced-motion:reduce){
-  #loading,.loading-scene,.loading-fill{transition:none}
+  #loading,#gameLoading,.loading-scene,.loading-fill{transition:none}
   .loading-logo,.loading-fill::after{animation:none}
 }

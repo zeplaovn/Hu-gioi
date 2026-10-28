@@ -391,7 +391,7 @@
     const w = root.innerWidth || document.documentElement.clientWidth || 0;
     const h = root.innerHeight || document.documentElement.clientHeight || 1;
     const a = w / h;
-    return a < 0.85 ? 'portrait' : (a >= 1.5 && w >= 1100) ? 'wide' : 'landscape';
+    return a < 0.85 ? 'portrait' : (a >= 1.5 && (w >= 1100 || (w >= 700 && h <= 520))) ? 'wide' : 'landscape';
   }
 
   function applyLayout() {
@@ -539,7 +539,7 @@
       // Điện thoại: cửa sổ chiếm trọn khoảng trống giữa bảng trạng thái và thanh menu,
       // thay vì bị bó trong sân khấu (chỉ cao ~370px nên nội dung bị cắt sớm).
       const status = $('status')?.getBoundingClientRect(), menu = $('menu')?.getBoundingClientRect();
-      if (layout === 'portrait' && W < 600 && status && menu && menu.top - status.bottom > 260) {
+      if (layout === 'portrait' && W < 600 && status && menu && menu.top - status.bottom > 200) {
         const top = status.bottom + 8;
         return this.clampRect({ x: 8, y: top, w: W - 16, h: menu.top - 8 - top });
       }
@@ -799,7 +799,23 @@
     if ($('mpFill')) $('mpFill').style.width = mpPct + '%';
     if ($('hpValue')) $('hpValue').textContent = num(s.hp) + ' / ' + num(st.HP);
     if ($('mpValue')) $('mpValue').textContent = num(s.mp) + ' / ' + num(maxMp);
-    $('statusVitals')?.setAttribute('aria-label', 'Sinh lực ' + num(s.hp) + ' trên ' + num(st.HP) + '; linh khí ' + num(s.mp) + ' trên ' + num(maxMp));
+    const life = g.lifeInfo();
+    $('lifeFill').style.width = clamp(s.age / life.max * 100, 0, 100) + '%';
+    $('lifeValue').textContent = s.completed ? 'Trường sinh' : Math.floor(s.age) + ' / ' + num(life.max) + ' năm';
+    $('lifeRow').classList.toggle('low-life', !s.completed && life.left <= 40);
+    $('lifeRow').title = s.completed ? 'Đã chứng đạo, không còn giới hạn thọ nguyên.' : 'Còn ' + num(life.left) + ' năm thọ nguyên';
+    $('lifeMeter').setAttribute('aria-valuemax', String(life.max));
+    $('lifeMeter').setAttribute('aria-valuenow', String(Math.min(life.max, Math.floor(s.age))));
+    $('lifeMeter').setAttribute('aria-valuetext', $('lifeValue').textContent);
+    $('statusVitals')?.setAttribute('aria-label', 'Sinh lực ' + num(s.hp) + ' trên ' + num(st.HP) + '; linh khí ' + num(s.mp) + ' trên ' + num(maxMp) + '; thọ nguyên ' + $('lifeValue').textContent);
+    const talents = $('statusTalents');
+    if (!talents.childElementCount) talents.innerHTML = H.TALENT_INFO.map(t => `<div class="status-talent" data-talent="${t.key}"><img src="${A.BASE}ui/icon/menu/${t.icon}" alt=""><span>${esc(t.name)}</span><b></b><meter min="0" max="${H.TALENT_MAX}" aria-label="${esc(t.name)}"></meter></div>`).join('');
+    for (const t of H.TALENT_INFO) {
+      const el = talents.querySelector(`[data-talent="${t.key}"]`), value = s.talent[t.key] || 0;
+      el.querySelector('b').textContent = value;
+      el.querySelector('meter').value = value;
+      el.title = t.name + ': ' + value + ' điểm · ' + t.effect(value);
+    }
     const bb = $('btn-break');
     if (bb) {
       const can = !s.completed && readyQi;
@@ -963,19 +979,17 @@
 
   function fillLeaves(layer, season) {
     layer.innerHTML = '';
-    const kinds = {
-      spring: ['pink', 'green', 'pink', ''],
-      summer: ['green', 'green', ''],
-      autumn: ['', '', ''],
-      winter: ['blue', 'blue', '']
-    }[season] || [''];
     for (let i = 0; i < 14; i++) {
-      const leaf = document.createElement('span');
-      leaf.className = 'leaf ' + kinds[i % kinds.length];
+      const leaf = document.createElement('img');
+      leaf.className = 'leaf' + (season === 'summer' ? ' firefly' : '');
+      leaf.src = A.seasonSprite(season, i);
+      leaf.alt = '';
+      leaf.draggable = false;
+      leaf.decoding = 'async';
       leaf.style.left = (Math.random() * 100).toFixed(2) + '%';
       leaf.style.animationDelay = (-Math.random() * 14).toFixed(2) + 's';
       leaf.style.animationDuration = (8 + Math.random() * 8).toFixed(2) + 's';
-      leaf.style.transform = 'scale(' + (.6 + Math.random() * .7).toFixed(2) + ')';
+      leaf.style.width = (season === 'summer' ? 14 + i % 3 * 3 : 18 + i % 4 * 5) + 'px';
       layer.append(leaf);
     }
     layer.dataset.season = season;
@@ -1011,7 +1025,7 @@
       }
       const season = seasonOf(s);
       if (layer.dataset.season !== season) fillLeaves(layer, season);
-      layer.hidden = reduced || !s.settings.seasonEffects;
+      layer.hidden = reduced || !s.settings.seasonEffects || document.hidden;
     });
     const aura = $('idleAura');
     if (aura) aura.hidden = reduced || !s.settings.cultivationEffects || s.auto;
@@ -1478,6 +1492,7 @@
   });
 
   document.addEventListener('keydown', e => {
+    if (UI.intro?.active || UI.tutorial?.active) return;
     if (e.key === 'Tab' && !$('modalLayer').hidden) {
       const els = [...$('modalLayer').querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]')].filter(x => x.offsetParent !== null);
       const first = els[0], last = els.at(-1);
@@ -1560,10 +1575,14 @@
   function tick() {
     if (!store.ready || document.hidden || store.locked) return;
     safe(() => {
-      store.catchUp();
+      const beforeQi = UI.s().qi;
+      const report = store.catchUp();
       if (trib.active) return;
       updateChrome();
       updateStage();
+      updateSceneEffects();
+      const absorbed = Math.max(0, UI.s().qi - beforeQi);
+      if (absorbed > 0 && report?.seconds <= 3 && UI.current === 'idle' && !UI.s().auto && !UI.intro?.active && !trib.pageOpen && $('modalLayer').hidden && $('game')?.dataset.stage === 'idle') UI.vfx?.cultivationGain(absorbed);
       wins.map.forEach((w, id) => {
         const def = w.def, tab = tabOf(def);
         def.update?.(tab);

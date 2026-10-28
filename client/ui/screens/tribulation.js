@@ -80,7 +80,7 @@
     return card('Đạo Tổ viên mãn', `
       <p>Đạo cơ đã hợp nhất với Thiên đạo. Không còn lôi kiếp nào có thể lay chuyển bạn.</p>
       <p class="info-note">Trọng sinh để nhận Đạo vận, mở vòng tu hành mới với tốc độ cao hơn.</p>
-      <div class="action-group"><button class="btn btn-gold" data-go="world:prestige">Mở Trọng sinh</button><button class="btn btn-outline" data-go="idle">Về tiên sơn</button></div>`, { eyebrow: 'ĐẠO TỔ', cls: 'wide' });
+      <div class="action-group"><button class="btn btn-gold" data-go="meta:prestige">Mở Trọng sinh</button><button class="btn btn-outline" data-go="idle">Về tiên sơn</button></div>`, { eyebrow: 'ĐẠO TỔ', cls: 'wide' });
   }
 
   function render() {

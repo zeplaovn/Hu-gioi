@@ -26,15 +26,8 @@
 
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();
-    const slots = Array.from({ length: 4 }, (_, i) => {
-      const key = s.equipment[i];
-      return key
-        ? `<button class="gear-slot" data-act="equip" ${codeAttr(key)} title="Bấm để tháo">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
-        : `<button class="gear-slot empty" data-go="character:bag" title="Ô pháp bảo trống"><span>＋</span><small>Ô trống</small></button>`;
-    }).join('');
     return `<div class="screen-grid">
       ${card('Chiến lực', [['Sinh lực', st.HP], ['Công kích', st.ATK], ['Phòng thủ', st.DEF], ['Thân pháp', st.SPD], ['Chiến lực', st.CP]].map(([k, v]) => row(k, num(v))).join('') + row('Bạo kích', pct(st.CRIT)) + row('Né tránh', pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
-      ${card('Pháp bảo trang bị', `<div class="gear-row">${slots}</div><p class="info-note">Tối đa bốn pháp bảo, cao hơn cảnh giới một bậc. Vào tab Hành trang để trang bị.</p>`, { eyebrow: 'TRANG BỊ' })}
       ${card('Tu luyện', `
         ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row('Tốc độ', num(g.rate()) + '/giây')}
         ${row('Tu vi từ đan / trần', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
@@ -45,7 +38,7 @@
       }).join(''), { eyebrow: 'KHỞI NGUYÊN' })}
       ${card('Đạo vận · Thiên mệnh', `
         ${row('Đạo vận', num(s.daoVan))}${row('Tốc tu vĩnh viễn', '×' + num(F.prestige_mult(s.daoVan)))}${row('Số lần trọng sinh', s.rebirths)}${row('Điểm Thiên mệnh', num(s.meta?.points || 0))}
-        <div class="action-group"><button class="btn btn-outline" data-go="world:prestige">Mở Trọng sinh ›</button><button class="btn btn-outline" data-go="meta">Mở Thiên mệnh ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
+        <div class="action-group"><button class="btn btn-outline" data-go="meta:prestige">Mở Trọng sinh ›</button><button class="btn btn-outline" data-go="meta">Mở Thiên mệnh ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
     </div>`;
   }
 
@@ -77,7 +70,13 @@
 
   function bag() {
     const s = UI.s(), g = UI.g(), v = UI.view;
-    /* Hành trang hiện toàn bộ đồ trong túi: không còn bảng tra cứu/lọc/phân trang (tra cứu vật phẩm nằm ở Thế giới → Tra cứu). */
+    const slots = Array.from({ length: 4 }, (_, i) => {
+      const key = s.equipment[i];
+      return key
+        ? `<button class="gear-slot" data-act="equip" ${codeAttr(key)} aria-label="Tháo ${esc(H.item(key).name)}" title="Bấm để tháo">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
+        : `<div class="gear-slot empty" aria-label="Ô pháp bảo ${i + 1} trống"><span>＋</span><small>Ô ${i + 1} · trống</small></div>`;
+    }).join('');
+    /* Hành trang chứa cả các ô trang bị và toàn bộ vật phẩm trong túi. */
     const xs = Object.keys(s.bag).map(H.item).filter(Boolean)
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
     const visible = xs;
@@ -87,6 +86,7 @@
       <div class="detail-actions">${btn(x.kind === 'EQ' ? (s.equipment.includes(v.selected) ? 'Tháo' : 'Trang bị') : x.kind === 'BT' ? 'Lĩnh ngộ' : usable ? 'Sử dụng' : 'Công dụng',
         x.kind === 'EQ' ? 'equip' : x.kind === 'BT' ? 'learn' : usable ? 'consume' : 'info', codeAttr(v.selected))}${btn('Bán 1', 'sell', codeAttr(v.selected), s.equipment.includes(v.selected), 'btn-outline')}</div>` : empty('Chọn một vật phẩm.');
     return `<p class="screen-lead">${Object.keys(s.bag).length} loại và phẩm chất trong túi. Giá bán bằng 40% giá trị vật phẩm.</p>
+      <section id="equippedItems" class="card"><header class="card-head"><h3>Pháp bảo đang trang bị · ${s.equipment.length}/4</h3></header><div class="gear-row">${slots}</div><p class="info-note">Chọn pháp bảo bên dưới để trang bị. Bấm ô đang mặc để tháo; tối đa cao hơn cảnh giới một bậc.</p></section>
       <div class="inventory-layout">
         <div class="card"><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Không có vật phẩm phù hợp.')}</div></div>
         <div class="card item-detail">${main}</div>

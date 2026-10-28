@@ -16,8 +16,8 @@
     return !prefersReduced() && s?.settings?.combatEffects !== false;
   };
 
-  function transient(host, el, ms) {
-    if (!host || !effectsEnabled() || document.hidden || running.size >= MAX_EFFECTS) return null;
+  function transient(host, el, ms, enabled = effectsEnabled) {
+    if (!host || !enabled() || document.hidden || running.size >= MAX_EFFECTS) return null;
     host.append(el);
     let timer;
     const handle = { el, stop() { clearTimeout(timer); el.remove(); running.delete(handle); } };
@@ -180,6 +180,18 @@
     transient(p.host, el, 1000);
   }
 
+  function cultivationGain(amount) {
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    const p = position('hero');
+    if (!p) return;
+    const el = document.createElement('span');
+    el.className = 'float-text cultivation-gain';
+    el.textContent = '+' + UI.kit.num(amount) + ' linh khí';
+    el.setAttribute('aria-hidden', 'true');
+    Object.assign(el.style, { left: p.x + 'px', top: (p.y - p.height * .85) + 'px' });
+    transient(p.host, el, 1600, () => !prefersReduced() && UI.s().settings.cultivationEffects !== false);
+  }
+
   function clear(host) {
     const el = hostOf(host);
     if (!el) return;
@@ -198,7 +210,7 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearAll(); });
 
   UI.vfx = {
-    play, at, stage, trib, tribStage, hero, effect, ring, burst, float, clear, clearAll, screenFlash, effectsEnabled,
+    play, at, stage, trib, tribStage, hero, effect, ring, burst, float, cultivationGain, clear, clearAll, screenFlash, effectsEnabled,
     preload: (kind, variant) => A.preloadVfx(kind, variant)
   };
 })(typeof window !== 'undefined' ? window : globalThis);

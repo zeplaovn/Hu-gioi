@@ -39,7 +39,7 @@
     age: randInt(14, 30), race: H.rollRace(), ...H.rollRoots(),
     points: TALENT_MAX, talent: blankTalent()
   };
-  let rolling = '';
+  let rolling = '', entering = false;
 
   function nameError() {
     const value = $('nameInput').value;
@@ -52,7 +52,7 @@
     note.hidden = !err;
     note.textContent = err;
     $('nameInput').setAttribute('aria-invalid', String(!!err));
-    $('startNew').disabled = !H.cleanName($('nameInput').value);
+    $('startNew').disabled = entering || !H.cleanName($('nameInput').value);
   }
 
   function raceInfoHtml() {
@@ -167,7 +167,7 @@
   }
 
   function roll(kind) {
-    if (rolling) return;
+    if (rolling || entering) return;
     rolling = kind;
     const btnId = { name: 'randomName', age: 'rollAge', race: 'rollRace', root: 'rollRoot' }[kind];
     const btn = btnId ? $(btnId) : null;
@@ -175,7 +175,7 @@
     let i = 0;
     const step = () => {
       const welcome = $('welcome');
-      if (!welcome || welcome.hidden) { rolling = ''; btn?.classList.remove('rolling'); return; }
+      if (!welcome || welcome.hidden || entering) { rolling = ''; btn?.classList.remove('rolling'); return; }
       if (kind === 'name') { creation.name = H.randomName(creation.gender); creation.nameAuto = true; }
       else if (kind === 'age') creation.age = randInt(14, 30);
       else if (kind === 'race') creation.race = H.rollRace();
@@ -197,6 +197,11 @@
     return out.slice(0, 3);
   }
 
+  function offlineSnapshot(now) {
+    const s = UI.s();
+    return { age: s.age, realm: s.realm, harvests: s.garden.filter(p => p.end <= now).length };
+  }
+
   /** Hộp thoại "Bế quan trở về": cùng bố cục với bản Hu-gioi (vắng mặt, thời gian tính, tuổi, kết quả, các mục kỳ ngộ/bí cảnh/tông môn). */
   function showOfflineReport(r, before, awaySeconds) {
     const s = UI.s(), g = UI.g();
@@ -208,14 +213,17 @@
     const section = title => row('report-sec', '— ' + title + ' —');
 
     row('report-center', 'Bạn đã vắng mặt <b>' + duration(awaySeconds) + '</b>. Thời gian bế quan được tính: <b>' + duration(r.seconds) + '</b>' + (capped ? ' (đã đạt mức tối đa)' : '') + '.');
-    row('report-center dim small', 'Hiệu suất ' + pct(eff) + ', tối đa ' + duration(cap) + ' mỗi lần. Linh điền vẫn lớn đến lúc chín.');
+    row('report-center dim small', 'Hiệu suất ' + pct(eff) + ', tối đa ' + duration(cap) + ' mỗi lần. Linh điền tự thu hoạch khi chín.');
     row('cyan', 'Thời gian trong game: +' + months + ' tháng (tuổi ' + Math.floor(before.age) + ' → ' + Math.floor(s.age) + ')');
-    row('green', 'Tu vi: +' + num(r.exp) + '&nbsp;&nbsp;&nbsp; Linh thạch: ' + (r.stone < 0 ? '−' : '+') + moneyHTML(Math.abs(r.stone)));
+    row('report-rewards', '<div><span>Tu vi hấp thụ</span><b>+' + num(r.exp) + '</b></div><div><span>Linh thạch</span><b>' + (r.stone < 0 ? '−' : '+') + moneyHTML(Math.abs(r.stone)) + '</b></div>');
     if (s.realm !== before.realm) row('gold', 'Cảnh giới: ' + F.REALMS[before.realm] + ' → ' + F.REALMS[s.realm]);
+    if (!s.completed && s.qi >= g.need()) row('gold', '◆ Tu vi đã viên mãn — hãy đột phá để tiếp tục hấp thụ linh khí!');
+    if (before.harvests) row('green', '🌿 Linh điền: đã tự thu hoạch ' + before.harvests + ' ô, nhận ' + before.harvests * 3 + ' cây linh thảo vào Hành trang.');
     if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
     const life = g.lifeInfo();
-    if (life.left <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' nhân vật sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
+    row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm.');
+    if (!s.completed && life.left <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' nhân vật sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
 
     if (r.encounters?.length) {
       section('Kỳ ngộ (' + r.encounters.length + ')');
@@ -251,6 +259,7 @@
   let deathOpen = false;
   UI.onDeath = function (r) {
     if (deathOpen) return;
+    UI.tutorial?.close();
     const s = UI.s(), g = UI.g();
     deathOpen = true;
     const reward = F.dao_van(s.totalRunExp), points = Math.max(1, Math.floor(reward / 5)) + Math.floor(s.realm / 2);
@@ -294,7 +303,7 @@
     document.body.classList.add('in-game');
     store.ready = true;
     const awayStart = Date.now(), awaySeconds = Math.max(0, (awayStart - s.lastUpdate) / 1000);
-    const before = { age: s.age, realm: s.realm, stone: s.stone, hp: s.hp };
+    const before = offlineSnapshot(awayStart);
     const r = store.catchUp(awayStart, true);
     store.write();
     UI.applySettings();
@@ -310,20 +319,51 @@
   }
 
   function bindCreation() {
-    $('createForm').addEventListener('submit', e => {
+    $('createForm').addEventListener('submit', async e => {
       e.preventDefault();
+      if (entering || store.ready) return;
       if (store.locked) { UI.toast('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.'); return; }
       const name = H.cleanName($('nameInput').value);
       if (!name) { syncName(); return; }
-      UI.session.create({
+      const profile = {
         name, gender: creation.gender, race: creation.race,
         roots: [...creation.roots], rootType: creation.rootType, rootSub: creation.rootSub || '',
         age: creation.age, talent: { ...creation.talent }
-      });
-      start();
+      };
+      entering = true;
+      const button = $('startNew'), label = button.textContent;
+      button.textContent = 'Đang vào Hư Giới…';
+      $('createForm').setAttribute('aria-busy', 'true');
+      syncName();
+      try {
+        const images = [...A.INTRO, A.zoneBg(0), A.heroPortrait(profile.gender, 0)];
+        for (const action of ['dung_yen', 'di_chuyen', 'tan_cong']) {
+          for (let i = 0; i < A.heroFrames(profile.gender, 0, action); i++) images.push(A.heroSrc(profile.gender, 0, action, i));
+        }
+        let introDone;
+        await root.HU_LOADER.enter(images, () => { introDone = UI.intro.play(); });
+        UI.intro.focus();
+        await introDone;
+        if (store.locked) throw Error('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.');
+        UI.session.create(profile);
+        start();
+        await UI.intro.close();
+        $('stage')?.focus({ preventScroll: true });
+        UI.tutorial.start();
+      } catch (error) {
+        await UI.intro.close();
+        UI.toast('Không thể bắt đầu tu tiên: ' + error.message, { type: 'danger', title: 'Khởi tạo nhân vật' });
+        if (!$('welcome').hidden) $('nameInput').focus({ preventScroll: true });
+      } finally {
+        entering = false;
+        button.textContent = label;
+        $('createForm').removeAttribute('aria-busy');
+        syncName();
+      }
     });
 
     $('continueGame').addEventListener('click', () => UI.safe(() => {
+      if (entering) return;
       if (store.locked) throw Error('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.');
       const saved = store.load();
       if (!saved) throw Error('Không tìm thấy bản lưu hợp lệ.');
@@ -410,10 +450,15 @@
       UI.updateSceneEffects();
       if (!store.ready || store.locked) return;
       if (document.hidden) { store.catchUp(); store.write(); return; }
-      const r = store.catchUp(Date.now(), true);
+      const now = Date.now(), awaySeconds = Math.max(0, (now - UI.s().lastUpdate) / 1000);
+      const before = offlineSnapshot(now);
+      const r = store.catchUp(now, true);
       store.write();
       UI.refresh();
-      if (r && r.seconds >= 20) UI.toast('Bế quan · +' + num(r.exp) + ' tu vi · ' + money(r.stone) + '.', { type: 'loot', title: 'Bế quan trở về' });
+      if (r && r.seconds >= 20 && !r.died) {
+        if ($('modalLayer').hidden && !UI.tutorial.active && !UI.intro.active && !UI.tribulation.active) showOfflineReport(r, before, awaySeconds);
+        else UI.toast('Bế quan · +' + num(r.exp) + ' tu vi · ' + money(r.stone) + '.', { type: 'loot', title: 'Bế quan trở về' });
+      }
     });
     root.addEventListener('pagehide', () => {
       if (store.ready && !store.locked) { store.catchUp(Date.now(), document.hidden); store.write(); }

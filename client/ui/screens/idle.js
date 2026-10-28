@@ -15,7 +15,7 @@
 
   function nearGoals() {
     const s = UI.s(), g = UI.g(), need = g.need(), goals = [];
-    if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Có thể trọng sinh để mở vòng mới.', go: 'world:prestige', cta: 'Trọng sinh' });
+    if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Có thể trọng sinh để mở vòng mới.', go: 'meta:prestige', cta: 'Trọng sinh' });
     else if (s.qi >= need) goals.push({ icon: '⚡', text: `Tu vi đã đầy · xác suất ${pct(g.chance())}.`, go: 'tribulation', cta: 'Thiên kiếp' });
     else goals.push({ icon: '☯', text: `Còn khoảng ${duration(F.time_to_goal(need, s.qi, g.rate()))} đến đột phá.`, go: 'character:skills', cta: 'Công pháp' });
     const life = g.lifeInfo();

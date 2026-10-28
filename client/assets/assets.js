@@ -84,6 +84,9 @@
   };
   const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.png', linh_gioi: MAP_BASE + 'MAP-LG.png', tien_gioi: MAP_BASE + 'MAP-TG.png' };
   const zoneBg = zone => BG[worldOf(zone)];
+  const INTRO = Array.from({ length: 5 }, (_, i) => `${BASE}world/story/intro/${i + 1}.png`);
+  const SEASONS = { spring: 'mua_xuan', summer: 'mua_ha', autumn: 'mua_thu', winter: 'mua_dong' };
+  const seasonSprite = (season, n = 0) => `${BASE}world/vfx/leaf/${SEASONS[season] || SEASONS.spring}/${wrap(n, 3)}.png`;
 
   /* ---- hiệu ứng khung hình ----
    * Bộ Hu-gioi dùng chuỗi 8 khung PNG (không phải sprite sheet). Mỗi hiệu ứng
@@ -167,6 +170,6 @@
   }
   const itemSrc = x => itemImg(x).src;
 
-  root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, itemImg, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
+  root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, INTRO, seasonSprite, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, itemImg, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
   if (typeof module !== 'undefined') module.exports = root.HU_ASSETS;
 })(typeof window !== 'undefined' ? window : globalThis);

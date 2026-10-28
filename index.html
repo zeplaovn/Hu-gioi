@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="css/welcome.css">
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/screens.css">
+<link rel="stylesheet" href="css/onboarding.css">
 <link rel="stylesheet" href="css/vfx.css">
 <script src="client/platform/content-guard.js"></script>
 </head>
@@ -112,7 +113,13 @@
         <div class="meter"><i class="mp" id="mpFill"></i></div>
         <small id="mpValue">0 / 0</small>
       </div>
+      <div class="vital-row vital-life" id="lifeRow">
+        <span class="vital-label">Thọ nguyên</span>
+        <div class="meter" role="progressbar" aria-label="Tuổi trên thọ nguyên" aria-valuemin="0" id="lifeMeter"><i class="life" id="lifeFill"></i></div>
+        <small id="lifeValue">0 / 0 năm</small>
+      </div>
     </div>
+    <div id="statusTalents" class="status-talents" aria-label="Năm chỉ số thiên phú"></div>
     <div class="info">
       <div class="row"><span>Tốc độ</span><b id="topRate">+0/giây</b></div>
       <div class="row"><span>Linh thạch</span><b id="moneyTop">0</b></div>
@@ -330,6 +337,7 @@
 <script src="client/ui/screens/settings.js"></script>
 <script src="client/ui/screens/more.js"></script>
 <script src="client/ui/screens/meta.js"></script>
+<script src="client/ui/onboarding.js"></script>
 <script src="client/ui/boot.js"></script>
 <script src="client/main.js"></script>
 </body>

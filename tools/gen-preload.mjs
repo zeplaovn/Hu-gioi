@@ -26,6 +26,8 @@ for (const g of ['nam', 'nu']) {
 for (const m of ['mon_001', 'mon_002']) {
   walk(join(ROOT, `${A}enemies/mon/ha_gioi/${m}`)).map(rel).sort().forEach(p => add(p));
 }
+// 5) Hạt theo mùa; ảnh intro được nạp riêng khi bấm Bắt đầu tu tiên.
+walk(join(ROOT, A + 'world/vfx/leaf')).map(rel).sort().forEach(p => add(p));
 
 writeFileSync(join(ROOT, 'client/assets/preload-manifest.js'),
   `/* Sinh bởi tools/gen-preload.mjs — không sửa tay. */\n(function(root){root.HU_PRELOAD=${JSON.stringify(list)};})(typeof window!=='undefined'?window:globalThis);\n`);
