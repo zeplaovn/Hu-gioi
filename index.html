@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/screens.css">
 <link rel="stylesheet" href="css/vfx.css">
-<script src="js/content-guard.js"></script>
+<script src="client/platform/content-guard.js"></script>
 </head>
 <body>
 <div id="loading" aria-busy="true" aria-label="Đang tải tài nguyên">
@@ -287,31 +287,47 @@
 <div id="itemTip" class="item-tip" role="tooltip" aria-hidden="true" hidden></div>
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 
-<script src="js/preload-manifest.js"></script>
-<script src="js/loader.js"></script>
-<script src="js/balance-data.js"></script>
-<script src="js/items-data.js"></script>
-<script src="js/formulas.js"></script>
-<script src="js/adventure-data.js"></script>
-<script src="js/adventures.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/asset-index.js"></script>
-<script src="js/assets.js"></script>
-<script src="js/ui-core.js"></script>
-<script src="js/vfx.js"></script>
-<script src="js/ui-shell.js"></script>
-<script src="js/audio.js"></script>
-<script src="js/screens-idle.js"></script>
-<script src="js/screens-combat.js"></script>
-<script src="js/screens-craft.js"></script>
-<script src="js/screens-tribulation.js"></script>
-<script src="js/screens-adventures.js"></script>
-<script src="js/screens-character.js"></script>
-<script src="js/screens-world.js"></script>
-<script src="js/screens-settings.js"></script>
-<script src="js/screens-more.js"></script>
-<script src="js/screens-meta.js"></script>
-<script src="js/ui-boot.js"></script>
-<script src="js/main.js"></script>
+<!-- Classic scripts: mở trực tiếp file://, không cần bundler hoặc máy chủ. -->
+<script src="client/assets/preload-manifest.js"></script>
+<script src="client/platform/loader.js"></script>
+<script src="shared/data/balance.js"></script>
+<script src="shared/data/items.js"></script>
+<script src="shared/rules/formulas.js"></script>
+<script src="shared/data/catalog.js"></script>
+<script src="shared/data/character.js"></script>
+<script src="shared/data/social.js"></script>
+<script src="shared/data/adventures.js"></script>
+<script src="shared/rules/adventures.js"></script>
+<script src="shared/state/player.js"></script>
+<script src="shared/rules/progression.js"></script>
+<script src="shared/rules/inventory.js"></script>
+<script src="shared/rules/crafting.js"></script>
+<script src="shared/rules/combat.js"></script>
+<script src="shared/rules/world.js"></script>
+<script src="shared/rules/social.js"></script>
+<script src="shared/rules/time.js"></script>
+<script src="shared/rules/creation.js"></script>
+<script src="shared/game.js"></script>
+<script src="shared/protocol/commands.js"></script>
+<script src="client/assets/asset-index.js"></script>
+<script src="client/assets/assets.js"></script>
+<script src="client/session/local-session.js"></script>
+<script src="client/persistence/local-store.js"></script>
+<script src="client/ui/core.js"></script>
+<script src="client/ui/vfx.js"></script>
+<script src="client/ui/shell.js"></script>
+<script src="client/platform/audio.js"></script>
+<script src="client/ui/screens/idle.js"></script>
+<script src="client/ui/screens/combat.js"></script>
+<script src="client/ui/screens/craft.js"></script>
+<script src="client/ui/screens/tribulation.js"></script>
+<script src="client/ui/screens/adventures.js"></script>
+<script src="client/ui/screens/character.js"></script>
+<script src="client/ui/screens/world.js"></script>
+<script src="client/ui/screens/settings.js"></script>
+<script src="client/ui/screens/more.js"></script>
+<script src="client/ui/screens/meta.js"></script>
+<script src="client/ui/boot.js"></script>
+<script src="client/main.js"></script>
 </body>
 </html>

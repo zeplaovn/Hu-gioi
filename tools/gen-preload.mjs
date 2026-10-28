@@ -1,4 +1,4 @@
-// Sinh js/preload-manifest.js: danh sách tài nguyên nạp trước khi vào game.
+// Sinh client/assets/preload-manifest.js: danh sách tài nguyên nạp trước khi vào game.
 // Chạy lại sau khi thêm/đổi tên ảnh:  node tools/gen-preload.mjs
 import { readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -27,6 +27,6 @@ for (const m of ['mon_001', 'mon_002']) {
   walk(join(ROOT, `${A}enemies/mon/ha_gioi/${m}`)).map(rel).sort().forEach(p => add(p));
 }
 
-writeFileSync(join(ROOT, 'js/preload-manifest.js'),
+writeFileSync(join(ROOT, 'client/assets/preload-manifest.js'),
   `/* Sinh bởi tools/gen-preload.mjs — không sửa tay. */\n(function(root){root.HU_PRELOAD=${JSON.stringify(list)};})(typeof window!=='undefined'?window:globalThis);\n`);
 console.log(list.length + ' tệp');
