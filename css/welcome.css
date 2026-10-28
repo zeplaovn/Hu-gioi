@@ -153,3 +153,9 @@
 .root-tier-list s{text-decoration:none;color:#5f7a86}
 .chip-di{color:#7fdcff;border-color:#7fdcff}
 @media(max-width:620px){.root-tier-name{flex-basis:96px}}
+
+.root-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0}
+.root-line-label{font-size:12px;letter-spacing:.04em;color:#8fa8b4;min-width:104px}
+.root-elem-title{margin:10px 0 3px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8fa8b4}
+.root-section-title{margin:16px 0 8px;font:700 16px var(--serif)}
+.root-section-title small{font:400 12px system-ui;color:#8fa8b4}

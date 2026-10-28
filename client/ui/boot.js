@@ -97,6 +97,7 @@
       ' <span class="root-group root-group-' + esc(info.group) + '">' + esc(group ? group.name : '') + '</span></div>' +
       '<div class="root-rate-line">tốc tu ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') + (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</div>' +
       '<div class="small">' + esc(info.desc) + '</div>' + diBox +
+      (descs ? '<div class="root-elem-title">' + (type === 'Dị' ? 'Hệ ngũ hành gốc' : 'Ngũ hành') + '</div>' : '') +
       '<div class="root-elem-list">' + descs + '</div>' + tiers +
       '<div class="root-doc"><b>Dị ≠ Thiên:</b> Thiên là một hệ ngũ hành thuần; Dị là biến thể cao cấp (Băng, Lôi, Phong, Độc) có thế mạnh riêng. <b>Hỗn Độn</b> không gieo được khi tạo nhân vật: chỉ Tạp linh căn (Ngụy) vượt lôi kiếp mới có cơ hội hóa thành.</div>' +
       '<div class="dim small">Gieo lại xúc xắc để đổi linh căn. Điểm ngũ hành quyết định loại linh căn và thiên phú chiến đấu.</div>';
@@ -154,11 +155,12 @@
     $('raceInfo').innerHTML = raceInfoHtml();
     const active = ELEMENTS.map(([name, color], i) => ({ name, color, value: creation.roots[i] }))
       .filter(x => x.value >= 50);
+    const chips = active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('');
+    /* Dị linh căn và ngũ hành tách thành hai dòng riêng, mỗi dòng có nhãn nhóm. */
     $('rootValue').innerHTML = creation.rootType === 'Dị'
-      ? '<span class="chip chip-di">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span>' + active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('')
-      : active.length
-      ? active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('')
-      : '<span class="chip">…</span>';
+      ? '<div class="root-line"><span class="root-line-label">Dị linh căn</span><span class="chip chip-di">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span></div>' +
+        '<div class="root-line"><span class="root-line-label">Hệ ngũ hành gốc</span>' + chips + '</div>'
+      : '<div class="root-line"><span class="root-line-label">' + (creation.rootType === 'Âm Dương' ? 'Chí tôn · ngũ hành' : 'Ngũ hành') + '</span>' + (chips || '<span class="chip">…</span>') + '</div>';
     $('rootDescription').innerHTML = rootInfoHtml();
     renderStats();
     syncName();
