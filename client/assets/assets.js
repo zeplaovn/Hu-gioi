@@ -152,7 +152,7 @@
   const moneyIcon = tier => MONEY[tier] || MONEY.high;
 
   /* ---- vật phẩm ----
-   * Ảnh vật phẩm nằm trong các bảng sprite 128×128 (media/assets/item/*.png). Ô n của bảng ứng với mã thứ n
+   * Ảnh vật phẩm nằm trong các bảng sprite 128×128 (media/assets/item/*.png). Số ô trong item-index bắt đầu từ 1
    * (trái → phải, trên → xuống). Giao diện giữ thẻ <img> nhưng src là ảnh trong suốt 128×128 và ảnh thật được cắt
    * bằng CSS (background-position tính theo %), nên đổi kích thước ô thế nào cũng đúng. Mã ngoài bảng dùng ảnh riêng. */
   const BLANK = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27128%27 height=%27128%27/%3E';
@@ -161,7 +161,7 @@
     if (!ref) return { src: BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png', style: '' };
     const at = ref.indexOf('#');
     if (at < 0) return { src: BASE + ref, style: '' };
-    const sheet = ref.slice(0, at), k = Number(ref.slice(at + 1)), [cols, rows] = ITEM_DB.sheets[sheet];
+    const sheet = ref.slice(0, at), k = Number(ref.slice(at + 1)) - ITEM_DB.indexBase, [cols, rows] = ITEM_DB.sheets[sheet];
     const px = cols > 1 ? (k % cols) / (cols - 1) * 100 : 0, py = rows > 1 ? Math.floor(k / cols) / (rows - 1) * 100 : 0;
     return { src: BLANK, style: `background:url(${BASE}item/${sheet}) ${px.toFixed(3)}% ${py.toFixed(3)}%/${cols * 100}% ${rows * 100}% no-repeat` };
   }
