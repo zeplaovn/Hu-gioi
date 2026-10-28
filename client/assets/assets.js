@@ -8,7 +8,7 @@
   const ENEMY = BASE + 'enemies/';
   const BG_BASE = BASE + 'world/bg/';
   const MAP_BASE = BASE + 'world/map/';
-  const ITEM_IDX = root.HU_ITEM_INDEX || (typeof require === 'function' ? require('./item-index.js') : {});
+  const ITEM_DB = root.HU_ITEM_INDEX || (typeof require === 'function' ? require('./item-index.js') : { sheets: {}, items: {} });
   const IDX = root.HU_ASSET_INDEX || (typeof require === 'function' ? require('./asset-index.js') : { player: {}, monster: {} });
 
   /* Cảnh giới (zone) -> đại giới. Khớp F.realm_map: 0-4 Hạ, 5-8 Linh, 9+ Tiên. */
@@ -152,14 +152,21 @@
   const moneyIcon = tier => MONEY[tier] || MONEY.high;
 
   /* ---- vật phẩm ----
-   * Mỗi mã vật phẩm có một ảnh riêng, đường dẫn lấy từ item-index.js (sinh bởi tools/cut-item-atlases.py
-   * từ vat_pham.xlsx và các bảng sprite 128×128 trong media/assets/item). */
-  function itemSrc(x) {
-    if (!x) return '';
-    const path = ITEM_IDX[String(x.code || '')];
-    return path ? BASE + path : BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png';
+   * Ảnh vật phẩm nằm trong các bảng sprite 128×128 (media/assets/item/*.png). Ô n của bảng ứng với mã thứ n
+   * (trái → phải, trên → xuống). Giao diện giữ thẻ <img> nhưng src là ảnh trong suốt 128×128 và ảnh thật được cắt
+   * bằng CSS (background-position tính theo %), nên đổi kích thước ô thế nào cũng đúng. Mã ngoài bảng dùng ảnh riêng. */
+  const BLANK = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27128%27 height=%27128%27/%3E';
+  function itemImg(x) {
+    const ref = ITEM_DB.items[String(x && x.code || '')];
+    if (!ref) return { src: BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png', style: '' };
+    const at = ref.indexOf('#');
+    if (at < 0) return { src: BASE + ref, style: '' };
+    const sheet = ref.slice(0, at), k = Number(ref.slice(at + 1)), [cols, rows] = ITEM_DB.sheets[sheet];
+    const px = cols > 1 ? (k % cols) / (cols - 1) * 100 : 0, py = rows > 1 ? Math.floor(k / cols) / (rows - 1) * 100 : 0;
+    return { src: BLANK, style: `background:url(${BASE}item/${sheet}) ${px.toFixed(3)}% ${py.toFixed(3)}%/${cols * 100}% ${rows * 100}% no-repeat` };
   }
+  const itemSrc = x => itemImg(x).src;
 
-  root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
+  root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, itemImg, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
   if (typeof module !== 'undefined') module.exports = root.HU_ASSETS;
 })(typeof window !== 'undefined' ? window : globalThis);

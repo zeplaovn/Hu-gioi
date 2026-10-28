@@ -38,7 +38,8 @@
     `<button class="btn ${style}" data-act="${act}" ${data} ${disabled ? 'disabled' : ''}>${label}</button>`;
   const img = (key, cls = '') => {
     const x = H.item(key);
-    return `<img class="${cls}" loading="lazy" decoding="async" src="${esc(A.itemSrc ? A.itemSrc(x) : (x?.src || ''))}" alt="${esc(x?.name || '')}">`;
+    const v = A.itemImg(x);
+    return `<img class="${cls}" loading="lazy" decoding="async" src="${v.src}"${v.style ? ` style="${esc(v.style)}"` : ''} alt="${esc(x?.name || '')}">`;
   };
   const codeAttr = key => `data-code="${esc(key)}"`;
   const bar = (percent, cls = '', id = '') =>

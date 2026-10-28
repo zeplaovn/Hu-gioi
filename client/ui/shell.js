@@ -933,8 +933,8 @@
     const count = g.count(key);
     const quality = [x.grade || x.quality, F.SUBPHAM[x.sub]].filter(Boolean).join(' · ') || 'Phàm phẩm';
     const price = moneyHTML(F.shop_sell_price(g.price(key)));
-    const src = A.itemSrc ? A.itemSrc(x) : (x.src || '');
-    tip.innerHTML = `<div class="item-tip-head"><img src="${esc(src)}" alt="" decoding="async"><div><b>${esc(x.name)}</b><span>${esc(quality)}</span></div></div>` +
+    const v = A.itemImg(x);
+    tip.innerHTML = `<div class="item-tip-head"><img src="${v.src}"${v.style ? ` style="${esc(v.style)}"` : ''} alt="" decoding="async"><div><b>${esc(x.name)}</b><span>${esc(quality)}</span></div></div>` +
       `<p class="item-tip-desc">${esc(x.description || 'Không có mô tả.')}</p>` +
       `<div class="item-tip-meta"><span>Cảnh giới <b>${esc(x.realm || '—')}</b></span><span>Số lượng <b>×${num(count)}</b></span><span>Giá bán <b>${price}</b></span></div>`;
     tip.hidden = false;
