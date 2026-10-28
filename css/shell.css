@@ -654,3 +654,16 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 #game:not([data-layout="wide"]) .skill-dock .skillbar{flex-direction:row;padding:5px;gap:6px}
 #game:not([data-layout="wide"]) .skill-dock .skill-btn,#game:not([data-layout="wide"]) .skill-dock .strike-btn{width:46px;height:46px}
 #game:not([data-layout="wide"]) .skill-dock .skill-btn img{width:32px;height:32px}
+
+/* Thanh Thọ nguyên cùng kiểu với Sinh lực/Linh khí; nhãn đủ rộng để không bị cắt chữ */
+.vital-row{grid-template-columns:62px minmax(0,1fr)}
+.vital-row .meter.life{--c:var(--bar-age)}
+.vital-row .meter>i.life,.vital-life.low-life .meter>i.life{background:var(--c)}
+.vital-life .vital-label{color:var(--bar-age)}
+.vital-life.low-life .meter.life{--c:var(--bar-hp)}
+.vital-life.low-life .vital-label{color:var(--bar-hp)}
+.vital-life.low-life .meter .bar-text{color:#fff}
+#game:not([data-layout="wide"]) .vital-row{grid-template-columns:56px minmax(0,1fr)}
+/* Nhãn "Thọ nguyên" dài hơn Sinh lực/Linh khí: nới cột nhãn để không đè lên thanh. */
+.vital-row{grid-template-columns:68px minmax(0,1fr)}
+#game:not([data-layout="wide"]) .vital-row{grid-template-columns:62px minmax(0,1fr)}
