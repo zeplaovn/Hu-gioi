@@ -59,10 +59,30 @@
   }
 
   function panel() {
-    return `${skillbar()}<div class="screen-grid combat-grid">${enemyCard()}${powerCard()}${lootCard()}${zoneCard()}${logCard()}</div>`;
+    return `<div class="screen-grid combat-grid">${enemyCard()}${powerCard()}${lootCard()}${zoneCard()}${logCard()}</div>`;
   }
 
+  /* Thanh kỹ năng nằm ngoài cửa sổ, trên sân khấu; chỉ hiện khi đang ở chế độ chiến đấu. */
+  function dock() {
+    const d = $('skillDock');
+    if (!d || !UI.s().created) return;
+    if (!d.firstChild) d.innerHTML = skillbar();
+    dockState();
+  }
+  function dockState() {
+    const s = UI.s(), g = UI.g(), maxMp = g.maxMp(), now = Date.now();
+    SKILLS.forEach((k, i) => {
+      const b = $('skill' + i);
+      if (!b) return;
+      const cooling = now < s.cooldowns[i], short = s.mp < maxMp * k.mp;
+      b.classList.toggle('cooling', cooling);
+      b.classList.toggle('starved', !cooling && short);
+    });
+  }
+  UI.skillDock = { update: dock };
+
   function update() {
+    dock();
     const s = UI.s(), g = UI.g();
     const hpText = $('enemyHpText');
     if (!hpText) return;
@@ -75,13 +95,6 @@
       if (yao.textContent !== yaoText) yao.innerHTML = moneyHTML(s.yaoValue);
       yao.setAttribute('aria-label', yaoText);
     }
-    SKILLS.forEach((k, i) => {
-      const b = $('skill' + i);
-      if (!b) return;
-      const cooling = now < s.cooldowns[i], short = s.mp < maxMp * k.mp;
-      b.classList.toggle('cooling', cooling);
-      b.classList.toggle('starved', !cooling && short);
-    });
     const log = $('combatJournal');
     if (log) log.innerHTML = s.logs.slice(0, 7).map(v => `<div><time>✦</time>${esc(v)}</div>`).join('');
   }

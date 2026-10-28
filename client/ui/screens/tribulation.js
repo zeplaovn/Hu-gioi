@@ -37,6 +37,7 @@
       ${row('Điểm hỗ trợ đan', num(s.breakBonus))}
       ${row('Chúc phúc tông môn', s.sect.blessing ? '+10%' : 'Chưa bật')}
       ${row('Hệ số chịu kiếp của linh căn', '×' + (F.LINH_CAN_TRIB[s.rootType] || 1))}
+      ${s.rootType === 'Ngụy' ? row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) + `<p class="info-note">Tạp linh căn chỉ có cơ hội hóa Hỗn Độn khi vượt lôi kiếp (từ Kết Đan trở lên). Mỗi lần vượt kiếp mà chưa hóa sẽ cộng dồn bảo hiểm; Vận Khí tăng tỉ lệ.</p>` : ''}
       <p class="info-note">Thất bại mất 15% tu vi và tăng 1 điểm bảo hiểm lần sau (tối đa 15 lần). Trần xác suất 98% (Vận Khí cộng thêm sau ngưỡng 95%).</p>`, { eyebrow: 'TỈ LỆ' });
   }
 

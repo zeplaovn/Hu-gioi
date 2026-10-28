@@ -3,8 +3,10 @@
 'use strict';
 const node=typeof module!=='undefined'&&module.exports;
 const F=node?require('../rules/formulas.js'):root.HU_FORMULAS;
+const R=node?require('./roots.js'):root.HU_ROOTS;
 function rootType(roots){const n=roots.filter(x=>x>=50).length;return ['Thiên','Thiên','Song','Tam hành','Tứ hành','Ngụy'][n]}
-function rollRoots(rng=Math.random){const v=rng();let type=v<.005?'Hỗn Độn':v<.02?'Âm Dương':v<.08?'Dị':v<.23?'Thiên':v<.55?'Song':v<.8?'Tam hành':v<.95?'Tứ hành':'Ngụy';const count={Thiên:1,Song:2,'Tam hành':3,'Tứ hành':4,Ngụy:5,Dị:1,'Âm Dương':2,'Hỗn Độn':5}[type],order=[0,1,2,3,4];for(let i=4;i>0;i--){const j=Math.floor(rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}const roots=order.map(()=>15+Math.floor(rng()*30));order.slice(0,count).forEach(i=>roots[i]=65+Math.floor(rng()*36));return {roots,rootType:type}}
+/* Hỗn Độn không còn gieo được khi tạo nhân vật: chỉ Ngụy mới hóa thành sau lôi kiếp (xem Game.chaosChance). */
+function rollRoots(rng=Math.random){const v=rng();let type=v<.015?'Âm Dương':v<.075?'Dị':v<.225?'Thiên':v<.545?'Song':v<.795?'Tam hành':v<.945?'Tứ hành':'Ngụy';const count={Thiên:1,Song:2,'Tam hành':3,'Tứ hành':4,Ngụy:5,Dị:1,'Âm Dương':2}[type],order=[0,1,2,3,4];for(let i=4;i>0;i--){const j=Math.floor(rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}const roots=order.map(()=>15+Math.floor(rng()*30));let rootSub='';if(type==='Dị'){rootSub=R.DI_KEYS[Math.floor(rng()*R.DI_KEYS.length)];const from=R.DI_LINH_CAN[rootSub].from;roots[from[Math.floor(rng()*from.length)]]=65+Math.floor(rng()*36)}else order.slice(0,count).forEach(i=>roots[i]=65+Math.floor(rng()*36));return {roots,rootType:type,rootSub}}
 const RACES=[['nhan','Nhân',34],['ma','Ma',16],['yeu','Yêu',16],['linh','Linh',16],['tien_due','Tiên Duệ',6],['thu','Thú',12]];
 const LEGACY_RACES={tien:'tien_due'};
 const NAME_MAX=20;
@@ -53,6 +55,6 @@ function rollRace(rng=Math.random){let r=rng()*100,acc=0;for(const [id,,w] of RA
 const oneOf=(a,rng)=>a[Math.floor(rng()*a.length)];
 function randomName(gender='nam',rng=Math.random){return (oneOf(NAME_FAMILY,rng)+' '+oneOf(gender==='nu'?NAME_FEMALE:NAME_MALE,rng)).slice(0,NAME_MAX)}
 function cleanName(raw){const c=String(raw??'').normalize('NFC').replace(/\s+/g,' ').trim();return c.length>=2&&c.length<=NAME_MAX&&!/[\u0000-\u001f\u007f<>&"'`[\]]/.test(c)?c:null}
-const API={rootType,rollRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,raceBonus,startStone,rollRace,randomName,cleanName};
+const API={rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,raceBonus,startStone,rollRace,randomName,cleanName};
 root.HU_CHARACTER=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);

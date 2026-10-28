@@ -365,3 +365,18 @@ body.in-tribulation{overflow:hidden}
 
 .death-actions{display:flex;justify-content:center;margin-top:14px}
 .death-actions .btn{min-width:200px}
+
+.root-awaken{margin-top:8px;padding:9px 12px;border:1px solid #b99b4e;border-radius:10px;background:#2a2417;color:#ffe08b;line-height:1.5}
+.root-awaken b{color:#fff0b0}
+
+/* ---- Phân loại linh căn: ba nhóm rõ ràng ---- */
+.root-di,.root-chaos{margin:10px 0 4px;padding:10px 12px;border:1px solid #3c5a68;border-radius:10px;background:#0f1b23}
+.root-di>b,.root-chaos>b{color:var(--cyan)}
+.root-di p{margin:4px 0 0;font-size:13.5px;line-height:1.5}
+.root-di-fx{color:var(--gold)}
+.root-class{padding:9px 0;border-top:1px solid #2b404a}
+.root-class:first-child{border-top:0;padding-top:0}
+.root-class>b{display:block;color:var(--gold);margin-bottom:5px}
+.root-chip{display:inline-block;padding:2px 9px;border:1px solid #34505e;border-radius:99px;font-size:13px;color:#b9cbd3;background:#101c25}
+.root-chip.is-current{border-color:var(--gold);color:#ffe08b;background:#2a2417;font-weight:700}
+.root-sep{margin:0 5px;color:var(--dim)}

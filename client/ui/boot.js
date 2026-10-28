@@ -31,7 +31,7 @@
 
   const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   const blankTalent = () => Object.fromEntries(TALENT_KEYS.map(k => [k, 0]));
-  const rootLabel = type => ['Dị', 'Âm Dương', 'Hỗn Độn'].includes(type) ? type + ' Linh Căn' : type + ' linh căn';
+  const rootLabel = (type, sub) => H.rootLabel(type, sub);
   const pctText = v => (v > 0 ? '+' : '') + Math.round(v * 100) + '%';
 
   let creation = {
@@ -67,8 +67,11 @@
       '<div class="dim small">' + esc(RACE_DESC[race] || '') + '</div>';
   }
 
+  /* Thông tin linh căn: tên + nhóm, mô tả loại, (Dị) biến thể và thế mạnh, hệ ngũ hành, rồi bảng phân loại 3 nhóm. */
   function rootInfoHtml() {
-    const type = creation.rootType;
+    const type = creation.rootType, sub = creation.rootSub || '';
+    const info = H.ROOT_TYPES[type] || { group: 'ngu_hanh', desc: '', how: '' };
+    const group = H.ROOT_GROUPS.find(g => g.id === info.group);
     const rate = F.LINH_CAN_RATE[type] / 2;
     const trib = F.LINH_CAN_TRIB[type] || 1;
     const combat = F.LINH_CAN_COMBAT[type] || 1;
@@ -76,22 +79,26 @@
       .filter(x => x.value >= 50);
     const descs = active.map(x => '<div class="root-elem-desc"><b style="color:' + x.color + '">' +
       x.name + ':</b> ' + esc(ELEM_DESC[x.name] || '') + '</div>').join('');
-    const typeDoc = {
-      'Thiên': 'Một hệ đạt 50 trở lên. Tốc độ tu luyện cao nhất trong nhóm linh căn thường.',
-      'Song': 'Hai hệ đạt 50 trở lên. Mốc cân bằng: tốc độ tu luyện ×1.',
-      'Tam hành': 'Ba hệ đạt 50 trở lên. Tu luyện chậm hơn Song nhưng dễ gieo được nhiều hệ.',
-      'Tứ hành': 'Bốn hệ đạt 50 trở lên. Tu luyện chậm, bù lại nền chỉ số ổn định.',
-      'Ngụy': 'Cả năm hệ đạt 50 trở lên. Linh căn tạp, tốc độ tu luyện thấp nhất.',
-      'Dị': 'Một hệ đặc biệt. Tốc tu ×2, +50% sinh lực/công kích, chịu lôi kiếp ×1.25.',
-      'Âm Dương': 'Hai hệ đặc biệt. Tốc tu ×3, +80% sinh lực/công kích, chịu lôi kiếp ×1.4.',
-      'Hỗn Độn': 'Năm hệ đặc biệt. Tốc tu ×4, +120% sinh lực/công kích, chịu lôi kiếp ×1.5.'
-    }[type] || 'Số hệ đạt 50 trở lên quyết định loại linh căn.';
-    return '<div class="info-title">' + esc(rootLabel(type)) +
-      ' <span class="root-rate">tốc tu ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') +
-      (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</span></div>' +
-      '<div class="small">' + esc(typeDoc) + '</div>' +
-      '<div class="root-elem-list">' + descs + '</div>' +
-      '<div class="root-doc"><b>Cách đọc:</b> mỗi hệ từ 50 điểm trở lên được tính. 1 hệ = Thiên, 2 = Song, 3 = Tam hành, 4 = Tứ hành, 5 = Ngụy. Dị, Âm Dương và Hỗn Độn là linh căn đặc biệt hiếm.</div>' +
+    const di = type === 'Dị' ? H.DI_LINH_CAN[sub] : null;
+    const diBox = di
+      ? '<div class="root-di"><b>' + esc(di.name) + ' · ' + esc(di.role) + '</b><div>' + esc(di.desc) + '</div>' +
+        '<div class="root-di-fx">Thế mạnh: ' + esc(UI.rootEffectText(di.effects)) + '</div></div>'
+      : '';
+    const cur = t => (t === type ? ' is-current' : '');
+    const tiers = '<div class="root-tiers" role="list">' +
+      '<div class="root-tier" role="listitem"><span class="root-tier-name">Ngũ hành cơ bản</span><span class="root-tier-list">' +
+        ['Ngụy', 'Tứ hành', 'Tam hành', 'Song', 'Thiên'].map(n => '<i class="' + cur(n).trim() + '">' + n + '</i>').join('<s>›</s>') + '</span></div>' +
+      '<div class="root-tier" role="listitem"><span class="root-tier-name">Dị linh căn</span><span class="root-tier-list">' +
+        H.DI_KEYS.map(k => '<i class="' + (type === 'Dị' && sub === k ? 'is-current' : '') + '">' + H.DI_LINH_CAN[k].name + '</i>').join('<s>·</s>') + '</span></div>' +
+      '<div class="root-tier" role="listitem"><span class="root-tier-name">Chí tôn</span><span class="root-tier-list">' +
+        ['Âm Dương', 'Hỗn Độn'].map(n => '<i class="' + cur(n).trim() + '">' + n + '</i>').join('<s>·</s>') + '</span></div>' +
+      '</div>';
+    return '<div class="info-title">' + esc(rootLabel(type, sub)) +
+      ' <span class="root-group root-group-' + esc(info.group) + '">' + esc(group ? group.name : '') + '</span></div>' +
+      '<div class="root-rate-line">tốc tu ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') + (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</div>' +
+      '<div class="small">' + esc(info.desc) + '</div>' + diBox +
+      '<div class="root-elem-list">' + descs + '</div>' + tiers +
+      '<div class="root-doc"><b>Dị ≠ Thiên:</b> Thiên là một hệ ngũ hành thuần; Dị là biến thể cao cấp (Băng, Lôi, Phong, Độc) có thế mạnh riêng. <b>Hỗn Độn</b> không gieo được khi tạo nhân vật: chỉ Tạp linh căn (Ngụy) vượt lôi kiếp mới có cơ hội hóa thành.</div>' +
       '<div class="dim small">Gieo lại xúc xắc để đổi linh căn. Điểm ngũ hành quyết định loại linh căn và thiên phú chiến đấu.</div>';
   }
 
@@ -147,7 +154,9 @@
     $('raceInfo').innerHTML = raceInfoHtml();
     const active = ELEMENTS.map(([name, color], i) => ({ name, color, value: creation.roots[i] }))
       .filter(x => x.value >= 50);
-    $('rootValue').innerHTML = active.length
+    $('rootValue').innerHTML = creation.rootType === 'Dị'
+      ? '<span class="chip chip-di">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span>' + active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('')
+      : active.length
       ? active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('')
       : '<span class="chip">…</span>';
     $('rootDescription').innerHTML = rootInfoHtml();
@@ -306,7 +315,7 @@
       if (!name) { syncName(); return; }
       UI.session.create({
         name, gender: creation.gender, race: creation.race,
-        roots: [...creation.roots], rootType: creation.rootType,
+        roots: [...creation.roots], rootType: creation.rootType, rootSub: creation.rootSub || '',
         age: creation.age, talent: { ...creation.talent }
       });
       start();

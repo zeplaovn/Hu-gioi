@@ -91,11 +91,36 @@
       (s.sect.last && sub === 'missions' ? `<p class="adventure-result info-note">${esc(s.sect.last.text)}</p>` : '') + panels[sub]();
   }
 
+  /* Tổng quan linh căn: loại + nhóm, thế mạnh Dị / Hỗn Độn, cơ hội Ngụy -> Hỗn Độn, và bảng phân loại ba nhóm. */
+  function rootOverview() {
+    const s = UI.s(), g = UI.g(), type = s.rootType, info = H.ROOT_TYPES[type] || { group: 'ngu_hanh', desc: '' };
+    const group = H.ROOT_GROUPS.find(x => x.id === info.group);
+    const combat = F.LINH_CAN_COMBAT[type] || 1, trib = F.LINH_CAN_TRIB[type] || 1;
+    let extra = '';
+    if (type === 'Dị') {
+      const di = H.DI_LINH_CAN[s.rootSub];
+      if (di) extra = `<div class="root-di"><b>${esc(di.name)} · ${esc(di.role)}</b><p>${esc(di.desc)}</p><p class="root-di-fx">Thế mạnh: ${esc(UI.rootEffectText(di.effects))}</p></div>`;
+    } else if (type === 'Hỗn Độn') {
+      extra = `<div class="root-di"><b>Bao trùm ngũ hành và cả bốn Dị linh căn</b><p>Nhận 50% thế mạnh của mỗi loại:</p>` +
+        H.DI_KEYS.map(k => `<p class="root-di-fx">${esc(H.DI_LINH_CAN[k].name)}: ${esc(UI.rootEffectText(H.DI_LINH_CAN[k].effects, .5))}</p>`).join('') + '</div>';
+    } else if (type === 'Ngụy') {
+      extra = `<div class="root-chaos"><b>Con đường Hỗn Độn</b>` + row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) +
+        row('Đã vượt lôi kiếp mà chưa hóa', num(s.chaosTries || 0) + ' lần') +
+        '<p class="info-note">Chỉ Tạp linh căn mới có cơ hội này, và chỉ khi vượt lôi kiếp đại cảnh giới (từ Kết Đan trở lên). Mỗi lần vượt kiếp chưa hóa sẽ cộng dồn bảo hiểm; Vận Khí tăng tỉ lệ.</p></div>';
+    }
+    const body = `<p>${esc(info.desc)}</p>${row('Tốc tu nền', '×' + F.LINH_CAN_RATE[type] / 2)}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
+    const rank = (types, cur) => types.map(n => `<span class="root-chip ${cur === n ? 'is-current' : ''}">${esc(n)}</span>`).join('<span class="root-sep">›</span>');
+    const classes = `<div class="root-class"><b>Ngũ hành cơ bản</b><div>${rank(['Ngụy', 'Tứ hành', 'Tam hành', 'Song', 'Thiên'], type)}</div><p class="info-note">Theo số hệ đạt 50 điểm; Thiên là một hệ thuần, không biến thể.</p></div>` +
+      `<div class="root-class"><b>Dị linh căn</b><div>${H.DI_KEYS.map(k => `<span class="root-chip ${type === 'Dị' && s.rootSub === k ? 'is-current' : ''}">${esc(H.DI_LINH_CAN[k].name)}</span>`).join('<span class="root-sep">·</span>')}</div><p class="info-note">Biến thể cao cấp của một hệ gốc; tốc tu ngang Thiên nhưng chiến lực ×1,5 và có thế mạnh riêng. Khác Thiên linh căn.</p></div>` +
+      `<div class="root-class"><b>Chí tôn</b><div>${rank(['Âm Dương', 'Hỗn Độn'], type)}</div><p class="info-note">Âm Dương gieo khi tạo nhân vật (rất hiếm). Hỗn Độn không gieo được: chỉ Ngụy hóa thành sau lôi kiếp.</p></div>`;
+    return card(H.rootLabel(type, s.rootSub), body, { eyebrow: (group ? group.name : 'Linh căn').toUpperCase() }) + card('Phân loại linh căn', classes, { eyebrow: 'BA NHÓM' });
+  }
+
   function roots() {
     const s = UI.s(), g = UI.g(), c = s.rootCraft, els = g.activeElements(), scale = 1 / Math.sqrt(Math.max(1, els.length));
     const labels = { attack: 'Công kích', hp: 'Sinh lực', guard: 'Phòng thủ', rate: 'Tốc tu', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
     const effectText = (i, level) => Object.entries(H.TEMPER_EFFECTS[i]).map(([k, v]) => labels[k] + ' +' + (v * level * scale * 100).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + (['crit', 'dodge', 'regen'].includes(k) ? ' điểm %' : '%')).join(' · ');
-    return `<p class="screen-lead">${esc(s.rootType)} linh căn · tốc tu nền ×${F.LINH_CAN_RATE[s.rootType] / 2} · chịu kiếp ×${F.LINH_CAN_TRIB[s.rootType] || 1}.</p>
+    return `<div class="screen-grid">${rootOverview()}</div>
       ${card('Tôi luyện linh căn', '<p>Dùng Tinh hoa cùng hệ để tôi luyện đến cấp 10. Mỗi cấp tăng chỉ số và ưu thế nguyên tố trong bí cảnh.</p><p class="info-note">Hệ từ 50 điểm mới tôi luyện được. Hiệu quả chia √số hệ để cân bằng linh căn nhiều hệ. Cấp và Tinh hoa thuộc kiếp hiện tại.</p><button class="text-btn" data-go="world:dungeons">Tìm Tinh hoa trong bí cảnh ›</button>', { eyebrow: 'NGŨ HÀNH' })}
       <div class="adventure-grid">${H.ELEMENT_NAMES.map((name, i) => {
         const on = els.includes(i), level = c.levels[i], cost = g.temperCost(i), max = level >= H.TEMPER_MAX;
@@ -103,8 +128,7 @@
           (on ? `<p>${effectText(i, level)}</p>${!max ? '<p class="info-note">Cấp kế: ' + effectText(i, level + 1) + '</p>' : ''}` : '<p class="info-note">Hệ này chưa đạt 50 điểm.</p>') +
           btn(!on ? 'Chưa có linh căn' : max ? 'Đã tối đa' : 'Tôi luyện · ' + cost + ' Tinh hoa', 'temperRoot', `data-index="${i}"`, !on || max || c.essence[i] < cost), { cls: on ? '' : 'adventure-locked' });
       }).join('')}</div>
-      <details class="adventure-details"><summary>Ngũ hành & hệ số linh căn</summary>${card('Tương khắc', '<p>Kim → Mộc → Thổ → Thủy → Hỏa → Kim.</p><p>Đồng hệ +20%, khắc địch +30%, bị khắc −25%; chia √số hệ. Mỗi cấp tôi luyện tăng 8% phần ưu thế của hệ đó. Tổng sát thương nguyên tố giới hạn −35% đến +60%.</p>')}
-      ${card('Phân loại', '<p>Số hệ đạt 50 điểm: 1 Thiên · 2 Song · 3 Tam hành · 4 Tứ hành · 5 Ngụy. Dị, Âm Dương, Hỗn Độn là linh căn đặc biệt.</p>' + Object.entries(F.LINH_CAN_RATE).map(([k, v]) => row(k, '×' + v / 2 + ' tốc tu nền')).join(''))}</details>`;
+      <details class="adventure-details"><summary>Ngũ hành & hệ số linh căn</summary>${card('Tương khắc', '<p>Kim → Mộc → Thổ → Thủy → Hỏa → Kim.</p><p>Đồng hệ +20%, khắc địch +30%, bị khắc −25%; chia √số hệ. Mỗi cấp tôi luyện tăng 8% phần ưu thế của hệ đó. Tổng sát thương nguyên tố giới hạn −35% đến +60%.</p>')}</details>`;
   }
   function update() {
     const now = Date.now();

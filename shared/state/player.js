@@ -25,7 +25,7 @@ const normalizeMeta=(raw,now=Date.now())=>{
  return m;
 };
 function createBase(now){
- return {version:VERSION,created:false,name:'Hàn Thiên Sơn',gender:'nam',race:'nhan',roots:[72,41,38,55,47],rootType:'Song',talent:{tuongMao:0,phucDuyen:0,canCot:0,ngoTinh:0,vanKhi:0},realm:0,stage:1,qi:0,hp:100,mp:100,stone:380,jade:6,zone:0,auto:false,enemyHp:0,enemyNum:0,combatClock:0,manualAt:0,enemyKind:'thường',bag:initialBag(),equipment:[],tech:[1,1,1,1],cooldowns:[0,0,0,0],learned:{},activeManuals:[],pity:0,breakBonus:0,shield:0,reduction:0,pillUses:0,pillRealmExp:0,permanent:0,buffs:[],debuffs:[],totalRunExp:0,daoVan:0,rebirths:0,rebirthKeep:0,completed:false,offlineCap:0,offlineEff:0,age:18,extraLife:0,alchemySkill:0,craftBoost:0,craftQueue:[],garden:[],offlineKills:0,yaoValue:0,progress:{kill:0,meditate:0,travel:1,breaks:0,alchemy:0},claimed:[],locations:[0],sect:{joined:false,contribution:0,blessing:false,claimedDay:'',mission:null,missionsDone:0},auction:{offers:{},cycle:Math.floor(now/3600000)},encounter:{index:0,usedAt:0},social:{friends:{},pvp:{rating:1000,wins:0,losses:0,streak:0,best:1000,lastAt:0},lastDiscuss:0},meta:metaDefault(),settings:{reducedMotion:false,motionMode:'auto',season:'auto',seasonEffects:true,cultivationEffects:true,combatEffects:true,music:true,musicVolume:40,musicTrack:'auto'},logs:['Một đạo cơ duyên mở ra nơi Thanh Vân Sơn.'],createdAt:now,lastSaved:now,lastUpdate:now,tick:0};
+ return {version:VERSION,created:false,name:'Hàn Thiên Sơn',gender:'nam',race:'nhan',roots:[72,41,38,55,47],rootType:'Song',rootSub:'',chaosTries:0,talent:{tuongMao:0,phucDuyen:0,canCot:0,ngoTinh:0,vanKhi:0},realm:0,stage:1,qi:0,hp:100,mp:100,stone:380,jade:6,zone:0,auto:false,enemyHp:0,enemyNum:0,combatClock:0,manualAt:0,enemyKind:'thường',bag:initialBag(),equipment:[],tech:[1,1,1,1],cooldowns:[0,0,0,0],learned:{},activeManuals:[],pity:0,breakBonus:0,shield:0,reduction:0,pillUses:0,pillRealmExp:0,permanent:0,buffs:[],debuffs:[],totalRunExp:0,daoVan:0,rebirths:0,rebirthKeep:0,completed:false,offlineCap:0,offlineEff:0,age:18,extraLife:0,alchemySkill:0,craftBoost:0,craftQueue:[],garden:[],offlineKills:0,yaoValue:0,progress:{kill:0,meditate:0,travel:1,breaks:0,alchemy:0},claimed:[],locations:[0],sect:{joined:false,contribution:0,blessing:false,claimedDay:'',mission:null,missionsDone:0},auction:{offers:{},cycle:Math.floor(now/3600000)},encounter:{index:0,usedAt:0},social:{friends:{},pvp:{rating:1000,wins:0,losses:0,streak:0,best:1000,lastAt:0},lastDiscuss:0},meta:metaDefault(),settings:{reducedMotion:false,motionMode:'auto',season:'auto',seasonEffects:true,cultivationEffects:true,combatEffects:true,music:true,musicVolume:40,musicTrack:'auto'},logs:['Một đạo cơ duyên mở ra nơi Thanh Vân Sơn.'],createdAt:now,lastSaved:now,lastUpdate:now,tick:0};
 }
 function create(now=Date.now()){return {...createBase(now),...ADVENTURES.defaults()}}
 function normalize(raw,now,Game){
@@ -38,14 +38,14 @@ function normalize(raw,now,Game){
  const x=create(now),old=raw.version<6;
  x.created=true;x.name=String(raw.name||x.name).slice(0,24);x.gender=raw.gender==='nu'?'nu':'nam';x.race=RACES.some(r=>r[0]===raw.race)?raw.race:LEGACY_RACES[raw.race]||'nhan';
  x.roots=Array.isArray(raw.roots)&&raw.roots.length===5?raw.roots.map(v=>integer(v,40,100)):x.roots;
- x.rootType=F.LINH_CAN_RATE[raw.rootType]?raw.rootType:rootType(x.roots);
+ x.rootType=F.LINH_CAN_RATE[raw.rootType]?raw.rootType:rootType(x.roots);x.rootSub=x.rootType==='Dị'?(C.DI_LINH_CAN[raw.rootSub]?raw.rootSub:C.diFromRoots(x.roots)):'';
  x.realm=integer(raw.realm,0,13);
  if(old)x.realm=[0,1,2,3,4,5,6,7,9,10,12][Math.min(x.realm,10)];
  x.stage=old?Math.min(F.STAGES[x.realm],1+Math.floor((integer(raw.stage,1,9)-1)*F.STAGES[x.realm]/9)):Math.max(1,integer(raw.stage,1,F.STAGES[x.realm]));
  const floats=['qi','hp','mp','stone','jade','totalRunExp','daoVan','age','extraLife','alchemySkill','combatClock','offlineKills','yaoValue','tick'];
  for(const k of floats)x[k]=finite(raw[k],x[k]);
  if(old){const oldNeed=310*1.43**integer(raw.realm)*1.25**(integer(raw.stage,1)-1);x.qi=Math.min(1,finite(raw.qi)/oldNeed)*F.exp_need(x.realm,x.stage-1);x.totalRunExp=0;for(let r=0;r<x.realm;r++)x.totalRunExp+=F.realm_exp_total(r);for(let s=0;s<x.stage-1;s++)x.totalRunExp+=F.exp_need(x.realm,s);x.totalRunExp+=x.qi;}
- for(const k of ['pity','rebirths','offlineCap','offlineEff','pillUses','enemyNum'])x[k]=integer(raw[k],0,k==='pity'?15:k.startsWith('offline')?8:1e9);
+ for(const k of ['pity','rebirths','offlineCap','offlineEff','pillUses','enemyNum','chaosTries'])x[k]=integer(raw[k],0,k==='pity'?15:k.startsWith('offline')?8:1e9);
  x.talent={};let talentTotal=0;
  for(const t of TALENT_INFO){const v=Math.max(0,Math.min(TALENT_MAX-talentTotal,integer(raw.talent?.[t.key],0,TALENT_MAX)));x.talent[t.key]=v;talentTotal+=v}
  for(const [k,max] of Object.entries({breakBonus:10,shield:8,reduction:.4,pillRealmExp:MAX,permanent:.15,rebirthKeep:.8,craftBoost:2}))x[k]=finite(raw[k],0,max);

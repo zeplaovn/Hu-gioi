@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 function install(H){
- const {F,item,raceBonus,META_UPGRADES,META_ACHIEVEMENTS,metaDefault,normalizeMeta,create,startStone}=H;
+ const {F,item,raceBonus,META_UPGRADES,META_ACHIEVEMENTS,metaDefault,normalizeMeta,create,startStone,CHAOS}=H;
  Object.assign(H.Game.prototype,{
   need(){return F.exp_need(this.s.realm,this.s.stage-1)},
   gainExp(value){const gain=Math.max(0,Math.min(value,this.need()-this.s.qi));this.s.qi+=gain;this.s.totalRunExp+=gain;return gain},
@@ -16,8 +16,13 @@ function install(H){
    if(!success){s.qi=F.on_breakthrough_fail(s.qi);s.pity=Math.min(15,s.pity+1);this.log('Đột phá thất bại: mất 15% tu vi, tăng bảo hiểm lần sau.');return {success,chance,events}}
    s.qi=0;s.pity=0;s.pillUses=0;s.progress.breaks++;
    if(s.stage<F.STAGES[s.realm])s.stage++;else if(s.realm<13){s.realm++;s.stage=1;s.pillRealmExp=0;s.permanent=0;s.tech=[1,1,1,1];s.zone=s.realm;if(!s.locations.includes(s.zone)){s.locations.push(s.zone);s.progress.travel++}}else s.completed=true;
-   s.hp=this.stats().HP;s.mp=this.maxMp();s.enemyHp=0;s.combatClock=0;this.log('Đột phá thành công: '+this.realmLabel()+'.');return {success,chance,events};
+   /* Chỉ khi vượt LÔI KIẾP, Tạp linh căn (Ngụy) mới có cơ hội hóa Hỗn Độn: nền + Vận Khí + bảo hiểm cộng dồn. */
+   let awaken=null;
+   if(events.length&&s.rootType==='Ngụy'){const p=this.chaosChance();if(this.rng()<p){s.rootType='Hỗn Độn';s.rootSub='';awaken={from:'Ngụy',to:'Hỗn Độn',chance:p};s.chaosTries=0;this.log('Lôi kiếp tẩy luyện: Tạp linh căn thoát thai hoán cốt, hóa thành Hỗn Độn linh căn!')}else s.chaosTries=(s.chaosTries||0)+1}
+   s.hp=this.stats().HP;s.mp=this.maxMp();s.enemyHp=0;s.combatClock=0;this.log('Đột phá thành công: '+this.realmLabel()+'.');return {success,chance,events,awaken};
   },
+  /* Xác suất Ngụy hóa Hỗn Độn ở lần vượt lôi kiếp kế tiếp (0 nếu không phải Ngụy). */
+  chaosChance(){const s=this.s,K=CHAOS;if(s.rootType!=='Ngụy')return 0;return Math.min(K.cap,K.base+(s.talent?.vanKhi||0)*K.luck+Math.min(K.pityMax,(s.chaosTries||0)*K.pity))},
   realmLabel(){const s=this.s,n=F.STAGES[s.realm],label=n===4?['Sơ kỳ','Trung kỳ','Hậu kỳ','Đỉnh phong'][s.stage-1]:s.realm===13?['Nhập Đạo','Hợp Đạo','Vô Thượng'][s.stage-1]:'Tầng '+s.stage;return F.REALMS[s.realm]+' · '+label+(s.completed?' · Chứng đạo':'')},
   upgradeBase(i){return F.upgrade_base_cost(this.s.realm,i===1?.02:.02)},
   upgrade(i,wanted=1){if(!Number.isInteger(i)||i<0||i>3)throw Error('Nâng cấp không hợp lệ.');const owned=this.s.tech[i]-1,base=this.upgradeBase(i),n=Math.min(20-owned,wanted==='max'?F.max_buy(this.s.stone,base,F.P.UP_GROWTH,owned):wanted);if(n<=0)throw Error('Đã đủ cấp hoặc không đủ linh thạch.');this.spend(F.bulk_cost(base,F.P.UP_GROWTH,owned,n));this.s.tech[i]+=n;return n},
@@ -25,7 +30,7 @@ function install(H){
   metaCost(key){const u=META_UPGRADES[key];if(!u)throw Error('Nâng cấp Thiên mệnh không hợp lệ.');const lvl=this.s.meta.upgrades[key]||0;return lvl>=u.max?null:u.cost[lvl]},
   buyMeta(key){const s=this.s,u=META_UPGRADES[key];if(!u)throw Error('Nâng cấp Thiên mệnh không hợp lệ.');const lvl=s.meta.upgrades[key]||0;if(lvl>=u.max)throw Error('Đã đạt cấp tối đa.');const cost=u.cost[lvl];if(s.meta.points<cost)throw Error('Không đủ điểm Thiên mệnh.');s.meta.points-=cost;s.meta.upgrades[key]=lvl+1;this.log('Thiên mệnh · '+u.name+' cấp '+(lvl+1)+'.');return {key,level:lvl+1,cost}},
   checkMeta(now=this.s.lastUpdate){const s=this.s;if(!s.meta)s.meta=metaDefault();const out=[];for(const a of META_ACHIEVEMENTS){if(!s.meta.achievements[a.id]&&a.check(s)){s.meta.achievements[a.id]=now;s.meta.points+=a.points;s.meta.totalPoints+=a.points;out.push(a)}}return out},
-  prestige(force=false,cause=''){const s=this.s,reward=F.dao_van(s.totalRunExp);if(!force&&reward<10)throw Error('Trọng sinh mở khi nhận ít nhất 10 Đạo vận.');const kept=s.qi*s.rebirthKeep,next=create(s.lastUpdate);for(const k of ['name','gender','race','roots','rootType','settings','learned','offlineCap','offlineEff','createdAt','talent','social'])next[k]=structuredClone(s[k]);const meta=normalizeMeta(structuredClone(s.meta||metaDefault()),s.lastUpdate);const earned=Math.max(1,Math.floor(reward/5))+Math.floor(s.realm/2);meta.points+=earned;meta.totalPoints+=earned;meta.history.unshift({name:s.name,realm:s.realm,stage:s.stage,rebirths:s.rebirths,daoVan:s.daoVan+reward,at:s.lastUpdate,cause:cause||(s.completed?'Chứng đạo':'Trọng sinh')});meta.history=meta.history.slice(0,20);next.meta=meta;next.activeManuals=s.activeManuals.filter(k=>item(k).tier<=1);next.created=true;next.daoVan=s.daoVan+reward;next.rebirths=s.rebirths+1;next.qi=Math.min(F.exp_need(0,0),kept);next.totalRunExp=0;next.stone=startStone(next.talent,meta);next.extraLife=(meta.upgrades.life||0)*5;next.logs=['Trọng sinh, nhận '+F.fmt(reward)+' Đạo vận · +'+earned+' Thiên mệnh.'];this.s=next;this._lifeWarn={};return reward},
+  prestige(force=false,cause=''){const s=this.s,reward=F.dao_van(s.totalRunExp);if(!force&&reward<10)throw Error('Trọng sinh mở khi nhận ít nhất 10 Đạo vận.');const kept=s.qi*s.rebirthKeep,next=create(s.lastUpdate);for(const k of ['name','gender','race','roots','rootType','rootSub','chaosTries','settings','learned','offlineCap','offlineEff','createdAt','talent','social'])next[k]=structuredClone(s[k]);const meta=normalizeMeta(structuredClone(s.meta||metaDefault()),s.lastUpdate);const earned=Math.max(1,Math.floor(reward/5))+Math.floor(s.realm/2);meta.points+=earned;meta.totalPoints+=earned;meta.history.unshift({name:s.name,realm:s.realm,stage:s.stage,rebirths:s.rebirths,daoVan:s.daoVan+reward,at:s.lastUpdate,cause:cause||(s.completed?'Chứng đạo':'Trọng sinh')});meta.history=meta.history.slice(0,20);next.meta=meta;next.activeManuals=s.activeManuals.filter(k=>item(k).tier<=1);next.created=true;next.daoVan=s.daoVan+reward;next.rebirths=s.rebirths+1;next.qi=Math.min(F.exp_need(0,0),kept);next.totalRunExp=0;next.stone=startStone(next.talent,meta);next.extraLife=(meta.upgrades.life||0)*5;next.logs=['Trọng sinh, nhận '+F.fmt(reward)+' Đạo vận · +'+earned+' Thiên mệnh.'];this.s=next;this._lifeWarn={};return reward},
   maxLife(){return H.raceLife(this.s.race,this.s.realm)+this.s.extraLife},
   isDead(){return !this.s.completed&&this.s.age>=this.maxLife()},
   lifeInfo(){const s=this.s,max=this.maxLife(),pace=F.aging_speed(s.realm),left=Math.max(0,max-s.age),sec=pace>0?left/pace:Infinity;return {max,left,pace,safeSeconds:s.completed||sec>F.offline_cap(s.offlineCap)?Infinity:Math.floor(sec)}},

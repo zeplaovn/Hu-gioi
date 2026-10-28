@@ -97,3 +97,77 @@ test('lệnh không cho caller gửi tiền, sức mạnh, thời gian hoặc fo
   ]) assert.throws(()=>C.execute(g,command,NOW),{code:'INVALID_COMMAND'});
   assert.deepEqual(g.s,before);
 });
+
+/* ---- Phân loại linh căn: Dị khác Thiên; Hỗn Độn chỉ từ Ngụy sau lôi kiếp ---- */
+const nguyProfile = { ...profile, roots:[72,60,58,55,47], rootType:'Ngụy', talent:{ vanKhi:8 } };
+const nguyGame = (rng=()=>.2) => { const g = new H.Game(H.createCharacter(nguyProfile,NOW,()=>.2),rng); return g; };
+const atTribulation = (g,realm=2) => { const s=g.s;s.realm=realm;s.stage=H.F.STAGES[realm];s.qi=g.need();s.shield=8;s.reduction=.4;s.breakBonus=10;return g; };
+
+test('gieo linh căn: không bao giờ ra Hỗn Độn, Dị luôn có biến thể hợp lệ và đúng một hệ gốc', () => {
+  let seed = 7; const rng = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const seen = new Set();
+  for (let i = 0; i < 4000; i++) {
+    const r = H.rollRoots(rng); seen.add(r.rootType);
+    assert.notEqual(r.rootType, 'Hỗn Độn');
+    if (r.rootType === 'Dị') {
+      assert.ok(H.DI_LINH_CAN[r.rootSub], 'Dị phải có biến thể');
+      const high = r.roots.map((v,k)=>v>=50?k:-1).filter(k=>k>=0);
+      assert.equal(high.length, 1);
+      assert.ok(H.DI_LINH_CAN[r.rootSub].from.includes(high[0]), 'hệ gốc phải khớp biến thể');
+    } else assert.equal(r.rootSub, '');
+  }
+  for (const t of ['Dị','Thiên','Song','Tam hành','Tứ hành','Ngụy','Âm Dương']) assert.ok(seen.has(t), t + ' phải gieo được');
+});
+
+test('tạo nhân vật từ chối Hỗn Độn và Dị thiếu biến thể', () => {
+  assert.throws(() => H.createCharacter({ ...profile, rootType:'Hỗn Độn' }, NOW), /sau lôi kiếp/);
+  assert.throws(() => H.createCharacter({ ...profile, roots:[72,41,38,55,47], rootType:'Dị' }, NOW), /Dị linh căn/);
+  const di = H.createCharacter({ ...profile, roots:[20,20,80,20,20], rootType:'Dị', rootSub:'bang' }, NOW, () => .2);
+  assert.equal(di.rootSub, 'bang'); assert.equal(H.rootLabel(di.rootType, di.rootSub), 'Băng Linh Căn');
+  assert.equal(H.createCharacter(profile, NOW, () => .2).rootSub, '');
+});
+
+test('Dị có thế mạnh riêng, Thiên thì không; Hỗn Độn nhận 50% mỗi Dị', () => {
+  const mk = (type, sub, roots) => new H.Game(H.createCharacter({ ...profile, rootType:type, rootSub:sub, roots }, NOW, () => .2), () => .2);
+  const thien = mk('Thiên','',[20,20,80,20,20]).rootEffects(), bang = mk('Dị','bang',[20,20,80,20,20]).rootEffects();
+  assert.equal(thien.guard, 0); assert.ok(bang.guard > 0, 'Băng cộng phòng thủ');
+  const loi = mk('Dị','loi',[80,20,20,20,20]).rootEffects();
+  assert.ok(loi.attack > 0 && loi.crit > 0);
+  const hd = mk('Dị','bang',[20,20,80,20,20]); hd.s.rootType = 'Hỗn Độn'; hd.s.rootSub = '';
+  assert.equal(hd.rootEffects().guard, H.DI_LINH_CAN.bang.effects.guard * .5);
+});
+
+test('Ngụy chỉ có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; thất bại cộng dồn bảo hiểm', () => {
+  // Đột phá nhỏ (không có lôi kiếp): không đổi linh căn, không tính lượt.
+  const small = nguyGame(() => .0); small.s.realm = 0; small.s.stage = 1; small.s.qi = small.need();
+  const sr = small.breakthrough();
+  assert.ok(sr.success); assert.equal(sr.awaken, null); assert.equal(small.s.rootType, 'Ngụy'); assert.equal(small.s.chaosTries, 0);
+  // Lôi kiếp nhưng không trúng: giữ Ngụy, chaosTries tăng, xác suất tăng.
+  const g = atTribulation(nguyGame(() => .2)); const p0 = g.chaosChance();
+  const r = g.breakthrough();
+  assert.ok(r.success); assert.equal(r.awaken, null); assert.equal(g.s.rootType, 'Ngụy'); assert.equal(g.s.chaosTries, 1);
+  assert.ok(g.chaosChance() > p0);
+  // Lôi kiếp và trúng: hóa Hỗn Độn, đặt lại bộ đếm.
+  const w = atTribulation(nguyGame(() => .0)); const wr = w.breakthrough();
+  assert.deepEqual({ from: wr.awaken.from, to: wr.awaken.to }, { from: 'Ngụy', to: 'Hỗn Độn' });
+  assert.equal(w.s.rootType, 'Hỗn Độn'); assert.equal(w.s.chaosTries, 0); assert.equal(w.chaosChance(), 0);
+  assert.ok(w.s.logs.some(l => /Hỗn Độn linh căn/.test(l)));
+});
+
+test('xác suất Hỗn Độn: nền + Vận Khí + bảo hiểm, có trần, chỉ áp dụng cho Ngụy', () => {
+  const g = nguyGame(); const K = H.CHAOS;
+  g.s.talent.vanKhi = 0; g.s.chaosTries = 0; assert.ok(Math.abs(g.chaosChance() - K.base) < 1e-9);
+  g.s.talent.vanKhi = 8; assert.ok(Math.abs(g.chaosChance() - (K.base + 8 * K.luck)) < 1e-9);
+  g.s.chaosTries = 1000; assert.ok(Math.abs(g.chaosChance() - Math.min(K.cap, K.base + 8 * K.luck + K.pityMax)) < 1e-9);
+  assert.ok(g.chaosChance() <= K.cap);
+  for (const t of ['Thiên','Song','Dị','Âm Dương','Hỗn Độn']) { g.s.rootType = t; assert.equal(g.chaosChance(), 0); }
+});
+
+test('Hỗn Độn được giữ khi chuyển thế và bản lưu cũ được chuẩn hóa', () => {
+  const g = atTribulation(nguyGame(() => .0)); g.breakthrough(); g.s.totalRunExp = 1e12;
+  g.prestige(true, 'Tọa hóa');
+  assert.equal(g.s.rootType, 'Hỗn Độn'); assert.equal(g.s.rebirths, 1);
+  const old = H.normalize({ ...H.create(NOW), version:7, created:true, name:'Cổ Nhân', roots:[20,20,20,90,20], rootType:'Dị' }, NOW);
+  assert.ok(H.DI_LINH_CAN[old.rootSub], 'Dị cũ phải được gán biến thể'); assert.equal(old.chaosTries, 0);
+  assert.equal(H.normalize({ ...old, rootType:'Song', rootSub:'bang' }, NOW).rootSub, '');
+});

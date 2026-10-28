@@ -557,3 +557,14 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   .text-btn::after{inset:-10px -6px}
   .stat-pm{height:38px}
 }
+
+/* ===== THANH KỸ NĂNG TRÊN SÂN KHẤU (ngoài cửa sổ): cột biểu tượng ở mép trái, không bị cửa sổ che ===== */
+.skill-dock{position:absolute;z-index:60;left:10px;top:50%;transform:translateY(-50%);display:none}
+#game[data-stage="combat"] .skill-dock{display:block}
+.skill-dock .skillbar{display:flex;flex-direction:column;gap:7px;margin:0;background:#07111acc;border:1px solid #304a57;border-radius:12px;padding:7px;backdrop-filter:blur(6px)}
+.skill-dock .skill-btn{position:relative;width:52px;height:52px;padding:0;justify-content:center}
+.skill-dock .skill-btn img{width:36px;height:36px}
+.skill-dock .skill-btn>span{display:none}
+.skill-dock .skill-btn kbd{display:block;position:absolute;right:2px;bottom:1px;margin:0;border:0;padding:0 2px;background:#07111acc;font-size:11px}
+.skill-dock .strike-btn{min-width:0;width:52px;padding:8px 0;font-size:0}
+.skill-dock .strike-btn::before{content:"⚔";font-size:22px}

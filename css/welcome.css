@@ -135,3 +135,21 @@
   .stat-ico{width:22px;height:22px}
   .points{font-size:18px}
 }
+
+/* ---- Màn tạo nhân vật: nhóm linh căn ---- */
+.root-group{display:inline-block;margin-left:6px;padding:1px 8px;border:1px solid #3c5a68;border-radius:99px;font:600 12px var(--font);vertical-align:middle;color:#b9d6df;text-shadow:none}
+.root-group-di{border-color:#7fdcff;color:#7fdcff}
+.root-group-chi_ton{border-color:#e6c164;color:#ffe08b}
+.root-rate-line{font-size:13px;color:#a9c4cd;margin-bottom:3px}
+.root-di{margin:6px 0;padding:7px 10px;border:1px solid #3c5a68;border-radius:9px;background:#0f1b23;font-size:13.5px;line-height:1.5}
+.root-di>b{color:var(--cyan)}
+.root-di-fx{color:var(--gold)}
+.root-tiers{display:flex;flex-direction:column;gap:4px;margin:6px 0;padding:7px 0;border-top:1px dashed #2d424d}
+.root-tier{display:flex;gap:8px;align-items:baseline;font-size:13px}
+.root-tier-name{flex:0 0 112px;color:#cfe7ee;font-weight:700}
+.root-tier-list{display:flex;flex-wrap:wrap;gap:2px 5px;color:#93aeb8}
+.root-tier-list i{font-style:normal;padding:0 6px;border-radius:6px}
+.root-tier-list i.is-current{color:#ffe08b;background:#2a2417;border:1px solid #b99b4e;font-weight:700}
+.root-tier-list s{text-decoration:none;color:#5f7a86}
+.chip-di{color:#7fdcff;border-color:#7fdcff}
+@media(max-width:620px){.root-tier-name{flex-basis:96px}}

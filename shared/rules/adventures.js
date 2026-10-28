@@ -3,6 +3,7 @@
   'use strict';
   const node = typeof module !== 'undefined' && module.exports;
   const D = node ? require('../data/adventures.js') : root.HU_ADVENTURE_DATA;
+  const RT = node ? require('../data/roots.js') : root.HU_ROOTS;
   const { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX, DUNGEONS, ENCOUNTERS, ENCOUNTER_RARITIES, ENCOUNTER_INTERVAL, SECTS, SECT_RANKS, SECT_MISSIONS, SECT_SHOP } = D;
   const number = (v, fallback = 0, max = 1e100) => Number.isFinite(Number(v)) ? Math.max(0, Math.min(max, Number(v))) : fallback;
   const int = (v, fallback = 0, max = 1e9) => Math.floor(number(v, fallback, max));
@@ -80,6 +81,9 @@
         const out = { attack: 0, hp: 0, guard: 0, rate: 0, crit: 0, dodge: 0, regen: 0 };
         const els = this.activeElements(), scale = 1 / Math.sqrt(Math.max(1, els.length));
         for (const i of els) for (const [key, value] of Object.entries(TEMPER_EFFECTS[i])) out[key] += value * this.s.rootCraft.levels[i] * scale;
+        // Dị linh căn có thế mạnh riêng; Hỗn Độn bao trùm cả bốn Dị nên nhận 50% mỗi loại.
+        const di = this.s.rootType === 'Dị' ? [[this.s.rootSub, 1]] : this.s.rootType === 'Hỗn Độn' ? RT.DI_KEYS.map(k => [k, .5]) : [];
+        for (const [k, w] of di) for (const [key, value] of Object.entries(RT.DI_LINH_CAN[k]?.effects || {})) out[key] += value * w;
         return out;
       },
       temperCost(i) { return 2 + 2 * (this.s.rootCraft.levels[i] || 0); },

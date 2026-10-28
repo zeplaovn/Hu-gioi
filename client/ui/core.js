@@ -51,6 +51,12 @@
       `<button role="tab" class="tab ${t.id === active ? 'active' : ''}" aria-selected="${t.id === active}" data-tab="${t.id}">${t.icon ? `<span aria-hidden="true">${t.icon}</span>` : ''}${t.label}${t.badge ? `<em>${t.badge}</em>` : ''}</button>`).join('')}</div>`;
   const live = end => `<span class="live" data-end="${end}"></span>`;
 
+  /* Mô tả một bảng hiệu ứng {attack,hp,guard,rate,crit,dodge,regen} thành chữ: "Phòng thủ +12% · Sinh lực +5%". */
+  UI.rootEffectText = (effects, weight = 1) => {
+    const labels = { attack: 'Công kích', hp: 'Sinh lực', guard: 'Phòng thủ', rate: 'Tốc tu', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
+    return Object.entries(effects || {}).map(([k, v]) => labels[k] + ' +' + (v * weight * 100).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) +
+      (['crit', 'dodge', 'regen'].includes(k) ? ' điểm %' : '%')).join(' · ');
+  };
   UI.kit = { $, $$, esc, clamp, num, money, moneyHTML, coinLabel, pct, duration, abs, row, btn, img, codeAttr, bar, card, empty, tabs, live };
 
   /* ======================================================================

@@ -779,7 +779,7 @@
     const need = g.need(), p = clamp(s.qi / need * 100, 0, 100), readyQi = p >= 100 && !s.completed;
     $('playerName').textContent = s.name;
     $('playerRealm').textContent = g.realmLabel();
-    $('playerRoot').textContent = String(s.rootType || '').toUpperCase() + ' LINH CĂN';
+    $('playerRoot').textContent = H.rootLabel(s.rootType, s.rootSub).toUpperCase();
     $('playerPlace').textContent = F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
     const avatar = $('avatar'), avatarSrc = A.heroPortrait(s.gender, s.realm);
     if (avatar && avatar.getAttribute('src') !== avatarSrc) avatar.src = avatarSrc;
@@ -832,6 +832,7 @@
     }
     const gameEl = $('game');
     if (gameEl) gameEl.dataset.stage = mode;
+    UI.skillDock?.update();
     UI.combatFx?.sync(mode);
     const sceneBg = H.ZONES[s.zone].bg;
     if (sceneBg !== lastSceneBg) {
@@ -1323,7 +1324,11 @@
         $('tribSubtitle').textContent = g.realmLabel() + ' · cảnh giới mới đã mở';
         $('tribStatus').textContent = result.events.length ? 'Thiên kiếp đã qua, đạo cơ tái tạo.' : 'Đạo cơ đã thành · mở ra cảnh giới mới.';
         $('tribResult').className = 'trib-result success';
-        $('tribResult').innerHTML = `<h3 class="gold">${esc(g.realmLabel())}</h3><p>Xác suất ${pct(result.chance)} · hộ kiếp còn lại đã tiêu hao. Cảnh giới mới mở ra trước mắt.</p>`;
+        const chaosNote = result.awaken
+          ? `<p class="root-awaken">✦ Lôi kiếp tẩy luyện: <b>Tạp linh căn</b> thoát thai hoán cốt, hóa thành <b>Hỗn Độn linh căn</b>! (xác suất ${pct(result.awaken.chance)})</p>`
+          : (result.events.length && s.rootType === 'Ngụy' ? `<p class="info-note">Tạp linh căn chưa hóa Hỗn Độn. Lần vượt lôi kiếp sau: ${pct(g.chaosChance())}.</p>` : '');
+        $('tribResult').innerHTML = `<h3 class="gold">${esc(g.realmLabel())}</h3><p>Xác suất ${pct(result.chance)} · hộ kiếp còn lại đã tiêu hao. Cảnh giới mới mở ra trước mắt.</p>${chaosNote}`;
+        if (result.awaken) UI.toast('Tạp linh căn hóa thành Hỗn Độn linh căn!', { type: 'gold', title: 'Linh căn thức tỉnh' });
         $('tribHpText').textContent = num(s.hp) + ' / ' + num(g.stats().HP);
         $('tribHpFill').style.width = clamp(s.hp / g.stats().HP * 100, 0, 100) + '%';
         $('tribShieldText').textContent = 'Đã tiêu hao';

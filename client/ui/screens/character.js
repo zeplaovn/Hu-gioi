@@ -18,7 +18,7 @@
     const s = UI.s(), g = UI.g();
     return `<header class="char-header">
       <div class="portrait"><img src="${A.heroPortrait(s.gender, s.realm)}" alt="${esc(s.name)}" decoding="async"></div>
-      <div><span class="eyebrow gold">${s.rootType.toUpperCase()} LINH CĂN</span><h2>${esc(s.name)}</h2>
+      <div><span class="eyebrow gold">${esc(H.rootLabel(s.rootType, s.rootSub).toUpperCase())}</span><h2>${esc(s.name)}</h2>
         <p>${g.realmLabel()} · ${F.realm_map(s.zone)}</p>
         <p class="muted">Chủng tộc ${H.raceName(s.race)} · Tuổi ${num(Math.floor(s.age))} / thọ nguyên ${num(H.raceLife(s.race, s.realm) + s.extraLife)} năm</p></div>
     </header>`;
@@ -77,16 +77,16 @@
 
   function bag() {
     const s = UI.s(), g = UI.g(), v = UI.view;
-    const xs = Object.keys(s.bag).map(H.item).filter(x => x && lists.matches(x))
+    /* Hành trang hiện toàn bộ đồ trong túi: không còn bảng tra cứu/lọc/phân trang (tra cứu vật phẩm nằm ở Thế giới → Tra cứu). */
+    const xs = Object.keys(s.bag).map(H.item).filter(Boolean)
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
-    const visible = lists.slice(xs);
+    const visible = xs;
     if (!xs.some(x => x.key === v.selected)) v.selected = visible[0]?.key || '';
     const x = H.item(v.selected), usable = x && ['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind);
     const main = x ? `${img(v.selected, 'detail-img')}<h3 class="detail-title">${esc(x.name)}</h3>${itemDescription(v.selected)}${row('Giá bán', moneyHTML(F.shop_sell_price(g.price(v.selected))))}
       <div class="detail-actions">${btn(x.kind === 'EQ' ? (s.equipment.includes(v.selected) ? 'Tháo' : 'Trang bị') : x.kind === 'BT' ? 'Lĩnh ngộ' : usable ? 'Sử dụng' : 'Công dụng',
         x.kind === 'EQ' ? 'equip' : x.kind === 'BT' ? 'learn' : usable ? 'consume' : 'info', codeAttr(v.selected))}${btn('Bán 1', 'sell', codeAttr(v.selected), s.equipment.includes(v.selected), 'btn-outline')}</div>` : empty('Chọn một vật phẩm.');
     return `<p class="screen-lead">${Object.keys(s.bag).length} loại và phẩm chất trong túi. Giá bán bằng 40% giá trị vật phẩm.</p>
-      ${lists.controls()}${lists.pager(xs.length)}
       <div class="inventory-layout">
         <div class="card"><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Không có vật phẩm phù hợp.')}</div></div>
         <div class="card item-detail">${main}</div>
