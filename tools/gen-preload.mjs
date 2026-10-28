@@ -6,7 +6,7 @@ import { join, relative } from 'node:path';
 const ROOT = new URL('..', import.meta.url).pathname;
 const walk = dir => readdirSync(dir).flatMap(n => {
   const p = join(dir, n);
-  return statSync(p).isDirectory() ? walk(p) : [p];
+  return statSync(p).isDirectory() ? walk(p) : /\.(png|webp|jpe?g|svg)$/i.test(n) ? [p] : [];
 });
 const rel = p => relative(ROOT, p).split('\\').join('/');
 const A = 'media/assets/';

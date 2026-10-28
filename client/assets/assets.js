@@ -8,6 +8,7 @@
   const ENEMY = BASE + 'enemies/';
   const BG_BASE = BASE + 'world/bg/';
   const MAP_BASE = BASE + 'world/map/';
+  const ITEM_IDX = root.HU_ITEM_INDEX || (typeof require === 'function' ? require('./item-index.js') : {});
   const IDX = root.HU_ASSET_INDEX || (typeof require === 'function' ? require('./asset-index.js') : { player: {}, monster: {} });
 
   /* Cảnh giới (zone) -> đại giới. Khớp F.realm_map: 0-4 Hạ, 5-8 Linh, 9+ Tiên. */
@@ -79,9 +80,9 @@
     tribulation: BG_BASE + 'dai_loi_kiep.webp',
     forge: BG_BASE + 'room_luyen_khi.webp',
     talisman: BG_BASE + 'room_ve_phu.webp',
-    logo: BG_BASE + 'logo.webp'
+    logo: BG_BASE + 'logo.webp' /* có kèm logo.png */
   };
-  const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.webp', linh_gioi: MAP_BASE + 'MAP-LG.webp', tien_gioi: MAP_BASE + 'MAP-TG.webp' };
+  const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.png', linh_gioi: MAP_BASE + 'MAP-LG.png', tien_gioi: MAP_BASE + 'MAP-TG.png' };
   const zoneBg = zone => BG[worldOf(zone)];
 
   /* ---- hiệu ứng khung hình ----
@@ -89,7 +90,6 @@
    * được phát bằng cách đổi src theo nhịp thời gian trong client/ui/vfx.js. */
   const VFX_BASE = BASE + 'world/vfx/';
   const VFX = {
-    hu_gioi: { slash: 8, hit: 8, bolt: 8, break: 8, heal: 8, qi: 8 },
     loi_kiep: { ha_gioi: 8, linh_gioi: 8, tien_gioi: 8, hon_don: 8 },
     dot_pha: { ha_gioi: 8 },
     phi_thang: { linh_gioi: 8, tien_gioi: 8, hon_don: 8 },
@@ -99,15 +99,22 @@
       hoi_phuc: { mau_01: 8, mau_02: 8 }
     }
   };
-  const vfxCount = (kind, variant) => {
+  /* Bộ hiệu ứng "hu_gioi" cũ đã được thay bằng bộ mới: ánh xạ tên cũ sang chuỗi khung mới. */
+  const VFX_ALIAS = {
+    slash: ['chien_dau', 'nhan_vat'], hit: ['chien_dau', 'trung_don'], bolt: ['chien_dau', 'linh_khi'],
+    break: ['dot_pha', 'ha_gioi'], heal: ['chien_dau', 'hoi_phuc/mau_01'], qi: ['chien_dau', 'linh_khi']
+  };
+  const resolveVfx = (kind, variant) => kind === 'hu_gioi' && VFX_ALIAS[variant] ? VFX_ALIAS[variant] : [kind, variant];
+  const vfxCount = (kind0, variant0) => {
+    const [kind, variant] = resolveVfx(kind0, variant0);
     let node = VFX[kind];
     for (const part of String(variant || '').split('/').filter(Boolean)) node = node && node[part];
     return Number.isInteger(node) ? node : 0;
   };
-  const vfxFrames = (kind, variant) => {
+  const vfxFrames = (kind0, variant0) => {
+    const [kind, variant] = resolveVfx(kind0, variant0);
     const n = vfxCount(kind, variant);
     if (!n) return [];
-    if (kind === 'hu_gioi') return Array.from({ length: n }, (_, i) => VFX_BASE + 'hu_gioi/' + variant + '_' + i + '.png');
     const dir = VFX_BASE + kind + '/' + String(variant || '').replace(/^\/+|\/+$/g, '') + '/';
     return Array.from({ length: n }, (_, i) => dir + (i + 1) + '.png');
   };
@@ -138,45 +145,19 @@
    * Ba biểu tượng gốc: linh thạch hạ phẩm (lam), thượng phẩm (tím) và tiên ngọc (ngọc bích).
    * Trung/Thượng/Cực dùng chung biểu tượng thượng phẩm; các bậc Tiên tinh dùng tiên ngọc. */
   const MONEY = {
-    low: BASE + 'ui/icon/money/linh_thach_ha_pham.webp',
-    high: BASE + 'ui/icon/money/linh_thach_thuong_pham.webp',
-    jade: BASE + 'ui/icon/money/tien_ngoc.webp'
+    low: BASE + 'ui/icon/money/linh_thach_ha_pham.png',
+    high: BASE + 'ui/icon/money/linh_thach_thuong_pham.png',
+    jade: BASE + 'ui/icon/money/tien_ngoc.png'
   };
   const moneyIcon = tier => MONEY[tier] || MONEY.high;
 
   /* ---- vật phẩm ----
-   * Bộ asset gốc là các bảng sprite 128×128. Dữ liệu vật phẩm không còn giữ
-   * đường dẫn ảnh riêng; giao diện dùng icon đã cắt sẵn theo loại. Bốn biến
-   * thể mỗi loại chọn theo bậc/phẩm để giao diện có sắc thái. */
-  const ITEM_ICON = BASE + 'item/icons/';
-  const ITEM_VARIANTS = {
-    HERB: ['herb_0', 'herb_1', 'herb_2', 'herb_3'],
-    EQ: ['eq_0', 'eq_1', 'eq_2', 'eq_3'],
-    BT: ['bt_0', 'bt_1', 'bt_2', 'bt_3'],
-    SEED: ['seed_0', 'seed_1', 'seed_2', 'seed_3'],
-    MAT: ['mat_0', 'mat_1', 'mat_2', 'mat_3'],
-    TAL: ['tal_0', 'tal_1', 'tal_2', 'tal_3'],
-    GFT: ['gft_0', 'gft_1', 'gft_2', 'gft_3']
-  };
-  const PILL_SINGLE = ['pill_single_0', 'pill_single_1', 'pill_single_2', 'pill_single_3'];
-  const PILL_PACK = ['pill_pack_0', 'pill_pack_1', 'pill_pack_2', 'pill_pack_3'];
-  const hashOf = s => { let h = 0; for (const c of String(s || '')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
-  const variantOf = (x, list) => list[(hashOf(x.code) + Math.max(0, Number(x.tier) || 0) * 3 + Math.max(0, Number(x.sub) || 0)) % list.length];
-
+   * Mỗi mã vật phẩm có một ảnh riêng, đường dẫn lấy từ item-index.js (sinh bởi tools/cut-item-atlases.py
+   * từ vat_pham.xlsx và các bảng sprite 128×128 trong media/assets/item). */
   function itemSrc(x) {
     if (!x) return '';
-    const code = String(x.code || '');
-    if (/^INK-(HG|LG|TG)$/.test(code)) return BASE + 'item/muc_luyen_phu/' + code + '.png';
-    if (/^FERT-(HG|LG|TG)$/.test(code)) return BASE + 'item/phan_bon/' + code + '.png';
-    if (/^CAT-(HG|LG|TG)$/.test(code)) return BASE + 'item/tinh_hoa_luyen_che/' + code + '.png';
-    if (/^QITEM-HD-0[1-6]$/.test(code)) return BASE + 'item/vat_pham_nhiem_vu/' + code + '.png';
-    if (x.kind === 'PILL') {
-      const n = Number((code.match(/\d+/) || [0])[0]);
-      return ITEM_ICON + variantOf(x, n && n <= 25 ? PILL_PACK : PILL_SINGLE) + '.png';
-    }
-    const list = ITEM_VARIANTS[x.kind];
-    if (list) return ITEM_ICON + variantOf(x, list) + '.png';
-    return BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png';
+    const path = ITEM_IDX[String(x.code || '')];
+    return path ? BASE + path : BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png';
   }
 
   root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
