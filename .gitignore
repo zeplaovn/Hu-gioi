@@ -1,1 +1,48 @@
 *.deb
+# Dependencies
+node_modules/
+
+# Bí mật và cấu hình máy (quan trọng nhất)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# File cài đặt và gói nhị phân lớn (vụ .deb vừa rồi)
+*.deb
+*.rpm
+*.AppImage
+*.exe
+*.dmg
+*.msi
+*.iso
+*.zip
+*.tar
+*.tar.gz
+
+# Dữ liệu local của DB
+*.sqlite
+*.sqlite3
+pgdata/
+postgres-data/
+*.dump
+*.sql.gz
+
+# Build, log, coverage
+dist/
+build/
+coverage/
+*.log
+npm-debug.log*
+.cache/
+
+# Hệ điều hành và editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Công cụ AI cục bộ (tùy chọn)
+.opencode/
