@@ -11,6 +11,7 @@
     'Họ vượt qua giang hà vũ trụ, xuyên qua những tàn tích tiên gia đã phủ bụi triệu năm, nơi thiên đạo tái lập và mở ra cánh cổng đến cõi mộng ảo tận cùng.',
     'Chào mừng đến với Hư Giới! Nơi muôn vàn sinh linh rơi xuống những góc trời xa lạ — kẻ hóa thành cô độc giữa muôn ngàn hiểm nguy, người đứng trước cơ duyên thành Tiên hóa Thánh. Và số phận của bạn... chính thức bắt đầu từ đây!'
   ];
+  const CHAPTERS = ['Nhân gian', 'Thiên biến', 'Ly giới', 'Vượt hư không', 'Tiên lộ khởi nguyên'];
   let intro = null;
 
   function playIntro() {
@@ -22,23 +23,28 @@
     el.setAttribute('aria-label', 'Khởi nguyên Hư Giới');
     el.tabIndex = -1;
     el.innerHTML = `<div class="intro-images" aria-hidden="true"><img class="intro-image" alt=""><img class="intro-image" alt=""></div>
-      <div class="intro-shade"></div><header class="intro-top"><span>HƯ GIỚI · KHỞI NGUYÊN</span><button id="introSkip" class="btn btn-outline" type="button">Bỏ qua intro</button></header>
-      <div class="intro-bottom"><span id="introChapter" class="eyebrow gold"></span>
+      <div class="intro-shade"></div><div class="intro-dust" aria-hidden="true"></div><div class="intro-letterbox" aria-hidden="true"></div>
+      <header class="intro-top"><span>HƯ GIỚI</span><span>THIÊN MỆNH KHỞI NGUYÊN</span></header>
+      <div class="intro-bottom"><span id="introChapter" class="eyebrow gold"></span><h2 id="introTitle"></h2>
         <p id="introCaption" class="intro-caption" role="status" aria-live="polite"></p>
-        <div class="intro-controls"><span id="introDots" aria-hidden="true"></span><div class="action-group">
-          <button id="introPause" class="btn btn-outline" type="button" aria-pressed="false">Tạm dừng</button>
-          <button id="introNext" class="btn btn-gold" type="button">Tiếp tục ›</button></div></div></div>`;
+        <div class="intro-controls"><span id="introDots" aria-hidden="true"></span><small id="introHint">Chạm để chuyển cảnh · Space tạm dừng · Esc bỏ qua</small></div></div>`;
     document.body.append(el);
     document.body.classList.add('intro-open');
     const welcome = $('welcome'), wasInert = welcome.inert && !$('gameLoading');
     welcome.inert = true;
     let resolve;
-    const state = intro = { el, index: 0, timer: 0, paused: false, ended: false, welcome, wasInert,
+    const state = intro = { el, index: 0, timer: 0, paused: false, ended: false, remaining: 0, started: 0, welcome, wasInert,
       promise: new Promise(done => { resolve = done; }) };
     const schedule = () => {
       clearTimeout(state.timer);
+      if (state.started) state.remaining = Math.max(0, state.remaining - (performance.now() - state.started));
+      state.started = 0;
+      const paused = state.paused || document.hidden;
+      el.classList.toggle('paused', paused);
+      el.getAnimations({ subtree: true }).forEach(animation => paused ? animation.pause() : animation.play());
       if (!state.ended && !state.paused && !document.hidden) {
-        state.timer = setTimeout(next, Math.max(7500, STORY[state.index].split(/\s+/).length * 220));
+        state.started = performance.now();
+        state.timer = setTimeout(next, state.remaining);
       }
     };
     const finish = () => {
@@ -46,20 +52,26 @@
       state.ended = true;
       clearTimeout(state.timer);
       el.focus({ preventScroll: true });
-      el.querySelectorAll('button').forEach(button => { button.disabled = true; });
       resolve();
     };
     const show = () => {
       const images = el.querySelectorAll('.intro-image'), current = images[state.index % 2];
       current.src = A.INTRO[state.index];
       images.forEach(image => image.classList.toggle('active', image === current));
-      $('introChapter').textContent = `Chương mở đầu · ${state.index + 1} / ${STORY.length}`;
+      state.remaining = Math.max(8000, STORY[state.index].split(/\s+/).length * 230);
+      state.started = 0;
+      current.getAnimations().forEach(animation => animation.cancel());
+      if (!UI.isReduced()) current.animate([
+        { transform: state.index % 2 ? 'scale(1.13) translateX(-1%)' : 'scale(1.02) translateX(1%)' },
+        { transform: state.index % 2 ? 'scale(1.02) translateX(1%)' : 'scale(1.13) translateX(-1%)' }
+      ], { duration: state.remaining + 1800, fill: 'forwards', easing: 'linear' });
+      $('introChapter').textContent = `CHƯƠNG ${String(state.index + 1).padStart(2, '0')} / 05`;
+      $('introTitle').textContent = CHAPTERS[state.index];
       const caption = $('introCaption');
       caption.textContent = STORY[state.index];
       caption.getAnimations().forEach(animation => animation.cancel());
-      if (!UI.isReduced()) caption.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 700, easing: 'ease-out' });
+      if (!UI.isReduced()) caption.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 1500, easing: 'ease-out' });
       $('introDots').innerHTML = STORY.map((_, i) => `<i class="${i <= state.index ? 'on' : ''}"></i>`).join('');
-      $('introNext').textContent = state.index === STORY.length - 1 ? 'Bước vào Hư Giới' : 'Tiếp tục ›';
       schedule();
     };
     function next() {
@@ -67,21 +79,20 @@
       if (state.index === STORY.length - 1) finish();
       else { state.index++; show(); }
     }
-    $('introNext').addEventListener('click', next);
-    $('introSkip').addEventListener('click', finish);
-    $('introPause').addEventListener('click', () => {
+    el.addEventListener('click', next);
+    const togglePause = () => {
       state.paused = !state.paused;
-      $('introPause').textContent = state.paused ? 'Tự động phát' : 'Tạm dừng';
-      $('introPause').setAttribute('aria-pressed', String(state.paused));
+      $('introHint').textContent = state.paused ? 'Đã tạm dừng · Space để tiếp tục' : 'Chạm để chuyển cảnh · Space tạm dừng · Esc bỏ qua';
       schedule();
-    });
+    };
     state.visibility = schedule;
     document.addEventListener('visibilitychange', schedule);
     el.addEventListener('keydown', event => {
       event.stopPropagation();
       if (event.key === 'Escape') { event.preventDefault(); finish(); }
-      else if (event.key === 'ArrowRight') { event.preventDefault(); next(); }
-      else if (event.key === 'Tab') trapTab(el, event);
+      else if (event.key === 'ArrowRight' || event.key === 'Enter') { event.preventDefault(); next(); }
+      else if (event.code === 'Space') { event.preventDefault(); if (!event.repeat) togglePause(); }
+      else if (event.key === 'Tab') { event.preventDefault(); el.focus({ preventScroll: true }); }
     });
     show();
     return state.promise;
@@ -99,7 +110,7 @@
     document.body.classList.remove('intro-open');
     intro = null;
   }
-  UI.intro = { play: playIntro, close: closeIntro, focus: () => $('introNext')?.focus({ preventScroll: true }), get active() { return !!intro; } };
+  UI.intro = { play: playIntro, close: closeIntro, focus: () => intro?.el.focus({ preventScroll: true }), get active() { return !!intro; } };
 
   function trapTab(el, event) {
     const buttons = [...el.querySelectorAll('button:not(:disabled)')];

@@ -123,7 +123,7 @@
       UI.vfx?.stage({ kind: 'loi_kiep', variant: world, fps: 12, size: 'clamp(120px,20vw,220px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
     }
     if (result.success) {
-      UI.vfx?.effect('break', target);
+      UI.vfx?.effect('break', target, { loop: true, duration: 5000 + 8000 / 15 });
       UI.vfx?.ring(target);
       UI.vfx?.burst(target, '#ffe29a', 18);
       UI.vfx?.screenFlash('flash-gold', 520);

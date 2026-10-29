@@ -5,7 +5,7 @@
 
   const editable = target => {
     const el = target instanceof Element ? target : target?.parentElement;
-    return !!el && (el.matches('input, textarea') || el.isContentEditable);
+    return !!el && (el.matches('textarea, input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="url"], input[type="tel"]') || el.isContentEditable);
   };
   const stop = event => {
     event.preventDefault();

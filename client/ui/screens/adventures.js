@@ -39,7 +39,7 @@
   function encounters() {
     const s = UI.s(), e = s.encounter, end = e.usedAt + 90000;
     return `<p class="screen-lead">Mỗi ${duration(H.ENCOUNTER_INTERVAL)} bế quan hiệu dụng có ${pct(UI.g().encounterChance())} cơ hội gặp kỳ ngộ. Phúc Duyên tăng cơ hội hiếm; Vận Khí giúp tránh họa. Offline áp dụng giới hạn và hiệu suất bế quan.</p>
-      ${card('Dấu chân cơ duyên', row('Đã khám phá', Object.keys(e.journal).length + '/' + H.ENCOUNTERS.length) + row('Tổng kỳ ngộ', num(e.total)) + '<p class="info-note">Phần thưởng tự nhận và ghi vào Nhật ký thông báo. Tu vi dừng ở ngưỡng đột phá.</p>')}
+      ${card('Dấu chân cơ duyên', row('Đã khám phá', Object.keys(e.journal).length + '/' + H.ENCOUNTERS.length) + row('Tổng kỳ ngộ', num(e.total)) + '<p class="info-note">Phần thưởng tự nhận và ghi vào Nhật ký tu tiên. Tu vi dừng ở ngưỡng đột phá.</p>')}
       ${card('Kỳ ngộ gần đây', e.recent.map(v => {
         const d = H.ENCOUNTERS.find(x => x.id === v.id), rarity = H.ENCOUNTER_RARITIES[d.rarity];
         return `<article class="encounter-entry"><header><b style="color:${rarity.color}">${esc(d.name)}</b><small>${date(v.at)} · ${rarity.name}</small></header><p>${esc(v.text)}</p></article>`;

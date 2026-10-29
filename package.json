@@ -5,8 +5,8 @@
   "description": "Hư Giới — luật dùng chung và nền tảng phiên nhiều người chơi",
   "engines": { "node": ">=20" },
   "scripts": {
+    "demo": "node server/demo.js",
     "check": "node tools/check.mjs",
-    "test": "node --test tests/*.test.js",
     "preload": "node tools/gen-preload.mjs"
   }
 }

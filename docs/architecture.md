@@ -24,6 +24,8 @@ API online (bước tiếp theo) → xác thực → PlayerService
 - Thành tựu được xét sau tick/lệnh. Render chỉ lấy thông báo đã tạo; không tự cấp điểm.
 - Log dùng subscription của phiên, không sửa `Game.prototype` từ giao diện.
 - Luật nhận thời gian do bên sở hữu phiên cung cấp. Payload lệnh không chứa `now`, RNG, giá mua, phần thưởng hoặc state.
+- Chat demo chạy độc lập: `screens/chat.js → ChatSession → /api/chat/* → server/chat/demo-server.js`. Tin nhắn không sửa state gameplay.
+- Cảnh sắc thuộc `client/ui/environment.js`: đọc `state.tick`, đổi mùa mỗi 900 giây và ngày/đêm mỗi 450 giây. `HU_ASSETS.zoneBg(zone, season, phase)` chọn ảnh; `hu:scene-change` phát khi cảnh sắc thay đổi. `shared/data/catalog.js` chỉ giữ dữ liệu địa danh.
 
 ## 2. Các file cũ được chuyển tới đâu?
 
@@ -49,6 +51,7 @@ Danh sách đầy đủ: `shared/protocol/commands.js` (`types`, `validate`, `ex
 UI.command('buy', { code: 'HERB-001' });
 UI.command('giftFriend', { id: 'trieu-nguyet' });
 UI.command('setAuto', { enabled: true });
+UI.command('garden', { slot: 0, action: 'water' });
 ```
 
 Payload có khóa lạ, kiểu sai, số âm/phân số ngoài phạm vi hoặc mã vật phẩm không hợp lệ bị từ chối. Các điều kiện theo nhân vật như tiền, cấp, hồi chiêu và nhiệm vụ đã nhận được kiểm tra trong luật. `reincarnate` chỉ hợp lệ khi đã tọa hóa; không có lệnh từ client để gọi `prestige(true)`.
@@ -104,21 +107,37 @@ demo();
 
 Schema tiếp tục là V7. Hai khóa vẫn là `huGioiWorkspaceV1` và `huGioiWorkspaceV1Backup`; bản V4/V5/V6/V7 được chuyển qua `shared/state/player.js`. Backup, import và export thuộc adapter offline. Việc đưa save offline sang tài khoản online cần một luồng chuyển dữ liệu riêng ở server.
 
+Linh điền bổ sung `slot`, `plantedAt`, `water`, `soil`, `pest`, `steps`, `good`, `dry`, `wilt` vào từng ô. Bản V7 chỉ có `herb/end` được bổ sung mặc định khi nạp. Ô có số cố định 0–3, thu hoạch không dịch chuyển ô khác. Luật `crafting.js` xử lý 6 giai đoạn lớn, RNG sâu bệnh, dưỡng chất, héo, phẩm chất và thu hoạch; lệnh `garden` chỉ nhận `slot` và `action` (`water/soil/pest/harvest`). Khi offline, cây lớn an toàn đến lúc chín và chờ thu hoạch thủ công. Không cấp vật phẩm từ render.
+
 Màn loading/preload, báo cáo bế quan, tọa hóa, nhạc, nhật ký, đột phá nhỏ trực tiếp và trang độ kiếp lớn tiếp tục sử dụng các module đã tách. Bản web chạy `file://` bằng classic scripts và giữ CSP/bảo vệ nội dung hiện tại.
 
 ## 6. Bước nối online
 
 Kế hoạch thiết kế backend chi tiết (stack, schema, API, bảo mật, lộ trình): [backend-plan.md](backend-plan.md).
 
-Nền tảng service chưa mở cổng mạng. Các phần cần triển khai tiếp:
+Nền tảng `PlayerService` chưa mở cổng mạng. Chat demo đã có máy chủ độc lập (mục 8). Các phần gameplay online cần triển khai tiếp:
 
 1. Chọn tài khoản/đăng nhập và API HTTP hoặc WebSocket; API lấy `principal` từ xác thực server.
 2. Thay `MemoryPlayers` bằng database có transaction/revision và lưu receipt bền vững.
 3. Tạo adapter phiên remote bất đồng bộ. `UI.command` hiện trả kết quả đồng bộ của `LocalSession`; runner, callback modal, độ kiếp và vòng tick cần chờ Promise, xử lý mất kết nối và đồng bộ snapshot. Chuyển phần cài đặt trình duyệt sang kho local riêng khi dùng snapshot server.
 4. Chỉ server tính tick, offline, RNG và phần thưởng. Client có thể dự đoán số hiển thị nhưng phải nhận lại snapshot chính thức; không gọi `Game.advance()` để ghi tiến trình online.
-5. Xây dịch vụ tương tác giữa người chơi: presence/chat, PvP thật, tông môn chung, đấu giá và bảng xếp hạng. Giao du/PvP/đấu giá hiện tại vẫn là luật mô phỏng theo từng nhân vật.
+5. Nâng chat demo lên tài khoản thật và lưu bền vững; xây PvP thật, tông môn chung, đấu giá và bảng xếp hạng. Giao du/PvP/đấu giá hiện tại vẫn là luật mô phỏng theo từng nhân vật.
 6. Khi có endpoint cụ thể, cập nhật `connect-src` trong `index.html` và `_headers`; cấu hình static hosting phục vụ `index.html`, `client/`, `shared/`, `css/`, `media/`, còn service chạy ở backend riêng.
 
 ## 7. Kiểm tra
 
-`npm run check`: cú pháp JS và script trong HTML. `npm test`: bản lưu V4–V7, khởi tạo, phần thưởng một lần, hồi chiêu, bí cảnh, tông môn offline, tọa hóa, cô lập state, rollback, retry và xung đột lệnh.
+`npm run check`: kiểm tra cú pháp JavaScript trong `client/`, `shared/`, `server/`, `tools/` và đường dẫn script trong `index.html`.
+
+## 8. Chat online demo
+
+Chạy `npm run demo` với Node 20+, mặc định `127.0.0.1:8000`; `HOST` và `PORT` tùy chỉnh địa chỉ nghe. Máy chủ dùng thư viện chuẩn Node, phục vụ `/index.html`, `client/`, `shared/`, `css/`, `media/` và ba endpoint:
+
+| Endpoint | Nội dung |
+|---|---|
+| `POST /api/chat/join` | Nhận `{ name }`, tạo/cập nhật phiên demo và cookie HttpOnly/SameSite=Strict. Trả `self`. |
+| `GET /api/chat/events` | SSE với `snapshot` (100 tin gần nhất), `message`, `presence`; heartbeat mỗi 15 giây. |
+| `POST /api/chat/messages` | Nhận `{ requestId, text }`, xác thực phiên, giới hạn 400 ký tự và một tin/2 giây. Retry cùng ID/nội dung trả lại tin đã gửi trong cửa sổ 100 receipt/phiên. |
+
+Tên và tin nhắn hiển thị qua `textContent`. Server tạo ID/thời gian/tên người gửi từ phiên, giới hạn body 4 KiB và chỉ nhận POST cùng origin. Có tối đa 100 kết nối SSE, 3 kết nối/phiên; phiên hết hạn sau 24 giờ. Phiên, lịch sử, receipt đều trong RAM. Đây là danh tính demo bằng đạo hiệu, chưa xác thực tài khoản gameplay.
+
+`ChatSession` kết nối lại với backoff, giữ bản nháp tại UI và tái sử dụng requestId khi người chơi gửi lại cùng bản nháp bị lỗi. `connect-src 'self'` trong HTML/`_headers` cho phép API cùng origin. Trên `file://`, chat chỉ hiển thị hướng dẫn khởi chạy HTTP.

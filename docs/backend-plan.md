@@ -74,12 +74,15 @@ Với 1 backend + 1 fullstack + 0.5 DevOps + 0.5 QA: **12–17 tuần** đến b
 | Repository | `server/repositories/memory-players.js` | Adapter bộ nhớ, transaction theo playerId, chỉ dùng dev/test |
 | Client offline | `client/session/local-session.js`, `client/persistence/local-store.js` | LocalSession đồng bộ, localStorage |
 | UI | `client/ui/*` | Gọi `UI.command(type, payload)` đồng bộ |
-| Test | `tests/gameplay.test.js`, `tests/player-service.test.js` | Luật, cô lập người chơi, retry, conflict, rollback |
-| Bảo mật tĩnh | `index.html`, `_headers` | CSP `connect-src 'none'`, chạy `file://` |
+| Kiểm tra mã | `tools/check.mjs` | Cú pháp JavaScript và đường dẫn script trong HTML |
+| Chat demo | `server/demo.js`, `server/chat/demo-server.js` | Máy chủ static + chat HTTP/SSE cùng origin |
+| Bảo mật tĩnh | `index.html`, `_headers` | CSP `connect-src 'self'`, hỗ trợ `file://` cho gameplay offline |
+
+Các bộ test và lệnh `npm test` trong lộ trình bên dưới là hạng mục cần bổ sung khi triển khai backend.
 
 ### 1.2 Khoảng trống so với online
 
-- Chưa có HTTP/WebSocket server, chưa có auth, chưa có database bền vững.
+- Chưa có API gameplay HTTP/WebSocket, auth hoặc database bền vững. Chat demo có máy chủ riêng dùng bộ nhớ.
 - `MemoryPlayers` mất dữ liệu khi process dừng và chỉ khóa trong một process.
 - `PlayerService` dùng `Date.now` và RNG cấp service, chưa có DB clock/seed theo người chơi.
 - `UI.command` đang đồng bộ; `RemoteSession` bất đồng bộ sẽ cần refactor call site.
@@ -1145,7 +1148,7 @@ MVP nên dừng ở Phase 2 (online single-player + client) trước khi làm so
 - [ ] Chốt các quyết định ở 15.2; viết ADR-001 (stack) và ADR-002 (persistence).
 - [ ] Tạo `server/` skeleton + `docker-compose.yml` (Postgres 16, Redis 7) + `.env.example`.
 - [ ] Viết migration 0001 core; script `npm run db:migrate`.
-- [ ] Implement `PostgresPlayers` với `transact`, row lock, receipt, outbox; chạy lại toàn bộ test hiện có.
+- [ ] Implement `PostgresPlayers` với `transact`, row lock, receipt, outbox; bổ sung và chạy bộ test gameplay/contract.
 - [ ] Refactor `PlayerService`: principal/account, player ownership, DB clock, RNG seed/counter, ticket tạo nhân vật.
 - [ ] Làm auth MVP + `GET /bootstrap` + `POST /players` + `POST /sync` + `POST /commands`.
 - [ ] Thêm error envelope, rate limit, request logging, health/metrics, CI.
@@ -1371,7 +1374,7 @@ Content-Type: application/json
 | `client/ui/*` | Refactor dần | `UI.command` async; pending/disable; conflict UX |
 | `index.html` CSP | Tách offline/online | Online `connect-src 'self'`; offline giữ `none`/`file:` |
 | `_headers` | Bổ sung | HSTS, cache, security headers |
-| `tests/*` | Mở rộng | Contract, concurrency, integration, load, E2E |
+| Bộ test backend (cần bổ sung) | Tạo mới | Contract, concurrency, integration, load, E2E |
 | `Hu-gioi` auth/chat/leaderboard | Tham khảo mô hình | Không dùng `save_game()` client-authoritative |
 
 ## Phụ lục D — Phạm vi 41 lệnh

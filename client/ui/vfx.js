@@ -46,16 +46,20 @@
 
     const fps = Math.max(1, Number(opts.fps) || 14);
     const frameMs = 1000 / fps;
-    let index = 0, start = 0, raf = 0, stopped = false;
+    let index = 0, start = 0, raf = 0, stopped = false, lifetimeTimer = 0;
+    const finish = completed => {
+      if (stopped) return;
+      stopped = true;
+      cancelAnimationFrame(raf);
+      clearTimeout(lifetimeTimer);
+      sprite.remove();
+      running.delete(handle);
+      opts.onDone?.(completed);
+    };
     const handle = {
       el: sprite,
       stop() {
-        if (stopped) return;
-        stopped = true;
-        cancelAnimationFrame(raf);
-        sprite.remove();
-        running.delete(handle);
-        opts.onDone?.(false);
+        finish(false);
       }
     };
     running.add(handle);
@@ -72,11 +76,7 @@
             index = 0;
             start = now;
           } else {
-            stopped = true;
-            cancelAnimationFrame(raf);
-            sprite.remove();
-            running.delete(handle);
-            opts.onDone?.(true);
+            finish(true);
             return;
           }
         }
@@ -86,7 +86,10 @@
     };
     // Chờ ảnh tải xong để lần phát đầu không bỏ qua các khung hình.
     Promise.all(imgs.map(im => im.decode ? im.decode().catch(() => null) : Promise.resolve())).then(() => {
-      if (!stopped) raf = requestAnimationFrame(tick);
+      if (!stopped) {
+        if (opts.duration) lifetimeTimer = setTimeout(() => finish(true), Math.min(30000, Math.max(1, opts.duration)));
+        raf = requestAnimationFrame(tick);
+      }
     });
     return handle;
   }

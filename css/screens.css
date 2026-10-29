@@ -224,7 +224,15 @@ body.in-tribulation{overflow:hidden}
 .list-head{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:12px 0 0}
 .list-head .catalog-controls{flex:1;margin:0}
 .list-head>button{flex:0 0 auto;margin-bottom:2px}
-.garden-field{position:relative;border:1px solid #354a3f;border-radius:14px;padding:16px 18px;background:radial-gradient(ellipse at 50% 100%,#1b322466,transparent 70%),linear-gradient(160deg,#12211a,#0d1714);overflow:hidden;margin-bottom:12px}
+.garden-field{position:relative;border:1px solid #658359;border-radius:14px;padding:36px 18px;background:linear-gradient(#061b1144,#061b1177),var(--garden-bg) center/cover no-repeat;overflow:hidden;margin-bottom:12px}
+.garden-field .plot-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.garden-field .plot{aspect-ratio:auto;max-width:none;min-height:220px;padding:14px 10px;background:#091c14da;border-color:#779a6666;backdrop-filter:blur(3px)}
+.garden-field .plot.ripe{border-color:#d6b45d;box-shadow:0 0 18px #d6b45d22}
+.garden-field .plot.wilt>img{filter:grayscale(1);opacity:.5}
+.plot-status{font-size:12px;color:#d8e7c9}
+.farm-meters{display:grid;gap:5px;width:100%;margin-top:4px}.farm-meters label{display:flex;align-items:center;gap:8px;font-size:12px}.farm-meters meter{flex:1;min-width:0;height:14px}
+.farm-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;margin-top:6px}.farm-actions .btn{padding:7px 4px;font-size:12px;white-space:normal}
+@media(max-width:420px){.garden-field .plot-grid{grid-template-columns:1fr}.garden-field .plot{max-width:none}}
 .garden-field .plot-grid{position:relative;z-index:2}
 .garden-field .decor{position:absolute;z-index:1;object-fit:contain;opacity:.62;pointer-events:none;filter:drop-shadow(0 4px 8px #0006)}
 .garden-field .decor.stone{width:110px;left:-16px;bottom:-20px;transform:rotate(-8deg)}

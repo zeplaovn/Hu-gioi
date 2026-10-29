@@ -73,17 +73,20 @@
 
   /* ---- nền, bản đồ, logo ---- */
   const BG = {
-    ha_gioi: BG_BASE + 'idle_ha_gioi.webp',
-    linh_gioi: BG_BASE + 'idle_linh_gioi.webp',
-    tien_gioi: BG_BASE + 'idle_tien_gioi.webp',
+    ha_gioi: BG_BASE + 'ha_gioi/day/xuan.webp',
+    linh_gioi: BG_BASE + 'linh_gioi/day/xuan.webp',
+    tien_gioi: BG_BASE + 'tien_gioi/bg.webp',
     home: BG_BASE + 'background.webp',
     tribulation: BG_BASE + 'dai_loi_kiep.webp',
-    forge: BG_BASE + 'room_luyen_khi.webp',
-    talisman: BG_BASE + 'room_ve_phu.webp',
+    forge: BG_BASE + 'room/luyen_khi.webp',
+    talisman: BG_BASE + 'room/ve_phu.webp',
+    garden: BASE + 'ui/linh_dien/BG.webp',
     logo: BG_BASE + 'logo.webp' /* có kèm logo.png */
   };
   const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.png', linh_gioi: MAP_BASE + 'MAP-LG.png', tien_gioi: MAP_BASE + 'MAP-TG.png' };
-  const zoneBg = zone => BG[worldOf(zone)];
+  const SEASON_FILES = { spring: 'xuan', summer: 'ha', autumn: 'thu', winter: 'dong' };
+  const zoneBg = (zone, season = 'spring', phase = 'day') => worldOf(zone) === 'tien_gioi' ? BG.tien_gioi
+    : `${BG_BASE}${worldOf(zone)}/${phase === 'night' ? 'night' : 'day'}/${SEASON_FILES[season] || 'xuan'}.webp`;
   const INTRO = Array.from({ length: 5 }, (_, i) => `${BASE}world/story/intro/${i + 1}.png`);
   const SEASONS = { spring: 'mua_xuan', summer: 'mua_ha', autumn: 'mua_thu', winter: 'mua_dong' };
   const seasonSprite = (season, n = 0) => `${BASE}world/vfx/leaf/${SEASONS[season] || SEASONS.spring}/${wrap(n, 3)}.png`;

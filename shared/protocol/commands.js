@@ -21,6 +21,7 @@
     use: entry({ code }, (g,p,now) => g.use(p.code,now)),
     craft: entry({ code }, (g,p,now) => g.craft(p.code,now)),
     forge: entry({ code }, (g,p) => g.forge(p.code)),
+    garden: entry({ slot: integer(0,3), action: oneOf(['water','soil','pest','harvest']) }, (g,p,now) => g.gardenAct(p.slot,p.action,now)),
     bid: entry({ code }, (g,p,now) => g.bid(p.code,now)),
     absorb: entry({ index: integer(0,H.F.COINS.length-1) }, (g,p) => g.absorb(p.index)),
     sellYao: entry({}, g => g.sellYao()),

@@ -1,6 +1,6 @@
 /* HƯ GIỚI · NẠP TÀI NGUYÊN
    Nạp trước các ảnh chính (danh sách ở preload-manifest.js) và hiện tiến độ thật trên #loading.
-   Nạp xong thì mờ dần màn loading; mọi lỗi tải đều được bỏ qua để không kẹt ở màn này.
+   Tiến độ phối hợp tải ảnh và thời gian trình diễn; lỗi tải không làm kẹt màn này.
    HU_LOADER.enter dùng lại giao diện khi người chơi bắt đầu tu tiên. */
 (function (root) {
   'use strict';
@@ -11,7 +11,7 @@
   const fill = el.querySelector('.loading-fill'), pctEl = el.querySelector('.loading-pct');
   const tipEl = el.querySelector('.loading-tip'), track = el.querySelector('.loading-track');
   const list = Array.isArray(root.HU_PRELOAD) ? root.HU_PRELOAD.slice() : [];
-  const MIN_MS = 900, MAX_MS = 20000, POOL = 6;
+  const MIN_MS = 10900, MAX_MS = 30000, POOL = 6;
   const TIPS = [
     [0, 'Triệu hồi linh khí…'],
     [30, 'Dệt cảnh giới Hạ Giới…'],
@@ -46,12 +46,16 @@
     const track = screen.querySelector('.loading-track'), tip = screen.querySelector('.loading-tip');
     track.setAttribute('aria-label', 'Tiến độ chuẩn bị hành trình');
     tip.setAttribute('role', 'status');
-    const update = (p, text) => {
+    let targetProgress = 0, tipText = '', entryProgress = 0;
+    const paintEntry = () => {
+      const p = entryProgress = Math.max(entryProgress, Math.min(targetProgress, (Date.now() - startedAt) / MIN_MS));
       fill.style.transform = 'scaleX(' + p + ')';
       pct.textContent = Math.round(p * 100) + '%';
       track.setAttribute('aria-valuenow', String(Math.round(p * 100)));
-      tip.textContent = text;
+      tip.textContent = tipText;
     };
+    const update = (p, text) => { targetProgress = p; tipText = text; paintEntry(); };
+    const entryTimer = setInterval(paintEntry, 50);
     update(0, 'Chuẩn bị hành trình tu tiên…');
     doc.body.appendChild(screen);
     doc.body.classList.add('loading-game');
@@ -86,6 +90,7 @@
       update(1, 'Tiên lộ đã mở, bắt đầu tu luyện!');
       await delay(200);
     } finally {
+      clearInterval(entryTimer);
       screen.setAttribute('aria-busy', 'false');
       screen.classList.add('done');
       await delay(550);
@@ -109,6 +114,8 @@
   function finish() {
     if (finished) return;
     finished = true;
+    clearInterval(progressTimer);
+    clearTimeout(deadline);
     paint(1);
     el.setAttribute('aria-busy', 'false');
     el.classList.add('done');
@@ -119,12 +126,12 @@
   // Cảnh nền chỉ hiện khi đã tải xong, tránh nháy một khung hình đen.
   const bg = new Image();
   bg.onload = bg.onerror = () => el.classList.add('scene-ready');
-  bg.src = 'media/assets/world/bg/idle_ha_gioi.webp';
+  bg.src = 'media/assets/world/bg/ha_gioi/day/xuan.webp';
 
   function loadOne(url) {
     return new Promise(resolve => {
       const img = new Image();
-      const end = () => { done++; paint(done / Math.max(1, list.length)); resolve(); };
+      const end = () => { done++; resolve(); };
       img.onload = img.onerror = end;
       img.decoding = 'async';
       img.src = url;
@@ -145,6 +152,10 @@
   }
 
   // Chốt an toàn: mạng chậm hoặc treo cũng không giữ người chơi ở màn loading quá lâu.
-  setTimeout(finish, MAX_MS);
+  const progressTimer = setInterval(() => {
+    shown = Math.max(shown, Math.min(done / Math.max(1, list.length), now() / MIN_MS));
+    paint(shown);
+  }, 50);
+  const deadline = setTimeout(finish, MAX_MS);
   run().catch(finish);
 })(typeof window !== 'undefined' ? window : globalThis);

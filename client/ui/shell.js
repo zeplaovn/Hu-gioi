@@ -10,7 +10,7 @@
 
   let modalAction = null, modalFocus = null, modalBusy = false;
   let lastFrameTime = 0, frameCount = 0, zTop = 1;
-  let lastStageMode = '', lastIdleVfx = 0, lastSceneBg = '', lastDocTitle = '';
+  let lastStageMode = '', lastIdleVfx = 0, lastDocTitle = '';
   let heroAttackUntil = 0, heroAttackFrame = 0;
 
   const motionQuery = typeof root.matchMedia === 'function' ? root.matchMedia('(prefers-reduced-motion: reduce)') : null;
@@ -655,7 +655,7 @@
     });
     const moreBtn = $('moreMenuBtn');
     if (moreBtn) {
-      const on = wins.has('more');
+      const on = wins.has('more') || wins.has('chat');
       moreBtn.classList.toggle('on', on);
       moreBtn.setAttribute('aria-pressed', String(on));
     }
@@ -850,11 +850,7 @@
     if (gameEl) gameEl.dataset.stage = mode;
     UI.skillDock?.update();
     UI.combatFx?.sync(mode);
-    const sceneBg = H.ZONES[s.zone].bg;
-    if (sceneBg !== lastSceneBg) {
-      lastSceneBg = sceneBg;
-      $('sceneBackdrop').style.backgroundImage = "url('" + sceneBg + "')";
-    }
+    UI.environment?.update(s);
     $('stageTag').textContent = F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
     $('rateText').textContent = '+' + num(g.rate()) + ' tu vi/giây';
     $('stageHeroName').textContent = s.name;
@@ -1043,6 +1039,7 @@
     UI.tribulation?.setReduced(isReduced());
     if (isReduced() || s.settings.combatEffects === false) UI.vfx?.clearAll();
     updateSceneEffects();
+    UI.environment?.update(s);
     const note = $('motionStatus');
     if (note) note.textContent = isReduced() ? 'Đang giảm chuyển động: lá, linh khí và hiệu ứng khung hình ở trạng thái tĩnh.' : 'Đang bật đầy đủ: lá rơi, linh khí và hiệu ứng chiến đấu chuyển động.';
   }
@@ -1315,7 +1312,9 @@
       $('tribStatus').textContent = 'Thiên lôi tàn · đạo cơ đang tái tạo...';
       $('tribStageHint').textContent = 'Thiên đạo phán quyết · linh quang tụ hội';
       $('tribStage').classList.remove('struck');
-      this.wait(() => this.finish(), this.reduced ? 220 : 900);
+      const settleMs = this.reduced ? 220 : 5900;
+      UI.vfx?.tribStage({ kind: this.result?.success ? 'dot_pha' : 'chien_dau', variant: this.result?.success ? 'ha_gioi' : 'linh_khi', fps: 10, loop: true, duration: settleMs });
+      this.wait(() => this.finish(), settleMs);
     },
     finish() {
       if (!this.pageOpen || !['running', 'settling'].includes(this.phase)) return;

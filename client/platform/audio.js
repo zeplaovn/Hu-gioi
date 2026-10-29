@@ -27,6 +27,8 @@
     if (el) return el;
     el = new Audio();
     el.preload = 'none';
+    el.controls = false;
+    el.setAttribute('controlsList', 'nodownload noplaybackrate');
     el.loop = false;
     el.volume = 0;
     el.addEventListener('ended', () => next());
@@ -140,5 +142,5 @@
     UI.applySettings = function () { const r = baseApply.apply(this, arguments); sync(); return r; };
   }
 
-  UI.audio = { tracks: TRACKS, defaults: DEFAULTS, play, pause, next, sync };
+  UI.audio = { tracks: TRACKS.map(({ id, title }) => ({ id, title })), defaults: DEFAULTS, play, pause, next, sync };
 })(typeof window !== 'undefined' ? window : globalThis);

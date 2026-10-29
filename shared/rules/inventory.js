@@ -27,8 +27,8 @@ function install(H){
     if(x.effect==='KIEP'){const e=F.dan_effect('KIEP',s.realm,s.stage-1,x.sub,0,Math.max(0,s.realm-x.tier));s.shield=Math.max(s.shield,e.khien_theo_HP);s.reduction=Math.max(s.reduction,e.giam_sat_thuong)}else this.strike(2*2**x.sub,now,true);
    }else if(x.kind==='GFT'){s.stone+=this.price(key)*.5;}
    else if(x.kind==='CAT'){s.craftBoost=Math.min(2,s.craftBoost+.5)}
-   else if(x.kind==='FERT'){const plot=s.garden.find(p=>p.end>now);if(!plot)throw Error('Linh điền chưa có cây đang lớn.');plot.end=now+(plot.end-now)*.7}
-   else if(x.kind==='SEED'){if(s.garden.length>=4)throw Error('Bốn ô linh điền đã đầy.');s.garden.push({herb:x.herb,end:now+Math.max(60,F.craft_time(x.tier)*2)*1000});message='Đã gieo '+x.name}
+    else if(x.kind==='FERT'){const plot=s.garden.find(p=>!p.wilt&&p.end>now);if(!plot)throw Error('Linh điền chưa có cây đang lớn.');plot.end=now+(plot.end-now)*.7}
+    else if(x.kind==='SEED'){this.plant(x.herb,now);message='Đã gieo '+x.name}
    else throw Error(x.description||'Vật phẩm dùng trong chế tạo.');
    this.take(key);this.log(message);return message;
   },

@@ -14,8 +14,8 @@ const list = [];
 const add = (...a) => a.forEach(x => { if (!list.includes(x)) list.push(x); });
 
 // 1) Cảnh nền chính + logo (hiện ngay ở màn loading nên xếp đầu)
-add(A + 'world/bg/logo.webp', A + 'world/bg/idle_ha_gioi.webp', A + 'world/bg/background.webp');
-for (const f of ['idle_linh_gioi', 'idle_tien_gioi', 'dai_loi_kiep']) add(`${A}world/bg/${f}.webp`);
+add(A + 'world/bg/logo.webp', A + 'world/bg/ha_gioi/day/xuan.webp', A + 'world/bg/background.webp');
+walk(join(ROOT, A + 'world/bg')).map(rel).sort().forEach(p => add(p));
 // 2) Toàn bộ icon/nút giao diện (nhỏ, dùng ở mọi màn)
 walk(join(ROOT, A + 'ui')).map(rel).sort().forEach(p => add(p));
 // 3) Nhân vật Hạ Giới cả hai giới tính: màn tạo nhân vật và 5 cảnh giới đầu

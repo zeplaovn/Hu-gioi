@@ -81,7 +81,14 @@ function normalize(raw,now,Game){
  if(x.lastUpdate>now){x.lastUpdate=now;x.lastSaved=now;x.logs.unshift('Giờ máy lùi: không cộng tiến trình offline.');}
  x.enemyHp=finite(raw.enemyHp);x.manualAt=finite(raw.manualAt,0,now);
  x.craftQueue=Array.isArray(raw.craftQueue)?raw.craftQueue.filter(j=>j&&item(j.code)?.kind==='PILL'&&Number.isFinite(j.end)&&Number.isFinite(j.success)).slice(0,3).map(j=>({code:j.code,end:finite(j.end,now,now+F.craft_time(13)*1000),success:Math.max(.05,finite(j.success,.9,.95)),quality:integer(j.quality,0,3)})):[];
- x.garden=Array.isArray(raw.garden)?raw.garden.filter(g=>g&&item(g.herb)?.kind==='HERB'&&Number.isFinite(g.end)).slice(0,4).map(g=>({herb:g.herb,end:finite(g.end,now,now+F.craft_time(13)*3000)})):[];
+  const slots=new Set();
+  x.garden=Array.isArray(raw.garden)?raw.garden.filter(g=>g&&item(g.herb)?.kind==='HERB'&&Number.isFinite(g.end)).slice(0,4).map(g=>{
+   const total=Math.max(60,F.craft_time(item(g.herb).tier)*2)*1000,end=finite(g.end,now,now+total);
+   const plantedAt=Math.min(end-1,finite(g.plantedAt,Math.max(0,end-total),now));
+   const slot=Number.isInteger(g.slot)&&g.slot>=0&&g.slot<4&&!slots.has(g.slot)?g.slot:[0,1,2,3].find(i=>!slots.has(i));slots.add(slot);
+   const steps=integer(g.steps,0,6);
+   return {slot,herb:g.herb,end,plantedAt,water:finite(g.water,1,1),soil:finite(g.soil,.6,1),pest:!!g.pest,steps,good:finite(g.good,0,steps*1.25),dry:integer(g.dry,0,3),wilt:!!g.wilt};
+  }):[];
  if(old)x.logs.unshift('Đã chuyển bản lưu V5 sang V6: giữ vật phẩm, đổi cảnh giới và tỷ lệ tu vi.');
  ADVENTURES.normalize(x,raw,now);
  const g=new Game(x);x.qi=Math.min(x.qi,g.need());x.hp=Math.min(x.hp,g.stats().HP);x.mp=Math.min(x.mp,g.maxMp());x.enemyHp=Math.min(x.enemyHp,g.enemy().HP);x.pillRealmExp=Math.min(x.pillRealmExp,F.realm_exp_total(x.realm)*F.P.DAN_REALM_CAP);

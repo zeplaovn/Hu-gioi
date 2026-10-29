@@ -17,9 +17,9 @@
 
   function banner(tab) {
     const s = UI.s();
-    const art = tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop;
+    const art = tab === 'dien' ? root.HU_ASSETS.BG.garden : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop;
     return `<header class="workshop-banner" style="--art:url('${abs(art)}')">
-      <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>Các mẻ chạy nền theo giờ thật. Xong lúc offline vẫn được nhận.</p></div>
+      <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>${tab === 'dien' ? 'Gieo trồng · tưới nước · bón thổ · bắt sâu · thu hoạch.' : 'Các mẻ chạy nền theo giờ thật. Xong lúc offline vẫn được nhận.'}</p></div>
       <div class="banner-stats">
         <div><small>Kỹ năng luyện đan</small><b>${alchemySkill().toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</b></div>
         <div><small>Mẻ đang luyện</small><b>${s.craftQueue.length}/3</b></div>
@@ -86,23 +86,25 @@
 
   function plotArt(p, now) {
     if (!p) return FARM(10);
-    const total = Math.max(60, F.craft_time(H.item(p.herb).tier) * 2) * 1000, done = 1 - (p.end - now) / total;
-    return done >= .98 ? FARM(3) : done > .45 ? FARM(4) : FARM(8);
+    const { progress, ripe } = UI.g().gardenInfo(p, now);
+    return ripe ? FARM(3) : progress > .45 ? FARM(4) : FARM(8);
   }
 
   function garden() {
     const s = UI.s(), g = UI.g(), now = Date.now();
     const plots = Array.from({ length: 4 }, (_, i) => {
-      const p = s.garden[i];
+      const p = s.garden.find(p => p.slot === i);
       if (!p) return `<div class="plot empty"><img src="${FARM(10)}" alt="Ô trống" loading="lazy" decoding="async"><b>Ô ${i + 1}</b><small>Ô trống · gieo hạt giống bên dưới</small></div>`;
-      const total = Math.max(60, F.craft_time(H.item(p.herb).tier) * 2) * 1000;
-      return `<div class="plot growing" data-start="${p.end - total}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Đang lớn" loading="lazy" decoding="async"><b>${esc(H.item(p.herb).name)}</b>
-        <div class="meter-bar job-bar"><i></i></div>${live(p.end)}</div>`;
+      const action = (key, label) => btn(label, 'gardenAct', `data-slot="${i}" data-care="${key}"`, false, key === 'harvest' ? 'btn-gold' : 'btn-outline');
+      return `<div class="plot growing" data-plot="${i}" data-start="${p.plantedAt}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Linh thảo" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(H.item(p.herb).name)}</b>
+        <div class="meter-bar job-bar"><i></i></div><span class="plot-status"></span>
+        <div class="farm-meters"><label>Nước <meter class="farm-water" min="0" max="1" value="${p.water}"></meter></label><label>Đất <meter class="farm-soil" min="0" max="1" value="${p.soil}"></meter></label></div><small class="farm-pest"></small>
+        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 LT')}${action('pest', 'Bắt sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
     }).join('');
     const seeds = Object.keys(s.bag).map(H.item).filter(x => x?.kind === 'SEED' && x.tier <= s.realm + 1).sort((a, b) => a.tier - b.tier);
-    const seedRows = seeds.map(x => `<article class="shop-item">${img(x.key)}<div><h3>${esc(x.name)} <em>×${g.count(x.key)}</em></h3><p>Thu 3 ${esc(H.item(x.herb).name)} · lớn sau ${duration(Math.max(60, F.craft_time(x.tier) * 2))}</p></div>${btn('Gieo', 'consume', codeAttr(x.key), s.garden.length >= 4)}</article>`).join('');
+    const seedRows = seeds.map(x => `<article class="shop-item">${img(x.key)}<div><h3>${esc(x.name)} <em>×${g.count(x.key)}</em></h3><p>Thu 2–4 ${esc(H.item(x.herb).name)} theo chăm sóc · lớn sau ${duration(Math.max(60, F.craft_time(x.tier) * 2))}</p></div>${btn('Gieo', 'consume', codeAttr(x.key), s.garden.length >= 4)}</article>`).join('');
     const ferts = Object.keys(s.bag).map(H.item).filter(x => x?.kind === 'FERT').map(x => `<article class="shop-item">${img(x.key)}<div><h3>${esc(x.name)} <em>×${g.count(x.key)}</em></h3><p>${esc(x.description)}</p></div>${btn('Bón', 'consume', codeAttr(x.key), !s.garden.length, 'btn-outline')}</article>`).join('');
-    return `<div class="garden-field">
+    return `<p class="info-note">Cây trải qua 6 giai đoạn: nước và dưỡng chất giảm dần, có thể xuất hiện sâu. Tưới và bắt sâu để cây khỏe; bón thổ giúp tăng phẩm chất. Thiếu nước 3 giai đoạn liên tiếp sẽ héo. Khi bế quan, cây được chăm an toàn và chờ bạn thu hoạch lúc chín.</p><div class="garden-field" style="--garden-bg:url('${abs(root.HU_ASSETS.BG.garden)}')">
         <img class="decor stone" src="${FARM(1)}" alt="" loading="lazy" decoding="async"><img class="decor scarecrow" src="${FARM(2)}" alt="" loading="lazy" decoding="async">
         <div class="plot-grid">${plots}</div></div>
       <div class="screen-grid">
@@ -118,6 +120,26 @@
 
   function update() {
     const now = Date.now();
+    $$('[data-plot]').forEach(el => {
+      const p = UI.s().garden.find(p => p.slot === Number(el.dataset.plot));
+      if (!p) return;
+      const info = UI.g().gardenInfo(p, now);
+      el.dataset.endAt = p.end;
+      el.classList.toggle('ripe', info.ripe);
+      el.classList.toggle('wilt', p.wilt);
+      const art = el.querySelector('img'), src = plotArt(p, now);
+      if (art.getAttribute('src') !== src) art.src = src;
+      el.querySelector('.plot-status').textContent = p.wilt ? 'Đã héo · nhổ bỏ để gieo lại' : info.ripe ? `Chín · ${info.count} cây · ${F.SUBPHAM[info.quality]} phẩm` : `Chín sau ${duration((p.end - now) / 1000)}`;
+      el.querySelector('.farm-water').value = p.water;
+      el.querySelector('.farm-soil').value = p.soil;
+      el.querySelector('.farm-pest').textContent = p.pest ? '🐛 Có sâu bệnh!' : 'Không có sâu bệnh';
+      el.querySelector('[data-care="water"]').disabled = p.wilt || info.ripe || p.water >= 1;
+      el.querySelector('[data-care="soil"]').disabled = p.wilt || info.ripe || p.soil >= 1 || UI.s().stone < 1;
+      el.querySelector('[data-care="pest"]').disabled = p.wilt || !p.pest;
+      const harvest = el.querySelector('[data-care="harvest"]');
+      harvest.disabled = !p.wilt && !info.ripe;
+      harvest.textContent = p.wilt ? 'Nhổ bỏ' : 'Thu hoạch';
+    });
     $$('[data-start][data-end-at]').forEach(el => {
       const a = Number(el.dataset.start), b = Number(el.dataset.endAt);
       const job = el.querySelector('.job-bar i');
@@ -142,4 +164,8 @@
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('onlyReady', () => { UI.view.onlyReady = !UI.view.onlyReady; UI.view.page = 0; });
+  UI.action('gardenAct', (el, d) => {
+    const result = UI.command('garden', { slot: Number(d.slot), action: d.care });
+    UI.toast(result.message, { type: 'success', title: 'Linh điền' });
+  });
 })(typeof window !== 'undefined' ? window : globalThis);

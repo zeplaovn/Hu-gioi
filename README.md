@@ -1,48 +1,141 @@
-# Hư Giới
+# Hư Giới · Tiên Lộ Vô Tận
 
-Game idle tu tiên, đang được tổ chức lại để phát triển bản online nhiều người chơi.
+Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-## Chạy game
+**Hiện trạng:** bản chơi một người dùng lưu trữ trên thiết bị. Mã nguồn đã tách thành `client / shared / server`, có nền tảng dịch vụ người chơi để phát triển bản online.
 
-Mở `index.html` trực tiếp bằng trình duyệt, kể cả `file://`. Không cần cài dependency hoặc build.
+Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 
-## Cấu trúc
+## Bắt đầu chơi
 
-```text
-client/
-  assets/          Đường dẫn ảnh, chỉ mục animation, danh sách preload
-  platform/        Loading, âm thanh, bảo vệ nội dung trình duyệt
-  persistence/     localStorage, dự phòng, xuất/nhập JSON offline
-  session/         Phiên offline và điểm nhận lệnh từ giao diện
-  ui/              Shell, bootstrap, VFX và các màn hình
-shared/
-  data/            Cân bằng, vật phẩm, nhân vật, giao du, bí cảnh/tông môn
-  state/           Schema V7 và chuyển bản lưu V4–V7
-  rules/           Tu luyện, chiến đấu, đồ đạc, chế tạo, thế giới, thời gian
-  protocol/        Danh sách lệnh và kiểm tra payload
-  game.js          Điểm vào luật game cho browser và Node
-server/
-  services/        PlayerService: xử lý tiến trình theo từng người chơi
-  repositories/    Kho thử nghiệm trong bộ nhớ, giao dịch theo playerId
-tests/             Gameplay, bản lưu, cô lập người chơi và lệnh đồng thời
-tools/             Kiểm tra source và sinh preload manifest
-css/               Giao diện responsive
-media/             Tài nguyên hình ảnh, âm thanh
-```
+### Mở trực tiếp
 
-## Kiểm tra
+1. Tải hoặc clone repository, giữ nguyên cấu trúc thư mục.
+2. Mở [index.html](index.html) bằng trình duyệt hiện đại có bật JavaScript; hỗ trợ `file://`.
+3. Tạo nhân vật, xem intro rồi làm quen qua hướng dẫn tân thủ. Intro tự chuyển cảnh, không có nút: chạm/Enter/→ chuyển cảnh, Space tạm dừng, Esc bỏ qua. Chọn **Tiếp tục** để nạp nhân vật đã lưu.
 
-Node.js 20 trở lên, không cần `npm install`:
+Game dùng HTML, CSS và JavaScript với classic scripts; không cần build hoặc cài thư viện để chơi. Nhạc nền bắt đầu sau tương tác của người chơi.
+
+### Chạy qua HTTP trên máy
+
+Nếu có Python 3, chạy tại thư mục gốc repository:
 
 ```sh
-npm run check
-npm test
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Sau khi thêm hoặc đổi tên ảnh: `npm run preload`.
+Mở <http://127.0.0.1:8000>. Đây là máy chủ phục vụ bản game tĩnh; dịch vụ gameplay online được phát triển riêng trong `server/`.
 
-## Chuẩn bị online
+### Chơi cùng chat online demo
 
-Giao diện gửi `UI.command(type, payload)`; luật dùng chung kiểm tra điều kiện, tính phí và phần thưởng. `PlayerService` chạy cùng bộ luật với đồng hồ/RNG của máy chủ, revision và chống xử lý lặp. Bản web hiện dùng `LocalSession`.
+Với **Node.js 20+**, chạy tại thư mục gốc:
 
-Chi tiết luồng dữ liệu, ví dụ dịch vụ và các bước nối đăng nhập/API/database: [docs/architecture.md](docs/architecture.md). Kế hoạch backend online đầy đủ (stack, schema, API, bảo mật, lộ trình): [docs/backend-plan.md](docs/backend-plan.md).
+```sh
+npm run demo
+```
+
+Mở <http://127.0.0.1:8000>, vào game rồi chọn **Thêm → Chat online**. Dùng hai trình duyệt hoặc hai hồ sơ trình duyệt để thử nhắn tin qua lại; mỗi hồ sơ có bản lưu game riêng. Máy chủ cung cấp cả game tĩnh và chat HTTP/SSE, không cần cài thư viện.
+
+Để thử trên hai thiết bị cùng mạng, chạy `HOST=0.0.0.0 PORT=8000 npm run demo`, rồi mở `http://<IP-máy-chủ>:8000` trên cả hai thiết bị. Có thể đổi `PORT` nếu cổng đang được dùng.
+
+Chat có trạng thái online, kết nối lại, giữ bản nháp, giới hạn 400 ký tự/tin và 2 giây giữa các tin. Đây là kênh demo dùng đạo hiệu hiển thị, chưa có tài khoản xác thực; 100 tin gần nhất nằm trong RAM và mất khi khởi động lại máy chủ. Gameplay tiếp tục dùng phiên offline. Khi mở `file://` hoặc máy chủ Python, màn chat hiển thị hướng dẫn chạy demo.
+
+## Tính năng hiện có
+
+| Nhóm | Nội dung |
+|---|---|
+| Khởi nguyên | Intro cinematic 5 chương với chuyển cảnh, chuyển động máy quay và phụ đề; loading tối thiểu 10,9 giây (tăng 10 giây). Tạo đạo hiệu, giới tính, tuổi, chủng tộc, linh căn và phân bổ thiên phú. Hướng dẫn có thể xem lại tại **Cài đặt → Hướng dẫn**. |
+| Tu luyện | Tự tăng tu vi, bế quan khi vắng mặt, báo cáo tiến trình và giới hạn tu vi tại ngưỡng đột phá. |
+| Cảnh giới | Đột phá tiểu cảnh giới trực tiếp; đại cảnh giới có xác nhận, trang độ kiếp riêng, hiệu ứng và kết quả. VFX đột phá nhỏ và giai đoạn tụ linh quang trên độ kiếp đài kéo dài thêm 5 giây; chế độ giảm chuyển động vẫn được tôn trọng. |
+| Lịch luyện | Công kích, kỹ năng, chiến đấu tự động, yêu thú, chiến lợi phẩm, Sinh lực và Linh khí. |
+| Nhân vật | Hành trang, trang bị pháp bảo, lĩnh ngộ công pháp, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngụy linh căn có cơ hội hóa Hỗn Độn sau khi vượt lôi kiếp. |
+| Nghề phụ | Luyện đan theo hàng đợi, rèn pháp bảo, chế phù; linh điền có tưới nước, bón thổ, bắt sâu, thu hoạch 2–4 cây theo phẩm chất. Cây được chăm an toàn khi bế quan và chờ thu hoạch khi chín. |
+| Thế giới | Nhiệm vụ, bí cảnh theo thời gian, kỳ ngộ tự động và chủ động, tông môn, chức vị, cống hiến và kho đổi thưởng. |
+| Xuyên kiếp | Thọ nguyên, tọa hóa, chuyển thế, thành tựu, nâng cấp vĩnh viễn và lịch sử kiếp trước. Trọng sinh nằm trong **Thiên mệnh → Trọng sinh**. |
+| Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile và một cửa sổ con tại một thời điểm. |
+
+Menu **Thêm** gồm: **Chat online · Tri kỷ · Đạo hữu · Tông môn · PvP · Bảng xếp hạng**. Giao du, PvP, bảng xếp hạng và đấu giá hiện phục vụ chế độ mô phỏng một người chơi.
+
+Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<giới>/<day|night>/<xuan|ha|thu|dong>.webp`. Mỗi mùa tự động dài 15 phút tiến trình tu luyện, chia đều ngày/đêm. Tiên Giới dùng duy nhất `tien_gioi/bg.webp`. Có thể chọn mùa cố định tại **Cài đặt → Tứ thời**.
+
+## Lưu và chuyển tiến trình
+
+- Game tự lưu bằng `localStorage`; vào **Cài đặt → Bản lưu** để **Lưu ngay**, **Xuất JSON** hoặc **Nhập JSON**.
+- Tệp xuất có tên `hu-gioi-save.json`. Nhập bản lưu hỗ trợ V4, V5, V6 và V7, chuyển về schema **V7**.
+- Khóa chính: `huGioiWorkspaceV1`; khóa dự phòng: `huGioiWorkspaceV1Backup`. Bản hiện tại được giữ thêm trước khi nhập JSON.
+- Dữ liệu gắn với trình duyệt và địa chỉ chạy game. Dùng xuất/nhập JSON khi đổi thiết bị, trình duyệt hoặc chuyển giữa `file://` và HTTP.
+- Thiên mệnh được giữ qua trọng sinh; **Xóa tiến trình** trong Cài đặt xóa cả bản lưu và tiến trình xuyên kiếp trên thiết bị.
+
+## Cấu trúc mã nguồn
+
+```text
+index.html                 Điểm vào trình duyệt và thứ tự nạp scripts
+client/
+  assets/                  Đường dẫn ảnh, chỉ mục vật phẩm/animation, preload
+  platform/                Loading, âm thanh, bảo vệ nội dung trình duyệt
+  persistence/             localStorage, dự phòng, xuất/nhập JSON offline
+  session/                 LocalSession và ChatSession HTTP/SSE độc lập
+  ui/
+    screens/               Tu luyện, chiến đấu, nghề phụ, nhân vật, thế giới…
+    onboarding.js          Intro và hướng dẫn tân thủ
+    core.js                Bộ dựng giao diện và cầu nối phiên chơi
+    shell.js               Điều hướng, cửa sổ, nhật ký và trình diễn độ kiếp
+    environment.js         Chuyển cảnh mùa/ngày–đêm và sự kiện cảnh sắc
+    boot.js                Khởi tạo, tiếp tục game và vòng đời trang
+    vfx.js                 Hiệu ứng hình ảnh
+  main.js                  Khởi động giao diện
+shared/
+  data/                    Cân bằng, vật phẩm, linh căn, nhân vật, thế giới
+  state/                   Schema V7 và chuyển bản lưu V4–V7
+  rules/                   Luật tu luyện, chiến đấu, chế tạo, phần thưởng, thời gian
+  protocol/                Danh sách lệnh và kiểm tra payload
+  game.js                  Điểm vào luật dùng chung cho browser và Node
+server/
+  demo.js                  Chạy máy chủ game tĩnh + chat demo
+  chat/                    API chat, phiên demo, SSE, lịch sử trong RAM
+  services/                PlayerService: tạo, đồng bộ và xử lý lệnh người chơi
+  repositories/            Kho thử nghiệm trong bộ nhớ, giao dịch theo playerId
+tools/                     Kiểm tra mã, sinh preload và công cụ tài nguyên
+docs/                      Kiến trúc hiện tại và kế hoạch backend
+css/                       Giao diện responsive
+media/                     Hình ảnh và âm thanh
+_headers                   Cấu hình HTTP headers cho nền tảng hosting hỗ trợ
+```
+
+## Phát triển và kiểm tra
+
+Các công cụ JavaScript yêu cầu **Node.js 20 trở lên**. Chạy tại thư mục gốc; hiện không cần `npm install`.
+
+| Lệnh | Công dụng |
+|---|---|
+| `npm run check` | Kiểm tra cú pháp JavaScript và đường dẫn script trong `index.html`. |
+| `npm run preload` | Sinh lại `client/assets/preload-manifest.js` theo cấu hình trong `tools/gen-preload.mjs`. |
+| `npm run demo` | Chạy game và chat demo tại cổng 8000; hỗ trợ biến `HOST`, `PORT`. |
+
+Luồng thay đổi gameplay:
+
+```text
+Giao diện → UI.command(type, payload) → LocalSession
+         → shared/protocol/commands → shared/rules → state
+```
+
+- Viết luật và tính phần thưởng trong `shared/`; giao diện gửi lệnh và hiển thị kết quả. Các cài đặt trình bày dùng `UI.preference()`.
+- `shared/` dùng được trong Node qua `require('./shared/game.js')`, không phụ thuộc DOM hay `localStorage`.
+- Khi thêm module, cập nhật điểm ghép module và thứ tự script trong `index.html` để cả Node lẫn `file://` nạp đúng.
+- Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và cấu hình preload rồi chạy `npm run preload`. Intro được nạp riêng khi bắt đầu nhân vật.
+
+## Nền tảng online
+
+`server/services/player-service.js` đã có:
+
+- State riêng theo người chơi, với đồng hồ và bộ sinh số ngẫu nhiên do máy chủ cung cấp.
+- Kiểm tra lệnh, điều kiện gameplay, tạo nhân vật và tính tiến trình bế quan.
+- `expectedRevision` để phát hiện cập nhật đồng thời; `requestId` và lịch sử kết quả để xử lý retry không cấp thưởng hoặc trừ tiền lặp.
+- Giao dịch hoàn tác khi lỗi và snapshot kết quả không chứa seed bí cảnh.
+
+`MemoryPlayers` là kho thử nghiệm trong một tiến trình, mất dữ liệu khi tiến trình dừng. Bản web hiện kết nối `LocalSession`; API gameplay HTTP/WebSocket, đăng nhập, database bền vững và gameplay nhiều người là các bước tiếp theo. Chat demo có API riêng cùng origin; không nối `PlayerService` ra mạng. Stack nêu trong kế hoạch backend đang ở mức đề xuất.
+
+## Tài liệu liên quan
+
+- [Kiến trúc hiện tại](docs/architecture.md): ranh giới client/shared/server, ánh xạ file cũ → mới, hợp đồng lệnh và ví dụ `PlayerService`.
+- [Kế hoạch backend online](docs/backend-plan.md): đề xuất stack, schema dữ liệu, API, xác thực, triển khai và lộ trình nhiều người chơi.

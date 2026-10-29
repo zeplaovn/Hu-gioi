@@ -16,7 +16,7 @@ function install(H){
    if(s.auto&&!offline){s.combatClock+=seconds;const interval=Math.max(.5,F.kill_time(s.zone)/10);let turns=0;while(s.auto&&s.combatClock>=interval&&turns<300){s.combatClock-=interval;this.strike(1,now,true);turns++}}
    const st=this.stats(now);s.hp=Math.min(st.HP,s.hp+st.HP*(.008+this.rootEffects().regen)*seconds);s.mp=Math.min(this.maxMp(),s.mp+this.maxMp()*.018*seconds);
    const dungeon=this.finishDungeon(now),encounters=this.advanceEncounters(seconds,now,eff),sect=this.finishSect(now,offline);
-   const batches=this.finishJobs(now);s.buffs=s.buffs.filter(b=>b.end>now);s.lastUpdate=now;s.lastSaved=now;this.settleAuction(now);
+    const batches=this.finishJobs(now,offline);s.buffs=s.buffs.filter(b=>b.end>now);s.lastUpdate=now;s.lastSaved=now;this.settleAuction(now);
    return {seconds,exp:s.totalRunExp-beforeExp,stone:s.stone-before,batches,dungeon,encounters,sect,sectReady:!!s.sect.mission&&s.sect.mission.end<=now,died};
   }
  });

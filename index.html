@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080d12">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'none'; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'self'; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="Hư Giới — game idle tu tiên một người chơi, chạy hoàn toàn trong trình duyệt.">
 <title>Hư Giới · Tiên Lộ Vô Tận</title>
 <link rel="icon" href="data:,">
@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/screens.css">
 <link rel="stylesheet" href="css/onboarding.css">
+<link rel="stylesheet" href="css/chat.css">
 <link rel="stylesheet" href="css/vfx.css">
 <script src="client/platform/content-guard.js"></script>
 </head>
@@ -140,10 +141,12 @@
   <section id="stage" class="box stage" tabindex="-1" aria-label="Sân khấu tu hành">
     <div class="scene stage-scene" id="scene">
       <div class="scene-bg" id="sceneBackdrop"></div>
+      <div class="scene-bg scene-transition" id="sceneTransition" aria-hidden="true"></div>
       <div class="scene-shade"></div>
       <div class="fx-leaves" aria-hidden="true"></div>
       <div class="stage-hud">
         <span class="stage-tag" id="stageTag">Hạ Giới · Thanh Vân Sơn</span>
+        <span class="stage-weather" id="stageWeather"></span>
         <span class="stage-rate" id="rateText">+0 tu vi/giây</span>
       </div>
       <div class="idle-aura" id="idleAura" aria-hidden="true"></div>
@@ -169,19 +172,20 @@
         </div>
       </div>
       <div class="idle-quote" id="idleQuote"></div>
+      <div class="season-announcement" id="seasonAnnouncement" role="status" aria-live="polite" hidden></div>
     </div>
   </section>
 
   <section id="logPanel" class="box log-panel" aria-labelledby="logTitle">
     <header class="log-head">
-      <div class="log-title"><span class="eyebrow gold">THIÊN MỆNH</span><b id="logTitle">Nhật ký thông báo</b></div>
+      <div class="log-title"><span class="eyebrow gold">THIÊN MỆNH</span><b id="logTitle">Nhật ký tu tiên</b></div>
       <div class="log-tools">
         <span class="log-count" id="logCount" aria-live="polite">0</span>
         <button type="button" id="logToggle" class="log-toggle" aria-expanded="true" aria-controls="logFeed" title="Thu gọn nhật ký" aria-label="Thu gọn nhật ký">▾</button>
       </div>
     </header>
     <div class="log-wrap" id="logWrap">
-      <div class="log" id="logFeed" role="log" aria-live="polite" aria-relevant="additions" aria-label="Nhật ký thông báo tu hành" tabindex="0"></div>
+      <div class="log" id="logFeed" role="log" aria-live="polite" aria-relevant="additions" aria-label="Nhật ký tu tiên" tabindex="0"></div>
       <button type="button" class="log-jump" id="logJump" hidden>↓ Tin mới</button>
     </div>
   </section>
@@ -189,6 +193,9 @@
   <nav id="menu" class="box" aria-label="Màn chơi"></nav>
   <div id="moreMenu" class="more-menu glass" role="menu" aria-labelledby="moreMenuBtn" hidden>
     <div class="more-menu-head"><span class="eyebrow gold">GIAO DU</span><b>Thêm</b></div>
+    <button type="button" role="menuitem" data-more-go="chat">
+      <span class="more-ico" aria-hidden="true">✉</span><span><b>Chat online</b><small>Truyền âm thế giới · demo</small></span>
+    </button>
     <button type="button" role="menuitem" data-more-go="more:friends">
       <span class="more-ico" aria-hidden="true">♡</span><span><b>Tri kỷ</b><small>Bạn đạo thân thiết</small></span>
     </button>
@@ -322,10 +329,12 @@
 <script src="client/assets/item-index.js"></script>
 <script src="client/assets/assets.js"></script>
 <script src="client/session/local-session.js"></script>
+<script src="client/session/chat-session.js"></script>
 <script src="client/persistence/local-store.js"></script>
 <script src="client/ui/core.js"></script>
 <script src="client/ui/vfx.js"></script>
 <script src="client/ui/shell.js"></script>
+<script src="client/ui/environment.js"></script>
 <script src="client/platform/audio.js"></script>
 <script src="client/ui/screens/idle.js"></script>
 <script src="client/ui/screens/combat.js"></script>
@@ -336,6 +345,7 @@
 <script src="client/ui/screens/world.js"></script>
 <script src="client/ui/screens/settings.js"></script>
 <script src="client/ui/screens/more.js"></script>
+<script src="client/ui/screens/chat.js"></script>
 <script src="client/ui/screens/meta.js"></script>
 <script src="client/ui/onboarding.js"></script>
 <script src="client/ui/boot.js"></script>

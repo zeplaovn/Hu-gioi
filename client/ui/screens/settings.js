@@ -25,7 +25,7 @@
     const st = UI.s().settings;
     return `<div class="screen-grid">
       ${card('Tứ thời · cảnh sắc bốn mùa', `
-        <p>Chọn cảnh sắc cho tiên sơn. Chế độ tự động đổi mùa mỗi 15 phút tu luyện, kể cả thời gian bế quan.</p>
+        <p>Chọn cảnh sắc cho tiên sơn. Mỗi mùa kéo dài 15 phút tu luyện: 7 phút 30 giây ban ngày, rồi 7 phút 30 giây ban đêm, kể cả tiến trình bế quan. Hạ Giới và Linh Giới đổi cảnh theo tứ thời; Tiên Giới giữ tiên cảnh trường tồn.</p>
         <div class="settings-row"><label for="seasonSetting">Chế độ mùa</label>${select('seasonSetting', st.season, [['auto', 'Tự động · Xuân → Hạ → Thu → Đông'], ...SEASONS.map(([id, name, icon]) => [id, icon + ' ' + name])])}</div>
         <div class="season-options">${SEASONS.map(([, name, icon]) => `<span>${icon} ${name}</span>`).join('')}</div>
         <div class="settings-row"><label for="seasonEffectsSetting">Lá rơi và cảnh sắc theo mùa</label><input type="checkbox" id="seasonEffectsSetting" ${st.seasonEffects ? 'checked' : ''}></div>
@@ -85,7 +85,7 @@
         <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Quyết có sẵn. Công pháp tự vận hành nếu còn ô trống; quản lý trong tab <b>Công pháp</b>.</p>
         <p><b>3.</b> Ở <b>Lịch luyện</b>, chọn khu vực, đổi loại đối thủ, dùng bốn kỹ năng hoặc bật tự chiến để farm linh thạch, linh thảo và yêu đan.</p>
         <p><b>4.</b> <b>Nghề phụ</b> chạy nền: luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Kết quả vẫn được nhận khi offline.</p>
-        <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký thông báo; đại cảnh giới mở Độ kiếp đài.</p>
+        <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký tu tiên; đại cảnh giới mở Độ kiếp đài.</p>
         <p><b>6.</b> <b>Thế giới → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Kỳ ngộ</b> tự xuất hiện khi tu luyện, có sổ khám phá riêng.</p>
         <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Thiên mệnh</b> để xem thành tựu, nâng cấp vĩnh viễn và tab Trọng sinh.</p>
         <button class="btn btn-gold" data-act="tutorial">Xem lại hướng dẫn từng bước</button>`, { eyebrow: 'TIÊN LỘ' })}
@@ -100,7 +100,7 @@
         <p class="info-note">Phím kỹ năng chỉ có tác dụng ở màn Lịch luyện. Khi hộp thoại mở, phím tắt toàn cục tạm khóa. Thiên kiếp mở từ nút Đột phá khi đủ duyên, không có phím tắt riêng.</p>
         <div class="action-group"><button class="btn btn-outline" data-go="character:bag">Hành trang</button><button class="btn btn-outline" data-go="world:quests">Nhiệm vụ</button></div>`, { eyebrow: 'ĐIỀU KHIỂN' })}
       ${card('Nhật ký & tiến trình xuyên kiếp', `
-        <p>• Nhật ký thông báo dưới sân khấu nhận cả log tu hành và toast. Dòng mới gõ dần; cuộn lên để đọc cũ, bấm <b>↓ Tin mới</b> để về cuối.</p>
+        <p>• Nhật ký tu tiên dưới sân khấu nhận cả log tu hành và toast. Dòng mới gõ dần; cuộn lên để đọc cũ, bấm <b>↓ Tin mới</b> để về cuối.</p>
         <p>• Nút thu gọn nhật ký được ghi nhớ trên thiết bị. Chế độ giảm chuyển động hiển thị ngay, không gõ chữ.</p>
         <p>• <b>Thiên mệnh</b> giữ nâng cấp, thành tựu và bia kiếp trước qua trọng sinh; chỉ mất khi xóa toàn bộ bản lưu.</p>
         <p>• <b>Nhiệm vụ tông môn</b> chạy theo thời gian thực, kể cả khi đóng game; nhận cống hiến khi hoàn tất.</p>`, { eyebrow: 'XUYÊN KIẾP' })}

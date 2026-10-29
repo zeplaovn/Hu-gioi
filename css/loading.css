@@ -7,7 +7,7 @@
 }
 #loading.done,#gameLoading.done{opacity:0;visibility:hidden;pointer-events:none}
 body.loading-game{overflow:hidden}
-.loading-scene{position:absolute;inset:0;background:url('../media/assets/world/bg/idle_ha_gioi.webp') center/cover no-repeat;opacity:0;transition:opacity .8s ease}
+.loading-scene{position:absolute;inset:0;background:url('../media/assets/world/bg/ha_gioi/day/xuan.webp') center/cover no-repeat;opacity:0;transition:opacity .8s ease}
 #loading.scene-ready .loading-scene,#gameLoading.scene-ready .loading-scene{opacity:1}
 /* Lớp phủ: sáng nhẹ phía trên để logo mực đen nổi rõ, tối dần xuống đáy nơi đặt thanh tiến độ. */
 .loading-veil{position:absolute;inset:0;background:
