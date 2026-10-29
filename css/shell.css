@@ -667,3 +667,30 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 /* Nhãn "Thọ nguyên" dài hơn Sinh lực/Linh khí: nới cột nhãn để không đè lên thanh. */
 .vital-row{grid-template-columns:68px minmax(0,1fr)}
 #game:not([data-layout="wide"]) .vital-row{grid-template-columns:62px minmax(0,1fr)}
+
+/* ===== SỬA BỐ CỤC (rà soát nhiều kích thước màn hình) ===== */
+/* Tên cảnh giới không xuống dòng ở cột trạng thái hẹp; nhãn thanh có khoảng thở với thanh. */
+.status-title h2{font-size:clamp(15px,1vw,20px);overflow-wrap:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vital-row{gap:8px}
+.vital-row .vital-label{white-space:nowrap;font-size:12px}
+/* Năm chỉ số thiên phú: nhãn một dòng, thu nhỏ nhẹ để "Phúc Duyên" không gãy dòng ở điện thoại. */
+.status-talent{white-space:nowrap}
+.status-talent span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+#game:not([data-layout="wide"]) .status-talent{font-size:9.5px;letter-spacing:-.01em}
+/* Màn ngang thấp (điện thoại xoay ngang): thanh nhỏ không đủ chỗ cho chữ, ẩn chữ trong thanh; thanh kỹ năng xếp hàng ngang. */
+@media(max-height:520px){
+  .status-progress .bar .bar-text{display:none}
+  .status-progress .bar{height:9px}
+  .vital-row .meter{height:12px}
+  .vital-row .meter .bar-text{font-size:9.5px}
+  .skill-dock{left:6px;top:8px;bottom:auto;transform:none}
+  #game[data-stage="combat"] .skill-dock{display:block}
+  .skill-dock .skillbar{flex-direction:column;padding:4px;gap:4px}
+  .vital-row,#game[data-layout="wide"] .vital-row{grid-template-columns:66px minmax(0,1fr);font-size:11px}
+  .vital-row .vital-label{font-size:10.5px;letter-spacing:-.02em}
+  .skill-dock .skill-btn,.skill-dock .strike-btn{width:38px;height:38px}
+  .skill-dock .skill-btn img{width:26px;height:26px}
+  .skill-dock .strike-btn::before{font-size:18px}
+}
+#game:not([data-layout="wide"]) .vital-row{grid-template-columns:64px minmax(0,1fr)}
+#game:not([data-layout="wide"]) .vital-row .vital-label{font-size:11.5px}

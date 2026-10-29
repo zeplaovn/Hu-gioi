@@ -543,6 +543,16 @@
         const top = status.bottom + 8;
         return this.clampRect({ x: 8, y: top, w: W - 16, h: menu.top - 8 - top });
       }
+      /* Lịch luyện: hero và quái đứng ở hai bên giữa sân khấu nên cửa sổ ở giữa sẽ che trận đánh.
+         Trên màn rộng, đặt cửa sổ dưới sân khấu (đè lên bảng nhật ký, nhật ký chiến đấu đã có trong cửa sổ). */
+      if (id === 'combat' && layout === 'wide' && stage) {
+        const top = stage.bottom + 6, h = H - top - 8;
+        if (h >= 220) return this.clampRect({ x: stage.left, y: top, w: stage.width, h });
+      }
+      /* Màn ngang thấp: chừa cột kỹ năng ở mép trái sân khấu. */
+      if (id === 'combat' && layout === 'wide' && stage && H <= 520) {
+        return this.clampRect({ x: stage.left + 58, y, w: Math.min(width, stage.width - 66), h: height });
+      }
       return this.clampRect({ x, y, w: width, h: height });
     },
     loadRect(id) {
