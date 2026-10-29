@@ -529,9 +529,13 @@
       let height = Math.min(layout === 'portrait' ? H * 0.7 : H * 0.88, 800, maxH);
       height = Math.max(180, Math.min(height, H - 16));
       let x, y;
+      /* Màn rộng: sân khấu thấp (~500px ở 768p) nên cửa sổ nội dung dài bị cắt sớm. Cho cửa sổ cao đến hết màn hình,
+         đè lên phần nhật ký bên dưới (kéo thả được) để thấy nhiều nội dung hơn mà không phải cuộn. */
+      const tall = layout === 'wide' && stage && H > 520 && id !== 'combat';
+      if (tall) height = Math.max(height, Math.min(800, H - stage.top - 16));
       if (stage) {
         x = stage.left + (stage.width - width) / 2;
-        y = stage.top + (stage.height - height) / 2;
+        y = tall ? stage.top + 10 : stage.top + (stage.height - height) / 2;
       } else {
         x = (W - width) / 2;
         y = (H - height) / 2;
