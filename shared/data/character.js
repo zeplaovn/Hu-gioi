@@ -5,8 +5,8 @@ const node=typeof module!=='undefined'&&module.exports;
 const F=node?require('../rules/formulas.js'):root.HU_FORMULAS;
 const R=node?require('./roots.js'):root.HU_ROOTS;
 function rootType(roots){const n=roots.filter(x=>x>=50).length;return ['Thiên','Thiên','Song','Tam hành','Tứ hành','Ngụy'][n]}
-/* Hỗn Độn không còn gieo được khi tạo nhân vật: chỉ Ngụy mới hóa thành sau lôi kiếp (xem Game.chaosChance). */
-function rollRoots(rng=Math.random){const v=rng();let type=v<.015?'Âm Dương':v<.075?'Dị':v<.225?'Thiên':v<.545?'Song':v<.795?'Tam hành':v<.945?'Tứ hành':'Ngụy';const count={Thiên:1,Song:2,'Tam hành':3,'Tứ hành':4,Ngụy:5,Dị:1,'Âm Dương':2}[type],order=[0,1,2,3,4];for(let i=4;i>0;i--){const j=Math.floor(rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}const roots=order.map(()=>15+Math.floor(rng()*30));let rootSub='';if(type==='Dị'){rootSub=R.DI_KEYS[Math.floor(rng()*R.DI_KEYS.length)];const from=R.DI_LINH_CAN[rootSub].from;roots[from[Math.floor(rng()*from.length)]]=65+Math.floor(rng()*36)}else order.slice(0,count).forEach(i=>roots[i]=65+Math.floor(rng()*36));return {roots,rootType:type,rootSub}}
+/* Không gieo Âm Dương hoặc Hỗn Độn; giữ tỷ lệ tương đối của các loại còn lại. */
+function rollRoots(rng=Math.random){const v=.015+rng()*.985;let type=v<.075?'Dị':v<.225?'Thiên':v<.545?'Song':v<.795?'Tam hành':v<.945?'Tứ hành':'Ngụy';const count={Thiên:1,Song:2,'Tam hành':3,'Tứ hành':4,Ngụy:5,Dị:1}[type],order=[0,1,2,3,4];for(let i=4;i>0;i--){const j=Math.floor(rng()*(i+1));[order[i],order[j]]=[order[j],order[i]]}const roots=order.map(()=>15+Math.floor(rng()*30));let rootSub='';if(type==='Dị'){rootSub=R.DI_KEYS[Math.floor(rng()*R.DI_KEYS.length)];const from=R.DI_LINH_CAN[rootSub].from;roots[from[Math.floor(rng()*from.length)]]=65+Math.floor(rng()*36)}else order.slice(0,count).forEach(i=>roots[i]=65+Math.floor(rng()*36));return {roots,rootType:type,rootSub}}
 const RACES=[['nhan','Nhân',34],['ma','Ma',16],['yeu','Yêu',16],['linh','Linh',16],['tien_due','Tiên Duệ',6],['thu','Thú',12]];
 const LEGACY_RACES={tien:'tien_due'};
 const NAME_MAX=20;

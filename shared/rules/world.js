@@ -4,7 +4,7 @@
 function install(H){
  const {ITEMS,ZONES,QUESTS,item}=H;
  Object.assign(H.Game.prototype,{
-  travel(zone){if(!Number.isInteger(zone)||!ZONES[zone]||zone>this.s.realm)throw Error('Cảnh giới chưa đủ.');const s=this.s;s.zone=zone;s.enemyHp=0;s.combatClock=0;s.auto=false;if(!s.locations.includes(zone)){s.locations.push(zone);s.progress.travel++}this.log('Đến '+ZONES[zone].name+'.')},
+  travel(zone){if(!Number.isInteger(zone)||!ZONES[zone]||zone>this.s.realm)throw Error('Cảnh giới chưa đủ.');const s=this.s;s.zone=zone;s.enemyHp=0;s.combatClock=0;s.auto=false;s.designCombat.enemyEffects=[];if(!s.locations.includes(zone)){s.locations.push(zone);s.progress.travel++}this.log('Đến '+ZONES[zone].name+'.')},
   lots(){return ITEMS.filter(x=>x.kind==='EQ'&&x.tier===this.s.realm).slice(0,3)},
   bid(code,now=this.s.lastUpdate){this.settleAuction(now);if(!this.lots().some(x=>x.code===code))throw Error('Lô này không còn mở.');if(this.s.auction.offers[code])throw Error('Đã đặt lô này.');const cost=this.price(code);this.spend(cost);this.s.auction.offers[code]=cost},
   settleAuction(now){const cycle=Math.floor(now/3600000);if(cycle<=this.s.auction.cycle)return;for(const code of Object.keys(this.s.auction.offers)){if(item(code)){this.add(code);this.log('Đấu giá mô phỏng: nhận '+item(code).name+'.')}}this.s.auction={cycle,offers:{}}},

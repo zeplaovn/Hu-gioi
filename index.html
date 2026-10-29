@@ -45,10 +45,6 @@
       <h2 id="welcomeRebirth" class="create-rebirth center">Đây là lần trùng sinh thứ 1 của bạn</h2>
       <p class="story">Bạn vốn là một người bình thường nơi trần thế, nhưng một lần mưa gió đã đưa bạn xuyên vào <b class="gold">Hư Giới</b> — nơi tiên nhân, yêu ma và thiên kiếp cùng tranh đấu. Từ đây, bạn bắt đầu một hành trình tu hành theo cách của riêng mình.</p>
       <p class="story dim small">Chọn đạo hiệu, tuổi, chủng tộc và linh căn rồi nhập định: tu vi tự tăng theo thời gian, kể cả khi bạn đóng game. Kỳ ngộ sẽ tìm đến, bí cảnh chờ bạn thám hiểm.</p>
-      <div id="raceInfo" class="info-box" aria-live="polite"></div>
-      <div id="rootBox" class="info-box root-box" aria-live="polite">
-        <div id="rootDescription"></div>
-      </div>
     </div>
     <form id="createForm" class="create-right" autocomplete="off" novalidate>
       <div class="create-heading">
@@ -66,11 +62,11 @@
         <label>Tuổi :</label>
         <div id="ageValue" class="field">…</div>
         <button type="button" id="rollAge" class="dice" title="Gieo tuổi ngẫu nhiên" aria-label="Gieo tuổi ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
-        <label>Chủng tộc :</label>
-        <div id="raceValue" class="field">…</div>
+        <label for="raceValue">Chủng tộc :</label>
+        <button type="button" id="raceValue" class="field creation-info-trigger" aria-haspopup="dialog" aria-label="Xem thông tin chủng tộc">…</button>
         <button type="button" id="rollRace" class="dice" title="Gieo chủng tộc ngẫu nhiên" aria-label="Gieo chủng tộc ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
-        <label>Linh căn :</label>
-        <div id="rootValue" class="field root-field">…</div>
+        <label for="rootValue">Linh căn :</label>
+        <button type="button" id="rootValue" class="field root-field creation-info-trigger" aria-haspopup="dialog" aria-label="Xem thông tin linh căn">…</button>
         <button type="button" id="rollRoot" class="dice" title="Gieo linh căn ngẫu nhiên" aria-label="Gieo linh căn ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
         <p id="nameNote" class="name-note form-note" role="alert" hidden></p>
       </div>
@@ -83,6 +79,10 @@
         <p class="foot-note">Điểm còn dư sẽ được phân ngẫu nhiên khi bắt đầu. Dữ liệu được lưu trên thiết bị này.</p>
       </div>
     </form>
+    <dialog id="creationInfoDialog" class="creation-info-dialog" aria-labelledby="creationInfoTitle">
+      <header class="creation-info-header"><h2 id="creationInfoTitle"></h2><button type="button" id="creationInfoClose" aria-label="Đóng thông tin">×</button></header>
+      <div id="creationInfoContent" class="info-box root-box"></div>
+    </dialog>
   </div>
 </section>
 
@@ -303,6 +303,8 @@
 <script src="client/platform/loader.js"></script>
 <script src="shared/data/balance.js"></script>
 <script src="shared/data/items.js"></script>
+<script src="shared/data/design-raw.js"></script>
+<script src="shared/data/design.js"></script>
 <script src="shared/rules/formulas.js"></script>
 <script src="shared/data/catalog.js"></script>
 <script src="shared/data/roots.js"></script>
@@ -314,6 +316,7 @@
 <script src="shared/rules/progression.js"></script>
 <script src="shared/rules/inventory.js"></script>
 <script src="shared/rules/crafting.js"></script>
+<script src="shared/rules/defined-combat.js"></script>
 <script src="shared/rules/combat.js"></script>
 <script src="shared/rules/world.js"></script>
 <script src="shared/rules/social.js"></script>

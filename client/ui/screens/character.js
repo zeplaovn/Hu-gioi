@@ -27,7 +27,7 @@
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();
     return `<div class="screen-grid">
-      ${card('Chiến lực', [['Sinh lực', st.HP], ['Công kích', st.ATK], ['Phòng thủ', st.DEF], ['Thân pháp', st.SPD], ['Chiến lực', st.CP]].map(([k, v]) => row(k, num(v))).join('') + row('Bạo kích', pct(st.CRIT)) + row('Né tránh', pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
+      ${card('Chiến lực', [['Sinh lực', st.HP], ['Linh khí tối đa', g.maxMp()], ['Thể lực', st.STA], ['Công kích', st.ATK], ['Phòng thủ', st.DEF], ['Thân pháp', st.SPD], ['Chiến lực', st.CP]].map(([k, v]) => row(k, num(v))).join('') + row('Bạo kích', pct(st.CRIT)) + row('Sát thương bạo kích', pct(st.CRIT_DMG)) + row('Né tránh', pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
       ${card('Tu luyện', `
         ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row('Tốc độ', num(g.rate()) + '/giây')}
         ${row('Tu vi từ đan / trần', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
@@ -46,7 +46,7 @@
     const s = UI.s(), g = UI.g();
     const learned = Object.keys(s.learned).map(key => `<div class="technique-item">${img(key)}<div><h3>${esc(H.item(key).name)}</h3>
       <p>${H.item(key).realm} · ${F.SUBPHAM[H.item(key).sub]} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.item(key).description)}</p></div>
-      ${btn(s.activeManuals.includes(key) ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))}</div>`).join('');
+      ${['BT-900','BT-901'].includes(H.item(key).code)?'<span class="gold">Đã học bí tịch nghề</span>':btn(s.activeManuals.includes(key) ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))}</div>`).join('');
     const ups = ['Công kích +2%', 'Tốc tu +2%', 'Phòng thủ +2%', 'Điểm né +0,5%'].map((name, i) => {
       const n = s.tech[i] - 1;
       return card(`${name} · ${n}/20`, row('Giá một cấp', moneyHTML(F.cost(g.upgradeBase(i), 1.15, n))) +
@@ -64,8 +64,13 @@
   }
 
   function itemDescription(key) {
-    const x = H.item(key);
-    return `<p>${esc(x.description)}</p>${row('Cảnh giới', x.realm)}${row('Phẩm chất', (x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub])}${row('Mã', esc(x.code))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}`;
+    const x=H.item(key),d=x.design,e=H.DESIGN.effects[x.code],q=2**(x.sub-H.BY_ID[x.code].sub);
+    let detail='';
+    if(d?.group==='pháp bảo')detail=row('Chỉ số','HP +'+num(d['hp cộng']*q)+' · MP +'+num(d['mp cộng']*q)+' · ATK +'+num(d['atk cộng']*q)+' · DEF +'+num(d['def cộng']*q))+row('Né / bạo kích','+'+num(d['eva cộng (%)']*q)+'% / +'+num(d['crit cộng (%)']*q)+'%')+(e?row('Hiệu ứng',esc(e['hiệu ứng'])+' · '+esc(e['điều kiện kích hoạt'])):'');
+    else if(d?.group==='công pháp')detail=row('Hệ',esc(d['hệ']))+row('Kỹ năng',esc(d['công dụng'])+' · '+d['tiêu hao mp']+' MP · '+d['hồi chiêu (giây)']+' giây');
+    else if(d?.group==='bí tịch')detail=row('Thể loại',esc(d['thể loại']))+row('Công dụng',esc(d['công dụng']));
+    else if(d?.group==='linh thảo')detail=row('Cách dùng',esc(d['cách dùng']))+row('Hiệu quả',esc(d['hiệu quả']));
+    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub]))}${row('Mã',esc(x.code)+(x.designId?' · '+esc(x.designId):''))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${detail}`;
   }
 
   function bag() {
@@ -81,7 +86,7 @@
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
     const visible = xs;
     if (!xs.some(x => x.key === v.selected)) v.selected = visible[0]?.key || '';
-    const x = H.item(v.selected), usable = x && ['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind);
+    const x = H.item(v.selected), usable = x && (['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind)||(x.kind==='HERB'&&x.design?.['cách dùng']?.includes('ăn trực tiếp')));
     const main = x ? `${img(v.selected, 'detail-img')}<h3 class="detail-title">${esc(x.name)}</h3>${itemDescription(v.selected)}${row('Giá bán', moneyHTML(F.shop_sell_price(g.price(v.selected))))}
       <div class="detail-actions">${btn(x.kind === 'EQ' ? (s.equipment.includes(v.selected) ? 'Tháo' : 'Trang bị') : x.kind === 'BT' ? 'Lĩnh ngộ' : usable ? 'Sử dụng' : 'Công dụng',
         x.kind === 'EQ' ? 'equip' : x.kind === 'BT' ? 'learn' : usable ? 'consume' : 'info', codeAttr(v.selected))}${btn('Bán 1', 'sell', codeAttr(v.selected), s.equipment.includes(v.selected), 'btn-outline')}</div>` : empty('Chọn một vật phẩm.');

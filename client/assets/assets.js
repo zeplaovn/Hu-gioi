@@ -163,7 +163,7 @@
    * bằng CSS (background-position tính theo %), nên đổi kích thước ô thế nào cũng đúng. Mã ngoài bảng dùng ảnh riêng. */
   const BLANK = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27128%27 height=%27128%27/%3E';
   function itemImg(x) {
-    const ref = ITEM_DB.items[String(x && x.code || '')];
+    const ref = ITEM_DB.items[String(x && (x.imageCode || x.code) || '')];
     if (!ref) return { src: BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png', style: '' };
     const at = ref.indexOf('#');
     if (at < 0) return { src: BASE + ref, style: '' };

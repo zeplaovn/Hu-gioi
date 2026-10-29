@@ -78,12 +78,14 @@
     Object.assign(H.Game.prototype, {
       activeElements() { return ELEMENT_NAMES.map((_, i) => i).filter(i => this.s.roots[i] >= 50); },
       rootEffects() {
-        const out = { attack: 0, hp: 0, guard: 0, rate: 0, crit: 0, dodge: 0, regen: 0 };
+        const out = { attack: 0, hp: 0, mp: 0, sta: 0, guard: 0, rate: 0, crit: 0, dodge: 0, regen: 0, heal: 0, mpRegen: 0, critDmg: 0, reduction: 0 };
         const els = this.activeElements(), scale = 1 / Math.sqrt(Math.max(1, els.length));
         for (const i of els) for (const [key, value] of Object.entries(TEMPER_EFFECTS[i])) out[key] += value * this.s.rootCraft.levels[i] * scale;
-        // Dị linh căn có thế mạnh riêng; Hỗn Độn bao trùm cả bốn Dị nên nhận 50% mỗi loại.
-        const di = this.s.rootType === 'Dị' ? [[this.s.rootSub, 1]] : this.s.rootType === 'Hỗn Độn' ? RT.DI_KEYS.map(k => [k, .5]) : [];
-        for (const [k, w] of di) for (const [key, value] of Object.entries(RT.DI_LINH_CAN[k]?.effects || {})) out[key] += value * w;
+        const base=[{attack:.05,crit:.02},{hp:.08,heal:.15},{mp:.08,dodge:.02,mpRegen:.10},{attack:.08,critDmg:.05},{guard:.08,hp:.05,reduction:.05}];
+        const add=effects=>{for(const [key,value] of Object.entries(effects||{}))out[key]+=value;};
+        if(this.s.rootType==='Dị')add(RT.DI_LINH_CAN[this.s.rootSub]?.effects);
+        else if(this.s.rootType==='Hỗn Độn')add({hp:.15,mp:.15,attack:.10,guard:.10,dodge:.05,crit:.05,critDmg:.20});
+        else if(this.s.rootType!=='Âm Dương')for(const i of els)add(base[i]);
         return out;
       },
       temperCost(i) { return 2 + 2 * (this.s.rootCraft.levels[i] || 0); },
@@ -99,11 +101,15 @@
       addEssence(i, n) { this.s.rootCraft.essence[i] = Math.min(1e9, this.s.rootCraft.essence[i] + n); },
       affinity(element) {
         if (element < 0) return 0;
-        const els = this.activeElements(), scale = 1 / Math.sqrt(Math.max(1, els.length));
-        const a = els.reduce((sum, i) => sum + ((i === element ? .2 : BEATS[i] === element ? .3 : 0) * (1 + .08 * this.s.rootCraft.levels[i]) - (BEATS[element] === i ? .25 : 0)) * scale, 0);
-        return Math.max(-.35, Math.min(.6, a));
+        const els = this.activeElements();
+        if(this.s.rootType==='Hỗn Độn')return .10;
+        if(this.s.rootType==='Dị')return els.includes(element)?.20:0;
+        if(els.some(i=>BEATS[i]===element))return .20;
+        return els.some(i=>BEATS[element]===i)?-.20:0;
       },
       dungeonEnemy(d, floor) {
+        const boss=floor===d.floors&&H.DESIGN.raw.boss.find(x=>x['tên boss']===d.boss);
+        if(boss)return F.combat_power(boss.hp,boss.atk,boss.def,boss['crit (%)']/100,boss['crit_dame (%)']/100);
         const st = F.stats(d.realm, 0), mult = (.48 + .12 * (floor - 1)) * (floor === d.floors ? 1.5 : 1);
         return F.combat_power(st.HP, st.ATK, st.DEF) * mult;
       },
@@ -113,10 +119,11 @@
         for (let floor = 1; floor <= d.floors; floor++) {
           if (hp < st.HP * .25) break;
           const enemy = this.dungeonEnemy(d, floor), ratio = enemy / Math.max(1, power), mitigation = enemy / (enemy + .6 * st.DEF);
-          let enemyHp = enemy * 3;
+          const boss=floor===d.floors&&H.DESIGN.raw.boss.find(x=>x['tên boss']===d.boss);
+          let enemyHp = boss?boss.hp:enemy*3;const enemyMax=enemyHp;
           for (let turn = 0; turn < 40 && hp > 0 && enemyHp > 0; turn++) {
             enemyHp -= power * (.85 + rng() * .3) * (rng() < st.CRIT ? 1.5 : 1);
-            if (enemyHp > 0 && rng() >= st.DODGE) hp -= st.HP * .045 * ratio * mitigation;
+            if (enemyHp > 0 && rng() >= st.DODGE) {const phase=boss?H.DESIGN.phase(boss['mã boss'],enemyHp/enemyMax)?.multiplier||1:1;hp -= st.HP * .045 * ratio * mitigation * phase;}
           }
           if (enemyHp > 0) break;
           floors = floor;
@@ -150,9 +157,11 @@
         const record = s.dungeon.records[d.id] || { best: 0, runs: 0, clears: 0, firstAt: 0 };
         const full = sim.floors === d.floors, first = full && record.clears === 0;
         const fraction = sim.floors / d.floors, stone = F.income_rate(d.realm) * d.seconds * .45 * fraction * (first ? 2 : 1);
-        const exp = this.gainExp(F.base_rate(d.realm) * d.seconds * .35 * fraction * (first ? 2 : 1));
+        let exp = this.gainExp(F.base_rate(d.realm) * d.seconds * .35 * fraction * (first ? 2 : 1));
         const essence = [0, 0, 0, 0, 0];
         if (full) {
+          const boss=H.DESIGN.raw.boss.find(x=>x['tên boss']===d.boss);
+          if(boss){const reward=this.rewardDefinedEnemy(boss['mã boss'],1,rng);exp+=reward.exp;for(const [code,n] of Object.entries(reward.items))this.log('Thủ lĩnh rơi '+H.item(code).name+' ×'+n+'.');}
           const i = d.element >= 0 ? d.element : pick(this.activeElements().length ? this.activeElements() : [0, 1, 2, 3, 4], rng);
           essence[i] = 1 + Math.floor(rng() * 2) + (d.floors >= 8 ? 1 : 0) + (first ? 3 : 0);
           this.addEssence(i, essence[i]); record.clears++;

@@ -3,7 +3,7 @@
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
   const UI = root.HU_UI;
-  const { $, esc, clamp, num, money, moneyHTML, pct, duration, row, btn, card } = UI.kit;
+  const { $, esc, clamp, num, money, moneyHTML, pct, duration, row, btn, card, codeAttr } = UI.kit;
   const { SKILLS } = UI.data;
 
   function skillbar() {
@@ -21,8 +21,10 @@
     const kinds = Object.keys(F.MONSTER_MULT);
     return card(esc(enemy.name), `
       ${row('Cảnh giới', F.REALMS[s.zone])}
+      ${enemy.designId ? row('Mã / cấp / hệ', esc(enemy.designId)+' · '+num(enemy.level)+' · '+esc(enemy.elementName)) : ''}
       ${row('Sinh lực', '<span id="enemyHpText">—</span>')}
       ${row('Chiến lực đối thủ', num(enemy.CP))}
+      ${enemy.designId?.startsWith('BS') ? row('Giai đoạn', '<span id="enemyPhaseText">—</span>') : ''}
       <div class="kind-toolbar">${kinds.map(k => `<button class="btn ${k === s.enemyKind ? 'btn-gold' : 'btn-outline'}" data-act="enemyKind" data-kind="${k}">${k}</button>`).join('')}</div>
       <p class="info-note">Tinh anh, boss và boss kiếp mạnh hơn nhưng rơi nhiều hơn. Đổi đối thủ sẽ làm mới trận.</p>`, { eyebrow: 'ĐỐI THỦ' });
   }
@@ -36,13 +38,15 @@
   }
 
   function lootCard() {
-    const s = UI.s();
+    const s = UI.s(),enemy=UI.g().enemy();
+    const drops=H.DESIGN.raw['vật phẩm rơi'].filter(d=>d['mã đối thủ']===enemy.designId).map(d=>{const x=H.item(H.DESIGN.legacy(d['mã vật phẩm']));return x?row(esc(x.name),num(d['tỉ lệ (%)'])+'%'):''}).join('');
     return card('Chiến lợi phẩm', `
       ${row('Linh thạch / thắng', moneyHTML(F.loot_linh_thach(s.zone, s.enemyKind)))}
       ${row('Cơ hội yêu đan', pct(F.yeu_dan_drop_chance(s.zone, s.enemyKind)))}
-      ${row('Nhịp đánh', duration(F.kill_time(s.zone) / 10))}
+      ${row('Nhịp đánh', duration(UI.g().attackInterval()))}
       ${row('Đã hạ', '<span id="killCount">0</span>')}
       ${row('Yêu đan tích lũy', '<span id="yaoValue">0</span>')}
+      ${drops}
       ${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0, 'btn-outline')}
       <p class="info-note">Khi offline, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
   }
@@ -58,8 +62,17 @@
     return card('Nhật ký chiến đấu', `<div class="journal" id="combatJournal"></div>`, { eyebrow: 'GHI CHÉP' });
   }
 
+  function definedCard() {
+    const s=UI.s(),now=Date.now();
+    const manuals=s.activeManuals.map(key=>({key,x:H.item(key)})).filter(v=>v.x?.design?.group==='công pháp');
+    const gear=s.equipment.map(key=>({key,x:H.item(key),effect:H.DESIGN.effects[H.item(key).code]})).filter(v=>v.effect?.['điều kiện kích hoạt']==='khi kích hoạt');
+    const m=manuals.map(({key,x})=>btn(esc(x.name)+' · '+x.design['tiêu hao mp']+' MP','castManual',codeAttr(key),s.mp<x.design['tiêu hao mp']||now<(s.designCombat.manualCooldowns[key]||0),'btn-outline')).join('');
+    const p=gear.map(({key,x})=>btn('Kích hoạt '+esc(x.name),'activateArtifact',codeAttr(key),now<(s.designCombat.itemCooldowns[key]||0),'btn-outline')).join('');
+    return card('Công pháp & pháp bảo',`<div class="action-group">${m||'<p class="info-note">Chưa vận hành công pháp chủ động.</p>'}${p||''}</div><p class="info-note">Lĩnh ngộ và vận hành công pháp hoặc trang bị pháp bảo để mở kỹ năng.</p>`,{eyebrow:'KỸ NĂNG MỚI'});
+  }
+
   function panel() {
-    return `<div class="screen-grid combat-grid">${enemyCard()}${powerCard()}${lootCard()}${zoneCard()}${logCard()}</div>`;
+    return `<div class="screen-grid combat-grid">${enemyCard()}${powerCard()}${lootCard()}${definedCard()}${zoneCard()}${logCard()}</div>`;
   }
 
   /* Thanh kỹ năng nằm ngoài cửa sổ, trên sân khấu; chỉ hiện khi đang ở chế độ chiến đấu. */
@@ -87,7 +100,10 @@
     const hpText = $('enemyHpText');
     if (!hpText) return;
     const st = g.stats(), enemy = g.enemy(), maxMp = g.maxMp(), now = Date.now();
+    document.querySelectorAll('[data-act="castManual"]').forEach(b=>{const x=H.item(b.dataset.code);b.disabled=!x||s.mp<x.design['tiêu hao mp']||now<(s.designCombat.manualCooldowns[b.dataset.code]||0)});
+    document.querySelectorAll('[data-act="activateArtifact"]').forEach(b=>{b.disabled=now<(s.designCombat.itemCooldowns[b.dataset.code]||0)});
     hpText.textContent = num(s.enemyHp || enemy.HP) + ' / ' + num(enemy.HP);
+    const phase=$('enemyPhaseText');if(phase){const ratio=(s.enemyHp||enemy.HP)/enemy.HP;phase.textContent=H.DESIGN.phase(enemy.designId,ratio)?.['kỹ năng giai đoạn']||'—';}
     const kills = $('killCount'); if (kills) kills.textContent = num(s.enemyNum);
     const yao = $('yaoValue');
     if (yao) {
@@ -140,7 +156,7 @@
   UI.register({
     id: 'combat', label: 'Lịch luyện', icon: 'ICON-MENU-002', eyebrow: 'DIỆT YÊU',
     render: panel, panel, update,
-    signature: () => { const s = UI.s(); return s.zone + '|' + s.enemyKind + '|' + (s.yaoValue > 0); }
+    signature: () => { const s = UI.s(); return s.zone + '|' + s.enemyKind + '|' + (s.yaoValue > 0) + '|' + s.activeManuals.join(',') + '|' + s.equipment.join(','); }
   });
 
   UI.action('auto', () => { UI.command('setAuto', { enabled: !UI.s().auto }); return UI.SOFT; });
@@ -167,6 +183,16 @@
     }
     battle = snapshot();
     return UI.SOFT;
+  });
+  UI.action('castManual', (el, d) => {
+    const before=UI.s().hp,result=UI.command('castManual',{code:d.code});
+    if(result.damage!==undefined)attackFx(result.damage,result.won,Math.max(0,before-UI.s().hp),true);
+    else UI.vfx?.effect('heal');
+    UI.toast('Đã vận dụng '+H.item(d.code).name+'.',{type:'success',title:'Công pháp'});
+  });
+  UI.action('activateArtifact', (el, d) => {
+    UI.command('activateArtifact',{code:d.code});
+    UI.toast('Đã kích hoạt '+H.item(d.code).name+'.',{type:'success',title:'Pháp bảo'});
   });
   UI.action('enemyKind', (el, d) => {
     UI.command('setEnemyKind', { kind: d.kind });

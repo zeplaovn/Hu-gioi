@@ -13,6 +13,7 @@
     { id: 'quests', label: 'Nhiệm vụ', icon: '✦' },
     { id: 'sect', label: 'Tông môn', icon: '⌂' },
     { id: 'encounter', label: 'Kỳ ngộ', icon: '❂' },
+    { id: 'npc', label: 'NPC', icon: '♧' },
     { id: 'shop', label: 'Cửa hàng', icon: '◈' },
     { id: 'auction', label: 'Đấu giá', icon: '⚖' }
   ];
@@ -37,6 +38,18 @@
   const sect = () => UI.adventure.sect();
   const encounter = () => UI.adventure.encounters();
   const dungeons = () => UI.adventure.dungeons();
+  const npcs = () => {
+    const s=UI.s(),g=UI.g();
+    return `<p class="screen-lead">Gặp gỡ nhân vật Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100.</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).map(n=>{
+      const id=n['mã NPC'],like=H.item(n.likes),dislike=H.item(n.dislikes),offer=H.item(n.offer),role=n['vai trò'];
+      const gifts=[[like,'Tặng món thích'],[dislike,'Tặng món không thích']].map(([x,label])=>{if(!x)return '';const key=Object.keys(s.bag).find(k=>H.item(k)?.code===x.code&&!s.equipment.includes(k)&&g.count(k)>0);return btn(label,'npcGift',`data-id="${esc(id)}" ${codeAttr(key||x.code)}`,!key,'btn-outline')}).join('');
+      const trade=offer&&['bán đồ','dạy công pháp','dạy bí tịnh'].includes(role)?btn((role==='bán đồ'?'Mua ':'Học ')+esc(offer.name)+' · '+moneyHTML(F.shop_buy_price(g.price(offer.code))),'npcOffer',`data-id="${esc(id)}"`,offer.tier>s.realm+1||s.stone<F.shop_buy_price(g.price(offer.code))):'';
+      const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="world:quests">Xem nhiệm vụ</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
+      return card(esc(n['tên NPC']),`<div class="npc-profile"><img src="${esc(n.ảnh)}" alt="" loading="lazy" decoding="async"><p>${esc(n['bối cảnh'])}</p></div>`+
+        row('Địa điểm',esc(n['địa điểm']))+row('Quan hệ',esc(n['quan hệ']))+row('Vai trò',esc(role))+row('Thiện cảm',num(s.npcAffinities[id]||0)+'/100')+
+        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+`<div class="action-group">${gifts}${trade}${link}</div>`,{eyebrow:esc(id)});
+    }).join('')}</div>`;
+  };
 
   const shop = () => {
     const s = UI.s(), g = UI.g(), v = UI.view;
@@ -55,7 +68,7 @@
       <div class="auction-lots">${g.lots().map(x => `<section class="auction-lot">${img(x.code)}<h3>${esc(x.name)}</h3><p>${moneyHTML(g.price(x.code))}</p>${btn(s.auction.offers[x.code] ? 'Đã đặt' : 'Đặt giá', 'bid', codeAttr(x.code), !!s.auction.offers[x.code])}</section>`).join('')}</div>`;
   };
 
-  const body = { map, dungeons, quests, sect, encounter, shop, auction };
+  const body = { map, dungeons, quests, sect, encounter, npc: npcs, shop, auction };
   UI.register({
     id: 'world', label: 'Thế giới', icon: 'ICON-MENU-007', eyebrow: 'BA GIỚI', tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">BA GIỚI</span><h2>Thế giới</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
@@ -72,6 +85,14 @@
     UI.command('buy', { code: d.code });
     UI.toast('Đã mua ' + H.item(d.code).name + '.', { type: 'loot', title: 'Cửa hàng' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+  });
+  UI.action('npcGift', (el, d) => {
+    const result=UI.command('npcGift',{id:d.id,code:d.code});
+    UI.toast('Thiện cảm '+(result.change>=0?'+':'')+result.change+' · '+result.affinity+'/100.',{type:'success',title:'Tặng lễ'});
+  });
+  UI.action('npcOffer', (el, d) => {
+    const result=UI.command('npcOffer',{id:d.id});
+    UI.toast((result.role==='bán đồ'?'Đã mua ':'Đã lĩnh ngộ ')+H.item(result.code).name+'.',{type:'success',title:'Gặp gỡ'});
   });
   UI.action('bid', (el, d) => {
     UI.command('bid', { code: d.code });

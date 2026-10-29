@@ -2,19 +2,24 @@
 (function(root){
 'use strict';
 const D=typeof module!=='undefined'&&module.exports?require('../data/balance.js'):root.HU_BALANCE;
-const {P,REALMS,STAGES,BOLTS}=D;
+const {P,REALMS,STAGES}=D;
+/* Trúc Cơ → Kết Đan có lôi kiếp theo đặc tả mới. */
+const BOLTS=D.BOLTS.map((n,i)=>i===1?3:n);
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const sum=xs=>xs.reduce((a,b)=>a+b,0);
 const range=n=>Array.from({length:n},(_,i)=>i);
-const F={...D};
+const F={...D,BOLTS};
+/* Hệ số tốc tu mới; Âm Dương giữ tốc độ tương đối cũ. */
+F.LINH_CAN_RATE={...D.LINH_CAN_RATE,'Ngụy':.6,'Tứ hành':.8,'Tam hành':1,'Song':1.2,'Thiên':1.5,'Dị':2,'Âm Dương':3,'Hỗn Độn':3};
+F.LINH_CAN_COMBAT={...D.LINH_CAN_COMBAT,'Dị':1,'Hỗn Độn':1};
 F.stage_time=(r,s)=>P.T0*(1+r)**P.T_POW*(P.W_MIN+(P.W_MAX-P.W_MIN)*(STAGES[r]>1?s/(STAGES[r]-1):.5));
 F.base_rate=r=>P.R0*P.K_RATE**r;
 F.ref_rate=(r,s)=>F.base_rate(r)*P.U**(s/STAGES[r]);
 F.exp_need=(r,s)=>F.stage_time(r,s)*F.ref_rate(r,s);
-F.cultivation_rate=(r,add=0,mults=[],rootType='Song',prestige=1)=>F.base_rate(r)*(1+add)*mults.reduce((a,b)=>a*(1+b),1)*D.LINH_CAN_RATE[rootType]/D.LINH_CAN_RATE.Song*prestige;
+F.cultivation_rate=(r,add=0,mults=[],rootType='Song',prestige=1)=>F.base_rate(r)*(1+add)*mults.reduce((a,b)=>a*(1+b),1)*F.LINH_CAN_RATE[rootType]*prestige;
 F.time_to_goal=(need,have,rate)=>rate>0?Math.max(0,(need-have)/rate):Infinity;
 F.stat_scale=(r,s)=>P.K_STAT**r*P.K_STAGE**(s/STAGES[r]);
-F.stats=(r,s,rootType=null)=>{const k=F.stat_scale(r,s),c=D.LINH_CAN_COMBAT[rootType]||1;return {HP:P.HP0*k*c,ATK:P.ATK0*k*c,DEF:P.DEF0*k,SPD:P.SPD0*P.K_SPD**(r+s/STAGES[r])}};
+F.stats=(r,s,rootType=null)=>{const k=F.stat_scale(r,s),c=F.LINH_CAN_COMBAT[rootType]||1;return {HP:P.HP0*k*c,ATK:P.ATK0*k*c,DEF:P.DEF0*k,SPD:P.SPD0*P.K_SPD**(r+s/STAGES[r])}};
 F.item_flat_bonus=(r,sub)=>F.stat_scale(r,0)*.05*2**sub;
 F.diminishing=(x,max,k)=>x>0?max*x/(x+k):0;
 F.crit_rate=x=>Math.min(.75,.05+F.diminishing(x,.70,1));

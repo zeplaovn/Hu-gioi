@@ -7,6 +7,7 @@
   "scripts": {
     "demo": "node server/demo.js",
     "check": "node tools/check.mjs",
+    "test": "node --test tools/test-game-integration.mjs",
     "preload": "node tools/gen-preload.mjs"
   }
 }

@@ -3,7 +3,17 @@
 'use strict';
 const node=typeof module!=='undefined'&&module.exports;
 const F=node?require('../rules/formulas.js'):root.HU_FORMULAS;
-const ITEMS=node?require('./items.js'):root.TIEN_VAN_ITEMS;
+const BASE=node?require('./items.js'):root.TIEN_VAN_ITEMS;
+const DESIGN=node?require('./design.js'):root.HU_DESIGN;
+const EXTRA=[
+ ['BT-900','BT900','BT','DAN','BT-004'],['BT-901','BT901','BT','DAN','BT-004'],
+ ['BT-CP-900','CP900','BT','TOC','BT-001'],['BT-CP-901','CP901','BT','TOC','BT-001'],
+ ['TAL-PL-001','PL001','TAL','STRIKE','TAL-002']
+].map(([code,id,kind,effect,imageCode])=>{const d=DESIGN.byLegacy[code],tier=Math.max(0,['luyện khí','trúc cơ','kim đan','nguyên anh','hóa thần'].indexOf(d['yêu cầu']||d['yêu cầu học']));return {code,name:d['tên bí tịch']||d['tên công pháp']||d['tên phù'],
+ category:kind==='BT'?'Công pháp':'Phù lục',kind,tier,sub:0,source:'Thiết kế mới',description:d['mô tả']||d['công dụng']||d['hiệu quả'],
+ effect,map:'Hạ Giới',realm:F.REALMS[tier],quality:'Hạ phẩm',grade:d['độ hiếm']||'Linh',originalName:d['tên bí tịch']||d['tên công pháp']||d['tên phù'],
+ design:d,designId:id,designOnly:true,imageCode};});
+const ITEMS=[...BASE.map(x=>{const d=DESIGN.byCode(x.code);return d?{...x,design:d,designId:d.designId,grade:d['độ hiếm']||x.grade}:x}),...EXTRA];
 const BY_ID=Object.fromEntries(ITEMS.map(x=>[x.code,x]));
 const item=key=>{if(typeof key!=='string')return null;const [code,q,...rest]=key.split('@'),base=Object.hasOwn(BY_ID,code)?BY_ID[code]:null;if(!base||rest.length||q!==undefined&&!/^[0-3]$/.test(q))return null;return {...base,key,sub:q===undefined?base.sub:Number(q)}};
 const keyFor=(code,sub)=>sub===BY_ID[code]?.sub?code:code+'@'+sub;
@@ -21,6 +31,6 @@ const QUESTS=[
  ['breaks','Phá kén thành tiên',1,280,pill(7),1],
  ['alchemy','Luyện đan kỳ tài',2,220,'HERB-002',3]
 ];
-const API={ITEMS,BY_ID,item,keyFor,pill,ZONES,ENEMY_NAMES,QUESTS};
+const API={ITEMS,BY_ID,item,keyFor,pill,ZONES,ENEMY_NAMES,QUESTS,DESIGN};
 root.HU_CATALOG=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);

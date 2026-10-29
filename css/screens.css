@@ -284,6 +284,9 @@ body.in-tribulation{overflow:hidden}
 /* Bảng mở rộng tự co theo bề rộng cửa sổ, kể cả khi kéo nhỏ trên desktop. */
 .adventure-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin:12px 0}
 .adventure-grid>.card{margin:0;min-width:0}
+.npc-profile{display:flex;align-items:center;gap:12px;margin:8px 0}
+.npc-profile img{width:64px;height:72px;object-fit:cover;border:1px solid #49616b;border-radius:8px}
+.npc-profile p{flex:1;min-width:0}
 .adventure-grid .card-head h3{overflow-wrap:anywhere}
 .adventure-grid .stat-line{gap:8px;flex-wrap:wrap}
 .adventure-grid .stat-line b{overflow-wrap:anywhere;min-width:0}

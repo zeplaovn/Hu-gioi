@@ -34,6 +34,13 @@
 .form-grid{display:grid;grid-template-columns:104px minmax(0,1fr) 44px;gap:8px;align-items:center;margin:2px 0 0}
 .form-grid label{text-align:right;font-weight:750;font-size:14px;color:#b6cbd3}
 .field{border:1px solid #314553;background:#0d171f;border-radius:9px;color:#e9f1f3;font-weight:700;text-align:center;padding:9px 10px;min-height:40px;display:flex;flex-direction:row;align-items:center;justify-content:center;min-width:0}
+.creation-info-trigger{width:100%;cursor:pointer;transition:border-color .2s,background .2s}
+.creation-info-trigger:hover,.creation-info-trigger:focus-visible{border-color:var(--gold);background:#15242c}
+.creation-info-dialog{position:fixed;inset:0;margin:auto;width:min(620px,calc(100vw - 24px));max-height:min(80dvh,720px);overflow:auto;border:1px solid #49616b;border-radius:16px;background:#0c1820;color:var(--text);padding:18px;box-shadow:0 24px 80px #000c}
+.creation-info-dialog::backdrop{background:#020a10cc;backdrop-filter:blur(3px)}
+.creation-info-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}
+.creation-info-header h2{font-size:20px;margin:0}
+.creation-info-header button{width:36px;height:36px;flex:none;border:1px solid #405967;border-radius:8px;background:#172630;color:#d5e8ee;font-size:24px;line-height:1}
 .name-in{display:block;width:100%;font-weight:700;text-align:center}
 .name-in::placeholder{font-weight:400}
 .root-field{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:5px 6px}

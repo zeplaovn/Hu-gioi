@@ -17,9 +17,9 @@ class Game{
 }
 const API={F,...C,...D,...social,VERSION:S.VERSION,Game,create:S.create,metaDefault:S.metaDefault,normalizeMeta:S.normalizeMeta,normalize:(raw,now=Date.now())=>S.normalize(raw,now,Game)};
 const modules=node?[
- require('./rules/progression.js'),require('./rules/inventory.js'),require('./rules/crafting.js'),require('./rules/combat.js'),
+ require('./rules/progression.js'),require('./rules/inventory.js'),require('./rules/crafting.js'),require('./rules/defined-combat.js'),require('./rules/combat.js'),
  require('./rules/world.js'),require('./rules/social.js'),require('./rules/adventures.js'),require('./rules/time.js'),require('./rules/creation.js')
-]:[root.HU_PROGRESSION,root.HU_INVENTORY,root.HU_CRAFTING,root.HU_COMBAT,root.HU_WORLD,root.HU_SOCIAL,root.HU_ADVENTURES,root.HU_TIME,root.HU_CREATION];
+]:[root.HU_PROGRESSION,root.HU_INVENTORY,root.HU_CRAFTING,root.HU_DEFINED_COMBAT,root.HU_COMBAT,root.HU_WORLD,root.HU_SOCIAL,root.HU_ADVENTURES,root.HU_TIME,root.HU_CREATION];
 modules.forEach(m=>m.install(API));
 root.HU_GAME=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);

@@ -72,7 +72,7 @@
     const type = creation.rootType, sub = creation.rootSub || '';
     const info = H.ROOT_TYPES[type] || { group: 'ngu_hanh', desc: '', how: '' };
     const group = H.ROOT_GROUPS.find(g => g.id === info.group);
-    const rate = F.LINH_CAN_RATE[type] / 2;
+    const rate = F.LINH_CAN_RATE[type];
     const trib = F.LINH_CAN_TRIB[type] || 1;
     const combat = F.LINH_CAN_COMBAT[type] || 1;
     const active = ELEMENTS.map(([name, color], i) => ({ name, color, value: creation.roots[i] }))
@@ -91,7 +91,7 @@
       '<div class="root-tier" role="listitem"><span class="root-tier-name">Dị linh căn</span><span class="root-tier-list">' +
         H.DI_KEYS.map(k => '<i class="' + (type === 'Dị' && sub === k ? 'is-current' : '') + '">' + H.DI_LINH_CAN[k].name + '</i>').join('<s>·</s>') + '</span></div>' +
       '<div class="root-tier" role="listitem"><span class="root-tier-name">Chí tôn</span><span class="root-tier-list">' +
-        ['Âm Dương', 'Hỗn Độn'].map(n => '<i class="' + cur(n).trim() + '">' + n + '</i>').join('<s>·</s>') + '</span></div>' +
+        ['Hỗn Độn'].map(n => '<i class="' + cur(n).trim() + '">' + n + '</i>').join('<s>·</s>') + '</span></div>' +
       '</div>';
     return '<div class="info-title">' + esc(rootLabel(type, sub)) +
       ' <span class="root-group root-group-' + esc(info.group) + '">' + esc(group ? group.name : '') + '</span></div>' +
@@ -99,7 +99,7 @@
       '<div class="small">' + esc(info.desc) + '</div>' + diBox +
       (descs ? '<div class="root-elem-title">' + (type === 'Dị' ? 'Hệ ngũ hành gốc' : 'Ngũ hành') + '</div>' : '') +
       '<div class="root-elem-list">' + descs + '</div>' + tiers +
-      '<div class="root-doc"><b>Dị ≠ Thiên:</b> Thiên là một hệ ngũ hành thuần; Dị là biến thể cao cấp (Băng, Lôi, Phong, Độc) có thế mạnh riêng. <b>Hỗn Độn</b> không gieo được khi tạo nhân vật: chỉ Tạp linh căn (Ngụy) vượt lôi kiếp mới có cơ hội hóa thành.</div>' +
+      '<div class="root-doc"><b>Dị ≠ Thiên:</b> Thiên là một hệ ngũ hành thuần; Dị là biến thể cao cấp (Băng, Lôi, Phong, Độc) có thế mạnh riêng. <b>Hỗn Độn</b> không gieo được khi tạo nhân vật.</div>' +
       '<div class="dim small">Gieo lại xúc xắc để đổi linh căn. Điểm ngũ hành quyết định loại linh căn và thiên phú chiến đấu.</div>';
   }
 
@@ -152,16 +152,16 @@
     });
     $('ageValue').textContent = creation.age + ' tuổi';
     $('raceValue').textContent = H.raceName(creation.race);
-    $('raceInfo').innerHTML = raceInfoHtml();
+    $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
     const active = ELEMENTS.map(([name, color], i) => ({ name, color, value: creation.roots[i] }))
       .filter(x => x.value >= 50);
     const chips = active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('');
     /* Dị linh căn và ngũ hành tách thành hai dòng riêng, mỗi dòng có nhãn nhóm. */
     $('rootValue').innerHTML = creation.rootType === 'Dị'
-      ? '<div class="root-line"><span class="root-line-label">Dị linh căn</span><span class="chip chip-di">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span></div>' +
-        '<div class="root-line"><span class="root-line-label">Hệ ngũ hành gốc</span>' + chips + '</div>'
-      : '<div class="root-line"><span class="root-line-label">' + (creation.rootType === 'Âm Dương' ? 'Chí tôn · ngũ hành' : 'Ngũ hành') + '</span>' + (chips || '<span class="chip">…</span>') + '</div>';
-    $('rootDescription').innerHTML = rootInfoHtml();
+      ? '<span class="root-line"><span class="root-line-label">Dị linh căn</span><span class="chip chip-di">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span></span>' +
+        '<span class="root-line"><span class="root-line-label">Hệ ngũ hành gốc</span>' + chips + '</span>'
+      : '<span class="root-line"><span class="root-line-label">Ngũ hành</span>' + (chips || '<span class="chip">…</span>') + '</span>';
+    $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
     renderStats();
     syncName();
   }
@@ -380,6 +380,14 @@
     $('rollAge').addEventListener('click', () => roll('age'));
     $('rollRace').addEventListener('click', () => roll('race'));
     $('rollRoot').addEventListener('click', () => roll('root'));
+    const showCreationInfo = type => {
+      $('creationInfoTitle').textContent = type === 'race' ? 'Thông tin chủng tộc' : 'Thông tin linh căn';
+      $('creationInfoContent').innerHTML = type === 'race' ? raceInfoHtml() : rootInfoHtml();
+      $('creationInfoDialog').showModal();
+    };
+    $('raceValue').addEventListener('click', () => showCreationInfo('race'));
+    $('rootValue').addEventListener('click', () => showCreationInfo('root'));
+    $('creationInfoClose').addEventListener('click', () => $('creationInfoDialog').close());
     $$('[data-gender]').forEach(b => b.addEventListener('click', () => {
       creation.gender = b.dataset.gender;
       if (creation.nameAuto || !creation.name) {

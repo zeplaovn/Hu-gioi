@@ -44,13 +44,13 @@ Chat có trạng thái online, kết nối lại, giữ bản nháp, giới hạ
 
 | Nhóm | Nội dung |
 |---|---|
-| Khởi nguyên | Intro cinematic 5 chương với chuyển cảnh, chuyển động máy quay và phụ đề; loading tối thiểu 10,9 giây (tăng 10 giây). Tạo đạo hiệu, giới tính, tuổi, chủng tộc, linh căn và phân bổ thiên phú. Hướng dẫn có thể xem lại tại **Cài đặt → Hướng dẫn**. |
+| Khởi nguyên | Intro cinematic 5 chương; loading tối thiểu 10,9 giây. Tạo đạo hiệu, giới tính, tuổi, chủng tộc, linh căn và phân bổ thiên phú. Nhấn ô chủng tộc hoặc linh căn để xem giải thích. Không còn gieo Âm Dương khi tạo mới; bản lưu cũ vẫn được giữ. |
 | Tu luyện | Tự tăng tu vi, bế quan khi vắng mặt, báo cáo tiến trình và giới hạn tu vi tại ngưỡng đột phá. |
 | Cảnh giới | Đột phá tiểu cảnh giới trực tiếp; đại cảnh giới có xác nhận, trang độ kiếp riêng, hiệu ứng và kết quả. VFX đột phá nhỏ và giai đoạn tụ linh quang trên độ kiếp đài kéo dài thêm 5 giây; chế độ giảm chuyển động vẫn được tôn trọng. |
 | Lịch luyện | Công kích, kỹ năng, chiến đấu tự động, yêu thú, chiến lợi phẩm, Sinh lực và Linh khí. |
-| Nhân vật | Hành trang, trang bị pháp bảo, lĩnh ngộ công pháp, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngụy linh căn có cơ hội hóa Hỗn Độn sau khi vượt lôi kiếp. |
-| Nghề phụ | Luyện đan theo hàng đợi, rèn pháp bảo, chế phù; linh điền có tưới nước, bón thổ, bắt sâu, thu hoạch 2–4 cây theo phẩm chất. Cây được chăm an toàn khi bế quan và chờ thu hoạch khi chín. |
-| Thế giới | Nhiệm vụ, bí cảnh theo thời gian, kỳ ngộ tự động và chủ động, tông môn, chức vị, cống hiến và kho đổi thưởng. |
+| Nhân vật | Hành trang, trang bị pháp bảo, công pháp chủ động, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; Dị khắc hệ gốc. |
+| Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Hạt trong bộ dữ liệu mới có thời gian, loại đất, độ khó và sản lượng riêng; các hạt còn lại tiếp tục dùng luật cũ. Cây được chăm an toàn khi bế quan. |
+| Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ, tông môn và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. |
 | Xuyên kiếp | Thọ nguyên, tọa hóa, chuyển thế, thành tựu, nâng cấp vĩnh viễn và lịch sử kiếp trước. Trọng sinh nằm trong **Thiên mệnh → Trọng sinh**. |
 | Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile và một cửa sổ con tại một thời điểm. |
 
@@ -109,6 +109,7 @@ Các công cụ JavaScript yêu cầu **Node.js 20 trở lên**. Chạy tại th
 | Lệnh | Công dụng |
 |---|---|
 | `npm run check` | Kiểm tra cú pháp JavaScript và đường dẫn script trong `index.html`. |
+| `npm test` | Kiểm tra tương thích bản lưu và các luật tích hợp dữ liệu mới. |
 | `npm run preload` | Sinh lại `client/assets/preload-manifest.js` theo cấu hình trong `tools/gen-preload.mjs`. |
 | `npm run demo` | Chạy game và chat demo tại cổng 8000; hỗ trợ biến `HOST`, `PORT`. |
 
@@ -137,5 +138,6 @@ Giao diện → UI.command(type, payload) → LocalSession
 
 ## Tài liệu liên quan
 
+- [Tích hợp dữ liệu game](docs/design-integration.md): phạm vi, cách ánh xạ dữ liệu mới và những giới hạn còn lại.
 - [Kiến trúc hiện tại](docs/architecture.md): ranh giới client/shared/server, ánh xạ file cũ → mới, hợp đồng lệnh và ví dụ `PlayerService`.
 - [Kế hoạch backend online](docs/backend-plan.md): đề xuất stack, schema dữ liệu, API, xác thực, triển khai và lộ trình nhiều người chơi.

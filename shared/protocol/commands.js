@@ -21,7 +21,7 @@
     use: entry({ code }, (g,p,now) => g.use(p.code,now)),
     craft: entry({ code }, (g,p,now) => g.craft(p.code,now)),
     forge: entry({ code }, (g,p) => g.forge(p.code)),
-    garden: entry({ slot: integer(0,3), action: oneOf(['water','soil','pest','harvest']) }, (g,p,now) => g.gardenAct(p.slot,p.action,now)),
+    garden: entry({ slot: integer(0,3), action: oneOf(['water','soil','pest','harvest','terrain']), terrain: optional(oneOf(['đất thường','linh điền','hỏa địa','hàn đàm','linh điền có trận pháp'])) }, (g,p,now) => g.gardenAct(p.slot,p.action,now,p.terrain)),
     bid: entry({ code }, (g,p,now) => g.bid(p.code,now)),
     absorb: entry({ index: integer(0,H.F.COINS.length-1) }, (g,p) => g.absorb(p.index)),
     sellYao: entry({}, g => g.sellYao()),
@@ -34,6 +34,8 @@
     setAuto: entry({ enabled: boolean }, (g,p) => g.setAuto(p.enabled)),
     strike: entry({}, (g,p,now) => g.strike(1,now)),
     skill: entry({ index: integer(0,3) }, (g,p,now) => g.skill(p.index,now)),
+    castManual: entry({ code }, (g,p,now) => g.castDefinedManual(p.code,now)),
+    activateArtifact: entry({ code }, (g,p,now) => g.activateArtifact(p.code,now)),
     setEnemyKind: entry({ kind: oneOf(Object.keys(H.F.MONSTER_MULT)) }, (g,p) => g.setEnemyKind(p.kind)),
     travel: entry({ zone: integer(0,H.ZONES.length-1) }, (g,p) => g.travel(p.zone)),
     claimQuest: entry({ id: string }, (g,p) => g.claimQuest(p.id)),
@@ -54,6 +56,8 @@
     meetFriend: entry({ id: string }, (g,p,now) => g.meetFriend(p.id,now)),
     giftFriend: entry({ id: string }, (g,p,now) => g.giftFriend(p.id,now)),
     discuss: entry({ id: string }, (g,p,now) => g.discuss(p.id,now)),
+    npcGift: entry({ id: string, code }, (g,p) => g.npcGift(p.id,p.code)),
+    npcOffer: entry({ id: string }, (g,p) => g.npcOffer(p.id)),
     duel: entry({ id: string }, (g,p,now) => g.duel(p.id,now))
   });
   function invalid() { const e = Error('Lệnh game không hợp lệ.'); e.code = 'INVALID_COMMAND'; throw e; }

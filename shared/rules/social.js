@@ -2,9 +2,27 @@
 (function(root){
 'use strict';
 function install(H){
- const {F,FRIENDS,DAO,RIVALS,PVP_CD,DISCUSS_CD,giftCost}=H;
+ const {F,FRIENDS,DAO,RIVALS,PVP_CD,DISCUSS_CD,giftCost,DESIGN,item}=H;
  const find=(list,id)=>{const f=list.find(x=>x.id===id);if(!f)throw Error('Đạo hữu không hợp lệ.');return f};
- Object.assign(H.Game.prototype,{
+  Object.assign(H.Game.prototype,{
+   npcGift(id,key){
+    const npc=DESIGN.npc[id],x=item(key),s=this.s;
+    if(!npc||!x||!this.count(key))throw Error('NPC hoặc vật phẩm không hợp lệ.');
+    if(s.equipment.includes(key))throw Error('Hãy tháo pháp bảo trước khi tặng.');
+    const delta=x.code===npc.likes?5:x.code===npc.dislikes?-5:0;
+    this.take(key);const before=s.npcAffinities[id]||0;s.npcAffinities[id]=Math.max(0,Math.min(100,before+delta));
+    const change=s.npcAffinities[id]-before;this.log('Tặng '+x.name+' cho '+npc['tên NPC']+' · thiện cảm '+(change>=0?'+':'')+change+'.');
+    return {affinity:s.npcAffinities[id],change};
+   },
+   npcOffer(id){
+    const npc=DESIGN.npc[id],role=npc?.['vai trò'],code=npc?.offer,x=item(code);
+    if(!npc||!x||!['bán đồ','dạy công pháp','dạy bí tịnh'].includes(role))throw Error('NPC không có vật phẩm để trao đổi.');
+    if(x.tier>this.s.realm+1)throw Error('Vật phẩm vượt quá một bậc cảnh giới.');
+    if(role!=='bán đồ'&&x.kind!=='BT')throw Error('Bí tịch không hợp lệ.');
+    if(this.count(code)>=1e9)throw Error('Túi đã đầy vật phẩm này.');
+    this.buy(code);if(role!=='bán đồ')this.learn(code);
+    this.log(npc['tên NPC']+(role==='bán đồ'?' bán ':' truyền dạy ')+x.name+'.');return {code,role};
+   },
   friend(id){
    find([...FRIENDS,...DAO],id);
    return this.s.social.friends[id]||(this.s.social.friends[id]={affinity:0,metAt:0,giftAt:0,discussAt:0});
