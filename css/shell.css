@@ -32,9 +32,9 @@ body.in-game{overflow:hidden}
 .status-title{min-width:0}
 .status-title h2{font:700 22px/1.2 var(--serif);color:var(--text);margin:2px 0 0;overflow-wrap:anywhere}
 .status-title .eyebrow{font-size:11.5px}
-#playerRoot{color:#9beeff;text-shadow:0 0 6px #67e2ff99,0 0 14px #2ba6d755;animation:neonCyan 4.2s ease-in-out infinite}
-#playerRealm{color:#f4e4b8;text-shadow:0 0 7px #ffe6a899,0 0 18px #e6c16455;animation:neonGold 5.4s ease-in-out infinite}
-.char-header h2{text-shadow:0 0 9px #e6c16455,0 0 22px #e6c16433}
+#playerRoot{color:#9beeff;text-shadow:0 1px 2px #000a}
+#playerRealm{color:#f4e4b8;text-shadow:0 1px 2px #000a}
+.char-header h2{text-shadow:0 1px 2px #000a}
 .status-name{font-size:14px;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:1px 0 0}
 .status-place{font-size:13px;color:var(--dim);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status-progress{display:block;width:100%;border:0;background:transparent;color:var(--text);padding:0;text-align:left;cursor:pointer;border-radius:6px}
@@ -85,7 +85,7 @@ body.in-game{overflow:hidden}
 #game:not([data-layout="wide"]) .vital-row .meter{height:6px}
 #game:not([data-layout="wide"]) .vital-row small{font-size:11px}
 #game:not([data-layout="wide"]) .status-talents{grid-column:1 / -1;grid-row:4;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:5px 0;margin-top:3px}
-#game:not([data-layout="wide"]) .status-talent{grid-template-columns:1fr auto;gap:2px;font-size:10px}
+#game:not([data-layout="wide"]) .status-talent{grid-template-columns:1fr auto;gap:2px;font-size:11px}
 #game:not([data-layout="wide"]) .status-talent img{display:none}
 #game:not([data-layout="wide"]) .status-talent meter{grid-column:1 / -1}
 #game:not([data-layout="wide"]) .info{grid-column:1 / -1;grid-row:5;display:flex;flex-direction:row;flex-wrap:wrap;gap:1px 12px}
@@ -183,7 +183,7 @@ body.in-game{overflow:hidden}
 #menu .badge{position:absolute;top:2px;right:5px;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:#2b6f86;color:#fff;font:700 11.5px/17px var(--font);font-style:normal;text-align:center}
 #menu .badge.hot{background:#d9532f;animation:pulse 1.4s ease-in-out infinite}
 #game[data-layout="portrait"] #menu{gap:2px;padding:4px}
-#game[data-layout="portrait"] #menu button{flex:1 1 0;min-width:0;font-size:10.5px;letter-spacing:-.2px;padding:3px 0 2px;min-height:54px;gap:1px}
+#game[data-layout="portrait"] #menu button{flex:1 1 0;min-width:0;font-size:11px;letter-spacing:-.2px;padding:3px 0 2px;min-height:54px;gap:1px}
 #game[data-layout="portrait"] #menu button img{width:25px;height:25px}
 #game[data-layout="portrait"] #menu button span{max-width:100%;overflow:hidden;text-overflow:clip;white-space:normal;line-height:1.05;text-align:center}
 #game[data-layout="landscape"] #menu{gap:3px;padding:4px}
@@ -236,7 +236,7 @@ body.in-game{overflow:hidden}
 .log-tag{flex:0 0 auto;margin-top:2px;padding:0 4px;border:1px solid #36505d;border-radius:3px;font:800 11.5px/1.5 var(--font);letter-spacing:.03em;color:#8faab6;background:#0c171e}
 .log-time{flex:0 0 auto;margin-top:2px;font-size:12px;color:#83a2af;font-variant-numeric:tabular-nums}
 .log-text{min-width:0;color:#c6d7dd;overflow-wrap:anywhere}
-.log-entry.tribulation .log-tag{color:#f6d98f;border-color:#7f6933;background:#2a2412;text-shadow:0 0 8px #e6c16455}
+.log-entry.tribulation .log-tag{color:#f6d98f;border-color:#7f6933;background:#2a2412;text-shadow:0 1px 2px #000a}
 .log-entry.danger .log-tag{color:#ffab97;border-color:#7d4137;background:#2c1714}
 .log-entry.loot .log-tag{color:#8fe3b0;border-color:#35634a;background:#10251b}
 .log-entry.success .log-tag{color:#8fe3b0;border-color:#35634a;background:#10251b}
@@ -343,7 +343,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .affinity-bar{height:5px;border:1px solid #354a55;background:#070f14;border-radius:6px;overflow:hidden;margin-top:3px}
 .affinity-bar i{display:block;height:100%;background:linear-gradient(90deg,#7d5f2b,#e6c164);transition:width .35s}
 .pvp-rating{display:flex;align-items:baseline;gap:9px;padding:4px 0 8px;border-bottom:1px solid #263b47;margin-bottom:5px}
-.pvp-rating b{font:700 34px/1 var(--serif);color:var(--gold);text-shadow:0 0 18px #e6c16433}
+.pvp-rating b{font:700 34px/1 var(--serif);color:var(--gold);text-shadow:0 1px 2px #000a}
 .pvp-rating span{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#9fb4bf}
 .pvp-list{margin-top:10px}
 .rank-list{display:flex;flex-direction:column;gap:5px;margin-top:10px}
@@ -551,7 +551,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   .status-title h2{font-size:17px}
   .status-progress .bar{height:9px}
   .vital-row{grid-template-columns:64px minmax(0,1fr) auto;font-size:11.5px}
-  .vital-row small{font-size:10.5px}
+  .vital-row small{font-size:11px}
   #status .row{font-size:12px;line-height:1.3}
   .btn-break{min-height:38px;font-size:13px}
   #menu button{min-height:38px;font-size:11.5px}
@@ -592,7 +592,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   :root{--log-h:clamp(64px,12vh,90px)}
   #game[data-layout="portrait"] #stage .hero-wrap{--hero-unit:clamp(65px,13vh,90px);bottom:30%}
   #game[data-layout="portrait"] #stage .stage-hud{top:6px;left:6px;right:6px;gap:4px}
-  #game[data-layout="portrait"] .stage-tag,#game[data-layout="portrait"] .stage-rate{font-size:10.5px;padding:3px 5px}
+  #game[data-layout="portrait"] .stage-tag,#game[data-layout="portrait"] .stage-rate{font-size:11px;padding:3px 5px}
   #game[data-layout="portrait"] #stage .scene-bottom{bottom:6px;left:6px;right:6px}
   #game[data-layout="portrait"] #stage .mode-switch button{font-size:11px;padding:5px 7px}
 }
@@ -607,21 +607,21 @@ body.in-game.log-collapsed{--log-panel-h:31px}
   #game[data-layout="wide"] .status-title h2{font-size:15px}
   #game[data-layout="wide"] .status-title .eyebrow,#game[data-layout="wide"] .status-place,#game[data-layout="wide"] .status-foot{display:none}
   #game[data-layout="wide"] .status-name{font-size:11px}
-  #game[data-layout="wide"] .status-progress-head,#game[data-layout="wide"] .status-exp{font-size:10px}
+  #game[data-layout="wide"] .status-progress-head,#game[data-layout="wide"] .status-exp{font-size:11px}
   #game[data-layout="wide"] .status-progress .bar{height:7px}
   #game[data-layout="wide"] .status-vitals{gap:2px}
   #game[data-layout="wide"] .vital-row{grid-template-columns:60px minmax(0,1fr);gap:3px;font-size:11px}
-  #game[data-layout="wide"] .vital-row small{font-size:10px}
+  #game[data-layout="wide"] .vital-row small{font-size:11px}
   #game[data-layout="wide"] .status-talents{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;padding:5px 0}
-  #game[data-layout="wide"] .status-talent{grid-template-columns:1fr auto;font-size:10px;gap:1px 3px}
+  #game[data-layout="wide"] .status-talent{grid-template-columns:1fr auto;font-size:11px;gap:1px 3px}
   #game[data-layout="wide"] .status-talent img{display:none}
   #game[data-layout="wide"] .status-talent meter{grid-column:1 / -1}
   #game[data-layout="wide"] #status .info{gap:1px}
-  #game[data-layout="wide"] #status .row{font-size:10.5px;line-height:1.3}
+  #game[data-layout="wide"] #status .row{font-size:11px;line-height:1.3}
   #game[data-layout="wide"] .btn-break{min-height:36px;font-size:13px;padding:4px}
-  #game[data-layout="wide"] .btn-break small{font-size:10px}
+  #game[data-layout="wide"] .btn-break small{font-size:11px}
   #game[data-layout="wide"] #menu{gap:2px;padding:3px}
-  #game[data-layout="wide"] #menu button{min-height:40px;font-size:10.5px;padding:2px}
+  #game[data-layout="wide"] #menu button{min-height:40px;font-size:11px;padding:2px}
   #game[data-layout="wide"] #menu button img{width:22px;height:22px}
   #game[data-layout="wide"] #menu button .ico{font-size:20px}
   #game[data-layout="wide"] #stage .hero-wrap{--hero-unit:clamp(90px,27vh,135px)}
@@ -648,7 +648,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 #game:not([data-layout="wide"]) .vital-row .meter{height:14px}
 #game:not([data-layout="wide"]) .status-progress .bar{height:14px}
 #game:not([data-layout="wide"]) .status-progress .bar .bar-text{display:flex}
-#game:not([data-layout="wide"]) .vital-row .meter .bar-text{font-size:10.5px}
+#game:not([data-layout="wide"]) .vital-row .meter .bar-text{font-size:11px}
 /* Màn hẹp: cửa sổ phủ gần hết sân khấu, nên thanh kỹ năng nổi thành một hàng phía trên thanh điều hướng. */
 #game:not([data-layout="wide"]) .skill-dock{position:fixed;left:50%;top:auto;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:900}
 #game:not([data-layout="wide"]) .skill-dock .skillbar{flex-direction:row;padding:5px;gap:6px}
@@ -676,18 +676,18 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 /* Năm chỉ số thiên phú: nhãn một dòng, thu nhỏ nhẹ để "Phúc Duyên" không gãy dòng ở điện thoại. */
 .status-talent{white-space:nowrap}
 .status-talent span{overflow:hidden;text-overflow:ellipsis;min-width:0}
-#game:not([data-layout="wide"]) .status-talent{font-size:9.5px;letter-spacing:-.01em}
+#game:not([data-layout="wide"]) .status-talent{font-size:11px;letter-spacing:-.01em}
 /* Màn ngang thấp (điện thoại xoay ngang): thanh nhỏ không đủ chỗ cho chữ, ẩn chữ trong thanh; thanh kỹ năng xếp hàng ngang. */
 @media(max-height:520px){
   .status-progress .bar .bar-text{display:none}
   .status-progress .bar{height:9px}
   .vital-row .meter{height:12px}
-  .vital-row .meter .bar-text{font-size:9.5px}
+  .vital-row .meter .bar-text{font-size:11px}
   .skill-dock{left:6px;top:8px;bottom:auto;transform:none}
   #game[data-stage="combat"] .skill-dock{display:block}
   .skill-dock .skillbar{flex-direction:column;padding:4px;gap:4px}
   .vital-row,#game[data-layout="wide"] .vital-row{grid-template-columns:66px minmax(0,1fr);font-size:11px}
-  .vital-row .vital-label{font-size:10.5px;letter-spacing:-.02em}
+  .vital-row .vital-label{font-size:11px;letter-spacing:-.02em}
   .skill-dock .skill-btn,.skill-dock .strike-btn{width:38px;height:38px}
   .skill-dock .skill-btn img{width:26px;height:26px}
   .skill-dock .strike-btn::before{font-size:18px}

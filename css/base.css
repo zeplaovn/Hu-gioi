@@ -40,8 +40,6 @@ h1,h2,h3{font-family:var(--serif);line-height:1.15}
 /* ===== chữ & tiện ích ===== */
 .eyebrow{display:block;font-size:12.5px;font-weight:800;letter-spacing:.16em;color:#9db3bf;text-transform:uppercase}
 .eyebrow.gold{color:var(--gold)}
-@keyframes neonCyan{0%,100%{text-shadow:0 0 5px #67e2ffcc,0 0 14px #2ba6d788}50%{text-shadow:0 0 9px #b6f4ff,0 0 26px #45c8ffb3}}
-@keyframes neonGold{0%,100%{text-shadow:0 0 6px #ffe6a8aa,0 0 18px #e6c16466}50%{text-shadow:0 0 11px #fff2c7,0 0 30px #ffd87399}}
 .gold{color:var(--gold)} .jade{color:var(--jade)} .cyan{color:var(--cyan)} .danger{color:var(--danger)} .muted{color:var(--muted)}
 .small{font-size:14px}.tiny{font-size:13px}
 .center{text-align:center}
@@ -173,7 +171,7 @@ body.modal-open{overflow:hidden}
 
 /* chồng thông báo */
 .toasts{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:120;display:flex;flex-direction:column;align-items:flex-end;gap:8px;width:min(380px,calc(100vw - 24px));max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;pointer-events:none}
-.toast-item{position:relative;pointer-events:auto;display:flex;align-items:flex-start;gap:10px;width:100%;padding:11px 12px 13px;border:1px solid #35505c;border-left:3px solid var(--gold);border-radius:11px;background:linear-gradient(135deg,#152630f2,#0c161ee8);box-shadow:0 10px 30px #0009;backdrop-filter:blur(10px);opacity:0;transform:translateY(10px) scale(.98);transition:opacity .22s,transform .22s;overflow:hidden;cursor:pointer}
+.toast-item{position:relative;pointer-events:auto;display:flex;align-items:flex-start;gap:10px;width:100%;padding:11px 12px 13px;border:1px solid #35505c;border-top:2px solid var(--gold);border-radius:11px;background:linear-gradient(135deg,#152630f2,#0c161ee8);box-shadow:0 10px 30px #0009;backdrop-filter:blur(10px);opacity:0;transform:translateY(10px) scale(.98);transition:opacity .22s,transform .22s;overflow:hidden;cursor:pointer}
 .toast-item{flex-shrink:0}
 .toast-item.show{opacity:1;transform:none}
 .toast-item.out{opacity:0;transform:translateY(-6px) scale(.98)}

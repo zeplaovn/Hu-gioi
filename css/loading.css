@@ -20,15 +20,12 @@ body.loading-game{overflow:hidden}
 .loading-track{height:12px;border-radius:99px;background:#050b11cc;border:1px solid #5a6f79;overflow:hidden;box-shadow:0 0 0 3px #0a121866,inset 0 1px 3px #000a}
 .loading-fill{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);border-radius:99px;
   background:linear-gradient(90deg,#8a6a22,#e6c164 55%,#fff0b0);transition:transform .25s ease-out;position:relative;overflow:hidden}
-.loading-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffff66 50%,transparent 70%);transform:translateX(-100%);animation:loadingShine 1.6s linear infinite}
 .loading-tip{min-height:1.3em;text-align:center;font-size:13px;color:#9fb6c0}
-@keyframes loadingShine{to{transform:translateX(100%)}}
 @keyframes loadingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-height:520px){.loading-logo{max-height:38vh}}
 @media(prefers-reduced-motion:reduce){
   #loading,#gameLoading,.loading-scene,.loading-fill{transition:none}
-  .loading-logo,.loading-fill::after{animation:none}
-}
+  .loading-logo,}
 
 .loading-track{background:var(--inset,#0b1015);border:1px solid var(--bar-age,#d9a21b);border-radius:4px;box-shadow:none}
 .loading-fill{border-radius:3px;background:var(--bar-age,#d9a21b);opacity:.9}
