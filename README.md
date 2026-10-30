@@ -11,13 +11,13 @@ Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 Yêu cầu **Node.js 20+**. Không cần `npm install`.
 
 ```sh
-npm start        # máy chủ tại http://127.0.0.1:8000 (HOST, PORT tùy chọn)
+npm start        # máy chủ tại http://127.0.0.1:8000 (HOST, PORT, SECURE_COOKIES… xem server/config.js)
 npm run check    # cú pháp JavaScript + đường dẫn script trong index.html
-npm test         # kiểm tra khung: dữ liệu, hợp đồng lệnh, thứ tự script, máy chủ tĩnh
+npm test         # khung: dữ liệu, hợp đồng lệnh, thứ tự script; backend: service, auth, API, outbox, giới hạn tốc độ
 npm run preload  # sinh lại client/assets/preload-manifest.js
 ```
 
-`npm start` phục vụ game tĩnh và `GET /api/health`. Cũng có thể mở thẳng [index.html](index.html) (`file://`) hoặc chạy `python3 -m http.server 8000 --bind 127.0.0.1`; game dùng HTML, CSS và JavaScript với classic scripts, không cần build. Khi `HU_GAME.READY` còn `false`, trang chỉ hiện thông báo và in danh sách phần còn thiếu trong console.
+`npm start` phục vụ game tĩnh và API (`/api/*`: đăng ký/đăng nhập, tạo nhân vật, sync, lệnh; gameplay trả 501 tới khi engine xong). Cũng có thể mở thẳng [index.html](index.html) (`file://`) hoặc chạy `python3 -m http.server 8000 --bind 127.0.0.1`; game dùng HTML, CSS và JavaScript với classic scripts, không cần build. Khi `HU_GAME.READY` còn `false`, trang chỉ hiện thông báo và in danh sách phần còn thiếu trong console.
 
 ## Tính năng thiết kế
 
@@ -66,8 +66,10 @@ client/
   ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                    Khởi động
 server/                    Máy chủ HTTP
-  main.js http/              File tĩnh + /api/health
-  services/ repositories/ chat/   Khung PlayerService, kho lưu trữ, chat
+  main.js app.js config.js   Điểm vào, ghép ứng dụng, cấu hình
+  http/ api/ auth/           Router, lỗi chuẩn, giới hạn tốc độ; route; mật khẩu + phiên
+  services/ repositories/ workers/   PlayerService, kho (bộ nhớ) + outbox, OutboxWorker
+  chat/                      Khung chat (chưa cài đặt)
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
 tools/                     Kiểm tra, preload, import dữ liệu; pending-engine/ chờ engine mới
 docs/                      Tài liệu
@@ -86,12 +88,15 @@ Thứ tự gợi ý khi viết lại engine: state → time/creation → progres
 
 ## Backend
 
-`server/` hiện có file tĩnh và `GET /api/health`. `PlayerService` (create/sync/command, `expectedRevision`, `requestId` idempotent), `PlayerRepository` (`transact/get/create`) và chat là khung giao diện. Kế hoạch online (stack, schema, API, xác thực, triển khai, lộ trình nhiều người chơi) ở [docs/backend-plan.md](docs/backend-plan.md). Gameplay hiện chạy offline qua `LocalSession`; chat client (`client/session/chat-session.js`) chờ máy chủ chat.
+`server/` là khung chạy được, không cần phụ thuộc ngoài: cấu hình, lỗi chuẩn, token bucket, tài khoản (scrypt), phiên cookie, `PlayerService` (idempotency theo `requestId`, `expectedRevision`, hoàn tác khi lỗi, đồng hồ server), kho người chơi có giao dịch theo từng người chơi và outbox, `OutboxWorker`. Kho đang trong bộ nhớ; hợp đồng `PlayerRepository` có bộ test dùng lại được cho bản PostgreSQL. Engine chưa READY nên các endpoint gameplay trả `501 ENGINE_NOT_READY`.
+
+Kiến thức thiết kế, nguồn tham khảo và phần chưa kiểm chứng: [docs/backend-knowledge.md](docs/backend-knowledge.md). Kế hoạch online dài hạn (PostgreSQL, WebSocket, nhiều người chơi): [docs/backend-plan.md](docs/backend-plan.md). Chat client (`client/session/chat-session.js`) chờ máy chủ chat.
 
 ## Tài liệu
 
 - [Kiến trúc](docs/architecture.md): các lớp, thư mục, luồng lệnh, cách nạp module, thêm lệnh.
 - [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (46 lệnh, API `HU_GAME`, state, bản lưu) để viết lại.
+- [Kiến thức thiết kế backend](docs/backend-knowledge.md): nguyên tắc đã tra cứu, nguồn, quyết định áp dụng, điểm chưa kiểm chứng.
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
 - [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
 - [data/README.md](data/README.md), [tools/pending-engine/README.md](tools/pending-engine/README.md): dữ liệu và công cụ chờ engine.

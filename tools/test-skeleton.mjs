@@ -69,14 +69,17 @@ test('index.html nạp data → engine → client đúng thứ tự, không đư
 });
 
 test('máy chủ: health, 404 API, chặn thoát thư mục và mã nguồn server', async () => {
-  const { createRouter } = require('../server/http/router.js');
-  const server = http.createServer(createRouter());
+  const { createApp } = require('../server/app.js');
+  const { silentLogger } = require('../server/lib/logger.js');
+  const server = http.createServer(createApp({ logger: silentLogger }).handler);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const get = async path => fetch(`http://127.0.0.1:${server.address().port}${path}`);
   try {
     const health = await get('/api/health');
     assert.equal(health.status, 200);
-    assert.equal((await health.json()).ok, true);
+    const body = await health.json();
+    assert.equal(body.ok, true);
+    assert.equal(body.engineReady, H.READY);
     assert.equal((await get('/api/khong-co')).status, 404);
     assert.equal((await get('/%2e%2e/%2e%2e/etc/passwd')).status, 404);
     assert.equal((await get('/server/main.js')).status, 404);

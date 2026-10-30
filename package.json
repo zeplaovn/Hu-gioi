@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server/main.js",
     "check": "node tools/check.mjs",
-    "test": "node --test tools/test-skeleton.mjs",
+    "test": "node --test tools/test-skeleton.mjs tools/test-backend.mjs",
     "preload": "node tools/gen-preload.mjs"
   }
 }

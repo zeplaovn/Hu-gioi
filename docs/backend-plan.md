@@ -70,22 +70,22 @@ Với 1 backend + 1 fullstack + 0.5 DevOps + 0.5 QA: **12–17 tuần** đến b
 | Luật game | `engine/rules/*.js` | Khung 9 miền, chưa cài đặt |
 | State | `engine/state/player.js` | Khung; cần schema V7 + normalize V4–V7 |
 | Protocol | `engine/protocol/commands.js` | Hoàn chỉnh: 46 lệnh, validate, execute |
-| Service | `server/services/player-service.js` | Khung giao diện: create/sync/command, revision, receipt |
-| Repository | `server/repositories/player-repository.js` | Khung hợp đồng `transact/get/create` |
-| Máy chủ | `server/main.js`, `server/http/*` | Chạy: file tĩnh + `/api/health` |
+| Service | `server/services/player-service.js` | Đã có: create/sync/command, revision, receipt idempotent, outbox (test bằng engine giả) |
+| Repository | `server/repositories/*.js` | Hợp đồng + bản bộ nhớ; bộ test hợp đồng ở `tools/lib/repository-contract.mjs` |
+| Máy chủ | `server/main.js`, `server/app.js`, `server/http/*`, `server/api/*`, `server/auth/*` | Chạy: file tĩnh + auth + API + giới hạn tốc độ (kho bộ nhớ) |
 | Chat | `server/chat/chat-service.js` | Khung; client `chat-session.js` đã có |
 | Client offline | `client/session/local-session.js`, `client/persistence/local-store.js` | LocalSession đồng bộ, localStorage |
 | UI | `client/ui/*` | Gọi `UI.command(type, payload)` đồng bộ |
 | Kiểm tra | `tools/check.mjs`, `tools/test-skeleton.mjs` | Cú pháp, hợp đồng lệnh, thứ tự script, máy chủ tĩnh |
 | Bảo mật tĩnh | `index.html`, `_headers` | CSP `connect-src 'self'`, hỗ trợ `file://` cho gameplay offline |
 
-`npm test` hiện chỉ kiểm tra khung (`tools/test-skeleton.mjs`). Test hành vi gameplay, contract, concurrency, load và E2E trong lộ trình bên dưới là hạng mục cần bổ sung; `tools/pending-engine/test-game-integration.mjs` là đặc tả tham chiếu.
+`npm test` hiện kiểm tra khung (`tools/test-skeleton.mjs`) và backend (`tools/test-backend.mjs`, dùng engine giả `tools/lib/fake-engine.mjs`). Test hành vi gameplay thật, load và E2E trong lộ trình bên dưới vẫn cần bổ sung; `tools/pending-engine/test-game-integration.mjs` là đặc tả tham chiếu.
 
 ### 1.2 Khoảng trống so với online
 
-- Chưa có engine, `PlayerService`, API gameplay HTTP/WebSocket, auth hoặc database bền vững; chat chưa có máy chủ.
+- Chưa có engine thật, database bền vững, WebSocket; chat chưa có máy chủ. `PlayerService`, API HTTP và auth đã có ở dạng khung (kho bộ nhớ).
 - Kho lưu trữ đầu tiên (bộ nhớ) sẽ mất dữ liệu khi process dừng và chỉ khóa trong một process; chỉ dùng cho dev/test.
-- `PlayerService` cần nhận đồng hồ và RNG qua tham số, rồi sang DB clock/seed theo người chơi.
+- `PlayerService` đã nhận đồng hồ và RNG qua tham số; còn lại là DB clock và seed/counter theo người chơi.
 - `UI.command` đang đồng bộ; `RemoteSession` bất đồng bộ sẽ cần refactor call site.
 - Chưa có khái niệm account, session, player thuộc account, server/shard.
 - Chưa có idempotency bền vững ngoài process, chưa có outbox/worker.
@@ -1368,8 +1368,8 @@ Content-Type: application/json
 | `engine/protocol/commands.js` | Giữ, mở rộng nhẹ | 46 lệnh; thêm error code ổn định ở giai đoạn 2 |
 | `engine/rules/*.js` | Viết lại theo `engine-contract.md` | Thiết kế `advance` có `offline`/`maxSeconds`/`aggregateCombat` ngay từ đầu; không copy luật cũ |
 | `engine/state/player.js` | Viết lại V7; thêm migration V8 sau | `normalize` khi load; schema/content version ở DB |
-| `server/services/player-service.js` | Viết theo khung | Principal/account, player ownership, DB clock/RNG, ticket, batch |
-| `server/repositories/player-repository.js` | Cài bản bộ nhớ cho dev/test | Thêm `PostgresPlayers` cùng contract |
+| `server/services/player-service.js` | Đã có khung chạy được | Còn: DB clock/RNG seed, ticket tạo nhân vật, batch |
+| `server/repositories/*.js` | Bản bộ nhớ đã có | Thêm `PostgresPlayers` và chạy `repositoryContract` |
 | `client/session/local-session.js` | Giữ cho offline | Thêm `RemoteSession` async |
 | `client/persistence/local-store.js` | Chỉ offline | Online dùng IndexedDB read-only cache; không ghi gameplay |
 | `client/ui/*` | Refactor dần | `UI.command` async; pending/disable; conflict UX |

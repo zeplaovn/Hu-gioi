@@ -14,7 +14,7 @@ server/  ──►  engine/  ──►  data/
 | `client/` | Giao diện, tài nguyên, lưu cục bộ, phiên chơi. | `engine/`, `data/` | `server/` |
 | `server/` | Máy chủ HTTP: file tĩnh và API. | `engine/`, `data/` | `client/` |
 
-`tools/check.mjs` và `tools/test-skeleton.mjs` kiểm tra các điều này ở mức cú pháp, thứ tự script và việc không đưa `server/` vào trình duyệt.
+`tools/check.mjs`, `tools/test-skeleton.mjs` và `tools/test-backend.mjs` kiểm tra các điều này ở mức cú pháp, thứ tự script và việc không đưa `server/` vào trình duyệt.
 
 ## 1. Thư mục
 
@@ -38,11 +38,15 @@ client/
   ui/                      Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                  Khởi động; hiển thị thông báo khi engine chưa READY
 server/
-  main.js                  Điểm vào (npm start)
-  http/                    router.js, static.js
-  services/                player-service.js   (khung, chưa cài đặt)
-  repositories/            player-repository.js (khung, chưa cài đặt)
-  chat/                    chat-service.js      (khung, chưa cài đặt)
+  main.js app.js config.js   Điểm vào, ghép ứng dụng, cấu hình từ biến môi trường
+  http/                      router (vòng đời yêu cầu), errors, json, rate-limit, static
+  api/routes.js              Bảng route: auth, players, sync, commands, health
+  auth/                      passwords (scrypt), sessions (cookie), accounts
+  services/player-service.js createPlayer / sync / command: idempotency, revision, hoàn tác
+  repositories/              Hợp đồng PlayerRepository + bản bộ nhớ (transact, outbox)
+  workers/outbox-worker.js   Giao sự kiện ít nhất một lần
+  lib/                       util (JSON ổn định, che seed), logger
+  chat/chat-service.js       Khung, chưa cài đặt
 css/  media/  _headers     Giao diện, tài nguyên, HTTP headers
 tools/                     Kiểm tra, sinh preload, import dữ liệu; pending-engine/ chờ engine mới
 docs/                      Tài liệu
@@ -87,7 +91,22 @@ Trình duyệt dùng classic script để chạy được cả `file://` không 
 
 ## 5. Máy chủ
 
-`npm start` chạy `server/main.js`: phục vụ file tĩnh (chặn `server/`, `tools/`, file ẩn, `package.json`, `_headers` và mọi đường dẫn thoát thư mục) và `GET /api/health`. Route mới thêm vào bảng `ROUTES` trong `server/http/router.js`. Dịch vụ người chơi, kho lưu trữ và chat mới là khung giao diện, mô tả trong từng file và trong [backend-plan.md](backend-plan.md).
+`npm start` chạy `server/main.js`. Vòng đời một yêu cầu `/api/*` (`server/http/router.js`): `requestId` → xô token theo IP → kiểm tra Origin (CSRF) → xác thực phiên → xô token riêng (`auth`, `command`) → handler → lỗi chuẩn `{ error: { code, message, requestId } }`. Ngoài `/api/*` là file tĩnh (chặn `server/`, `tools/`, file ẩn, `package.json`, `_headers`, thoát thư mục).
+
+| Endpoint | Auth | Việc |
+|---|---|---|
+| `GET /api/health` | — | Tình trạng và số mục engine còn thiếu |
+| `POST /api/auth/register` · `login` · `logout` | — / — / phiên | Tài khoản và phiên cookie |
+| `GET /api/me` | phiên | Tài khoản hiện tại |
+| `POST /api/players` | phiên | Tạo nhân vật `{ requestId, profile }` |
+| `POST /api/sync` | phiên | Đẩy tiến trình theo đồng hồ server, trả snapshot (không tăng revision) |
+| `POST /api/commands` | phiên | `{ requestId, expectedRevision, type, payload }` |
+
+Lỗi gameplay: `REVISION_CONFLICT` (409, kèm `currentRevision`), `IDEMPOTENCY_KEY_REUSED` (409), `GAME_RULE_VIOLATION` / `INVALID_COMMAND` (422), `ENGINE_NOT_READY` (501), `RATE_LIMITED` (429, `Retry-After`).
+
+Cơ chế, nguồn tham khảo và những điểm chưa kiểm chứng: [backend-knowledge.md](backend-knowledge.md). Thêm endpoint: thêm một mục vào `ROUTES` trong `server/api/routes.js`.
+
+Giới hạn của khung: kho tài khoản, phiên, người chơi và outbox đều **trong bộ nhớ** (mất khi khởi động lại, chỉ một tiến trình); chưa có PostgreSQL, WebSocket/SSE chat, email/khôi phục mật khẩu, tin cậy `X-Forwarded-For` sau proxy.
 
 ## 6. Trạng thái
 
@@ -96,7 +115,7 @@ Trình duyệt dùng classic script để chạy được cả `file://` không 
 | `data/` | Giữ nguyên dữ liệu và công thức cũ |
 | `client/ui`, `css/`, `media/` | Giữ nguyên |
 | `engine/` | Khung; chưa cài đặt luật, state, tạo nhân vật (xem [engine-contract.md](engine-contract.md)) |
-| `server/` | Chạy file tĩnh và `/api/health`; còn lại là khung |
+| `server/` | Khung chạy được: auth, phiên, API, service, outbox, giới hạn tốc độ (kho trong bộ nhớ); gameplay trả 501 tới khi engine READY |
 | Game chơi được | Chưa, cho tới khi `HU_GAME.MISSING` rỗng |
 
 Cài đặt cũ vẫn xem được tại commit `5f6b9bc`, ví dụ `git show 5f6b9bc:shared/rules/combat.js`.

@@ -113,6 +113,14 @@ Hệ thống: `settings`, `logs`, `lastUpdate`, `lastSaved`.
 
 Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/state/player.js` (`createBase`, `normalize`).
 
+## 6b. Điều server cần từ engine
+
+`server/services/player-service.js` dùng engine như sau (và test bằng engine giả `tools/lib/fake-engine.mjs`, cùng hình dạng):
+- `engine.READY` / `engine.MISSING`; `engine.createCharacter(profile, now, rng)` trả state có `created`, `lastUpdate`.
+- `new engine.Game(state, rng, onLog)` với `advance(now, offline)`, `isDead()`, `checkMeta()` (trả mảng thành tựu mới).
+- `protocol.validate` và `protocol.execute(game, command, now)`; lỗi lập trình (`TypeError`…) hoặc lỗi có `code` lạ thành HTTP 500, còn `Error` thường mang thông điệp tiếng Việt thành `GAME_RULE_VIOLATION` (422).
+- State phải là JSON thuần (qua `structuredClone`) và đặt seed bí mật dưới khóa `seed` hoặc `rngState` để snapshot tự che.
+
 ## 7. Bản lưu
 
 - Schema hiện hành V7; nhập được V4, V5, V6, V7 (`SUPPORTED_VERSIONS`).
