@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const node=typeof module!=='undefined'&&module.exports;
-const F=node?require('../rules/formulas.js'):root.HU_FORMULAS;
+const F=node?require('./formulas.js'):root.HU_FORMULAS;
 const BASE=node?require('./items.js'):root.TIEN_VAN_ITEMS;
 const DESIGN=node?require('./design.js'):root.HU_DESIGN;
 const EXTRA=[

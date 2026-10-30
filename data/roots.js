@@ -2,7 +2,7 @@
    - Ngũ hành cơ bản: Ngụy (tạp) < Tứ hành < Tam hành < Song < Thiên. Thiên = MỘT hệ thuần, không biến thể.
    - Dị linh căn: biến thể cao cấp của một hệ ngũ hành (Băng/Lôi/Phong/Độc), có thế mạnh riêng. KHÁC Thiên linh căn.
    - Chí tôn: Âm Dương (gieo khi tạo nhân vật) và Hỗn Độn (không gieo bẩm sinh).
-   Dữ liệu thuần, không DOM/RNG; luật nằm ở shared/rules. */
+   Dữ liệu thuần, không DOM/RNG; luật nằm ở engine/rules. */
 (function (root) {
   'use strict';
   const ELEMENTS = ['Kim', 'Mộc', 'Thủy', 'Hỏa', 'Thổ'];

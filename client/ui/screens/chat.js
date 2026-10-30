@@ -8,9 +8,9 @@
 
   function render() {
     return `<section class="chat-panel"><header class="chat-heading"><div><span class="eyebrow gold">TRUYỀN ÂM · DEMO</span><h2>Kênh thế giới</h2></div><span id="chatOnline" class="chat-online"></span></header>
-      <p class="info-note">Trò chuyện trực tiếp với người đang mở cùng máy chủ. Đạo hiệu là tên hiển thị demo; máy chủ giữ tối đa 100 tin gần nhất trong bộ nhớ.</p>
+      <p class="info-note">Kênh trò chuyện giữa những đạo hữu đang online. Tính năng cần máy chủ chat riêng (đang được viết lại).</p>
       <div class="chat-connection"><span id="chatStatus" role="status"></span><button type="button" class="btn btn-outline" data-act="chatConnect" id="chatConnect">Kết nối</button><button type="button" class="btn btn-outline" data-act="chatDisconnect" id="chatDisconnect">Rời kênh</button></div>
-      ${!session.available ? '<p class="info-note">Chạy <code>npm run demo</code>, mở <b>http://127.0.0.1:8000</b> rồi vào Thêm → Chat online. Dùng hai trình duyệt hoặc hai hồ sơ trình duyệt để thử cùng nhau.</p>' : ''}
+      ${!session.available ? '<p class="info-note">Máy chủ chat đang được viết lại, hiện chưa có dịch vụ trả lời tại <code>/api/chat/*</code>. Xem <code>docs/backend-plan.md</code>.</p>' : ''}
       <div id="chatFeed" class="chat-feed" role="log" aria-label="Tin nhắn kênh thế giới" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
       <p id="chatEmpty" class="empty-note">Chưa có tin nhắn. Gửi lời chào đến các đạo hữu!</p>
       <form id="chatForm" class="chat-form"><label for="chatInput">Lời truyền âm</label><div><input id="chatInput" type="text" maxlength="400" autocomplete="off" placeholder="Gửi lời đến đạo hữu bốn phương…" value="${esc(draft)}" aria-describedby="chatError chatLimit"><button type="submit" class="btn btn-gold" id="chatSend">Gửi</button></div><small id="chatLimit">Tối đa 400 ký tự · mỗi tin cách nhau 2 giây.</small></form>

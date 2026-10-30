@@ -1,14 +1,16 @@
 # Tích hợp dữ liệu thiết kế
 
-Game dùng snapshot `shared/data/design-raw.js` từ `../idea/data-game-chuan/du_lieu.json`, cùng lớp ánh xạ `shared/data/design.js`. Các mã hiện có như `HERB-001`, `EQ-001`, `BT-001` vẫn dùng trong bản lưu; mã thiết kế được đối chiếu qua cột mã game cũ. Nội dung mới không có mã cũ có mã riêng, ví dụ `BT-900` và `TAL-PL-001`.
+> Trạng thái: **dữ liệu** (snapshot, ánh xạ, công cụ import) vẫn nguyên vẹn trong `data/`. Các mục "Phạm vi đã nối" và "Giới hạn cần hoàn thiện" bên dưới mô tả **hành vi của engine cũ** và là đặc tả hành vi mà `engine/` mới phải giữ khi viết lại (xem [engine-contract.md](engine-contract.md)). Nhánh hiện tại chưa có engine nên chưa chơi được.
+
+Game dùng snapshot `data/design-raw.js` từ `../idea/data-game-chuan/du_lieu.json`, cùng lớp ánh xạ `data/design.js`. Các mã hiện có như `HERB-001`, `EQ-001`, `BT-001` vẫn dùng trong bản lưu; mã thiết kế được đối chiếu qua cột mã game cũ. Nội dung mới không có mã cũ có mã riêng, ví dụ `BT-900` và `TAL-PL-001`.
 
 Snapshot được đóng gói thành classic script để browser chạy được cả qua `file://`; Node và browser dùng cùng dữ liệu. Chỉnh Excel hoặc JSON bên ngoài **không tự cập nhật game**. Nếu cần tạo snapshot mới từ JSON, chạy tại gốc workspace:
 
 ```sh
 node tools/import-game-design.mjs /duong-dan/du_lieu.json --check
 node tools/import-game-design.mjs /duong-dan/du_lieu.json --force
-npm test
 npm run check
+npm test
 ```
 
 `--check` chỉ kiểm tra dữ liệu và liên kết, không ghi file; `--force` ghi đè snapshot hiện tại, nên sao lưu nếu đã sửa thủ công. Excel và JSON không tự đồng bộ với nhau. Không chạy công cụ xuất Excel lên bản đã chỉnh nếu chưa sao lưu.

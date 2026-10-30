@@ -1,7 +1,7 @@
 /* Pure numerical model. Port of docs/cong_thuc_game.py; stages are zero based. */
 (function(root){
 'use strict';
-const D=typeof module!=='undefined'&&module.exports?require('../data/balance.js'):root.HU_BALANCE;
+const D=typeof module!=='undefined'&&module.exports?require('./balance.js'):root.HU_BALANCE;
 const {P,REALMS,STAGES}=D;
 /* Trúc Cơ → Kết Đan có lôi kiếp theo đặc tả mới. */
 const BOLTS=D.BOLTS.map((n,i)=>i===1?3:n);
