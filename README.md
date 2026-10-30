@@ -2,45 +2,26 @@
 
 Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-**Hiện trạng:** bản chơi một người dùng lưu trữ trên thiết bị. Mã nguồn đã tách thành `client / shared / server`, có nền tảng dịch vụ người chơi để phát triển bản online.
+> **Hiện trạng (nhánh `rebuild/backend-skeleton`): đang viết lại backend.** Toàn bộ logic cũ (`shared/`, `server/`, `client/session/local-session.js`) đã được dọn đi. Giao diện, CSS, tài nguyên, dữ liệu thiết kế và công thức cân bằng được giữ nguyên; `engine/` và `server/` là khung có giao diện rõ ràng nhưng **chưa cài đặt luật chơi nên game chưa chơi được**. Mở `index.html` sẽ hiện thông báo thiếu engine thay vì khởi động. Đặc tả để viết lại: [docs/engine-contract.md](docs/engine-contract.md). Bản chơi được cuối cùng nằm ở commit `5f6b9bc` (nhánh `main`).
 
 Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 
-## Bắt đầu chơi
+## Chạy dự án
 
-### Mở trực tiếp
-
-1. Tải hoặc clone repository, giữ nguyên cấu trúc thư mục.
-2. Mở [index.html](index.html) bằng trình duyệt hiện đại có bật JavaScript; hỗ trợ `file://`.
-3. Tạo nhân vật, xem intro rồi làm quen qua hướng dẫn tân thủ. Intro tự chuyển cảnh, không có nút: chạm/Enter/→ chuyển cảnh, Space tạm dừng, Esc bỏ qua. Chọn **Tiếp tục** để nạp nhân vật đã lưu.
-
-Game dùng HTML, CSS và JavaScript với classic scripts; không cần build hoặc cài thư viện để chơi. Nhạc nền bắt đầu sau tương tác của người chơi.
-
-### Chạy qua HTTP trên máy
-
-Nếu có Python 3, chạy tại thư mục gốc repository:
+Yêu cầu **Node.js 20+**. Không cần `npm install`.
 
 ```sh
-python3 -m http.server 8000 --bind 127.0.0.1
+npm start        # máy chủ tại http://127.0.0.1:8000 (HOST, PORT tùy chọn)
+npm run check    # cú pháp JavaScript + đường dẫn script trong index.html
+npm test         # kiểm tra khung: dữ liệu, hợp đồng lệnh, thứ tự script, máy chủ tĩnh
+npm run preload  # sinh lại client/assets/preload-manifest.js
 ```
 
-Mở <http://127.0.0.1:8000>. Đây là máy chủ phục vụ bản game tĩnh; dịch vụ gameplay online được phát triển riêng trong `server/`.
+`npm start` phục vụ game tĩnh và `GET /api/health`. Cũng có thể mở thẳng [index.html](index.html) (`file://`) hoặc chạy `python3 -m http.server 8000 --bind 127.0.0.1`; game dùng HTML, CSS và JavaScript với classic scripts, không cần build. Khi `HU_GAME.READY` còn `false`, trang chỉ hiện thông báo và in danh sách phần còn thiếu trong console.
 
-### Chơi cùng chat online demo
+## Tính năng thiết kế
 
-Với **Node.js 20+**, chạy tại thư mục gốc:
-
-```sh
-npm run demo
-```
-
-Mở <http://127.0.0.1:8000>, vào game rồi chọn **Thêm → Chat online**. Dùng hai trình duyệt hoặc hai hồ sơ trình duyệt để thử nhắn tin qua lại; mỗi hồ sơ có bản lưu game riêng. Máy chủ cung cấp cả game tĩnh và chat HTTP/SSE, không cần cài thư viện.
-
-Để thử trên hai thiết bị cùng mạng, chạy `HOST=0.0.0.0 PORT=8000 npm run demo`, rồi mở `http://<IP-máy-chủ>:8000` trên cả hai thiết bị. Có thể đổi `PORT` nếu cổng đang được dùng.
-
-Chat có trạng thái online, kết nối lại, giữ bản nháp, giới hạn 400 ký tự/tin và 2 giây giữa các tin. Đây là kênh demo dùng đạo hiệu hiển thị, chưa có tài khoản xác thực; 100 tin gần nhất nằm trong RAM và mất khi khởi động lại máy chủ. Gameplay tiếp tục dùng phiên offline. Khi mở `file://` hoặc máy chủ Python, màn chat hiển thị hướng dẫn chạy demo.
-
-## Tính năng hiện có
+Các tính năng sau thuộc bản trước và là phạm vi mà engine mới phải đáp ứng; UI và dữ liệu cho chúng vẫn còn trong repository.
 
 | Nhóm | Nội dung |
 |---|---|
@@ -68,76 +49,49 @@ Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<gi
 
 ## Cấu trúc mã nguồn
 
+Phụ thuộc một chiều: `client/` và `server/` → `engine/` → `data/`. Chi tiết: [docs/architecture.md](docs/architecture.md).
+
 ```text
 index.html                 Điểm vào trình duyệt và thứ tự nạp scripts
+data/                      Dữ liệu thiết kế và công thức cân bằng (thuần dữ liệu)
+engine/                    Luật chơi dùng chung cho client và server (khung, chưa cài đặt)
+  game.js                    Ghép data + state + rules; báo READY / MISSING
+  state/                     Schema V7, create, normalize V4–V7
+  rules/                     9 miền: progression inventory crafting combat world adventures social time creation
+  protocol/                  46 lệnh: schema payload, validate, execute
 client/
-  assets/                  Đường dẫn ảnh, chỉ mục vật phẩm/animation, preload
-  platform/                Loading, âm thanh, bảo vệ nội dung trình duyệt
-  persistence/             localStorage, dự phòng, xuất/nhập JSON offline
-  session/                 LocalSession và ChatSession HTTP/SSE độc lập
-  ui/
-    screens/               Tu luyện, chiến đấu, nghề phụ, nhân vật, thế giới…
-    onboarding.js          Intro và hướng dẫn tân thủ
-    core.js                Bộ dựng giao diện và cầu nối phiên chơi
-    shell.js               Điều hướng, cửa sổ, nhật ký và trình diễn độ kiếp
-    environment.js         Chuyển cảnh mùa/ngày–đêm và sự kiện cảnh sắc
-    boot.js                Khởi tạo, tiếp tục game và vòng đời trang
-    vfx.js                 Hiệu ứng hình ảnh
-  main.js                  Khởi động giao diện
-shared/
-  data/                    Cân bằng, vật phẩm, linh căn, nhân vật, thế giới
-  state/                   Schema V7 và chuyển bản lưu V4–V7
-  rules/                   Luật tu luyện, chiến đấu, chế tạo, phần thưởng, thời gian
-  protocol/                Danh sách lệnh và kiểm tra payload
-  game.js                  Điểm vào luật dùng chung cho browser và Node
-server/
-  demo.js                  Chạy máy chủ game tĩnh + chat demo
-  chat/                    API chat, phiên demo, SSE, lịch sử trong RAM
-  services/                PlayerService: tạo, đồng bộ và xử lý lệnh người chơi
-  repositories/            Kho thử nghiệm trong bộ nhớ, giao dịch theo playerId
-tools/                     Kiểm tra mã, sinh preload và công cụ tài nguyên
-docs/                      Kiến trúc hiện tại và kế hoạch backend
-css/                       Giao diện responsive
-media/                     Hình ảnh và âm thanh
-_headers                   Cấu hình HTTP headers cho nền tảng hosting hỗ trợ
+  assets/ platform/          Ảnh, âm thanh, loading, bảo vệ nội dung
+  persistence/               localStorage, dự phòng, xuất/nhập JSON
+  session/                   LocalSession (offline) và ChatSession (HTTP/SSE)
+  ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
+  main.js                    Khởi động
+server/                    Máy chủ HTTP
+  main.js http/              File tĩnh + /api/health
+  services/ repositories/ chat/   Khung PlayerService, kho lưu trữ, chat
+css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
+tools/                     Kiểm tra, preload, import dữ liệu; pending-engine/ chờ engine mới
+docs/                      Tài liệu
 ```
 
-## Phát triển và kiểm tra
+## Phát triển
 
-Các công cụ JavaScript yêu cầu **Node.js 20 trở lên**. Chạy tại thư mục gốc; hiện không cần `npm install`.
+- Viết luật và tính thưởng trong `engine/`; giao diện chỉ gửi lệnh bằng `UI.command(type, payload)` và hiển thị state. Cài đặt hiển thị dùng `UI.preference()`.
+- `engine/` và `data/` không phụ thuộc DOM, `localStorage`, mạng hay timer; thời gian và RNG do phiên cung cấp.
+- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh](docs/engine-contract.md#4-lệnh-46) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
+- Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node lẫn `file://` nạp đúng; `npm test` kiểm tra thứ tự.
+- Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và cấu hình preload rồi chạy `npm run preload`.
+- Thay dữ liệu thiết kế: xem [docs/design-integration.md](docs/design-integration.md).
 
-| Lệnh | Công dụng |
-|---|---|
-| `npm run check` | Kiểm tra cú pháp JavaScript và đường dẫn script trong `index.html`. |
-| `npm test` | Kiểm tra tương thích bản lưu và các luật tích hợp dữ liệu mới. |
-| `npm run preload` | Sinh lại `client/assets/preload-manifest.js` theo cấu hình trong `tools/gen-preload.mjs`. |
-| `npm run demo` | Chạy game và chat demo tại cổng 8000; hỗ trợ biến `HOST`, `PORT`. |
+Thứ tự gợi ý khi viết lại engine: state → time/creation → progression → inventory/crafting/combat → world/adventures/social. Mỗi bước thêm test; `HU_GAME.MISSING` rỗng thì UI tự khởi động.
 
-Luồng thay đổi gameplay:
+## Backend
 
-```text
-Giao diện → UI.command(type, payload) → LocalSession
-         → shared/protocol/commands → shared/rules → state
-```
+`server/` hiện có file tĩnh và `GET /api/health`. `PlayerService` (create/sync/command, `expectedRevision`, `requestId` idempotent), `PlayerRepository` (`transact/get/create`) và chat là khung giao diện. Kế hoạch online (stack, schema, API, xác thực, triển khai, lộ trình nhiều người chơi) ở [docs/backend-plan.md](docs/backend-plan.md). Gameplay hiện chạy offline qua `LocalSession`; chat client (`client/session/chat-session.js`) chờ máy chủ chat.
 
-- Viết luật và tính phần thưởng trong `shared/`; giao diện gửi lệnh và hiển thị kết quả. Các cài đặt trình bày dùng `UI.preference()`.
-- `shared/` dùng được trong Node qua `require('./shared/game.js')`, không phụ thuộc DOM hay `localStorage`.
-- Khi thêm module, cập nhật điểm ghép module và thứ tự script trong `index.html` để cả Node lẫn `file://` nạp đúng.
-- Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và cấu hình preload rồi chạy `npm run preload`. Intro được nạp riêng khi bắt đầu nhân vật.
+## Tài liệu
 
-## Nền tảng online
-
-`server/services/player-service.js` đã có:
-
-- State riêng theo người chơi, với đồng hồ và bộ sinh số ngẫu nhiên do máy chủ cung cấp.
-- Kiểm tra lệnh, điều kiện gameplay, tạo nhân vật và tính tiến trình bế quan.
-- `expectedRevision` để phát hiện cập nhật đồng thời; `requestId` và lịch sử kết quả để xử lý retry không cấp thưởng hoặc trừ tiền lặp.
-- Giao dịch hoàn tác khi lỗi và snapshot kết quả không chứa seed bí cảnh.
-
-`MemoryPlayers` là kho thử nghiệm trong một tiến trình, mất dữ liệu khi tiến trình dừng. Bản web hiện kết nối `LocalSession`; API gameplay HTTP/WebSocket, đăng nhập, database bền vững và gameplay nhiều người là các bước tiếp theo. Chat demo có API riêng cùng origin; không nối `PlayerService` ra mạng. Stack nêu trong kế hoạch backend đang ở mức đề xuất.
-
-## Tài liệu liên quan
-
-- [Tích hợp dữ liệu game](docs/design-integration.md): phạm vi, cách ánh xạ dữ liệu mới và những giới hạn còn lại.
-- [Kiến trúc hiện tại](docs/architecture.md): ranh giới client/shared/server, ánh xạ file cũ → mới, hợp đồng lệnh và ví dụ `PlayerService`.
-- [Kế hoạch backend online](docs/backend-plan.md): đề xuất stack, schema dữ liệu, API, xác thực, triển khai và lộ trình nhiều người chơi.
+- [Kiến trúc](docs/architecture.md): các lớp, thư mục, luồng lệnh, cách nạp module, thêm lệnh.
+- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (46 lệnh, API `HU_GAME`, state, bản lưu) để viết lại.
+- [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
+- [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
+- [data/README.md](data/README.md), [tools/pending-engine/README.md](tools/pending-engine/README.md): dữ liệu và công cụ chờ engine.

@@ -1,8 +1,8 @@
 # Kế hoạch thiết kế backend — Hư Giới
 
-> Trạng thái: đề xuất thiết kế, chưa triển khai  
-> Phạm vi: game chính trong `workspace/`  
-> Mục tiêu: đưa game idle tu tiên một người chơi hiện tại thành game online nhiều người chơi, server-authoritative, vẫn dùng chung bộ luật `shared/`.
+> Trạng thái: đề xuất thiết kế, chưa triển khai. Nhánh hiện tại đã dọn backend cũ và chỉ có khung `engine/` + `server/` (xem [architecture.md](architecture.md), [engine-contract.md](engine-contract.md)); các mô tả "hiện có" trong tài liệu này tham chiếu cài đặt cũ ở commit `5f6b9bc`.  
+> Phạm vi: game chính trong repository này  
+> Mục tiêu: đưa game idle tu tiên một người chơi hiện tại thành game online nhiều người chơi, server-authoritative, vẫn dùng chung bộ luật `engine/`.
 
 ---
 
@@ -13,14 +13,14 @@
 - Giữ nguyên trải nghiệm idle: tu vi tăng theo thời gian, kể cả khi offline.
 - Chuyển toàn bộ quyết định gameplay quan trọng lên server: thời gian, RNG, giá, phần thưởng, đột phá, bí cảnh, tông môn, giao dịch.
 - Client chỉ gửi **ý định** (`type` + `payload`), không gửi state, thời gian, RNG, giá hay phần thưởng.
-- Tái sử dụng tối đa `shared/rules`, `shared/protocol`, `shared/state` và `PlayerService` hiện có; không fork luật game.
+- Dùng chung `engine/rules`, `engine/protocol`, `engine/state` cho client và server; không fork luật game. `PlayerService` cần viết lại theo khung `server/services/player-service.js`.
 - Mở rộng dần: online single-player → chat/presence → PvP/tông môn/thị trường → live ops.
 
 ### 0.2 Stack đề xuất
 
 | Thành phần | Đề xuất | Ghi chú |
 |---|---|---|
-| Runtime | Node.js 20 LTS trở lên | Tái dùng trực tiếp `shared/*.js` CommonJS |
+| Runtime | Node.js 20 LTS trở lên | Tái dùng trực tiếp `engine/*.js` và `data/*.js` (CommonJS) |
 | HTTP API | Fastify | Nhẹ, schema validation, plugin, hiệu năng tốt |
 | Database | PostgreSQL 16 | Nguồn sự thật cho account, player, receipt, outbox, social |
 | Cache / realtime | Redis 7 | Presence, rate limit, leaderboard cache, pub/sub; không phải nguồn sự thật |
@@ -47,7 +47,7 @@
 |---|---|
 | Đăng ký/đăng nhập, refresh token, đăng xuất | OAuth Google/Apple, 2FA người chơi |
 | Tạo nhân vật có preview do server gieo | Nhiều slot nhân vật, đổi tên có phí |
-| Sync + 41 lệnh hiện có qua API | Chat thế giới, presence, bạn bè thật |
+| Sync + 46 lệnh hiện có qua API | Chat thế giới, presence, bạn bè thật |
 | Catch-up offline, chống gian lận thời gian | PvP thật, tông môn chung, thị trường |
 | Revision, requestId, receipt, retry an toàn | Đấu giá realtime, world boss |
 | Rate limit, log, metric, health check | Season pass, IAP, live ops |
@@ -64,27 +64,28 @@ Với 1 backend + 1 fullstack + 0.5 DevOps + 0.5 QA: **12–17 tuần** đến b
 
 ### 1.1 Những gì đã có
 
-| Khu vực | File / thành phần | Vai trò |
+| Khu vực | File / thành phần | Trạng thái |
 |---|---|---|
-| Luật game | `shared/rules/*.js` | Tu luyện, chiến đấu, inventory, crafting, world, social, adventures, time, creation |
-| Dữ liệu | `shared/data/*.js` | Cân bằng, vật phẩm, nhân vật, bản đồ, tông môn, bí cảnh |
-| State | `shared/state/player.js` | Schema V7, normalize V4–V7, clamp dữ liệu |
-| Protocol | `shared/protocol/commands.js` | 41 lệnh, validate payload, execute |
-| Service | `server/services/player-service.js` | create/sync/execute, revision, receipt, snapshot đã lọc seed |
-| Repository | `server/repositories/memory-players.js` | Adapter bộ nhớ, transaction theo playerId, chỉ dùng dev/test |
+| Dữ liệu | `data/*.js` | Giữ nguyên: cân bằng, công thức, vật phẩm, nhân vật, bản đồ, tông môn, bí cảnh |
+| Luật game | `engine/rules/*.js` | Khung 9 miền, chưa cài đặt |
+| State | `engine/state/player.js` | Khung; cần schema V7 + normalize V4–V7 |
+| Protocol | `engine/protocol/commands.js` | Hoàn chỉnh: 46 lệnh, validate, execute |
+| Service | `server/services/player-service.js` | Khung giao diện: create/sync/command, revision, receipt |
+| Repository | `server/repositories/player-repository.js` | Khung hợp đồng `transact/get/create` |
+| Máy chủ | `server/main.js`, `server/http/*` | Chạy: file tĩnh + `/api/health` |
+| Chat | `server/chat/chat-service.js` | Khung; client `chat-session.js` đã có |
 | Client offline | `client/session/local-session.js`, `client/persistence/local-store.js` | LocalSession đồng bộ, localStorage |
 | UI | `client/ui/*` | Gọi `UI.command(type, payload)` đồng bộ |
-| Kiểm tra mã | `tools/check.mjs` | Cú pháp JavaScript và đường dẫn script trong HTML |
-| Chat demo | `server/demo.js`, `server/chat/demo-server.js` | Máy chủ static + chat HTTP/SSE cùng origin |
+| Kiểm tra | `tools/check.mjs`, `tools/test-skeleton.mjs` | Cú pháp, hợp đồng lệnh, thứ tự script, máy chủ tĩnh |
 | Bảo mật tĩnh | `index.html`, `_headers` | CSP `connect-src 'self'`, hỗ trợ `file://` cho gameplay offline |
 
-Các bộ test và lệnh `npm test` trong lộ trình bên dưới là hạng mục cần bổ sung khi triển khai backend.
+`npm test` hiện chỉ kiểm tra khung (`tools/test-skeleton.mjs`). Test hành vi gameplay, contract, concurrency, load và E2E trong lộ trình bên dưới là hạng mục cần bổ sung; `tools/pending-engine/test-game-integration.mjs` là đặc tả tham chiếu.
 
 ### 1.2 Khoảng trống so với online
 
-- Chưa có API gameplay HTTP/WebSocket, auth hoặc database bền vững. Chat demo có máy chủ riêng dùng bộ nhớ.
-- `MemoryPlayers` mất dữ liệu khi process dừng và chỉ khóa trong một process.
-- `PlayerService` dùng `Date.now` và RNG cấp service, chưa có DB clock/seed theo người chơi.
+- Chưa có engine, `PlayerService`, API gameplay HTTP/WebSocket, auth hoặc database bền vững; chat chưa có máy chủ.
+- Kho lưu trữ đầu tiên (bộ nhớ) sẽ mất dữ liệu khi process dừng và chỉ khóa trong một process; chỉ dùng cho dev/test.
+- `PlayerService` cần nhận đồng hồ và RNG qua tham số, rồi sang DB clock/seed theo người chơi.
 - `UI.command` đang đồng bộ; `RemoteSession` bất đồng bộ sẽ cần refactor call site.
 - Chưa có khái niệm account, session, player thuộc account, server/shard.
 - Chưa có idempotency bền vững ngoài process, chưa có outbox/worker.
@@ -94,7 +95,7 @@ Các bộ test và lệnh `npm test` trong lộ trình bên dưới là hạng m
 
 ### 1.3 Ràng buộc kỹ thuật
 
-- `shared/` phải tiếp tục chạy được cả browser classic script và Node CommonJS; không được import DB/network/timer vào `shared/`.
+- `engine/` và `data/` phải chạy được cả browser classic script và Node CommonJS; không được import DB/network/timer vào hai thư mục này.
 - Không có build step cho client; giữ client vanilla JS, có thể thêm `RemoteSession` như một classic script.
 - State V7 là JSON lớn; mọi thay đổi phải qua `normalize` và kiểm tra giới hạn.
 - Protocol v1 đã có hợp đồng rõ: `protocolVersion`, `requestId`, `expectedRevision`, `type`, `payload`.
@@ -109,7 +110,7 @@ Các bộ test và lệnh `npm test` trong lộ trình bên dưới là hạng m
 
 ## 2. Nguyên tắc thiết kế
 
-1. **Một nguồn luật duy nhất**: server và client cùng dùng `shared/`; không copy công thức sang backend.
+1. **Một nguồn luật duy nhất**: server và client cùng dùng `engine/`; không copy công thức sang backend.
 2. **Server sở hữu thời gian và RNG**: client chỉ hiển thị dự đoán; mọi kết quả chính thức do server trả.
 3. **Intent, not state**: payload chỉ chứa ý định và ID; không chứa giá, phần thưởng, state, thời gian.
 4. **Idempotency mặc định**: mọi lệnh có `requestId`; retry không nhân đôi phần thưởng.
@@ -219,7 +220,7 @@ Trả snapshot; client nội suy thanh tiến trình giữa các lần sync
 
 | ID | Quyết định | Lý do | Hệ quả |
 |---|---|---|---|
-| ADR-001 | API Node riêng, không cho client ghi DB/BaaS | Giữ luật server-authoritative, tái dùng `shared/` | Phải vận hành API + DB |
+| ADR-001 | API Node riêng, không cho client ghi DB/BaaS | Giữ luật server-authoritative, tái dùng `engine/` | Phải vận hành API + DB |
 | ADR-002 | PostgreSQL là nguồn sự thật | Transaction, revision, receipt, outbox, quan hệ | Cần migration/backup/PITR |
 | ADR-003 | Lazy simulation, không global tick | Idle game không cần 1 Hz; tiết kiệm CPU/DB | Client phải sync định kỳ |
 | ADR-004 | Transaction + row lock theo player | Đơn giản, đúng, chống ghi đè | Một player bị serialize; chấp nhận được |
@@ -374,7 +375,7 @@ Admin API đặt ở host/port riêng, không public: xem player, grant mail, ba
 
 - `requestId`: 1–128 ký tự `[A-Za-z0-9_-]`, unique theo player, client giữ nguyên khi retry.
 - `expectedRevision`: revision client đã thấy gần nhất.
-- `type`: một trong 41 lệnh của `shared/protocol/commands.js`.
+- `type`: một trong 46 lệnh của `engine/protocol/commands.js`.
 - `payload`: đúng schema của lệnh; server validate lại bằng `C.validate`.
 
 ### 6.4 Response command
@@ -471,7 +472,7 @@ Error envelope:
 ```
 
 - Không trả stack trace, SQL, hay state nội bộ.
-- Lỗi luật game hiện tại là tiếng Việt không có code; giai đoạn 1 bọc thành `GAME_RULE_VIOLATION`, giai đoạn 2 thêm `code` ổn định cho từng lỗi trong `shared/rules`.
+- Lỗi luật game hiện tại là tiếng Việt không có code; giai đoạn 1 bọc thành `GAME_RULE_VIOLATION`, giai đoạn 2 thêm `code` ổn định cho từng lỗi trong `engine/rules`.
 
 ### 6.8 WebSocket protocol (giai đoạn 3)
 
@@ -632,7 +633,7 @@ async execute(principal, playerId, request) {
 
 ### 7.8 Content version và job đang chạy
 
-- `content_version` là hash của `shared/data` + `shared/rules` tại thời điểm deploy; trả trong bootstrap/response.
+- `content_version` là hash của `data/` + `engine/rules` tại thời điểm deploy; trả trong bootstrap/response.
 - Active dungeon/sect mission nên lưu **snapshot định nghĩa** (floors, boss, element, seconds, contribution) trong state server-only hoặc bảng job, để đổi balance không làm hỏng job đang chạy.
 - Khi deploy balance mới: settle các player đang online/active trước khi chuyển version; player offline sẽ catch-up bằng version mới (chấp nhận hoặc version hóa công thức nếu cần công bằng tuyệt đối).
 - Client version mismatch → `426 CONTENT_VERSION_MISMATCH`, yêu cầu reload.
@@ -641,7 +642,7 @@ async execute(principal, playerId, request) {
 
 ## 8. Multiplayer và tính năng xã hội
 
-> MVP giữ các lệnh `meetFriend`, `giftFriend`, `discuss`, `duel`, `bid`, `joinSect`… là mô phỏng server-side theo từng nhân vật. Giai đoạn 3 mới thay bằng dữ liệu chung. Không trộn hai nguồn sự thật cho cùng một tính năng.
+> MVP giữ các lệnh `meetFriend`, `giftFriend`, `discuss`, `npcGift`, `npcOffer`, `duel`, `bid`, `joinSect`… là mô phỏng server-side theo từng nhân vật. Giai đoạn 3 mới thay bằng dữ liệu chung. Không trộn hai nguồn sự thật cho cùng một tính năng.
 
 ### 8.1 Presence và chat
 
@@ -753,7 +754,7 @@ Trước khi ghi:
 - `expectedRevision` + receipt chống replay/dup.
 - Rate limit + velocity + upper bound theo realm/thời gian:
   - exp/giờ, stone/giờ, item/giờ, số trận dungeon/sect/ngày.
-  - So sánh với trần lý thuyết từ `shared/rules` + dung sai.
+  - So sánh với trần lý thuyết từ `engine/rules` + dung sai.
 - Phát hiện bất thường: command cadence, requestId trùng payload khác, revision gap, nhiều account cùng device/IP, market price bất thường.
 - Shadow ban/flag thay vì auto-ban; admin review; audit.
 - Không log state/token; log hash/size.
@@ -996,7 +997,7 @@ frame-ancestors 'none'
 | Loại | Phạm vi | Công cụ | Gate |
 |---|---|---|---|
 | Unit | shared rules, normalize, protocol, service với fake repo/clock/RNG | `node:test` | mỗi PR |
-| Contract | cùng bộ test chạy với `MemoryPlayers` và `PostgresPlayers` | `node:test` + Postgres | mỗi PR |
+| Contract | cùng bộ test chạy với kho bộ nhớ và `PostgresPlayers` | `node:test` + Postgres | mỗi PR |
 | Integration | API + DB + Redis + auth + outbox | Testcontainers/docker compose | mỗi PR |
 | Concurrency | 2 command cùng revision; 2 instance; duplicate requestId; deadlock retry | script + DB | mỗi PR |
 | Crash | commit xong nhưng mất response; retry receipt | fault injection | trước release |
@@ -1049,7 +1050,7 @@ frame-ancestors 'none'
 - Chốt ADR-001…010; freeze MVP scope.
 - Tạo `server/` skeleton, `docker-compose` Postgres/Redis, env schema, error envelope, pino, health check.
 - Migration 0001 core; `PostgresPlayers` + contract tests.
-- Refactor `PlayerService` sang repository interface; DB clock/RNG; player ownership.
+- Viết `PlayerService` trên repository interface; DB clock/RNG; player ownership.
 - CI: check/test/DB test.
 
 **Exit:** `npm test` pass với cả Memory và Postgres; API health chạy local.
@@ -1146,10 +1147,10 @@ MVP nên dừng ở Phase 2 (online single-player + client) trước khi làm so
 ## 16. Việc cần làm ngay
 
 - [ ] Chốt các quyết định ở 15.2; viết ADR-001 (stack) và ADR-002 (persistence).
-- [ ] Tạo `server/` skeleton + `docker-compose.yml` (Postgres 16, Redis 7) + `.env.example`.
+- [ ] Mở rộng khung `server/` hiện có + `docker-compose.yml` (Postgres 16, Redis 7) + `.env.example`.
 - [ ] Viết migration 0001 core; script `npm run db:migrate`.
 - [ ] Implement `PostgresPlayers` với `transact`, row lock, receipt, outbox; bổ sung và chạy bộ test gameplay/contract.
-- [ ] Refactor `PlayerService`: principal/account, player ownership, DB clock, RNG seed/counter, ticket tạo nhân vật.
+- [ ] Viết `PlayerService` (khung đã có): principal/account, player ownership, DB clock, RNG seed/counter, ticket tạo nhân vật.
 - [ ] Làm auth MVP + `GET /bootstrap` + `POST /players` + `POST /sync` + `POST /commands`.
 - [ ] Thêm error envelope, rate limit, request logging, health/metrics, CI.
 - [ ] Viết `RemoteSession` + refactor `UI.command` async trên 2–3 screen đầu; đo UX.
@@ -1364,11 +1365,11 @@ Content-Type: application/json
 
 | Hiện tại | Giữ / đổi | Ghi chú |
 |---|---|---|
-| `shared/protocol/commands.js` | Giữ, mở rộng nhẹ | 41 lệnh; thêm error code ổn định ở giai đoạn 2 |
-| `shared/rules/*.js` | Giữ, refactor `advance` | Tách `offline`/`maxSeconds`/`aggregateCombat`; không copy luật |
-| `shared/state/player.js` | Giữ V7; thêm migration V8 sau | `normalize` khi load; schema/content version ở DB |
-| `server/services/player-service.js` | Refactor | Principal/account, player ownership, DB clock/RNG, ticket, batch |
-| `server/repositories/memory-players.js` | Giữ cho dev/test | Thêm `PostgresPlayers` cùng contract |
+| `engine/protocol/commands.js` | Giữ, mở rộng nhẹ | 46 lệnh; thêm error code ổn định ở giai đoạn 2 |
+| `engine/rules/*.js` | Viết lại theo `engine-contract.md` | Thiết kế `advance` có `offline`/`maxSeconds`/`aggregateCombat` ngay từ đầu; không copy luật cũ |
+| `engine/state/player.js` | Viết lại V7; thêm migration V8 sau | `normalize` khi load; schema/content version ở DB |
+| `server/services/player-service.js` | Viết theo khung | Principal/account, player ownership, DB clock/RNG, ticket, batch |
+| `server/repositories/player-repository.js` | Cài bản bộ nhớ cho dev/test | Thêm `PostgresPlayers` cùng contract |
 | `client/session/local-session.js` | Giữ cho offline | Thêm `RemoteSession` async |
 | `client/persistence/local-store.js` | Chỉ offline | Online dùng IndexedDB read-only cache; không ghi gameplay |
 | `client/ui/*` | Refactor dần | `UI.command` async; pending/disable; conflict UX |
@@ -1377,17 +1378,17 @@ Content-Type: application/json
 | Bộ test backend (cần bổ sung) | Tạo mới | Contract, concurrency, integration, load, E2E |
 | `Hu-gioi` auth/chat/leaderboard | Tham khảo mô hình | Không dùng `save_game()` client-authoritative |
 
-## Phụ lục D — Phạm vi 41 lệnh
+## Phụ lục D — Phạm vi 46 lệnh
 
 | Nhóm | Lệnh | Ghi chú online |
 |---|---|---|
 | Tu luyện / meta | `breakthrough`, `prestige`, `reincarnate`, `upgrade`, `buyMeta`, `upgradeOffline` | Server-authoritative; `prestige` không có force |
-| Inventory | `buy`, `sell`, `equip`, `learn`, `activate`, `use`, `craft`, `forge`, `absorb`, `sellYao` | Giá/tỉ lệ server tính |
-| Chiến đấu | `strike`, `skill`, `setAuto`, `setEnemyKind`, `travel` | Catch-up/auto server; rate limit |
+| Inventory | `buy`, `sell`, `equip`, `learn`, `activate`, `use`, `craft`, `forge`, `garden`, `absorb`, `sellYao` | Giá/tỉ lệ server tính |
+| Chiến đấu | `strike`, `skill`, `castManual`, `activateArtifact`, `setAuto`, `setEnemyKind`, `travel` | Catch-up/auto server; rate limit |
 | Thế giới | `claimQuest`, `claimFragments`, `manualEncounter`, `bid` | `bid` là đấu giá NPC mô phỏng ở MVP |
 | Tông môn | `joinSect`, `leaveSect`, `donateSect`, `setBlessing`, `setSectRepeat`, `startSectMission`, `claimSectMission`, `abortSectMission`, `buySect` | MVP mô phỏng per-player; Phase 3 roster/chat thật |
 | Bí cảnh / linh căn | `startDungeon`, `abortDungeon`, `temperRoot` | Seed server-only; job params freeze |
-| Social | `meetFriend`, `giftFriend`, `discuss`, `duel` | MVP mô phỏng; Phase 3 thay bằng player thật |
+| Social | `meetFriend`, `giftFriend`, `discuss`, `npcGift`, `npcOffer`, `duel` | MVP mô phỏng; Phase 3 thay bằng player thật |
 
 ---
 

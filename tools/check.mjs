@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const walk = dir => readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(join(dir,e.name)) : [join(dir,e.name)]);
-const files = ['client','shared','server','tools'].flatMap(dir => walk(join(root,dir))).filter(f => /\.(?:m?js)$/.test(f));
+const files = ['client','data','engine','server','tools'].flatMap(dir => walk(join(root,dir))).filter(f => /\.(?:m?js)$/.test(f));
 for (const file of files) {
   const check = spawnSync(process.execPath,['--check',file],{ stdio:'inherit' });
   if (check.status !== 0) process.exit(check.status || 1);

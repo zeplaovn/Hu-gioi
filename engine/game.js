@@ -1,0 +1,69 @@
+/* Điểm vào engine: ghép dữ liệu thiết kế + trạng thái + các module luật.
+   Chạy trong Node (require) và trình duyệt (classic scripts / file://), không đụng DOM, localStorage, mạng hay timer.
+   HU_GAME.READY chỉ là true khi mọi lệnh và hàm bắt buộc đã được cài đặt; HU_GAME.MISSING liệt kê phần còn thiếu. */
+(function (root) {
+  'use strict';
+  const node = typeof module !== 'undefined' && module.exports;
+  const F = node ? require('../data/formulas.js') : root.HU_FORMULAS;
+  const C = node ? require('../data/character.js') : root.HU_CHARACTER;
+  const D = node ? require('../data/catalog.js') : root.HU_CATALOG;
+  const social = node ? require('../data/social.js') : root.HU_SOCIAL_DATA;
+  const adventures = node ? require('../data/adventures.js') : root.HU_ADVENTURE_DATA;
+  const S = node ? require('./state/player.js') : root.HU_PLAYER_STATE;
+  const P = node ? require('./protocol/commands.js') : root.HU_COMMANDS;
+  const RULE_FILES = ['progression', 'inventory', 'crafting', 'combat', 'world', 'adventures', 'social', 'time', 'creation'];
+  const RULES = node ? RULE_FILES.map(name => require('./rules/' + name + '.js')) : RULE_FILES.map(name => root.HU_RULES[name]);
+
+  /* Phương thức bắt buộc ngoài các lệnh: do rules/time.js và rules/progression.js cung cấp. */
+  const REQUIRED_METHODS = Object.freeze(['advance', 'isDead', 'checkMeta']);
+
+  function notImplemented(name) {
+    const fn = function () { const e = Error('Chưa cài đặt: ' + name); e.code = 'NOT_IMPLEMENTED'; throw e; };
+    fn.notImplemented = true;
+    return fn;
+  }
+
+  class Game {
+    constructor(state, rng = Math.random, onLog = null) { this.s = state; this.rng = rng; this.onLog = onLog; }
+    log(message) {
+      this.s.logs.unshift(message);
+      this.s.logs.length = Math.min(38, this.s.logs.length);
+      this.onLog?.(message);
+    }
+  }
+  [...P.types, ...REQUIRED_METHODS].forEach(name => { Game.prototype[name] = notImplemented(name); });
+
+  const API = {
+    F, ...C, ...D, ...social, ...adventures,
+    VERSION: S.VERSION,
+    Game,
+    createCharacter: notImplemented('createCharacter'),
+    create: (now = Date.now()) => S.create(now),
+    normalize: (raw, now = Date.now()) => S.normalize(raw, now, Game)
+  };
+
+  /* Mỗi lệnh phải thuộc đúng một miền luật. */
+  const owner = new Map();
+  for (const rule of RULES) {
+    for (const type of rule.commands) {
+      if (!P.types.includes(type)) throw Error(`Miền "${rule.domain}" khai báo lệnh không có trong protocol: ${type}`);
+      if (owner.has(type)) throw Error(`Lệnh "${type}" bị khai báo ở cả "${owner.get(type)}" và "${rule.domain}".`);
+      owner.set(type, rule.domain);
+    }
+    rule.install(API);
+  }
+  const unowned = P.types.filter(type => !owner.has(type));
+  if (unowned.length) throw Error('Lệnh chưa thuộc miền luật nào: ' + unowned.join(', '));
+
+  const MISSING = [
+    ...(S.implemented === true ? [] : ['state']),
+    ...(API.createCharacter.notImplemented ? ['createCharacter'] : []),
+    ...[...P.types, ...REQUIRED_METHODS].filter(name => Game.prototype[name].notImplemented)
+  ];
+  API.MISSING = Object.freeze(MISSING);
+  API.READY = MISSING.length === 0;
+  API.OWNERS = Object.freeze(Object.fromEntries(owner));
+
+  root.HU_GAME = API;
+  if (node) module.exports = API;
+})(typeof window !== 'undefined' ? window : globalThis);

@@ -20,9 +20,9 @@
     emit() { this.listeners.forEach(fn => fn(this.state)); }
     async request(path, value, signal = AbortSignal.timeout(8000)) {
       const response = await fetch('/api/chat/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(value), signal });
-      if ([404, 405].includes(response.status)) throw Object.assign(Error('Chat demo chưa chạy. Khởi động bằng npm run demo rồi mở địa chỉ máy chủ.'), { permanent: true });
+      if ([404, 405].includes(response.status)) throw Object.assign(Error('Dịch vụ chat chưa có trên máy chủ này (backend đang được viết lại).'), { permanent: true });
       let data;
-      try { data = await response.json(); } catch { throw Object.assign(Error('Máy chủ này chưa hỗ trợ chat demo.'), { permanent: true }); }
+      try { data = await response.json(); } catch { throw Object.assign(Error('Máy chủ này chưa hỗ trợ chat.'), { permanent: true }); }
       if (!response.ok) throw Error(data.error || 'Không thể kết nối chat.');
       return data;
     }

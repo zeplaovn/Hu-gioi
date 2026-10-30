@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const node=typeof module!=='undefined'&&module.exports;
-const F=node?require('../rules/formulas.js'):root.HU_FORMULAS;
+const F=node?require('./formulas.js'):root.HU_FORMULAS;
 const R=node?require('./roots.js'):root.HU_ROOTS;
 function rootType(roots){const n=roots.filter(x=>x>=50).length;return ['Thiên','Thiên','Song','Tam hành','Tứ hành','Ngụy'][n]}
 /* Không gieo Âm Dương hoặc Hỗn Độn; giữ tỷ lệ tương đối của các loại còn lại. */

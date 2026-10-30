@@ -1,13 +1,13 @@
 {
   "name": "hu-gioi",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Hư Giới — luật dùng chung và nền tảng phiên nhiều người chơi",
+  "description": "Hư Giới — game idle tu tiên: client, dữ liệu thiết kế, engine luật dùng chung và máy chủ",
   "engines": { "node": ">=20" },
   "scripts": {
-    "demo": "node server/demo.js",
+    "start": "node server/main.js",
     "check": "node tools/check.mjs",
-    "test": "node --test tools/test-game-integration.mjs",
+    "test": "node --test tools/test-skeleton.mjs",
     "preload": "node tools/gen-preload.mjs"
   }
 }

@@ -8,7 +8,7 @@ const args = process.argv.slice(2);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pathArg = args.find(arg => !['--force','--check'].includes(arg));
 const source = pathArg ? resolve(pathArg) : resolve(root, '../idea/data-game-chuan/du_lieu.json');
-const target = resolve(root, 'shared/data/design-raw.js');
+const target = resolve(root, 'data/design-raw.js');
 const force = args.includes('--force');
 const check = args.includes('--check');
 try {
@@ -24,7 +24,7 @@ for (const key of ['hạt giống', 'linh thảo', 'đan dược', 'đan phươn
   if (!Array.isArray(data[key]) || !data[key].length) throw new Error(`Thiếu bảng dữ liệu: ${key}`);
 }
 const require = createRequire(import.meta.url);
-const existing = new Set(require('../shared/data/items.js').map(x => x.code));
+const existing = new Set(require('../data/items.js').map(x => x.code));
 const extras = {CP900:'BT-CP-900',CP901:'BT-CP-901',BT900:'BT-900',BT901:'BT-901',PL001:'TAL-PL-001'};
 const groups = [['hạt giống','mã hạt','HG'],['linh thảo','mã cây','LT'],['đan dược','mã đan','DD'],
   ['pháp bảo','mã PB','PB'],['công pháp','mã CP','CP'],['bí tịch','mã BT','BT'],['phù lục','mã phù','PL']];
