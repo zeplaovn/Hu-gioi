@@ -24,6 +24,10 @@
 .chat-bubble-panel .chat-message{border-radius:14px 14px 14px 3px}
 .chat-bubble-panel .chat-message.mine{border-radius:14px 14px 3px 14px;align-self:flex-end}
 @keyframes bubbleWiggle{0%,100%{transform:rotate(0)}10%{transform:rotate(-8deg)}20%{transform:rotate(8deg)}30%{transform:rotate(0)}}
-@media(min-width:1101px){.chat-bubble{left:264px}}
+@media(min-width:1101px){.chat-bubble{left:auto;right:106px;bottom:12px}.chat-bubble-panel{left:auto;right:0}.chat-bubble-panel::after{left:auto;right:18px}}
 @media(orientation:portrait) and (max-width:700px){.chat-bubble{bottom:calc(86px + env(safe-area-inset-bottom,0px))}}
 @media(prefers-reduced-motion:reduce){.chat-bubble.has-new .chat-bubble-btn{animation:none}}
+/* Khi đang ở trang toàn màn hình: bong bóng chat về góc dưới phải, không đè nội dung bên trái. */
+body:has(#game.page-open) .chat-bubble{left:auto;right:16px}
+body:has(#game.page-open) .chat-bubble-panel{left:auto;right:0}
+body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}

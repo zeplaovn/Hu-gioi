@@ -192,3 +192,11 @@
 #game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 14px)}
 /* chừa chỗ cho icon ☰ nổi ở góc sân khấu */
 #game:not([data-layout="portrait"])[data-menu="collapsed"] .stage-hud{padding-right:52px}
+
+/* ===== Tối ưu màn 1366×768 (laptop): sân khấu cao hơn, nhật ký gọn lại ===== */
+@media(min-width:1101px) and (max-height:820px){
+  :root{--log-h:150px;--status-w:232px}
+  #status{padding:10px;gap:7px}
+  .idle-deck{bottom:50px}
+  .qd-card{padding:5px 7px}
+}
