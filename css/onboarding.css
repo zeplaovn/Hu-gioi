@@ -1,31 +1,31 @@
 /* ===== KHỞI NGUYÊN · INTRO VÀ DẪN ĐƯỜNG ===== */
 body.intro-open{overflow:hidden}
-#storyIntro{position:fixed;inset:0;z-index:4600;background:#070c14;color:#fff;opacity:1;transition:opacity .5s ease;isolation:isolate}
+#storyIntro{position:fixed;inset:0;z-index:4600;background:#110c0a;color:#fff;opacity:1;transition:opacity .5s ease;isolation:isolate}
 #storyIntro.leaving{opacity:0}
 .intro-images,.intro-shade{position:absolute;inset:0;z-index:-1;overflow:hidden}
 .intro-image{position:absolute;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.8s ease;will-change:transform,opacity}
 .intro-image.active{opacity:1}
-.intro-shade{background:linear-gradient(180deg,#02070ca8,transparent 27%,#03091255 52%,#030912ed 88%,#030912)}
+.intro-shade{background:linear-gradient(180deg,#090605a8,transparent 27%,#0d090855 52%,#0d0908ed 88%,#0d0908)}
 .intro-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:calc(22px + env(safe-area-inset-top,0px)) clamp(18px,5vw,70px);font-size:11px;letter-spacing:.3em;color:#d9c797}
 .intro-bottom{position:absolute;left:50%;bottom:4vh;transform:translateX(-50%);width:min(1060px,100%);padding:24px clamp(22px,5vw,64px) calc(36px + env(safe-area-inset-bottom,0px))}
 #introTitle{font:500 clamp(30px,4.6vw,60px)/1.2 var(--serif);color:#f3e4bd;margin:14px 0;text-shadow:0 3px 24px #000;letter-spacing:.08em}
-.intro-caption{font:400 clamp(18px,2vw,25px)/1.75 var(--serif);color:#e1e5e7;text-shadow:0 2px 12px #000;min-height:5.3em;margin:14px 0 26px}
-.intro-letterbox{position:absolute;inset:0;pointer-events:none;border-block:clamp(40px,7vh,80px) solid #03070ce8}
+.intro-caption{font:400 clamp(18px,2vw,25px)/1.75 var(--serif);color:#e7e4e1;text-shadow:0 2px 12px #000;min-height:5.3em;margin:14px 0 26px}
+.intro-letterbox{position:absolute;inset:0;pointer-events:none;border-block:clamp(40px,7vh,80px) solid #0a0705e8}
 .intro-dust{position:absolute;inset:0;pointer-events:none;opacity:.3;background-image:radial-gradient(1px 1px at 12% 35%,#ffe9b0 90%,transparent),radial-gradient(2px 2px at 65% 45%,#ffe9b0 90%,transparent),radial-gradient(1px 1px at 40% 24%,#fff 90%,transparent),radial-gradient(2px 2px at 82% 20%,#ffe9b0 90%,transparent);background-size:430px 320px;animation:introDust 24s linear infinite}
 @keyframes introDust{to{background-position:80px -320px}}
-#introHint{font:11px/1.6 var(--font);color:#94a4ac;letter-spacing:.04em}
+#introHint{font:11px/1.6 var(--font);color:#aca094;letter-spacing:.04em}
 #storyIntro.paused .intro-dust{animation-play-state:paused}
 body.reduced-motion .intro-dust{display:none}
 @media(prefers-reduced-motion:reduce){.intro-dust{display:none}.intro-image{transition:none}}
 .intro-controls{display:flex;align-items:center;justify-content:space-between;gap:18px}
 #introDots{display:flex;gap:8px}#introDots i{display:block;width:24px;height:3px;background:#ffffff44;transition:background .5s}#introDots i.on{background:var(--gold);box-shadow:0 0 12px #e6c16477}
 #tutorialLayer{position:fixed;inset:0;z-index:4200;overflow:hidden}
-#tutorialLayer.no-target{background:#020710b8}
-#tutorialSpot{position:fixed;border:2px solid var(--gold);border-radius:12px;box-shadow:0 0 0 200vmax #020710b8,0 0 24px #e6c16499;pointer-events:none;animation:tutorialPulse 1.8s ease-in-out infinite;transition:top .2s,left .2s,width .2s,height .2s}
-#tutorialCard{position:fixed;width:min(390px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:22px;border:1px solid #9c8348;border-radius:16px;background:linear-gradient(150deg,#21343e,#0d1822);box-shadow:0 16px 60px #000b}
-#tutorialCard h2{font-size:25px;margin:10px 0;color:#f3e3b6}#tutorialCard p{font-size:14px;line-height:1.75;color:#c7dce6}
+#tutorialLayer.no-target{background:#0c0806b8}
+#tutorialSpot{position:fixed;border:2px solid var(--gold);border-radius:12px;box-shadow:0 0 0 200vmax #0c0806b8,0 0 24px #e6c16499;pointer-events:none;animation:tutorialPulse 1.8s ease-in-out infinite;transition:top .2s,left .2s,width .2s,height .2s}
+#tutorialCard{position:fixed;width:min(390px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:22px;border:1px solid #9c8348;border-radius:16px;background:linear-gradient(150deg,#3d2a22,#1e1511);box-shadow:0 16px 60px #000b}
+#tutorialCard h2{font-size:25px;margin:10px 0;color:#f3e3b6}#tutorialCard p{font-size:14px;line-height:1.75;color:#e6dbc7}
 #tutorialCount{font-size:11px}.tutorial-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}.tutorial-actions .text-btn{margin-right:auto;font-size:13px}.tutorial-actions .btn{font-size:13px;padding:9px 11px}
-@keyframes tutorialPulse{50%{border-color:#fff1bf;box-shadow:0 0 0 200vmax #020710b8,0 0 36px #e6c164cc}}
+@keyframes tutorialPulse{50%{border-color:#fff1bf;box-shadow:0 0 0 200vmax #0c0806b8,0 0 36px #e6c164cc}}
 @media(max-width:600px){.intro-top{font-size:11px;letter-spacing:.12em}.intro-top span:last-child{max-width:130px;text-align:right}.intro-bottom{bottom:2vh;padding-top:18px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}.intro-caption{font-size:17px;line-height:1.65;margin:12px 0 20px}.intro-controls{align-items:flex-start;flex-direction:column;gap:12px}#tutorialCard{padding:16px}#tutorialCard h2{font-size:22px}}
 @media(max-height:500px){.intro-top{padding:10px 20px}.intro-bottom{bottom:0;padding:10px 24px;width:100%}#introTitle{font-size:26px;margin:6px 0}.intro-caption{font-size:16px;line-height:1.5;min-height:0;margin:8px 0 12px}.intro-controls{flex-direction:row}.intro-letterbox{border-block-width:28px}}
 @media(max-height:500px){#tutorialCard{width:min(340px,calc(100vw - 24px));padding:14px}#tutorialCard h2{font-size:20px;margin:8px 0}#tutorialCard p{font-size:13px;line-height:1.6}.tutorial-actions{margin-top:12px}}

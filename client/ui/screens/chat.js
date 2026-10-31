@@ -70,5 +70,47 @@
   root.addEventListener('pagehide', () => session.disconnect());
   UI.action('chatConnect', () => { error = ''; session.connect(UI.s().name); return UI.KEEP; });
   UI.action('chatDisconnect', () => { error = ''; session.disconnect(); return UI.KEEP; });
+  /* Bong bóng chat nổi ngoài màn chơi: bấm để mở khung nhỏ, đóng lại vẫn giữ kết nối và đếm tin mới. */
+  const bubble = { el: null, panel: null, btn: null, badge: null, open: false, unread: 0, seen: 0 };
+  function bubbleBuild() {
+    if (bubble.el || !root.document) return;
+    const el = document.createElement('div');
+    el.id = 'chatBubble'; el.className = 'chat-bubble';
+    el.innerHTML = '<button type="button" class="chat-bubble-btn" aria-expanded="false" aria-controls="chatBubblePanel" aria-label="Mở chat thế giới"><span aria-hidden="true">✉</span><i class="chat-bubble-badge" hidden>0</i></button>' +
+      '<div id="chatBubblePanel" class="chat-bubble-panel" role="dialog" aria-label="Kênh thế giới" hidden><button type="button" class="chat-bubble-close" aria-label="Thu nhỏ chat">×</button><div class="chat-bubble-body"></div></div>';
+    document.body.appendChild(el);
+    bubble.el = el; bubble.btn = el.querySelector('.chat-bubble-btn'); bubble.panel = el.querySelector('.chat-bubble-panel'); bubble.badge = el.querySelector('.chat-bubble-badge');
+    bubble.panel.querySelector('.chat-bubble-body').innerHTML = render();
+    mount();
+    bubble.btn.addEventListener('click', () => bubbleToggle());
+    el.querySelector('.chat-bubble-close').addEventListener('click', () => bubbleToggle(false));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && bubble.open) bubbleToggle(false); });
+    session.subscribe(bubbleCount);
+  }
+  function bubbleCount() {
+    const n = session.state.messages.length;
+    if (bubble.open) { bubble.seen = n; bubble.unread = 0; }
+    else bubble.unread = Math.max(0, n - bubble.seen);
+    if (bubble.badge) { bubble.badge.hidden = !bubble.unread; bubble.badge.textContent = bubble.unread > 9 ? '9+' : String(bubble.unread); }
+    bubble.el?.classList.toggle('has-new', !!bubble.unread);
+  }
+  function bubbleToggle(force) {
+    bubbleBuild();
+    bubble.open = force === undefined ? !bubble.open : !!force;
+    bubble.panel.hidden = !bubble.open;
+    bubble.btn.setAttribute('aria-expanded', String(bubble.open));
+    bubble.el.classList.toggle('open', bubble.open);
+    bubbleCount();
+    if (bubble.open) { update(); const f = $('chatFeed'); if (f) f.scrollTop = f.scrollHeight; }
+  }
+  UI.chatBubble = { open: () => bubbleToggle(true), close: () => bubbleToggle(false), toggle: () => bubbleToggle() };
+  /* Chỉ hiện khi đã vào game (có #game hiển thị), nên dựng sau khi nhân vật được tạo. */
+  function bubbleSync() {
+    const game = document.getElementById('game');
+    const show = !!(game && !game.hidden && UI.s && UI.s().created);
+    if (show) bubbleBuild();
+    if (bubble.el) bubble.el.hidden = !show;
+  }
+  if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 700);
   UI.register({ id: 'chat', label: 'Chat online', icon: '✉', eyebrow: 'TRUYỀN ÂM', render, mount, update });
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -18,6 +18,19 @@
     [65, 'Mài giũa pháp bảo…'],
     [92, 'Mở cửa Hư Giới…']
   ];
+  /* Mẹo & cảnh báo xoay vòng dưới thanh tiến độ (đổi mỗi ~3,2 giây). */
+  const HINTS = [
+    'Ma thú về đêm mạnh và nguy hiểm hơn. Hãy chuẩn bị kỹ trước khi lịch luyện sau khi trời tối.',
+    'Hãy dùng đan dược để nâng cảnh giới khi tu vi tiến chậm.',
+    'Tu vi đầy ở viên mãn: bấm đột phá thủ công, cảnh giới lớn có thể gặp thiên kiếp.',
+    'Thọ nguyên cạn là hết đường tu. Đừng quên đan trường sinh và bế quan định kỳ.',
+    'Linh căn càng thuần, tốc độ tu luyện càng cao. Tạp chất tích tụ sẽ làm chậm tu vi.',
+    'Nghề phụ vẫn chạy khi bạn offline. Quay lại để nhận thành quả.',
+    'Linh khí mùa xuân dồi dào hơn; mùa đông tu luyện chậm lại.',
+    'Trang bị phẩm chất cao giúp sống sót qua các trận lịch luyện khó.'
+  ];
+  let hintIdx = Math.floor(Math.random() * HINTS.length);
+  const nextHint = () => HINTS[hintIdx++ % HINTS.length];
   const started = (root.performance && performance.now()) || Date.now();
   const now = () => ((root.performance && performance.now()) || Date.now()) - started;
   let done = 0, shown = 0, finished = false;
@@ -46,13 +59,17 @@
     const track = screen.querySelector('.loading-track'), tip = screen.querySelector('.loading-tip');
     track.setAttribute('aria-label', 'Tiến độ chuẩn bị hành trình');
     tip.setAttribute('role', 'status');
-    let targetProgress = 0, tipText = '', entryProgress = 0;
+    let targetProgress = 0, tipText = '', entryProgress = 0, hintAtE = 0;
+    const hintEl = doc.createElement('p');
+    hintEl.className = 'loading-hint';
+    tip.after(hintEl);
     const paintEntry = () => {
       const p = entryProgress = Math.max(entryProgress, Math.min(targetProgress, (Date.now() - startedAt) / MIN_MS));
       fill.style.transform = 'scaleX(' + p + ')';
       pct.textContent = Math.round(p * 100) + '%';
       track.setAttribute('aria-valuenow', String(Math.round(p * 100)));
       tip.textContent = tipText;
+      if (hintEl) { if (Date.now() - hintAtE > 3200) { hintAtE = Date.now(); hintEl.textContent = nextHint(); } }
     };
     const update = (p, text) => { targetProgress = p; tipText = text; paintEntry(); };
     const entryTimer = setInterval(paintEntry, 50);
@@ -102,13 +119,19 @@
   }
   root.HU_LOADER = { enter };
 
+  let hintText = HINTS[hintIdx++ % HINTS.length], hintAt = 0;
+  function nextHintFor() {
+    const t = now();
+    if (t - hintAt > 3200) { hintAt = t; hintText = nextHint(); }
+    return hintText;
+  }
   function paint(p) {
     p = Math.max(0, Math.min(1, p));
     if (fill) fill.style.transform = 'scaleX(' + p + ')';
     const n = Math.round(p * 100);
     if (pctEl) pctEl.textContent = n + '%';
     if (track) track.setAttribute('aria-valuenow', String(n));
-    if (tipEl) { let t = TIPS[0][1]; TIPS.forEach(([from, text]) => { if (n >= from) t = text; }); if (tipEl.textContent !== t) tipEl.textContent = t; }
+    if (tipEl) { const t = nextHintFor(); if (tipEl.textContent !== t) tipEl.textContent = t; }
   }
 
   function finish() {

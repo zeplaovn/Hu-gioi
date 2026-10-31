@@ -6,12 +6,12 @@
 .stage-rate{display:none!important}
 .idle-chips{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-left:auto;pointer-events:auto}
 .idle-chip{position:relative;display:inline-flex;align-items:center;gap:6px;padding:4px 11px 4px 5px;border-radius:999px;
-  background:linear-gradient(180deg,#16242fef,#0a131bd9);border:1px solid #46606d;color:#eaf4f7;
+  background:linear-gradient(180deg,#2c1f19ef,#18100dd9);border:1px solid #6d5a46;color:#f7f2ea;
   font:800 14px/1 var(--font);font-variant-numeric:tabular-nums;box-shadow:0 2px 10px #0008,inset 0 1px 0 #ffffff14;backdrop-filter:blur(3px)}
-.idle-chip .chip-ico{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#0b161d;border:1px solid #3d5663;font-size:13px;line-height:1;color:#9beeff}
+.idle-chip .chip-ico{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#1a120e;border:1px solid #62503e;font-size:13px;line-height:1;color:#e6d4b4}
 .idle-chip .chip-ico img{width:16px;height:16px;object-fit:contain;display:block}
 .idle-chip.stone{border-color:#8f7535}.idle-chip.stone b{color:#f6de92}
-.idle-chip.rate b{color:#a9f1ff}
+.idle-chip.rate b{color:#eadabe}
 .idle-chip.dao .chip-ico{color:#d9b6ff}.idle-chip.dao b{color:#e6ccff}
 .idle-chip .chip-gain{position:absolute;right:6px;top:-4px;font:800 13px var(--font);color:#fff1b8;text-shadow:0 1px 4px #000,0 0 10px #e5b13f;pointer-events:none;animation:chipGain 1.3s ease-out forwards;white-space:nowrap}
 @keyframes chipGain{0%{opacity:0;transform:translateY(6px)}15%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}
@@ -36,11 +36,11 @@
 /* Dock nâng cấp nhanh */
 .quick-dock{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px}
 .qd-card{display:flex;flex-direction:column;justify-content:space-between;gap:5px;min-width:0;padding:6px 7px;border-radius:12px;
-  background:linear-gradient(180deg,#13222cf2,#0a141cf2);border:1px solid #3a5460;box-shadow:0 4px 14px #0008}
+  background:linear-gradient(180deg,#281c17f2,#18110ef2);border:1px solid #5e4d3c;box-shadow:0 4px 14px #0008}
 .qd-card.empty{opacity:.6}
 .qd-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;min-width:0}
-.qd-name{font-size:13px;font-weight:800;color:#eef4f6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.qd-name small{font-weight:600;font-size:11px;color:#98b1bc;margin-left:3px}
+.qd-name{font-size:13px;font-weight:800;color:#f5f2ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.qd-name small{font-weight:600;font-size:11px;color:#bcaa98;margin-left:3px}
 .qd-price{font-size:12px;color:#f1dd9a;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex:none}
 .qd-price .coin-value{display:inline-flex;align-items:center;gap:3px}
 .qd-price img{width:14px;height:14px}
@@ -48,8 +48,8 @@
 .qd-btns button,.qd-one{flex:1 1 0;min-width:0;padding:6px 4px;border-radius:9px;border:1px solid #8f7535;background:linear-gradient(180deg,#4a3a14,#2b2209);
   color:#ffe9a8;font:800 12.5px var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qd-btns button:hover:not(:disabled),.qd-one:hover:not(:disabled){filter:brightness(1.18)}
-.qd-btns button:disabled,.qd-one:disabled{opacity:.42;filter:grayscale(.6);border-color:#3b4a52;color:#9aa9b0}
-.qd-one{width:100%;border-color:#3d8aa0;background:linear-gradient(180deg,#1e4a5c,#102a36);color:#c9f4ff}
+.qd-btns button:disabled,.qd-one:disabled{opacity:.42;filter:grayscale(.6);border-color:#52423b;color:#b0a59a}
+.qd-one{width:100%;border-color:#876f56;background:linear-gradient(180deg,#4e362c,#2d1f19);color:#f2e8d6}
 @media(max-width:620px){
   .quick-dock{grid-template-columns:1.35fr 1fr 1fr;gap:5px}
   .qd-card{padding:5px 5px;gap:4px}
@@ -74,38 +74,38 @@
 
 /* ===== SÂN KHẤU AFK SỐNG ĐỘNG ===== */
 .idle-motes{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2}
-.idle-motes i{position:absolute;left:var(--x);bottom:-10px;width:var(--s);height:var(--s);border-radius:50%;background:#bdf5ff;box-shadow:0 0 8px #6fe3ff,0 0 18px #4fd3ff88;opacity:0;animation:mote var(--d) linear var(--delay) infinite}
+.idle-motes i{position:absolute;left:var(--x);bottom:-10px;width:var(--s);height:var(--s);border-radius:50%;background:#efe2ce;box-shadow:0 0 8px #dbc193,0 0 18px #d3b37b88;opacity:0;animation:mote var(--d) linear var(--delay) infinite}
 @keyframes mote{0%{opacity:0;transform:translate3d(0,0,0)}15%{opacity:.75}70%{opacity:.4}100%{opacity:0;transform:translate3d(var(--dx),-70vh,0)}}
 .hero-rune{position:absolute;left:50%;bottom:-14%;width:170%;aspect-ratio:1;transform:translateX(-50%) scaleY(.34);pointer-events:none;z-index:1;opacity:calc(.3 + var(--qi-p,0) * .7);transition:opacity .6s}
-.hero-rune i{position:absolute;inset:0;border-radius:50%;border:2px solid #6fe3ffaa;box-shadow:0 0 22px #4fd3ff88,inset 0 0 28px #4fd3ff55;
-  background:repeating-conic-gradient(from 0deg,#6fe3ff33 0 5deg,transparent 5deg 15deg),radial-gradient(circle,#6fe3ff22 0 40%,transparent 41%);animation:runeSpin 16s linear infinite}
-.hero-rune i::after{content:"";position:absolute;inset:14%;border-radius:50%;border:1px dashed #bdf5ffaa;animation:runeSpin 9s linear infinite reverse}
+.hero-rune i{position:absolute;inset:0;border-radius:50%;border:2px solid #dbc193aa;box-shadow:0 0 22px #d3b37b88,inset 0 0 28px #d3b37b55;
+  background:repeating-conic-gradient(from 0deg,#dbc19333 0 5deg,transparent 5deg 15deg),radial-gradient(circle,#dbc19322 0 40%,transparent 41%);animation:runeSpin 16s linear infinite}
+.hero-rune i::after{content:"";position:absolute;inset:14%;border-radius:50%;border:1px dashed #efe2ceaa;animation:runeSpin 9s linear infinite reverse}
 @keyframes runeSpin{to{transform:rotate(360deg)}}
 #game[data-stage="combat"] .hero-rune{opacity:.25}
 #stage .hero-wrap.idle{animation:heroGlow 4.2s ease-in-out infinite}
-@keyframes heroGlow{50%{filter:drop-shadow(0 10px 15px #071017) drop-shadow(0 0 calc(10px + var(--qi-p,0) * 18px) #4fd3ffaa)}}
+@keyframes heroGlow{50%{filter:drop-shadow(0 10px 15px #130d0b) drop-shadow(0 0 calc(10px + var(--qi-p,0) * 18px) #d3b37baa)}}
 .qi-orb{position:absolute;z-index:6;width:11px;height:11px;margin:-5px 0 0 -5px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,#fff,#9beeff 45%,#3fb6d9);box-shadow:0 0 12px #6fe3ff,0 0 26px #4fd3ffaa;animation:orbFly var(--t,1s) cubic-bezier(.4,.05,.6,1) forwards}
+  background:radial-gradient(circle,#fff,#e6d4b4 45%,#3fb6d9);box-shadow:0 0 12px #dbc193,0 0 26px #d3b37baa;animation:orbFly var(--t,1s) cubic-bezier(.4,.05,.6,1) forwards}
 @keyframes orbFly{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1}100%{opacity:.2;transform:translate(var(--tx),var(--ty)) scale(1)}}
 .stage-scene.low-fx .idle-motes,.stage-scene.low-fx .hero-rune,.stage-scene.low-fx .qi-orb{display:none}
 @media(prefers-reduced-motion:reduce){.idle-motes,.hero-rune i,.qi-orb{animation:none!important}.idle-motes{display:none}}
 
 /* ===== ĐỘ TẦNG / TỰ ĐỘT PHÁ ===== */
 .stage-pips{display:flex;flex-wrap:wrap;gap:3px;margin:5px 0 0;align-items:center}
-.stage-pips i{width:7px;height:7px;border-radius:50%;background:#16242d;border:1px solid #3a5460}
-.stage-pips i.done{background:#6fe3ff;border-color:#bdf5ff;box-shadow:0 0 6px #4fd3ff88}
+.stage-pips i{width:7px;height:7px;border-radius:50%;background:#2b1e18;border:1px solid #5e4d3c}
+.stage-pips i.done{background:#dbc193;border-color:#efe2ce;box-shadow:0 0 6px #d3b37b88}
 .stage-pips i.now{background:#f2d679;border-color:#fff2c2;box-shadow:0 0 8px #f2c95aaa;animation:pulse 1.6s ease-in-out infinite}
 .stage-pips i.peak{border-radius:2px;transform:rotate(45deg);width:7px;height:7px;margin-left:2px;border-color:#a8873a}
 .stage-pips i.peak.done,.stage-pips i.peak.now{background:#f2d679;border-color:#fff2c2}
-.btn-break.auto{opacity:1;filter:none;background:linear-gradient(160deg,#102a36,#0a1a22);border-color:#3d8aa0;color:#9beeff}
-.btn-break.auto small{color:#8fc4d4}
+.btn-break.auto{opacity:1;filter:none;background:linear-gradient(160deg,#2d1f19,#1c1410);border-color:#876f56;color:#e6d4b4}
+.btn-break.auto small{color:#d4bb8f}
 .btn-break.auto:disabled{opacity:.9;filter:none}
 .btn-break.ready:not(.auto){background:linear-gradient(160deg,#6b4f12,#3a2a08);color:#fff2c2}
 
 /* ===== THANH TAB DƯỚI / MENU ===== */
 #menu .badge.dot{min-width:9px;width:9px;height:9px;padding:0;top:4px;right:calc(50% - 22px);background:#ff5a3c;box-shadow:0 0 8px #ff5a3c;font-size:0;border:1px solid #1a0f0c;animation:pulse 1.4s ease-in-out infinite}
-#game[data-layout="portrait"] #menu{padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#111d26,#09121a);border-color:#3a5460;box-shadow:0 -8px 22px #000a;border-radius:14px}
-#game[data-layout="portrait"] #menu button{border:0;border-radius:10px;background:transparent;color:#b9ccd4}
+#game[data-layout="portrait"] #menu{padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#231814,#16100d);border-color:#5e4d3c;box-shadow:0 -8px 22px #000a;border-radius:14px}
+#game[data-layout="portrait"] #menu button{border:0;border-radius:10px;background:transparent;color:#d3c7ba}
 #game[data-layout="portrait"] #menu button.on{background:linear-gradient(180deg,#3a2f1299,transparent 90%);color:var(--gold)}
 #game[data-layout="portrait"] #menu button.on::before{content:"";position:absolute;top:-4px;left:20%;right:20%;height:3px;border-radius:0 0 4px 4px;background:var(--gold);box-shadow:0 0 12px var(--gold)}
 #game[data-layout="portrait"] #menu button.on img{transform:translateY(-2px) scale(1.1);transition:transform .15s}
@@ -121,14 +121,14 @@
 }
 
 /* ===== POPUP BẾ QUAN TRỞ VỀ ===== */
-.report-hero{display:flex;flex-direction:column;gap:10px;padding:14px 12px;margin:2px 0 6px;border-radius:14px;border:1px solid #4a6a62;
-  background:radial-gradient(120% 120% at 50% 0%,#1d3a40 0%,#0f1f24 70%);box-shadow:inset 0 0 30px #4fd3ff18}
+.report-hero{display:flex;flex-direction:column;gap:10px;padding:14px 12px;margin:2px 0 6px;border-radius:14px;border:1px solid #6a5a4a;
+  background:radial-gradient(120% 120% at 50% 0%,#3c2921 0%,#211712 70%);box-shadow:inset 0 0 30px #d3b37b18}
 .report-hero .rh-time{text-align:center}
-.report-hero .rh-time span{display:block;font-size:12px;letter-spacing:.14em;color:#8fc4d4}
+.report-hero .rh-time span{display:block;font-size:12px;letter-spacing:.14em;color:#d4bb8f}
 .report-hero .rh-time b{display:block;font:800 clamp(28px,5vw,38px)/1.15 var(--serif);color:#fff2c2;text-shadow:0 0 18px #e5b13f66}
 .report-hero .rh-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.report-hero .rh-grid>div{padding:9px 6px;text-align:center;border-radius:10px;background:#0a161bcc;border:1px solid #2f4b54;min-width:0}
-.report-hero .rh-grid span{display:block;font-size:11.5px;color:#93adb8}
+.report-hero .rh-grid>div{padding:9px 6px;text-align:center;border-radius:10px;background:#18100dcc;border:1px solid #543a2f;min-width:0}
+.report-hero .rh-grid span{display:block;font-size:11.5px;color:#b8a593}
 .report-hero .rh-grid b{display:flex;justify-content:center;align-items:center;gap:.2em;font-size:clamp(16px,2.6vw,20px);color:var(--jade);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .report-hero .rh-grid b.up{color:#f2d679}
 .report-hero .rh-note{text-align:center;font-size:12.5px;color:#9fe2c0}
@@ -145,17 +145,17 @@
 .win.page{position:fixed;inset:0;left:0!important;top:0!important;width:auto!important;height:auto!important;max-width:none;
   border:0;border-radius:0;box-shadow:none;min-width:0;min-height:0;animation:pageIn .18s ease-out;
   padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);
-  background:linear-gradient(160deg,#101c24,#091218)}
+  background:linear-gradient(160deg,#211713,#150f0c)}
 @keyframes pageIn{from{opacity:0;transform:translateY(6px)}}
 .win.page.top{border:0;box-shadow:none}
-.win.page>header{cursor:default;touch-action:auto;padding:8px clamp(10px,2vw,22px);gap:12px;justify-content:flex-start;background:linear-gradient(180deg,#14222cf2,#0d1820d9);backdrop-filter:blur(6px);border-bottom:1px solid #2d4450}
+.win.page>header{cursor:default;touch-action:auto;padding:8px clamp(10px,2vw,22px);gap:12px;justify-content:flex-start;background:linear-gradient(180deg,#291c17f2,#1d1410d9);backdrop-filter:blur(6px);border-bottom:1px solid #50382d}
 .win.page>header>b{flex:0 1 auto;font-size:18px}
 .win.page>header .win-close{display:none}
-.page-back{display:inline-flex;align-items:center;gap:5px;padding:8px 14px 8px 10px;border-radius:10px;border:1px solid #46606d;background:#122029;color:#d6e6ec;font:750 14px var(--font);white-space:nowrap}
+.page-back{display:inline-flex;align-items:center;gap:5px;padding:8px 14px 8px 10px;border-radius:10px;border:1px solid #6d5a46;background:#261a15;color:#ece4d6;font:750 14px var(--font);white-space:nowrap}
 .page-back:hover{border-color:var(--gold);color:var(--gold)}
 .page-nav{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
 .page-nav::-webkit-scrollbar{display:none}
-.page-nav button{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:10px;border:1px solid #2f4653;background:#0f1b23cc;color:#b9ccd4;font:650 13.5px var(--font);white-space:nowrap}
+.page-nav button{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:10px;border:1px solid #533a2f;background:#201612cc;color:#d3c7ba;font:650 13.5px var(--font);white-space:nowrap}
 .page-nav button img{width:22px;height:22px;object-fit:contain;image-rendering:pixelated}
 .page-nav button:hover{color:var(--gold);border-color:#6d5f35}
 .page-nav button.on{color:var(--gold);border-color:var(--gold);background:#3a2f1299}
@@ -168,15 +168,15 @@
 @media(max-width:420px){.win.page>header>b span{display:none}}
 
 /* Nghề phụ: toàn màn hình với nền riêng của từng nghề (đan phòng, luyện khí/chế phù, linh điền) */
-.win.page[data-window="craft"]{background:linear-gradient(180deg,#050b11cc 0%,#08121bb3 40%,#050b11e0 100%),var(--page-bg,linear-gradient(#0b1118,#0b1118)) center/cover no-repeat fixed}
-.win.page[data-window="craft"]>header{background:linear-gradient(180deg,#0a141cdd,#0a141c88)}
-.win.page[data-window="craft"] .card{background:#0a151dcc;border-color:#34505d;backdrop-filter:blur(5px)}
-.win.page[data-window="craft"] .workshop-banner{--art:none;min-height:0;background:#0a151db3;backdrop-filter:blur(5px);padding:16px 20px}
+.win.page[data-window="craft"]{background:linear-gradient(180deg,#0e0a08cc 0%,#16100db3 40%,#0e0a08e0 100%),var(--page-bg,linear-gradient(#16100d,#16100d)) center/cover no-repeat fixed}
+.win.page[data-window="craft"]>header{background:linear-gradient(180deg,#18110edd,#18110e88)}
+.win.page[data-window="craft"] .card{background:#19110ecc;border-color:#5d4034;backdrop-filter:blur(5px)}
+.win.page[data-window="craft"] .workshop-banner{--art:none;min-height:0;background:#19110eb3;backdrop-filter:blur(5px);padding:16px 20px}
 .win.page[data-window="craft"] .workshop-banner::after{display:none}
-.win.page[data-window="craft"] .tabbar{background:#0a151d99;border-radius:12px;padding:0 6px}
+.win.page[data-window="craft"] .tabbar{background:#19110e99;border-radius:12px;padding:0 6px}
 
 /* ===== MENU THU GỌN: ẩn cả thanh, chỉ còn icon ☰ nổi ===== */
-#menu .menu-toggle{order:-1;min-height:40px;border:1px solid #46606d;border-radius:10px;background:#122029;color:#d6e6ec}
+#menu .menu-toggle{order:-1;min-height:40px;border:1px solid #6d5a46;border-radius:10px;background:#261a15;color:#ece4d6}
 #menu .menu-toggle .ico{font-size:20px;line-height:1}
 #menu .menu-toggle:hover{border-color:var(--gold);color:var(--gold)}
 #game[data-layout="portrait"] #menu .menu-toggle{flex:0 0 44px;min-height:54px;padding:3px 0 2px;font-size:11px}
@@ -186,7 +186,7 @@
 #game:not([data-layout="portrait"])[data-menu="collapsed"] #menu{margin-left:calc(var(--gap) * -1);width:0}
 #game[data-layout="portrait"][data-menu="collapsed"] #menu{margin-top:calc(var(--gap) * -1);height:0}
 #game[data-menu="collapsed"] #menu .menu-toggle{position:fixed;z-index:60;pointer-events:auto;width:44px;height:44px;min-width:0;min-height:0;padding:0;
-  border-radius:12px;background:#0f1d27f2;box-shadow:0 6px 18px #000a;
+  border-radius:12px;background:#231813f2;box-shadow:0 6px 18px #000a;
   top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px)}
 #game[data-menu="collapsed"] #menu .menu-toggle span:not(.ico){display:none}
 #game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 14px)}

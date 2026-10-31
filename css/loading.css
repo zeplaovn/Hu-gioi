@@ -2,7 +2,7 @@
 #loading,#gameLoading{
   position:fixed;inset:0;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
   padding:clamp(24px,7vh,64px) 20px calc(clamp(28px,8vh,64px) + env(safe-area-inset-bottom,0px));
-  background:#0a1218;color:#e9f1f3;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  background:#160f0c;color:#f2eeea;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   transition:opacity .55s ease,visibility .55s;
 }
 #loading.done,#gameLoading.done{opacity:0;visibility:hidden;pointer-events:none}
@@ -11,16 +11,16 @@ body.loading-game{overflow:hidden}
 #loading.scene-ready .loading-scene,#gameLoading.scene-ready .loading-scene{opacity:1}
 /* Lớp phủ: sáng nhẹ phía trên để logo mực đen nổi rõ, tối dần xuống đáy nơi đặt thanh tiến độ. */
 .loading-veil{position:absolute;inset:0;background:
-  linear-gradient(to bottom,#e9eef0 0,#e9eef066 34%,#0a121800 52%,#0a1218d9 82%,#0a1218 100%),
-  radial-gradient(ellipse at 50% 30%,transparent 40%,#0a121866 100%)}
+  linear-gradient(to bottom,#f0ede9 0,#f0ede966 34%,#160f0c00 52%,#160f0cd9 82%,#160f0c 100%),
+  radial-gradient(ellipse at 50% 30%,transparent 40%,#160f0c66 100%)}
 .loading-logo{position:relative;width:min(640px,88vw);max-height:46vh;object-fit:contain;margin-top:2vh;filter:drop-shadow(0 6px 18px #ffffffaa);animation:loadingFloat 5s ease-in-out infinite}
 .loading-foot{position:relative;width:min(560px,90vw);display:flex;flex-direction:column;gap:10px}
-.loading-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;letter-spacing:.04em;color:#c9d8de}
+.loading-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;letter-spacing:.04em;color:#ddd3ca}
 .loading-row b{font-size:15px;color:#e6c164;font-variant-numeric:tabular-nums}
-.loading-track{height:12px;border-radius:99px;background:#050b11cc;border:1px solid #5a6f79;overflow:hidden;box-shadow:0 0 0 3px #0a121866,inset 0 1px 3px #000a}
+.loading-track{height:12px;border-radius:99px;background:#0e0a08cc;border:1px solid #796a5a;overflow:hidden;box-shadow:0 0 0 3px #160f0c66,inset 0 1px 3px #000a}
 .loading-fill{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);border-radius:99px;
   background:linear-gradient(90deg,#8a6a22,#e6c164 55%,#fff0b0);transition:transform .25s ease-out;position:relative;overflow:hidden}
-.loading-tip{min-height:1.3em;text-align:center;font-size:13px;color:#9fb6c0}
+.loading-tip{min-height:1.3em;text-align:center;font-size:13px;color:#c0b09f}
 @keyframes loadingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-height:520px){.loading-logo{max-height:38vh}}
 @media(prefers-reduced-motion:reduce){
@@ -28,5 +28,9 @@ body.loading-game{overflow:hidden}
   .loading-logo{animation:none}
 }
 
-.loading-track{background:var(--inset,#0b1015);border:1px solid var(--bar-age,#d9a21b);border-radius:4px;box-shadow:none}
+.loading-track{background:var(--inset,#140e0c);border:1px solid var(--bar-age,#d9a21b);border-radius:4px;box-shadow:none}
 .loading-fill{border-radius:3px;background:var(--bar-age,#d9a21b);opacity:.9}
+
+.loading-hint{min-height:2.7em;margin:6px auto 0;max-width:46ch;text-align:center;font-size:14px;line-height:1.45;color:#f0e6d0;padding:8px 14px;border:1px solid #ffffff22;border-left:3px solid var(--seal,#c8452e);background:#0d0907b3;border-radius:2px}
+.loading-tip{font-size:12px;opacity:.85}
+#loading .loading-tip{min-height:2.7em;font-size:14px;color:#f0e6d0;padding:8px 14px;border:1px solid #ffffff22;border-left:3px solid #c8452e;background:#0d0907b3;border-radius:2px;margin:6px auto 0;max-width:46ch;line-height:1.45;transition:opacity .3s}

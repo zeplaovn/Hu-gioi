@@ -787,6 +787,7 @@
   }
 
   function go(target, { silent = false } = {}) {
+    if (target === 'chat' && UI.chatBubble) { UI.chatBubble.open(); return; }
     if (!UI.s().created) return;
     if (['running', 'settling'].includes(trib.phase)) return;
     closeMoreMenu();

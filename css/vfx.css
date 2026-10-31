@@ -7,7 +7,7 @@
 .trib-vfx-sprite{position:absolute;object-fit:contain;filter:drop-shadow(0 0 24px #0008);opacity:.95}
 .vfx-flash{position:absolute;inset:0;z-index:5;pointer-events:none;mix-blend-mode:screen;animation:vfxFlash .55s ease-out forwards}
 .vfx-flash.flash-gold{background:radial-gradient(ellipse at 50% 40%,#ffe6a3cc,transparent 68%)}
-.vfx-flash.flash-blue{background:radial-gradient(ellipse at 50% 30%,#d6f3ffd9,transparent 70%)}
+.vfx-flash.flash-blue{background:radial-gradient(ellipse at 50% 30%,#f5ede0d9,transparent 70%)}
 .vfx-flash.flash-red{background:radial-gradient(ellipse at 50% 50%,#ff6a4fb8,transparent 70%)}
 @keyframes vfxFlash{0%{opacity:0}12%{opacity:.4}100%{opacity:0}}
 .vfx-ring{position:absolute;border:2px solid currentColor;border-radius:50%;pointer-events:none;animation:vfxRing .85s ease-out forwards;box-shadow:0 0 12px currentColor}
@@ -32,8 +32,8 @@ body.reduced-motion .vfx-sprite{display:none}
 .float-text{position:absolute;z-index:8;pointer-events:none;font:900 clamp(28px,3.4vmin,42px) var(--serif);letter-spacing:.01em;color:#ffe0d6;white-space:nowrap;-webkit-text-stroke:.7px #4a160d;text-shadow:0 2px 0 #2a0805,0 4px 12px #000,0 0 16px #ff6d4a,0 0 34px #ff4b2b88;animation:floatUp 1.05s ease-out forwards}
 .float-text.won{color:#b6ffd2;text-shadow:0 2px 0 #062b16,0 4px 12px #000,0 0 16px #55d98a,0 0 34px #39c97a88;font-size:clamp(30px,3.8vmin,46px)}
 .float-text.skill{color:#fff1b8;text-shadow:0 2px 0 #3a2503,0 4px 12px #000,0 0 18px #ffd45c,0 0 38px #e5b13f99;font-size:clamp(32px,4.2vmin,50px)}
-.float-text.heal{color:#b8f2ff;text-shadow:0 2px 0 #062b38,0 4px 12px #000,0 0 16px #5cd6ff,0 0 32px #3fa9d899;font-size:clamp(28px,3.4vmin,42px)}
-.float-text.cultivation-gain{font:750 clamp(17px,2.4vmin,25px) var(--font);color:#bdf8ff;-webkit-text-stroke:0;text-shadow:0 2px 5px #071b28,0 0 12px #60d9ff;animation:floatUp 1.6s ease-out forwards}
+.float-text.heal{color:#ede0ca;text-shadow:0 2px 0 #281c16,0 4px 12px #000,0 0 16px #d6b885,0 0 32px #3fa9d899;font-size:clamp(28px,3.4vmin,42px)}
+.float-text.cultivation-gain{font:750 clamp(17px,2.4vmin,25px) var(--font);color:#efe2ce;-webkit-text-stroke:0;text-shadow:0 2px 5px #1e1511,0 0 12px #d7ba88;animation:floatUp 1.6s ease-out forwards}
 @keyframes floatUp{0%{opacity:0;transform:translate(-50%,12px) scale(.72)}18%{opacity:1;transform:translate(-50%,0) scale(1.16)}38%{transform:translate(-50%,-8px) scale(1)}100%{opacity:0;transform:translate(-50%,-58px) scale(1.12)}}
 .hero-wrap.attack{animation:heroAttack .36s ease-in-out}
 @keyframes heroAttack{0%,100%{translate:0 0}45%{translate:clamp(18px,3vw,48px) -6px}}
