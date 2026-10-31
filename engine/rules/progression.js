@@ -12,11 +12,32 @@
 
     Object.assign(H.Game.prototype, {
       need() { return F.exp_need(this.s.realm, this.s.stage - 1); },
+      /* Cộng tu vi. Tiểu cảnh giới tự động đột phá khi đầy tu vi (kể cả nhiều tầng liên tiếp khi bế quan);
+         tu vi chỉ dừng lại ở tầng cuối của đại cảnh giới, chờ người chơi bấm Đột phá thủ công. */
       gainExp(value) {
-        const gain = Math.max(0, Math.min(value, this.need() - this.s.qi));
-        this.s.qi += gain;
-        this.s.totalRunExp += gain;
-        return gain;
+        let left = Math.max(0, Number(value) || 0), total = 0, guard = 0;
+        while (left > 0 && guard++ < 400) {
+          const take = Math.min(left, Math.max(0, this.need() - this.s.qi));
+          this.s.qi += take;
+          this.s.totalRunExp += take;
+          total += take;
+          left -= take;
+          if (!this.autoStage()) break;
+        }
+        return total;
+      },
+      /* Tầng cuối của đại cảnh giới (viên mãn): chỉ còn đại đột phá bằng tay. */
+      isPeakStage() { return this.s.stage >= F.STAGES[this.s.realm]; },
+      /* Tự động lên 1 tầng nhỏ nếu tu vi đã đầy. Trả về true nếu có lên tầng. */
+      autoStage() {
+        const s = this.s;
+        if (s.completed || this.isPeakStage()) return false;
+        if (s.qi + this.need() * 1e-12 < this.need()) return false;
+        s.qi = 0; s.pity = 0; s.pillUses = 0; s.progress.breaks++;
+        s.stage++;
+        s.hp = this.stats().HP; s.mp = this.maxMp();
+        this.log('Tự động đột phá: ' + this.realmLabel() + '.');
+        return true;
       },
       manualEffects() {
         const s = this.s, out = { rate: 0, attack: 0, guard: 0, alchemy: 0, alchemyChance: 0 };
@@ -109,6 +130,7 @@
         const s = this.s;
         if (s.completed) throw Error('Đạo Tổ đã chứng đạo. Có thể trọng sinh.');
         if (s.qi + this.need() * 1e-12 < this.need()) throw Error('Tu vi chưa đầy.');
+        if (!this.isPeakStage()) { this.autoStage(); return { success: true, chance: 1, events: [], auto: true }; }
         const chance = this.chance(), events = this.tribulation();
         const success = this.rng() < chance && events.every(x => x.success);
         s.breakBonus = 0; s.shield = 0; s.reduction = 0;

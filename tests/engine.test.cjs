@@ -276,6 +276,15 @@ test('progression: hấp thụ, nâng cấp, đột phá thất bại/thành cô
   assert.equal(g.s.tech[0], tech + 1);
   assert.throws(() => run(g, 'upgrade', { index: 9 }), { code: 'INVALID_COMMAND' });
 
+  // Tiểu cảnh giới tự động đột phá khi tu vi đầy, không cần bấm nút.
+  g.s.stage = 1;
+  g.s.qi = 0;
+  g.gainExp(g.need());
+  assert.equal(g.s.stage, 2);
+  assert.equal(g.s.qi, 0);
+
+  // Đại cảnh giới: dừng ở tầng cuối, chỉ đột phá khi bấm tay (có thể thất bại).
+  g.s.stage = F.STAGES[g.s.realm];
   g.s.qi = g.need();
   g.rng = () => 0.999999;
   const failed = run(g, 'breakthrough');
@@ -285,9 +294,11 @@ test('progression: hấp thụ, nâng cấp, đột phá thất bại/thành cô
 
   g.s.qi = g.need();
   g.rng = () => 0;
+  const realm = g.s.realm;
   const success = run(g, 'breakthrough');
   assert.equal(success.success, true);
-  assert.equal(g.s.stage, 2);
+  assert.equal(g.s.realm, realm + 1);
+  assert.equal(g.s.stage, 1);
   assert.equal(g.s.qi, 0);
   assert.equal(g.s.pity, 0);
 
@@ -645,4 +656,24 @@ test('browser: nạp classic script đúng thứ tự index.html và chạy Loca
   session.dispatch('reincarnate');
   assert.equal(session.game.s.rebirths, 1);
   assert.equal(session.game.isDead(), false);
+});
+
+test('progression: tự đột phá nhiều tầng liên tiếp và dừng ở tầng cuối đại cảnh giới', () => {
+  const g = rich();
+  g.s.realm = 0;
+  g.s.stage = 1;
+  g.s.qi = 0;
+  const peak = F.STAGES[0];
+  let total = 0;
+  for (let st = 0; st < peak; st++) total += F.exp_need(0, st);
+  const gained = g.gainExp(total * 3);
+  assert.equal(g.s.realm, 0);
+  assert.equal(g.s.stage, peak);
+  assert.equal(g.s.qi, g.need());
+  assert.ok(gained > 0 && gained <= total * 3);
+  assert.equal(g.isPeakStage(), true);
+  assert.equal(g.autoStage(), false);
+  // tu vi đầy ở tầng cuối: không tự lên đại cảnh giới.
+  g.gainExp(1e9);
+  assert.equal(g.s.realm, 0);
 });

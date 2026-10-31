@@ -17,7 +17,7 @@
     const s = UI.s(), g = UI.g(), need = g.need(), goals = [];
     if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Có thể trọng sinh để mở vòng mới.', go: 'meta:prestige', cta: 'Trọng sinh' });
     else if (s.qi >= need) goals.push({ icon: '⚡', text: `Tu vi đã đầy · xác suất ${pct(g.chance())}.`, go: 'tribulation', cta: 'Thiên kiếp' });
-    else goals.push({ icon: '☯', text: `Còn khoảng ${duration(F.time_to_goal(need, s.qi, g.rate()))} đến đột phá.`, go: 'character:skills', cta: 'Công pháp' });
+    else goals.push({ icon: '☯', text: `Còn khoảng ${duration(F.time_to_goal(need, s.qi, g.rate()))} đến ${g.isPeakStage() ? 'lúc độ kiếp đại cảnh giới' : 'tầng kế (tự động đột phá)'}.`, go: 'character:skills', cta: 'Công pháp' });
     const life = g.lifeInfo();
     if (!s.completed && life.left <= 40) goals.unshift({ icon: '⌛', text: `Thọ nguyên còn ${num(Math.floor(life.left))} năm${Number.isFinite(life.safeSeconds) ? ` · vắng mặt quá ${duration(life.safeSeconds)} sẽ tọa hóa` : ''}.`, go: 'character:bag', cta: 'Hành trang' });
     const claimable = QUESTS.filter(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]).length;

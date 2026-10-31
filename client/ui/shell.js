@@ -833,11 +833,13 @@
     }
     const bb = $('btn-break');
     if (bb) {
-      const can = !s.completed && readyQi;
+      /* Tiểu cảnh giới tự động đột phá; chỉ tầng cuối (viên mãn) mới cần bấm tay để độ kiếp. */
+      const peak = s.stage === F.STAGES[s.realm], can = !s.completed && readyQi && peak;
       bb.disabled = !can;
       bb.classList.toggle('ready', can);
-      $('breakLabel').textContent = s.completed ? 'Đã chứng đạo' : 'Đột phá';
-      $('breakHint').textContent = s.completed ? 'Trọng sinh để mở vòng mới' : can ? (s.stage === F.STAGES[s.realm] ? 'Đủ duyên · nhận thiên kiếp' : 'Tu vi đã đầy') : 'Chưa đủ tu vi';
+      bb.classList.toggle('auto', !s.completed && !peak);
+      $('breakLabel').textContent = s.completed ? 'Đã chứng đạo' : peak ? 'Đột phá đại cảnh giới' : 'Tự động đột phá';
+      $('breakHint').textContent = s.completed ? 'Trọng sinh để mở vòng mới' : peak ? (can ? 'Viên mãn · bấm để nhận thiên kiếp' : 'Viên mãn · chưa đủ tu vi') : 'Tầng ' + s.stage + '/' + F.STAGES[s.realm] + ' · tự động';
     }
     const badge = (id, text, on) => {
       const el = document.querySelector('#menu [data-badge="' + id + '"]');

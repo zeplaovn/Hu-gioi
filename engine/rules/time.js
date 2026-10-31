@@ -22,6 +22,7 @@
         const start = s.lastUpdate, elapsed = Math.max(0, (now - start) / 1000);
         if (now < start) { s.lastUpdate = now; return empty(); }
         if (!elapsed) return empty();
+        for (let i = 0; i < 400 && this.autoStage(); i++); // bản lưu cũ có tu vi đầy ở tiểu cảnh giới
 
         let seconds = offline ? Math.min(elapsed, F.offline_cap(s.offlineCap)) : elapsed;
         const eff = offline ? F.offline_efficiency(s.offlineEff) : 1;

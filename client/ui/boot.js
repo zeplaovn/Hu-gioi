@@ -199,7 +199,7 @@
 
   function offlineSnapshot(now) {
     const s = UI.s();
-    return { age: s.age, realm: s.realm, harvests: s.garden.filter(p => !p.wilt && p.end <= now).length };
+    return { age: s.age, realm: s.realm, stage: s.stage, harvests: s.garden.filter(p => !p.wilt && p.end <= now).length };
   }
 
   /** Hộp thoại "Bế quan trở về": cùng bố cục với bản Hu-gioi (vắng mặt, thời gian tính, tuổi, kết quả, các mục kỳ ngộ/bí cảnh/tông môn). */
@@ -212,12 +212,17 @@
     const row = (cls, html) => L.push('<div class="' + cls + '">' + html + '</div>');
     const section = title => row('report-sec', '— ' + title + ' —');
 
+    const ups = s.realm === before.realm ? Math.max(0, s.stage - before.stage) : 0;
+    row('report-hero', '<div class="rh-time"><span>BẾ QUAN</span><b>' + duration(r.seconds) + '</b></div>' +
+      '<div class="rh-grid"><div><span>Tu vi</span><b data-countup="' + Math.max(0, r.exp) + '" data-fmt="num">+0</b></div>' +
+      '<div><span>Linh thạch</span><b data-countup="' + r.stone + '" data-fmt="money">+0</b></div>' +
+      '<div><span>Tầng mới</span><b class="' + (ups ? 'up' : '') + '">' + (ups ? '+' + ups : '—') + '</b></div></div>' +
+      (ups ? '<div class="rh-note">Tự động đột phá: ' + esc(g.realmLabel()) + '</div>' : ''));
     row('report-center', 'Bạn đã vắng mặt <b>' + duration(awaySeconds) + '</b>. Thời gian bế quan được tính: <b>' + duration(r.seconds) + '</b>' + (capped ? ' (đã đạt mức tối đa)' : '') + '.');
     row('report-center dim small', 'Hiệu suất ' + pct(eff) + ', tối đa ' + duration(cap) + ' mỗi lần. Linh điền được chăm khi vắng mặt; cây chín chờ bạn thu hoạch.');
     row('cyan', 'Thời gian trong game: +' + months + ' tháng (tuổi ' + Math.floor(before.age) + ' → ' + Math.floor(s.age) + ')');
-    row('report-rewards', '<div><span>Tu vi hấp thụ</span><b>+' + num(r.exp) + '</b></div><div><span>Linh thạch</span><b>' + (r.stone < 0 ? '−' : '+') + moneyHTML(Math.abs(r.stone)) + '</b></div>');
     if (s.realm !== before.realm) row('gold', 'Cảnh giới: ' + F.REALMS[before.realm] + ' → ' + F.REALMS[s.realm]);
-    if (!s.completed && s.qi >= g.need()) row('gold', '◆ Tu vi đã viên mãn — hãy đột phá để tiếp tục hấp thụ linh khí!');
+    if (!s.completed && s.qi >= g.need()) row('gold', '◆ Đã viên mãn — bấm Đột phá để độ kiếp lên đại cảnh giới và tiếp tục hấp thụ linh khí!');
     if (before.harvests) row('green', '🌿 Linh điền: ' + before.harvests + ' ô đã chín, vào Nghề phụ → Linh điền để thu hoạch.');
     if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
@@ -248,7 +253,8 @@
       tips.forEach(x => row('small', '→ ' + esc(x)));
     }
     UI.modal('Bế quan trở về', '<div class="report-lines">' + L.join('') + '</div>',
-      null, 'Tiếp tục tu luyện', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_khi'] });
+      null, 'Nhận & tiếp tục tu luyện', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_khi'] });
+    UI.idle?.countUp(document.getElementById('modalBody'));
   }
 
   /* ======================================================================
