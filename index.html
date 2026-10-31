@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="css/loading.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/welcome.css">
+<link rel="stylesheet" href="css/creation.css">
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/screens.css">
 <link rel="stylesheet" href="css/onboarding.css">
@@ -44,8 +45,7 @@
         <div class="scene-orbit"></div>
       </div>
       <div class="welcome-brand">
-        <span class="brand-seal" aria-hidden="true">道</span>
-        <span><b>HƯ GIỚI</b><small>TIÊN LỘ VÔ TẬN</small></span>
+        <img class="brand-logo" src="media/assets/world/bg/logo.webp" alt="Hư Giới · Tiên lộ vô tận" fetchpriority="high" decoding="async">
       </div>
       <div class="scene-copy">
         <p class="scene-kicker"><span></span> MỘT NIỆM KHỞI ĐẠO · VẠN KIẾP TRƯỜNG SINH</p>
@@ -85,7 +85,9 @@
         <button type="button" id="rollRoot" class="dice" title="Gieo linh căn ngẫu nhiên" aria-label="Gieo linh căn ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
         <p id="nameNote" class="name-note form-note" role="alert" hidden></p>
       </div>
-      <div class="creation-divider talent-divider"><span>02</span> PHÂN BỔ THIÊN PHÚ <i></i></div>
+      <div class="creation-divider meridian-divider"><span>02</span> KINH MẠCH <i></i></div>
+      <button type="button" id="meridianValue" class="meridian-box creation-info-trigger" aria-haspopup="dialog" aria-label="Xem thông tin kinh mạch">…</button>
+      <div class="creation-divider talent-divider"><span>03</span> PHÂN BỔ THIÊN PHÚ <i></i></div>
       <p id="pointsValue" class="points" role="status">Số điểm còn lại: 8</p>
       <div id="statGrid" class="stat-grid" aria-label="Phân bổ thiên phú"></div>
       <p id="statHint" class="hint" aria-live="polite">Rê chuột hoặc chạm vào tên thiên phú để xem mô tả.</p>
@@ -121,7 +123,7 @@
         <p class="status-name" id="playerName">…</p>
       </div>
     </div>
-    <button class="status-progress" data-window="idle" aria-label="Mở chi tiết tu luyện">
+    <button class="status-progress" data-open-page="idle" aria-label="Mở trang chi tiết tu luyện">
       <span class="status-progress-head"><span>TU VI</span><b id="topQiHint">0%</b></span>
       <span class="bar"><i id="topQiFill"></i><span class="bar-text status-exp" id="topQiText">0 / 0</span></span>
     </button>
@@ -332,6 +334,7 @@
 <script src="data/formulas.js"></script>
 <script src="data/catalog.js"></script>
 <script src="data/roots.js"></script>
+<script src="data/meridians.js"></script>
 <script src="data/character.js"></script>
 <script src="data/social.js"></script>
 <script src="data/adventures.js"></script>
