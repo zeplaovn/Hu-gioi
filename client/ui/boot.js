@@ -55,16 +55,24 @@
     $('startNew').disabled = !H.READY || entering || !H.cleanName($('nameInput').value);
   }
 
+  const raceBonusText = race => {
+    const b = H.raceBonus(race), out = [];
+    if (b.hp) out.push('sinh lực ' + pctText(b.hp));
+    if (b.atk) out.push('công kích ' + pctText(b.atk));
+    if (b.rate) out.push('tốc tu ' + pctText(b.rate));
+    return out.length ? out.join(' · ') : 'cân bằng, không thiên lệch';
+  };
+
+  /* Chủng tộc: danh sách đủ sáu tộc để so sánh; tộc hiện tại được nhấn mạnh. */
   function raceInfoHtml() {
-    const race = creation.race, name = H.raceName(race), b = H.raceBonus(race);
-    const bonus = [];
-    if (b.hp) bonus.push('Sinh lực ' + pctText(b.hp));
-    if (b.atk) bonus.push('công kích ' + pctText(b.atk));
-    if (b.rate) bonus.push('tốc tu ' + pctText(b.rate));
-    return '<div class="info-title">Chủng tộc ' + esc(name) + '</div>' +
-      '<div class="small">Thọ nguyên nền ~<b class="gold">' + H.raceLife(race, 0) + '</b> năm. Thiên phú: <b>' +
-      (bonus.length ? bonus.join(' · ') : 'không thiên lệch') + '</b>.</div>' +
-      '<div class="dim small">' + esc(RACE_DESC[race] || '') + '</div>';
+    const cur = creation.race;
+    const rows = H.RACES.map(([id, name, weight]) =>
+      '<div class="race-row' + (id === cur ? ' is-current' : '') + '"><div class="race-head"><b>' + esc(name) + '</b><span>~' + H.raceLife(id, 0) + ' năm · gặp ' + weight + '%</span></div>' +
+      '<div class="race-fx">' + esc(raceBonusText(id)) + '</div><div class="dim small">' + esc(RACE_DESC[id] || '') + '</div></div>').join('');
+    return '<div class="info-title">Chủng tộc ' + esc(H.raceName(cur)) + '</div>' +
+      '<div class="small">Thọ nguyên nền ~<b class="gold">' + H.raceLife(cur, 0) + '</b> năm. Thiên phú: <b>' + esc(raceBonusText(cur)) + '</b>.</div>' +
+      '<div class="race-list">' + rows + '</div>' +
+      '<div class="dim small">Gieo xúc xắc để đổi chủng tộc. Tỉ lệ gặp phản ánh độ hiếm của từng tộc.</div>';
   }
 
   /* Thông tin linh căn: tên + nhóm, mô tả loại, (Dị) biến thể và thế mạnh, hệ ngũ hành, rồi bảng phân loại 3 nhóm. */
@@ -100,7 +108,77 @@
       (descs ? '<div class="root-elem-title">' + (type === 'Dị' ? 'Hệ ngũ hành gốc' : 'Ngũ hành') + '</div>' : '') +
       '<div class="root-elem-list">' + descs + '</div>' + tiers +
       '<div class="root-doc"><b>Dị ≠ Thiên:</b> Thiên là một hệ ngũ hành thuần; Dị là biến thể cao cấp (Băng, Lôi, Phong, Độc) có thế mạnh riêng. <b>Hỗn Độn</b> không gieo được khi tạo nhân vật.</div>' +
+      rootRulesHtml() +
       '<div class="dim small">Gieo lại xúc xắc để đổi linh căn. Điểm ngũ hành quyết định loại linh căn và thiên phú chiến đấu.</div>';
+  }
+
+  /* Quy tắc linh căn theo root.txt: tốc tu theo số hệ, tương sinh/khắc, nguồn biến dị Dị linh căn, Hỗn Độn. */
+  function rootRulesHtml() {
+    const M = root.HU_MERIDIANS;
+    if (!M) return '';
+    const cnt = [1, 2, 3, 4, 5].map(n => '<i><b>' + M.COUNT_NAME[n].replace(' linh căn', '').replace(' (tạp)', '') + '</b> ×' + M.COUNT_RATE[n] + '</i>').join('');
+    const chain = ['Mộc', 'Hỏa', 'Thổ', 'Kim', 'Thủy'].map(h => '<b style="color:' + M.HE_COLOR[h] + '">' + h + '</b>').join(' → ');
+    const khac = ['Mộc', 'Thổ', 'Thủy', 'Hỏa', 'Kim'].map(h => '<b style="color:' + M.HE_COLOR[h] + '">' + h + '</b>').join(' → ');
+    const di = Object.entries(M.DI_SOURCE).map(([k, from]) => '<b style="color:' + M.HE_COLOR[M.DI_HE[k]] + '">' + M.DI_HE[k] + '</b> ← ' +
+      from.map(h => '<span style="color:' + M.HE_COLOR[h] + '">' + h + '</span>').join(' + ')).join(' · ');
+    return '<div class="root-rules"><div class="root-elem-title">Theo thiên thư</div>' +
+      '<div class="rule-line"><span>Tốc tu theo số hệ</span><span class="rule-chips">' + cnt + '</span></div>' +
+      '<div class="rule-line"><span>Tương sinh</span><span>' + chain + ' → Mộc</span></div>' +
+      '<div class="rule-line"><span>Tương khắc (+20% / −20% sát thương)</span><span>' + khac + ' → Mộc</span></div>' +
+      '<div class="rule-line"><span>Nguồn biến dị Dị linh căn (×2.0)</span><span>' + di + '</span></div>' +
+      '<div class="rule-line"><span>Hỗn Độn linh căn (×3.0)</span><span>Chỉ hình thành khi độ kiếp lên đại cảnh giới; không bẩm sinh, không đoạt được.</span></div></div>';
+  }
+
+  /* Kinh mạch xem trước: 12 chính kinh theo hệ, đánh dấu mạch cùng hệ / mạch sinh hệ với linh căn. */
+  function meridianPreview() {
+    const M = root.HU_MERIDIANS;
+    return M ? M.preview(creation.roots, creation.rootType, creation.rootSub) : null;
+  }
+  const zTime = minutes => !Number.isFinite(minutes) ? 'không tích tạp chất' : minutes >= 120 ? '~' + num(minutes / 60) + ' giờ' : '~' + Math.round(minutes) + ' phút';
+
+  function meridianBoxHtml() {
+    const M = root.HU_MERIDIANS, pv = meridianPreview();
+    if (!M || !pv) return '';
+    const chips = M.CHINH_KINH.map((m, i) => {
+      const rel = pv.rel[i], color = M.HE_COLOR[m.he];
+      return '<span class="mm-chip mm-' + rel + '" style="--c:' + color + '" title="' + esc(m.name + ' · ' + m.he + (rel === 'same' ? ' · cùng hệ linh căn' : rel === 'sinh' ? ' · hệ sinh ra linh căn' : '')) + '">' +
+        (rel === 'same' ? '<s>★</s>' : rel === 'sinh' ? '<s>↑</s>' : '') + esc(m.short) + '</span>';
+    }).join('');
+    const zLine = pv.zPerMinute > 0
+      ? 'Tạp chất <b>+' + pv.zPerMinute.toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + '/phút</b> · phạt tốc tu từ ' + zTime(pv.zPenaltyAt50) + '</span>'
+      : 'Đơn linh căn: <b>không tích tạp chất</b></span>';
+    return '<span class="mm-head"><b>Thập nhị chính kinh</b><em>Tinh khiết ' + pv.purity + '% · ' + esc(pv.countName) + ' ×' + pv.countRate + '</em></span>' +
+      '<span class="mm-grid">' + chips + '</span>' +
+      '<span class="mm-stat"><span><b>' + pv.same + '</b> mạch cùng hệ <i>(thông ×' + M.SAME_SPEED + ', stat ×' + M.SAME_STAT + ')</i></span>' +
+      '<span><b>' + pv.sinh + '</b> mạch sinh hệ <i>(thông ×' + M.SINH_SPEED + ')</i></span></span>' +
+      '<span class="mm-z"><span>' + zLine + '</span>' +
+      '<span class="mm-note">8 kỳ kinh mở khi Trúc Cơ · mạch tăng tối đa +' + Math.round(pv.maxBonus * 100) + '% tốc tu</span></span>';
+  }
+
+  function meridianInfoHtml() {
+    const M = root.HU_MERIDIANS, pv = meridianPreview();
+    if (!M || !pv) return '';
+    const rar = key => { const r = M.RARITY[key]; return '<span class="rar' + (r.rainbow ? ' rainbow' : '') + '" style="color:' + r.color + '">' + r.name + '</span>'; };
+    const heTag = he => '<span class="he-tag" style="color:' + M.HE_COLOR[he] + ';border-color:' + M.HE_COLOR[he] + '">' + esc(he) + '</span>';
+    const chinh = M.CHINH_KINH.map((m, i) => '<tr class="mm-' + pv.rel[i] + '"><td><b>' + esc(m.name) + '</b>' + (pv.rel[i] === 'same' ? ' <em>★ cùng hệ</em>' : pv.rel[i] === 'sinh' ? ' <em>↑ sinh hệ</em>' : '') + '</td><td>' + heTag(m.he) + '</td><td>' + m.points + '</td><td>' + esc(m.stat) + '</td><td>' + esc(m.perfect) + '</td></tr>').join('');
+    const ky = M.KY_KINH.map(m => '<tr><td><b>' + esc(m.name) + '</b></td><td>' + rar(m.rarity) + '</td><td>' + esc(m.stat) + '</td><td>' + esc(m.perfect) + '</td></tr>').join('');
+    const t = M.THIEN_MACH;
+    return '<div class="info-title">Kinh mạch · đường dẫn linh khí</div>' +
+      '<div class="small">Linh căn quyết định <b>hệ</b> và <b>tốc độ</b> hấp thụ linh khí; kinh mạch quyết định linh khí đi qua được <b>bao nhiêu</b>, <b>sạch đến đâu</b> và hóa thành sức mạnh nào. Kinh mạch không chọn lúc tạo nhân vật: bạn thông dần khi tu luyện.</div>' +
+      '<div class="mm-summary"><div><span>Hệ linh căn</span><b>' + (pv.diHe ? esc(pv.diHe) + ' (từ ' + pv.diFrom.join('/') + ')' : pv.heList.map(h => '<span style="color:' + M.HE_COLOR[h] + '">' + h + '</span>').join(' · ') || '—') + '</b></div>' +
+      '<div><span>Độ tinh khiết</span><b>' + pv.purity + '%</b></div><div><span>Tạp chất Z</span><b>' + (pv.zPerMinute > 0 ? '+' + pv.zPerMinute.toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + '/phút' : 'không tích') + '</b></div>' +
+      '<div><span>Đầy Z (tẩu hỏa)</span><b>' + zTime(pv.zMinutes) + '</b></div></div>' +
+      '<div class="root-elem-title">12 chính kinh · mở từ Luyện Khí · phải đả thông hết trước khi lên Trúc Cơ</div>' +
+      '<div class="mm-table-wrap"><table class="mm-table"><thead><tr><th>Tên</th><th>Hệ</th><th>Huyệt</th><th>Stat (t=100)</th><th>Viên mãn</th></tr></thead><tbody>' + chinh + '</tbody></table></div>' +
+      '<div class="root-elem-title">8 kỳ kinh bát mạch · mở khi đạt Trúc Cơ · hệ trung hòa</div>' +
+      '<div class="mm-table-wrap"><table class="mm-table"><thead><tr><th>Tên</th><th>Hiếm</th><th>Stat (t=100)</th><th>Viên mãn</th></tr></thead><tbody>' + ky + '</tbody></table></div>' +
+      '<div class="root-elem-title">Hỗn Độn Thiên Mạch</div>' +
+      '<div class="small"><b style="color:#ffd9a0">' + esc(t.name) + '</b> · ' + rar('thiên') + ' · ' + esc(t.opens) + ': ' + esc(t.stat) + '; ' + esc(t.perfect) + '. Thông tự động t = 100, không thể đoạt.</div>' +
+      '<div class="root-rules"><div class="root-elem-title">Cách vận hành</div>' +
+      '<div class="rule-line"><span>Mạch cùng hệ linh căn</span><span>thông nhanh ×' + M.SAME_SPEED + ', cộng stat ×' + M.SAME_STAT + '</span></div>' +
+      '<div class="rule-line"><span>Mạch của hệ sinh ra linh căn</span><span>thông nhanh ×' + M.SINH_SPEED + '</span></div>' +
+      '<div class="rule-line"><span>Tạp chất Z</span><span>tăng mỗi phút = (số hệ − 1) × 0,5 × (1 − tinh khiết). Z ≥ 50: −10% tốc tu; ≥ 80: −30%; = 100: tẩu hỏa nhập ma.</span></div>' +
+      '<div class="rule-line"><span>Đột phá</span><span>tầng nhỏ tự động; đại cảnh giới bấm tay và kiểm tra độ thông kinh mạch.</span></div></div>';
   }
 
   function renderStats() {
@@ -151,17 +229,19 @@
       b.setAttribute('aria-pressed', String(on));
     });
     $('ageValue').textContent = creation.age + ' tuổi';
-    $('raceValue').textContent = H.raceName(creation.race);
+    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span><span class="field-sub">' + esc(raceBonusText(creation.race)) + ' · thọ ~' + H.raceLife(creation.race, 0) + ' năm</span>';
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
-    const active = ELEMENTS.map(([name, color], i) => ({ name, color, value: creation.roots[i] }))
-      .filter(x => x.value >= 50);
+    const M = root.HU_MERIDIANS, pv = meridianPreview();
+    const active = ELEMENTS.map(([name], i) => ({ name, color: M ? M.HE_COLOR[name] : '#fff', value: creation.roots[i] })).filter(x => x.value >= 50);
     const chips = active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('');
-    /* Dị linh căn và ngũ hành tách thành hai dòng riêng, mỗi dòng có nhãn nhóm. */
-    $('rootValue').innerHTML = creation.rootType === 'Dị'
-      ? '<span class="root-line"><span class="root-line-label">Dị linh căn</span><span class="chip chip-di">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span></span>' +
-        '<span class="root-line"><span class="root-line-label">Hệ ngũ hành gốc</span>' + chips + '</span>'
-      : '<span class="root-line"><span class="root-line-label">Ngũ hành</span>' + (chips || '<span class="chip">…</span>') + '</span>';
+    const rate = F.LINH_CAN_RATE[creation.rootType];
+    const diChip = creation.rootType === 'Dị'
+      ? '<span class="chip chip-di" style="color:' + (M ? M.HE_COLOR[M.DI_HE[creation.rootSub]] : '#fff') + ';border-color:' + (M ? M.HE_COLOR[M.DI_HE[creation.rootSub]] : '#fff') + '">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span>' : '';
+    $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + ' <em>×' + rate + ' tốc tu</em></span>' +
+      '<span class="root-line">' + (diChip ? '<span class="root-line-label">Dị</span>' + diChip + '<span class="root-line-label">gốc</span>' : '') + (chips || '<span class="chip">…</span>') + '</span>' +
+      '<span class="purity" title="Độ tinh khiết: điểm trung bình các hệ chính"><span class="purity-bar"><i style="width:' + (pv ? pv.purity : 0) + '%"></i></span><b>Tinh khiết ' + (pv ? pv.purity : 0) + '%</b></span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
+    if ($('meridianValue')) $('meridianValue').innerHTML = meridianBoxHtml();
     renderStats();
     syncName();
   }
@@ -387,12 +467,13 @@
     $('rollRace').addEventListener('click', () => roll('race'));
     $('rollRoot').addEventListener('click', () => roll('root'));
     const showCreationInfo = type => {
-      $('creationInfoTitle').textContent = type === 'race' ? 'Thông tin chủng tộc' : 'Thông tin linh căn';
-      $('creationInfoContent').innerHTML = type === 'race' ? raceInfoHtml() : rootInfoHtml();
+      $('creationInfoTitle').textContent = type === 'race' ? 'Thông tin chủng tộc' : type === 'meridian' ? 'Thông tin kinh mạch' : 'Thông tin linh căn';
+      $('creationInfoContent').innerHTML = type === 'race' ? raceInfoHtml() : type === 'meridian' ? meridianInfoHtml() : rootInfoHtml();
       $('creationInfoDialog').showModal();
     };
     $('raceValue').addEventListener('click', () => showCreationInfo('race'));
     $('rootValue').addEventListener('click', () => showCreationInfo('root'));
+    $('meridianValue').addEventListener('click', () => showCreationInfo('meridian'));
     $('creationInfoClose').addEventListener('click', () => $('creationInfoDialog').close());
     $$('[data-gender]').forEach(b => b.addEventListener('click', () => {
       creation.gender = b.dataset.gender;

@@ -435,7 +435,8 @@
       }
       this.closeOthers(id);
       const el = document.createElement('section');
-      el.className = 'win';
+      const isPage = id !== 'combat';
+      el.className = isPage ? 'win page' : 'win';
       el.dataset.window = id;
       el.tabIndex = -1;
       el.setAttribute('role', 'dialog');
@@ -443,15 +444,19 @@
       const icon = def.icon && /^ICON-/.test(def.icon)
         ? '<img src="media/assets/ui/icon/menu/' + esc(def.icon) + '-40.png" alt="" decoding="async">'
         : '<span aria-hidden="true">' + esc(def.icon || '◈') + '</span>';
-      el.innerHTML = '<header><b>' + icon + '<span>' + esc(def.label) + '</span></b><button class="win-close" type="button" aria-label="Đóng">✕</button></header><div class="win-body"></div><div class="rz" aria-hidden="true"></div>';
+      el.innerHTML = '<header>' + (isPage ? '<button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' : '') +
+        '<b>' + icon + '<span>' + esc(def.label) + '</span></b><button class="win-close" type="button" aria-label="Đóng">✕</button></header><div class="win-body"></div>' + (isPage ? '' : '<div class="rz" aria-hidden="true"></div>');
       $('wins').appendChild(el);
-      const rect = this.clampRect(this.loadRect(id) || this.defaultRect(id));
+      const rect = this.clampRect((isPage ? null : this.loadRect(id)) || this.defaultRect(id));
       this.setRect(el, rect);
       this.map.set(id, { el, body: el.querySelector('.win-body'), rect, def, sig: '' });
       el.addEventListener('pointerdown', () => this.focus(id), true);
       el.querySelector('.win-close').addEventListener('click', e => { e.stopPropagation(); this.close(id); });
-      drag(el.querySelector('header'), el, id);
-      resize(el.querySelector('.rz'), el, id);
+      el.querySelector('.page-back')?.addEventListener('click', e => { e.stopPropagation(); this.close(id); try { $('stage')?.focus?.({ preventScroll: true }); } catch { /* bỏ qua */ } });
+      if (!isPage) {
+        drag(el.querySelector('header'), el, id);
+        resize(el.querySelector('.rz'), el, id);
+      }
       this.render(id);
       this.focus(id);
       markMenu();
@@ -461,7 +466,7 @@
     close(id) {
       const w = this.map.get(id);
       if (!w) return;
-      this.saveRect(id, w.rect);
+      if (id === 'combat') this.saveRect(id, w.rect);
       w.el.remove();
       this.map.delete(id);
       if (UI.current === id) UI.current = this.topId() || 'idle';
@@ -474,7 +479,7 @@
         if (id === except) return;
         const w = this.map.get(id);
         if (!w) return;
-        this.saveRect(id, w.rect);
+        if (id === 'combat') this.saveRect(id, w.rect);
         w.el.remove();
         this.map.delete(id);
         removed = true;
@@ -486,7 +491,7 @@
       }
     },
     closeAll() {
-      this.map.forEach((w, id) => this.saveRect(id, w.rect));
+      this.map.forEach((w, id) => { if (id === 'combat') this.saveRect(id, w.rect); });
       this.map.forEach(w => w.el.remove());
       this.map.clear();
       UI.current = 'idle';
@@ -517,7 +522,15 @@
       w.sig = def.signature?.(tab) ?? '';
     },
     refreshAll() { this.map.forEach((w, id) => this.render(id)); },
+    /* Trang riêng: phủ đúng vùng sân khấu + nhật ký, tách biệt màn chơi. */
+    pageRect() {
+      const a = $('stage')?.getBoundingClientRect(), b = $('logPanel')?.getBoundingClientRect();
+      if (!a || !a.width) return null;
+      const bottom = b && b.height ? Math.max(a.bottom, b.bottom) : a.bottom;
+      return { x: a.left, y: a.top, w: a.width, h: bottom - a.top };
+    },
     defaultRect(id) {
+      if (id !== 'combat') { const page = this.pageRect(); if (page) return this.clampRect(page); }
       const layout = $('game')?.dataset.layout || 'wide';
       const W = root.innerWidth || document.documentElement.clientWidth || 1280;
       const H = root.innerHeight || document.documentElement.clientHeight || 800;
@@ -584,10 +597,10 @@
       el.style.width = r.w + 'px';
       el.style.height = r.h + 'px';
     },
-    fit() { this.map.forEach(w => { w.rect = this.clampRect(w.rect); this.setRect(w.el, w.rect); }); },
+    fit() { this.map.forEach((w, id) => { w.rect = this.clampRect(id === 'combat' ? w.rect : this.defaultRect(id)); this.setRect(w.el, w.rect); }); },
     relayout() {
       this.map.forEach((w, id) => {
-        w.rect = this.clampRect(this.loadRect(id) || this.defaultRect(id));
+        w.rect = this.clampRect((id === 'combat' ? this.loadRect(id) : null) || this.defaultRect(id));
         this.setRect(w.el, w.rect);
         this.render(id);
       });
@@ -648,7 +661,7 @@
   function buildMenu() {
     const menu = $('menu');
     if (!menu) return;
-    menu.innerHTML = WINDOW_ORDER.map(id => {
+    menu.innerHTML = '<button type="button" id="menuToggle" class="menu-toggle" aria-controls="menu" aria-expanded="true" aria-label="Thu gọn menu" title="Thu gọn menu"><span class="ico" aria-hidden="true">☰</span><span>Menu</span></button>' + WINDOW_ORDER.map(id => {
       const def = UI.screens[id];
       if (!def) return '';
       const icon = def.icon && /^ICON-/.test(def.icon)
@@ -658,12 +671,40 @@
       return '<button type="button" data-window="' + id + '" title="' + esc(def.label) + '" aria-label="' + esc(def.label) + '" aria-pressed="false">' + icon + '<span>' + esc(def.label) + '</span>' + badge + '</button>';
     }).join('') +
       '<button type="button" id="moreMenuBtn" class="menu-more" title="Thêm" aria-label="Thêm" aria-haspopup="true" aria-expanded="false" aria-controls="moreMenu"><span class="ico" aria-hidden="true">⋯</span><span>Thêm</span></button>';
+    applyMenuState(false);
     markMenu();
   }
 
+  /* Menu thu gọn/mở bằng icon ☰; nhớ lựa chọn theo trình duyệt. */
+  function menuCollapsed() {
+    try { return localStorage.getItem('huGioiMenuCollapsed') === '1'; } catch { return false; }
+  }
+  function applyMenuState(collapsed) {
+    const game = $('game'), toggle = $('menuToggle');
+    if (!game) return;
+    if (collapsed === false && toggle && !toggle.dataset.init) { collapsed = menuCollapsed(); toggle.dataset.init = '1'; }
+    game.dataset.menu = collapsed ? 'collapsed' : 'open';
+    if (toggle) {
+      const label = collapsed ? 'Mở menu' : 'Thu gọn menu';
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      toggle.setAttribute('aria-label', label);
+      toggle.title = label;
+      toggle.querySelector('.ico').textContent = collapsed ? '☰' : '✕';
+    }
+  }
+  function toggleMenu() {
+    const collapsed = $('game').dataset.menu !== 'collapsed';
+    closeMoreMenu();
+    applyMenuState(collapsed);
+    try { localStorage.setItem('huGioiMenuCollapsed', collapsed ? '1' : '0'); } catch { /* bỏ qua */ }
+    requestAnimationFrame(() => { wins.fit(); trib.layoutScene(); });
+  }
+
   function markMenu() {
+    const pageOpen = [...wins.map.keys()].some(id => id !== 'combat');
+    $('game')?.classList.toggle('page-open', pageOpen);
     $$('#menu [data-window]').forEach(b => {
-      const on = b.dataset.window === 'tribulation' ? trib.pageOpen : wins.has(b.dataset.window);
+      const on = b.dataset.window === 'tribulation' ? trib.pageOpen : b.dataset.window === 'idle' ? wins.map.size === 0 && !trib.pageOpen : wins.has(b.dataset.window);
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', String(on));
     });
@@ -1473,6 +1514,12 @@
       return;
     }
     if (!$('moreMenu')?.hidden && !e.target.closest('#moreMenu, #moreMenuBtn')) closeMoreMenu();
+    if (e.target.closest('#menuToggle')) { e.preventDefault(); toggleMenu(); return; }
+    const pageBtn = e.target.closest('[data-open-page]');
+    if (pageBtn && UI.s().created) {
+      safe(() => { store.catchUp(); if (trib.pageOpen) trib.closePage(); wins.open(pageBtn.dataset.openPage); });
+      return;
+    }
     const winBtn = e.target.closest('[data-window]');
     if (winBtn && !winBtn.closest('.win') && UI.s().created) {
       safe(() => {
@@ -1480,6 +1527,8 @@
         if (winBtn.dataset.window === 'tribulation') {
           if (trib.pageOpen) trib.close();
           else go('tribulation');
+        } else if (winBtn.dataset.window === 'idle' && winBtn.closest('#menu')) {
+          go('idle');
         } else {
           if (trib.pageOpen) trib.closePage();
           wins.toggle(winBtn.dataset.window);

@@ -10,7 +10,7 @@
   /* effects cộng vào rootEffects(); from = các hệ gốc có thể sinh ra Dị này (chỉ số trong ELEMENTS). */
   const DI_LINH_CAN = {
     bang: { name: 'Băng', from: [2], role: 'Phong ấn · khống chế', desc: 'Biến thể của Thủy; khắc hệ gốc và không bị hệ gốc khắc.', effects: { guard: .08, mp: .10 } },
-    loi: { name: 'Lôi', from: [3, 0], role: 'Công sát · phá phòng', desc: 'Biến thể của Hỏa hoặc Kim; khắc hệ gốc và không bị hệ gốc khắc.', effects: { attack: .10, crit: .05 } },
+    loi: { name: 'Lôi', from: [3, 2], role: 'Công sát · phá phòng', desc: 'Biến thể của Hỏa hoặc Thủy; khắc hệ gốc và không bị hệ gốc khắc.', effects: { attack: .10, crit: .05 } },
     phong: { name: 'Phong', from: [1, 2], role: 'Tốc độ · né tránh', desc: 'Biến thể của Mộc hoặc Thủy; khắc hệ gốc và không bị hệ gốc khắc.', effects: { dodge: .10, sta: .10 } },
     doc: { name: 'Độc', from: [1, 4], role: 'Độc · hộ thể', desc: 'Biến thể của Mộc hoặc Thổ; khắc hệ gốc và không bị hệ gốc khắc.', effects: { hp: .05, attack: .05 } }
   };

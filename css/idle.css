@@ -152,3 +152,35 @@
 /* Nút đột phá trên thanh trạng thái mobile: gọn, vì đã có nút lớn trên sân khấu */
 #game:not([data-layout="wide"]) .btn-break{max-width:124px;min-width:0;line-height:1.15;text-align:center}
 #game:not([data-layout="wide"]) .btn-break small{display:none}
+
+/* ===== TRANG RIÊNG CHO TỪNG MENU ===== */
+/* Mỗi menu (trừ Lịch luyện) mở thành một trang phủ vùng sân khấu + nhật ký; màn chơi bị ẩn bên dưới. */
+#game.page-open #stage,#game.page-open #logPanel{visibility:hidden}
+.win.page{border-radius:10px;min-width:0;min-height:0;box-shadow:0 0 0 1px #0007;animation:pageIn .18s ease-out}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}}
+.win.page.top{border-color:var(--line2);box-shadow:0 0 0 1px #0007}
+.win.page>header{cursor:default;touch-action:auto;padding:7px 8px;gap:10px;justify-content:flex-start;background:linear-gradient(180deg,#1b2c37,#14222b)}
+.win.page>header b{flex:1;font-size:17px}
+.win.page>header .win-close{display:none}
+.page-back{display:inline-flex;align-items:center;gap:5px;padding:7px 12px 7px 9px;border-radius:9px;border:1px solid #46606d;background:#122029;color:#d6e6ec;font:750 14px var(--font);white-space:nowrap}
+.page-back:hover{border-color:var(--gold);color:var(--gold)}
+.win.page .win-body{padding:14px clamp(12px,2.2vw,26px) 22px}
+.win.page .win-body>*{max-width:1180px;margin-left:auto;margin-right:auto}
+@media(min-width:900px){
+  .win.page .screen-grid{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start}
+}
+@media(max-width:620px){.page-back span{display:none}.page-back{padding:7px 10px}}
+
+/* ===== MENU THU GỌN / MỞ BẰNG ICON ===== */
+#menu .menu-toggle{order:-1;min-height:40px;border:1px solid #46606d;border-radius:10px;background:#122029;color:#d6e6ec}
+#menu .menu-toggle .ico{font-size:20px;line-height:1}
+#menu .menu-toggle:hover{border-color:var(--gold);color:var(--gold)}
+#game[data-menu="collapsed"]{--menu-w:54px}
+#game[data-menu="collapsed"] #menu>button:not(.menu-toggle){display:none}
+#game[data-menu="collapsed"] #menu .menu-toggle{min-width:0;width:100%}
+#game[data-menu="collapsed"] #menu .menu-toggle span:not(.ico){display:none}
+#game[data-menu="collapsed"] #menu{align-content:flex-start}
+#game[data-layout="portrait"] #menu .menu-toggle{flex:0 0 44px;min-height:54px;padding:3px 0 2px;font-size:11px}
+#game[data-layout="portrait"][data-menu="collapsed"] #menu{justify-content:flex-end}
+#game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle{flex:0 0 auto;width:auto;min-height:40px;padding:4px 18px}
+#game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle span:not(.ico){display:inline;margin-left:6px}
