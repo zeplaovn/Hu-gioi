@@ -2,7 +2,7 @@
 
 Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-> **Hiện trạng (nhánh `rebuild/backend-skeleton`): đang viết lại backend.** Toàn bộ logic cũ (`shared/`, `server/`, `client/session/local-session.js`) đã được dọn đi. Giao diện, CSS, tài nguyên, dữ liệu thiết kế và công thức cân bằng được giữ nguyên; `engine/` và `server/` là khung có giao diện rõ ràng nhưng **chưa cài đặt luật chơi nên game chưa chơi được**. Mở `index.html` sẽ hiện thông báo thiếu engine thay vì khởi động. Đặc tả để viết lại: [docs/engine-contract.md](docs/engine-contract.md). Bản chơi được cuối cùng nằm ở commit `5f6b9bc` (nhánh `main`).
+> **Hiện trạng (nhánh `rebuild/backend-skeleton`): engine đã sẵn sàng, game chơi được offline.** Giao diện, tài nguyên, dữ liệu thiết kế và công thức cân bằng được giữ lại; `engine/` đã cài đặt đủ 9 miền luật, 46 lệnh và schema V7 nên `HU_GAME.READY === true`. `server/` vẫn là khung cho chế độ online. Mở `index.html` để tạo đạo thân và chơi; bản lưu nằm trong trình duyệt. Hợp đồng engine: [docs/engine-contract.md](docs/engine-contract.md). Bản chơi được cuối cùng trước đợt dọn backend nằm ở commit `5f6b9bc` (nhánh `main`).
 
 Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 
@@ -12,12 +12,11 @@ Yêu cầu **Node.js 20+**. Không cần `npm install`.
 
 ```sh
 npm start        # máy chủ tại http://127.0.0.1:8000 (HOST, PORT tùy chọn)
-npm run check    # cú pháp JavaScript + đường dẫn script trong index.html
-npm test         # kiểm tra khung: dữ liệu, hợp đồng lệnh, thứ tự script, máy chủ tĩnh
-npm run preload  # sinh lại client/assets/preload-manifest.js
+npm run check    # cú pháp JavaScript, ranh giới engine, thứ tự script
+npm test         # test hợp đồng, hành vi 9 miền luật, LocalSession và UI entry
 ```
 
-`npm start` phục vụ game tĩnh và `GET /api/health`. Cũng có thể mở thẳng [index.html](index.html) (`file://`) hoặc chạy `python3 -m http.server 8000 --bind 127.0.0.1`; game dùng HTML, CSS và JavaScript với classic scripts, không cần build. Khi `HU_GAME.READY` còn `false`, trang chỉ hiện thông báo và in danh sách phần còn thiếu trong console.
+`npm start` phục vụ game tĩnh và `GET /api/health`. Cũng có thể mở thẳng [index.html](index.html) (`file://`) hoặc chạy `python3 -m http.server 8000 --bind 127.0.0.1`; game dùng HTML, CSS và JavaScript với classic scripts, không cần build. Game chạy offline qua `LocalSession`, tự lưu bằng `localStorage` và cộng tiến trình bế quan khi mở lại. Nếu `HU_GAME.READY` là `false` (ví dụ thiếu file engine), trang mở bản xem trước và in danh sách phần còn thiếu trong console.
 
 ## Tính năng thiết kế
 
@@ -54,7 +53,7 @@ Phụ thuộc một chiều: `client/` và `server/` → `engine/` → `data/`. 
 ```text
 index.html                 Điểm vào trình duyệt và thứ tự nạp scripts
 data/                      Dữ liệu thiết kế và công thức cân bằng (thuần dữ liệu)
-engine/                    Luật chơi dùng chung cho client và server (khung, chưa cài đặt)
+engine/                    Luật chơi dùng chung cho client và server
   game.js                    Ghép data + state + rules; báo READY / MISSING
   state/                     Schema V7, create, normalize V4–V7
   rules/                     9 miền: progression inventory crafting combat world adventures social time creation
@@ -79,10 +78,10 @@ docs/                      Tài liệu
 - `engine/` và `data/` không phụ thuộc DOM, `localStorage`, mạng hay timer; thời gian và RNG do phiên cung cấp.
 - Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh](docs/engine-contract.md#4-lệnh-46) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
 - Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node lẫn `file://` nạp đúng; `npm test` kiểm tra thứ tự.
-- Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và cấu hình preload rồi chạy `npm run preload`.
+- Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và `client/assets/preload-manifest.js`.
 - Thay dữ liệu thiết kế: xem [docs/design-integration.md](docs/design-integration.md).
 
-Thứ tự gợi ý khi viết lại engine: state → time/creation → progression → inventory/crafting/combat → world/adventures/social. Mỗi bước thêm test; `HU_GAME.MISSING` rỗng thì UI tự khởi động.
+Engine đã hoàn tất theo thứ tự state → time/creation → progression → inventory/crafting/combat → world/adventures/social. Test nằm trong `tests/`; `HU_GAME.MISSING` rỗng nên UI tự khởi động phiên chơi.
 
 ## Backend
 
@@ -91,7 +90,7 @@ Thứ tự gợi ý khi viết lại engine: state → time/creation → progres
 ## Tài liệu
 
 - [Kiến trúc](docs/architecture.md): các lớp, thư mục, luồng lệnh, cách nạp module, thêm lệnh.
-- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (46 lệnh, API `HU_GAME`, state, bản lưu) để viết lại.
+- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (46 lệnh, API `HU_GAME`, state, bản lưu).
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
 - [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
-- [data/README.md](data/README.md), [tools/pending-engine/README.md](tools/pending-engine/README.md): dữ liệu và công cụ chờ engine.
+- [data/README.md](data/README.md): dữ liệu thiết kế và công thức cân bằng.

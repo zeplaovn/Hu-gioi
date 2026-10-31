@@ -52,7 +52,7 @@
     note.hidden = !err;
     note.textContent = err;
     $('nameInput').setAttribute('aria-invalid', String(!!err));
-    $('startNew').disabled = entering || !H.cleanName($('nameInput').value);
+    $('startNew').disabled = !H.READY || entering || !H.cleanName($('nameInput').value);
   }
 
   function raceInfoHtml() {
@@ -321,7 +321,7 @@
   function bindCreation() {
     $('createForm').addEventListener('submit', async e => {
       e.preventDefault();
-      if (entering || store.ready) return;
+      if (!H.READY || entering || store.ready) return;
       if (store.locked) { UI.toast('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.'); return; }
       const name = H.cleanName($('nameInput').value);
       if (!name) { syncName(); return; }
@@ -503,6 +503,13 @@
   }
 
   UI.boot = boot;
+  /* Xem trước các lựa chọn thuần dữ liệu, không mở phiên hay đọc/ghi bản lưu. */
+  UI.bootPreview = function () {
+    buildStats();
+    bindCreation();
+    renderCreation();
+    UI.mainPreview?.bind();
+  };
   UI.renderCreation = renderCreation;
   UI.creation = () => creation;
 })(typeof window !== 'undefined' ? window : globalThis);

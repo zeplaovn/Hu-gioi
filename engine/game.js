@@ -24,11 +24,29 @@
   }
 
   class Game {
-    constructor(state, rng = Math.random, onLog = null) { this.s = state; this.rng = rng; this.onLog = onLog; }
+    constructor(state, rng, onLog = null) {
+      this.s = state;
+      this.rng = typeof rng === 'function' ? rng : () => { throw Error('Thiếu nguồn ngẫu nhiên cho phiên chơi.'); };
+      this.onLog = onLog;
+    }
     log(message) {
       this.s.logs.unshift(message);
       this.s.logs.length = Math.min(38, this.s.logs.length);
       this.onLog?.(message);
+    }
+    count(key) { return this.s.bag[key] || 0; }
+    add(key, count = 1) {
+      if (!D.item(key)) throw Error('Mã vật phẩm không hợp lệ.');
+      this.s.bag[key] = Math.min(1e9, this.count(key) + Math.max(0, Math.floor(count)));
+    }
+    take(key, count = 1) {
+      if (this.count(key) < count) throw Error('Không đủ ' + (D.item(key)?.name || 'vật phẩm'));
+      this.s.bag[key] -= count;
+      if (!this.s.bag[key]) delete this.s.bag[key];
+    }
+    spend(value) {
+      if (!Number.isFinite(value) || value < 0 || this.s.stone < value) throw Error('Không đủ linh thạch.');
+      this.s.stone -= value;
     }
   }
   [...P.types, ...REQUIRED_METHODS].forEach(name => { Game.prototype[name] = notImplemented(name); });
@@ -36,10 +54,14 @@
   const API = {
     F, ...C, ...D, ...social, ...adventures,
     VERSION: S.VERSION,
+    SUPPORTED_VERSIONS: S.SUPPORTED_VERSIONS,
     Game,
+    metaDefault: S.metaDefault,
+    normalizeMeta: S.normalizeMeta,
+    sectDefault: S.sectDefault,
     createCharacter: notImplemented('createCharacter'),
-    create: (now = Date.now()) => S.create(now),
-    normalize: (raw, now = Date.now()) => S.normalize(raw, now, Game)
+    create: (now = 0) => S.create(now),
+    normalize: (raw, now = 0) => S.normalize(raw, now, Game)
   };
 
   /* Mỗi lệnh phải thuộc đúng một miền luật. */

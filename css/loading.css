@@ -25,7 +25,8 @@ body.loading-game{overflow:hidden}
 @media(max-height:520px){.loading-logo{max-height:38vh}}
 @media(prefers-reduced-motion:reduce){
   #loading,#gameLoading,.loading-scene,.loading-fill{transition:none}
-  .loading-logo,}
+  .loading-logo{animation:none}
+}
 
 .loading-track{background:var(--inset,#0b1015);border:1px solid var(--bar-age,#d9a21b);border-radius:4px;box-shadow:none}
 .loading-fill{border-radius:3px;background:var(--bar-age,#d9a21b);opacity:.9}

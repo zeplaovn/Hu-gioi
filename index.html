@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="css/onboarding.css">
 <link rel="stylesheet" href="css/chat.css">
 <link rel="stylesheet" href="css/vfx.css">
+<link rel="stylesheet" href="css/destiny.css">
 <script src="client/platform/content-guard.js"></script>
 </head>
 <body>
@@ -39,18 +40,31 @@
   <div class="welcome-card create-screen">
     <div class="create-left">
       <div class="create-scene" aria-hidden="true">
-        <img class="scene-logo" src="media/assets/world/bg/logo.webp" alt="" decoding="async">
-        <span class="scene-caption">Thanh Vân Sơn · Tiên cảnh</span>
+        <div class="scene-orbit"></div>
       </div>
-      <h2 id="welcomeRebirth" class="create-rebirth center">Đây là lần trùng sinh thứ 1 của bạn</h2>
-      <p class="story">Bạn vốn là một người bình thường nơi trần thế, nhưng một lần mưa gió đã đưa bạn xuyên vào <b class="gold">Hư Giới</b> — nơi tiên nhân, yêu ma và thiên kiếp cùng tranh đấu. Từ đây, bạn bắt đầu một hành trình tu hành theo cách của riêng mình.</p>
-      <p class="story dim small">Chọn đạo hiệu, tuổi, chủng tộc và linh căn rồi nhập định: tu vi tự tăng theo thời gian, kể cả khi bạn đóng game. Kỳ ngộ sẽ tìm đến, bí cảnh chờ bạn thám hiểm.</p>
+      <div class="welcome-brand">
+        <span class="brand-seal" aria-hidden="true">道</span>
+        <span><b>HƯ GIỚI</b><small>TIÊN LỘ VÔ TẬN</small></span>
+      </div>
+      <div class="scene-copy">
+        <p class="scene-kicker"><span></span> MỘT NIỆM KHỞI ĐẠO · VẠN KIẾP TRƯỜNG SINH</p>
+        <p class="scene-headline">Giữa vạn giới,<br><em>tìm đạo của riêng mình.</em></p>
+        <p class="story">Một bước vào tiên lộ, vạn kiếp chẳng quay đầu. Từ một phàm nhân nơi trần thế, bạn sẽ viết nên câu chuyện tu hành của chính mình.</p>
+        <div class="journey-features" aria-label="Hành trình tu tiên">
+          <div><span class="feature-mark" aria-hidden="true">01</span><b>Tĩnh tu</b><small>Tích lũy từng ngày</small></div>
+          <div><span class="feature-mark" aria-hidden="true">02</span><b>Lịch luyện</b><small>Gặp gỡ kỳ duyên</small></div>
+          <div><span class="feature-mark" aria-hidden="true">03</span><b>Vượt thiên kiếp</b><small>Phá cảnh phi thăng</small></div>
+        </div>
+      </div>
+      <div class="scene-footer"><span>THANH VÂN SƠN <i>·</i> HẠ GIỚI</span><span id="welcomeRebirth" class="create-rebirth">Đây là lần trùng sinh thứ 1 của bạn</span></div>
     </div>
     <form id="createForm" class="create-right" autocomplete="off" novalidate>
       <div class="create-heading">
-        <span class="eyebrow">THIÊN MỆNH KHỞI NGUYÊN</span>
-        <h1 id="welcomeTitle">Chào mừng đến Hư Giới</h1>
+        <span class="eyebrow">THIÊN THƯ <span aria-hidden="true">/</span> KHỞI NGUYÊN</span>
+        <h1 id="welcomeTitle">Khai mở đạo thân</h1>
+        <p>Định danh một kiếp, bắt đầu một con đường.</p>
       </div>
+      <div class="creation-divider"><span>01</span> CHỌN ĐẠO THÂN <i></i></div>
       <div class="seg-row" role="group" aria-label="Giới tính">
         <button type="button" class="seg active" data-gender="nam" aria-pressed="true">Nam</button>
         <button type="button" class="seg" data-gender="nu" aria-pressed="false">Nữ</button>
@@ -70,12 +84,15 @@
         <button type="button" id="rollRoot" class="dice" title="Gieo linh căn ngẫu nhiên" aria-label="Gieo linh căn ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
         <p id="nameNote" class="name-note form-note" role="alert" hidden></p>
       </div>
-      <p id="pointsValue" class="points">Số điểm còn lại: 8</p>
+      <div class="creation-divider talent-divider"><span>02</span> PHÂN BỔ THIÊN PHÚ <i></i></div>
+      <p id="pointsValue" class="points" role="status">Số điểm còn lại: 8</p>
       <div id="statGrid" class="stat-grid" aria-label="Phân bổ thiên phú"></div>
       <p id="statHint" class="hint" aria-live="polite">Rê chuột hoặc chạm vào tên thiên phú để xem mô tả.</p>
       <div class="create-actions">
+        <button type="button" id="previewGame" class="btn btn-gold btn-wide" hidden>Vào giao diện chính · Xem trước</button>
         <button id="startNew" class="btn btn-gold btn-wide" type="submit">Bắt đầu tu tiên</button>
         <button type="button" class="btn btn-outline btn-wide" id="continueGame" hidden>Tiếp tục hành trình đã lưu</button>
+        <p id="engineNotice" class="engine-notice" role="status" hidden><b>Bản xem trước giao diện</b> · Luật chơi đang được hoàn thiện. Bạn có thể thử tạo đạo thân và xem giao diện chính, nhưng chưa thể chơi hay lưu tiến trình.</p>
         <p class="foot-note">Điểm còn dư sẽ được phân ngẫu nhiên khi bắt đầu. Dữ liệu được lưu trên thiết bị này.</p>
       </div>
     </form>
@@ -87,7 +104,12 @@
 </section>
 
 <div id="game" class="app" data-layout="wide" data-stage="idle" hidden>
+  <div id="previewBar" class="preview-bar" hidden>
+    <div><b>BẢN XEM TRƯỚC</b><span>Số liệu minh họa · Chưa thể chơi hoặc lưu tiến trình</span></div>
+    <button type="button" id="previewBack">← Tạo nhân vật</button>
+  </div>
   <section id="status" class="box status-panel" aria-label="Trạng thái tu hành">
+    <div class="status-kicker"><span>THIÊN THƯ</span><span>ĐẠO THÂN</span></div>
     <div class="status-head">
       <button class="status-avatar" data-window="character" aria-label="Mở bảng nhân vật">
         <img id="avatar" src="media/assets/chars/player/nam/ha_gioi/portrait.png" alt="" decoding="async">
@@ -139,6 +161,7 @@
       <div class="scene-bg" id="sceneBackdrop"></div>
       <div class="scene-bg scene-transition" id="sceneTransition" aria-hidden="true"></div>
       <div class="scene-shade"></div>
+      <div class="stage-frame" aria-hidden="true"></div>
       <div class="fx-leaves" aria-hidden="true"></div>
       <div class="stage-hud">
         <span class="stage-tag" id="stageTag">Hạ Giới · Thanh Vân Sơn</span>
@@ -347,6 +370,7 @@
 <script src="client/ui/screens/meta.js"></script>
 <script src="client/ui/onboarding.js"></script>
 <script src="client/ui/boot.js"></script>
+<script src="client/ui/preview.js"></script>
 <script src="client/main.js"></script>
 </body>
 </html>

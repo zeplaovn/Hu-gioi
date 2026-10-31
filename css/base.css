@@ -1,12 +1,12 @@
 /* ===== HƯ GIỚI · nền tảng ===== */
 :root{
   /* Bảng màu và phông chữ theo dự án Hu-gioi (mực núi + ngọc bích + giấy dó, điểm nhấn ấn chu sa). */
-  --bg:#10161c; --bg2:#0b1015; --panel:#16202a; --panel2:#1c2a37; --panel3:#22313f;
-  --line:#2a4a3a; --line2:#2c3d4d; --text:#e8e8e8; --muted:#8a9aa8; --dim:#8a9aa8;
-  --gold:#ffd24a; --gold2:#b98a1a; --jade:#3cff3c; --cyan:#7fdcff; --danger:#ff5c5c;
-  --inset:#0b1015; --hover:#22313f; --off:#4a5560; --green:#3cff3c; --red:#ff5c5c; --orange:#ff9f43;
+  --bg:#0b1418; --bg2:#080f12; --panel:#101e21; --panel2:#192a2b; --panel3:#233536;
+  --line:#344b44; --line2:#3b504b; --text:#f0ebe0; --muted:#a6bab5; --dim:#a6bab5;
+  --gold:#e8c47d; --gold2:#b78d49; --jade:#8bd8b9; --cyan:#9adbd9; --danger:#ff8d7a;
+  --inset:#091416; --hover:#233536; --off:#52635e; --green:#8bd8b9; --red:#ff8d7a; --orange:#ecad72;
   --seal:#c8452e; --seal-deep:#a93520; --paper:#fff4e6;
-  --bar-hp:#d63a3a; --bar-mp:#3f9bd6; --bar-qi:#3cff3c; --bar-age:#d9a21b; --bar-job:#3f8f6a;
+  --bar-hp:#dd7b6d; --bar-mp:#5ba8bb; --bar-qi:#69b795; --bar-age:#d5a957; --bar-job:#65a688;
   --shadow:0 10px 30px #0007;
   --font:"Be Vietnam Pro","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
   --serif:"Noto Serif","Source Serif 4","Iowan Old Style","Palatino Linotype",Georgia,"Times New Roman",serif;

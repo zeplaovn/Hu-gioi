@@ -1532,7 +1532,7 @@
       return;
     }
     if (e.target.id === 'itemSearch' && e.key === 'Enter') { e.preventDefault(); safe(() => run('search', { dataset: {} })); return; }
-    if (!UI.s().created || !$('modalLayer').hidden || ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName) || e.ctrlKey || e.altKey || e.metaKey) return;
+    if (!store.ready || !UI.s().created || !$('modalLayer').hidden || ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName) || e.ctrlKey || e.altKey || e.metaKey) return;
     const key = e.key.toLowerCase();
     if (['1', '2', '3', '4'].includes(key)) {
       if (UI.current === 'combat') { e.preventDefault(); safe(() => run('skill', { dataset: { index: String(Number(key) - 1) } })); }
@@ -1544,7 +1544,7 @@
 
   if (typeof root.addEventListener === 'function') {
     root.addEventListener('hashchange', () => {
-      if (!UI.s().created) return;
+      if (!store.ready || !UI.s().created) return;
       closeMoreMenu();
       hideItemTip();
       if (['running', 'settling'].includes(trib.phase)) {
@@ -1621,14 +1621,14 @@
       lastFrameTime = time; frameCount++;
       trib.heroFrame(frameCount);
     }
-    if (UI.s().created && !trib.active && !trib.pageOpen && !document.hidden && time - lastFrameTime >= 235) {
+    if (store.ready && UI.s().created && !trib.active && !trib.pageOpen && !document.hidden && time - lastFrameTime >= 235) {
       lastFrameTime = time; frameCount++;
       stageFrame(frameCount, isReduced());
     }
     requestAnimationFrame(animate);
   }
 
-  motionQuery?.addEventListener?.('change', () => { if (UI.s().created) applySettings(); });
+  motionQuery?.addEventListener?.('change', () => { if (store.ready && UI.s().created) applySettings(); });
   store.setBusy(() => trib.active);
   applyLayout();
   requestAnimationFrame(animate);

@@ -14,7 +14,7 @@ server/  ──►  engine/  ──►  data/
 | `client/` | Giao diện, tài nguyên, lưu cục bộ, phiên chơi. | `engine/`, `data/` | `server/` |
 | `server/` | Máy chủ HTTP: file tĩnh và API. | `engine/`, `data/` | `client/` |
 
-`tools/check.mjs` và `tools/test-skeleton.mjs` kiểm tra các điều này ở mức cú pháp, thứ tự script và việc không đưa `server/` vào trình duyệt.
+`npm run check` (tests/sources.test.cjs) và `npm test` kiểm tra các điều này ở mức cú pháp, ranh giới engine, thứ tự script và việc không đưa `server/` vào trình duyệt.
 
 ## 1. Thư mục
 
@@ -44,7 +44,7 @@ server/
   repositories/            player-repository.js (khung, chưa cài đặt)
   chat/                    chat-service.js      (khung, chưa cài đặt)
 css/  media/  _headers     Giao diện, tài nguyên, HTTP headers
-tools/                     Kiểm tra, sinh preload, import dữ liệu; pending-engine/ chờ engine mới
+tools/                     Công cụ phụ trợ còn lại; test chuyển sang tests/
 docs/                      Tài liệu
 ```
 
@@ -73,7 +73,7 @@ Mọi file trong `data/` và `engine/` dùng mẫu hai môi trường:
 })(typeof window !== 'undefined' ? window : globalThis);
 ```
 
-Trình duyệt dùng classic script để chạy được cả `file://` không cần bundler, nên **thứ tự thẻ `<script>` trong `index.html` là một phần của mã**: `data/` → `engine/state` → `engine/rules` → `engine/protocol` → `engine/game.js` → `client/…`. `tools/test-skeleton.mjs` kiểm tra thứ tự này.
+Trình duyệt dùng classic script để chạy được cả `file://` không cần bundler, nên **thứ tự thẻ `<script>` trong `index.html` là một phần của mã**: `data/` → `engine/state` → `engine/rules` → `engine/protocol` → `engine/game.js` → `client/…`. `tests/sources.test.cjs` kiểm tra thứ tự này.
 
 ## 4. Thêm hoặc đổi một lệnh
 
@@ -95,8 +95,8 @@ Trình duyệt dùng classic script để chạy được cả `file://` không 
 |---|---|
 | `data/` | Giữ nguyên dữ liệu và công thức cũ |
 | `client/ui`, `css/`, `media/` | Giữ nguyên |
-| `engine/` | Khung; chưa cài đặt luật, state, tạo nhân vật (xem [engine-contract.md](engine-contract.md)) |
+| `engine/` | Đã cài đặt đủ state V7, 9 miền luật và 46 lệnh; `HU_GAME.READY === true` (xem [engine-contract.md](engine-contract.md)) |
 | `server/` | Chạy file tĩnh và `/api/health`; còn lại là khung |
-| Game chơi được | Chưa, cho tới khi `HU_GAME.MISSING` rỗng |
+| Game chơi được | Có, offline qua `LocalSession`; `HU_GAME.MISSING` rỗng |
 
 Cài đặt cũ vẫn xem được tại commit `5f6b9bc`, ví dụ `git show 5f6b9bc:shared/rules/combat.js`.

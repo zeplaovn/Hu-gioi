@@ -1,8 +1,8 @@
 # Hợp đồng engine
 
-Tài liệu này là **đặc tả để viết lại `engine/`**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine mới chỉ cần thỏa hợp đồng này là UI chạy lại được mà không phải sửa.
+Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: `engine/` là khung rỗng. `HU_GAME.READY === false` cho tới khi mọi mục dưới đây được cài đặt; `HU_GAME.MISSING` liệt kê phần còn thiếu và `client/main.js` hiển thị thông báo thay vì khởi động UI.
+> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 46 lệnh và state V7. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
 > Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
@@ -96,7 +96,7 @@ Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDe
 
 ## 5. Phương thức truy vấn UI đang gọi
 
-Các phép tính/tra cứu chỉ-đọc mà UI gọi trên `UI.g()` (tức `session.game`). Danh sách trích bằng tìm kiếm trong mã `client/ui`; khi viết lại hãy chạy từng màn để bắt thêm nếu còn thiếu.
+Các phép tính/tra cứu chỉ-đọc mà UI gọi trên `UI.g()` (tức `session.game`). Danh sách trích bằng tìm kiếm trong mã `client/ui`; `tests/engine.test.cjs` kiểm tra tất cả đều tồn tại và chạy được.
 
 `stats`, `need`, `rate`, `price`, `count`, `ingredientCount`, `maxMp`, `realmLabel`, `enemy`, `chance`, `chaosChance`, `craftChance`, `missionChance`, `encounterChance`, `discussGain`, `attackInterval`, `lifeInfo`, `upgradeBase`, `tribulation`, `temperCost`, `recipe`, `forgeRecipe`, `gardenInfo`, `activeElements`, `manualEffects`, `affinity`, `rivalPower`, `lots`, `estimateDungeon`, `featuredMission`, `sectDefinition`, `sectRank`, `sectMissions`, `sectShopOffer`, `sectIncome`.
 
@@ -119,11 +119,11 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 - `normalize` phải chống khóa nguy hiểm, giới hạn số, độ sâu và kích thước (phần kiểm tra JSON an toàn nằm ở `local-store.js`, phần làm sạch giá trị nằm ở `normalize`).
 - Thiên mệnh (`meta`) được giữ qua trọng sinh.
 
-## 8. Thứ tự việc gợi ý khi viết lại
+## 8. Thứ tự đã triển khai
 
 1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V7).
 2. `rules/time.js` và `rules/creation.js`: `advance`, `isDead`, `createCharacter`.
 3. `rules/progression.js`: tu luyện, đột phá, độ kiếp, thiên mệnh.
 4. `rules/inventory.js`, `rules/crafting.js`, `rules/combat.js`.
 5. `rules/world.js`, `rules/adventures.js`, `rules/social.js`.
-6. Mỗi bước: thêm test hành vi vào `tools/test-skeleton.mjs` (hoặc tách file mới), tham chiếu `tools/pending-engine/test-game-integration.mjs`, rồi chạy `npm run check && npm test`. Khi `HU_GAME.MISSING` rỗng thì UI tự khởi động.
+6. Mỗi bước: thêm test hành vi vào `tests/` (ví dụ `tests/engine.test.cjs`), rồi chạy `npm run check && npm test`. Khi `HU_GAME.MISSING` rỗng thì UI tự khởi động.

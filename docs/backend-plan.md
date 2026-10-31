@@ -1,6 +1,6 @@
 # Kế hoạch thiết kế backend — Hư Giới
 
-> Trạng thái: đề xuất thiết kế, chưa triển khai. Nhánh hiện tại đã dọn backend cũ và chỉ có khung `engine/` + `server/` (xem [architecture.md](architecture.md), [engine-contract.md](engine-contract.md)); các mô tả "hiện có" trong tài liệu này tham chiếu cài đặt cũ ở commit `5f6b9bc`.  
+> Trạng thái: đề xuất thiết kế, chưa triển khai. Engine chung đã sẵn sàng (`HU_GAME.READY === true`); `server/` vẫn là khung (xem [architecture.md](architecture.md), [engine-contract.md](engine-contract.md)); các mô tả "hiện có" trong tài liệu này tham chiếu cài đặt cũ ở commit `5f6b9bc`.
 > Phạm vi: game chính trong repository này  
 > Mục tiêu: đưa game idle tu tiên một người chơi hiện tại thành game online nhiều người chơi, server-authoritative, vẫn dùng chung bộ luật `engine/`.
 
@@ -67,7 +67,7 @@ Với 1 backend + 1 fullstack + 0.5 DevOps + 0.5 QA: **12–17 tuần** đến b
 | Khu vực | File / thành phần | Trạng thái |
 |---|---|---|
 | Dữ liệu | `data/*.js` | Giữ nguyên: cân bằng, công thức, vật phẩm, nhân vật, bản đồ, tông môn, bí cảnh |
-| Luật game | `engine/rules/*.js` | Khung 9 miền, chưa cài đặt |
+| Luật game | `engine/rules/*.js` | Đủ 9 miền, đã cài đặt và có test hành vi |
 | State | `engine/state/player.js` | Khung; cần schema V7 + normalize V4–V7 |
 | Protocol | `engine/protocol/commands.js` | Hoàn chỉnh: 46 lệnh, validate, execute |
 | Service | `server/services/player-service.js` | Khung giao diện: create/sync/command, revision, receipt |
@@ -76,10 +76,10 @@ Với 1 backend + 1 fullstack + 0.5 DevOps + 0.5 QA: **12–17 tuần** đến b
 | Chat | `server/chat/chat-service.js` | Khung; client `chat-session.js` đã có |
 | Client offline | `client/session/local-session.js`, `client/persistence/local-store.js` | LocalSession đồng bộ, localStorage |
 | UI | `client/ui/*` | Gọi `UI.command(type, payload)` đồng bộ |
-| Kiểm tra | `tools/check.mjs`, `tools/test-skeleton.mjs` | Cú pháp, hợp đồng lệnh, thứ tự script, máy chủ tĩnh |
+| Kiểm tra | `npm run check`, `npm test` | Cú pháp, ranh giới engine, hợp đồng lệnh, thứ tự script, hành vi 9 miền |
 | Bảo mật tĩnh | `index.html`, `_headers` | CSP `connect-src 'self'`, hỗ trợ `file://` cho gameplay offline |
 
-`npm test` hiện chỉ kiểm tra khung (`tools/test-skeleton.mjs`). Test hành vi gameplay, contract, concurrency, load và E2E trong lộ trình bên dưới là hạng mục cần bổ sung; `tools/pending-engine/test-game-integration.mjs` là đặc tả tham chiếu.
+`npm test` hiện kiểm tra hợp đồng engine, hành vi 9 miền luật, chuyển bản lưu V4–V7, LocalSession và UI entry. Test contract server, concurrency, load và E2E trong lộ trình bên dưới vẫn là hạng mục cần bổ sung.
 
 ### 1.2 Khoảng trống so với online
 
