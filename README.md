@@ -26,12 +26,13 @@ Các tính năng sau thuộc bản trước và là phạm vi mà engine mới p
 |---|---|
 | Khởi nguyên | Intro cinematic 5 chương; loading tối thiểu 10,9 giây. Tạo đạo hiệu, giới tính, tuổi, chủng tộc, linh căn và phân bổ thiên phú. Nhấn ô chủng tộc hoặc linh căn để xem giải thích. Không còn gieo Âm Dương khi tạo mới; bản lưu cũ vẫn được giữ. |
 | Tu luyện | Tự tăng tu vi, bế quan khi vắng mặt, báo cáo tiến trình và giới hạn tu vi tại ngưỡng đột phá. |
-| Cảnh giới | Đột phá tiểu cảnh giới trực tiếp; đại cảnh giới có xác nhận, trang độ kiếp riêng, hiệu ứng và kết quả. VFX đột phá nhỏ và giai đoạn tụ linh quang trên độ kiếp đài kéo dài thêm 5 giây; chế độ giảm chuyển động vẫn được tôn trọng. |
+| Cảnh giới | Tiểu cảnh giới (tầng) **tự động đột phá** khi đủ tu vi, kể cả nhiều tầng liên tiếp lúc bế quan. Đến tầng cuối (viên mãn) tu vi dừng ở ngưỡng và người chơi phải **bấm tay** đột phá đại cảnh giới: có xác nhận, trang độ kiếp riêng, hiệu ứng và kết quả. VFX đột phá nhỏ và giai đoạn tụ linh quang trên độ kiếp đài kéo dài thêm 5 giây; chế độ giảm chuyển động vẫn được tôn trọng. |
 | Lịch luyện | Công kích, kỹ năng, chiến đấu tự động, yêu thú, chiến lợi phẩm, Sinh lực và Linh khí. |
 | Nhân vật | Hành trang, trang bị pháp bảo, công pháp chủ động, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; Dị khắc hệ gốc. |
 | Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Hạt trong bộ dữ liệu mới có thời gian, loại đất, độ khó và sản lượng riêng; các hạt còn lại tiếp tục dùng luật cũ. Cây được chăm an toàn khi bế quan. |
 | Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ, tông môn và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. |
 | Xuyên kiếp | Thọ nguyên, tọa hóa, chuyển thế, thành tựu, nâng cấp vĩnh viễn và lịch sử kiếp trước. Trọng sinh nằm trong **Thiên mệnh → Trọng sinh**. |
+| Giao diện idle | Thanh tài nguyên (linh thạch, tu vi/giây, Đạo vận) có số chạy, thanh tu vi + dải chấm tầng, dock nâng cấp nhanh (Tốc tu ×1/×10/Tối đa, Hấp thu, Dùng đan) ngay trên sân khấu, nút lớn Đột phá đại cảnh giới, cầu linh khí bay vào thanh tu vi, chấm thông báo trên tab, popup Bế quan trở về có số đếm lên. Mã: `css/idle.css`, `client/ui/idle-hud.js`. |
 | Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile và một cửa sổ con tại một thời điểm. |
 
 Menu **Thêm** gồm: **Chat online · Tri kỷ · Đạo hữu · Tông môn · PvP · Bảng xếp hạng**. Giao du, PvP, bảng xếp hạng và đấu giá hiện phục vụ chế độ mô phỏng một người chơi.
