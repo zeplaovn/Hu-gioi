@@ -444,8 +444,11 @@
       const icon = def.icon && /^ICON-/.test(def.icon)
         ? '<img src="media/assets/ui/icon/menu/' + esc(def.icon) + '-40.png" alt="" decoding="async">'
         : '<span aria-hidden="true">' + esc(def.icon || '◈') + '</span>';
+      const navIcon = k => { const d = UI.screens[k], ic = d.icon && /^ICON-/.test(d.icon) ? '<img src="media/assets/ui/icon/menu/' + esc(d.icon) + '-40.png" alt="" decoding="async">' : '<span aria-hidden="true">' + esc(d.icon || '◈') + '</span>'; return ic; };
+      const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' + WINDOW_ORDER.filter(k => k !== 'idle' && UI.screens[k]).map(k =>
+        '<button type="button" data-open-page="' + k + '" class="' + (k === id ? 'on' : '') + '" aria-label="' + esc(UI.screens[k].label) + '" title="' + esc(UI.screens[k].label) + '"' + (k === id ? ' aria-current="page"' : '') + '>' + navIcon(k) + '<span>' + esc(UI.screens[k].label) + '</span></button>').join('') + '</nav>' : '';
       el.innerHTML = '<header>' + (isPage ? '<button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' : '') +
-        '<b>' + icon + '<span>' + esc(def.label) + '</span></b><button class="win-close" type="button" aria-label="Đóng">✕</button></header><div class="win-body"></div>' + (isPage ? '' : '<div class="rz" aria-hidden="true"></div>');
+        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '<button class="win-close" type="button" aria-label="Đóng">✕</button></header><div class="win-body"></div>' + (isPage ? '' : '<div class="rz" aria-hidden="true"></div>');
       $('wins').appendChild(el);
       const rect = this.clampRect((isPage ? null : this.loadRect(id)) || this.defaultRect(id));
       this.setRect(el, rect);
@@ -516,6 +519,7 @@
       w.body.innerHTML = (id === 'idle' ? '<p class="screen-lead">Tu vi tự tăng khi nhập định. Mở các bảng bên dưới để tăng tốc, xem công pháp và mục tiêu gần.</p>' : '') + content;
       w.body.scrollTop = y;
       w.tab = tab;
+      if (def.pageBg) { const bg = def.pageBg(tab); if (bg) w.el.style.setProperty('--page-bg', "url('" + bg + "')"); else w.el.style.removeProperty('--page-bg'); }
       def.mount?.(tab);
       def.update?.(tab);
       updateTimers();

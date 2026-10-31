@@ -36,11 +36,6 @@
 
     const deck = mk('div', 'idle-deck', `
       <button type="button" class="peak-cta" id="peakCta" data-act="break" hidden></button>
-      <div class="idle-xp" id="idleXp">
-        <div class="xp-head"><span id="xpStage">—</span><b id="xpPct">0%</b></div>
-        <div class="xp-track" role="progressbar" aria-label="Tu vi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="xpTrack"><i id="xpFill"></i></div>
-        <div class="xp-foot"><span id="xpNote"></span><span id="xpEta"></span></div>
-      </div>
       <div class="quick-dock" id="quickDock" role="group" aria-label="Nâng cấp nhanh"></div>`);
     deck.id = 'idleDeck';
     const bottom = scene.querySelector('.scene-bottom');
@@ -115,21 +110,10 @@
     tween('dao', s.daoVan, v => { $('chipDaoVal').textContent = num(Math.round(v)); });
   }
 
-  /* ---------- Thanh tu vi, tầng, nút đột phá lớn ---------- */
+  /* ---------- Dải tầng, nút đột phá đại cảnh giới (tu vi xem ở bảng trạng thái) ---------- */
   function updateProgress(s, g) {
     const need = g.need(), p = clamp(s.qi / need * 100, 0, 100), full = p >= 100 - 1e-9;
     const peak = g.isPeakStage(), total = F.STAGES[s.realm];
-    const xp = $('idleXp');
-    $('xpFill').style.width = p + '%';
-    $('xpTrack').setAttribute('aria-valuenow', String(Math.floor(p)));
-    $('xpPct').textContent = s.completed ? 'Chứng đạo' : full ? 'Đã đầy' : p.toFixed(p < 10 ? 1 : 0) + '%';
-    $('xpStage').textContent = g.realmLabel() + (s.completed ? '' : ' · ' + s.stage + '/' + total);
-    xp.classList.toggle('peak', peak);
-    const note = $('xpNote'), eta = $('xpEta');
-    if (s.completed) { note.textContent = 'Đã chứng đạo · có thể trọng sinh'; eta.textContent = ''; }
-    else if (peak && full) { note.textContent = 'Viên mãn · bấm Đột phá để độ kiếp'; eta.textContent = ''; }
-    else if (peak) { note.textContent = 'Viên mãn · tích đủ tu vi để độ kiếp'; eta.textContent = '≈ ' + duration(F.time_to_goal(need, s.qi, g.rate())); }
-    else { note.innerHTML = '<em>Tự động đột phá</em> khi đủ tu vi'; eta.textContent = '≈ ' + duration(F.time_to_goal(need, s.qi, g.rate())); }
     $('stage')?.style.setProperty('--qi-p', String((p / 100).toFixed(3)));
 
     const cta = $('peakCta'), ready = !s.completed && peak && full;
@@ -210,7 +194,7 @@
   /* ---------- Tự động đột phá + hiệu ứng ---------- */
   function onAutoStage(s, g, ups) {
     const label = g.realmLabel();
-    const xp = $('idleXp');
+    const xp = document.querySelector('#status .status-progress');
     if (xp) { xp.classList.remove('stage-up'); void xp.offsetWidth; xp.classList.add('stage-up'); }
     if ($('modalLayer') && !$('modalLayer').hidden) return;
     UI.toast('Tự động đột phá: ' + label + '.', { type: 'success', title: ups > 1 ? 'Đột phá +' + ups + ' tầng' : 'Đột phá' });
@@ -221,9 +205,9 @@
     }
   }
 
-  /* ---------- Cầu linh khí bay vào thanh tu vi ---------- */
+  /* ---------- Cầu linh khí bay vào thanh tu vi ở bảng trạng thái ---------- */
   function orbs(s) {
-    const scene = $('scene'), hero = $('heroSprite'), target = $('xpFill');
+    const scene = $('scene'), hero = $('heroSprite'), target = $('topQiFill');
     if (!scene || !hero || !target || !fxOn(s) || s.auto || $('game').dataset.stage !== 'idle') return;
     if (UI.tribulation && UI.tribulation.pageOpen) return;
     const sr = scene.getBoundingClientRect(), hr = hero.getBoundingClientRect(), tr = target.parentElement.getBoundingClientRect();

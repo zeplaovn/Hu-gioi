@@ -33,21 +33,6 @@
 .peak-cta[hidden]{display:none}
 @keyframes peakPulse{50%{transform:scale(1.025);box-shadow:0 0 0 1px #0008,0 0 40px #ffd45caa,inset 0 1px 0 #ffe9a655}}
 
-/* Thanh tu vi */
-.idle-xp{padding:7px 12px 8px;border-radius:12px;background:linear-gradient(180deg,#0e1a22ee,#08111aee);border:1px solid #3a5460;box-shadow:0 4px 16px #0009;backdrop-filter:blur(3px)}
-.xp-head,.xp-foot{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;color:#a9c0ca}
-.xp-head b{color:var(--gold);font-variant-numeric:tabular-nums;font-size:13px}
-.xp-head span{color:#e8dcb6;font-weight:700;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.xp-track{position:relative;height:13px;margin:4px 0 3px;border-radius:8px;background:#050a0e;border:1px solid #33505c;overflow:hidden}
-.xp-track i{display:block;height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#2b8aa8,#6fe3ff 60%,#c9f6ff);transition:width .5s ease-out;box-shadow:0 0 12px #4fd3ff88}
-.xp-track::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,#ffffff33 50%,transparent 65%);transform:translateX(-100%);animation:xpShine 2.8s ease-in-out infinite}
-@keyframes xpShine{60%,100%{transform:translateX(100%)}}
-.idle-xp.peak .xp-track i{background:linear-gradient(90deg,#8a6d2b,#f2d679 65%,#fff2c2);box-shadow:0 0 14px #f2c95aaa}
-.idle-xp.stage-up{animation:stageUp 1.2s ease-out}
-@keyframes stageUp{20%{box-shadow:0 0 0 2px #f2d679,0 0 34px #f2c95acc;transform:scale(1.02)}}
-.xp-foot{font-size:12px}
-.xp-foot em{font-style:normal;color:#9fe2c0}
-
 /* Dock nâng cấp nhanh */
 .quick-dock{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px}
 .qd-card{display:flex;flex-direction:column;justify-content:space-between;gap:5px;min-width:0;padding:6px 7px;border-radius:12px;
@@ -153,34 +138,57 @@
 #game:not([data-layout="wide"]) .btn-break{max-width:124px;min-width:0;line-height:1.15;text-align:center}
 #game:not([data-layout="wide"]) .btn-break small{display:none}
 
-/* ===== TRANG RIÊNG CHO TỪNG MENU ===== */
-/* Mỗi menu (trừ Lịch luyện) mở thành một trang phủ vùng sân khấu + nhật ký; màn chơi bị ẩn bên dưới. */
-#game.page-open #stage,#game.page-open #logPanel{visibility:hidden}
-.win.page{border-radius:10px;min-width:0;min-height:0;box-shadow:0 0 0 1px #0007;animation:pageIn .18s ease-out}
+/* ===== TRANG RIÊNG TOÀN MÀN HÌNH CHO TỪNG MENU ===== */
+/* Mỗi menu (trừ Lịch luyện) mở thành một trang phủ kín cửa sổ trình duyệt, tách biệt hẳn màn chơi. */
+.wins{z-index:80}
+#game.page-open #stage,#game.page-open #logPanel,#game.page-open #status,#game.page-open #menu{visibility:hidden}
+.win.page{position:fixed;inset:0;left:0!important;top:0!important;width:auto!important;height:auto!important;max-width:none;
+  border:0;border-radius:0;box-shadow:none;min-width:0;min-height:0;animation:pageIn .18s ease-out;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);
+  background:linear-gradient(160deg,#101c24,#091218)}
 @keyframes pageIn{from{opacity:0;transform:translateY(6px)}}
-.win.page.top{border-color:var(--line2);box-shadow:0 0 0 1px #0007}
-.win.page>header{cursor:default;touch-action:auto;padding:7px 8px;gap:10px;justify-content:flex-start;background:linear-gradient(180deg,#1b2c37,#14222b)}
-.win.page>header b{flex:1;font-size:17px}
+.win.page.top{border:0;box-shadow:none}
+.win.page>header{cursor:default;touch-action:auto;padding:8px clamp(10px,2vw,22px);gap:12px;justify-content:flex-start;background:linear-gradient(180deg,#14222cf2,#0d1820d9);backdrop-filter:blur(6px);border-bottom:1px solid #2d4450}
+.win.page>header>b{flex:0 1 auto;font-size:18px}
 .win.page>header .win-close{display:none}
-.page-back{display:inline-flex;align-items:center;gap:5px;padding:7px 12px 7px 9px;border-radius:9px;border:1px solid #46606d;background:#122029;color:#d6e6ec;font:750 14px var(--font);white-space:nowrap}
+.page-back{display:inline-flex;align-items:center;gap:5px;padding:8px 14px 8px 10px;border-radius:10px;border:1px solid #46606d;background:#122029;color:#d6e6ec;font:750 14px var(--font);white-space:nowrap}
 .page-back:hover{border-color:var(--gold);color:var(--gold)}
-.win.page .win-body{padding:14px clamp(12px,2.2vw,26px) 22px}
-.win.page .win-body>*{max-width:1180px;margin-left:auto;margin-right:auto}
+.page-nav{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.page-nav::-webkit-scrollbar{display:none}
+.page-nav button{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:10px;border:1px solid #2f4653;background:#0f1b23cc;color:#b9ccd4;font:650 13.5px var(--font);white-space:nowrap}
+.page-nav button img{width:22px;height:22px;object-fit:contain;image-rendering:pixelated}
+.page-nav button:hover{color:var(--gold);border-color:#6d5f35}
+.page-nav button.on{color:var(--gold);border-color:var(--gold);background:#3a2f1299}
+.win.page .win-body{padding:16px clamp(12px,3vw,40px) 28px}
+.win.page .win-body>*{max-width:1280px;margin-left:auto;margin-right:auto}
 @media(min-width:900px){
   .win.page .screen-grid{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start}
 }
-@media(max-width:620px){.page-back span{display:none}.page-back{padding:7px 10px}}
+@media(max-width:760px){.page-nav button span,.page-back span{display:none}.page-nav button,.page-back{padding:7px 10px}.win.page>header>b{font-size:16px}}
+@media(max-width:420px){.win.page>header>b span{display:none}}
 
-/* ===== MENU THU GỌN / MỞ BẰNG ICON ===== */
+/* Nghề phụ: toàn màn hình với nền riêng của từng nghề (đan phòng, luyện khí/chế phù, linh điền) */
+.win.page[data-window="craft"]{background:linear-gradient(180deg,#050b11cc 0%,#08121bb3 40%,#050b11e0 100%),var(--page-bg,linear-gradient(#0b1118,#0b1118)) center/cover no-repeat fixed}
+.win.page[data-window="craft"]>header{background:linear-gradient(180deg,#0a141cdd,#0a141c88)}
+.win.page[data-window="craft"] .card{background:#0a151dcc;border-color:#34505d;backdrop-filter:blur(5px)}
+.win.page[data-window="craft"] .workshop-banner{--art:none;min-height:0;background:#0a151db3;backdrop-filter:blur(5px);padding:16px 20px}
+.win.page[data-window="craft"] .workshop-banner::after{display:none}
+.win.page[data-window="craft"] .tabbar{background:#0a151d99;border-radius:12px;padding:0 6px}
+
+/* ===== MENU THU GỌN: ẩn cả thanh, chỉ còn icon ☰ nổi ===== */
 #menu .menu-toggle{order:-1;min-height:40px;border:1px solid #46606d;border-radius:10px;background:#122029;color:#d6e6ec}
 #menu .menu-toggle .ico{font-size:20px;line-height:1}
 #menu .menu-toggle:hover{border-color:var(--gold);color:var(--gold)}
-#game[data-menu="collapsed"]{--menu-w:54px}
-#game[data-menu="collapsed"] #menu>button:not(.menu-toggle){display:none}
-#game[data-menu="collapsed"] #menu .menu-toggle{min-width:0;width:100%}
-#game[data-menu="collapsed"] #menu .menu-toggle span:not(.ico){display:none}
-#game[data-menu="collapsed"] #menu{align-content:flex-start}
 #game[data-layout="portrait"] #menu .menu-toggle{flex:0 0 44px;min-height:54px;padding:3px 0 2px;font-size:11px}
-#game[data-layout="portrait"][data-menu="collapsed"] #menu{justify-content:flex-end}
-#game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle{flex:0 0 auto;width:auto;min-height:40px;padding:4px 18px}
-#game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle span:not(.ico){display:inline;margin-left:6px}
+#game[data-menu="collapsed"]{--menu-w:0px}
+#game[data-menu="collapsed"] #menu{background:none;border:0;box-shadow:none;padding:0;overflow:visible;min-width:0;min-height:0;pointer-events:none}
+#game[data-menu="collapsed"] #menu>button:not(.menu-toggle){display:none}
+#game:not([data-layout="portrait"])[data-menu="collapsed"] #menu{margin-left:calc(var(--gap) * -1);width:0}
+#game[data-layout="portrait"][data-menu="collapsed"] #menu{margin-top:calc(var(--gap) * -1);height:0}
+#game[data-menu="collapsed"] #menu .menu-toggle{position:fixed;z-index:60;pointer-events:auto;width:44px;height:44px;min-width:0;min-height:0;padding:0;
+  border-radius:12px;background:#0f1d27f2;box-shadow:0 6px 18px #000a;
+  top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px)}
+#game[data-menu="collapsed"] #menu .menu-toggle span:not(.ico){display:none}
+#game[data-layout="portrait"][data-menu="collapsed"] #menu .menu-toggle{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 14px)}
+/* chừa chỗ cho icon ☰ nổi ở góc sân khấu */
+#game:not([data-layout="portrait"])[data-menu="collapsed"] .stage-hud{padding-right:52px}

@@ -155,6 +155,8 @@
   UI.register({
     id: 'craft', label: 'Nghề phụ', icon: 'ICON-MENU-005', eyebrow: 'NGHỀ PHỤ',
     tabs: TABS, render, update,
+    /* Trang Nghề phụ toàn màn hình dùng nền riêng của từng nghề. */
+    pageBg: tab => abs(tab === 'dien' ? root.HU_ASSETS.BG.garden : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop),
     signature: () => { const s = UI.s(); return s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
   });
 
