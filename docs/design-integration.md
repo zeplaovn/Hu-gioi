@@ -32,3 +32,9 @@ npm test
 - Chiến đấu bí cảnh vẫn là mô phỏng theo tầng, không phải trận chiến tương tác trực tiếp. Chỉ các thủ lĩnh có trong dữ liệu thiết kế được dùng chỉ số/giai đoạn và thưởng mới.
 - Thể lực được hiển thị dưới dạng chỉ số; dữ liệu công pháp hiện có không yêu cầu tiêu hao thể lực. Hệ quả cân bằng giữa 5 cảnh giới mới và các cảnh giới cao hơn cần được chơi thử và điều chỉnh.
 - Schema lưu vẫn là V7, bổ sung giá trị mặc định khi nạp bản cũ. Nên xuất bản lưu trước khi thử một bản cập nhật có thay đổi cân bằng.
+
+## Vạn Kiếp Tàng Thư và hội thoại NPC
+
+Dữ liệu cốt truyện nằm riêng ở `data/story.js` theo mẫu IIFE/CommonJS, không chứa luật chơi. Ba hồi gồm 14 chương theo cảnh giới `realm`, 30 cảnh thoại cho 10 NPC theo thiện cảm, 9 cặp lời dẫn bí cảnh/thủ lĩnh, 23 ghi chép kỳ ngộ và ba đoạn vượt kiếp. Tên cổ của địa danh chỉ được dùng trong văn bản tự sự; mã vùng, tên hiện có trong `ZONES`/`DUNGEONS` và cân bằng không thay đổi.
+
+Engine ghép `HU_STORY_DATA` thành `HU_GAME.STORY`. `storyMark` thuộc đúng miền `world`, chỉ ghi `s.story.read` và `s.story.flags` sau khi kiểm tra ID, điều kiện mở và thiện cảm. Bản lưu V7 được nâng lên V8; lựa chọn và trang đã đọc được giữ qua trọng sinh, không sửa phần thưởng NPC. Giao diện `Thiên Mệnh → Thiên Thư` dùng cùng `UI.kit`; `Thế giới → NPC → Trò chuyện` dùng lớp đối thoại độc lập `client/ui/dialogue.js` và ảnh nhân vật sẵn có.
