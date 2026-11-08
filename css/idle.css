@@ -1,5 +1,5 @@
 /* HƯ GIỚI · LỚP GIAO DIỆN IDLE
- * Nạp sau shell.css/screens.css. Chỉ thêm: thanh tài nguyên, thanh tu vi + dock nâng cấp nhanh,
+ * Nạp sau shell.css/screens.css. Chỉ thêm: thanh tài nguyên, thanh tu vi,
  * nút đột phá đại cảnh giới, sân khấu AFK sống động, tab dưới kiểu mobile idle, popup bế quan. */
 
 /* ===== THANH TÀI NGUYÊN (trong stage-hud) ===== */
@@ -22,7 +22,7 @@
 .idle-deck{position:absolute;z-index:4;left:14px;right:14px;bottom:58px;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .idle-deck>*{pointer-events:auto;width:min(100%,640px)}
 #game[data-layout="portrait"] .idle-deck{left:8px;right:8px;bottom:54px;gap:6px}
-#stage{--deck-h:150px}
+#stage{--deck-h:0px}
 
 /* Nút đột phá đại cảnh giới: chỉ hiện khi đã viên mãn và đủ tu vi */
 .peak-cta{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 16px;border-radius:14px;border:1px solid #f2d679;
@@ -33,34 +33,7 @@
 .peak-cta[hidden]{display:none}
 @keyframes peakPulse{50%{transform:scale(1.025);box-shadow:0 0 0 1px #0008,0 0 40px #ffd45caa,inset 0 1px 0 #ffe9a655}}
 
-/* Dock nâng cấp nhanh */
-.quick-dock{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px}
-.qd-card{display:flex;flex-direction:column;justify-content:space-between;gap:5px;min-width:0;padding:6px 7px;border-radius:12px;
-  background:linear-gradient(180deg,#281c17f2,#18110ef2);border:1px solid #5e4d3c;box-shadow:0 4px 14px #0008}
-.qd-card.empty{opacity:.6}
-.qd-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;min-width:0}
-.qd-name{font-size:13px;font-weight:800;color:#f5f2ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.qd-name small{font-weight:600;font-size:11px;color:#bcaa98;margin-left:3px}
-.qd-price{font-size:12px;color:#f1dd9a;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex:none}
-.qd-price .coin-value{display:inline-flex;align-items:center;gap:3px}
-.qd-price img{width:14px;height:14px}
-.qd-btns{display:flex;gap:4px}
-.qd-btns button,.qd-one{flex:1 1 0;min-width:0;padding:6px 4px;border-radius:9px;border:1px solid #8f7535;background:linear-gradient(180deg,#4a3a14,#2b2209);
-  color:#ffe9a8;font:800 12.5px var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qd-btns button:hover:not(:disabled),.qd-one:hover:not(:disabled){filter:brightness(1.18)}
-.qd-btns button:disabled,.qd-one:disabled{opacity:.42;filter:grayscale(.6);border-color:#52423b;color:#b0a59a}
-.qd-one{width:100%;border-color:#876f56;background:linear-gradient(180deg,#4e362c,#2d1f19);color:#f2e8d6}
-@media(max-width:620px){
-  .quick-dock{grid-template-columns:1.35fr 1fr 1fr;gap:5px}
-  .qd-card{padding:5px 5px;gap:4px}
-  .qd-top{flex-direction:column;gap:0;align-items:flex-start}
-  .qd-name{font-size:12px;max-width:100%}
-  .qd-name small{font-size:10.5px}
-  .qd-price{font-size:11px}
-  .qd-btns{gap:3px}
-  .qd-btns button,.qd-one{font-size:11px;padding:6px 1px}
-  .idle-chip{font-size:13px;padding:3px 9px 3px 4px}
-}
+@media(max-width:620px){.idle-chip{font-size:13px;padding:3px 9px 3px 4px}}
 
 /* Hero luôn nằm phía trên cụm điều khiển */
 #stage .hero-wrap{bottom:calc(var(--deck-h) + 84px);--hero-unit:clamp(120px,19vmin,185px)}
