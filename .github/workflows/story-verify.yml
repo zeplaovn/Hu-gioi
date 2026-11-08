@@ -1,0 +1,19 @@
+name: Story verification
+on:
+  push:
+    branches:
+      - feature/story
+  workflow_dispatch:
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check source contracts
+        run: npm run check
+      - name: Run entire test suite
+        run: npm test
