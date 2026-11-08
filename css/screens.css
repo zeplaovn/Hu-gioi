@@ -451,3 +451,55 @@ body.in-tribulation{overflow:hidden}
   .interactive-map .map-toolbar{top:7px;left:7px;gap:3px;padding:4px}
   .interactive-map .map-toolbar button{width:34px;height:34px}
 }
+
+/* VẠN KIẾP TÀNG THƯ · chỉ bổ sung nhật ký và khung thoại. */
+.hu-story-act{margin:22px 0 28px;min-width:0}
+.hu-story-act>h3{margin:0 0 12px;font-size:clamp(17px,3.8vw,22px);color:var(--gold,#e2c48b)}
+.hu-story-act>h3 small{font-size:12px;font-weight:400;color:var(--muted,#aaa)}
+.hu-story-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px}
+.hu-story-chapter{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-width:0;padding:15px;border:1px solid rgba(210,180,125,.23);border-radius:12px;background:rgba(17,22,30,.52)}
+.hu-story-chapter h4{margin:5px 0;font-size:16px;overflow-wrap:anywhere}
+.hu-story-chapter small{color:#ccb17f}
+.hu-story-chapter p{margin:5px 0 0;line-height:1.65;overflow-wrap:anywhere}
+.hu-story-chapter.locked{opacity:.47}
+.hu-story-chapter .btn{align-self:flex-start;max-width:100%}
+.hu-dungeon-lore{font-style:italic;color:#cfc1a5;line-height:1.65;overflow-wrap:anywhere}
+.hu-dialogue-open{overflow:hidden}
+.hu-dialogue{position:fixed;inset:0;z-index:11000;display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));color:#eee5d6}
+.hu-dialogue[hidden]{display:none}
+.hu-dialogue-shade{position:absolute;inset:0;background:rgba(0,4,11,.87)}
+.hu-dialogue-frame{position:relative;width:min(100%,840px);min-width:0;max-height:calc(100dvh - 28px);overflow:auto;overscroll-behavior:contain;padding:clamp(15px,3vw,28px);border:1px solid rgba(218,184,121,.36);border-radius:17px;background:linear-gradient(160deg,#17202a,#0b111a 68%,#171a1d);box-shadow:0 20px 70px rgba(0,0,0,.65);outline-offset:3px}
+.hu-dialogue-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.hu-dialogue-head button{white-space:nowrap}
+.hu-dialogue-content{min-width:0}
+.hu-dialogue-content h2{margin:6px 0 14px;font-size:clamp(20px,4.5vw,27px);line-height:1.3;overflow-wrap:anywhere}
+.hu-dialogue-topic-head{display:flex;gap:18px;align-items:center;min-width:0}
+.hu-dialogue-portrait{width:clamp(84px,22vw,150px);height:clamp(100px,26vw,180px);object-fit:contain;flex:none}
+.hu-dialogue-topic-head>div{min-width:0}
+.hu-dialogue-topic-head p{line-height:1.55;margin:3px 0 6px}
+.hu-dialogue-hint{font-size:14px;line-height:1.6;color:#cabda7}
+.hu-dialogue-topics{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0}
+.hu-dialogue-topic{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;width:100%;padding:14px 16px;border:1px solid rgba(220,194,145,.3);border-radius:10px;background:rgba(34,39,45,.72);color:inherit;overflow-wrap:anywhere}
+.hu-dialogue-topic small{font-size:12px;color:#d1b987}
+.hu-dialogue-topic:hover:not(:disabled),.hu-dialogue-topic:focus-visible{border-color:#d7b978;background:rgba(87,71,44,.38)}
+.hu-dialogue-topic.locked{opacity:.45;cursor:not-allowed}
+.hu-dialogue-line{display:flex;align-items:flex-end;gap:16px;min-height:145px;min-width:0}
+.hu-dialogue-speaker{width:clamp(86px,20vw,170px);height:clamp(108px,26vw,205px);flex:none;object-fit:contain;object-position:bottom}
+.hu-dialogue-speech{flex:1;min-width:0;padding:14px 16px;border:1px solid rgba(207,174,109,.2);border-radius:12px;background:rgba(6,15,24,.6)}
+.hu-dialogue-speech>b{color:#e5c78c}
+.hu-dialogue-speech p{font-size:clamp(15px,2.1vw,19px);line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0}
+.hu-dialogue-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;align-items:center;gap:12px;margin-top:18px}
+.hu-dialogue-progress{margin-right:auto;font-size:12px;color:#afa58f}
+.hu-dialogue-reply{padding:18px 0;font-size:17px;line-height:1.7}
+@media(max-width:520px){
+ .hu-story-list{grid-template-columns:minmax(0,1fr)}
+ .hu-dialogue{padding:8px}
+ .hu-dialogue-frame{width:100%;max-width:100%;max-height:calc(100dvh - 16px);padding:14px 12px;border-radius:12px}
+ .hu-dialogue-head{margin-bottom:12px}
+ .hu-dialogue-portrait{width:85px;height:106px}
+ .hu-dialogue-topic-head{gap:10px}
+ .hu-dialogue-line{gap:8px;align-items:flex-end}
+ .hu-dialogue-speaker{width:82px;height:122px}
+ .hu-dialogue-speech{padding:12px 10px}
+ .hu-dialogue-actions .btn{min-width:0}
+}
