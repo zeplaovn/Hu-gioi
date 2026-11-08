@@ -42,6 +42,7 @@
     skill: { index: integer(0, 3) },
     castManual: { code },
     activateArtifact: { code },
+    startExploration: {},
     setEnemyKind: { kind: oneOf(Object.keys(F.MONSTER_MULT)) },
     travel: { zone: integer(0, D.ZONES.length - 1) },
     // world
