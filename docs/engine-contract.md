@@ -2,7 +2,7 @@
 
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 46 lệnh và state V7. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
+> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 51 lệnh và state V8. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
 > Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
@@ -21,10 +21,10 @@ Phần **engine phải cung cấp**:
 
 | Thành viên | Vai trò |
 |---|---|
-| `VERSION` | Phiên bản schema (hiện 7), lấy từ `engine/state/player.js`. |
+| `VERSION` | Phiên bản schema (hiện 8), lấy từ `engine/state/player.js`. |
 | `create(now)` | State mới, `created: false`. |
 | `createCharacter(profile, now, rng)` | Tạo nhân vật; profile do màn tạo nhân vật dựng (`name`, `gender`, `age`, `race`, `roots`, `rootType`, `talent`, …). |
-| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V7 về V7; trả `null` nếu không hợp lệ. |
+| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V8 về V8; trả `null` nếu không hợp lệ. |
 | `Game` | Lớp bọc `(state, rng, onLog)`; xem §4. |
 
 ## 3. Phiên chơi (client/session/local-session.js)
@@ -37,7 +37,7 @@ Phần **engine phải cung cấp**:
 
 `client/persistence/local-store.js` bọc phiên: tự lưu `localStorage` (khóa `huGioiWorkspaceV1`, dự phòng `huGioiWorkspaceV1Backup`), xuất/nhập JSON, `preference(key, value)` cho cài đặt hiển thị. Nó gọi `H.create` và `H.normalize`, và mọi bản lưu đọc vào đều phải qua `H.normalize`.
 
-## 4. Lệnh (49)
+## 4. Lệnh (51)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -66,6 +66,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `skill` | combat | `index` |
 | `castManual` | combat | `code` |
 | `activateArtifact` | combat | `code` |
+| `startExploration` | combat | — |
 | `setEnemyKind` | combat | `kind` |
 | `travel` | combat | `zone` |
 | `claimQuest` | world | `id` |
@@ -81,6 +82,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `abortSectMission` | world | — |
 | `buySect` | world | `id`, `element` |
 | `temperRoot` | world | `index` |
+| `storyMark` | world | `id`, `option` (tùy chọn) |
 | `startDungeon` | adventures | `id` |
 | `abortDungeon` | adventures | — |
 | `enterDungeon` | adventures | `id` |
@@ -92,6 +94,8 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `npcOffer` | social | `id` |
 | `npcQuest` | social | `id` |
 | `duel` | social | `id` |
+
+`storyMark` chỉ ghi `s.story.read` và `s.story.flags`. Engine kiểm tra ID, cảnh giới, thiện cảm và lựa chọn; không cấp chỉ số hay phần thưởng.
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).
 
@@ -118,13 +122,13 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 
 ## 7. Bản lưu
 
-- Schema hiện hành V7; nhập được V4, V5, V6, V7 (`SUPPORTED_VERSIONS`).
+- Schema hiện hành V8; nhập được V4, V5, V6, V7, V8 (`SUPPORTED_VERSIONS`).
 - `normalize` phải chống khóa nguy hiểm, giới hạn số, độ sâu và kích thước (phần kiểm tra JSON an toàn nằm ở `local-store.js`, phần làm sạch giá trị nằm ở `normalize`).
 - Thiên mệnh (`meta`) được giữ qua trọng sinh.
 
 ## 8. Thứ tự đã triển khai
 
-1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V7).
+1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V8).
 2. `rules/time.js` và `rules/creation.js`: `advance`, `isDead`, `createCharacter`.
 3. `rules/progression.js`: tu luyện, đột phá, độ kiếp, thiên mệnh.
 4. `rules/inventory.js`, `rules/crafting.js`, `rules/combat.js`.

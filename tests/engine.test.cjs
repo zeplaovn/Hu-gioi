@@ -54,12 +54,12 @@ function run(g, type, payload = {}, now = NOW) {
   return C.execute(g, { type, payload }, now);
 }
 
-test('hợp đồng: engine READY, đủ 50 lệnh và phân miền rõ ràng', () => {
+test('hợp đồng: engine READY, đủ 51 lệnh và phân miền rõ ràng', () => {
   assert.equal(H.READY, true);
   assert.deepEqual(H.MISSING, []);
-  assert.equal(H.VERSION, 7);
-  assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7]);
-  assert.equal(C.types.length, 50);
+  assert.equal(H.VERSION, 8);
+  assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8]);
+  assert.equal(C.types.length, 51);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -72,7 +72,7 @@ test('hợp đồng: engine READY, đủ 50 lệnh và phân miền rõ ràng', 
     inventory: ['buy', 'sell', 'equip', 'learn', 'activate', 'use', 'sellYao', 'bid'],
     crafting: ['craft', 'forge', 'garden'],
     combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration'],
-    world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot'],
+    world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot', 'storyMark'],
     adventures: ['startDungeon', 'abortDungeon', 'enterDungeon', 'dungeonAct'],
     social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel'],
     time: [],
@@ -123,10 +123,10 @@ test('hợp đồng: mọi phương thức truy vấn UI đang gọi đều tồ
   assert.ok(g.sectIncome() > 0);
 });
 
-test('state: tạo state trống, tạo nhân vật và giữ đúng hình dạng V7', () => {
+test('state: tạo state trống, tạo nhân vật và giữ đúng hình dạng V8', () => {
   const empty = H.create(NOW);
   assert.equal(empty.created, false);
-  assert.equal(empty.version, 7);
+  assert.equal(empty.version, 8);
   assert.equal(typeof empty.bag, 'object');
 
   const g = game();
@@ -165,15 +165,15 @@ test('state: createCharacter từ chối hồ sơ sai', () => {
   assert.throws(() => H.createCharacter(PROFILE, NaN, rng), /thời gian/);
 });
 
-test('state: normalize nâng cấp V4–V7 và loại bản lưu hỏng', () => {
+test('state: normalize nâng cấp V4–V8 và loại bản lưu hỏng', () => {
   const g = rich();
   const saved = JSON.parse(JSON.stringify(g.s));
 
-  for (const version of [5, 6, 7]) {
+  for (const version of [5, 6, 7, 8]) {
     const raw = { ...JSON.parse(JSON.stringify(saved)), version };
     const next = H.normalize(raw, NOW + 1000);
     assert.ok(next, 'v' + version);
-    assert.equal(next.version, 7);
+    assert.equal(next.version, 8);
     assert.equal(next.created, true);
     assert.equal(next.name, saved.name);
     assert.equal(next.realm, saved.realm);
@@ -186,7 +186,7 @@ test('state: normalize nâng cấp V4–V7 và loại bản lưu hỏng', () => 
     resources: { jade: 5000, gold: 12 }
   }, NOW);
   assert.ok(v4);
-  assert.equal(v4.version, 7);
+  assert.equal(v4.version, 8);
   assert.equal(v4.realm, 2);
   assert.equal(v4.name, 'Cổ Nhân');
   assert.equal(v4.stone, 5000);
@@ -215,7 +215,7 @@ test('state: normalize nâng cấp V4–V7 và loại bản lưu hỏng', () => 
   assert.ok(clean.talent.phucDuyen >= 0);
   assert.equal(clean.settings.musicVolume, 100);
   assert.equal(clean.settings.motionMode, 'auto');
-  assert.equal(clean.version, 7);
+  assert.equal(clean.version, 8);
 
   const backwards = H.normalize({ ...JSON.parse(JSON.stringify(saved)), lastUpdate: NOW + 60_000, lastSaved: NOW + 60_000 }, NOW);
   assert.equal(backwards.lastUpdate, NOW);
@@ -614,7 +614,7 @@ test('browser: nạp classic script đúng thứ tự index.html và chạy Loca
   const files = [
     'data/balance.js', 'data/items.js', 'data/design-raw.js', 'data/design.js',
     'data/formulas.js', 'data/catalog.js', 'data/roots.js', 'data/character.js',
-    'data/social.js', 'data/adventures.js',
+    'data/social.js', 'data/adventures.js', 'data/story.js',
     'engine/state/player.js',
     'engine/rules/progression.js', 'engine/rules/inventory.js', 'engine/rules/crafting.js',
     'engine/rules/combat.js', 'engine/rules/world.js', 'engine/rules/adventures.js',

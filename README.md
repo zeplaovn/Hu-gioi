@@ -2,7 +2,7 @@
 
 Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-> **Hiện trạng (nhánh `rebuild/backend-skeleton`): engine đã sẵn sàng, game chơi được offline.** Giao diện, tài nguyên, dữ liệu thiết kế và công thức cân bằng được giữ lại; `engine/` đã cài đặt đủ 9 miền luật, 49 lệnh và schema V7 nên `HU_GAME.READY === true`. `server/` vẫn là khung cho chế độ online. Mở `index.html` để tạo đạo thân và chơi; bản lưu nằm trong trình duyệt. Hợp đồng engine: [docs/engine-contract.md](docs/engine-contract.md). Bản chơi được cuối cùng trước đợt dọn backend nằm ở commit `5f6b9bc` (nhánh `main`).
+> **Hiện trạng (nhánh `rebuild/backend-skeleton`): engine đã sẵn sàng, game chơi được offline.** Giao diện, tài nguyên, dữ liệu thiết kế và công thức cân bằng được giữ lại; `engine/` đã cài đặt đủ 9 miền luật, 51 lệnh và schema V8 nên `HU_GAME.READY === true`. `server/` vẫn là khung cho chế độ online. Mở `index.html` để tạo đạo thân và chơi; bản lưu nằm trong trình duyệt. Hợp đồng engine: [docs/engine-contract.md](docs/engine-contract.md). Bản chơi được cuối cùng trước đợt dọn backend nằm ở commit `5f6b9bc` (nhánh `main`).
 
 Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 
@@ -42,7 +42,7 @@ Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<gi
 ## Lưu và chuyển tiến trình
 
 - Game tự lưu bằng `localStorage`; vào **Cài đặt → Bản lưu** để **Lưu ngay**, **Xuất JSON** hoặc **Nhập JSON**.
-- Tệp xuất có tên `hu-gioi-save.json`. Nhập bản lưu hỗ trợ V4, V5, V6 và V7, chuyển về schema **V7**.
+- Tệp xuất có tên `hu-gioi-save.json`. Nhập bản lưu hỗ trợ V4, V5, V6, V7 và V8, chuyển về schema **V8**.
 - Khóa chính: `huGioiWorkspaceV1`; khóa dự phòng: `huGioiWorkspaceV1Backup`. Bản hiện tại được giữ thêm trước khi nhập JSON.
 - Dữ liệu gắn với trình duyệt và địa chỉ chạy game. Dùng xuất/nhập JSON khi đổi thiết bị, trình duyệt hoặc chuyển giữa `file://` và HTTP.
 - Thiên mệnh được giữ qua trọng sinh; **Xóa tiến trình** trong Cài đặt xóa cả bản lưu và tiến trình xuyên kiếp trên thiết bị.
@@ -56,9 +56,9 @@ index.html                 Điểm vào trình duyệt và thứ tự nạp scri
 data/                      Dữ liệu thiết kế và công thức cân bằng (thuần dữ liệu)
 engine/                    Luật chơi dùng chung cho client và server
   game.js                    Ghép data + state + rules; báo READY / MISSING
-  state/                     Schema V7, create, normalize V4–V7
+  state/                     Schema V8, create, normalize V4–V8
   rules/                     9 miền: progression inventory crafting combat world adventures social time creation
-  protocol/                  49 lệnh: schema payload, validate, execute
+  protocol/                  51 lệnh: schema payload, validate, execute
 client/
   assets/ platform/          Ảnh, âm thanh, loading, bảo vệ nội dung
   persistence/               localStorage, dự phòng, xuất/nhập JSON
@@ -77,7 +77,7 @@ docs/                      Tài liệu
 
 - Viết luật và tính thưởng trong `engine/`; giao diện chỉ gửi lệnh bằng `UI.command(type, payload)` và hiển thị state. Cài đặt hiển thị dùng `UI.preference()`.
 - `engine/` và `data/` không phụ thuộc DOM, `localStorage`, mạng hay timer; thời gian và RNG do phiên cung cấp.
-- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh](docs/engine-contract.md#4-lệnh-49) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
+- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh](docs/engine-contract.md#4-lệnh-51) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
 - Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node lẫn `file://` nạp đúng; `npm test` kiểm tra thứ tự.
 - Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và `client/assets/preload-manifest.js`.
 - Thay dữ liệu thiết kế: xem [docs/design-integration.md](docs/design-integration.md).
@@ -91,7 +91,13 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 ## Tài liệu
 
 - [Kiến trúc](docs/architecture.md): các lớp, thư mục, luồng lệnh, cách nạp module, thêm lệnh.
-- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (49 lệnh, API `HU_GAME`, state, bản lưu).
+- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (51 lệnh, API `HU_GAME`, state, bản lưu).
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
 - [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
 - [data/README.md](data/README.md): dữ liệu thiết kế và công thức cân bằng.
+
+## Thiên Thư · Vạn Kiếp Tàng Thư
+
+Vào **Thiên Mệnh → Thiên Thư** để đọc 14 chương qua Hạ Giới, Linh Giới và Tiên Giới. Chương mở theo cảnh giới; trang đã đọc được giữ qua trọng sinh. Ba lựa chọn cốt truyện lưu lời hẹn nhưng không đổi chỉ số hay phần thưởng.
+
+Trong **Thế giới → NPC**, chọn **Trò chuyện** để gặp 10 kỳ nhân qua ba mức thiện cảm (0, 20, 55). Hội thoại nhiều lượt gồm câu đáp của người chơi, chủ đề và lựa chọn lưu qua engine. Bí cảnh và kỳ ngộ có lời dẫn bổ sung trong các bảng hiện có. Nội dung ở `data/story.js`, một lệnh mới `storyMark` thuộc miền `world`; có thể chạy offline bằng `file://`.

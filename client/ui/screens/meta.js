@@ -11,7 +11,8 @@
     { id: 'upgrades', label: 'Thiên mệnh', icon: '✦' },
     { id: 'achievements', label: 'Thành tựu', icon: '✧' },
     { id: 'history', label: 'Kiếp trước', icon: '☯' },
-    { id: 'prestige', label: 'Trọng sinh', icon: '↻' }
+    { id: 'prestige', label: 'Trọng sinh', icon: '↻' },
+    { id: 'story', label: 'Thiên Thư', icon: '❖' }
   ];
 
   function stageName(realm, stage) {
@@ -74,14 +75,32 @@
       ${card('Chuyển thế', `${row('Tu vi thực nhận vòng này', num(s.totalRunExp))}${row('Phần thưởng', num(reward) + ' Đạo vận')}${row('Tu vi tới mốc kế tiếp', num(remaining))}${row('Số lần trọng sinh', s.rebirths)}${btn('Trọng sinh', 'prestige', '', reward < 10)}<p class="info-note">Đặt lại cảnh giới, tiền, túi đồ, nâng cấp thường và nhiệm vụ. Tu vi tràn ngưỡng đột phá không tính Đạo vận.</p>`)}
       ${card('Truyền thừa bế quan', `${row('Đạo vận', num(s.daoVan))}${row('Thời gian bế quan tối đa', duration(F.offline_cap(s.offlineCap)))}${btn('+2 giờ · ' + (2 + s.offlineCap) + ' Đạo vận', 'offlineCap', '', s.offlineCap >= 8)}${row('Hiệu quả bế quan khi vắng mặt', pct(F.offline_efficiency(s.offlineEff)))}${btn('+5 điểm % · ' + (2 + s.offlineEff) + ' Đạo vận', 'offlineEff', '', s.offlineEff >= 8)}<p class="info-note">Tối đa 24 giờ và 100%. Tiêu Đạo vận sẽ giảm hệ số tốc độ hấp thụ linh khí tương ứng.</p>`)}</div>`;
   }
-  const body = { upgrades, achievements, history, prestige };
+  function story() {
+    const s = UI.s(), all = H.STORY.ACTS.flatMap(act => act.chapters), read = s.story?.read || {};
+    return '<p class="screen-lead">Vạn Kiếp Tàng Thư ghi lại dấu chân người lạc giới, từ Thanh Vân Sơn tới Hồng Mông Đạo Vực. ' +
+      'Chương mới mở dần theo cảnh giới; lời đã ghi vẫn ở lại qua những lần chuyển thế.</p>' +
+      card('Thiên Thư', row('Đã đọc', Object.keys(read).filter(id => all.some(ch => ch.id === id)).length + '/' + all.length),
+        { eyebrow: 'THIÊN MỆNH · TÀNG THƯ' }) +
+      H.STORY.ACTS.map(act => '<section class="hu-story-act"><h3>' + esc(act.title) +
+        ' <small>· ' + esc(act.world) + '</small></h3><div class="hu-story-list">' +
+        act.chapters.map(ch => {
+          const seen = !!read[ch.id], unlocked = s.realm >= ch.unlock.realm || seen;
+          return '<article class="hu-story-chapter' + (unlocked ? '' : ' locked') + '">' +
+            '<div><small>' + esc(F.REALMS[ch.unlock.realm]) + (seen ? ' · Đã đọc' : '') +
+            '</small><h4>' + esc(ch.title) + '</h4><p>' +
+            (unlocked ? esc(ch.text.slice(0, 92)) + '…' : 'Đạt cảnh giới ' + esc(F.REALMS[ch.unlock.realm]) + ' để mở.') +
+            '</p></div>' + (unlocked ? btn(seen ? 'Đọc lại' : 'Đọc chương', 'openStory', 'data-id="' + esc(ch.id) + '"', false, 'btn-outline') : '') +
+            '</article>';
+        }).join('') + '</div></section>').join('');
+  }
+  const body = { upgrades, achievements, history, prestige, story };
 
   UI.register({
     id: 'meta', label: 'Thiên mệnh', icon: '✦', eyebrow: 'THIÊN MỆNH', tabs: TABS,
     render: tab => header() + tabs(TABS, tab) + `<div class="screen-body">${body[tab]()}</div>`,
     signature: () => {
       const s = UI.s(), m = s.meta;
-      return [m.points, m.totalPoints, Object.keys(m.achievements).length, Object.values(m.upgrades).join(','), m.history.length].join('|');
+      return [m.points, m.totalPoints, Object.keys(m.achievements).length, Object.values(m.upgrades).join(','), m.history.length, s.realm, JSON.stringify(s.story)].join('|');
     }
   });
 

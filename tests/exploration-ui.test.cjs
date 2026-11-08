@@ -78,3 +78,38 @@ test('engine không tính tu vi và nghề phụ trong 600 giây lịch luyện'
   assert.match(time, /s\.lastUpdate = now;[\s\S]{0,110}return \{ \.\.\.empty\(\), exploring: true/);
   assert.match(protocol, /pausedActions\.includes\(c\.type\)/);
 });
+
+
+test('cửa sổ Lịch luyện đóng được và các menu khác mở được khi đang du hành', () => {
+  const shell = read('client/ui/shell.js');
+  const windows = shell.slice(shell.indexOf('  const wins = {'), shell.indexOf('  UI.windows = wins;'));
+  const routing = shell.slice(shell.indexOf('  function go(target,'), shell.indexOf('  function updateChrome()'));
+  const hash = shell.slice(shell.indexOf("root.addEventListener('hashchange'"), shell.indexOf("root.addEventListener('resize'"));
+  assert.ok(windows.length > 1000 && routing.length > 100, 'phải tìm thấy mã điều hướng');
+  assert.doesNotMatch(windows, /exploration\?\.active/, 'không khóa cửa sổ trong chuyến lịch luyện');
+  assert.doesNotMatch(routing, /exploration\?\.active/, 'không ép trở lại Lịch luyện');
+  assert.doesNotMatch(hash, /exploration\?\.active/, 'đổi đường dẫn vẫn vào menu được');
+  assert.match(windows, /if \(id === 'combat'\) this\.saveRect\(id, w\.rect\)/);
+  assert.match(shell, /if \(wins\.has\('combat'\)\) wins\.close\('combat'\)/, 'menu Lịch luyện phải đóng/mở luân phiên');
+});
+
+test('đang lịch luyện vẫn không được đổi vùng hoặc khởi hành chuyến khác', () => {
+  const combat = read('client/ui/screens/combat.js');
+  const protocol = read('engine/protocol/commands.js');
+  assert.match(combat, /journey \|\| z\.realm > s\.realm \? 'disabled' : ''/);
+  assert.match(combat, /if \(UI\.s\(\)\.exploration\?\.active\) throw Error/);
+  assert.match(protocol, /startExploration: \{\}/);
+});
+
+test('khôi phục hoặc trở lại tab không tự cướp trang người chơi đang xem', () => {
+  const boot = read('client/ui/boot.js');
+  assert.match(boot, /const requested = UI\.screens\[hash\[0\]\]/);
+  assert.match(boot, /if \(UI\.current === 'combat' \|\| UI\.windows\.has\('combat'\)\) UI\.go\('idle'\)/);
+  assert.doesNotMatch(boot, /else if \(UI\.s\(\)\.exploration\?\.active\) UI\.go\('combat'/);
+});
+
+test('đạo thân đi bộ có điểm neo chân ở tiền cảnh', () => {
+  const css = read('css/player-pack.css');
+  assert.match(css, /#game\[data-stage="combat"\] #stage #heroActor\s*\{[\s\S]*?top:87%;/);
+  assert.match(css, /#game\[data-stage="combat"\] #stage #heroActor\s*\{[\s\S]*?transform:translate\(-50%,-100%\)/);
+});

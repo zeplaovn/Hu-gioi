@@ -92,7 +92,7 @@
         assertSafeJson(raw);
         if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw Error('Bản lưu phải là một đối tượng JSON.');
         const value = H.normalize(raw,session.clock());
-        if (!value) throw Error('Chỉ nhận bản lưu nhân vật V4, V5, V6 hoặc V7 hợp lệ.');
+        if (!value) throw Error('Chỉ nhận bản lưu nhân vật từ V4 đến V8 hợp lệ.');
         return value;
       },
       keepBeforeImport() { try { localStorage.setItem(KEY + 'BeforeImport', JSON.stringify(session.game.s)); } catch { /* bỏ qua */ } }

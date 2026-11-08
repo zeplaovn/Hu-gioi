@@ -1,0 +1,26 @@
+name: Story verification
+on:
+  push:
+    branches:
+      - feature/story
+  workflow_dispatch:
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check source contracts
+        run: npm run check
+      - name: Run entire test suite
+        run: npm test
+      - name: Package worktree for responsive screenshots
+        run: tar --exclude=.git -czf /tmp/hu-gioi-story-worktree.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hu-gioi-story-worktree
+          path: /tmp/hu-gioi-story-worktree.tar.gz
+          retention-days: 3

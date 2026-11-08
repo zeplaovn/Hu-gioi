@@ -9,6 +9,7 @@
   const D = node ? require('../data/catalog.js') : root.HU_CATALOG;
   const social = node ? require('../data/social.js') : root.HU_SOCIAL_DATA;
   const adventures = node ? require('../data/adventures.js') : root.HU_ADVENTURE_DATA;
+  const story = node ? require('../data/story.js') : root.HU_STORY_DATA;
   const S = node ? require('./state/player.js') : root.HU_PLAYER_STATE;
   const P = node ? require('./protocol/commands.js') : root.HU_COMMANDS;
   const RULE_FILES = ['progression', 'inventory', 'crafting', 'combat', 'world', 'adventures', 'social', 'time', 'creation'];
@@ -52,7 +53,7 @@
   [...P.types, ...REQUIRED_METHODS].forEach(name => { Game.prototype[name] = notImplemented(name); });
 
   const API = {
-    F, ...C, ...D, ...social, ...adventures,
+    F, ...C, ...D, ...social, ...adventures, STORY: story,
     VERSION: S.VERSION,
     SUPPORTED_VERSIONS: S.SUPPORTED_VERSIONS,
     Game,

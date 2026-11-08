@@ -24,13 +24,13 @@ data/                      Dữ liệu thiết kế + công thức cân bằng
   balance.js  formulas.js  Bảng cân bằng và mô hình số học (F)
   items.js design-raw.js design.js catalog.js    Vật phẩm, snapshot thiết kế, lớp ánh xạ, tra cứu
   roots.js character.js    Linh căn, chủng tộc, thiên phú, thiên mệnh, thành tựu
-  social.js adventures.js  Giao du/NPC; bí cảnh, kỳ ngộ, tông môn, tôi luyện
+  social.js adventures.js story.js  Giao du/NPC; bí cảnh, kỳ ngộ, tông môn, tôi luyện
 engine/
   game.js                  Ghép data + state + rules; báo READY/MISSING
-  state/player.js          Schema V7, create, normalize V4–V7
+  state/player.js          Schema V8, create, normalize V4–V8
   rules/                   Chín miền luật (mỗi lệnh thuộc đúng một miền)
     progression inventory crafting combat world adventures social time creation
-  protocol/commands.js     49 lệnh: schema payload, validate, execute
+  protocol/commands.js     51 lệnh: schema payload, validate, execute
 client/
   assets/ platform/        Ảnh, âm thanh, loading, bảo vệ nội dung
   persistence/             localStorage, dự phòng, xuất/nhập JSON
@@ -95,7 +95,7 @@ Trình duyệt dùng classic script để chạy được cả `file://` không 
 |---|---|
 | `data/` | Giữ nguyên dữ liệu và công thức cũ |
 | `client/ui`, `css/`, `media/` | Giữ nguyên |
-| `engine/` | Đã cài đặt đủ state V7, 9 miền luật và 49 lệnh; `HU_GAME.READY === true` (xem [engine-contract.md](engine-contract.md)) |
+| `engine/` | Đã cài đặt đủ state V8, 9 miền luật và 51 lệnh; `HU_GAME.READY === true` (xem [engine-contract.md](engine-contract.md)) |
 | `server/` | Chạy file tĩnh và `/api/health`; còn lại là khung |
 | Game chơi được | Có, offline qua `LocalSession`; `HU_GAME.MISSING` rỗng |
 
