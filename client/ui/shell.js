@@ -1599,7 +1599,7 @@
     if (!store.ready || !UI.s().created || !$('modalLayer').hidden || ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName) || e.ctrlKey || e.altKey || e.metaKey) return;
     const key = e.key.toLowerCase();
     if (['1', '2', '3', '4'].includes(key)) {
-      if (UI.current === 'combat') { e.preventDefault(); safe(() => run('skill', { dataset: { index: String(Number(key) - 1) } })); }
+      if (UI.current === 'combat' && UI.s().exploration?.active?.kind === 'monster' && !UI.s().exploration.active.cleared) { e.preventDefault(); safe(() => run('skill', { dataset: { index: String(Number(key) - 1) } })); }
       return;
     }
     const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world', s: 'settings' };
