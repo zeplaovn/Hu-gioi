@@ -1,10 +1,10 @@
 /* assets.js — đường dẫn ảnh cho bộ assets phẳng (v8). Mọi màn lấy đường dẫn từ đây, không tự ghép chuỗi.
- * Nhân vật: player/{nam|nu}/{ha_gioi|linh_gioi|tien_gioi}/{dung_yen|di_chuyen|tan_cong}/N.png
+ * Nhân vật: player/realistic/{nam|nu}/{thien_dinh|di_bo|tung_skill|guc_nga}/00..05.webp
  * Quái:     monster/<giới>/<mon_xxx|boss_x|final_boss*>/{dung_yen|tan_cong|tu_vong}/N.png */
 (function (root) {
   'use strict';
   const BASE = 'media/assets/';
-  const PLAYER = BASE + 'chars/player/';
+  const PLAYER = BASE + 'chars/player/realistic/';
   const ENEMY = BASE + 'enemies/';
   const BG_BASE = BASE + 'world/bg/';
   const MAP_BASE = BASE + 'world/map/';
@@ -16,22 +16,32 @@
   const WORLD_NAME = { ha_gioi: 'Hạ Giới', linh_gioi: 'Linh Giới', tien_gioi: 'Tiên Giới' };
   const wrap = (n, count) => ((Math.floor(n) % count) + count) % count + 1;
 
-  /* ---- nhân vật ---- */
+  /* ---- nhân vật: chỉ còn WebP bán hiện thực; mọi giới dùng chung đạo thân ---- */
   const gender = g => g === 'nu' ? 'nu' : 'nam';
-  const heroFrames = (g, zone, action) => IDX.player[`${gender(g)}/${worldOf(zone)}/${action}`] || 1;
-  const heroSrc = (g, zone, action = 'dung_yen', n = 0) =>
-    `${PLAYER}${gender(g)}/${worldOf(zone)}/${action}/${wrap(n, heroFrames(g, zone, action))}.png`;
-  const heroPortrait = (g, zone) => `${PLAYER}${gender(g)}/${worldOf(zone)}/portrait.png`;
-  // Cùng quy chuẩn với tools/player-sprites.json và các biến --player-* trong CSS.
-  const HERO = { width: 512, height: 384, anchorX: 256, anchorY: 352,
-    bodyHeight: { dung_yen: 198, di_chuyen: 236, tan_cong: 236 } };
+  const HERO_ACTIONS = Object.freeze({
+    dung_yen: 'thien_dinh', di_chuyen: 'di_bo',
+    tan_cong: 'tung_skill', tu_vong: 'guc_nga'
+  });
+  const HERO_FRAMES = 6;
+  const heroFrames = () => HERO_FRAMES;
+  const heroSrc = (g, zone, action = 'dung_yen', n = 0) => {
+    const folder = HERO_ACTIONS[action] || HERO_ACTIONS.dung_yen;
+    const frame = ((Math.floor(Number(n) || 0) % HERO_FRAMES) + HERO_FRAMES) % HERO_FRAMES;
+    return PLAYER + gender(g) + '/' + folder + '/' + String(frame).padStart(2, '0') + '.webp';
+  };
+  const heroPortrait = g => PLAYER + gender(g) + '/portrait.webp';
+  const HERO = { width: 512, height: 512, anchorX: 256, anchorY: 472,
+    bodyHeight: { dung_yen: 360, di_chuyen: 400, tan_cong: 400, tu_vong: 225 } };
   const heroCache = new Map();
   function preloadHero(g, zone, action = 'dung_yen') {
-    const key = `${gender(g)}/${worldOf(zone)}/${action}`;
+    const key = gender(g) + '/' + (HERO_ACTIONS[action] || HERO_ACTIONS.dung_yen);
     if (heroCache.has(key)) return heroCache.get(key);
     if (typeof Image === 'undefined') return [];
-    const frames = Array.from({ length: heroFrames(g, zone, action) }, (_, i) => {
-      const image = new Image(); image.src = heroSrc(g, zone, action, i); return image;
+    const frames = Array.from({ length: HERO_FRAMES }, (_, i) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = heroSrc(g, zone, action, i);
+      return image;
     });
     heroCache.set(key, frames);
     return frames;
