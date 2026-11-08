@@ -34,9 +34,9 @@ test('493 item trong danh mục được ánh xạ đúng vị trí và atlas JS
   }
 });
 
-test('mọi ảnh item đều trỏ tới file PNG tồn tại trong repo', () => {
+test('mọi ảnh item đều trỏ tới file ảnh tồn tại trong repo', () => {
   for (const sheet of Object.keys(INDEX.sheets)) {
-    assert.ok(existsSync(join(ROOT, 'media/assets/item', sheet)), 'Thiếu sprite sheet: ' + sheet);
+    assert.ok(existsSync(join(ROOT, 'media/assets/item', sheet.replace(/\.png$/, '.webp'))), 'Thiếu sprite sheet: ' + sheet);
     assert.equal(ATLAS.sheets[sheet].columns, INDEX.sheets[sheet][0]);
     assert.equal(ATLAS.sheets[sheet].rows, INDEX.sheets[sheet][1]);
   }
@@ -48,7 +48,7 @@ test('mọi ảnh item đều trỏ tới file PNG tồn tại trong repo', () =
 test('resolver hiển thị atlas và ảnh đơn; mã không tồn tại có SVG dự phòng', () => {
   const herb = ASSETS.itemImg({ code: 'HERB-002' });
   assert.match(herb.src, /^data:image\/svg\+xml/);
-  assert.match(herb.style, /media\/assets\/item\/HG\.png/);
+  assert.match(herb.style, /media\/assets\/item\/HG\.webp/);
   assert.match(herb.style, /background-image:/);
   const special = ASSETS.itemImg({ code: 'QITEM-HD-01' });
   assert.equal(special.src, 'media/assets/item/vat_pham_dac_biet/SSSITEM01.png');
@@ -63,8 +63,8 @@ test('trang tra cứu item không dùng tên sprite sheet cũ', () => {
   for (const old of ['herb.png','seed.png','material.png','talisman.png','gift.png','cong_phap.png','phap_bao.png','single_pill.png','pack_pill.png']) {
     assert.ok(!html.includes('item/' + old), old);
   }
-  assert.match(html, /item\/HG\.png/);
-  assert.match(html, /item\/DAN_1\.png/);
+  assert.match(html, /item\/HG\.webp/);
+  assert.match(html, /item\/DAN_1\.webp/);
 });
 
 test('engine từ chối tạo nhân vật khi còn điểm thiên phú chưa dùng', () => {

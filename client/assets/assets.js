@@ -218,7 +218,7 @@
     const yPercent = tile.rows > 1 ? (tile.row - 1) * 100 / (tile.rows - 1) : 0;
     return {
       src: BLANK,
-      style: 'background-image:url("' + BASE + 'item/' + tile.sheet + '");' +
+      style: 'background-image:url("' + BASE + 'item/' + String(tile.sheet).replace(/\.png$/, '.webp') + '");' +
         'background-position:' + xPercent.toFixed(6) + '% ' + yPercent.toFixed(6) + '%;' +
         'background-size:' + (tile.columns * 100) + '% ' + (tile.rows * 100) + '%;' +
         'background-repeat:no-repeat'
