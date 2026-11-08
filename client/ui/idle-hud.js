@@ -1,5 +1,5 @@
 /* HƯ GIỚI · LỚP GIAO DIỆN IDLE
- * Thanh tài nguyên có số chạy, thanh tu vi, dock nâng cấp nhanh, nút đột phá đại cảnh giới,
+ * Thanh tài nguyên có số chạy, thanh tu vi và nút đột phá đại cảnh giới,
  * hiệu ứng AFK, chấm thông báo trên tab, hiệu ứng tự động đột phá và đếm số cho popup bế quan.
  * Chỉ đọc trạng thái từ HU_UI; mọi thay đổi game đi qua data-act như các màn khác. */
 (function (root) {
@@ -9,7 +9,7 @@
   const F = H.F;
   const { $, esc, clamp, num, money, moneyHTML, pct, duration } = UI.kit;
 
-  const state = { built: false, prev: null, dock: '', stone: 0, shown: { stone: null, dao: null }, tweens: new Map(), coinTier: '' };
+  const state = { built: false, prev: null, stone: 0, shown: { stone: null, dao: null }, tweens: new Map(), coinTier: '' };
 
   const session = () => { try { return UI.s && UI.s().created ? UI.s() : null; } catch { return null; } };
   const game = () => { try { return UI.g(); } catch { return null; } };
@@ -30,13 +30,12 @@
 
     hud.append(mk('div', 'idle-chips', `
       <div class="idle-chip stone" id="chipStone" title="Linh thạch"><span class="chip-ico" id="chipStoneIco"></span><b id="chipStoneVal">0</b></div>
-      <div class="idle-chip rate" id="chipRate" title="Tu vi hấp thụ mỗi giây"><span class="chip-ico" aria-hidden="true">☯</span><b id="chipRateVal">+0/giây</b></div>
+      <div class="idle-chip rate" id="chipRate" title="Tốc độ hấp thụ linh khí mỗi giây"><span class="chip-ico" aria-hidden="true">☯</span><b id="chipRateVal">+0/giây</b></div>
       <div class="idle-chip dao" id="chipDao" title="Đạo vận"><span class="chip-ico" aria-hidden="true">✧</span><b id="chipDaoVal">0</b></div>`));
     hud.querySelector('.idle-chips').id = 'idleChips';
 
     const deck = mk('div', 'idle-deck', `
-      <button type="button" class="peak-cta" id="peakCta" data-act="break" hidden></button>
-      <div class="quick-dock" id="quickDock" role="group" aria-label="Nâng cấp nhanh"></div>`);
+      <button type="button" class="peak-cta" id="peakCta" data-act="break" hidden></button>`);
     deck.id = 'idleDeck';
     const bottom = scene.querySelector('.scene-bottom');
     scene.insertBefore(deck, bottom || null);
@@ -135,45 +134,6 @@
     }
   }
 
-  /* ---------- Dock nâng cấp nhanh ---------- */
-  function pills(s, effect) {
-    return Object.keys(s.bag).map(H.item).filter(x => x && x.kind === 'PILL' && x.effect === effect && x.tier <= s.realm + 1)
-      .sort((a, b) => b.tier - a.tier || b.sub - a.sub);
-  }
-
-  function dockHTML(s, g) {
-    const growth = (F.P && F.P.UP_GROWTH) || 1.15, owned = s.tech[1] - 1, base = g.upgradeBase(1), capped = owned >= 20;
-    const one = F.cost(base, growth, owned), peakFull = g.isPeakStage() && s.qi >= g.need();
-    const ten = Math.min(10, 20 - owned), tenCost = ten > 0 ? F.bulk_cost(base, growth, owned, ten) : Infinity;
-    const b = (label, count, cost) => `<button type="button" data-act="upgrade" data-index="1" data-count="${count}" ${capped || s.stone < cost ? 'disabled' : ''}>${label}</button>`;
-    const upgrade = `<div class="qd-card up"><div class="qd-top"><span class="qd-name">Tốc tu +2% <small>${owned}/20</small></span>
-      <span class="qd-price">${capped ? 'Tối đa' : moneyHTML(one)}</span></div>
-      <div class="qd-btns">${b('×1', 1, one)}${b('×10', 10, tenCost)}${b('Tối đa', 'max', one)}</div></div>`;
-
-    let coin = -1;
-    for (let i = 2; i >= 0; i--) if (F.COINS[i] && s.stone >= F.COINS[i][1]) { coin = i; break; }
-    const absorbOk = coin >= 0 && !peakFull;
-    const absorbGain = coin >= 0 ? F.absorb_exp(s.realm, coin, 1) : 0;
-    const absorb = `<div class="qd-card${coin < 0 ? ' empty' : ''}"><div class="qd-top"><span class="qd-name">Hấp thu</span>
-      <span class="qd-price">${coin >= 0 ? '1 ' + esc(F.COINS[coin][0]) : 'Thiếu linh thạch'}</span></div>
-      <button type="button" class="qd-one" data-act="absorb" data-index="${Math.max(coin, 0)}" ${absorbOk ? '' : 'disabled'}>${coin >= 0 ? '+' + num(absorbGain) + ' tu vi' : 'Hấp thu'}</button></div>`;
-
-    const pill = pills(s, 'TU_VI')[0];
-    const dan = pill
-      ? `<div class="qd-card"><div class="qd-top"><span class="qd-name">${esc(pill.name)}</span><span class="qd-price">×${g.count(pill.key)}</span></div>
-        <button type="button" class="qd-one" data-act="consume" data-code="${esc(pill.key)}" ${peakFull ? 'disabled' : ''}>Dùng đan</button></div>`
-      : `<div class="qd-card empty"><div class="qd-top"><span class="qd-name">Đan tu vi</span><span class="qd-price">Chưa có</span></div>
-        <button type="button" class="qd-one" data-go="craft:dan">Luyện đan</button></div>`;
-    return upgrade + absorb + dan;
-  }
-
-  function updateDock(s, g) {
-    const dock = $('quickDock');
-    if (!dock) return;
-    const html = dockHTML(s, g);
-    if (html !== state.dock) { state.dock = html; dock.innerHTML = html; }
-  }
-
   /* ---------- Chấm thông báo trên tab ---------- */
   function dot(id, on) {
     const btn = document.querySelector('#menu [data-window="' + id + '"]');
@@ -230,7 +190,6 @@
     if (!build()) return;
     updateChips(s, g);
     updateProgress(s, g);
-    updateDock(s, g);
     updateDots(s, g);
     const prev = state.prev;
     if (prev && prev.created === s.created && s.realm === prev.realm && s.stage > prev.stage) onAutoStage(s, g, s.stage - prev.stage);
