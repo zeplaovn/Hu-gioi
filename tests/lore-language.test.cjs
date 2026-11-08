@@ -28,7 +28,7 @@ test('bảng chiến đấu giữ mã đối thủ nội bộ nhưng dùng tên 
   const combat = read('client/ui/screens/combat.js');
   const adventure = read('client/ui/screens/adventures.js');
   assert.match(combat, /'boss': 'Thủ lĩnh', 'boss kiếp': 'Kiếp chủ'/);
-  assert.match(combat, /data-kind="${k}"/);
+  assert.ok(combat.includes('data-kind="${k}"'));
   assert.doesNotMatch(combat, /Tinh anh, boss và boss kiếp/);
   assert.match(adventure, /meter\('Linh lực', s\.mp/);
   assert.match(adventure, /'% linh lực'/);
