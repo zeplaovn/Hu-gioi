@@ -6,13 +6,19 @@
   const names = { spring: 'Xuân', summer: 'Hạ', autumn: 'Thu', winter: 'Đông' };
   const verses = { spring: 'Xuân hồi đại địa · vạn vật hồi sinh', summer: 'Hạ chí quang lâm · linh khí thịnh vượng', autumn: 'Thu phong khởi · lá vàng quy căn', winter: 'Đông tuyết giáng · vạn vật tĩnh tu' };
   let owner = null, previous = null, requested = '', displayed = '', generation = 0, announcementTimer = 0;
+  let combatWebpMissing = false;
 
   function describe(s) {
     const tick = Math.max(0, s.tick || 0);
     const season = seasons.includes(s.settings.season) ? s.settings.season : seasons[Math.floor(tick / 900) % 4];
     const phase = Math.floor(tick / 450) % 2 ? 'night' : 'day';
     const world = A.worldOf(s.zone);
-    return { season, phase, world, src: A.zoneBg(s.zone, season, phase) };
+    // Chỉ khi đang chiến đấu mới chuyển sang nền bí cảnh.
+    // Ảnh WebP được ưu tiên; PNG có sẵn là phương án dự phòng an toàn.
+    const isCombat = root.document?.getElementById('game')?.dataset?.stage === 'combat';
+    const src = isCombat ? (combatWebpMissing ? A.BG.combatFallback : A.BG.combat)
+      : A.zoneBg(s.zone, season, phase);
+    return { season, phase, world, src };
   }
 
   function update(s) {
@@ -52,7 +58,14 @@
       if (displayed && !UI.isReduced()) overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 1800, easing: 'ease-in-out' });
       displayed = next.src;
     };
-    image.onerror = () => { if (token === generation) requested = ''; };
+    image.onerror = () => {
+      if (token !== generation) return;
+      requested = '';
+      if (next.src === A.BG.combat && !combatWebpMissing) {
+        combatWebpMissing = true;
+        update(s); // File bi_canh.webp chưa có: dùng ngay ảnh bi_canh.png.
+      }
+    };
     image.src = next.src;
   }
   UI.environment = { describe, update };
