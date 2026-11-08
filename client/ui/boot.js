@@ -363,10 +363,11 @@
     UI.windows?.closeAll();
     UI.buildShell?.();
     const hash = String(root.location && root.location.hash || '').replace(/^#\/?/, '').split('/');
-    // Tải lại vẫn ở Bí cảnh nếu chuyến đi còn giờ; nếu đã hết,
-    // tự quay về đài thay vì khôi phục #combat từ phiên cũ.
-    const target = s.exploration?.active ? 'combat' : wasExploring ? 'idle' :
-      UI.screens[hash[0]] ? hash.filter(Boolean).join(':') : 'idle';
+    // Khôi phục trang người chơi đã chọn, kể cả khi đang lịch luyện.
+    // Nếu chuyến cũ đã kết thúc và trang trước là Lịch luyện thì về đài.
+    const requested = UI.screens[hash[0]] ? hash.filter(Boolean).join(':') : '';
+    const target = wasExploring && !s.exploration?.active && (!requested || requested === 'combat')
+      ? 'idle' : requested || (s.exploration?.active ? 'combat' : 'idle');
     UI.go(target, { silent: true });
     if (wasExploring) {
       try { root.history?.replaceState(null, '', '#' + target); } catch { /* file:// */ }
@@ -527,9 +528,9 @@
       const r = store.catchUp(now, true);
       store.write();
       if (wasExploring && !UI.s().exploration?.active) {
-        UI.go('idle');
+        if (UI.current === 'combat' || UI.windows.has('combat')) UI.go('idle');
         UI.toast('Lịch luyện viên mãn. Đạo thân đã trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
-      } else if (UI.s().exploration?.active) UI.go('combat', { silent: true });
+      }
       UI.refresh();
       if (r && r.seconds >= 20 && !r.died) {
         if ($('modalLayer').hidden && !UI.tutorial.active && !UI.intro.active && !UI.tribulation.active) showOfflineReport(r, before, awaySeconds);
