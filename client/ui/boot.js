@@ -421,7 +421,7 @@
       if (entering) return;
       if (store.locked) throw Error('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.');
       const saved = store.load();
-      if (!saved) throw Error('Không tìm thấy bản lưu hợp lệ.');
+      if (!saved) throw Error('Không tìm thấy hành trình đã ghi nhận.');
       store.replace(saved);
       start();
     }));
