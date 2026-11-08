@@ -43,12 +43,12 @@
   function boostCard() {
     const s = UI.s(), g = UI.g();
     const n = s.tech[1] - 1, one = F.cost(g.upgradeBase(1), 1.15, n), capped = n >= 20;
-    const upgrade = `<div class="boost-row"><div><b>Tốc tu +2% · ${n}/20</b><small>Giá một cấp ${moneyHTML(one)}</small></div>
+    const upgrade = `<div class="boost-row"><div><b>Tốc độ hấp thụ linh khí +2% · ${n}/20</b><small>Giá một cấp ${moneyHTML(one)}</small></div>
       <div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="1" data-count="${k}"`, capped || s.stone < one, 'btn-outline')).join('')}</div></div>`;
     const pills = [...pillsBy('TU_VI').slice(0, 2), ...pillsBy('BUFF_TOC').slice(0, 1)].map(x =>
-      `<div class="boost-row">${img(x.key, 'mini-img')}<div><b>${esc(x.name)} <em>×${g.count(x.key)}</em></b><small>${x.effect === 'TU_VI' ? 'Cộng thẳng tu vi' : 'Tăng tốc tu có thời hạn'}</small></div>${btn('Dùng', 'consume', codeAttr(x.key), false, 'btn-outline')}</div>`).join('');
+      `<div class="boost-row">${img(x.key, 'mini-img')}<div><b>${esc(x.name)} <em>×${g.count(x.key)}</em></b><small>${x.effect === 'TU_VI' ? 'Cộng thẳng tu vi' : 'Tăng tốc độ hấp thụ linh khí có thời hạn'}</small></div>${btn('Dùng', 'consume', codeAttr(x.key), false, 'btn-outline')}</div>`).join('');
     const coins = F.COINS.slice(0, 3).map(([name, value], i) => btn('Hấp thu 1 ' + coinLabel(name), 'absorb', `data-index="${i}"`, s.stone < value || s.qi >= g.need(), 'btn-outline')).join('');
-    return card('Tăng tốc tu luyện', upgrade + (pills || '<p class="info-note">Chưa có đan tăng tu vi trong túi. Mua ở Thế giới → Cửa hàng hoặc tự luyện ở Nghề phụ.</p>') + `<div class="action-group coin-row">${coins}</div>`, { eyebrow: 'NÂNG CẤP & ĐAN' });
+    return card('Tăng tốc độ hấp thụ linh khí luyện', upgrade + (pills || '<p class="info-note">Chưa có đan tăng tu vi trong túi. Mua ở Thế giới → Cửa hàng hoặc tự luyện ở Nghề phụ.</p>') + `<div class="action-group coin-row">${coins}</div>`, { eyebrow: 'NÂNG CẤP & ĐAN' });
   }
 
   function manualsCard() {
@@ -115,7 +115,7 @@
   });
   UI.action('upgrade', (el, d) => {
     const n = UI.command('upgrade', { index: Number(d.index), count: d.count === 'max' ? 'max' : Number(d.count) });
-    UI.toast('Đã nâng ' + n + ' cấp · tốc tu và chiến lực tăng.', { type: 'success', title: 'Nâng cấp' });
+    UI.toast('Đã nâng ' + n + ' cấp · tốc độ hấp thụ linh khí và chiến lực tăng.', { type: 'success', title: 'Nâng cấp' });
     UI.vfx?.effect('break');
     UI.vfx?.ring();
   });
