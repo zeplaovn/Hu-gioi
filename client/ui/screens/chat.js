@@ -84,12 +84,16 @@
     bubble.el.classList.add('drag-positioned');
     for (const [key, value] of Object.entries({ left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto' }))
       bubble.el.style.setProperty(key, value, 'important');
-    // Popup luôn mở về phía có đủ khoảng trống.
-    const panel = bubble.panel, right = x > width / 2, down = y < Math.min(300, height / 2);
-    panel.style.left = right ? 'auto' : '0';
-    panel.style.right = right ? '0' : 'auto';
+    // Giữ bảng truyền âm trong viewport ngay cả khi ngọc giản nằm giữa màn.
+    const panel = bubble.panel, panelWidth = Math.min(360, width - 28);
+    const absoluteLeft = Math.max(8, Math.min(width - panelWidth - 8, x + 28 - panelWidth / 2));
+    const below = Math.max(0, height - y - 70), above = Math.max(0, y - 8);
+    const down = below > above;
+    panel.style.left = (absoluteLeft - x) + 'px';
+    panel.style.right = 'auto';
     panel.style.top = down ? '65px' : 'auto';
     panel.style.bottom = down ? 'auto' : '65px';
+    panel.style.maxHeight = Math.max(80, Math.min(520, down ? below : above)) + 'px';
     if (persist) {
       try { root.localStorage?.setItem(POSITION_KEY, JSON.stringify({ x, y })); } catch { /* bảo vệ chế độ riêng tư */ }
     }
