@@ -7,6 +7,22 @@
   if (!H || !F || !A) throw new Error('Thiếu lõi game. Kiểm tra thứ tự thẻ script.');
   const UI = root.HU_UI = root.HU_UI || {};
 
+  // Tên chỉ số dùng thống nhất trên mọi màn. Chỉ đổi cách gọi, không sửa công thức.
+  UI.statNames = Object.freeze({
+    qi: 'Tu vi',
+    qiRate: 'Tốc độ hấp thụ linh khí',
+    hp: 'Sinh lực',
+    mp: 'Linh lực tối đa',
+    sta: 'Thể lực',
+    atk: 'Công kích',
+    def: 'Phòng thủ',
+    spd: 'Thân pháp',
+    cp: 'Chiến lực',
+    crit: 'Tỷ lệ bạo kích',
+    critDamage: 'Sát thương bạo kích',
+    dodge: 'Tỷ lệ né tránh'
+  });
+
   /* ======================================================================
      1. KIT
      ====================================================================== */
