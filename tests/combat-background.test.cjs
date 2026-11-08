@@ -39,7 +39,7 @@ function sandbox({ webpAvailable = true } = {}) {
   vm.runInNewContext(source, context, { filename: 'environment.js' });
   return { env: UI.environment, state: state(), requests, elements, A,
     mode: value => { elements.get('game').dataset.stage = value; },
-    flush: () => new Promise(resolve => setImmediate(resolve)) };
+    flush: async () => { await new Promise(resolve => setImmediate(resolve)); await new Promise(resolve => setImmediate(resolve)); } };
 }
 
 test('chiến đấu ưu tiên bi_canh.webp, không thay nền của tu luyện', async () => {
