@@ -1113,40 +1113,40 @@
 };
   const DUNGEONS = {
   "moc": {
-    "intro": "moc",
-    "boss": "Tuế Mộc Cổ Lâm phủ bóng lên những phiến đá cũ. Vòng tuổi cây già ghi lại những mùa biến động mà không một sử quan nào còn nhớ."
+    "intro": "Tuế Mộc Cổ Lâm phủ bóng lên những phiến đá cũ. Vòng tuổi cây già ghi lại những mùa biến động mà không một sử quan nào còn nhớ.",
+    "boss": "Cổ Mộc Yêu Vương thức dậy, cành già rung lên như muôn tiếng cảnh báo."
   },
   "thuy": {
-    "intro": "thuy",
-    "boss": "Mặc Uyên Hàn Đàm phẳng lặng đến mức phản chiếu những đám mây chưa tới. Bên dưới, thủy tộc vẫn canh giữ mạch linh tuyền cổ."
+    "intro": "Mặc Uyên Hàn Đàm phẳng lặng đến mức phản chiếu những đám mây chưa tới. Bên dưới, thủy tộc vẫn canh giữ mạch linh tuyền cổ.",
+    "boss": "Huyền Thủy Giao vươn mình khỏi đáy đầm, mặt nước dựng thành những lớp sóng lạnh."
   },
   "hoa": {
-    "intro": "hoa",
-    "boss": "Chu Nham Địa Quật rạn nứt bởi nham lưu. Bậc đá đen dẫn xuống như dấu chân những người thợ từng làm việc trong lò khổng lồ."
+    "intro": "Chu Nham Địa Quật rạn nứt bởi nham lưu. Bậc đá đen dẫn xuống như dấu chân những người thợ từng làm việc trong lò khổng lồ.",
+    "boss": "Xích Viêm Ma Sư bước qua tầng khói nóng, tiếng gầm át cả nham thạch."
   },
   "kim": {
-    "intro": "kim",
-    "boss": "Thiết Phong Kiếm Cốc đón người đến bằng gió sắc như đao. Trên vách dựng, những vết kiếm cổ vẫn chưa bị thời gian bào mòn."
+    "intro": "Thiết Phong Kiếm Cốc đón người đến bằng gió sắc như đao. Trên vách dựng, những vết kiếm cổ vẫn chưa bị thời gian bào mòn.",
+    "boss": "Kim Giáp Kiếm Linh dựng kiếm giữa luồng gió, im lặng chờ kẻ vượt cảnh."
   },
   "tho": {
-    "intro": "tho",
-    "boss": "Hậu Thổ Trầm Cung ngủ sâu dưới tầng đất hóa đá. Phù văn trên cột vẫn nguyên dù hành lang đã nghiêng lệch từ lâu."
+    "intro": "Hậu Thổ Trầm Cung ngủ sâu dưới tầng đất hóa đá. Phù văn trên cột vẫn nguyên dù hành lang đã nghiêng lệch từ lâu.",
+    "boss": "Hậu Thổ Khôi Vương chuyển mình, tiếng đá chạm nhau vọng khắp cung điện chôn sâu."
   },
   "ma": {
-    "intro": "ma",
-    "boss": "Táng Nguyệt Ma Uyên sâu đến mức không nghe tiếng chim bay. Ma khí không thuộc ngũ hành khiến phương hướng cũng khó phân biệt."
+    "intro": "Táng Nguyệt Ma Uyên sâu đến mức không nghe tiếng chim bay. Ma khí không thuộc ngũ hành khiến phương hướng cũng khó phân biệt.",
+    "boss": "Cửu U Ma Chủ hiện thân trước vực tối, lời nói trầm như từ muôn tầng đất vọng lên."
   },
   "loi": {
-    "intro": "loi",
-    "boss": "Lôi Văn Phế Điện còn in những dấu cháy từ nghìn năm. Thiên lôi vẫn tìm tới các hoa văn đứt gãy như muốn hoàn thành điều dang dở."
+    "intro": "Lôi Văn Phế Điện còn in những dấu cháy từ nghìn năm. Thiên lôi vẫn tìm tới các hoa văn đứt gãy như muốn hoàn thành điều dang dở.",
+    "boss": "Lôi Đình Cổ Thú mở mắt dưới mái điện, tiếng chân khiến thạch trụ rung chuyển."
   },
   "tien": {
-    "intro": "tien",
-    "boss": "Thái Sơ Tàng Phủ cất giữ những trang bia đá chưa được đọc hết. Sau từng cánh cửa là dấu tích của những người đi trước."
+    "intro": "Thái Sơ Tàng Phủ cất giữ những trang bia đá chưa được đọc hết. Sau từng cánh cửa là dấu tích của những người đi trước.",
+    "boss": "Thủ Hộ Tiên Linh đứng trước bậc thềm, ra hiệu rằng kẻ đến phải tự bước tiếp."
   },
   "kiephai": {
-    "intro": "kiephai",
-    "boss": "Vạn Kiếp Độ Hải không có bến đò; giữa sóng lôi chỉ những cột đá cũ nhắc đã từng có người thử vượt qua."
+    "intro": "Vạn Kiếp Độ Hải không có bến đò; giữa sóng lôi chỉ những cột đá cũ nhắc đã từng có người thử vượt qua.",
+    "boss": "Thiên Môn Kiếp Chủ đón người vượt biển trước cửa thiên môn, tiếng nói hòa với lôi đình."
   }
 };
   const ENCOUNTERS = {
