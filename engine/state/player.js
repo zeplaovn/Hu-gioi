@@ -1,4 +1,4 @@
-/* Trạng thái người chơi (schema V7), khởi tạo và chuyển bản lưu V4–V7.
+/* Trạng thái người chơi (schema V8), khởi tạo và chuyển bản lưu V4–V8.
    Chỉ phụ thuộc data/; game.js truyền lớp Game vào normalize để tránh import vòng. */
 (function (root) {
   'use strict';
@@ -9,14 +9,21 @@
   const A = node ? require('../../data/adventures.js') : root.HU_ADVENTURE_DATA;
   const DESIGN = node ? require('../../data/design.js') : root.HU_DESIGN;
   const social = node ? require('../../data/social.js') : root.HU_SOCIAL_DATA;
+  const STORY = node ? require('../../data/story.js') : root.HU_STORY_DATA;
   const { RACES, LEGACY_RACES, TALENT_INFO, TALENT_MAX, META_UPGRADES, META_ACHIEVEMENTS, rootType } = C;
   const { item, pill } = D;
   const { ELEMENT_NAMES, DUNGEONS, SECTS, SECT_MISSIONS, ENCOUNTERS } = A;
-  const VERSION = 7, SUPPORTED_VERSIONS = Object.freeze([4, 5, 6, 7]), MAX = 1e100;
+  const VERSION = 8, SUPPORTED_VERSIONS = Object.freeze([4, 5, 6, 7, 8]), MAX = 1e100;
   const finite = (v, fallback = 0, max = MAX) => Number.isFinite(Number(v)) ? Math.max(0, Math.min(max, Number(v))) : fallback;
   const integer = (v, fallback = 0, max = 1e9) => Math.floor(finite(v, fallback, max));
   const uniq = xs => [...new Set(xs)];
   const object = v => !!v && typeof v === 'object' && !Array.isArray(v);
+  const storyDefault = () => ({ read: {}, flags: {} });
+  const storyEntries = [
+    ...STORY.ACTS.flatMap(a => a.chapters),
+    ...Object.values(STORY.NPCS).flatMap(tiers => Object.values(tiers))
+  ];
+  const storyById = Object.fromEntries(storyEntries.map(entry => [entry.id, entry]));
 
   const initialBag = () => ({
     [pill(2)]: 4, [pill(1)]: 3, [pill(7)]: 1,
@@ -75,7 +82,7 @@
       claimed: [], locations: [0], npcAffinities: {}, npcQuests: {},
       auction: { offers: {}, cycle: Math.floor(now / 3600000) },
       social: { friends: {}, pvp: { rating: 1000, wins: 0, losses: 0, streak: 0, best: 1000, lastAt: 0 }, lastDiscuss: 0 },
-      meta: metaDefault(), designCombat: designCombatDefault(),
+      meta: metaDefault(), story: storyDefault(), designCombat: designCombatDefault(),
       settings: {
         reducedMotion: false, motionMode: 'auto', season: 'auto', seasonEffects: true,
         cultivationEffects: true, combatEffects: true, music: true, musicVolume: 40, musicTrack: 'auto'
@@ -345,6 +352,13 @@
       const base = v.base !== null && Number.isFinite(Number(v.base)) ? finite(v.base, 0, 1e15) : null;
       x.npcQuests[id] = { step, base: step < steps.length && base !== null && base <= x.progress.kill ? base : null };
     }
+
+    /* Chỉ khôi phục ID và lựa chọn được định nghĩa trong dữ liệu: bản lưu không thể đưa cờ tùy ý vào game. */
+    x.story = storyDefault();
+    if (object(raw.story?.read)) for (const [id, seen] of Object.entries(raw.story.read))
+      if (Object.hasOwn(storyById, id) && seen === true) x.story.read[id] = true;
+    if (object(raw.story?.flags)) for (const [id, option] of Object.entries(raw.story.flags))
+      if (storyById[id]?.choices?.some(choice => choice.id === option)) x.story.flags[id] = option;
 
     x.meta = normalizeMeta(raw.meta, now);
     x.auction.cycle = integer(raw.auction?.cycle, x.auction.cycle, x.auction.cycle);
