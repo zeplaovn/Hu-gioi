@@ -31,14 +31,14 @@
   function chanceCard() {
     const s = UI.s(), g = UI.g();
     return card('Xác suất đột phá', `
-      <div class="trib-chance-line"><b id="tribPrepChance">${pct(g.chance())}</b><span id="tribPrepChanceNote">trần 98%</span></div>
+      <div class="trib-chance-line"><b id="tribPrepChance">${pct(g.chance())}</b><span id="tribPrepChanceNote">giới hạn 98%</span></div>
       ${row('Xác suất hiện tại', pct(g.chance()))}
-      ${row('Bảo hiểm thất bại', s.pity + '/15')}${bar(s.pity / 15 * 100)}
-      ${row('Điểm hỗ trợ đan', num(s.breakBonus))}
+      ${row('Kiếp vận tích lũy', s.pity + '/15')}${bar(s.pity / 15 * 100)}
+      ${row('Trợ lực từ đan dược', num(s.breakBonus))}
       ${row('Chúc phúc tông môn', s.sect.blessing ? '+10%' : 'Chưa bật')}
       ${row('Hệ số chịu kiếp của linh căn', '×' + (F.LINH_CAN_TRIB[s.rootType] || 1))}
-      ${g.chaosChance() > 0 ? row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) + `<p class="info-note">Linh căn ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp. Vận Khí và bảo hiểm tăng tỉ lệ.</p>` : ''}
-      <p class="info-note">Thất bại mất 15% tu vi và tăng 1 điểm bảo hiểm lần sau (tối đa 15 lần). Trần xác suất 98% (Vận Khí cộng thêm sau ngưỡng 95%).</p>`, { eyebrow: 'TỈ LỆ' });
+      ${g.chaosChance() > 0 ? row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) + `<p class="info-note">Linh căn ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp. Vận Khí và kiếp vận tích lũy tăng cơ hội.</p>` : ''}
+      <p class="info-note">Thất bại hao tổn 15% tu vi nhưng tích thêm 1 bậc kiếp vận cho lần đột phá sau (tối đa 15 bậc). Xác suất không vượt quá 98%; Vận Khí vẫn hỗ trợ khi xác suất đã đạt 95%.</p>`, { eyebrow: 'TỈ LỆ' });
   }
 
   function defenseCard() {
@@ -63,17 +63,15 @@
   }
 
   function minorCard() {
-    const s = UI.s(), g = UI.g(), chance = g.chance();
-    return card('Tiểu cảnh giới · đột phá tại chỗ', `
+    const s = UI.s(), g = UI.g();
+    return card('Tiểu cảnh giới · tu vi viên mãn', `
       <div class="trib-minor-head">
         <div><span class="eyebrow">KHÔNG LÔI KIẾP</span><h3>${esc(stageName(s.realm, s.stage))} → ${esc(stageName(s.realm, s.stage + 1))}</h3></div>
-        <div class="chance-ring small" style="--p:${(chance * 100).toFixed(1)}%"><b>${pct(chance)}</b><small>xác suất</small></div>
       </div>
-      <p>Tầng nhỏ không triệu hồi lôi kiếp. Đột phá dựa hoàn toàn vào xác suất; thất bại mất 15% tu vi và tăng bảo hiểm. Kết quả được ghi thẳng vào nhật ký thông báo.</p>
+      <p>Khi tu vi viên mãn, đạo thân tự vượt qua bình cảnh tiểu cảnh giới, không phải chịu lôi kiếp. Chỉ khi đột phá đại cảnh giới mới cần bước lên Độ kiếp đài.</p>
       ${row('Tu vi', '<span id="tribMinorQi">' + num(s.qi) + ' / ' + num(g.need()) + '</span>')}${bar(Math.min(100, s.qi / g.need() * 100), '', 'tribMinorQiFill')}
-      ${row('Bảo hiểm', s.pity + '/15')}
-      <div class="action-group">${btn('Đột phá tầng', 'break', '', s.qi < g.need())}<button class="btn btn-outline" data-go="idle">Về tu luyện</button></div>
-      <p class="info-note">Đại cảnh giới kế tiếp mới mở Độ kiếp đài với lôi kiếp và hộ kiếp đầy đủ.</p>`, { eyebrow: 'TIỂU CẢNH GIỚI', cls: 'wide' });
+      <div class="action-group">${btn('Đột phá tiểu cảnh', 'break', '', s.qi < g.need())}<button class="btn btn-outline" data-go="idle">Về tu luyện</button></div>
+      <p class="info-note">Đạo cơ cần tích đủ tu vi để tiến sang tầng kế tiếp.</p>`, { eyebrow: 'TIỂU CẢNH GIỚI', cls: 'wide' });
   }
 
   function completedCard() {
@@ -96,7 +94,7 @@
     const c = UI.g().chance();
     el.textContent = pct(c);
     const note = $('tribPrepChanceNote');
-    if (note) note.textContent = c >= .98 ? 'đã chạm trần' : 'trần 98%';
+    if (note) note.textContent = c >= .98 ? 'đã đạt giới hạn' : 'giới hạn 98%';
   }
 
   function request() {
