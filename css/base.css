@@ -1,10 +1,10 @@
 /* ===== HƯ GIỚI · nền tảng ===== */
 :root{
   /* Bảng màu "sơn mài": nền nâu đen như hộp sơn mài, chữ giấy dó, đồng thau cổ, điểm nhấn ấn chu sa. */
-  --bg:#130e0b; --bg2:#0d0907; --panel:#1c1511; --panel2:#271d17; --panel3:#352920;
+  --bg:#130e0b; --panel:#1c1511;
   --line:#4d3b2e; --line2:#5a4636; --text:#f0e6d0; --muted:#b8a58d; --dim:#b8a58d;
-  --gold:#dcaa63; --gold2:#a9783a; --jade:#8fc7a4; --cyan:#dcbc8e; --danger:#ff8d7a;
-  --inset:#0e0a08; --hover:#352920; --off:#5e5145; --green:#8fc7a4; --red:#ff8d7a; --orange:#ecad72;
+  --gold:#dcaa63; --jade:#8fc7a4; --cyan:#dcbc8e; --danger:#ff8d7a;
+  --inset:#0e0a08;
   --seal:#c8452e; --seal-deep:#9b2f1c; --paper:#f6ead2;
   --bar-hp:#d9705e; --bar-mp:#5aa3b8; --bar-qi:#7fb98f; --bar-age:#d1a14f; --bar-job:#7aa987;
   --shadow:0 10px 30px #0007;
@@ -66,27 +66,19 @@ h1,h2,h3{font-family:var(--serif);line-height:1.15}
 .btn-sm{padding:7px 10px;font-size:14px;border-radius:8px}
 .text-btn{border:0;background:transparent;color:#e1cba4;padding:2px 4px;font-size:14px;font-weight:700}
 .text-btn:hover{color:var(--gold)}
-.icon-btn{width:42px;height:42px;border-radius:11px;border:1px solid #5c4135;background:#231813d9;color:#e6dfd8;font-size:22px;display:grid;place-items:center}
-.icon-btn:hover{border-color:var(--gold);color:var(--gold)}
-
 /* ===== form ===== */
 input,select,textarea{color:var(--text);background:#1c1410;border:1px solid #533b31;border-radius:9px;padding:10px 12px;min-width:0}
 input::placeholder{color:#93816f}
 select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#b3a08c 50%),linear-gradient(135deg,#b3a08c 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}
 label{color:#d1c4b8;font-size:14px}
-.field{display:flex;flex-direction:column;gap:7px}
-.field .input-label{font-size:12.5px;font-weight:800;letter-spacing:.15em;color:#bdab99}
+.field{gap:7px}
 .name-note{color:var(--danger);font-size:13px;margin-top:2px}
-.segmented{display:flex;background:#211713;border:1px solid #533d34;border-radius:9px;padding:4px}
-.segmented button{flex:1;border:0;background:transparent;color:#c0af9d;border-radius:7px;padding:8px;font-weight:750}
-.segmented button.active{background:#47342c;color:var(--gold);box-shadow:inset 0 0 0 1px #6c623e}
-.dice{width:42px;height:42px;flex:0 0 auto;border:1px solid #584035;background:#2d201a;color:var(--gold);border-radius:9px;font-size:20px;display:grid;place-items:center}
+.dice{color:var(--gold);font-size:20px}
 .dice:hover{border-color:var(--gold)}
 
 /* ===== thanh & thẻ ===== */
-.meter-bar{height:8px;border:1px solid #594339;background:#16100d;border-radius:8px;overflow:hidden}
+.meter-bar{border:1px solid #594339;background:#16100d;border-radius:8px;overflow:hidden}
 .meter-bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3ca8ba,#ffcf5a);transition:width .35s}
-.meter-bar.qi{height:12px}
 .meter-bar.hp>i{background:linear-gradient(90deg,#d95443,#ff9a7f)}
 .meter-bar.mp>i{background:linear-gradient(90deg,#347fc0,#dabf90)}
 .meter-bar.job>i{background:linear-gradient(90deg,#7fbf6a,#d7cf62)}
@@ -131,7 +123,6 @@ label{color:#d1c4b8;font-size:14px}
 /* ===== bố cục ===== */
 .app{min-height:100dvh;max-width:1600px;margin:auto;padding:0 0 calc(88px + env(safe-area-inset-bottom));position:relative}
 .stage{outline:0;padding:14px 18px 26px;min-height:60vh}
-.screen{animation:screenIn .22s ease-out}
 .screen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:13px;margin-top:13px;align-items:start}
 .screen-grid>.wide{grid-column:1/-1}
 @media(max-width:600px){.stage{padding:10px 10px 20px}.card{padding:14px}.screen-grid{gap:10px}}
@@ -164,11 +155,6 @@ body.modal-open{overflow:hidden}
 .modal-pending::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#e3ceab,#e6c164,transparent);background-size:220% 100%;animation:busyBar 1.2s linear infinite}
 @keyframes busyPulse{50%{filter:drop-shadow(0 0 26px #e6d3b3);transform:scale(1.06)}}
 @keyframes busyBar{to{background-position:-220% 0}}
-.reward-table{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0;text-align:left}
-.reward-table div{background:#31221c;border:1px solid #563c31;border-radius:10px;padding:11px}
-.reward-table b{color:var(--gold);display:block;font:700 22px var(--serif)}
-.reward-table span{font-size:13px;color:#baa794}
-
 /* chồng thông báo */
 .toasts{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:120;display:flex;flex-direction:column;align-items:flex-end;gap:8px;width:min(380px,calc(100vw - 24px));max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;pointer-events:none}
 .toast-item{position:relative;pointer-events:auto;display:flex;align-items:flex-start;gap:10px;width:100%;padding:11px 12px 13px;border:1px solid #5c4135;border-top:2px solid var(--gold);border-radius:11px;background:linear-gradient(135deg,#2c1f19f2,#1b130fe8);box-shadow:0 10px 30px #0009;backdrop-filter:blur(10px);opacity:0;transform:translateY(10px) scale(.98);transition:opacity .22s,transform .22s;overflow:hidden;cursor:pointer}
@@ -209,7 +195,7 @@ body.modal-open{overflow:hidden}
   .toast-item{width:100%}
   body.in-tribulation .toasts{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px)}
 }
-@media(max-width:600px){.game-modal{padding:28px 18px 24px}.reward-table{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.game-modal{padding:28px 18px 24px}}
 @media(max-height:560px) and (orientation:landscape){
   .toasts{right:calc(env(safe-area-inset-right,0px) + 122px);bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
 }
@@ -222,8 +208,6 @@ body.modal-open{overflow:hidden}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes flash{0%,100%{opacity:0}12%,26%{opacity:.9}20%{opacity:.25}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
 /* ===== THANH TIẾN ĐỘ (theo Hu-gioi): nền lõm, viền màu theo loại, ruột phẳng độ đục .88, chữ nằm giữa thanh ===== */
 .meter-bar,.status-progress .bar,.vital-row .meter{position:relative;background:var(--inset);border:1px solid var(--c,var(--bar-job));border-radius:4px;overflow:hidden}
 .meter-bar>i,.status-progress .bar>i,.vital-row .meter>i{background:var(--c,var(--bar-job));opacity:.88;transition:width .35s}

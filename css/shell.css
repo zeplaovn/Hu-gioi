@@ -22,33 +22,32 @@ body.in-game{overflow:hidden}
 #stage{grid-area:stage}
 #logPanel{grid-area:log}
 #menu{grid-area:menu;z-index:40;position:relative}
-#game .box{background:var(--panel);border:1px solid var(--line);border-radius:10px;min-width:0;min-height:0}
+#game .box{background:var(--panel);border:1px solid var(--line);min-width:0;min-height:0}
 
 /* ===== CỘT TRẠNG THÁI ===== */
 #status{padding:12px;display:flex;flex-direction:column;gap:9px;overflow:auto;scrollbar-width:thin}
 .status-head{display:flex;align-items:center;gap:10px;min-width:0}
-.status-avatar{width:50px;height:56px;flex:0 0 auto;padding:0;border:1px solid #7f6b33;border-radius:9px;background:#281c16;overflow:hidden}
+.status-avatar{width:50px;height:56px;flex:0 0 auto;padding:0;border:1px solid #7f6b33;overflow:hidden}
 .status-avatar img{width:100%;height:100%;object-fit:contain;display:block}
 .status-title{min-width:0}
-.status-title h2{font:700 22px/1.2 var(--serif);color:var(--text);margin:2px 0 0;overflow-wrap:anywhere}
+.status-title h2{font:700 22px/1.2 var(--serif);color:var(--text);margin:2px 0 0}
 .status-title .eyebrow{font-size:11.5px}
-#playerRoot{color:#e6d4b4;text-shadow:0 1px 2px #000a}
 #playerRealm{color:#f4e4b8;text-shadow:0 1px 2px #000a}
 .char-header h2{text-shadow:0 1px 2px #000a}
-.status-name{font-size:14px;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:1px 0 0}
+.status-name{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:1px 0 0}
 .status-place{font-size:13px;color:var(--dim);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status-progress{display:block;width:100%;border:0;background:transparent;color:var(--text);padding:0;text-align:left;cursor:pointer;border-radius:6px}
 .status-progress:hover .bar{border-color:var(--gold)}
-.status-progress-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--dim);margin-bottom:3px}
+.status-progress-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;margin-bottom:3px}
 .status-progress-head b{color:var(--gold);font-size:13px}
-.status-progress .bar{height:12px;background:#16100d;border:1px solid #594339;border-radius:7px;overflow:hidden;display:block}
+.status-progress .bar{background:#16100d;border:1px solid #594339;border-radius:7px;overflow:hidden;display:block}
 .status-progress .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8a6d2b,var(--gold));transition:width .35s}
 .status-exp{display:block;font-size:12.5px;color:#c0b09f;text-align:right;margin-top:2px;font-variant-numeric:tabular-nums}
 .status-vitals{display:grid;gap:5px;min-width:0}
-.vital-row{display:grid;grid-template-columns:68px minmax(0,1fr) auto;align-items:center;gap:6px;min-width:0;font-size:12.5px;color:var(--dim)}
-.vital-row .vital-label{font-weight:750;color:#f0a091;letter-spacing:.01em;white-space:nowrap}
+.vital-row{display:grid;grid-template-columns:68px minmax(0,1fr) auto;align-items:center;min-width:0;font-size:12.5px;color:var(--dim)}
+.vital-row .vital-label{font-weight:750;color:#f0a091;letter-spacing:.01em}
 .vital-row:nth-child(2) .vital-label{color:#dcc295}
-.vital-row .meter{height:7px;border:1px solid #4b3c35;background:#0b0806;border-radius:12px;overflow:hidden;min-width:0}
+.vital-row .meter{border:1px solid #4b3c35;background:#0b0806;overflow:hidden;min-width:0}
 .vital-row .meter i{display:block;height:100%;width:0;transition:width .4s}
 .vital-row .meter i.hp{background:linear-gradient(90deg,#ed624b,#ff997d)}
 .vital-row .meter i.mp{background:linear-gradient(90deg,#3684bf,#dbc194)}
@@ -63,13 +62,13 @@ body.in-game{overflow:hidden}
 .status-talent meter{grid-column:2 / 4;width:100%;height:6px;appearance:none;border:0;border-radius:5px;background:#18110e;overflow:hidden}
 .status-talent meter::-webkit-meter-bar{background:#18110e;border:0}.status-talent meter::-webkit-meter-optimum-value{background:linear-gradient(90deg,#6d5a46,#86dfb7)}.status-talent meter::-moz-meter-bar{background:#86dfb7}
 .vital-row small{font-size:11.5px;line-height:1.2;color:#c0b09f;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-#status .info{display:flex;flex-direction:column;gap:4px;min-width:0}
+#status .info{display:flex;flex-direction:column;min-width:0}
 #status .row{display:flex;justify-content:space-between;gap:8px;color:var(--dim);font-size:13.5px;line-height:1.45}
 #status .row>span{flex:none;white-space:nowrap}
 #status .row b{color:var(--text);font-weight:650;text-align:right;overflow-wrap:anywhere}
-.btn-break{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:52px;border:1px solid #8f7535;border-radius:10px;background:linear-gradient(160deg,#3a2f12,#241d0b);color:var(--gold);font-weight:800;font-size:16px;padding:6px 10px;box-shadow:inset 0 0 20px #0006}
+.btn-break{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:52px;border:1px solid #8f7535;font-weight:800;font-size:16px;padding:6px 10px;box-shadow:inset 0 0 20px #0006}
 .btn-break small{font-size:11.5px;font-weight:600;color:#c9b985;letter-spacing:.03em}
-.btn-break:not(:disabled):hover{border-color:var(--gold);background:#4a3b17}
+.btn-break:not(:disabled):hover{border-color:var(--gold)}
 .btn-break.ready{animation:pulse 1.6s ease-in-out infinite}
 .btn-break:disabled{opacity:.55;filter:grayscale(.35)}
 .status-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:4px;border-top:1px solid #412d24}
@@ -82,16 +81,15 @@ body.in-game{overflow:hidden}
 #game:not([data-layout="wide"]) .status-progress{grid-column:1;grid-row:2}
 #game:not([data-layout="wide"]) .status-vitals{grid-column:1;grid-row:3;gap:2px}
 #game:not([data-layout="wide"]) .vital-row{grid-template-columns:70px minmax(0,1fr) auto;gap:4px;font-size:11.5px}
-#game:not([data-layout="wide"]) .vital-row .meter{height:6px}
 #game:not([data-layout="wide"]) .vital-row small{font-size:11px}
 #game:not([data-layout="wide"]) .status-talents{grid-column:1 / -1;grid-row:4;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:5px 0;margin-top:3px}
-#game:not([data-layout="wide"]) .status-talent{grid-template-columns:1fr auto;gap:2px;font-size:11px}
+#game:not([data-layout="wide"]) .status-talent{grid-template-columns:1fr auto;gap:2px}
 #game:not([data-layout="wide"]) .status-talent img{display:none}
 #game:not([data-layout="wide"]) .status-talent meter{grid-column:1 / -1}
 #game:not([data-layout="wide"]) .info{grid-column:1 / -1;grid-row:5;display:flex;flex-direction:row;flex-wrap:wrap;gap:1px 12px}
 #game:not([data-layout="wide"]) .info .row{gap:4px;font-size:12.5px;line-height:1.35}
 #game:not([data-layout="wide"]) .status-place{display:none}
-#game:not([data-layout="wide"]) .btn-break{grid-column:2;grid-row:1 / span 3;align-self:center;width:auto;min-width:90px;min-height:50px;padding:4px 8px;font-size:14.5px}
+#game:not([data-layout="wide"]) .btn-break{grid-column:2;grid-row:1 / span 3;align-self:center;width:auto;min-height:50px;padding:4px 8px;font-size:14.5px}
 #game:not([data-layout="wide"]) .btn-break small{font-size:11.5px}
 #game:not([data-layout="wide"]) .status-foot{display:none}
 #game:not([data-layout="wide"]) .status-avatar{width:32px;height:38px}
@@ -99,18 +97,17 @@ body.in-game{overflow:hidden}
 #game:not([data-layout="wide"]) .status-title h2{font-size:17px;margin:0}
 #game:not([data-layout="wide"]) .status-name{font-size:13px}
 #game:not([data-layout="wide"]) .status-progress-head{font-size:12px;margin-bottom:2px}
-#game:not([data-layout="wide"]) .status-progress .bar{height:9px}
 #game:not([data-layout="wide"]) .status-exp{display:none}
 
 /* ===== SÂN KHẤU ===== */
 #stage{position:relative;overflow:hidden;background:#140e0b;padding:0;min-height:0;border-radius:10px}
 #stage .scene{position:absolute;inset:0;height:auto;min-height:0;border:0;border-radius:0;box-shadow:none;background:#140e0b}
 .stage-scene .scene-bg{position:absolute;inset:0;background-position:center 38%;background-size:cover;background-repeat:no-repeat;filter:saturate(1.05);transition:background-image .4s}
-.stage-scene .scene-shade{position:absolute;inset:0;background:linear-gradient(180deg,#120c0aa8 0%,transparent 25%,#130d0a08 52%,#140e0cc7 90%,#140e0c 100%),linear-gradient(90deg,#120c0a66,transparent 32%,#140e0b3b)}
-.stage-hud{position:absolute;top:10px;left:12px;right:12px;z-index:5;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none}
+.stage-scene .scene-shade{position:absolute;inset:0}
+.stage-hud{position:absolute;z-index:5;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none}
 .stage-hud>*{pointer-events:auto}
 .stage-tag,.stage-rate{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px;background:#1a120ed9;border:1px solid #5c4034;color:#ddd4cb;font-size:13px;backdrop-filter:blur(7px);white-space:nowrap}
-.stage-rate{color:var(--gold);font-weight:700}
+.stage-rate{font-weight:700}
 .stage-weather{padding:6px 9px;border:1px solid #bba76a55;border-radius:8px;background:#221813d9;color:#ecdbac;font-size:12px;white-space:nowrap}
 .stage-scene .scene-transition{opacity:0;pointer-events:none;transition:none}
 .season-announcement{position:absolute;z-index:6;top:22%;left:50%;transform:translateX(-50%);width:max-content;max-width:90%;padding:14px 24px;border-block:1px solid #e6c16477;background:linear-gradient(90deg,transparent,#150f0ced 15%,#150f0ced 85%,transparent);font:500 clamp(16px,2vw,23px)/1.6 var(--serif);color:#f2dfad;text-align:center;pointer-events:none;text-shadow:0 2px 8px #000}
@@ -127,7 +124,7 @@ body.in-game{overflow:hidden}
 #stage .enemy-wrap img{width:145px;height:130px;object-fit:contain;filter:drop-shadow(0 0 10px #c7825659);animation:float 3.6s ease-in-out infinite}
 #stage .enemy-label{font:700 15px var(--serif);white-space:nowrap;text-shadow:0 1px 8px #000;color:#f7f4ee;text-align:center}
 #stage .enemy-label span{color:var(--gold);font:700 12.5px var(--font)}
-#stage .enemy-health{height:7px;border:1px solid #7a4241;background:#110c09;border-radius:8px;overflow:hidden;width:140px;margin-top:6px}
+#stage .enemy-health{border:1px solid #7a4241;background:#110c09;overflow:hidden;width:140px;margin-top:6px}
 #stage .enemy-health i{display:block;height:100%;width:100%;background:#de5946;transition:width .3s}
 #game[data-stage="combat"] .hero-wrap{left:32%;bottom:23%}
 #game[data-stage="combat"] .enemy-wrap{left:64%}
@@ -152,14 +149,13 @@ body.in-game{overflow:hidden}
 #stage .mode-switch{padding:4px}
 #stage .mode-switch button{padding:7px 10px;font-size:13px}
 #stage .idle-aura{left:50%;bottom:20%}
-#stage .idle-quote{left:18px;bottom:16px;max-width:min(320px,calc(50% - 100px))}
+#stage .idle-quote{max-width:min(320px,calc(50% - 100px))}
 #game[data-layout="portrait"] #stage .hero-wrap{--hero-unit:clamp(125px,29vmin,160px);bottom:25%}
 #game[data-layout="portrait"][data-stage="combat"] #stage .hero-wrap{left:29%}
 #game[data-layout="portrait"] #stage .enemy-wrap{left:60%;bottom:30%;transform:scale(.82);transform-origin:bottom center}
 #game[data-layout="portrait"] #stage .scene-bottom{left:10px;right:10px;bottom:10px;flex-direction:column;align-items:stretch;gap:6px}
 #game[data-layout="portrait"] #stage .vitals{width:100%;max-width:100%}
 #game[data-layout="portrait"] #stage .stage-mode{align-self:flex-end}
-#game[data-layout="portrait"] #stage .idle-quote{display:none}
 #game[data-layout="portrait"] #stage .hero-name{font-size:12.5px;bottom:-14px}
 #game[data-layout="portrait"] #stage .enemy-label{font-size:13px;white-space:normal;max-width:150px;line-height:1.25}
 #game[data-layout="portrait"] #stage .enemy-label b,#game[data-layout="portrait"] #stage .enemy-label span{display:block}
@@ -171,20 +167,17 @@ body.in-game{overflow:hidden}
 
 /* ===== MENU ===== */
 #menu{display:flex;gap:6px;padding:6px;overflow:hidden}
-#game[data-layout="portrait"] #menu{flex-direction:row;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
-#game[data-layout="portrait"] #menu::-webkit-scrollbar{display:none}
+#game[data-layout="portrait"] #menu{flex-direction:row;overflow-x:auto;overflow-y:hidden}
 #game:not([data-layout="portrait"]) #menu{flex-direction:column;overflow-y:auto;overflow-x:hidden}
-#menu button{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;padding:5px 6px;min-height:52px;min-width:48px;border:1px solid transparent;border-radius:8px;background:transparent;color:#c8bbae;font-weight:650}
+#menu button{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;padding:5px 6px;min-height:52px;min-width:48px;border:1px solid transparent;background:transparent;font-weight:650}
 #menu button img{width:30px;height:30px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 1px 2px #000)}
 #menu button .ico{font-size:24px;line-height:1}
-#menu button:hover{color:var(--gold);background:#ffffff08}
-#menu button.on{border-color:var(--gold);background:#3a2f12;color:var(--gold)}
+#menu button:hover{color:var(--gold)}
 #menu button.on img{filter:drop-shadow(0 0 5px #e6c16488)}
 #menu .badge{position:absolute;top:2px;right:5px;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:#6c5945;color:#fff;font:700 11.5px/17px var(--font);font-style:normal;text-align:center}
 #menu .badge.hot{background:#d9532f;animation:pulse 1.4s ease-in-out infinite}
 #game[data-layout="portrait"] #menu{gap:2px;padding:4px}
-#game[data-layout="portrait"] #menu button{flex:1 1 0;min-width:0;font-size:11px;letter-spacing:-.2px;padding:3px 0 2px;min-height:54px;gap:1px}
-#game[data-layout="portrait"] #menu button img{width:25px;height:25px}
+#game[data-layout="portrait"] #menu button{min-width:0;font-size:11px;letter-spacing:-.2px;padding:3px 0 2px;gap:1px}
 #game[data-layout="portrait"] #menu button span{max-width:100%;overflow:hidden;text-overflow:clip;white-space:normal;line-height:1.05;text-align:center}
 #game[data-layout="landscape"] #menu{gap:3px;padding:4px}
 #game[data-layout="landscape"] #menu button{flex:1 1 0;min-height:0;padding:2px 4px;font-size:12px;gap:1px}
@@ -216,10 +209,10 @@ body.in-game{overflow:hidden}
 
 /* ===== NHẬT KÝ THÔNG BÁO ===== */
 .log-panel{position:relative;display:flex;flex-direction:column;height:var(--log-h);overflow:hidden;background:linear-gradient(160deg,#221813f2,#16100df7);border-color:#4f372c;min-height:0}
-.log-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 7px 4px 9px;border-bottom:1px solid #432e25;background:#1f1511b8;flex:0 0 auto}
+.log-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 7px 4px 9px;border-bottom:1px solid #432e25;flex:0 0 auto}
 .log-title{display:flex;align-items:center;gap:7px;min-width:0}
 .log-title .eyebrow{font-size:11px;letter-spacing:.12em;white-space:nowrap}
-.log-title b{font:700 16px var(--serif);color:#e8dcc0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-title b{font:700 16px var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .log-tools{display:flex;align-items:center;gap:5px;flex:0 0 auto}
 .log-count{min-width:20px;padding:1px 5px;border:1px solid #63513f;border-radius:10px;background:#19110e;color:#beac99;font:700 11.5px/1.5 var(--font);text-align:center;font-variant-numeric:tabular-nums}
 .log-count.has-new{border-color:#8a733a;color:var(--gold);background:#241f12;box-shadow:0 0 8px #e6c16433}
@@ -249,7 +242,7 @@ body.in-game{overflow:hidden}
 .log-jump:hover{background:#3a2f12}
 .log-empty{color:#92816f;font-size:12.5px;font-style:italic;padding:4px 2px}
 @media(max-width:900px){.log-title .eyebrow{display:none}}
-@media(max-width:600px){.log{padding:5px 7px 7px;font-size:14px}.log-title b{font-size:15px}}
+@media(max-width:600px){.log{padding:5px 7px 7px}.log-title b{font-size:15px}}
 /* Chiều cao bảng nhật ký: một biến duy nhất cho cả khung log lẫn vị trí toast (--log-panel-h). */
 :root{--log-h:clamp(200px,32vh,330px)}
 @media(max-width:900px){:root{--log-h:clamp(176px,28vh,290px)}}
@@ -260,11 +253,11 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 @media(max-height:520px){:root{--log-h:120px}.log-panel{height:var(--log-h)}body.in-game:not(.log-collapsed){--log-panel-h:var(--log-h)}.log-panel.collapsed{height:28px}.log-head{padding-top:2px;padding-bottom:2px}.log-entry{gap:3px}}
 
 /* ===== CỬA SỔ NỔI ===== */
-.wins{position:fixed;inset:0;z-index:30;pointer-events:none}
-.win{position:absolute;display:flex;flex-direction:column;pointer-events:auto;background:linear-gradient(160deg,#261a15,#1c130f);border:1px solid var(--line2);border-radius:12px;box-shadow:0 18px 50px #000b;min-width:260px;min-height:180px;overflow:hidden;animation:winIn .16s ease-out}
-.win.top{border-color:var(--gold);box-shadow:0 0 0 1px #e6c16433,0 18px 50px #000b}
+.wins{position:fixed;inset:0;pointer-events:none}
+.win{position:absolute;display:flex;flex-direction:column;pointer-events:auto;border:1px solid var(--line2);box-shadow:0 18px 50px #000b;min-width:260px;min-height:180px;overflow:hidden;animation:winIn .16s ease-out}
+.win.top{box-shadow:0 0 0 1px #e6c16433,0 18px 50px #000b}
 @keyframes winIn{from{opacity:.5;transform:scale(.98)}}
-.win>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 5px 5px 11px;border-bottom:1px solid var(--line);cursor:move;touch-action:none;background:#2e201a;user-select:none}
+.win>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 5px 5px 11px;border-bottom:1px solid var(--line);cursor:move;touch-action:none;user-select:none}
 .win>header b{display:flex;align-items:center;gap:7px;font:700 15px var(--serif);color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .win>header b img{width:22px;height:22px;object-fit:contain}
 .win-close{width:32px;height:32px;min-width:32px;padding:0;border:1px solid transparent;border-radius:7px;background:transparent;color:#c7b8a9;font-size:17px;display:grid;place-items:center}
@@ -492,14 +485,10 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 
 /* ===== ĐIỆN THOẠI NHỎ ===== */
 @media(max-width:400px){
-  .wallet-pill{padding:0 7px}
-  .wallet-pill strong{font-size:13px}
   .player-pill img{width:30px;height:34px}
   .player-pill strong{font-size:15px}
   .player-pill small{font-size:12px}
-  .icon-btn{width:34px;height:34px;font-size:18px}
-  .main-nav button{font-size:12px}
-}
+  }
 
 /* ===== LAPTOP THẤP · 1366×768, 1280×720, 1440×900 ===== */
 @media(min-width:1100px) and (max-height:900px){

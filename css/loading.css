@@ -17,10 +17,9 @@ body.loading-game{overflow:hidden}
 .loading-foot{position:relative;width:min(560px,90vw);display:flex;flex-direction:column;gap:10px}
 .loading-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;letter-spacing:.04em;color:#ddd3ca}
 .loading-row b{font-size:15px;color:#e6c164;font-variant-numeric:tabular-nums}
-.loading-track{height:12px;border-radius:99px;background:#0e0a08cc;border:1px solid #796a5a;overflow:hidden;box-shadow:0 0 0 3px #160f0c66,inset 0 1px 3px #000a}
-.loading-fill{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);border-radius:99px;
-  background:linear-gradient(90deg,#8a6a22,#e6c164 55%,#fff0b0);transition:transform .25s ease-out;position:relative;overflow:hidden}
-.loading-tip{min-height:1.3em;text-align:center;font-size:13px;color:#c0b09f}
+.loading-track{height:12px;background:#0e0a08cc;border:1px solid #796a5a;overflow:hidden}
+.loading-fill{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:linear-gradient(90deg,#8a6a22,#e6c164 55%,#fff0b0);transition:transform .25s ease-out;position:relative;overflow:hidden}
+.loading-tip{min-height:1.3em;text-align:center;color:#c0b09f}
 @keyframes loadingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-height:520px){.loading-logo{max-height:38vh}}
 @media(prefers-reduced-motion:reduce){

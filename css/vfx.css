@@ -27,8 +27,6 @@ body.reduced-motion .vfx-sprite{display:none}
   50%{transform:translate3d(40px,45vh,0) rotate(180deg)}
   100%{transform:translate3d(-20px,105vh,0) rotate(360deg);opacity:0}
 }
-.spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffe9a8;box-shadow:0 0 10px #ffe9a8;animation:sparkFloat 5s ease-in-out infinite;opacity:.7}
-@keyframes sparkFloat{0%,100%{transform:translateY(0) scale(.8);opacity:.2}50%{transform:translateY(-28px) scale(1.2);opacity:.9}}
 .float-text{position:absolute;z-index:8;pointer-events:none;font:900 clamp(28px,3.4vmin,42px) var(--serif);letter-spacing:.01em;color:#ffe0d6;white-space:nowrap;-webkit-text-stroke:.7px #4a160d;text-shadow:0 2px 0 #2a0805,0 4px 12px #000,0 0 16px #ff6d4a,0 0 34px #ff4b2b88;animation:floatUp 1.05s ease-out forwards}
 .float-text.won{color:#b6ffd2;text-shadow:0 2px 0 #062b16,0 4px 12px #000,0 0 16px #55d98a,0 0 34px #39c97a88;font-size:clamp(30px,3.8vmin,46px)}
 .float-text.skill{color:#fff1b8;text-shadow:0 2px 0 #3a2503,0 4px 12px #000,0 0 18px #ffd45c,0 0 38px #e5b13f99;font-size:clamp(32px,4.2vmin,50px)}
@@ -38,8 +36,6 @@ body.reduced-motion .vfx-sprite{display:none}
 .hero-wrap.attack{animation:heroAttack .36s ease-in-out}
 @keyframes heroAttack{0%,100%{translate:0 0}45%{translate:clamp(18px,3vw,48px) -6px}}
 @keyframes auraRing{0%{transform:translate(-50%,-50%) scale(.85);opacity:.7}50%{opacity:.25}100%{transform:translate(-50%,-50%) scale(1.2);opacity:0}}
-.break-btn.ready{animation:pulse 1.5s ease-in-out infinite}
-.top-qi.ready{animation:pulse 1.6s ease-in-out infinite}
 .enemy-wrap.hit{animation:shake .32s ease-in-out}
 .hero-wrap.hurt{animation:shake .32s ease-in-out}
 .screen{animation:screenIn .22s ease-out}
@@ -48,6 +44,6 @@ body.reduced-motion .vfx-sprite{display:none}
   body:not(.motion-full) *,body:not(.motion-full) *::before,body:not(.motion-full) *::after{animation:none!important;transition:none!important}
 }
 body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after{animation:none!important;transition:none!important}
-body.reduced-motion .leaf,body.reduced-motion .spark{display:none}
+body.reduced-motion .leaf{display:none}
 body.effects-off .trib-rain,body.reduced-motion .trib-rain{display:none}
 body.effects-off .trib-aura{animation:none}
