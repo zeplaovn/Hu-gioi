@@ -76,7 +76,7 @@
     if (bubble.el || !root.document) return;
     const el = document.createElement('div');
     el.id = 'chatBubble'; el.className = 'chat-bubble';
-    el.innerHTML = '<button type="button" class="chat-bubble-btn" aria-expanded="false" aria-controls="chatBubblePanel" aria-label="Mở chat thế giới"><span aria-hidden="true">✉</span><i class="chat-bubble-badge" hidden>0</i></button>' +
+    el.innerHTML = '<button type="button" class="chat-bubble-btn" aria-expanded="false" aria-controls="chatBubblePanel" aria-label="Mở chat thế giới"><img class="chat-bubble-icon" src="media/assets/ui/icon/chat/truyen-am.svg" width="36" height="36" alt="" aria-hidden="true" decoding="async"><i class="chat-bubble-badge" hidden>0</i></button>' +
       '<div id="chatBubblePanel" class="chat-bubble-panel" role="dialog" aria-label="Kênh thế giới" hidden><button type="button" class="chat-bubble-close" aria-label="Thu nhỏ chat">×</button><div class="chat-bubble-body"></div></div>';
     document.body.appendChild(el);
     bubble.el = el; bubble.btn = el.querySelector('.chat-bubble-btn'); bubble.panel = el.querySelector('.chat-bubble-panel'); bubble.badge = el.querySelector('.chat-bubble-badge');
@@ -112,5 +112,5 @@
     if (bubble.el) bubble.el.hidden = !show;
   }
   if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 700);
-  UI.register({ id: 'chat', label: 'Chat online', icon: '✉', eyebrow: 'TRUYỀN ÂM', render, mount, update });
+  UI.register({ id: 'chat', label: 'Truyền âm', icon: '✧', eyebrow: 'TRUYỀN ÂM', render, mount, update });
 })(typeof window !== 'undefined' ? window : globalThis);
