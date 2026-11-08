@@ -250,7 +250,8 @@
     const validKind = ['monster', 'npc', 'encounter'];
     const cleanEvent = e => {
       if (!object(e) || !validKind.includes(e.kind)) return null;
-      return { kind: e.kind, npcId: typeof e.npcId === 'string' && Object.hasOwn(DESIGN.npc, e.npcId) ? e.npcId : '',
+      return { kind: e.kind, eventId: ENCOUNTERS.some(v => v.id === e.eventId) ? e.eventId : '',
+        npcId: typeof e.npcId === 'string' && Object.hasOwn(DESIGN.npc, e.npcId) ? e.npcId : '',
         text: String(e.text || '').slice(0, 500), name: String(e.name || '').slice(0, 100),
         cleared: !!e.cleared, start: finite(e.start, 0, now), end: finite(e.end, 0, now + 600000) };
     };
