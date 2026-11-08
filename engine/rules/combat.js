@@ -151,8 +151,7 @@
       },
       strike(payload, now) { this.assertNoRun(); return this._strike(1, at(this, now), false); },
       assertNoRun() { if (this.s.dungeon.run) throw Error('Đang chiến đấu trong bí cảnh, chưa thể lịch luyện.');
-        const e = this.s.exploration?.active;
-        if (e && (e.kind !== 'monster' || e.cleared)) throw Error('Không có yêu thú nào đang giao chiến.'); },
+        if (this.s.exploration?.active) throw Error('Đang lịch luyện, không thể chủ động giao chiến. Kết quả sẽ được luận định khi trở về.'); },
       skill(payload, now) {
         this.assertNoRun();
         now = at(this, now);
