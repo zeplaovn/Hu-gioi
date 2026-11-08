@@ -4,6 +4,7 @@ Nguồn ảnh: `player.zip` do chủ repo cung cấp. Các khung gốc không b�
 
 ## Thiết kế FE
 
+- `client/assets/player-preload.js` nạp ngay sau manifest và trước loader để không tải trước nhiều sprite pixel cũ.
 - `client/ui/player-pack.js` nạp **sau** `client/ui/boot.js`, **trước** `client/main.js`.
 - Gắn cùng API `HU_ASSETS.heroSrc`, `heroFrames`, `preloadHero`, `heroPortrait` mà các màn hiện có sử dụng.
 - `HU_UI.heroAttack`, action `travel`, `onDeath`, `reincarnate` được bọc để phát animation, nhưng kết quả game engine và bản lưu không bị sửa.
