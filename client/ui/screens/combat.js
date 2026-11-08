@@ -66,7 +66,7 @@
     UI.toast('Đã khởi hành đến ' + H.ZONES[UI.s().zone].name + ' · hẹn trở về sau 10 phút.',
       { type: 'gold', title: 'Lịch luyện' });
     UI.go('combat');
-    return UI.SOFT;
+    // Rerender ngay để vô hiệu hóa nút khởi hành và bộ chọn nơi, không chờ tick tiếp theo.
   });
   UI.action('travel', (el, d) => {
     if (UI.s().exploration?.active) throw Error('Chuyến lịch luyện chưa kết thúc; chưa thể đổi địa điểm.');
