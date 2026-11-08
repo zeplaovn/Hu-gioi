@@ -267,6 +267,7 @@
         return kind;
       },
       travel(payload) {
+        if (this.s.exploration?.active) throw Error('Đang lịch luyện; chưa thể đổi địa điểm trước khi trở về.');
         const zone = payload.zone;
         if (!Number.isInteger(zone) || !H.ZONES[zone] || zone > this.s.realm) throw Error('Cảnh giới chưa đủ.');
         const s = this.s;
