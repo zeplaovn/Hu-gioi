@@ -99,7 +99,7 @@
       return `<div class="plot growing" data-plot="${i}" data-start="${p.plantedAt}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Linh thảo" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(H.item(p.herb).name)}</b>
         <div class="meter-bar job-bar"><i></i></div><span class="plot-status"></span>
         <div class="farm-meters"><label>Nước <meter class="farm-water" min="0" max="1" value="${p.water}"></meter></label><label>Đất <meter class="farm-soil" min="0" max="1" value="${p.soil}"></meter></label></div><small class="farm-pest"></small>
-        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 LT')}${action('pest', 'Bắt sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
+        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 linh thạch')}${action('pest', 'Bắt sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
     }).join('');
     const seeds = Object.keys(s.bag).map(H.item).filter(x => x?.kind === 'SEED' && x.tier <= s.realm + 1).sort((a, b) => a.tier - b.tier);
     const seedRows = seeds.map(x => {
