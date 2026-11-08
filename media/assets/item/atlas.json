@@ -502,7 +502,6 @@
     "PILL-058": {"name": "Đản Hồn Tiên Đan", "group": "Đan dược", "image": "item/DAN.png", "slot": 33, "row": 5, "column": 1},
     "PILL-059": {"name": "Vô Trần Giải Độc Đan", "group": "Đan dược", "image": "item/DAN.png", "slot": 34, "row": 5, "column": 2},
     "PILL-060": {"name": "Quy Hương Tĩnh Tâm", "group": "Đan dược", "image": "item/DAN.png", "slot": 35, "row": 5, "column": 3},
-    "PILL-061": {"name": "Thái Dương Tiên Đan", "group": "Đan dược", "image": "item/DAN.png", "slot": 36, "row": 5, "column": 4},
     "PILL-001": {"name": "Huyết Châu Đan", "group": "Đan dược", "image": "item/DAN_1.png", "slot": 1, "row": 1, "column": 1},
     "PILL-002": {"name": "Kim Nguyên Đan", "group": "Đan dược", "image": "item/DAN_1.png", "slot": 2, "row": 1, "column": 2},
     "PILL-003": {"name": "Thanh Linh Đan", "group": "Đan dược", "image": "item/DAN_1.png", "slot": 3, "row": 1, "column": 3},

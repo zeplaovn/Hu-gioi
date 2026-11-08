@@ -11,10 +11,10 @@ const H = require('../engine/game.js');
 const ROOT = join(__dirname, '..');
 const ATLAS = JSON.parse(readFileSync(join(ROOT, 'media/assets/item/atlas.json'), 'utf8'));
 
-test('493 item trong danh mục được ánh xạ đúng vị trí và atlas JSON', () => {
+test('492 item trong danh mục được ánh xạ đúng vị trí và atlas JSON', () => {
   const codes = CATALOGUE.map(item => item.code);
-  assert.equal(codes.length, 493);
-  assert.equal(new Set(codes).size, 493);
+  assert.equal(codes.length, 492);
+  assert.equal(new Set(codes).size, 492);
   assert.deepEqual(Object.keys(INDEX.items).sort(), [...codes].sort());
   assert.deepEqual(Object.keys(ATLAS.items).sort(), [...codes].sort());
   for (const code of codes) {

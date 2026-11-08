@@ -23,7 +23,7 @@ Bạn là biên kịch game kiêm lập trình viên web cho **Hư Giới**, m�
 
 **Kỳ ngộ** (`ENCOUNTERS`): các sự kiện ngẫu nhiên khi du hành (Linh Tuyền Bên Suối, Lão Nông Chỉ Điểm, Quý Nhân Giúp Đỡ...). Đọc file để biết định dạng.
 
-**10 NPC Hạ Giới** (`data/design-raw.js` → `data/design.js`, `npc`): Trần Minh, Tô Nhược Vân, Diệp Hồng Y, Bạch Tử Yên, Tạ Thiên Cơ, Vũ Tiểu Thanh, Lâm Thiết Sinh, Tống Hữu Tài, Hứa Mặc, Tàng Phong Lão Nhân. Mỗi NPC có `bối cảnh`, `quan hệ`, `vai trò` (giao nhiệm vụ, dạy công pháp, dạy bí tịnh, bán đồ, luyện đan thuê). **Hãy đọc kỹ cột `bối cảnh` và `quan hệ` của từng NPC và giữ nguyên tính cách đó.**
+**10 NPC Hạ Giới** (`data/design-raw.js` → `data/design.js`, `npc`): Trần Minh, Tô Nhược Vân, Diệp Hồng Y, Bạch Tử Yên, Tạ Thiên Cơ, Vũ Tiểu Thanh, Lâm Thiết Sinh, Tống Hữu Tài, Hứa Mặc, Tàng Phong Lão Nhân. Mỗi NPC có `bối cảnh`, `quan hệ`, `vai trò` (giao nhiệm vụ, dạy công pháp, dạy bí tịch, bán đồ, luyện đan thuê). **Hãy đọc kỹ cột `bối cảnh` và `quan hệ` của từng NPC và giữ nguyên tính cách đó.**
 
 **Nhiệm vụ riêng NPC** (`data/social.js`, `NPC_QUESTS`): mỗi vai trò có chuỗi 3 bước (mở theo thiện cảm 0, 20, 55), mô tả dùng placeholder `{npc}` và `{likes}`.
 

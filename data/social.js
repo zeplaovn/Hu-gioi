@@ -37,7 +37,7 @@ const NPC_QUESTS={
   {name:'Lễ bái sư',desc:'Dâng {npc} ba phần {likes} làm lễ.',need:{type:'gift',count:3},minAffinity:20,reward:{affinity:15,exp:.04}},
   {name:'Tâm truyền',desc:'Nộp linh thạch làm học phí để {npc} truyền tâm đắc.',need:{type:'stone',seconds:900},minAffinity:55,reward:{affinity:20,exp:.06,item:{mastery:.3}}}
  ],
- 'dạy bí tịnh':[
+ 'dạy bí tịch':[
   {name:'Thử tay kiếm',desc:'Hạ yêu thú để {npc} xem căn cơ của đạo hữu.',need:{type:'kill',count:30},minAffinity:0,reward:{affinity:10,stone:600}},
   {name:'Lễ bái sư',desc:'Dâng {npc} ba phần {likes} làm lễ.',need:{type:'gift',count:3},minAffinity:20,reward:{affinity:15,exp:.04}},
   {name:'Tâm truyền',desc:'Nộp linh thạch làm học phí để {npc} truyền tâm đắc.',need:{type:'stone',seconds:900},minAffinity:55,reward:{affinity:20,exp:.06,item:{mastery:.3}}}

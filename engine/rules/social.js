@@ -6,7 +6,7 @@
 
   function install(API) {
     const H = API, F = H.F, { FRIENDS, DAO, RIVALS, PVP_CD, DISCUSS_CD, giftCost, DESIGN, item, NPC_QUESTS, NPC_DISCOUNT_MAX } = H;
-    const TEACH_ROLES = ['dạy công pháp', 'dạy bí tịnh'], SELL_ROLES = ['bán đồ', 'luyện đan thuê'];
+    const TEACH_ROLES = ['dạy công pháp', 'dạy bí tịch'], SELL_ROLES = ['bán đồ', 'luyện đan thuê'];
     const find = (list, id) => {
       const f = list.find(x => x.id === id);
       if (!f) throw Error('Đạo hữu không hợp lệ.');

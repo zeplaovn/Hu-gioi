@@ -29,7 +29,7 @@ test('atlas dùng ô 128×128, ID bắt đầu 1, quét ngang rồi xuống hàn
 });
 
 test('tất cả các ô ảnh dùng tọa độ hợp lệ và đúng bảng atlas', () => {
-  assert.equal(Object.keys(I.items).length, 493);
+  assert.equal(Object.keys(I.items).length, 492);
   for (const [code, ref] of Object.entries(I.items)) {
     if (!ref.includes('#')) continue;
     const tile = A.itemTile(code), info = atlas.items[code];
