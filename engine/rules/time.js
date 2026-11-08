@@ -107,7 +107,8 @@
         }
 
         const dungeon = this.finishDungeon(now);
-        const encounters = this.advanceEncounters(seconds, now, eff);
+        // Kỳ ngộ chỉ phát sinh khi gieo cơ duyên trong Lịch luyện; không còn xuất hiện từ tu vi thụ động.
+        const encounters = [];
         const sect = this.finishSect(now, offline);
         const batches = this.finishJobs(now, offline);
         s.buffs = s.buffs.filter(b => b.end > now);
