@@ -207,6 +207,9 @@
 
   function pumpLog(force = false) {
     if (!logState.live) return;
+    // Không có gì để gõ: bỏ qua, tránh ép layout (scrollHeight) 40 lần/giây.
+    if (!logState.current && !logState.queue.length && !force) return;
+    if (document.hidden && !force) return;
     const feed = $('logFeed');
     if (!feed) return;
     const reduced = isReduced();

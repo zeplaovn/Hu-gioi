@@ -212,6 +212,6 @@
   }
 
   UI.idle = { update, countUp, orbs: () => { const s = session(); if (s) orbs(s); } };
-  setInterval(() => { try { update(); } catch (e) { console.warn('Hư Giới · idle-hud:', e.message); } }, 500);
-  setInterval(() => { try { UI.idle.orbs(); } catch (e) { /* hiệu ứng không được làm hỏng game */ } }, 1100);
+  setInterval(() => { if (document.hidden) return; try { update(); } catch (e) { console.warn('Hư Giới · idle-hud:', e.message); } }, 500);
+  setInterval(() => { if (document.hidden) return; try { UI.idle.orbs(); } catch (e) { /* hiệu ứng không được làm hỏng game */ } }, 1100);
 })(typeof window !== 'undefined' ? window : globalThis);
