@@ -86,3 +86,22 @@ test('bản lưu có tự chiến cũ được chuyển sang chế độ không 
   const normalized=H.normalize(saved,NOW);
   assert.equal(normalized.auto,false);
 });
+
+test('gặp yêu thú không cho tự giao chiến; kết quả chỉ được quyết định một lần khi hết 10 phút', () => {
+  const g=make(.01), journey=run(g,'startExploration');
+  assert.equal(journey.kind,'monster');
+  const first=g.s.enemyNum;
+  assert.throws(() => run(g,'strike'), /Đang lịch luyện/);
+  assert.throws(() => run(g,'skill',{index:0}), /Đang lịch luyện/);
+  assert.throws(() => run(g,'travel',{zone:0}), /Đang lịch luyện/);
+  g.advance(journey.end);
+  const result=g.s.exploration.last;
+  assert.equal(g.s.exploration.active,null);
+  assert.equal(result.kind,'monster');
+  assert.ok(result.text.length>0);
+  assert.ok(g.s.logs.some(v=>v.startsWith('Lịch luyện kết thúc')));
+  const lootCount=g.s.enemyNum-first;
+  assert.ok(lootCount===0||lootCount===1);
+  g.advance(journey.end+1000);
+  assert.equal(g.s.enemyNum-first,lootCount,'không kết toán chiến lợi phẩm lần hai');
+});
