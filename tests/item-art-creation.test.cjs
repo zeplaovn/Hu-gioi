@@ -49,7 +49,7 @@ test('resolver hiển thị atlas và ảnh đơn; mã không tồn tại có SV
   const herb = ASSETS.itemImg({ code: 'HERB-002' });
   assert.match(herb.src, /^data:image\/svg\+xml/);
   assert.match(herb.style, /media\/assets\/item\/HG\.png/);
-  assert.match(herb.style, /background:/);
+  assert.match(herb.style, /background-image:/);
   const special = ASSETS.itemImg({ code: 'QITEM-HD-01' });
   assert.equal(special.src, 'media/assets/item/vat_pham_dac_biet/SSSITEM01.png');
   assert.equal(special.style, '');
