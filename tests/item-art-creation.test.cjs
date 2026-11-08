@@ -84,7 +84,8 @@ test('nút vào game chỉ mở khi phân bổ đủ 8 điểm và thông báo r
   const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
   const boot = readFileSync(join(ROOT, 'client/ui/boot.js'), 'utf8');
   assert.match(html, /id="startNew"[^>]*aria-describedby="pointsValue" disabled/);
-  assert.match(html, /phân bổ đủ 8 điểm thiên phú/);
+  assert.match(html, /Còn 8\/8 điểm — cần phân bổ hết để bắt đầu/);
+  assert.doesNotMatch(html, /Bạn phải phân bổ đủ 8 điểm thiên phú để bắt đầu/);
   assert.match(boot, /start\.disabled = [^;]*creation\.points !== 0/);
   assert.match(boot, /if \(creation\.points !== 0\) \{/);
   assert.match(boot, /points\.classList\.toggle\('points-complete', complete\)/);
