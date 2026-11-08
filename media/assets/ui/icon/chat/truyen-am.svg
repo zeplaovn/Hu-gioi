@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>Truyền âm</title>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0bb"/>
+      <stop offset=".49" stop-color="#e5c27b"/>
+      <stop offset="1" stop-color="#a9763b"/>
+    </linearGradient>
+    <linearGradient id="jade" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#cbfbea"/>
+      <stop offset="1" stop-color="#67cdbb"/>
+    </linearGradient>
+  </defs>
+  <!-- Lời truyền âm: ngọc giản hình thoại, góc thoát âm là đuôi bong bóng -->
+  <path d="M15 17.5C15 11.2 20.5 7 28 7h9c10.7 0 18 6.3 18 16v9c0 9.5-7.3 16-18 16h-8.3L15 56l3.2-13.5C16.1 39.6 15 36 15 32Z" fill="#19302f" stroke="url(#gold)" stroke-width="3.8" stroke-linejoin="round"/>
+  <path d="M20.5 19c1.2-4.8 4.5-6.9 11-6.9h8.4c5.2 0 9 3.6 9.8 8.2" fill="none" stroke="#fef0c5" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>
+  <path d="M24 37.4c5.3 3.8 11.4 4 17 .1" fill="none" stroke="#ddc689" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+  <g fill="url(#jade)" stroke="#f6e6ae" stroke-width=".75">
+    <path d="m24 23 4 5.5-4 5.5-4-5.5Z"/>
+    <path d="m35 20.7 4.5 7-4.5 7-4.5-7Z"/>
+    <path d="m45 24.1 3.3 4.4-3.3 4.4-3.3-4.4Z"/>
+  </g>
+  <path d="M7 27q-2.2 5.2 0 10M59 15q2.7 4.1 2.7 8.8" fill="none" stroke="#d4bc79" stroke-width="1.7" stroke-linecap="round" opacity=".8"/>
+</svg>
