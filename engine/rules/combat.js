@@ -13,6 +13,10 @@
 
     Object.assign(H.Game.prototype, {
       startExploration(payload, now) {
+        now = at(this, now);
+        // Kết toán tu hành trước khi bước vào bí cảnh để không làm mất thời gian
+        // giữa hai lần lưu, kể cả khi mở Lịch luyện qua phím tắt/đường dẫn.
+        if (now > this.s.lastUpdate) this.advance(now, false);
         const s = this.s;
         if (s.exploration?.active) throw Error('Lịch luyện đang diễn ra. Hãy đợi chuyến đi kết thúc.');
         if (s.dungeon?.active || s.dungeon?.run) throw Error('Cần hoàn tất hành trình bí cảnh trước khi lịch luyện.');
