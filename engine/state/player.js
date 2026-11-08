@@ -64,6 +64,7 @@
       talent: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0 },
       realm: 0, stage: 1, qi: 0, hp: 100, mp: 100, stone: 380, jade: 6, zone: 0,
       auto: false, enemyHp: 0, enemyNum: 0, combatClock: 0, manualAt: 0, enemyKind: 'thường',
+      exploration: { active: null, last: null },
       bag: initialBag(), equipment: [], tech: [1, 1, 1, 1], cooldowns: [0, 0, 0, 0],
       learned: {}, activeManuals: [], pity: 0, breakBonus: 0, shield: 0, reduction: 0,
       pillUses: 0, pillRealmExp: 0, permanent: 0, buffs: [], debuffs: [],
@@ -244,7 +245,19 @@
     if (old && raw.breakBuff) x.breakBonus = .3;
 
     x.completed = !!raw.completed;
-    x.auto = !!raw.auto;
+    x.auto = false; // Chế độ tự chiến cũ đã bỏ khỏi game.
+    const ex = raw.exploration, active = ex?.active;
+    const validKind = ['monster', 'npc', 'encounter'];
+    const cleanEvent = e => {
+      if (!object(e) || !validKind.includes(e.kind)) return null;
+      return { kind: e.kind, eventId: ENCOUNTERS.some(v => v.id === e.eventId) ? e.eventId : '',
+        npcId: typeof e.npcId === 'string' && Object.hasOwn(DESIGN.npc, e.npcId) ? e.npcId : '',
+        text: String(e.text || '').slice(0, 500), name: String(e.name || '').slice(0, 100),
+        cleared: !!e.cleared, start: finite(e.start, 0, now), end: finite(e.end, 0, now + 600000) };
+    };
+    x.exploration = { active: cleanEvent(active), last: cleanEvent(ex?.last) };
+    if (x.exploration.active && (x.exploration.active.end <= x.exploration.active.start ||
+        x.exploration.active.end > x.exploration.active.start + 600000)) x.exploration.active = null;
     x.zone = old ? Math.min(x.realm, [0, 0, 1, 2, 3, 5, 9][integer(raw.zone, 0, 6)]) : integer(raw.zone, 0, x.realm);
     x.enemyKind = ['thường', 'tinh anh', 'boss', 'boss kiếp'].includes(raw.enemyKind) ? raw.enemyKind : 'thường';
 

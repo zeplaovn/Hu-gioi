@@ -49,7 +49,7 @@
       ${row('Yêu đan tích lũy', '<span id="yaoValue">0</span>')}
       ${drops}
       ${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0, 'btn-outline')}
-      <p class="info-note">Khi bạn rời game, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
+      <p class="info-note">Yêu thú chỉ bị hạ khi bạn chủ động xuất chiêu. Trong chuyến lịch luyện, không tự chiến và không tích lũy tu vi thụ động.</p>`, { eyebrow: 'THU HOẠCH' });
   }
 
   function zoneCard() {
@@ -72,14 +72,47 @@
     return card('Công pháp & pháp bảo',`<div class="action-group">${m||'<p class="info-note">Chưa vận hành công pháp chủ động.</p>'}${p||''}</div><p class="info-note">Lĩnh ngộ và vận hành công pháp hoặc trang bị pháp bảo để mở kỹ năng.</p>`,{eyebrow:'KỸ NĂNG MỚI'});
   }
 
+  function explorationCard() {
+    const e = UI.s().exploration?.active;
+    if (!e) {
+      const last = UI.s().exploration?.last;
+      return card('Lịch luyện · Mười phút', `<p>Mỗi lần xuất hành sẽ ngẫu nhiên gặp yêu thú, kỳ nhân hoặc một cơ duyên. Trong mười phút lịch luyện, tu hành và nghề phụ đều tạm ngưng.</p>
+        ${last ? '<p class="info-note">Lần trước: ' + esc(last.name) + '. ' + esc(last.text) + '</p>' : ''}
+        ${btn('Khởi hành lịch luyện', 'exploreStart', '', false, 'btn-gold')}`, { eyebrow: 'THÁM HIỂM BÍ CẢNH' });
+    }
+    return card('Lịch luyện · ' + esc(e.name), `
+      ${row('Thời gian còn lại', '<strong id="explorationCountdown">10:00</strong>')}
+      <div class="meter-bar"><i id="explorationProgress"></i></div>
+      <p>${esc(e.text)}</p>
+      <p class="info-note">Tu vi, luyện đan, linh điền và ủy thác tạm dừng. Chuyến đi không thể đổi kết quả hoặc bắt đầu lại trước khi đủ 10 phút.</p>`,
+      { eyebrow: e.kind === 'monster' ? 'GẶP YÊU THÚ' : e.kind === 'npc' ? 'HỮU DUYÊN GẶP GỠ' : 'KỲ NGỘ' });
+  }
+
   function panel() {
-    return `<div class="screen-grid combat-grid">${enemyCard()}${powerCard()}${lootCard()}${definedCard()}${zoneCard()}${logCard()}</div>`;
+    const e = UI.s().exploration?.active;
+    const journal = UI.lorePanels?.encounter;
+    let content = explorationCard();
+    if (e?.kind === 'monster' && !e.cleared) {
+      content += enemyCard() + powerCard() + lootCard() + definedCard() + logCard();
+    } else if (e?.kind === 'monster') {
+      content += card('Đã vượt thử thách', '<p>Yêu thú đã bị đánh bại. Chiến lợi phẩm đã nhập túi. Hãy đợi hành trình kết thúc để trở về tu luyện.</p>');
+    } else if (e?.kind === 'npc') {
+      content += (UI.lorePanels?.npcs?.(e.npcId) || '<p>Chưa gặp được vị kỳ nhân này.</p>');
+    } else if (e?.kind === 'encounter') {
+      content += card('Thiên cơ chưa định', '<p>Cơ duyên sẽ kết thành quả khi chuyến lịch luyện đủ mười phút. Hãy chờ thiên cơ hiển lộ.</p>');
+    } else if (journal) {
+      content += journal();
+    }
+    return '<div class="screen-grid combat-grid">' + content + '</div>';
   }
 
   /* Thanh kỹ năng nằm ngoài cửa sổ, trên sân khấu; chỉ hiện khi đang ở chế độ chiến đấu. */
   function dock() {
     const d = $('skillDock');
     if (!d || !UI.s().created) return;
+    const active = UI.s().exploration?.active;
+    d.hidden = !active || active.kind !== 'monster' || active.cleared;
+    if (d.hidden) return;
     if (!d.firstChild) d.innerHTML = skillbar();
     dockState();
   }
@@ -98,6 +131,12 @@
   function update() {
     dock();
     const s = UI.s(), g = UI.g();
+    const e = s.exploration?.active, timer = $('explorationCountdown'), progress = $('explorationProgress');
+    if (e && timer) {
+      const remaining = Math.max(0, Math.ceil((e.end - Date.now()) / 1000));
+      timer.textContent = String(Math.floor(remaining / 60)).padStart(2, '0') + ':' + String(remaining % 60).padStart(2, '0');
+      if (progress) progress.style.width = (100 - remaining / 600 * 100).toFixed(1) + '%';
+    }
     const hpText = $('enemyHpText');
     if (!hpText) return;
     const st = g.stats(), enemy = g.enemy(), maxMp = g.maxMp(), now = Date.now();
@@ -157,10 +196,14 @@
   UI.register({
     id: 'combat', label: 'Lịch luyện', icon: 'ICON-MENU-002', eyebrow: 'DIỆT YÊU',
     render: panel, panel, update,
-    signature: () => { const s = UI.s(); return s.zone + '|' + s.enemyKind + '|' + (s.yaoValue > 0) + '|' + s.activeManuals.join(',') + '|' + s.equipment.join(','); }
+    signature: () => { const s = UI.s(), e = s.exploration?.active; return s.zone + '|' + s.enemyKind + '|' + (s.yaoValue > 0) + '|' + s.activeManuals.join(',') + '|' + s.equipment.join(',') + '|' + (e ? e.kind + ':' + e.start + ':' + e.cleared : 'none') + '|' + (s.exploration?.last?.end || 0) + '|' + s.encounter.total + '|' + s.progress.kill + '|' + Object.values(s.npcAffinities).join(','); }
   });
 
-  UI.action('auto', () => { UI.command('setAuto', { enabled: !UI.s().auto }); return UI.SOFT; });
+  UI.action('exploreStart', () => {
+    const event = UI.command('startExploration');
+    UI.toast('Lịch luyện · ' + event.name + '. Chuyến đi kéo dài 10 phút.', { type: 'gold', title: 'Bí cảnh' });
+    UI.go('combat');
+  });
   UI.action('strike', () => {
     const hp = UI.s().hp, hit = UI.command('strike');
     attackFx(hit.damage, hit.won, Math.max(0, hp - UI.s().hp));

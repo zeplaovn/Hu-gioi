@@ -78,7 +78,7 @@
       (s.dungeon.run ? row(H.DUNGEONS.find(d => d.id === s.dungeon.run.id).name, 'Tầng ' + s.dungeon.run.floor + ' · đang chiến đấu') + '<button class="btn btn-gold" data-go="world:dungeons">Tiếp tục chiến đấu</button>' : a ? row(H.DUNGEONS.find(d => d.id === a.id).name, live(a.end)) : '<p>Bí cảnh đã sẵn sàng để thám hiểm.</p>') +
       (m ? row(H.SECT_MISSIONS.find(d => d.id === m.id).name, live(m.end)) : '') +
       row('Kỳ ngộ đã gặp', num(s.encounter.total)) +
-      `<div class="action-group"><button class="btn btn-outline" data-go="world:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="world:encounter">Kỳ ngộ</button><button class="btn btn-outline" data-go="world:sect">Tông môn</button></div>`, { eyebrow: 'DUYÊN SỰ ĐANG TIẾN HÀNH' });
+      `<div class="action-group"><button class="btn btn-outline" data-go="world:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="combat">Kỳ ngộ</button><button class="btn btn-outline" data-go="world:sect">Tông môn</button></div>`, { eyebrow: 'DUYÊN SỰ ĐANG TIẾN HÀNH' });
     return `<div class="screen-grid idle-grid">${qiCard()}${tasks}${boostCard()}${manualsCard()}${goalsCard()}${logCard()}</div>`;
   }
 
@@ -101,11 +101,11 @@
   };
 
   UI.register({
-    id: 'idle', label: 'Tu luyện', icon: 'ICON-MENU-001', eyebrow: 'NHẬP ĐỊNH',
+    id: 'idle', label: 'Tu luyện', icon: 'ICON-MENU-001', eyebrow: 'TU HÀNH',
     render: panel, panel, update, signature
   });
 
-  UI.action('mode', (el, d) => { UI.command('setAuto', { enabled: d.mode === 'fight' }); return UI.SOFT; });
+
   UI.action('absorb', (el, d) => {
     const gain = UI.command('absorb', { index: Number(d.index) });
     UI.toast('Hấp thu linh thạch · +' + num(gain) + ' tu vi.', { type: 'loot', title: 'Tu vi' });

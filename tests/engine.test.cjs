@@ -54,12 +54,12 @@ function run(g, type, payload = {}, now = NOW) {
   return C.execute(g, { type, payload }, now);
 }
 
-test('hợp đồng: engine READY, đủ 49 lệnh và phân miền rõ ràng', () => {
+test('hợp đồng: engine READY, đủ 50 lệnh và phân miền rõ ràng', () => {
   assert.equal(H.READY, true);
   assert.deepEqual(H.MISSING, []);
   assert.equal(H.VERSION, 7);
   assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7]);
-  assert.equal(C.types.length, 49);
+  assert.equal(C.types.length, 50);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -71,7 +71,7 @@ test('hợp đồng: engine READY, đủ 49 lệnh và phân miền rõ ràng', 
     progression: ['absorb', 'upgrade', 'upgradeOffline', 'buyMeta', 'breakthrough', 'prestige', 'reincarnate', 'setAuto'],
     inventory: ['buy', 'sell', 'equip', 'learn', 'activate', 'use', 'sellYao', 'bid'],
     crafting: ['craft', 'forge', 'garden'],
-    combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel'],
+    combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration'],
     world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot'],
     adventures: ['startDungeon', 'abortDungeon', 'enterDungeon', 'dungeonAct'],
     social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel'],
@@ -486,18 +486,21 @@ test('combat: bí cảnh bắt đầu, hủy và hoàn tất theo thời gian', 
   assert.equal(g.s.dungeon.records.moc.runs, 1);
 });
 
-test('adventures: kỳ ngộ thủ công và kỳ ngộ tự động trong advance', () => {
+test('adventures: kỳ ngộ thủ công cũ vẫn hợp lệ; kỳ ngộ thụ động chuyển sang lịch luyện', () => {
   const g = rich();
   const got = run(g, 'manualEncounter', { index: 0 });
   assert.ok(got.item || got.part);
   assert.throws(() => run(g, 'manualEncounter', { index: 0 }), /hồi phục/);
 
   const before = g.s.encounter.total;
-  g.rng = () => 0;
-  g.s.auto = false;
+  g.rng = () => .99;
   const report = g.advance(NOW + 3600000);
-  assert.ok(report.encounters.length > 0);
-  assert.ok(g.s.encounter.total > before);
+  assert.equal(report.encounters.length, 0);
+  assert.equal(g.s.encounter.total, before);
+  const expedition = run(g, 'startExploration', {}, NOW + 3600000);
+  assert.equal(expedition.kind, 'encounter');
+  g.advance(expedition.end);
+  assert.equal(g.s.encounter.total, before + 1);
   assert.ok(g.s.encounter.recent.length > 0);
 });
 

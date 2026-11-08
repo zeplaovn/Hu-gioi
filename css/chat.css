@@ -35,3 +35,12 @@
 body:has(#game.page-open) .chat-bubble{left:auto;right:16px}
 body:has(#game.page-open) .chat-bubble-panel{left:auto;right:0}
 body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
+
+/* Vị trí đã kéo thả được ghi bằng tọa độ viewport và bảo toàn qua thay đổi layout. */
+.chat-bubble-btn{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.chat-bubble-btn.dragging,.chat-bubble.has-new .chat-bubble-btn.dragging{
+  cursor:grabbing;transform:none!important;animation:none!important;
+}
+.chat-bubble.drag-positioned{position:fixed}
+.chat-bubble.drag-positioned .chat-bubble-panel::after{display:none}
+@media(max-width:420px){.chat-bubble.drag-positioned .chat-bubble-panel{width:min(350px,calc(100vw - 20px))}}

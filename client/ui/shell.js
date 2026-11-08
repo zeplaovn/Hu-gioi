@@ -806,6 +806,11 @@
       }
       return;
     }
+    if (id === 'combat' && !silent && !UI.s().exploration?.active) {
+      const event = UI.command('startExploration');
+      store.write();
+      toast('Lịch luyện · ' + event.name + ' · 10 phút.', { type: 'gold', title: 'Khởi hành' });
+    }
     const def = UI.screens[id] || UI.screens.idle;
     if (UI.current !== def.id || tab) resetFilters();
     UI.current = def.id;
@@ -848,7 +853,7 @@
       if (moneyEl.textContent !== moneyText) moneyEl.innerHTML = moneyHTML(s.stone);
       moneyEl.setAttribute('aria-label', 'Linh thạch ' + moneyText);
     }
-    $('topRate').textContent = '+' + num(g.rate()) + '/giây';
+    $('topRate').textContent = s.exploration?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
     $('topDaoVan').textContent = num(s.daoVan);
     $('topQiFill').style.width = p + '%';
@@ -904,40 +909,41 @@
     const s = UI.s(), g = UI.g();
     if (!s.created || !$('scene')) return;
     if (trib.pageOpen) return;
-    const mode = (wins.has('combat') || s.auto) ? 'combat' : 'idle';
+    const exploring = s.exploration?.active;
+    const mode = exploring ? 'combat' : 'idle';
     if (mode !== lastStageMode) {
       if (mode === 'combat') UI.vfx?.stage({ kind: 'chien_dau', variant: 'ke_dich', fps: 14, size: 'clamp(150px,23vw,290px)', style: { left: '64%', bottom: '23%', transform: 'translateX(-50%)' } });
       lastStageMode = mode;
     }
     const gameEl = $('game');
-    if (gameEl) gameEl.dataset.stage = mode;
+    if (gameEl) { gameEl.dataset.stage = mode; gameEl.dataset.exploreKind = exploring?.kind || ''; }
+    // Scale theo chính kích thước đài, không theo viewport: trên điện thoại nhỏ
+    // đạo thân sẽ thu lại thay vì lớn ngang pháp trận.
+    const stageEl = $('stage'), actor = $('heroActor');
+    if (stageEl && actor && stageEl.clientWidth && stageEl.clientHeight) {
+      const unit = Math.round(clamp(Math.min(stageEl.clientWidth * .20, stageEl.clientHeight * .32), 67, 174));
+      if (actor.dataset.heroUnit !== String(unit)) {
+        actor.dataset.heroUnit = String(unit);
+        actor.style.setProperty('--hero-unit', unit + 'px');
+      }
+    }
     UI.skillDock?.update();
     UI.combatFx?.sync(mode);
     UI.environment?.update(s);
-    $('stageTag').textContent = F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
-    $('rateText').textContent = '+' + num(g.rate()) + ' tu vi/giây';
+    $('stageTag').textContent = exploring ? 'Bí cảnh · ' + exploring.name : F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
+    $('rateText').textContent = exploring ? 'Lịch luyện · ' + Math.max(0, Math.ceil((exploring.end - Date.now()) / 60000)) + ' phút' : '+' + num(g.rate()) + ' tu vi/giây';
     $('stageHeroName').textContent = s.name;
-    const mm = $('modeMeditate'), mf = $('modeFight');
-    if (mm) { mm.classList.toggle('active', !s.auto); mm.setAttribute('aria-pressed', String(!s.auto)); }
-    if (mf) { mf.classList.toggle('active', s.auto); mf.setAttribute('aria-pressed', String(s.auto)); }
-    const enemyActor = $('enemyActor'), autoToggle = $('autoCombatToggle');
+    const enemyActor = $('enemyActor');
     if (mode === 'combat') {
       A.preloadHero(s.gender, s.realm, 'tan_cong');
       const enemy = g.enemy();
-      if (enemyActor) enemyActor.hidden = false;
+      if (enemyActor) enemyActor.hidden = !exploring || exploring.kind !== 'monster' || exploring.cleared;
       if ($('enemyName')) $('enemyName').textContent = enemy.name;
       if ($('enemyLevel')) $('enemyLevel').textContent = F.REALMS[s.zone] + ' · ' + s.enemyKind;
       if ($('enemyBar')) $('enemyBar').style.width = clamp((s.enemyHp || enemy.HP) / enemy.HP * 100, 0, 100) + '%';
-      if (autoToggle) {
-        autoToggle.hidden = false;
-        autoToggle.textContent = s.auto ? '⚔ Tự chiến đang vận hành · Chạm để dừng' : '☯ Tự chiến chưa vận hành · Chạm để bắt đầu';
-        autoToggle.classList.toggle('fighting', s.auto);
-        autoToggle.setAttribute('aria-pressed', String(s.auto));
-      }
     } else {
       heroAttackUntil = 0;
       if (enemyActor) enemyActor.hidden = true;
-      if (autoToggle) autoToggle.hidden = true;
     }
     stageFrame(frameCount, isReduced());
   }
@@ -957,9 +963,9 @@
     const hero = $('heroSprite');
     if (hero) {
       const manual = Date.now() < heroAttackUntil;
-      const action = mode === 'combat' && (s.auto || manual) ? 'tan_cong' : 'dung_yen';
+      const action = mode === 'combat' ? (manual ? 'tan_cong' : 'di_chuyen') : 'dung_yen';
       A.preloadHero(s.gender, s.realm, action);
-      const index = reduced ? 0 : manual && !s.auto ? n - heroAttackFrame : n;
+      const index = reduced ? 0 : manual ? n - heroAttackFrame : n;
       const src = A.heroSrc(s.gender, s.realm, action, index);
       hero.dataset.action = action;
       hero.alt = action === 'tan_cong' ? 'Đạo sĩ đang công kích' : 'Đạo sĩ đang nhập định';
@@ -967,7 +973,7 @@
     }
     const foe = $('enemySprite');
     if (foe && mode === 'combat') {
-      const src = A.enemySrc(s.zone, s.enemyKind, s.auto && !reduced ? 'tan_cong' : 'dung_yen', reduced ? 0 : n);
+      const src = A.enemySrc(s.zone, s.enemyKind, 'dung_yen', reduced ? 0 : n);
       if (foe.getAttribute('src') !== src) foe.src = src;
     }
   }
@@ -1087,11 +1093,11 @@
       layer.hidden = reduced || !s.settings.seasonEffects || document.hidden;
     });
     const aura = $('idleAura');
-    if (aura) aura.hidden = reduced || !s.settings.cultivationEffects || s.auto;
+    if (aura) aura.hidden = reduced || !s.settings.cultivationEffects || !!s.exploration?.active;
     const particles = $('heroParticles');
-    if (particles) particles.hidden = reduced || !s.settings.cultivationEffects;
+    if (particles) particles.hidden = reduced || !s.settings.cultivationEffects || !!s.exploration?.active;
     const quote = $('idleQuote');
-    if (quote) quote.textContent = s.auto ? 'Tâm động, kiếm xuất; yêu khí tan trong một niệm.' : 'Hô hấp như mây, ý niệm như nước; linh khí tự tụ nơi đan điền.';
+    if (quote) quote.textContent = s.exploration?.active ? 'Một bước vào bí cảnh, cơ duyên khó lường.' : 'Hô hấp như mây, ý niệm như nước; linh khí tự tụ nơi đan điền.';
   }
 
   function applySettings() {
@@ -1529,7 +1535,9 @@
     if (winBtn && !winBtn.closest('.win') && UI.s().created) {
       safe(() => {
         store.catchUp();
-        if (winBtn.dataset.window === 'tribulation') {
+        if (winBtn.dataset.window === 'combat') {
+          go('combat');
+        } else if (winBtn.dataset.window === 'tribulation') {
           if (trib.pageOpen) trib.close();
           else go('tribulation');
         } else if (winBtn.dataset.window === 'idle' && winBtn.closest('#menu')) {
@@ -1591,7 +1599,7 @@
     if (!store.ready || !UI.s().created || !$('modalLayer').hidden || ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName) || e.ctrlKey || e.altKey || e.metaKey) return;
     const key = e.key.toLowerCase();
     if (['1', '2', '3', '4'].includes(key)) {
-      if (UI.current === 'combat') { e.preventDefault(); safe(() => run('skill', { dataset: { index: String(Number(key) - 1) } })); }
+      if (UI.current === 'combat' && UI.s().exploration?.active?.kind === 'monster' && !UI.s().exploration.active.cleared) { e.preventDefault(); safe(() => run('skill', { dataset: { index: String(Number(key) - 1) } })); }
       return;
     }
     const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world', s: 'settings' };
@@ -1613,6 +1621,7 @@
       if (trib.pageOpen) trib.closePage();
       if (tab) UI.tabState[id] = tab;
       if (id === 'idle') wins.closeAll();
+      else if (id === 'combat') { go('combat'); return; }
       else wins.open(id);
       updateChrome();
       updateStage();

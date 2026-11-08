@@ -12,21 +12,80 @@
     { id: 'dungeons', label: 'Bí cảnh', icon: '⚔' },
     { id: 'quests', label: 'Nhiệm vụ', icon: '✦' },
     { id: 'sect', label: 'Tông môn', icon: '⌂' },
-    { id: 'encounter', label: 'Kỳ ngộ', icon: '❂' },
-    { id: 'npc', label: 'Kỳ nhân', icon: '♧' },
     { id: 'shop', label: 'Cửa hàng', icon: '◈' },
     { id: 'auction', label: 'Đấu giá', icon: '⚖' }
   ];
 
+  const mapView = { zoom: 1, x: 0, y: 0 };
   const map = () => {
-    const s = UI.s();
-    const realms = [['Hạ Giới', 0, 'ha_gioi'], ['Linh Giới', 5, 'linh_gioi'], ['Tiên Giới', 9, 'tien_gioi']];
-    const here = A.worldOf(s.realm);
-    return `<p class="screen-lead">Hạ Giới: Luyện Khí–Hóa Thần · Linh Giới: Luyện Hư–Độ Kiếp · Tiên Giới: Chân Tiên–Đạo Tổ.</p>
-      <div class="map-grid">${realms.map(([name, r, w]) => `<div class="realm-card ${s.realm < r ? 'locked' : ''}" style="background-image:linear-gradient(#0003,#07131bf2),url('${abs(A.BG[w])}')"><div class="realm-card-content"><h3>${name}</h3><p>Mở từ ${F.REALMS[r]}</p><span class="pill">${s.realm >= r ? 'Đã khai mở' : 'Chưa mở'}</span></div></div>`).join('')}</div>
-      <figure class="world-map"><img src="${A.MAPS[here]}" alt="Bản đồ ${A.WORLD_NAME[here]}" loading="lazy" decoding="async"><figcaption>Bản đồ ${A.WORLD_NAME[here]}</figcaption></figure>
-      <div class="action-group"><button class="btn btn-gold" data-go="combat">⚔ Chọn khu vực lịch luyện ›</button><button class="btn btn-outline" data-go="world:dungeons">Khám phá bí cảnh ›</button></div>`;
+    const s = UI.s(), here = A.worldOf(s.realm);
+    return `<figure class="world-map interactive-map">
+      <div class="map-toolbar" role="group" aria-label="Điều khiển bản đồ">
+        <button type="button" data-map-zoom="in" aria-label="Phóng to bản đồ">＋</button>
+        <button type="button" data-map-zoom="out" aria-label="Thu nhỏ bản đồ">−</button>
+        <button type="button" data-map-zoom="reset" aria-label="Đưa bản đồ về vị trí ban đầu">⟲</button>
+        <span class="map-zoom-label" aria-live="polite">100%</span>
+      </div>
+      <div class="map-viewport" tabindex="0" role="img" aria-label="Bản đồ ${A.WORLD_NAME[here]}; kéo để di chuyển, cuộn để phóng to hoặc dùng phím mũi tên">
+        <img class="map-image" src="${A.MAPS[here]}" alt="Bản đồ ${A.WORLD_NAME[here]}" draggable="false" loading="lazy" decoding="async">
+      </div>
+      <figcaption>${A.WORLD_NAME[here]} · Kéo để khám phá, cuộn hoặc dùng nút ＋/− để phóng to và thu nhỏ</figcaption>
+    </figure>`;
   };
+
+  function mapMount(tab) {
+    if (tab !== 'map') return;
+    const viewport = root.document.querySelector('.interactive-map .map-viewport');
+    if (!viewport) return;
+    const host = viewport.closest('.interactive-map'), image = viewport.querySelector('.map-image');
+    const label = host.querySelector('.map-zoom-label');
+    const clampMap = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+    const apply = () => {
+      const r = viewport.getBoundingClientRect();
+      const boundX = Math.max(0, r.width * (mapView.zoom - 1) / 2);
+      const boundY = Math.max(0, r.height * (mapView.zoom - 1) / 2);
+      mapView.x = clampMap(mapView.x, -boundX, boundX);
+      mapView.y = clampMap(mapView.y, -boundY, boundY);
+      image.style.transform = 'translate3d(' + mapView.x + 'px,' + mapView.y + 'px,0) scale(' + mapView.zoom.toFixed(2) + ')';
+      label.textContent = Math.round(mapView.zoom * 100) + '%';
+    };
+    const zoom = factor => { mapView.zoom = clampMap(Math.round(mapView.zoom * factor * 100) / 100, 1, 4); apply(); };
+    host.querySelectorAll('[data-map-zoom]').forEach(button => button.addEventListener('click', () => {
+      const action = button.dataset.mapZoom;
+      if (action === 'reset') { mapView.zoom = 1; mapView.x = 0; mapView.y = 0; apply(); }
+      else zoom(action === 'in' ? 1.25 : 1 / 1.25);
+    }));
+    viewport.addEventListener('wheel', e => { e.preventDefault(); zoom(e.deltaY < 0 ? 1.18 : 1 / 1.18); }, { passive: false });
+    let drag = null;
+    viewport.addEventListener('pointerdown', e => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, px: mapView.x, py: mapView.y };
+      viewport.setPointerCapture(e.pointerId);
+      viewport.classList.add('dragging');
+    });
+    viewport.addEventListener('pointermove', e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      mapView.x = drag.px + e.clientX - drag.x;
+      mapView.y = drag.py + e.clientY - drag.y;
+      apply();
+    });
+    const finish = () => { drag = null; viewport.classList.remove('dragging'); };
+    viewport.addEventListener('pointerup', finish);
+    viewport.addEventListener('pointercancel', finish);
+    viewport.addEventListener('lostpointercapture', finish);
+    viewport.addEventListener('keydown', e => {
+      if (['+', '='].includes(e.key)) { e.preventDefault(); zoom(1.25); }
+      else if (['-', '_'].includes(e.key)) { e.preventDefault(); zoom(1 / 1.25); }
+      else if (e.key === '0') { e.preventDefault(); mapView.zoom = 1; mapView.x = mapView.y = 0; apply(); }
+      else if (e.key.startsWith('Arrow')) {
+        e.preventDefault();
+        mapView.x += e.key === 'ArrowLeft' ? 35 : e.key === 'ArrowRight' ? -35 : 0;
+        mapView.y += e.key === 'ArrowUp' ? 35 : e.key === 'ArrowDown' ? -35 : 0;
+        apply();
+      }
+    });
+    apply();
+  }
 
   const quests = () => {
     const s = UI.s(), g = UI.g(), fragments = H.ITEMS.filter(x => x.kind === 'QITEM');
@@ -56,9 +115,9 @@
       <p class="npc-quest-need">${progress}</p><p class="npc-quest-reward">Thưởng: ${rewards}</p>
       ${btn(label, 'npcQuest', `data-id="${esc(n['mã NPC'])}"`, q.locked || (q.accepted || need.type !== 'kill' ? !q.ready : false), 'btn-outline')}</div>`;
   };
-  const npcs = () => {
+  const npcs = (chosenId = '') => {
     const s=UI.s(),g=UI.g();
-    return `<p class="screen-lead">Gặp gỡ kỳ nhân nơi Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100. Mỗi vị có một chuỗi ủy thác riêng mở dần theo thiện cảm, và thiện cảm càng cao giá mua/học càng rẻ (tối đa −${Math.round(H.NPC_DISCOUNT_MAX*100)}%).</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).map(n=>{
+    return `<p class="screen-lead">Gặp gỡ kỳ nhân nơi Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100. Mỗi vị có một chuỗi ủy thác riêng mở dần theo thiện cảm, và thiện cảm càng cao giá mua/học càng rẻ (tối đa −${Math.round(H.NPC_DISCOUNT_MAX*100)}%).</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).filter(n => !chosenId || n['mã NPC'] === chosenId).map(n=>{
       const id=n['mã NPC'],like=H.item(n.likes),dislike=H.item(n.dislikes),offer=H.item(n.offer),role=n['vai trò'],disc=g.npcDiscount(id);
       const roleName = { 'giao nhiệm vụ': 'Ủy thác', 'bán đồ': 'Thương nhân', 'dạy công pháp': 'Truyền pháp', 'dạy bí tịnh': 'Truyền bí thuật', 'luyện đan thuê': 'Đan sư' }[role] || role;
       const gifts=[[like,'Tặng món thích'],[dislike,'Tặng món không thích']].map(([x,label])=>{if(!x)return '';const key=Object.keys(s.bag).find(k=>H.item(k)?.code===x.code&&!s.equipment.includes(k)&&g.count(k)>0);return btn(label,'npcGift',`data-id="${esc(id)}" ${codeAttr(key||x.code)}`,!key,'btn-outline')}).join('');
@@ -88,10 +147,12 @@
       <div class="auction-lots">${g.lots().map(x => `<section class="auction-lot">${img(x.code)}<h3>${esc(x.name)}</h3><p>${moneyHTML(g.price(x.code))}</p>${btn(s.auction.offers[x.code] ? 'Đã đặt' : 'Đặt giá', 'bid', codeAttr(x.code), !!s.auction.offers[x.code])}</section>`).join('')}</div>`;
   };
 
-  const body = { map, dungeons, quests, sect, encounter, npc: npcs, shop, auction };
+  UI.lorePanels = { npcs, encounter };
+  const body = { map, dungeons, quests, sect, shop, auction };
   UI.register({
     id: 'world', label: 'Thế giới', icon: 'ICON-MENU-007', eyebrow: 'BA GIỚI', tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">BA GIỚI</span><h2>Thế giới</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
+    mount: mapMount,
     update: () => UI.adventure.update(),
     signature: tab => {
       const s = UI.s(), g = UI.g();

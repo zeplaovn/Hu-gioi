@@ -687,3 +687,8 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 /* Nhãn hấp thụ linh khí có thể dài; không để đẩy trị số ra khỏi màn hình. */
 #status .qi-rate-row>span{flex:1 1 auto;min-width:0;white-space:normal}
 #status .qi-rate-row>b{flex:0 0 auto;white-space:nowrap}
+
+/* Thanh kỹ năng chỉ xuất hiện khi gặp yêu thú, không đè màn gặp kỳ nhân/kỳ ngộ. */
+#game[data-stage="combat"] #skillDock[hidden]{display:none!important}
+#game[data-stage="combat"][data-explore-kind="npc"] #stage .hero-wrap,
+#game[data-stage="combat"][data-explore-kind="encounter"] #stage .hero-wrap{left:50%}

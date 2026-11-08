@@ -42,6 +42,7 @@
     skill: { index: integer(0, 3) },
     castManual: { code },
     activateArtifact: { code },
+    startExploration: {},
     setEnemyKind: { kind: oneOf(Object.keys(F.MONSTER_MULT)) },
     travel: { zone: integer(0, D.ZONES.length - 1) },
     // world
@@ -96,6 +97,10 @@
     if (!Number.isFinite(now) || now < 0) invalid();
     if (!game.s.created) throw Error('Chưa tạo nhân vật.');
     if (game.isDead() && c.type !== 'reincarnate') throw Error('Thọ nguyên đã cạn. Hãy chuyển thế.');
+    const pausedActions = ['absorb', 'upgrade', 'craft', 'forge', 'garden', 'startDungeon', 'enterDungeon',
+      'startSectMission', 'breakthrough', 'manualEncounter', 'use', 'setAuto'];
+    if (game.s.exploration?.active && pausedActions.includes(c.type))
+      throw Error('Đang lịch luyện: tu hành và nghề phụ tạm dừng đến khi trở về.');
     return game[c.type](c.payload, now);
   }
 
