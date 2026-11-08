@@ -69,11 +69,12 @@ html.hg-realistic-player #game[data-stage="idle"] #stage .idle-aura {
   left:50%;
 }
 
-/* Trong bí cảnh không còn sân đấu hai bên: đạo thân đứng trên trục giữa cảnh,
-   đi bộ tại chỗ hoặc ngồi thiền nghỉ ngơi trong suốt chuyến lịch luyện. */
+/* Lịch luyện: căn chân nhân vật vào phần đất ở tiền cảnh (thay vì giữa ảnh).
+   Sprite 512px có khoảng trống phía dưới chân; giữ điểm neo chân đã dùng chung
+   cho hai tư thế đi bộ / nghỉ ngơi và mọi kích thước màn hình. */
 html.hg-realistic-player #game[data-stage="combat"] #stage #heroActor{
   left:50%!important;
-  top:75%;
+  top:87%;
   bottom:auto!important;
   transform:translate(-50%,-100%);
   transition:none;
