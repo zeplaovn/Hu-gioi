@@ -49,3 +49,8 @@
   .create-right{overflow:auto;scrollbar-width:thin;scrollbar-color:#5e4d3c transparent}
   .create-left{overflow:hidden}
 }
+
+/* Trạng thái phân bổ điểm — rõ ràng trên desktop và điện thoại. */
+#pointsValue.points-pending{color:#edc28b}
+#pointsValue.points-complete{color:#a9dfb2}
+#pointsValue:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:3px}
