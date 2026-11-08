@@ -98,7 +98,7 @@
         if (!d) throw Error('Tông môn không hợp lệ.');
         if (this.s.sect.joined) throw Error('Đã là đệ tử tông môn.');
         this.s.sect = { ...sectDefault(), joined: true, id };
-        this.log('Gia nhập ' + d.name + ' · mở thu nhập và ủy thác tông môn.');
+        this.log('Gia nhập ' + d.name + ' · được hưởng linh thạch định kỳ và nhận ủy thác tông môn.');
         return d;
       },
       leaveSect() {
@@ -173,7 +173,7 @@
         const result = { id: def.id, at: now, success, contribution, stone, exp, text };
         s.sect.last = result;
         this.log('Tông môn · ' + text);
-        if (this.sectRank().index > previous) this.log('Thăng chức tông môn: ' + this.sectRank().name + '.');
+        if (this.sectRank().index > previous) this.log('Được sắc phong chức vị tông môn: ' + this.sectRank().name + '.');
         return { ...result, def };
       },
       claimSectMission(payload, now) { return this._claimSectMission(at(this, now)); },
