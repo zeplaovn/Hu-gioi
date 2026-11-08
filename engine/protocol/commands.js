@@ -59,6 +59,7 @@
     abortSectMission: {},
     buySect: { id: string, element: optional(integer(0, 4)) },
     temperRoot: { index: integer(0, 4) },
+    storyMark: { id: string, option: optional(string) },
     // adventures
     startDungeon: { id: string },
     abortDungeon: {},
