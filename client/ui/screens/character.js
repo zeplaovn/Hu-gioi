@@ -27,8 +27,12 @@
 
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();
+    const glossary = Object.entries(S).map(([key, label]) =>
+      '<div class="stat-definition"><dt>' + esc(label) + '</dt><dd>' + esc(UI.statDescriptions[key] || '') + '</dd></div>'
+    ).join('');
     return `<div class="screen-grid">
       ${card('Chiến lực', [[S.hp, st.HP], [S.mp, g.maxMp()], [S.sta, st.STA], [S.atk, st.ATK], [S.def, st.DEF], [S.spd, st.SPD], [S.cp, st.CP]].map(([k, v]) => row(k, num(v))).join('') + row(S.crit, pct(st.CRIT)) + row(S.critDamage, pct(st.CRIT_DMG)) + row(S.dodge, pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
+      ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ' })}
       ${card('Tu luyện', `
         ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row(S.qiRate, num(g.rate()) + ' tu vi/giây')}
         ${row('Tu vi từ đan / giới hạn', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
