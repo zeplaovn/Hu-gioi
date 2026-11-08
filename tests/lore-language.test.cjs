@@ -69,7 +69,7 @@ test('giữ nguyên cấu trúc thông số và tên khoá trò chơi', () => {
   const skill = read('engine/rules/combat.js');
   const social = read('engine/rules/social.js');
   const save = read('engine/state/player.js');
-  assert.match(skill, /UI\.command\('skill'/);
+  assert.match(skill, /skill\(payload, now\)/);
   assert.match(social, /DESIGN\.npc\[id\]/);
   assert.match(save, /x\.enemyKind = \['thường', 'tinh anh', 'boss', 'boss kiếp'\]/);
   assert.doesNotMatch(save, /x\.logs\.unshift\('Đã chuyển bản lưu V5 sang V6/);
