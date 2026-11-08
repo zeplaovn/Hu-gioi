@@ -30,7 +30,7 @@
         total += n;
       }
       if (total > H.TALENT_MAX) throw Error('Thiên phú vượt quá 8 điểm.');
-      while (total++ < H.TALENT_MAX) talent[keys[Math.floor(rng() * keys.length)]]++;
+      if (total !== H.TALENT_MAX) throw Error('Phải phân bổ đủ 8 điểm thiên phú trước khi vào game.');
       const s = H.create(now);
       Object.assign(s, { name, gender: profile.gender, race: profile.race, roots: [...profile.roots], rootType: profile.rootType, rootSub, age: profile.age, talent, created: true });
       s.stone = H.startStone(talent);
