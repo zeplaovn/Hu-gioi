@@ -88,7 +88,7 @@
   const body = { season, audio, guide };
   UI.register({
     id: 'settings', label: 'Cài đặt', icon: 'ICON-MENU-006', eyebrow: 'THIẾT LẬP', nav: false, tabs: TABS,
-    render: mục => `<header class="screen-title"><span class="eyebrow gold">THIẾT LẬP</span><h2>Cài đặt</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
+    render: tab => `<header class="screen-title"><span class="eyebrow gold">THIẾT LẬP</span><h2>Cài đặt</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
     signature: () => ''
   });
 
