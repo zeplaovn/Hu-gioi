@@ -219,7 +219,7 @@ test('state: normalize nâng cấp V4–V7 và loại bản lưu hỏng', () => 
 
   const backwards = H.normalize({ ...JSON.parse(JSON.stringify(saved)), lastUpdate: NOW + 60_000, lastSaved: NOW + 60_000 }, NOW);
   assert.equal(backwards.lastUpdate, NOW);
-  assert.match(backwards.logs[0], /Giờ máy lùi/);
+  assert.match(backwards.logs[0], /Đồng hồ thiết bị bị chỉnh lùi/);
 });
 
 test('creation + time: tu vi, tuổi và offline có trần theo phiên', () => {
@@ -924,7 +924,7 @@ test('NPC: nhiệm vụ nộp linh thạch, truyền thụ và tiến độ săn
   assert.equal(run(reset, 'npcQuest', { id: 'NPC001' }).accepted, true);
   reset.s.progress.kill = 40;
   assert.equal(reset.npcQuestInfo('NPC001').progress, 25); // tiến độ chốt ở mục tiêu, không vượt
-  assert.throws(() => reset.npcQuestInfo('NPC999'), /không hợp lệ/);
+  assert.throws(() => reset.npcQuestInfo('NPC999'), /Không tìm thấy vị đạo hữu/);
   assert.throws(() => C.execute(reset, { type: 'npcQuest', payload: { id: 'NPC001', extra: 1 } }, NOW), /không hợp lệ/);
 });
 

@@ -56,7 +56,7 @@ test('đạo thân và pháp trận cùng lấy tâm X/Y trên đài, không l�
   const css = read('css/player-pack.css');
   assert.match(css, /#game\[data-stage="idle"\] #stage \{/);
   assert.match(css, /--cultivation-altar-x:\s*50%/);
-  assert.match(css, /--cultivation-altar-y:\s*68%/);
+  assert.match(css, /--cultivation-altar-y:\s*72%/);
   assert.match(css, /#game\[data-stage="idle"\] #stage #heroActor\s*\{[^}]*left:\s*var\(--cultivation-altar-x\);[^}]*top:\s*var\(--cultivation-altar-y\);[^}]*bottom:\s*auto;[^}]*transform:\s*translate\(-50%,\s*-100%\)/);
   assert.match(css, /#game\[data-stage="idle"\] #stage \.idle-aura\s*\{[^}]*left:\s*var\(--cultivation-altar-x\);/);
   assert.match(css, /orientation:\s*portrait/);
