@@ -49,8 +49,18 @@
               exploring.text = result.text;
             }
           } else if (exploring.kind === 'monster' && !exploring.cleared) {
-            this.log('Lịch luyện kết thúc, chưa thể hạ yêu thú cản đường.');
+            // Không còn chiến đấu thủ công: trận chạm trán được luận định khi
+            // kết thúc lịch luyện, không phát sinh tiến trình đánh quái mỗi giây.
+            const foe = this.enemy(), chance = F.win_probability(this.stats(exploring.end).CP, foe.CP);
+            if (this.rng() < chance) {
+              this.collectLoot(1, false);
+              exploring.cleared = true;
+              exploring.text = 'Đã vượt qua ' + exploring.name + ', thu nhận chiến lợi phẩm.';
+            } else {
+              exploring.text = 'Gặp ' + exploring.name + ', đạo thân tránh được hiểm họa nhưng chưa thể thu được chiến lợi phẩm.';
+            }
           }
+          this.log('Lịch luyện kết thúc · ' + exploring.name + '. ' + exploring.text);
           s.exploration.last = exploring;
           s.exploration.active = null;
           if (now <= start) {
