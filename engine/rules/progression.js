@@ -224,7 +224,7 @@
         const s = this.s, reward = F.dao_van(s.totalRunExp);
         if (!force && reward < 10) throw Error('Trọng sinh mở khi nhận ít nhất 10 Đạo vận.');
         const kept = s.qi * s.rebirthKeep, next = create(now);
-        for (const k of ['name', 'gender', 'race', 'roots', 'rootType', 'rootSub', 'chaosTries', 'settings', 'learned', 'offlineCap', 'offlineEff', 'createdAt', 'talent', 'social', 'npcAffinities', 'npcQuests'])
+        for (const k of ['name', 'gender', 'race', 'roots', 'rootType', 'rootSub', 'chaosTries', 'settings', 'learned', 'offlineCap', 'offlineEff', 'createdAt', 'talent', 'social', 'npcAffinities', 'npcQuests', 'story'])
           next[k] = clone(s[k]);
         for (const q of Object.values(next.npcQuests)) q.base = null; // bộ đếm hạ yêu thú đã đặt lại, việc đang nhận phải nhận lại
         const meta = normalizeMeta(clone(s.meta || metaDefault()), now);
