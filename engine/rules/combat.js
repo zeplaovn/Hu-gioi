@@ -3,7 +3,7 @@
 (function (root) {
   'use strict';
   const domain = 'combat';
-  const commands = Object.freeze(['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel']);
+  const commands = Object.freeze(['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration']);
 
   function install(API) {
     const H = API, F = H.F, { ITEMS, ENEMY_NAMES, DESIGN, item } = H;
@@ -12,6 +12,36 @@
     const effects = s => s.designCombat;
 
     Object.assign(H.Game.prototype, {
+      startExploration(payload, now) {
+        const s = this.s;
+        if (s.exploration?.active) throw Error('Lịch luyện đang diễn ra. Hãy đợi chuyến đi kết thúc.');
+        if (s.dungeon?.active || s.dungeon?.run) throw Error('Cần hoàn tất hành trình bí cảnh trước khi lịch luyện.');
+        const kinds = ['monster', 'npc', 'encounter'];
+        const kind = kinds[Math.min(2, Math.floor(this.rng() * 3))];
+        const e = { kind, start: now, end: now + 600000, npcId: '', name: '', text: '', cleared: false };
+        if (kind === 'monster') {
+          const monsterKinds = ['thường', 'tinh anh', 'boss'];
+          s.enemyKind = monsterKinds[Math.min(2, Math.floor(this.rng() * 3))];
+          s.enemyHp = 0;
+          e.name = this.enemy().name;
+          e.text = 'Yêu thú chặn đường. Hãy xuất chiêu để vượt qua thử thách.';
+        } else if (kind === 'npc') {
+          const ids = Object.keys(H.DESIGN.npc);
+          e.npcId = ids[Math.min(ids.length - 1, Math.floor(this.rng() * ids.length))] || '';
+          e.name = H.DESIGN.npc[e.npcId]?.['tên NPC'] || 'Kỳ nhân';
+          e.text = 'Hữu duyên gặp gỡ một vị đạo hữu trên đường lịch luyện.';
+        } else {
+          const events = H.ENCOUNTERS.filter(v => v.rarity <= Math.max(0, Math.min(4, s.realm)));
+          const ev = events[Math.min(events.length - 1, Math.floor(this.rng() * events.length))] || H.ENCOUNTERS[0];
+          e.name = ev.name;
+          e.eventId = ev.id;
+          e.text = ev.desc;
+        }
+        s.auto = false;
+        s.exploration = { ...(s.exploration || {}), active: e };
+        this.log('Khởi hành lịch luyện · ' + e.name + ' · 10 phút.');
+        return e;
+      },
       enemy() {
         const s = this.s;
         let d = null;
@@ -95,6 +125,7 @@
         }
         if (s.enemyHp === 0) {
           this.collectLoot();
+          if (s.exploration?.active?.kind === 'monster') s.exploration.active.cleared = true;
           s.designCombat.enemyEffects = [];
           s.enemyHp = this.enemy().HP;
           return { damage, won: true };
@@ -115,7 +146,9 @@
         return { damage, won: false };
       },
       strike(payload, now) { this.assertNoRun(); return this._strike(1, at(this, now), false); },
-      assertNoRun() { if (this.s.dungeon.run) throw Error('Đang chiến đấu trong bí cảnh, chưa thể lịch luyện.'); },
+      assertNoRun() { if (this.s.dungeon.run) throw Error('Đang chiến đấu trong bí cảnh, chưa thể lịch luyện.');
+        const e = this.s.exploration?.active;
+        if (e && (e.kind !== 'monster' || e.cleared)) throw Error('Không có yêu thú nào đang giao chiến.'); },
       skill(payload, now) {
         this.assertNoRun();
         now = at(this, now);
