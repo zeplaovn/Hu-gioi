@@ -137,7 +137,7 @@
         if (!success) {
           s.qi = F.on_breakthrough_fail(s.qi);
           s.pity = Math.min(15, s.pity + 1);
-          this.log('Đột phá thất bại: mất 15% tu vi, tăng bảo hiểm lần sau.');
+          this.log('Đột phá thất bại: hao tổn 15% tu vi, kiếp vận tích thêm một bậc.');
           return { success, chance, events };
         }
         s.qi = 0; s.pity = 0; s.pillUses = 0; s.progress.breaks++;
@@ -203,7 +203,7 @@
         const cost = u.cost[lvl];
         if (s.meta.points < cost) throw Error('Không đủ điểm Thiên mệnh.');
         s.meta.points -= cost; s.meta.upgrades[key] = lvl + 1;
-        this.log('Thiên mệnh · ' + u.name + ' cấp ' + (lvl + 1) + '.');
+        this.log('Thiên mệnh · ' + u.name + ' tăng lên bậc ' + (lvl + 1) + '.');
         return { key, level: lvl + 1, cost };
       },
       checkMeta(now = this.s.lastUpdate) {
