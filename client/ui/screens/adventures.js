@@ -107,11 +107,11 @@
         row('Đã vượt lôi kiếp mà chưa hóa', num(s.chaosTries || 0) + ' lần') +
         '<p class="info-note">Linh căn ngũ hành có cơ hội hóa sau khi vượt lôi kiếp đại cảnh giới. Nền 1%; Vận Khí và bảo hiểm tăng tỉ lệ.</p></div>';
     }
-    const body = `<p>${esc(info.desc)}</p>${row('Tốc độ hấp thụ linh khí nền', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
+    const body = `<p>${esc(info.desc)}</p>${row('Tốc độ hấp thụ linh khí', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
     const rank = (types, cur) => types.map(n => `<span class="root-chip ${cur === n ? 'is-current' : ''}">${esc(n)}</span>`).join('<span class="root-sep">›</span>');
     const classes = `<div class="root-class"><b>Ngũ hành cơ bản</b><div>${rank(['Ngụy', 'Tứ hành', 'Tam hành', 'Song', 'Thiên'], type)}</div><p class="info-note">Theo số hệ đạt 50 điểm; Thiên là một hệ thuần, không biến thể.</p></div>` +
       `<div class="root-class"><b>Dị linh căn</b><div>${H.DI_KEYS.map(k => `<span class="root-chip ${type === 'Dị' && s.rootSub === k ? 'is-current' : ''}">${esc(H.DI_LINH_CAN[k].name)}</span>`).join('<span class="root-sep">·</span>')}</div><p class="info-note">Dị khắc hệ gốc và không bị hệ gốc khắc.</p></div>` +
-      `<div class="root-class"><b>Chí tôn</b><div>${rank(type === 'Âm Dương' ? ['Âm Dương', 'Hỗn Độn'] : ['Hỗn Độn'], type)}</div><p class="info-note">Hỗn Độn không gieo bẩm sinh; bản lưu Âm Dương cũ vẫn được giữ.</p></div>`;
+      `<div class="root-class"><b>Chí tôn</b><div>${rank(type === 'Âm Dương' ? ['Âm Dương', 'Hỗn Độn'] : ['Hỗn Độn'], type)}</div><p class="info-note">Hỗn Độn không gieo bẩm sinh; truyền thừa Âm Dương từ kiếp cũ vẫn được giữ.</p></div>`;
     return card(H.rootLabel(type, s.rootSub), body, { eyebrow: (group ? group.name : 'Linh căn').toUpperCase() }) + card('Phân loại linh căn', classes, { eyebrow: 'BA NHÓM' });
   }
 
