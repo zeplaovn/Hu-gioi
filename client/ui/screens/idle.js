@@ -23,7 +23,7 @@
     const claimable = QUESTS.filter(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]).length;
     if (claimable) goals.push({ icon: '✦', text: `${claimable} nhiệm vụ đã đủ điều kiện nhận thưởng.`, go: 'world:quests', cta: 'Nhận' });
     const job = s.craftQueue[0];
-    if (job) goals.push({ icon: '⚗', text: `Lò ${esc(H.item(job.code).name)} xong sau ${live(job.end)}.`, go: 'craft:dan', cta: 'Nghề phụ' });
+    if (job) goals.push({ icon: '⚗', text: `Mẻ đan ${esc(H.item(job.code).name)} sẽ hoàn thành sau ${live(job.end)}.`, go: 'craft:dan', cta: 'Nghề phụ' });
     const plot = [...s.garden].sort((a, b) => a.end - b.end)[0];
     if (plot) goals.push({ icon: '❀', text: `Linh điền: ${esc(H.item(plot.herb).name)} chín sau ${live(plot.end)}.`, go: 'craft:dien', cta: 'Linh điền' });
     if (!Object.keys(s.learned).length && Object.keys(s.bag).some(k => H.item(k)?.kind === 'BT')) goals.push({ icon: '✧', text: 'Có công pháp trong túi chưa lĩnh ngộ.', go: 'character:bag', cta: 'Hành trang' });
