@@ -2,6 +2,8 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const { readFileSync } = require('node:fs');
+const { join } = require('node:path');
 const H = require('../engine/game.js');
 const C = require('../engine/protocol/commands.js');
 const STORY = require('../data/story.js');
@@ -21,6 +23,14 @@ const run = (g, id, option) => C.execute(g, { type: 'storyMark', payload: {
 } }, NOW);
 const chapters = STORY.ACTS.flatMap(a => a.chapters);
 const topics = Object.values(STORY.NPCS).flatMap(x => Object.values(x));
+
+test('tài liệu hợp đồng liệt kê đúng mọi lệnh protocol', () => {
+  const doc = readFileSync(join(__dirname, '../docs/engine-contract.md'), 'utf8');
+  const listed = [...doc.matchAll(/^\\| \`(\\w+)\` \\| (?:progression|inventory|crafting|combat|world|adventures|social) \\|/gm)]
+    .map(match => match[1]);
+  assert.deepEqual([...new Set(listed)].sort(), [...C.types].sort());
+  assert.equal(listed.length, C.types.length, 'bảng tài liệu không được lặp lệnh');
+});
 
 test('Vạn Kiếp Tàng Thư: ba hồi, 14 chương, mở đúng cảnh giới', () => {
   assert.deepEqual(STORY.ACTS.map(a => a.chapters.length), [5, 4, 5]);
