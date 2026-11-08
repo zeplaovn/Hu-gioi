@@ -14,12 +14,12 @@ const TALENT_INFO=[
  {key:'tuongMao',name:'Tướng Mạo',icon:'ICON-MENU-003-40.png',desc:'Dung mạo xuất chúng, khởi đầu có thêm linh thạch.',effect:v=>`+${v*20} linh thạch khởi đầu`},
  {key:'phucDuyen',name:'Phúc Duyên',icon:'ICON-MENU-006-40.png',desc:'Duyên lành với thiên địa, tăng lợi tức khi lịch luyện.',effect:v=>`+${v*2}% linh thạch, +${v*1.5}% linh thảo`},
  {key:'canCot',name:'Căn Cốt',icon:'ICON-MENU-005-40.png',desc:'Thân thể cường kiện, tăng sinh lực và công kích.',effect:v=>`+${v*2}% sinh lực và công kích`},
- {key:'ngoTinh',name:'Ngộ Tính',icon:'ICON-MENU-001-40.png',desc:'Huệ căn thông tuệ, tăng tốc độ tu luyện.',effect:v=>`+${v*1.5}% tốc tu`},
+ {key:'ngoTinh',name:'Ngộ Tính',icon:'ICON-MENU-001-40.png',desc:'Huệ căn thông tuệ, tăng tốc độ hấp thụ linh khí.',effect:v=>`+${v*1.5}% tốc độ hấp thụ linh khí`},
  {key:'vanKhi',name:'Vận Khí',icon:'ICON-MENU-007-40.png',desc:'Vận may hộ thân, tăng bạo kích và tỉ lệ đột phá.',effect:v=>`+${v*0.5}% bạo kích, +${v*0.3}% đột phá`}
 ];
 const TALENT_MAX=8;
 const META_UPGRADES={
- exp:{name:'Đạo Tâm',icon:'✧',desc:'+3% tốc độ tu luyện vĩnh viễn mỗi cấp.',cost:[2,3,5,7,10],max:5},
+ exp:{name:'Đạo Tâm',icon:'✧',desc:'+3% tốc độ hấp thụ linh khí vĩnh viễn mỗi cấp.',cost:[2,3,5,7,10],max:5},
  stone:{name:'Túi Càn Khôn',icon:'◈',desc:'+20 linh thạch khởi đầu mỗi cấp.',cost:[1,2,3,4,6],max:5},
  life:{name:'Trường Sinh',icon:'❋',desc:'+5 năm thọ nguyên khởi đầu mỗi cấp.',cost:[2,3,4,6,8],max:5},
  luck:{name:'Thiên Vận',icon:'✦',desc:'+1 Vận Khí khởi đầu mỗi cấp.',cost:[3,5,8],max:3}
@@ -39,7 +39,7 @@ const META_ACHIEVEMENTS=[
  {id:'breaks_10',name:'Mười lần phá cảnh',desc:'Đột phá thành công 10 lần.',points:2,check:s=>(s.progress?.breaks||0)>=10},
  {id:'rebirth_1',name:'Nhất niệm luân hồi',desc:'Trọng sinh lần đầu.',points:3,check:s=>s.rebirths>=1},
  {id:'rebirth_5',name:'Ngũ kiếp tu hành',desc:'Trọng sinh 5 lần.',points:6,check:s=>s.rebirths>=5},
- {id:'pvp_10',name:'Luận kiếm thập thắng',desc:'Thắng 10 trận PvP.',points:3,check:s=>(s.social?.pvp?.wins||0)>=10},
+ {id:'pvp_10',name:'Luận kiếm thập thắng',desc:'Thắng 10 trận luận kiếm.',points:3,check:s=>(s.social?.pvp?.wins||0)>=10},
  {id:'friends_3',name:'Tri kỷ tứ phương',desc:'Kết giao 3 vị đạo hữu.',points:3,check:s=>Object.values(s.social?.friends||{}).filter(f=>f?.metAt>0).length>=3}
 ];
 const NAME_FAMILY=['Hàn','Lục','Tô','Mạc','Vũ','Diệp','Bạch','Tạ','Lăng','Âu Dương','Thượng Quan','Tiêu','Lý','Phong','Mộ Dung','Đoàn'];

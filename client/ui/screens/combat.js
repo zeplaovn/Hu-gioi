@@ -10,7 +10,7 @@
     const g = UI.g();
     return `<div class="skillbar" role="group" aria-label="Kỹ năng chiến đấu">
       ${SKILLS.map((k, i) => `<button class="skill-btn" id="skill${i}" data-act="skill" data-index="${i}" title="${esc(k.desc)}">
-        <img src="${A.skillIcon(i + 1)}" alt="" loading="lazy" decoding="async"><span><b>${k.name}</b><small>${num(g.maxMp() * k.mp)} linh khí · <span data-cooldown="${i}"></span></small></span><kbd>${i + 1}</kbd>
+        <img src="${A.skillIcon(i + 1)}" alt="" loading="lazy" decoding="async"><span><b>${k.name}</b><small>${num(g.maxMp() * k.mp)} linh lực · <span data-cooldown="${i}"></span></small></span><kbd>${i + 1}</kbd>
       </button>`).join('')}
       <button class="btn btn-gold strike-btn" data-act="strike">⚔ Công kích</button>
     </div>`;
@@ -21,7 +21,7 @@
     const kinds = Object.keys(F.MONSTER_MULT);
     return card(esc(enemy.name), `
       ${row('Cảnh giới', F.REALMS[s.zone])}
-      ${enemy.designId ? row('Mã / cấp / hệ', esc(enemy.designId)+' · '+num(enemy.level)+' · '+esc(enemy.elementName)) : ''}
+      ${enemy.designId ? row('Cấp / thuộc tính', num(enemy.level)+' · '+esc(enemy.elementName)) : ''}
       ${row('Sinh lực', '<span id="enemyHpText">—</span>')}
       ${row('Chiến lực đối thủ', num(enemy.CP))}
       ${enemy.designId?.startsWith('BS') ? row('Giai đoạn', '<span id="enemyPhaseText">—</span>') : ''}
@@ -48,7 +48,7 @@
       ${row('Yêu đan tích lũy', '<span id="yaoValue">0</span>')}
       ${drops}
       ${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0, 'btn-outline')}
-      <p class="info-note">Khi offline, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
+      <p class="info-note">Khi bạn rời game, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
   }
 
   function zoneCard() {
@@ -66,7 +66,7 @@
     const s=UI.s(),now=Date.now();
     const manuals=s.activeManuals.map(key=>({key,x:H.item(key)})).filter(v=>v.x?.design?.group==='công pháp');
     const gear=s.equipment.map(key=>({key,x:H.item(key),effect:H.DESIGN.effects[H.item(key).code]})).filter(v=>v.effect?.['điều kiện kích hoạt']==='khi kích hoạt');
-    const m=manuals.map(({key,x})=>btn(esc(x.name)+' · '+x.design['tiêu hao mp']+' MP','castManual',codeAttr(key),s.mp<x.design['tiêu hao mp']||now<(s.designCombat.manualCooldowns[key]||0),'btn-outline')).join('');
+    const m=manuals.map(({key,x})=>btn(esc(x.name)+' · '+x.design['tiêu hao mp']+' linh lực','castManual',codeAttr(key),s.mp<x.design['tiêu hao mp']||now<(s.designCombat.manualCooldowns[key]||0),'btn-outline')).join('');
     const p=gear.map(({key,x})=>btn('Kích hoạt '+esc(x.name),'activateArtifact',codeAttr(key),now<(s.designCombat.itemCooldowns[key]||0),'btn-outline')).join('');
     return card('Công pháp & pháp bảo',`<div class="action-group">${m||'<p class="info-note">Chưa vận hành công pháp chủ động.</p>'}${p||''}</div><p class="info-note">Lĩnh ngộ và vận hành công pháp hoặc trang bị pháp bảo để mở kỹ năng.</p>`,{eyebrow:'KỸ NĂNG MỚI'});
   }

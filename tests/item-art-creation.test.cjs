@@ -49,7 +49,7 @@ test('resolver hiển thị atlas và ảnh đơn; mã không tồn tại có SV
   const herb = ASSETS.itemImg({ code: 'HERB-002' });
   assert.match(herb.src, /^data:image\/svg\+xml/);
   assert.match(herb.style, /media\/assets\/item\/HG\.png/);
-  assert.match(herb.style, /background:/);
+  assert.match(herb.style, /background-image:/);
   const special = ASSETS.itemImg({ code: 'QITEM-HD-01' });
   assert.equal(special.src, 'media/assets/item/vat_pham_dac_biet/SSSITEM01.png');
   assert.equal(special.style, '');
@@ -84,7 +84,8 @@ test('nút vào game chỉ mở khi phân bổ đủ 8 điểm và thông báo r
   const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
   const boot = readFileSync(join(ROOT, 'client/ui/boot.js'), 'utf8');
   assert.match(html, /id="startNew"[^>]*aria-describedby="pointsValue" disabled/);
-  assert.match(html, /phân bổ đủ 8 điểm thiên phú/);
+  assert.match(html, /Còn 8\/8 điểm — cần phân bổ hết để bắt đầu/);
+  assert.doesNotMatch(html, /Bạn phải phân bổ đủ 8 điểm thiên phú để bắt đầu/);
   assert.match(boot, /start\.disabled = [^;]*creation\.points !== 0/);
   assert.match(boot, /if \(creation\.points !== 0\) \{/);
   assert.match(boot, /points\.classList\.toggle\('points-complete', complete\)/);

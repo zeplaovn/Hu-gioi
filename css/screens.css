@@ -397,3 +397,13 @@ body.in-tribulation{overflow:hidden}
 .adventure-progress::-webkit-progress-bar{background:var(--inset);border-radius:4px}
 .adventure-progress::-webkit-progress-value{background:var(--bar-job);border-radius:4px;opacity:.88}
 .adventure-progress::-moz-progress-bar{background:var(--bar-job)}
+
+/* Chú giải các chỉ số: chỉ mở khi người chơi cần, không chiếm chỗ màn hình nhỏ. */
+.stat-glossary{padding:0}
+.stat-glossary summary{cursor:pointer;color:#e6d4b4;font-weight:700;line-height:1.6;list-style-position:inside}
+.stat-glossary summary:focus-visible{outline:2px solid #e6d4b4;outline-offset:3px;border-radius:5px}
+.stat-glossary dl{margin:12px 0 0;display:grid;gap:8px}
+.stat-definition{display:grid;grid-template-columns:minmax(130px,1fr) minmax(0,1.5fr);gap:10px;padding:8px 0;border-bottom:1px solid #e6d4b422;line-height:1.5}
+.stat-definition dt{font-weight:700;color:#e6d4b4}
+.stat-definition dd{margin:0;color:#d4c8b9;overflow-wrap:anywhere}
+@media(max-width:560px){.stat-definition{grid-template-columns:1fr;gap:2px}}

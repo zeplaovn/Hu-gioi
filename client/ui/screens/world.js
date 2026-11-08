@@ -101,7 +101,7 @@
   });
   UI.action('joinSect', (el, d) => {
     UI.command('joinSect', { id: d.id || 'thanhvan' });
-    UI.toast('Đã gia nhập ' + UI.g().sectDefinition().name + ' · mở thu nhập thụ động.', { type: 'success', title: 'Tông môn' });
+    UI.toast('Đã gia nhập ' + UI.g().sectDefinition().name + ' · mở nguồn linh thạch định kỳ.', { type: 'success', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('sectMissionStart', (el, d) => {
@@ -118,7 +118,7 @@
   UI.action('blessing', () => {
     const s = UI.s();
     UI.command('setBlessing', { enabled: !s.sect.blessing });
-    UI.toast(s.sect.blessing ? 'Chúc phúc đã bật · tốc tu +10%.' : 'Chúc phúc đã tắt.', { type: s.sect.blessing ? 'success' : 'info', title: 'Tông môn' });
+    UI.toast(s.sect.blessing ? 'Chúc phúc đã bật · tốc độ hấp thụ linh khí +10%.' : 'Chúc phúc đã tắt.', { type: s.sect.blessing ? 'success' : 'info', title: 'Tông môn' });
     if (s.sect.blessing) UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('donate', () => {

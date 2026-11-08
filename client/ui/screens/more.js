@@ -10,7 +10,7 @@
   const TABS = [
     { id: 'friends', label: 'Tri kỷ', icon: '♡' },
     { id: 'dao', label: 'Đạo hữu', icon: '✧' },
-    { id: 'pvp', label: 'PvP', icon: '⚔' },
+    { id: 'pvp', label: 'Luận kiếm', icon: '⚔' },
     { id: 'ranking', label: 'Bảng xếp hạng', icon: '♛' }
   ];
 

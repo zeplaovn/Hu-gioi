@@ -7,6 +7,38 @@
   if (!H || !F || !A) throw new Error('Thiếu lõi game. Kiểm tra thứ tự thẻ script.');
   const UI = root.HU_UI = root.HU_UI || {};
 
+  // Tên chỉ số dùng thống nhất trên mọi màn. Chỉ đổi cách gọi, không sửa công thức.
+  UI.statNames = Object.freeze({
+    qi: 'Tu vi',
+    qiRate: 'Tốc độ hấp thụ linh khí',
+    hp: 'Sinh lực',
+    mp: 'Linh lực tối đa',
+    sta: 'Thể lực',
+    atk: 'Công kích',
+    def: 'Phòng thủ',
+    spd: 'Thân pháp',
+    cp: 'Chiến lực',
+    crit: 'Tỷ lệ bạo kích',
+    critDamage: 'Sát thương bạo kích',
+    dodge: 'Tỷ lệ né tránh'
+  });
+
+  UI.statDescriptions = Object.freeze({
+    qi: 'Tu vi tích lũy để đạt bình cảnh và đột phá tầng tu luyện.',
+    qiRate: 'Lượng tu vi tích lũy mỗi giây khi hấp thụ linh khí thiên địa.',
+    hp: 'Sinh lực tối đa của đạo thân; cạn sinh lực sẽ bất lợi khi giao chiến.',
+    mp: 'Linh lực tối đa dùng để thi triển kỹ năng và công pháp.',
+    sta: 'Nền tảng sức bền thể chất của đạo thân.',
+    atk: 'Uy lực của những đòn tấn công lên đối thủ.',
+    def: 'Khả năng chống đỡ sát thương khi giao chiến.',
+    spd: 'Độ linh hoạt và tốc độ ứng biến của đạo thân.',
+    cp: 'Mức chiến lực tổng hợp từ các thuộc tính chiến đấu.',
+    crit: 'Khả năng tạo ra đòn công kích bạo kích.',
+    critDamage: 'Mức sát thương của đòn bạo kích.',
+    dodge: 'Khả năng né tránh đòn đánh của đối thủ.'
+  });
+
+
   /* ======================================================================
      1. KIT
      ====================================================================== */

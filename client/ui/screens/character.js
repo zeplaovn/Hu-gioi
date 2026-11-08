@@ -6,6 +6,7 @@
   const { $, esc, num, money, moneyHTML, pct, duration, row, btn, img, codeAttr, bar, card, empty, tabs } = UI.kit;
   const { ELEMENTS } = UI.data;
   const { lists } = UI;
+  const S = UI.statNames;
 
   const TABS = [
     { id: 'stats', label: 'Đạo thể', icon: '☯' },
@@ -26,18 +27,22 @@
 
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();
+    const glossary = Object.entries(S).map(([key, label]) =>
+      '<div class="stat-definition"><dt>' + esc(label) + '</dt><dd>' + esc(UI.statDescriptions[key] || '') + '</dd></div>'
+    ).join('');
     return `<div class="screen-grid">
-      ${card('Chiến lực', [['Sinh lực', st.HP], ['Linh khí tối đa', g.maxMp()], ['Thể lực', st.STA], ['Công kích', st.ATK], ['Phòng thủ', st.DEF], ['Thân pháp', st.SPD], ['Chiến lực', st.CP]].map(([k, v]) => row(k, num(v))).join('') + row('Bạo kích', pct(st.CRIT)) + row('Sát thương bạo kích', pct(st.CRIT_DMG)) + row('Né tránh', pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
+      ${card('Chiến lực', [[S.hp, st.HP], [S.mp, g.maxMp()], [S.sta, st.STA], [S.atk, st.ATK], [S.def, st.DEF], [S.spd, st.SPD], [S.cp, st.CP]].map(([k, v]) => row(k, num(v))).join('') + row(S.crit, pct(st.CRIT)) + row(S.critDamage, pct(st.CRIT_DMG)) + row(S.dodge, pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
+      ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ' })}
       ${card('Tu luyện', `
-        ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row('Tốc độ', num(g.rate()) + '/giây')}
-        ${row('Tu vi từ đan / trần', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
-        ${row('Kháng đan tầng này', s.pillUses + ' viên')}`, { eyebrow: 'ĐẠO CẢNH' })}
+        ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row(S.qiRate, num(g.rate()) + ' tu vi/giây')}
+        ${row('Tu vi từ đan / giới hạn', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
+        ${row('Đan đã dùng ở tầng này', s.pillUses + ' viên')}`, { eyebrow: 'ĐẠO CẢNH' })}
       ${card('Thiên phú khởi nguyên', H.TALENT_INFO.map(t => {
         const v = s.talent?.[t.key] || 0;
         return row(t.name, v + ' điểm · ' + t.effect(v));
       }).join(''), { eyebrow: 'KHỞI NGUYÊN' })}
       ${card('Đạo vận · Thiên mệnh', `
-        ${row('Đạo vận', num(s.daoVan))}${row('Tốc tu vĩnh viễn', '×' + num(F.prestige_mult(s.daoVan)))}${row('Số lần trọng sinh', s.rebirths)}${row('Điểm Thiên mệnh', num(s.meta?.points || 0))}
+        ${row('Đạo vận', num(s.daoVan))}${row('Tốc độ hấp thụ linh khí vĩnh viễn', '×' + num(F.prestige_mult(s.daoVan)))}${row('Số lần trọng sinh', s.rebirths)}${row('Điểm Thiên mệnh', num(s.meta?.points || 0))}
         <div class="action-group"><button class="btn btn-outline" data-go="meta:prestige">Mở Trọng sinh ›</button><button class="btn btn-outline" data-go="meta">Mở Thiên mệnh ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
     </div>`;
   }
@@ -47,15 +52,15 @@
     const learned = Object.keys(s.learned).map(key => `<div class="technique-item">${img(key)}<div><h3>${esc(H.item(key).name)}</h3>
       <p>${H.item(key).realm} · ${F.SUBPHAM[H.item(key).sub]} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.item(key).description)}</p></div>
       ${['BT-900','BT-901'].includes(H.item(key).code)?'<span class="gold">Đã học bí tịch nghề</span>':btn(s.activeManuals.includes(key) ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))}</div>`).join('');
-    const ups = ['Công kích +2%', 'Tốc tu +2%', 'Phòng thủ +2%', 'Điểm né +0,5%'].map((name, i) => {
+    const ups = ['Công kích +2%', 'Tốc độ hấp thụ linh khí +2%', 'Phòng thủ +2%', 'Điểm né +0,5%'].map((name, i) => {
       const n = s.tech[i] - 1;
       return card(`${name} · ${n}/20`, row('Giá một cấp', moneyHTML(F.cost(g.upgradeBase(i), 1.15, n))) +
         `<div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="${i}" data-count="${k}"`, n >= 20, 'btn-outline')).join('')}</div>`);
     }).join('');
-    return `<p class="screen-lead">Vận hành tối đa ba công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc tu tối đa +70%.</p>
+    return `<p class="screen-lead">Vận hành tối đa ba công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc độ hấp thụ linh khí tối đa +70%.</p>
       <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Vào tab Hành trang để lĩnh ngộ Dẫn Khí Quyết có sẵn.')}</div>
       <h3 class="section-title">Nâng cấp theo cảnh giới</h3>
-      <p class="info-note">Giá tăng ×1,15 mỗi cấp. Nâng cấp thường và củng cố tối đa +40% tốc tu; cấp thường đặt lại khi qua đại cảnh giới.</p>
+      <p class="info-note">Giá tăng ×1,15 mỗi cấp. Nâng cấp thường và củng cố tối đa +40% tốc độ hấp thụ linh khí; cấp thường đặt lại khi qua đại cảnh giới.</p>
       <div class="screen-grid">${ups}</div>`;
   }
 
@@ -66,11 +71,11 @@
   function itemDescription(key) {
     const x=H.item(key),d=x.design,e=H.DESIGN.effects[x.code],q=2**(x.sub-H.BY_ID[x.code].sub);
     let detail='';
-    if(d?.group==='pháp bảo')detail=row('Chỉ số','HP +'+num(d['hp cộng']*q)+' · MP +'+num(d['mp cộng']*q)+' · ATK +'+num(d['atk cộng']*q)+' · DEF +'+num(d['def cộng']*q))+row('Né / bạo kích','+'+num(d['eva cộng (%)']*q)+'% / +'+num(d['crit cộng (%)']*q)+'%')+(e?row('Hiệu ứng',esc(e['hiệu ứng'])+' · '+esc(e['điều kiện kích hoạt'])):'');
-    else if(d?.group==='công pháp')detail=row('Hệ',esc(d['hệ']))+row('Kỹ năng',esc(d['công dụng'])+' · '+d['tiêu hao mp']+' MP · '+d['hồi chiêu (giây)']+' giây');
+    if(d?.group==='pháp bảo')detail=row('Thuộc tính','Sinh lực +'+num(d['hp cộng']*q)+' · Linh lực +'+num(d['mp cộng']*q)+' · Công kích +'+num(d['atk cộng']*q)+' · Phòng thủ +'+num(d['def cộng']*q))+row('Né tránh / bạo kích','+'+num(d['eva cộng (%)']*q)+'% / +'+num(d['crit cộng (%)']*q)+'%')+(e?row('Hiệu ứng',esc(e['hiệu ứng'])+' · '+esc(e['điều kiện kích hoạt'])):'');
+    else if(d?.group==='công pháp')detail=row('Hệ',esc(d['hệ']))+row('Kỹ năng',esc(d['công dụng'])+' · '+d['tiêu hao mp']+' linh lực · '+d['hồi chiêu (giây)']+' giây');
     else if(d?.group==='bí tịch')detail=row('Thể loại',esc(d['thể loại']))+row('Công dụng',esc(d['công dụng']));
     else if(d?.group==='linh thảo')detail=row('Cách dùng',esc(d['cách dùng']))+row('Hiệu quả',esc(d['hiệu quả']));
-    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub]))}${row('Mã',esc(x.code)+(x.designId?' · '+esc(x.designId):''))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${detail}`;
+    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub]))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${detail}`;
   }
 
   function bag() {

@@ -38,7 +38,7 @@
 
   function encounters() {
     const s = UI.s(), e = s.encounter, end = e.usedAt + 90000;
-    return `<p class="screen-lead">Mỗi ${duration(H.ENCOUNTER_INTERVAL)} bế quan hiệu dụng có ${pct(UI.g().encounterChance())} cơ hội gặp kỳ ngộ. Phúc Duyên tăng cơ hội hiếm; Vận Khí giúp tránh họa. Offline áp dụng giới hạn và hiệu suất bế quan.</p>
+    return `<p class="screen-lead">Mỗi ${duration(H.ENCOUNTER_INTERVAL)} bế quan hiệu dụng có ${pct(UI.g().encounterChance())} cơ hội gặp kỳ ngộ. Phúc Duyên tăng cơ hội hiếm; Vận Khí giúp tránh họa. Khi rời game, cơ duyên vẫn được tính theo giới hạn và hiệu quả bế quan.</p>
       ${card('Dấu chân cơ duyên', row('Đã khám phá', Object.keys(e.journal).length + '/' + H.ENCOUNTERS.length) + row('Tổng kỳ ngộ', num(e.total)) + '<p class="info-note">Phần thưởng tự nhận và ghi vào Nhật ký tu tiên. Tu vi dừng ở ngưỡng đột phá.</p>')}
       ${card('Kỳ ngộ gần đây', e.recent.map(v => {
         const d = H.ENCOUNTERS.find(x => x.id === v.id), rarity = H.ENCOUNTER_RARITIES[d.rarity];
@@ -59,7 +59,7 @@
       row('Thành công', pct(active.chance)) + (active.featured ? '<p class="gold">★ Nổi bật · thưởng ×1,5</p>' : '') +
       `<div class="action-group">${btn('Nhận thưởng', 'sectMissionClaim', '', !ready)}${btn('Hủy nhiệm vụ', 'sectMissionAbort', '', false, 'btn-outline')}</div>`, { eyebrow: ready ? 'ĐÃ HOÀN TẤT' : 'ĐANG THỰC HIỆN' }) : '';
     return task + card('Ủy thác tông môn', `<div class="action-group">${btn(s.sect.repeat ? 'Tự lặp: Bật' : 'Tự lặp: Tắt', 'sectRepeat', `aria-pressed="${s.sect.repeat}"`, false, 'btn-outline')}</div>
-      <p class="info-note">Tự lặp: tự nhận thưởng và làm lại khi đang chơi. Offline chỉ hoàn tất một nhiệm vụ, không nhận chuyến mới. Thất bại sẽ tắt tự lặp.</p>
+      <p class="info-note">Tự lặp: tự nhận thưởng và làm lại khi đang chơi. Khi rời game chỉ hoàn tất một nhiệm vụ, không nhận chuyến mới. Thất bại sẽ tắt tự lặp.</p>
       ${s.dungeon.active ? '<p class="info-note">Đang trong bí cảnh; chờ trở về để nhận nhiệm vụ.</p>' : ''}
       ${[1, 2, 3, 4, 5].map(tier => {
         const list = all.filter(m => m.tier === tier);
@@ -80,12 +80,12 @@
   }
   function sect() {
     const s = UI.s(), g = UI.g(), d = g.sectDefinition();
-    if (!d) return `<p class="screen-lead">Chọn một tông môn để nhận thu nhập thụ động, ủy thác và quyền đổi bảo vật.</p><div class="adventure-grid">${H.SECTS.map(x => card(x.name, `<p>${x.desc}</p><p class="gold">${x.bonus}</p>` + btn('Gia nhập', 'joinSect', `data-id="${x.id}"`))).join('')}</div>`;
+    if (!d) return `<p class="screen-lead">Chọn một tông môn để nhận nguồn linh thạch định kỳ, ủy thác và quyền đổi bảo vật.</p><div class="adventure-grid">${H.SECTS.map(x => card(x.name, `<p>${x.desc}</p><p class="gold">${x.bonus}</p>` + btn('Gia nhập', 'joinSect', `data-id="${x.id}"`))).join('')}</div>`;
     const rank = g.sectRank(), sub = UI.view.sectPanel || 'missions';
     const header = card(d.name, `<p>${d.desc} <b class="gold">${d.bonus}</b></p>` + row('Chức vị', rank.name) + row('Cống hiến khả dụng', num(s.sect.contribution)) + row('Tổng đã kiếm', num(s.sect.earned)) +
-      row('Thu nhập thụ động', moneyHTML(g.sectIncome()) + '/giây') +
+      row('Linh thạch tự tích lũy', moneyHTML(g.sectIncome()) + '/giây') +
       (rank.next ? bar((s.sect.earned - rank.at) / (rank.next.at - rank.at) * 100) + `<p class="info-note">Còn ${num(rank.next.at - s.sect.earned)} cống hiến đã kiếm để lên ${rank.next.name}.</p>` : '<p class="gold">Đã đạt chức vị tối cao.</p>') +
-      `<div class="action-group">${btn(s.sect.blessing ? 'Tắt chúc phúc' : 'Chúc phúc +10% tốc tu', 'blessing', '', false, 'btn-outline')}${btn('Cống hiến · ' + moneyHTML(F.price_ha(s.realm)), 'donate', '', s.stone < F.price_ha(s.realm), 'btn-outline')}</div>`);
+      `<div class="action-group">${btn(s.sect.blessing ? 'Tắt chúc phúc' : 'Chúc phúc +10% tốc độ hấp thụ linh khí', 'blessing', '', false, 'btn-outline')}${btn('Cống hiến · ' + moneyHTML(F.price_ha(s.realm)), 'donate', '', s.stone < F.price_ha(s.realm), 'btn-outline')}</div>`);
     const panels = { missions: missionBoard, shop: sectShop, ranks: () => card('Lộ trình chức vị', H.SECT_RANKS.map(r => row(r.name, num(r.at) + ' tổng cống hiến · bậc ' + r.tier)).join('') + '<p class="info-note">Cống hiến đã kiếm tính cả nhiệm vụ và quyên góp. Rời tông môn sẽ đặt lại chức vị, cống hiến và chúc phúc.</p>' + btn('Rời tông môn', 'sectLeave', '', !!s.sect.mission, 'btn-outline')) };
     return header + `<div class="action-group adventure-nav" role="group" aria-label="Bảng tông môn">${[['missions', 'Nhiệm vụ'], ['shop', 'Kho tông môn'], ['ranks', 'Chức vị']].map(([id, label]) => btn(label, 'sectPanel', `data-panel="${id}" aria-pressed="${sub === id}"`, false, sub === id ? 'btn-gold' : 'btn-outline')).join('')}</div>` +
       (s.sect.last && sub === 'missions' ? `<p class="adventure-result info-note">${esc(s.sect.last.text)}</p>` : '') + panels[sub]();
@@ -105,19 +105,19 @@
     } else if (g.chaosChance() > 0) {
       extra = `<div class="root-chaos"><b>Con đường Hỗn Độn</b>` + row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) +
         row('Đã vượt lôi kiếp mà chưa hóa', num(s.chaosTries || 0) + ' lần') +
-        '<p class="info-note">Linh căn ngũ hành có cơ hội hóa sau khi vượt lôi kiếp đại cảnh giới. Nền 1%; Vận Khí và bảo hiểm tăng tỉ lệ.</p></div>';
+        '<p class="info-note">Linh căn ngũ hành có cơ hội hóa sau khi vượt lôi kiếp đại cảnh giới. Cơ hội ban đầu là 1%; Vận Khí và bảo hiểm tăng tỉ lệ.</p></div>';
     }
-    const body = `<p>${esc(info.desc)}</p>${row('Tốc tu nền', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
+    const body = `<p>${esc(info.desc)}</p>${row('Tốc độ hấp thụ linh khí', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
     const rank = (types, cur) => types.map(n => `<span class="root-chip ${cur === n ? 'is-current' : ''}">${esc(n)}</span>`).join('<span class="root-sep">›</span>');
     const classes = `<div class="root-class"><b>Ngũ hành cơ bản</b><div>${rank(['Ngụy', 'Tứ hành', 'Tam hành', 'Song', 'Thiên'], type)}</div><p class="info-note">Theo số hệ đạt 50 điểm; Thiên là một hệ thuần, không biến thể.</p></div>` +
       `<div class="root-class"><b>Dị linh căn</b><div>${H.DI_KEYS.map(k => `<span class="root-chip ${type === 'Dị' && s.rootSub === k ? 'is-current' : ''}">${esc(H.DI_LINH_CAN[k].name)}</span>`).join('<span class="root-sep">·</span>')}</div><p class="info-note">Dị khắc hệ gốc và không bị hệ gốc khắc.</p></div>` +
-      `<div class="root-class"><b>Chí tôn</b><div>${rank(type === 'Âm Dương' ? ['Âm Dương', 'Hỗn Độn'] : ['Hỗn Độn'], type)}</div><p class="info-note">Hỗn Độn không gieo bẩm sinh; bản lưu Âm Dương cũ vẫn được giữ.</p></div>`;
+      `<div class="root-class"><b>Chí tôn</b><div>${rank(type === 'Âm Dương' ? ['Âm Dương', 'Hỗn Độn'] : ['Hỗn Độn'], type)}</div><p class="info-note">Hỗn Độn không gieo bẩm sinh; truyền thừa Âm Dương từ kiếp cũ vẫn được giữ.</p></div>`;
     return card(H.rootLabel(type, s.rootSub), body, { eyebrow: (group ? group.name : 'Linh căn').toUpperCase() }) + card('Phân loại linh căn', classes, { eyebrow: 'BA NHÓM' });
   }
 
   function roots() {
     const s = UI.s(), g = UI.g(), c = s.rootCraft, els = g.activeElements(), scale = 1 / Math.sqrt(Math.max(1, els.length));
-    const labels = { attack: 'Công kích', hp: 'Sinh lực', guard: 'Phòng thủ', rate: 'Tốc tu', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
+    const labels = { attack: 'Công kích', hp: 'Sinh lực', guard: 'Phòng thủ', rate: 'Tốc độ hấp thụ linh khí', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
     const effectText = (i, level) => Object.entries(H.TEMPER_EFFECTS[i]).map(([k, v]) => labels[k] + ' +' + (v * level * scale * 100).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + (['crit', 'dodge', 'regen'].includes(k) ? ' điểm %' : '%')).join(' · ');
     return `<div class="screen-grid">${rootOverview()}</div>
       <h3 class="root-section-title">Ngũ hành · tôi luyện từng hệ <small>(tách riêng khỏi Dị linh căn)</small></h3>

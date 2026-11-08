@@ -19,7 +19,7 @@
     const s = UI.s();
     const art = tab === 'dien' ? root.HU_ASSETS.BG.garden : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop;
     return `<header class="workshop-banner" style="--art:url('${abs(art)}')">
-      <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>${tab === 'dien' ? 'Gieo trồng · tưới nước · bón thổ · bắt sâu · thu hoạch.' : 'Các mẻ chạy nền theo giờ thật. Xong lúc offline vẫn được nhận.'}</p></div>
+      <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>${tab === 'dien' ? 'Gieo trồng · tưới nước · bón thổ · bắt sâu · thu hoạch.' : 'Mẻ luyện chế vẫn hoàn thành và chờ bạn nhận khi trở lại.'}</p></div>
       <div class="banner-stats">
         <div><small>Kỹ năng luyện đan</small><b>${alchemySkill().toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</b></div>
         <div><small>Mẻ đang luyện</small><b>${s.craftQueue.length}/3</b></div>
@@ -42,7 +42,7 @@
       .map(x => `<span class="stock" title="${esc(x.name)}">${img(x.key, 'mini-img')}<em>×${g.count(x.key)}</em></span>`).join('');
     return `<div class="screen-grid craft-top">
       ${card('Lò luyện đan', `<div class="furnace-row">${slots}</div><p class="info-note">Mỗi mẻ dùng bốn linh thảo, cho ba viên nếu thành công. Phẩm chất được ghi riêng trong túi.</p>`, { eyebrow: `HÀNG ĐỢI ${s.craftQueue.length}/3`, cls: 'wide' })}
-      ${card('Linh thảo trong túi', herbs ? `<div class="stock-row">${herbs}</div>` : empty('Chưa có linh thảo. Trồng ở tab Linh điền hoặc đi Lịch luyện.'), { eyebrow: 'NGUYÊN LIỆU' })}
+      ${card('Linh thảo trong túi', herbs ? `<div class="stock-row">${herbs}</div>` : empty('Chưa có linh thảo. Trồng ở mục Linh điền hoặc đi Lịch luyện.'), { eyebrow: 'NGUYÊN LIỆU' })}
     </div>`;
   }
 
@@ -99,7 +99,7 @@
       return `<div class="plot growing" data-plot="${i}" data-start="${p.plantedAt}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Linh thảo" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(H.item(p.herb).name)}</b>
         <div class="meter-bar job-bar"><i></i></div><span class="plot-status"></span>
         <div class="farm-meters"><label>Nước <meter class="farm-water" min="0" max="1" value="${p.water}"></meter></label><label>Đất <meter class="farm-soil" min="0" max="1" value="${p.soil}"></meter></label></div><small class="farm-pest"></small>
-        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 LT')}${action('pest', 'Bắt sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
+        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 linh thạch')}${action('pest', 'Bắt sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
     }).join('');
     const seeds = Object.keys(s.bag).map(H.item).filter(x => x?.kind === 'SEED' && x.tier <= s.realm + 1).sort((a, b) => a.tier - b.tier);
     const seedRows = seeds.map(x => {

@@ -4,7 +4,7 @@
   const UI = root.HU_UI, { $, esc } = UI.kit;
   const session = new root.HU_CHAT_SESSION.ChatSession();
   let draft = '', sending = false, error = '', pending = null, opened = false;
-  const labels = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', online: 'Đã kết nối', offline: 'Mất kết nối', unavailable: 'Cần mở qua HTTP' };
+  const labels = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', online: 'Đã kết nối', offline: 'Mất kết nối', unavailable: 'Hãy mở Hư Giới từ đường dẫn trực tuyến để truyền âm' };
 
   function render() {
     return `<section class="chat-panel"><header class="chat-heading"><div><span class="eyebrow gold">TRUYỀN ÂM · DEMO</span><h2>Kênh thế giới</h2></div><span id="chatOnline" class="chat-online"></span></header>
