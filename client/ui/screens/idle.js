@@ -23,32 +23,32 @@
     const claimable = QUESTS.filter(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]).length;
     if (claimable) goals.push({ icon: '✦', text: `${claimable} nhiệm vụ đã đủ điều kiện nhận thưởng.`, go: 'world:quests', cta: 'Nhận' });
     const job = s.craftQueue[0];
-    if (job) goals.push({ icon: '⚗', text: `Mẻ ${esc(H.item(job.code).name)} xong sau ${live(job.end)}.`, go: 'craft:dan', cta: 'Nghề phụ' });
+    if (job) goals.push({ icon: '⚗', text: `Lò ${esc(H.item(job.code).name)} xong sau ${live(job.end)}.`, go: 'craft:dan', cta: 'Nghề phụ' });
     const plot = [...s.garden].sort((a, b) => a.end - b.end)[0];
     if (plot) goals.push({ icon: '❀', text: `Linh điền: ${esc(H.item(plot.herb).name)} chín sau ${live(plot.end)}.`, go: 'craft:dien', cta: 'Linh điền' });
     if (!Object.keys(s.learned).length && Object.keys(s.bag).some(k => H.item(k)?.kind === 'BT')) goals.push({ icon: '✧', text: 'Có công pháp trong túi chưa lĩnh ngộ.', go: 'character:bag', cta: 'Hành trang' });
-    if (!s.sect.joined) goals.push({ icon: '⌂', text: 'Chọn một tông môn để có thu nhập và ủy thác.', go: 'world:sect', cta: 'Tông môn' });
+    if (!s.sect.joined) goals.push({ icon: '⌂', text: 'Gia nhập tông môn để tích lũy linh thạch và nhận ủy thác.', go: 'world:sect', cta: 'Tông môn' });
     return goals.slice(0, 3);
   }
 
   function qiCard() {
-    return card('Tiến độ tu vi', `
+    return card('Tu vi tích lũy', `
       <div class="big-number" id="idleQi">0 / 0</div>
       ${bar(0, 'qi', 'idleQiBar')}
       ${row('Còn lại', '<span id="idleEta">—</span>')}
       ${row('Xác suất đột phá', '<span id="idleChance">—</span>')}
-      ${row('Bảo hiểm thất bại', '<span id="idlePity">0/15</span>')}`, { eyebrow: 'ĐẠO CẢNH', cls: 'qi-card' });
+      ${row('Kiếp vận tích lũy', '<span id="idlePity">0/15</span>')}`, { eyebrow: 'ĐẠO CẢNH', cls: 'qi-card' });
   }
 
   function boostCard() {
     const s = UI.s(), g = UI.g();
     const n = s.tech[1] - 1, one = F.cost(g.upgradeBase(1), 1.15, n), capped = n >= 20;
-    const upgrade = `<div class="boost-row"><div><b>Hấp thụ linh khí +2% · ${n}/20</b><small>Giá một cấp ${moneyHTML(one)}</small></div>
+    const upgrade = `<div class="boost-row"><div><b>Hấp thụ linh khí +2% · ${n}/20</b><small>Chi phí bậc kế ${moneyHTML(one)}</small></div>
       <div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="1" data-count="${k}"`, capped || s.stone < one, 'btn-outline')).join('')}</div></div>`;
     const pills = [...pillsBy('TU_VI').slice(0, 2), ...pillsBy('BUFF_TOC').slice(0, 1)].map(x =>
       `<div class="boost-row">${img(x.key, 'mini-img')}<div><b>${esc(x.name)} <em>×${g.count(x.key)}</em></b><small>${x.effect === 'TU_VI' ? 'Bồi bổ tu vi ngay' : 'Tăng tốc độ hấp thụ linh khí có thời hạn'}</small></div>${btn('Dùng', 'consume', codeAttr(x.key), false, 'btn-outline')}</div>`).join('');
     const coins = F.COINS.slice(0, 3).map(([name, value], i) => btn('Hấp thu 1 ' + coinLabel(name), 'absorb', `data-index="${i}"`, s.stone < value || s.qi >= g.need(), 'btn-outline')).join('');
-    return card('Bồi dưỡng khả năng hấp thụ linh khí', upgrade + (pills || '<p class="info-note">Chưa có đan tăng tu vi trong túi. Mua ở Thế giới → Cửa hàng hoặc tự luyện ở Nghề phụ.</p>') + `<div class="action-group coin-row">${coins}</div>`, { eyebrow: 'NÂNG CẤP & ĐAN' });
+    return card('Bồi dưỡng đạo cơ', upgrade + (pills || '<p class="info-note">Chưa có đan tăng tu vi trong túi. Mua ở Thế giới → Cửa hàng hoặc tự luyện ở Nghề phụ.</p>') + `<div class="action-group coin-row">${coins}</div>`, { eyebrow: 'ĐAN DƯỢC · TỤ LINH' });
   }
 
   function manualsCard() {
@@ -78,7 +78,7 @@
       (s.dungeon.run ? row(H.DUNGEONS.find(d => d.id === s.dungeon.run.id).name, 'Tầng ' + s.dungeon.run.floor + ' · đang chiến đấu') + '<button class="btn btn-gold" data-go="world:dungeons">Tiếp tục chiến đấu</button>' : a ? row(H.DUNGEONS.find(d => d.id === a.id).name, live(a.end)) : '<p>Bí cảnh đã sẵn sàng để thám hiểm.</p>') +
       (m ? row(H.SECT_MISSIONS.find(d => d.id === m.id).name, live(m.end)) : '') +
       row('Kỳ ngộ đã gặp', num(s.encounter.total)) +
-      `<div class="action-group"><button class="btn btn-outline" data-go="world:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="world:encounter">Kỳ ngộ</button><button class="btn btn-outline" data-go="world:sect">Tông môn</button></div>`, { eyebrow: 'TIẾN TRÌNH NỀN' });
+      `<div class="action-group"><button class="btn btn-outline" data-go="world:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="world:encounter">Kỳ ngộ</button><button class="btn btn-outline" data-go="world:sect">Tông môn</button></div>`, { eyebrow: 'DUYÊN SỰ ĐANG TIẾN HÀNH' });
     return `<div class="screen-grid idle-grid">${qiCard()}${tasks}${boostCard()}${manualsCard()}${goalsCard()}${logCard()}</div>`;
   }
 
