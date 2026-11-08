@@ -108,7 +108,7 @@
   });
   UI.action('offlineEff', () => {
     UI.command('upgradeOffline', { type: 'eff' });
-    UI.toast('Hiệu suất offline · ' + pct(F.offline_efficiency(UI.s().offlineEff)) + '.', { type: 'success', title: 'Bế quan' });
+    UI.toast('Hiệu quả bế quan khi vắng mặt · ' + pct(F.offline_efficiency(UI.s().offlineEff)) + '.', { type: 'success', title: 'Bế quan' });
     UI.vfx?.effect('qi');
   });
 
