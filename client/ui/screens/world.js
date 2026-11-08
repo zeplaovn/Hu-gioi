@@ -116,7 +116,7 @@
   });
   UI.action('npcQuest', (el, d) => {
     const r = UI.command('npcQuest', { id: d.id });
-    if (r.accepted) UI.toast('Đã nhận việc: ' + r.name + '. Hạ yêu thú ở Lịch luyện để hoàn thành.', { type: 'info', title: 'Nhiệm vụ NPC' });
+    if (r.accepted) UI.toast('Đã nhận ủy thác: ' + r.name + '. Hạ yêu thú ở Lịch luyện để hoàn thành.', { type: 'info', title: 'Ủy thác kỳ nhân' });
     else {
       UI.toast(r.text, { type: 'loot', title: r.finished ? 'Hoàn tất chuỗi nhiệm vụ' : 'Nhiệm vụ NPC' });
       UI.vfx?.stage({ kind: 'chien_dau', variant: r.finished ? 'phi_thang' : 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
