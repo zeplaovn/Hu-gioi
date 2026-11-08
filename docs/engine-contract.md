@@ -66,6 +66,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `skill` | combat | `index` |
 | `castManual` | combat | `code` |
 | `activateArtifact` | combat | `code` |
+| `startExploration` | combat | — |
 | `setEnemyKind` | combat | `kind` |
 | `travel` | combat | `zone` |
 | `claimQuest` | world | `id` |
