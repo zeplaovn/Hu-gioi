@@ -1540,7 +1540,9 @@
       safe(() => {
         store.catchUp();
         if (winBtn.dataset.window === 'combat') {
-          go('combat');
+          // Giống các tab khác: bấm lần nữa để đóng, kể cả khi chuyến đi còn giờ.
+          if (wins.has('combat')) wins.close('combat');
+          else go('combat');
         } else if (winBtn.dataset.window === 'tribulation') {
           if (trib.pageOpen) trib.close();
           else go('tribulation');
