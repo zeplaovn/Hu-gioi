@@ -52,7 +52,9 @@
     note.hidden = !err;
     note.textContent = err;
     $('nameInput').setAttribute('aria-invalid', String(!!err));
-    $('startNew').disabled = !H.READY || entering || !H.cleanName($('nameInput').value);
+    const start = $('startNew');
+    start.disabled = !H.READY || entering || creation.points !== 0 || !H.cleanName($('nameInput').value);
+    start.title = creation.points > 0 ? 'Phân bổ hết ' + creation.points + ' điểm thiên phú còn lại để bắt đầu.' : '';
   }
 
   const raceBonusText = race => {
@@ -137,7 +139,14 @@
 
   function renderStats() {
     const points = $('pointsValue');
-    if (points) points.textContent = 'Số điểm còn lại: ' + creation.points;
+    if (points) {
+      const complete = creation.points === 0;
+      points.textContent = complete
+        ? 'Đã phân bổ đủ ' + TALENT_MAX + '/' + TALENT_MAX + ' điểm thiên phú.'
+        : 'Còn ' + creation.points + '/' + TALENT_MAX + ' điểm — cần phân bổ hết để bắt đầu.';
+      points.classList.toggle('points-complete', complete);
+      points.classList.toggle('points-pending', !complete);
+    }
     for (const t of TALENTS) {
       const v = creation.talent[t.key] || 0;
       const val = document.querySelector('[data-stat-val="' + t.key + '"]');
@@ -364,6 +373,12 @@
       if (store.locked) { UI.toast('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.'); return; }
       const name = H.cleanName($('nameInput').value);
       if (!name) { syncName(); return; }
+      if (creation.points !== 0) {
+        renderStats();
+        syncName();
+        $('pointsValue')?.focus({ preventScroll: true });
+        return;
+      }
       const profile = {
         name, gender: creation.gender, race: creation.race,
         roots: [...creation.roots], rootType: creation.rootType, rootSub: creation.rootSub || '',
@@ -446,6 +461,7 @@
       else if (delta < 0 && creation.talent[key] > 0) { creation.talent[key]--; creation.points++; }
       else return;
       renderStats();
+      syncName();
       showStatHint(key);
     });
     $('statGrid').addEventListener('pointerover', e => {
