@@ -1,5 +1,5 @@
-/* Tối ưu preload cho player.zip: không tải trước toàn bộ khung pixel cũ.
- * Phải nạp sau preload-manifest.js và trước platform/loader.js. */
+/* Chỉ giữ ảnh đạo thân WebP ưu tiên để tải nhanh và tránh nạp lại.
+ * Nạp sau preload-manifest.js và trước platform/loader.js. */
 (function (root) {
   'use strict';
   if (!Array.isArray(root.HU_PRELOAD)) return;
