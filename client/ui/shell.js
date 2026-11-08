@@ -427,10 +427,6 @@
       return top;
     },
     open(id) {
-      if (UI.s().exploration?.active && id !== 'combat') {
-        toast('Đang lịch luyện, chưa thể rời bí cảnh trước khi hết 10 phút.', { type: 'info', title: 'Lịch luyện' });
-        return this.has('combat') ? (this.focus('combat'), this.map.get('combat').el) : this.open('combat');
-      }
       if (id === 'tribulation') { go('tribulation'); return null; }
       const def = UI.screens[id];
       if (!def) return null;
@@ -474,11 +470,6 @@
       return el;
     },
     close(id) {
-      if (id === 'combat' && UI.s().exploration?.active) {
-        toast('Chuyến lịch luyện chưa kết thúc. Hãy chờ đếm ngược về 00:00.', { type: 'info', title: 'Lịch luyện' });
-        this.focus('combat');
-        return;
-      }
       const w = this.map.get(id);
       if (!w) return;
       if (id === 'combat') this.saveRect(id, w.rect);
@@ -805,11 +796,6 @@
     closeMoreMenu();
     hideItemTip();
     const [id, tab] = String(target || 'idle').split(':');
-    if (UI.s().exploration?.active && id !== 'combat') {
-      if (!silent) toast('Đang lịch luyện, chưa thể về đài Tu luyện trước khi hết giờ.', { type: 'info', title: 'Lịch luyện' });
-      go('combat', { silent: true });
-      return;
-    }
     if (trib.pageOpen && id !== 'tribulation') trib.closePage();
     if (id === 'tribulation') {
       resetFilters();
@@ -1635,7 +1621,6 @@
       }
       const [id, tab] = String(root.location.hash || '#idle').replace(/^#\/?/, '').split('/');
       if (!UI.screens[id]) return;
-      if (UI.s().exploration?.active && id !== 'combat') { go('combat'); return; }
       if (id === 'tribulation') { trib.openPage(); return; }
       if (trib.pageOpen) trib.closePage();
       if (tab) UI.tabState[id] = tab;
@@ -1678,11 +1663,10 @@
       const report = store.catchUp();
       if (wasExploring && !UI.s().exploration?.active) {
         lockedExplorationStart = null;
-        if (wins.has('combat') || UI.current === 'combat') {
-          go('idle');
-          toast('Đã kết thúc mười phút lịch luyện. Đạo thân trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
-          store.write();
-        }
+        // Việc hoàn tất chuyến đi không được đóng trang người chơi đang xem.
+        if (wins.has('combat') || UI.current === 'combat') go('idle');
+        toast('Đã kết thúc mười phút lịch luyện. Đạo thân trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
+        store.write();
       }
       if (trib.active) return;
       updateChrome();
