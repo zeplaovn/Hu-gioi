@@ -52,15 +52,15 @@
     const learned = Object.keys(s.learned).map(key => `<div class="technique-item">${img(key)}<div><h3>${esc(H.item(key).name)}</h3>
       <p>${H.item(key).realm} · ${F.SUBPHAM[H.item(key).sub]} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.item(key).description)}</p></div>
       ${['BT-900','BT-901'].includes(H.item(key).code)?'<span class="gold">Đã học bí tịch nghề</span>':btn(s.activeManuals.includes(key) ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))}</div>`).join('');
-    const ups = ['Công kích +2%', 'Tốc độ hấp thụ linh khí +2%', 'Phòng thủ +2%', 'Điểm né +0,5%'].map((name, i) => {
+    const ups = ['Công kích +2%', 'Tốc độ hấp thụ linh khí +2%', 'Phòng thủ +2%', 'Né tránh +0,5%'].map((name, i) => {
       const n = s.tech[i] - 1;
       return card(`${name} · ${n}/20`, row('Giá một cấp', moneyHTML(F.cost(g.upgradeBase(i), 1.15, n))) +
         `<div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="${i}" data-count="${k}"`, n >= 20, 'btn-outline')).join('')}</div>`);
     }).join('');
     return `<p class="screen-lead">Vận hành tối đa ba công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc độ hấp thụ linh khí tối đa +70%.</p>
-      <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Vào tab Hành trang để lĩnh ngộ Dẫn Khí Quyết có sẵn.')}</div>
-      <h3 class="section-title">Nâng cấp theo cảnh giới</h3>
-      <p class="info-note">Giá tăng ×1,15 mỗi cấp. Nâng cấp thường và củng cố tối đa +40% tốc độ hấp thụ linh khí; cấp thường đặt lại khi qua đại cảnh giới.</p>
+      <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Mở mục Hành trang để lĩnh ngộ Dẫn Khí Quyết có sẵn.')}</div>
+      <h3 class="section-title">Bồi dưỡng theo cảnh giới</h3>
+      <p class="info-note">Chi phí mỗi bậc tăng ×1,15. Tu luyện và củng cố đạo cơ có thể tăng tối đa 40% tốc độ hấp thụ linh khí; phần bồi dưỡng thường sẽ bắt đầu lại khi sang đại cảnh giới mới.</p>
       <div class="screen-grid">${ups}</div>`;
   }
 
