@@ -714,7 +714,7 @@
     });
     const moreBtn = $('moreMenuBtn');
     if (moreBtn) {
-      const on = wins.has('more') || wins.has('chat');
+      const on = wins.has('more');
       moreBtn.classList.toggle('on', on);
       moreBtn.setAttribute('aria-pressed', String(on));
     }
