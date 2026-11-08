@@ -61,7 +61,7 @@
     const b = H.raceBonus(race), out = [];
     if (b.hp) out.push('sinh lực ' + pctText(b.hp));
     if (b.atk) out.push('công kích ' + pctText(b.atk));
-    if (b.rate) out.push('tốc tu ' + pctText(b.rate));
+    if (b.rate) out.push('tốc độ hấp thụ linh khí ' + pctText(b.rate));
     return out.length ? out.join(' · ') : 'cân bằng, không thiên lệch';
   };
 
@@ -105,7 +105,7 @@
       '</div>';
     return '<div class="info-title">' + esc(rootLabel(type, sub)) +
       ' <span class="root-group root-group-' + esc(info.group) + '">' + esc(group ? group.name : '') + '</span></div>' +
-      '<div class="root-rate-line">tốc tu ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') + (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</div>' +
+      '<div class="root-rate-line">tốc độ hấp thụ linh khí ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') + (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</div>' +
       '<div class="small">' + esc(info.desc) + '</div>' + diBox +
       (descs ? '<div class="root-elem-title">' + (type === 'Dị' ? 'Hệ ngũ hành gốc' : 'Ngũ hành') + '</div>' : '') +
       '<div class="root-elem-list">' + descs + '</div>' + tiers +
@@ -114,7 +114,7 @@
       '<div class="dim small">Gieo lại xúc xắc để đổi linh căn. Điểm ngũ hành quyết định loại linh căn và thiên phú chiến đấu.</div>';
   }
 
-  /* Quy tắc linh căn theo root.txt: tốc tu theo số hệ, tương sinh/khắc, nguồn biến dị Dị linh căn, Hỗn Độn. */
+  /* Quy tắc linh căn theo root.txt: tốc độ hấp thụ linh khí theo số hệ, tương sinh/khắc, nguồn biến dị Dị linh căn, Hỗn Độn. */
   function rootRulesHtml() {
     const M = root.HU_MERIDIANS;
     if (!M) return '';
@@ -124,7 +124,7 @@
     const di = Object.entries(M.DI_SOURCE).map(([k, from]) => '<b style="color:' + M.HE_COLOR[M.DI_HE[k]] + '">' + M.DI_HE[k] + '</b> ← ' +
       from.map(h => '<span style="color:' + M.HE_COLOR[h] + '">' + h + '</span>').join(' + ')).join(' · ');
     return '<div class="root-rules"><div class="root-elem-title">Theo thiên thư</div>' +
-      '<div class="rule-line"><span>Tốc tu theo số hệ</span><span class="rule-chips">' + cnt + '</span></div>' +
+      '<div class="rule-line"><span>Tốc độ hấp thụ linh khí theo số hệ</span><span class="rule-chips">' + cnt + '</span></div>' +
       '<div class="rule-line"><span>Tương sinh</span><span>' + chain + ' → Mộc</span></div>' +
       '<div class="rule-line"><span>Tương khắc (+20% / −20% sát thương)</span><span>' + khac + ' → Mộc</span></div>' +
       '<div class="rule-line"><span>Nguồn biến dị Dị linh căn (×2.0)</span><span>' + di + '</span></div>' +
@@ -200,7 +200,7 @@
     const rate = F.LINH_CAN_RATE[creation.rootType];
     const diChip = creation.rootType === 'Dị'
       ? '<span class="chip chip-di" style="color:' + (M ? M.HE_COLOR[M.DI_HE[creation.rootSub]] : '#fff') + ';border-color:' + (M ? M.HE_COLOR[M.DI_HE[creation.rootSub]] : '#fff') + '">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span>' : '';
-    $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + ' <em>×' + rate + ' tốc tu</em></span>' +
+    $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + ' <em>×' + rate + ' tốc độ hấp thụ linh khí</em></span>' +
       '<span class="root-line">' + (diChip ? '<span class="root-line-label">Dị</span>' + diChip + '<span class="root-line-label">gốc</span>' : '') + (chips || '<span class="chip">…</span>') + '</span>' +
       '<span class="purity" title="Độ tinh khiết: điểm trung bình các hệ chính"><span class="purity-bar"><i style="width:' + (pv ? pv.purity : 0) + '%"></i></span><b>Tinh khiết ' + (pv ? pv.purity : 0) + '%</b></span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
