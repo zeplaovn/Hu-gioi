@@ -35,10 +35,11 @@ html.hg-realistic-player .trib-actor img#tribHero {
 
 /* Đài tu luyện là một tọa độ duy nhất trong sân khấu, không dựa vào
  * chiều cao của thanh điều khiển. Giữ tâm X=50% khi chuyển desktop/mobile,
- * landscape/portrait và để vị trí chiến đấu riêng cho đối thủ. */
+ * landscape/portrait và để vị trí chiến đấu riêng cho đối thủ.
+ * Dịch xuống 4% chiều cao sân khấu để đạo thân đứng đúng tâm bát quái. */
 #game[data-stage="idle"] #stage {
   --cultivation-altar-x: 50%;
-  --cultivation-altar-y: 68%;
+  --cultivation-altar-y: 72%;
 }
 html.hg-realistic-player #game[data-stage="idle"] #stage #heroActor {
   left: var(--cultivation-altar-x);
