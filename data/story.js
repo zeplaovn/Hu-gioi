@@ -275,7 +275,7 @@
           "reply": "Người dẫn lối nghe vậy liền gật đầu thật chậm."
         },
         {
-          "id": "tim-ve",
+          "id": "n001-tim-ve",
           "label": "Ta chỉ biết mình phải tìm lối về.",
           "reply": "Trần Minh đáp rằng không ai nên hứa điều mình chưa chắc làm được."
         }
@@ -827,7 +827,7 @@
           "reply": "Lâm Thiết Sinh bảo hãy dùng nó đúng cách."
         },
         {
-          "id": "giu-loi",
+          "id": "n011-giu-loi",
           "label": "Ta sẽ giữ lời với người còn đợi.",
           "reply": "Lâm Thiết Sinh đáp: Lời thẳng đáng giá hơn sắt tốt."
         }
