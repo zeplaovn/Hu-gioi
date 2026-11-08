@@ -853,7 +853,7 @@
       if (moneyEl.textContent !== moneyText) moneyEl.innerHTML = moneyHTML(s.stone);
       moneyEl.setAttribute('aria-label', 'Linh thạch ' + moneyText);
     }
-    $('topRate').textContent = '+' + num(g.rate()) + '/giây';
+    $('topRate').textContent = s.exploration?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
     $('topDaoVan').textContent = num(s.daoVan);
     $('topQiFill').style.width = p + '%';
