@@ -1,5 +1,5 @@
-/* Nhân vật mới 512×512 có khoảng đệm alpha, thay sprite 512×384 cũ.
- * Giữ ground anchor, thanh tên, hiệu ứng, kích thước sân khấu responsive. */
+/* Nhân vật WebP 512×512. Đạo thân trên đài tu luyện dùng chung điểm neo
+ * với vòng tụ linh, độc lập với kích thước và hướng màn hình. */
 html.hg-realistic-player #stage .hero-wrap img#heroSprite {
   width: 144%;
   height: 144%;
@@ -31,4 +31,33 @@ html.hg-realistic-player .trib-actor img#tribHero {
 @media (prefers-reduced-motion: reduce) {
   html.hg-realistic-player #heroSprite,
   html.hg-realistic-player #tribHero { transition: none !important; }
+}
+
+/* Đài tu luyện là một tọa độ duy nhất trong sân khấu, không dựa vào
+ * chiều cao của thanh điều khiển. Giữ tâm X=50% khi chuyển desktop/mobile,
+ * landscape/portrait và để vị trí chiến đấu riêng cho đối thủ. */
+#game[data-stage="idle"] #stage {
+  --cultivation-altar-x: 50%;
+  --cultivation-altar-y: 68%;
+}
+html.hg-realistic-player #game[data-stage="idle"] #stage #heroActor {
+  left: var(--cultivation-altar-x);
+  top: var(--cultivation-altar-y);
+  bottom: auto;
+  transform: translate(-50%, -100%);
+  transition: none;
+}
+html.hg-realistic-player #game[data-stage="idle"] #stage .idle-aura {
+  left: var(--cultivation-altar-x);
+  top: calc(var(--cultivation-altar-y) + 2%);
+  bottom: auto;
+  transform: translate(-50%, -50%);
+}
+/* Chuyển cảnh chiến đấu không được kéo lệch vị trí đạo thân khi trở về đài. */
+@media (orientation: portrait), (orientation: landscape) {
+  html.hg-realistic-player #game[data-stage="idle"] #stage #heroActor {
+    left: 50%;
+    top: var(--cultivation-altar-y);
+    bottom: auto;
+  }
 }
