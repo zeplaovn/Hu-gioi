@@ -56,7 +56,7 @@
         <p><b>1.</b> Ở <b>Tu luyện</b>, nhân vật tự nhập định và tích tu vi theo thời gian thật. Cải thiện khả năng hấp thụ linh khí và dùng đan để tăng nhanh.</p>
         <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Quyết có sẵn. Công pháp tự vận hành nếu còn ô trống; quản lý trong mục <b>Công pháp</b>.</p>
         <p><b>3.</b> Ở <b>Lịch luyện</b>, chọn khu vực, đổi loại đối thủ, dùng bốn kỹ năng hoặc bật tự chiến để thu thập linh thạch, linh thảo và yêu đan.</p>
-        <p><b>4.</b> <b>Nghề phụ</b> chạy nền: luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Kết quả vẫn được nhận khi rời game.</p>
+        <p><b>4.</b> <b>Nghề phụ</b> vẫn hoạt động khi bạn vắng mặt: luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Kết quả vẫn được nhận khi rời game.</p>
         <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký tu tiên; đại cảnh giới mở Độ kiếp đài.</p>
         <p><b>6.</b> <b>Thế giới → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Kỳ ngộ</b> tự xuất hiện khi tu luyện, có sổ khám phá riêng.</p>
         <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Thiên mệnh</b> để xem thành tựu, nâng cấp vĩnh viễn và mục Trọng sinh.</p>
@@ -80,7 +80,7 @@
         <p>• Bán yêu đan ở Lịch luyện hoặc Thế giới → Cửa hàng để lấy linh thạch.</p>
         <p>• Đan cấp thấp vẫn dùng được nhưng hiệu quả giảm theo chênh lệch cảnh giới.</p>
         <p>• Bảo hiểm đột phá tăng sau mỗi lần thất bại, tối đa 15 điểm.</p>
-        <p>• Tông môn cho thu nhập thụ động và chúc phúc +10% tốc độ hấp thụ linh khí.</p>
+        <p>• Tông môn mang lại linh thạch định kỳ và chúc phúc +10% tốc độ hấp thụ linh khí.</p>
         <p>• Trọng sinh giữ công pháp, thiên phú, nâng cấp tu luyện khi vắng mặt, Thiên mệnh và cài đặt.</p>`, { eyebrow: 'GHI NHỚ' })}
     </div>`;
   }
