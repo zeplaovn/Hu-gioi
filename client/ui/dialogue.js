@@ -85,7 +85,7 @@
 
   function openChapter(id) {
     const chapter = chapterById(id);
-    if (!chapter || UI.s().realm < chapter.unlock.realm) return;
+    if (!chapter || (UI.s().realm < chapter.unlock.realm && !UI.s().story.read[id])) return;
     returnFocus = document.activeElement;
     current = { type: 'chapter', entry: chapter, index: 0 };
     renderLine();
@@ -139,7 +139,7 @@
       '<div class="hu-dialogue-topics">' + entry.choices.map(choice =>
         '<button type="button" class="hu-dialogue-topic" data-dialogue="answer" data-option="' +
         esc(choice.id) + '"><b>' + esc(choice.label) + '</b></button>').join('') + '</div>' +
-      '<button type="button" class="btn btn-outline" data-dialogue="next">Đọc lại</button>');
+      '<button type="button" class="btn btn-outline" data-dialogue="close">Để sau</button>');
   }
 
   function answer(option) {
