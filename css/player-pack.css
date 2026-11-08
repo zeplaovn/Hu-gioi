@@ -1,9 +1,9 @@
 /* Nhân vật WebP 512×512. Đạo thân trên đài tu luyện dùng chung điểm neo
  * với vòng tụ linh, độc lập với kích thước và hướng màn hình. */
 html.hg-realistic-player #stage .hero-wrap img#heroSprite {
-  width: 144%;
-  height: 144%;
-  bottom: -11%;
+  width: 124%;
+  height: 124%;
+  bottom: -8%;
   max-width: none;
   object-fit: contain;
   transform: translateX(-50%);
@@ -22,7 +22,7 @@ html.hg-realistic-player .trib-actor img#tribHero {
 }
 @media (max-width: 600px) {
   html.hg-realistic-player #stage .hero-wrap img#heroSprite {
-    width: 150%; height: 150%; bottom: -13%;
+    width: 122%; height: 122%; bottom: -8%;
   }
   html.hg-realistic-player .trib-actor img#tribHero {
     width: 152%; height: 152%; bottom: -13%;
@@ -61,4 +61,10 @@ html.hg-realistic-player #game[data-stage="idle"] #stage .idle-aura {
     top: var(--cultivation-altar-y);
     bottom: auto;
   }
+}
+
+/* Khi không đối đầu yêu thú, đạo thân vẫn đứng tại tâm bí cảnh. */
+#game[data-stage="combat"][data-explore-kind="npc"] #stage .hero-wrap,
+#game[data-stage="combat"][data-explore-kind="encounter"] #stage .hero-wrap{
+  left:50%;
 }
