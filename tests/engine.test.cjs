@@ -486,18 +486,21 @@ test('combat: bí cảnh bắt đầu, hủy và hoàn tất theo thời gian', 
   assert.equal(g.s.dungeon.records.moc.runs, 1);
 });
 
-test('adventures: kỳ ngộ thủ công và kỳ ngộ tự động trong advance', () => {
+test('adventures: kỳ ngộ thủ công cũ vẫn hợp lệ; kỳ ngộ thụ động chuyển sang lịch luyện', () => {
   const g = rich();
   const got = run(g, 'manualEncounter', { index: 0 });
   assert.ok(got.item || got.part);
   assert.throws(() => run(g, 'manualEncounter', { index: 0 }), /hồi phục/);
 
   const before = g.s.encounter.total;
-  g.rng = () => 0;
-  g.s.auto = false;
+  g.rng = () => .99;
   const report = g.advance(NOW + 3600000);
-  assert.ok(report.encounters.length > 0);
-  assert.ok(g.s.encounter.total > before);
+  assert.equal(report.encounters.length, 0);
+  assert.equal(g.s.encounter.total, before);
+  const expedition = run(g, 'startExploration', {}, NOW + 3600000);
+  assert.equal(expedition.kind, 'encounter');
+  g.advance(expedition.end);
+  assert.equal(g.s.encounter.total, before + 1);
   assert.ok(g.s.encounter.recent.length > 0);
 });
 
