@@ -67,18 +67,17 @@
   }
 
   function encounters() {
-    const s = UI.s(), e = s.encounter, end = e.usedAt + 90000;
-    return `<p class="screen-lead">Mỗi ${duration(H.ENCOUNTER_INTERVAL)} bế quan hiệu dụng có ${pct(UI.g().encounterChance())} cơ hội gặp kỳ ngộ. Phúc Duyên tăng cơ hội hiếm; Vận Khí giúp tránh họa. Khi rời game, cơ duyên vẫn được tính theo giới hạn và hiệu quả bế quan.</p>
+    const e = UI.s().encounter;
+    return `<p class="screen-lead">Cơ duyên sẽ hiển lộ khi một chuyến Lịch luyện gặp kỳ ngộ và kết thúc sau mười phút. Phúc Duyên giúp hành trình thêm thuận lợi, Vận Khí giúp tránh họa.</p>
       ${card('Dấu chân cơ duyên', row('Đã khám phá', Object.keys(e.journal).length + '/' + H.ENCOUNTERS.length) + row('Tổng kỳ ngộ', num(e.total)) + '<p class="info-note">Phần thưởng tự nhận và ghi vào Nhật ký tu tiên. Tu vi dừng ở ngưỡng đột phá.</p>')}
       ${card('Kỳ ngộ gần đây', e.recent.map(v => {
         const d = H.ENCOUNTERS.find(x => x.id === v.id), rarity = H.ENCOUNTER_RARITIES[d.rarity];
         return `<article class="encounter-entry"><header><b style="color:${rarity.color}">${esc(d.name)}</b><small>${date(v.at)} · ${rarity.name}</small></header><p>${esc(v.text)}</p></article>`;
-      }).join('') || empty('Tiếp tục tu luyện, cơ duyên sẽ tự tìm đến.'))}
+      }).join('') || empty('Hãy bước vào Lịch luyện để tìm kiếm cơ duyên.'))}
       <details class="adventure-details"><summary>Sổ khám phá · ${Object.keys(e.journal).length}/${H.ENCOUNTERS.length}</summary><div class="adventure-grid">${H.ENCOUNTERS.map(d => {
         const seen = e.journal[d.id], rarity = H.ENCOUNTER_RARITIES[d.rarity];
         return `<article class="discovery ${seen ? '' : 'undiscovered'}"><small style="color:${rarity.color}">${rarity.name}</small><h3>${seen ? d.name : 'Cơ duyên chưa biết'}</h3><p>${seen ? esc(d.desc) : 'Chờ thiên địa hé lộ.'}</p>${seen ? '<small>Đã gặp ' + num(seen.count) + ' lần · ' + date(seen.lastAt) + '</small>' : ''}</article>`;
-      }).join('')}</div></details>
-      ${card(e.index % 2 ? 'Tần Trường Ca' : 'Mộc Uyển Nhi', '<p class="quote">“Đạo hữu, hôm nay muốn tìm điều gì?”</p><div class="action-group">' + ['Tìm linh thảo', 'Tìm linh tài', 'Luận đạo'].map((n, i) => btn(n, 'encounter', `data-index="${i}"`, Date.now() < end)).join('') + '</div><p>' + live(end) + '</p><p class="info-note">Cơ duyên chủ động: một lựa chọn mỗi 90 giây.</p>', { eyebrow: 'GẶP GỠ' })}`;
+      }).join('')}</div></details>`;
   }
 
   function missionBoard() {
