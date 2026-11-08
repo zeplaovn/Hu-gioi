@@ -95,11 +95,11 @@
     garden: BASE + 'ui/linh_dien/BG.webp',
     logo: BG_BASE + 'logo.webp' /* có kèm logo.png */
   };
-  const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.png', linh_gioi: MAP_BASE + 'MAP-LG.png', tien_gioi: MAP_BASE + 'MAP-TG.png' };
+  const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.webp', linh_gioi: MAP_BASE + 'MAP-LG.webp', tien_gioi: MAP_BASE + 'MAP-TG.webp' };
   const SEASON_FILES = { spring: 'xuan', summer: 'ha', autumn: 'thu', winter: 'dong' };
   const zoneBg = (zone, season = 'spring', phase = 'day') => worldOf(zone) === 'tien_gioi' ? BG.tien_gioi
     : `${BG_BASE}${worldOf(zone)}/${phase === 'night' ? 'night' : 'day'}/${SEASON_FILES[season] || 'xuan'}.webp`;
-  const INTRO = Array.from({ length: 5 }, (_, i) => `${BASE}world/story/intro/${i + 1}.png`);
+  const INTRO = Array.from({ length: 5 }, (_, i) => `${BASE}world/story/intro/${i + 1}.webp`);
   const SEASONS = { spring: 'mua_xuan', summer: 'mua_ha', autumn: 'mua_thu', winter: 'mua_dong' };
   const seasonSprite = (season, n = 0) => `${BASE}world/vfx/leaf/${SEASONS[season] || SEASONS.spring}/${wrap(n, 3)}.png`;
 
@@ -163,9 +163,9 @@
    * Ba biểu tượng gốc: linh thạch hạ phẩm (lam), thượng phẩm (tím) và tiên ngọc (ngọc bích).
    * Trung/Thượng/Cực dùng chung biểu tượng thượng phẩm; các bậc Tiên tinh dùng tiên ngọc. */
   const MONEY = {
-    low: BASE + 'ui/icon/money/linh_thach_ha_pham.png',
-    high: BASE + 'ui/icon/money/linh_thach_thuong_pham.png',
-    jade: BASE + 'ui/icon/money/tien_ngoc.png'
+    low: BASE + 'ui/icon/money/linh_thach_ha_pham.webp',
+    high: BASE + 'ui/icon/money/linh_thach_thuong_pham.webp',
+    jade: BASE + 'ui/icon/money/tien_ngoc.webp'
   };
   const moneyIcon = tier => MONEY[tier] || MONEY.high;
 
