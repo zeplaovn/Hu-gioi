@@ -68,3 +68,13 @@ html.hg-realistic-player #game[data-stage="idle"] #stage .idle-aura {
 #game[data-stage="combat"][data-explore-kind="encounter"] #stage .hero-wrap{
   left:50%;
 }
+
+/* Trong bí cảnh không còn sân đấu hai bên: đạo thân đứng trên trục giữa cảnh,
+   đi bộ tại chỗ hoặc ngồi thiền nghỉ ngơi trong suốt chuyến lịch luyện. */
+html.hg-realistic-player #game[data-stage="combat"] #stage #heroActor{
+  left:50%!important;
+  top:75%;
+  bottom:auto!important;
+  transform:translate(-50%,-100%);
+  transition:none;
+}

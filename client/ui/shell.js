@@ -424,6 +424,10 @@
       return top;
     },
     open(id) {
+      if (UI.s().exploration?.active && id !== 'combat') {
+        toast('Đang lịch luyện, chưa thể rời bí cảnh trước khi hết 10 phút.', { type: 'info', title: 'Lịch luyện' });
+        return this.has('combat') ? (this.focus('combat'), this.map.get('combat').el) : this.open('combat');
+      }
       if (id === 'tribulation') { go('tribulation'); return null; }
       const def = UI.screens[id];
       if (!def) return null;
@@ -467,6 +471,11 @@
       return el;
     },
     close(id) {
+      if (id === 'combat' && UI.s().exploration?.active) {
+        toast('Chuyến lịch luyện chưa kết thúc. Hãy chờ đếm ngược về 00:00.', { type: 'info', title: 'Lịch luyện' });
+        this.focus('combat');
+        return;
+      }
       const w = this.map.get(id);
       if (!w) return;
       if (id === 'combat') this.saveRect(id, w.rect);
@@ -793,6 +802,11 @@
     closeMoreMenu();
     hideItemTip();
     const [id, tab] = String(target || 'idle').split(':');
+    if (UI.s().exploration?.active && id !== 'combat') {
+      if (!silent) toast('Đang lịch luyện, chưa thể về đài Tu luyện trước khi hết giờ.', { type: 'info', title: 'Lịch luyện' });
+      go('combat', { silent: true });
+      return;
+    }
     if (trib.pageOpen && id !== 'tribulation') trib.closePage();
     if (id === 'tribulation') {
       resetFilters();
@@ -805,11 +819,6 @@
         try { $('tribBack')?.focus?.({ preventScroll: true }); } catch { /* bỏ qua */ }
       }
       return;
-    }
-    if (id === 'combat' && !silent && !UI.s().exploration?.active) {
-      const event = UI.command('startExploration');
-      store.write();
-      toast('Lịch luyện · ' + event.name + ' · 10 phút.', { type: 'gold', title: 'Khởi hành' });
     }
     const def = UI.screens[id] || UI.screens.idle;
     if (UI.current !== def.id || tab) resetFilters();
@@ -905,14 +914,18 @@
     if (docTitle !== lastDocTitle) { lastDocTitle = docTitle; document.title = docTitle; }
   }
 
+  // Ghi nhớ chuyến đang diễn ra để tự trả về đài ngay cả khi bộ tự lưu
+  // đã kết toán chuyến trước vòng tick kế tiếp.
+  let lockedExplorationStart = null;
   function updateStage() {
     const s = UI.s(), g = UI.g();
     if (!s.created || !$('scene')) return;
     if (trib.pageOpen) return;
     const exploring = s.exploration?.active;
-    const mode = exploring ? 'combat' : 'idle';
+    if (exploring) lockedExplorationStart = exploring.start;
+    const mode = (exploring || wins.has('combat')) ? 'combat' : 'idle';
     if (mode !== lastStageMode) {
-      if (mode === 'combat') UI.vfx?.stage({ kind: 'chien_dau', variant: 'ke_dich', fps: 14, size: 'clamp(150px,23vw,290px)', style: { left: '64%', bottom: '23%', transform: 'translateX(-50%)' } });
+      heroAttackUntil = 0;
       lastStageMode = mode;
     }
     const gameEl = $('game');
@@ -930,21 +943,12 @@
     UI.skillDock?.update();
     UI.combatFx?.sync(mode);
     UI.environment?.update(s);
-    $('stageTag').textContent = exploring ? 'Bí cảnh · ' + exploring.name : F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
-    $('rateText').textContent = exploring ? 'Lịch luyện · ' + Math.max(0, Math.ceil((exploring.end - Date.now()) / 60000)) + ' phút' : '+' + num(g.rate()) + ' tu vi/giây';
+    $('stageTag').textContent = exploring ? 'Lịch luyện · ' + H.ZONES[s.zone].name : F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
+    $('rateText').textContent = exploring ? 'Trở về sau ' + explorationCountdown(exploring.end) : '+' + num(g.rate()) + ' tu vi/giây';
     $('stageHeroName').textContent = s.name;
     const enemyActor = $('enemyActor');
-    if (mode === 'combat') {
-      A.preloadHero(s.gender, s.realm, 'tan_cong');
-      const enemy = g.enemy();
-      if (enemyActor) enemyActor.hidden = !exploring || exploring.kind !== 'monster' || exploring.cleared;
-      if ($('enemyName')) $('enemyName').textContent = enemy.name;
-      if ($('enemyLevel')) $('enemyLevel').textContent = F.REALMS[s.zone] + ' · ' + s.enemyKind;
-      if ($('enemyBar')) $('enemyBar').style.width = clamp((s.enemyHp || enemy.HP) / enemy.HP * 100, 0, 100) + '%';
-    } else {
-      heroAttackUntil = 0;
-      if (enemyActor) enemyActor.hidden = true;
-    }
+    // Sân khấu lịch luyện chỉ có đạo thân, không tạo/sinh ảnh yêu thú.
+    if (enemyActor) enemyActor.hidden = true;
     stageFrame(frameCount, isReduced());
   }
 
@@ -956,25 +960,31 @@
     stageFrame(frameCount, false);
   }
 
+  function explorationCountdown(end, now = Date.now()) {
+    const seconds = Math.max(0, Math.ceil((end - now) / 1000));
+    return String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
+  }
+
+  function explorationPose(start, now = Date.now()) {
+    // Một tư thế kéo dài 9 giây; lựa chọn ngẫu nhiên có thể tái hiện khi tải lại.
+    const phase = Math.floor(Math.max(0, now - start) / 9000);
+    const seed = Math.imul((Math.floor(start / 1000) ^ (phase + 1)) >>> 0, 1664525) + 1013904223;
+    return ((seed >>> 9) & 3) < 2 ? 'di_chuyen' : 'dung_yen';
+  }
+
   function stageFrame(n, reduced) {
     const s = UI.s();
     if (!s.created) return;
-    const mode = $('game')?.dataset.stage || 'idle';
+    const exploring = s.exploration?.active;
     const hero = $('heroSprite');
     if (hero) {
-      const manual = Date.now() < heroAttackUntil;
-      const action = mode === 'combat' ? (manual ? 'tan_cong' : 'di_chuyen') : 'dung_yen';
+      const action = exploring ? explorationPose(exploring.start) : 'dung_yen';
       A.preloadHero(s.gender, s.realm, action);
-      const index = reduced ? 0 : manual ? n - heroAttackFrame : n;
-      const src = A.heroSrc(s.gender, s.realm, action, index);
+      const src = A.heroSrc(s.gender, s.realm, action, reduced ? 0 : n);
       hero.dataset.action = action;
-      hero.alt = action === 'tan_cong' ? 'Đạo sĩ đang công kích' : 'Đạo sĩ đang nhập định';
+      hero.alt = action === 'di_chuyen' ? 'Đạo thân đang đi bộ lịch luyện' :
+        exploring ? 'Đạo thân đang ngồi thiền nghỉ ngơi giữa đường' : 'Đạo thân đang nhập định';
       if (hero.getAttribute('src') !== src) hero.src = src;
-    }
-    const foe = $('enemySprite');
-    if (foe && mode === 'combat') {
-      const src = A.enemySrc(s.zone, s.enemyKind, 'dung_yen', reduced ? 0 : n);
-      if (foe.getAttribute('src') !== src) foe.src = src;
     }
   }
 
@@ -1599,7 +1609,7 @@
     if (!store.ready || !UI.s().created || !$('modalLayer').hidden || ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName) || e.ctrlKey || e.altKey || e.metaKey) return;
     const key = e.key.toLowerCase();
     if (['1', '2', '3', '4'].includes(key)) {
-      if (UI.current === 'combat' && UI.s().exploration?.active?.kind === 'monster' && !UI.s().exploration.active.cleared) { e.preventDefault(); safe(() => run('skill', { dataset: { index: String(Number(key) - 1) } })); }
+      // Lịch luyện không còn thanh kỹ năng chiến đấu.
       return;
     }
     const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world', s: 'settings' };
@@ -1617,6 +1627,7 @@
       }
       const [id, tab] = String(root.location.hash || '#idle').replace(/^#\/?/, '').split('/');
       if (!UI.screens[id]) return;
+      if (UI.s().exploration?.active && id !== 'combat') { go('combat'); return; }
       if (id === 'tribulation') { trib.openPage(); return; }
       if (trib.pageOpen) trib.closePage();
       if (tab) UI.tabState[id] = tab;
@@ -1655,7 +1666,16 @@
     if (!store.ready || document.hidden || store.locked) return;
     safe(() => {
       const beforeQi = UI.s().qi;
+      const wasExploring = !!UI.s().exploration?.active || lockedExplorationStart !== null;
       const report = store.catchUp();
+      if (wasExploring && !UI.s().exploration?.active) {
+        lockedExplorationStart = null;
+        if (wins.has('combat') || UI.current === 'combat') {
+          go('idle');
+          toast('Đã kết thúc mười phút lịch luyện. Đạo thân trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
+          store.write();
+        }
+      }
       if (trib.active) return;
       updateChrome();
       updateStage();

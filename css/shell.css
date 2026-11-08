@@ -692,3 +692,14 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 #game[data-stage="combat"] #skillDock[hidden]{display:none!important}
 #game[data-stage="combat"][data-explore-kind="npc"] #stage .hero-wrap,
 #game[data-stage="combat"][data-explore-kind="encounter"] #stage .hero-wrap{left:50%}
+
+/* Lịch luyện không còn yêu thú hiển thị và thanh kỹ năng chiến đấu. */
+#game[data-stage="combat"] #stage #enemyActor,
+#game[data-stage="combat"] #stage #skillDock{display:none!important}
+#game[data-explore-kind]:not([data-explore-kind=""]) .win[data-window="combat"]>.win-close,
+#game[data-explore-kind]:not([data-explore-kind=""]) .win[data-window="combat"]>header>.win-close{display:none!important}
+.exploration-clock{margin-top:16px;padding:11px 14px;border:1px solid #bda26d66;border-radius:10px;background:#211c19d9}
+.exploration-clock>span{display:block;font-size:13px;color:#e2d1ab}
+.exploration-clock>strong{display:block;margin:5px 0;font:700 clamp(25px,4vw,38px)/1.2 var(--serif);color:#f2d79c;letter-spacing:.06em}
+.exploration-clock .meter-bar{height:7px;overflow:hidden}
+.exploration-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}

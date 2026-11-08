@@ -353,6 +353,7 @@
     store.ready = true;
     const awayStart = Date.now(), awaySeconds = Math.max(0, (awayStart - s.lastUpdate) / 1000);
     const before = offlineSnapshot(awayStart);
+    const wasExploring = !!s.exploration?.active;
     const r = store.catchUp(awayStart, true);
     store.write();
     UI.applySettings();
@@ -362,8 +363,14 @@
     UI.windows?.closeAll();
     UI.buildShell?.();
     const hash = String(root.location && root.location.hash || '').replace(/^#\/?/, '').split('/');
-    const target = UI.screens[hash[0]] ? hash.filter(Boolean).join(':') : 'idle';
+    // Tải lại vẫn ở Bí cảnh nếu chuyến đi còn giờ; nếu đã hết,
+    // tự quay về đài thay vì khôi phục #combat từ phiên cũ.
+    const target = s.exploration?.active ? 'combat' : wasExploring ? 'idle' :
+      UI.screens[hash[0]] ? hash.filter(Boolean).join(':') : 'idle';
     UI.go(target, { silent: true });
+    if (wasExploring) {
+      try { root.history?.replaceState(null, '', '#' + target); } catch { /* file:// */ }
+    }
     store.write();
   }
 
@@ -516,8 +523,13 @@
       if (document.hidden) { store.catchUp(); store.write(); return; }
       const now = Date.now(), awaySeconds = Math.max(0, (now - UI.s().lastUpdate) / 1000);
       const before = offlineSnapshot(now);
+      const wasExploring = !!UI.s().exploration?.active;
       const r = store.catchUp(now, true);
       store.write();
+      if (wasExploring && !UI.s().exploration?.active) {
+        UI.go('idle');
+        UI.toast('Lịch luyện viên mãn. Đạo thân đã trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
+      } else if (UI.s().exploration?.active) UI.go('combat', { silent: true });
       UI.refresh();
       if (r && r.seconds >= 20 && !r.died) {
         if ($('modalLayer').hidden && !UI.tutorial.active && !UI.intro.active && !UI.tribulation.active) showOfflineReport(r, before, awaySeconds);
