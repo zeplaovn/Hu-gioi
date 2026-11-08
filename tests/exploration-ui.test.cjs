@@ -48,7 +48,7 @@ test('Thế giới không còn tab Kỳ ngộ và Kỳ nhân; cả hai nằm tro
   assert.doesNotMatch(world, /\{ id: 'npc', label: 'Kỳ nhân'/);
   assert.match(world, /UI\.lorePanels = \{ npcs, encounter \}/);
   assert.match(combat, /UI\.lorePanels\?\.npcs\?\.\(e\.npcId\)/);
-  assert.match(combat, /e\.kind === 'encounter'/);
+  assert.match(combat, /e\?\.kind === 'encounter'/);
   assert.match(combat, /explorationCountdown/);
 });
 
