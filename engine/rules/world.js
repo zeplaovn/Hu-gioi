@@ -27,6 +27,15 @@
     ]);
 
     Object.assign(H.Game.prototype, {
+      featureOpen(id) {
+        const f = H.FEATURES[id];
+        return !!f && this.s.realm >= f.realm;
+      },
+      requireFeature(id) {
+        const f = H.FEATURES[id];
+        if (!f) throw Error('Tính năng không tồn tại.');
+        if (this.s.realm < f.realm) throw Error(f.label + ' mở ở cảnh giới ' + F.REALMS[f.realm] + '.');
+      },
       storyMark(payload) {
         const entry = Object.hasOwn(storyById, payload.id) ? storyById[payload.id] : null;
         if (!entry) throw Error('Không tìm thấy trang Thiên Thư này.');

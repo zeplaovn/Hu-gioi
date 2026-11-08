@@ -38,3 +38,14 @@ npm test
 Dữ liệu cốt truyện nằm riêng ở `data/story.js` theo mẫu IIFE/CommonJS, không chứa luật chơi. Ba hồi gồm 14 chương theo cảnh giới `realm`, 30 cảnh thoại cho 10 NPC theo thiện cảm, 9 cặp lời dẫn bí cảnh/thủ lĩnh, 23 ghi chép kỳ ngộ và ba đoạn vượt kiếp. Tên cổ của địa danh chỉ được dùng trong văn bản tự sự; mã vùng, tên hiện có trong `ZONES`/`DUNGEONS` và cân bằng không thay đổi.
 
 Engine ghép `HU_STORY_DATA` thành `HU_GAME.STORY`. `storyMark` thuộc đúng miền `world`, chỉ ghi `s.story.read` và `s.story.flags` sau khi kiểm tra ID, điều kiện mở và thiện cảm. Bản lưu V7 được nâng lên V8; lựa chọn và trang đã đọc được giữ qua trọng sinh, không sửa phần thưởng NPC. Giao diện `Thiên Mệnh → Thiên Thư` dùng cùng `UI.kit`; `Thế giới → NPC → Trò chuyện` dùng lớp đối thoại độc lập `client/ui/dialogue.js` và ảnh nhân vật sẵn có.
+
+## Mở khóa tính năng theo cảnh giới
+
+Bảng `FEATURES` trong `data/catalog.js` là nguồn duy nhất; engine chặn qua `requireFeature(id)` và giao diện đọc `featureOpen(id)`.
+
+| Tính năng | Mở ở | Lệnh bị chặn | Giao diện |
+|---|---|---|---|
+| `forge` · rèn pháp bảo, vẽ phù | Kết Đan | `forge` | tab "Luyện khí & chế phù" |
+| `social` · kết bạn, luận kiếm, xếp hạng | Nguyên Anh | `meetFriend`, `giftFriend`, `discuss`, `duel` | màn "Giao du" |
+
+Luyện đan, linh điền, tông môn và kinh mạch đã mở từ Luyện Khí. Bí cảnh giữ điều kiện riêng của từng nơi (điểm còn mở trong gói thiết kế). Thêm khóa mới: thêm một dòng vào `FEATURES`, gọi `requireFeature` ở lệnh và bọc phần giao diện bằng `featureOpen`.

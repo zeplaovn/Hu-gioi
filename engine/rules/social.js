@@ -20,6 +20,7 @@
         return this.s.social.friends[id] || (this.s.social.friends[id] = { affinity: 0, metAt: 0, giftAt: 0, discussAt: 0 });
       },
       meetFriend(payload, now) {
+        this.requireFeature('social');
         now = at(this, now);
         find(FRIENDS, payload.id);
         const f = this.friend(payload.id);
@@ -30,6 +31,7 @@
         return f;
       },
       giftFriend(payload, now) {
+        this.requireFeature('social');
         now = at(this, now);
         const def = find(FRIENDS, payload.id), f = this.s.social.friends[payload.id], cost = giftCost(def), amount = 8 + def.realm;
         if (!f?.metAt) throw Error('Hãy kết giao trước khi tặng lễ.');
@@ -42,6 +44,7 @@
       },
       discussGain() { return Math.max(1, Math.floor(this.need() * .02)); },
       discuss(payload, now) {
+        this.requireFeature('social');
         now = at(this, now);
         const id = payload.id;
         find(DAO, id);
@@ -170,6 +173,7 @@
         return Math.max(1, Math.round(this.stats(now).CP * find(RIVALS, id).power));
       },
       duel(payload, now) {
+        this.requireFeature('social');
         now = at(this, now);
         const id = payload.id, power = this.rivalPower(id, now), pvp = this.s.social.pvp;
         if (now < pvp.lastAt + PVP_CD) throw Error('Đài luận kiếm đang tĩnh lặng, hãy chờ thêm.');

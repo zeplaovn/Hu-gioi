@@ -151,6 +151,7 @@
         return { herb: mat?.code, count: 4, ink: x.kind === 'TAL' ? 'INK-' + (x.tier < 5 ? 'HG' : x.tier < 9 ? 'LG' : 'TG') : null, stone: this.price(code) * .1 };
       },
       forge(payload, now) {
+        this.requireFeature('forge');
         const code = payload.code, x = item(code), s = this.s;
         if (!x || !['EQ', 'TAL'].includes(x.kind) || x.tier > s.realm) throw Error('Chỉ rèn vật phẩm cùng hoặc dưới cảnh giới.');
         const r = this.forgeRecipe(code);

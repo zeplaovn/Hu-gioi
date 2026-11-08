@@ -31,6 +31,11 @@ const QUESTS=[
  ['breaks','Phá kén thành tiên',1,280,pill(7),1],
  ['alchemy','Luyện đan kỳ tài',2,220,'HERB-002',3]
 ];
-const API={ITEMS,BY_ID,item,keyFor,pill,ZONES,ENEMY_NAMES,QUESTS,DESIGN};
+/* Mở khóa tính năng theo cảnh giới (chỉ số r của F.REALMS). Nguồn duy nhất cho engine và giao diện. */
+const FEATURES={
+ forge:{realm:2,label:'Rèn pháp bảo và vẽ phù'},
+ social:{realm:3,label:'Giao du: kết bạn, luận kiếm, bảng xếp hạng'}
+};
+const API={ITEMS,BY_ID,item,keyFor,pill,ZONES,ENEMY_NAMES,QUESTS,DESIGN,FEATURES};
 root.HU_CATALOG=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);

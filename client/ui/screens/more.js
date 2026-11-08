@@ -5,7 +5,7 @@
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
   const UI = root.HU_UI;
-  const { esc, num, money, moneyHTML, pct, row, btn, card, tabs, live } = UI.kit;
+  const { esc, num, money, moneyHTML, pct, row, btn, card, empty, tabs, live } = UI.kit;
 
   const TABS = [
     { id: 'friends', label: 'Tri kỷ', icon: '♡' },
@@ -106,14 +106,18 @@
   }
 
   const body = { friends, dao, pvp, ranking };
+  function lockedMore() {
+    const f = H.FEATURES.social;
+    return card('Chưa mở', empty(esc(f.label) + ' mở ở cảnh giới ' + esc(F.REALMS[f.realm]) + '. Hiện bạn đang ở ' + esc(F.REALMS[UI.s().realm]) + '.'), { eyebrow: 'CHƯA ĐỦ ĐẠO HẠNH' });
+  }
 
   UI.register({
     id: 'more', label: 'Giao du', icon: '♡', eyebrow: 'GIAO DU', tabs: TABS,
-    render: tab => `<header class="screen-title"><span class="eyebrow gold">GIAO DU</span><h2>Giao du</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
+    render: tab => `<header class="screen-title"><span class="eyebrow gold">GIAO DU</span><h2>Giao du</h2></header>${tabs(TABS, tab)}<div class="screen-body">${UI.g().featureOpen('social') ? body[tab]() : lockedMore()}</div>`,
     signature: () => {
       const s = UI.s(), now = Date.now(), pvp = s.social.pvp;
       const f = Object.values(s.social.friends).map(v => v.affinity + ':' + (v.discussAt <= now ? 1 : 0)).join(',');
-      return f + '|' + pvp.rating + '|' + pvp.wins + '|' + pvp.losses + '|' + pvp.streak + '|' + pvp.best + '|' + (pvp.lastAt + PVP_CD <= now ? 1 : 0);
+      return s.realm + '|' + f + '|' + pvp.rating + '|' + pvp.wins + '|' + pvp.losses + '|' + pvp.streak + '|' + pvp.best + '|' + (pvp.lastAt + PVP_CD <= now ? 1 : 0);
     }
   });
 

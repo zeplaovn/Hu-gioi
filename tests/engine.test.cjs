@@ -428,6 +428,8 @@ test('crafting: luyện đan theo hàng đợi, linh điền và rèn pháp bả
   g.s.learned['BT-900'] = 1;
   g.add('HERB-001', 4);
   const eqBefore = g.count('EQ-001');
+  assert.throws(() => run(g, 'forge', { code: 'EQ-001' }), /mở ở cảnh giới Kết Đan/);
+  g.s.realm = Math.max(g.s.realm, 2);
   run(g, 'forge', { code: 'EQ-001' });
   assert.equal(g.count('EQ-001'), eqBefore + 1);
   assert.throws(() => run(g, 'forge', { code: 'PILL-001' }), /Chỉ rèn|Chế tạo|công thức/);
@@ -564,6 +566,7 @@ test('world: tông môn, ủy thác và kho tông môn', () => {
 
 test('social: kết giao, tặng lễ, luận đạo, NPC và luận kiếm', () => {
   const g = rich();
+  g.s.realm = Math.max(g.s.realm, 3);
   const friend = run(g, 'meetFriend', { id: 'trieu-nguyet' });
   assert.ok(friend.affinity >= 12);
   assert.throws(() => run(g, 'meetFriend', { id: 'trieu-nguyet' }), /Đã kết giao/);
@@ -973,4 +976,22 @@ test('NPC: tiến độ nhiệm vụ được giữ qua trọng sinh và đượ
   assert.equal(back.npcQuests.NPC003, undefined);
   delete saved.npcQuests;
   assert.deepEqual(H.normalize(saved, NOW).npcQuests, {});
+});
+
+test('mở khóa tính năng theo cảnh giới: rèn/vẽ phù ở Kết Đan, giao du ở Nguyên Anh', () => {
+  const g = rich();
+  g.s.realm = 1;
+  assert.equal(g.featureOpen('forge'), false);
+  assert.equal(g.featureOpen('social'), false);
+  assert.throws(() => run(g, 'forge', { code: 'EQ-001' }), /Kết Đan/);
+  for (const [type, payload] of [['meetFriend', { id: 'trieu-nguyet' }], ['giftFriend', { id: 'trieu-nguyet' }],
+    ['discuss', { id: 'ly-van-du' }], ['duel', { id: 'hanh-chu' }]])
+    assert.throws(() => run(g, type, payload), /Nguyên Anh/, type);
+  g.s.realm = 2;
+  assert.equal(g.featureOpen('forge'), true);
+  assert.equal(g.featureOpen('social'), false);
+  g.s.realm = 3;
+  assert.equal(g.featureOpen('social'), true);
+  assert.ok(run(g, 'meetFriend', { id: 'trieu-nguyet' }).affinity >= 12);
+  assert.throws(() => g.requireFeature('khong-co'), /không tồn tại/);
 });

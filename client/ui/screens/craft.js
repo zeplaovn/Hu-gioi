@@ -118,8 +118,13 @@
       </div>`;
   }
 
+  function lockedFeature(id) {
+    const f = H.FEATURES[id];
+    return card('Chưa mở', empty(esc(f.label) + ' mở ở cảnh giới ' + esc(F.REALMS[f.realm]) + '. Hiện bạn đang ở ' + esc(F.REALMS[UI.s().realm]) + '.'), { eyebrow: 'CHƯA ĐỦ ĐẠO HẠNH' });
+  }
+
   function render(tab) {
-    const body = tab === 'khi' ? forge() : tab === 'dien' ? garden() : furnaces() + recipes();
+    const body = tab === 'khi' && !UI.g().featureOpen('forge') ? lockedFeature('forge') : tab === 'khi' ? forge() : tab === 'dien' ? garden() : furnaces() + recipes();
     return banner(tab) + tabs(TABS, tab) + `<div class="screen-body">${body}</div>`;
   }
 
@@ -157,7 +162,7 @@
     tabs: TABS, render, update,
     /* Trang Nghề phụ toàn màn hình dùng nền riêng của từng nghề. */
     pageBg: tab => abs(tab === 'dien' ? root.HU_ASSETS.BG.garden : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop),
-    signature: () => { const s = UI.s(); return s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
+    signature: () => { const s = UI.s(); return s.realm + '|' + s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
   });
 
   UI.action('craft', (el, d) => {
