@@ -28,6 +28,7 @@
           // Mỗi khoảng thời gian chỉ được tạm dừng đúng một lần, cả khi thoát game.
           const pauseMs = Math.max(0, Math.min(now, exploring.end) - Math.max(start, exploring.start));
           if (pauseMs > 0) {
+            for (const buff of s.buffs) if (buff.type === 'rate') buff.end += pauseMs;
             for (const job of s.craftQueue) job.end += pauseMs;
             for (const plot of s.garden) { plot.plantedAt += pauseMs; plot.end += pauseMs; }
             if (s.sect.mission) { s.sect.mission.start += pauseMs; s.sect.mission.end += pauseMs; }
