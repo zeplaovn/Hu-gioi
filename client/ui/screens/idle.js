@@ -75,7 +75,7 @@
   function panel() {
     const s = UI.s(), a = s.dungeon.active, m = s.sect.mission;
     const tasks = card('Hành trình tiên lộ',
-      (a ? row(H.DUNGEONS.find(d => d.id === a.id).name, live(a.end)) : '<p>Bí cảnh đã sẵn sàng để thám hiểm.</p>') +
+      (s.dungeon.run ? row(H.DUNGEONS.find(d => d.id === s.dungeon.run.id).name, 'Tầng ' + s.dungeon.run.floor + ' · đang chiến đấu') + '<button class="btn btn-gold" data-go="world:dungeons">Tiếp tục chiến đấu</button>' : a ? row(H.DUNGEONS.find(d => d.id === a.id).name, live(a.end)) : '<p>Bí cảnh đã sẵn sàng để thám hiểm.</p>') +
       (m ? row(H.SECT_MISSIONS.find(d => d.id === m.id).name, live(m.end)) : '') +
       row('Kỳ ngộ đã gặp', num(s.encounter.total)) +
       `<div class="action-group"><button class="btn btn-outline" data-go="world:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="world:encounter">Kỳ ngộ</button><button class="btn btn-outline" data-go="world:sect">Tông môn</button></div>`, { eyebrow: 'TIẾN TRÌNH NỀN' });
@@ -97,7 +97,7 @@
 
   const signature = () => {
     const s = UI.s();
-    return [s.craftQueue.length, s.garden.length, s.claimed.length, s.sect.joined, s.activeManuals.length, s.qi >= UI.g().need(), s.dungeon.active?.end, s.sect.mission?.end, s.encounter.total].join('|');
+    return [s.craftQueue.length, s.garden.length, s.claimed.length, s.sect.joined, s.activeManuals.length, s.qi >= UI.g().need(), s.dungeon.active?.end, s.dungeon.run?.floor, s.sect.mission?.end, s.encounter.total].join('|');
   };
 
   UI.register({

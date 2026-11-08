@@ -47,7 +47,7 @@
 |---|---|
 | Đăng ký/đăng nhập, refresh token, đăng xuất | OAuth Google/Apple, 2FA người chơi |
 | Tạo nhân vật có preview do server gieo | Nhiều slot nhân vật, đổi tên có phí |
-| Sync + 46 lệnh hiện có qua API | Chat thế giới, presence, bạn bè thật |
+| Sync + 49 lệnh hiện có qua API | Chat thế giới, presence, bạn bè thật |
 | Catch-up offline, chống gian lận thời gian | PvP thật, tông môn chung, thị trường |
 | Revision, requestId, receipt, retry an toàn | Đấu giá realtime, world boss |
 | Rate limit, log, metric, health check | Season pass, IAP, live ops |
@@ -69,7 +69,7 @@ Với 1 backend + 1 fullstack + 0.5 DevOps + 0.5 QA: **12–17 tuần** đến b
 | Dữ liệu | `data/*.js` | Giữ nguyên: cân bằng, công thức, vật phẩm, nhân vật, bản đồ, tông môn, bí cảnh |
 | Luật game | `engine/rules/*.js` | Đủ 9 miền, đã cài đặt và có test hành vi |
 | State | `engine/state/player.js` | Khung; cần schema V7 + normalize V4–V7 |
-| Protocol | `engine/protocol/commands.js` | Hoàn chỉnh: 46 lệnh, validate, execute |
+| Protocol | `engine/protocol/commands.js` | Hoàn chỉnh: 49 lệnh, validate, execute |
 | Service | `server/services/player-service.js` | Khung giao diện: create/sync/command, revision, receipt |
 | Repository | `server/repositories/player-repository.js` | Khung hợp đồng `transact/get/create` |
 | Máy chủ | `server/main.js`, `server/http/*` | Chạy: file tĩnh + `/api/health` |
@@ -375,7 +375,7 @@ Admin API đặt ở host/port riêng, không public: xem player, grant mail, ba
 
 - `requestId`: 1–128 ký tự `[A-Za-z0-9_-]`, unique theo player, client giữ nguyên khi retry.
 - `expectedRevision`: revision client đã thấy gần nhất.
-- `type`: một trong 46 lệnh của `engine/protocol/commands.js`.
+- `type`: một trong 49 lệnh của `engine/protocol/commands.js`.
 - `payload`: đúng schema của lệnh; server validate lại bằng `C.validate`.
 
 ### 6.4 Response command
@@ -1365,7 +1365,7 @@ Content-Type: application/json
 
 | Hiện tại | Giữ / đổi | Ghi chú |
 |---|---|---|
-| `engine/protocol/commands.js` | Giữ, mở rộng nhẹ | 46 lệnh; thêm error code ổn định ở giai đoạn 2 |
+| `engine/protocol/commands.js` | Giữ, mở rộng nhẹ | 49 lệnh; thêm error code ổn định ở giai đoạn 2 |
 | `engine/rules/*.js` | Viết lại theo `engine-contract.md` | Thiết kế `advance` có `offline`/`maxSeconds`/`aggregateCombat` ngay từ đầu; không copy luật cũ |
 | `engine/state/player.js` | Viết lại V7; thêm migration V8 sau | `normalize` khi load; schema/content version ở DB |
 | `server/services/player-service.js` | Viết theo khung | Principal/account, player ownership, DB clock/RNG, ticket, batch |
@@ -1378,7 +1378,7 @@ Content-Type: application/json
 | Bộ test backend (cần bổ sung) | Tạo mới | Contract, concurrency, integration, load, E2E |
 | `Hu-gioi` auth/chat/leaderboard | Tham khảo mô hình | Không dùng `save_game()` client-authoritative |
 
-## Phụ lục D — Phạm vi 46 lệnh
+## Phụ lục D — Phạm vi 49 lệnh
 
 | Nhóm | Lệnh | Ghi chú online |
 |---|---|---|

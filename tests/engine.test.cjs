@@ -54,12 +54,12 @@ function run(g, type, payload = {}, now = NOW) {
   return C.execute(g, { type, payload }, now);
 }
 
-test('hợp đồng: engine READY, đủ 46 lệnh và phân miền rõ ràng', () => {
+test('hợp đồng: engine READY, đủ 49 lệnh và phân miền rõ ràng', () => {
   assert.equal(H.READY, true);
   assert.deepEqual(H.MISSING, []);
   assert.equal(H.VERSION, 7);
   assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7]);
-  assert.equal(C.types.length, 46);
+  assert.equal(C.types.length, 49);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -73,8 +73,8 @@ test('hợp đồng: engine READY, đủ 46 lệnh và phân miền rõ ràng', 
     crafting: ['craft', 'forge', 'garden'],
     combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel'],
     world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot'],
-    adventures: ['startDungeon', 'abortDungeon'],
-    social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'duel'],
+    adventures: ['startDungeon', 'abortDungeon', 'enterDungeon', 'dungeonAct'],
+    social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel'],
     time: [],
     creation: []
   };
@@ -84,7 +84,7 @@ test('hợp đồng: engine READY, đủ 46 lệnh và phân miền rõ ràng', 
 
 test('hợp đồng: mọi phương thức truy vấn UI đang gọi đều tồn tại và chạy được', () => {
   const g = rich();
-  const queries = ['stats', 'need', 'rate', 'price', 'count', 'ingredientCount', 'maxMp', 'realmLabel', 'enemy', 'chance', 'chaosChance', 'craftChance', 'missionChance', 'encounterChance', 'discussGain', 'attackInterval', 'lifeInfo', 'upgradeBase', 'tribulation', 'temperCost', 'recipe', 'forgeRecipe', 'activeElements', 'manualEffects', 'affinity', 'rivalPower', 'lots', 'estimateDungeon', 'featuredMission', 'sectDefinition', 'sectRank', 'sectMissions', 'sectShopOffer', 'sectIncome'];
+  const queries = ['npcQuestInfo', 'npcPrice', 'npcDiscount', 'runEnemy', 'stats', 'need', 'rate', 'price', 'count', 'ingredientCount', 'maxMp', 'realmLabel', 'enemy', 'chance', 'chaosChance', 'craftChance', 'missionChance', 'encounterChance', 'discussGain', 'attackInterval', 'lifeInfo', 'upgradeBase', 'tribulation', 'temperCost', 'recipe', 'forgeRecipe', 'activeElements', 'manualEffects', 'affinity', 'rivalPower', 'lots', 'estimateDungeon', 'featuredMission', 'sectDefinition', 'sectRank', 'sectMissions', 'sectShopOffer', 'sectIncome'];
   for (const name of queries) assert.equal(typeof g[name], 'function', name);
   assert.ok(g.stats().HP > 0);
   assert.ok(g.need() > 0);
@@ -676,4 +676,298 @@ test('progression: tự đột phá nhiều tầng liên tiếp và dừng ở t
   // tu vi đầy ở tầng cuối: không tự lên đại cảnh giới.
   g.gainExp(1e9);
   assert.equal(g.s.realm, 0);
+});
+
+/* ---------- Bí cảnh tương tác (đánh từng lượt, thể lực) ---------- */
+function inRealm(realm = 2) {
+  const g = rich();
+  g.s.realm = realm; g.s.stage = 1; g.s.zone = realm;
+  g.s.hp = g.stats().HP; g.s.mp = g.maxMp();
+  return g;
+}
+/* Người chơi biết chơi: thủ thế khi địch tung đòn nặng, hồi phục khi yếu, trọng kích khi đủ thể lực. */
+function smartAction(g) {
+  const r = g.s.dungeon.run, st = g.stats();
+  if (g.s.hp < st.HP * .4 && r.healCd === 0 && g.s.mp >= g.maxMp() * .18) return 'heal';
+  if (r.intent === 'heavy') return 'guard';
+  if (r.sta >= 24) return 'power';
+  return r.sta >= 8 ? 'attack' : 'guard';
+}
+function playOut(g, policy = smartAction, limit = 400) {
+  for (let i = 0; i < limit && g.s.dungeon.run; i++) {
+    const out = run(g, 'dungeonAct', { action: policy(g) });
+    if (out.ended) return out.ended;
+  }
+  return null;
+}
+
+test('bí cảnh tương tác: vào, loại trừ với chuyến tự động và nhiệm vụ tông môn', () => {
+  const g = inRealm();
+  const r = run(g, 'enterDungeon', { id: 'kim' });
+  assert.equal(r.floor, 1);
+  assert.equal(r.sta, r.staMax);
+  assert.equal(r.staMax, Math.round(g.stats().STA));
+  assert.ok(['light', 'heavy'].includes(r.intent));
+  assert.equal(g.s.auto, false);
+  assert.throws(() => run(g, 'enterDungeon', { id: 'kim' }), /bí cảnh|nhiệm vụ/);
+  assert.throws(() => run(g, 'startDungeon', { id: 'kim' }), /bí cảnh|nhiệm vụ/);
+  run(g, 'joinSect', { id: 'thanhvan' });
+  assert.throws(() => run(g, 'startSectMission', { id: g.sectMissions()[0].id }), /bí cảnh|nhiệm vụ/);
+  assert.throws(() => run(game(), 'dungeonAct', { action: 'attack' }), /Chưa vào bí cảnh/);
+  const weak = inRealm();
+  weak.s.hp = weak.stats().HP * .3;
+  assert.throws(() => run(weak, 'enterDungeon', { id: 'kim' }), /50% sinh lực/);
+  const early = game();
+  assert.throws(() => run(early, 'enterDungeon', { id: 'kim' }), /chưa mở/);
+});
+
+test('bí cảnh tương tác: thể lực giới hạn đòn mạnh, thủ thế hồi thể lực và giảm sát thương', () => {
+  const g = inRealm();
+  run(g, 'enterDungeon', { id: 'kim' });
+  const r = g.s.dungeon.run;
+  r.sta = 5;
+  assert.throws(() => run(g, 'dungeonAct', { action: 'attack' }), /thể lực/);
+  assert.throws(() => run(g, 'dungeonAct', { action: 'power' }), /thể lực/);
+  const before = g.s.hp;
+  r.intent = 'heavy';
+  run(g, 'dungeonAct', { action: 'guard' });
+  assert.ok(g.s.dungeon.run.sta > 5, 'thủ thế phải hồi thể lực');
+  const guarded = before - g.s.hp;
+  const h = inRealm();
+  run(h, 'enterDungeon', { id: 'kim' });
+  h.s.dungeon.run.intent = 'heavy';
+  h.s.dungeon.run.enemyHp = h.s.dungeon.run.enemyMax = 1e15; // không bị hạ trong lượt thử
+  const start = h.s.hp;
+  run(h, 'dungeonAct', { action: 'attack' });
+  const open = start - h.s.hp;
+  assert.ok(guarded < open || open === 0, 'đỡ đòn nặng phải nhẹ hơn nhận trọn');
+  const cost = g.stats().STA >= 24 ? 24 : 0;
+  g.s.dungeon.run.sta = 30;
+  run(g, 'dungeonAct', { action: 'power' });
+  assert.ok(g.s.dungeon.run.sta <= 30 - cost + 4 + 1e-9);
+});
+
+test('bí cảnh tương tác: hồi phục tốn linh khí và có hồi chiêu theo lượt', () => {
+  const g = inRealm();
+  run(g, 'enterDungeon', { id: 'kim' });
+  g.s.hp = g.stats().HP * .5;
+  const mp = g.s.mp;
+  run(g, 'dungeonAct', { action: 'heal' });
+  assert.ok(g.s.mp < mp);
+  assert.throws(() => run(g, 'dungeonAct', { action: 'heal' }), /lượt/);
+  g.s.mp = 0;
+  g.s.dungeon.run.healCd = 0;
+  assert.throws(() => run(g, 'dungeonAct', { action: 'heal' }), /linh khí/);
+});
+
+test('bí cảnh tương tác: thông quan, rút lui và thất bại đều chốt thưởng đúng', () => {
+  const win = inRealm(0);
+  win.s.hp = win.stats().HP;
+  run(win, 'enterDungeon', { id: 'moc' });
+  const stone = win.s.stone;
+  const done = playOut(win);
+  assert.ok(done && done.success, 'người chơi biết thủ thế phải thông quan bí cảnh đầu');
+  assert.equal(done.floors, 5);
+  assert.equal(done.why, 'clear');
+  assert.equal(win.s.dungeon.run, null);
+  assert.ok(win.s.stone > stone);
+  assert.equal(win.s.dungeon.records.moc.clears, 1);
+  assert.equal(win.s.dungeon.last.floors, 5);
+  assert.ok(done.essence.some(n => n > 0));
+  // thưởng chủ động cao hơn thưởng tự động cùng điều kiện (thông quan đầu ×2 cả hai, cộng thêm hệ số tay + 1 tinh hoa)
+  const auto = inRealm(0);
+  run(auto, 'startDungeon', { id: 'moc' });
+  const report = auto.advance(auto.s.dungeon.active.end);
+  if (report.dungeon.success) {
+    assert.ok(done.stone > report.dungeon.stone);
+    assert.ok(done.essence.reduce((a, b) => a + b) > report.dungeon.essence.reduce((a, b) => a + b) - 3);
+  }
+
+  const out = inRealm();
+  run(out, 'enterDungeon', { id: 'kim' });
+  const retreat = run(out, 'dungeonAct', { action: 'retreat' }).ended;
+  assert.equal(retreat.floors, 0);
+  assert.equal(retreat.stone, 0);
+  assert.equal(retreat.why, 'retreat');
+  assert.equal(out.s.dungeon.run, null);
+  assert.equal(out.s.dungeon.records.kim.best, 0);
+
+  const lose = inRealm(0);
+  run(lose, 'enterDungeon', { id: 'moc' });
+  lose.s.hp = 1; // sinh lực cạn giữa chừng: bị đánh trúng một lần là thất bại
+  const lost = playOut(lose, g => g.s.dungeon.run.sta >= 8 ? 'attack' : 'guard');
+  assert.ok(lost && !lost.success && lost.why === 'defeat');
+  assert.ok(lose.s.hp > 0 && lose.s.hp <= lose.stats().HP * .3);
+  assert.equal(lose.s.dungeon.run, null);
+});
+
+test('bí cảnh tương tác: đang đánh thì không tự hồi, không lịch luyện và không tự chiến offline', () => {
+  const g = inRealm();
+  run(g, 'enterDungeon', { id: 'kim' });
+  g.s.hp = g.stats().HP * .6;
+  g.s.mp = g.maxMp() * .3;
+  const hp = g.s.hp, mp = g.s.mp;
+  g.advance(NOW + 20_000);
+  assert.equal(g.s.hp, hp);
+  assert.equal(g.s.mp, mp);
+  assert.ok(g.s.dungeon.run, 'chuyến tương tác không hết hạn theo thời gian');
+  assert.throws(() => run(g, 'strike'), /bí cảnh/);
+  assert.throws(() => run(g, 'skill', { index: 0 }), /bí cảnh/);
+  run(g, 'setAuto', { enabled: true });
+  g.advance(NOW + 40_000, true);
+  assert.equal(g.s.hp, hp);
+});
+
+test('bí cảnh tương tác: lưu/tải giữ nguyên chuyến, dữ liệu hỏng bị loại', () => {
+  const g = inRealm();
+  run(g, 'enterDungeon', { id: 'kim' });
+  run(g, 'dungeonAct', { action: 'guard' });
+  const saved = JSON.parse(JSON.stringify(g.s));
+  const back = H.normalize(saved, NOW + 1000);
+  assert.deepEqual(back.dungeon.run, g.s.dungeon.run);
+  const bad = JSON.parse(JSON.stringify(g.s));
+  bad.dungeon.run.id = 'khong-co';
+  assert.equal(H.normalize(bad, NOW).dungeon.run, null);
+  const low = JSON.parse(JSON.stringify(g.s));
+  low.realm = 0;
+  assert.equal(H.normalize(low, NOW).dungeon.run, null);
+  const wild = JSON.parse(JSON.stringify(g.s));
+  Object.assign(wild.dungeon.run, { floor: 99, sta: -5, healCd: 1e9, enemyHp: 'x', intent: 'hack', log: [1, 2, 3, 4, 5, 6, 7, 8] });
+  const fixed = H.normalize(wild, NOW).dungeon.run;
+  assert.ok(fixed.floor <= 6 && fixed.sta >= 0 && fixed.healCd <= 10 && fixed.log.length <= 6);
+  assert.equal(fixed.intent, 'light');
+  assert.ok(fixed.enemyHp > 0 && fixed.enemyHp <= fixed.enemyMax);
+  const v6 = JSON.parse(JSON.stringify(g.s));
+  delete v6.dungeon.run;
+  assert.equal(H.normalize(v6, NOW).dungeon.run, null);
+});
+
+/* ---------- NPC: nhiệm vụ riêng và ưu đãi theo thiện cảm ---------- */
+test('NPC: chuỗi nhiệm vụ săn yêu thú cần nhận việc rồi hạ đủ số lượng, mở dần theo thiện cảm', () => {
+  const g = rich();
+  const first = g.npcQuestInfo('NPC001');
+  assert.deepEqual([first.step, first.total, first.accepted, first.locked], [0, 3, false, false]);
+  assert.equal(first.def.need.type, 'kill');
+
+  assert.equal(run(g, 'npcQuest', { id: 'NPC001' }).accepted, true);
+  assert.equal(g.npcQuestInfo('NPC001').accepted, true);
+  assert.throws(() => run(g, 'npcQuest', { id: 'NPC001' }), /Chưa đủ điều kiện/);
+  g.s.progress.kill += 24;
+  assert.equal(g.npcQuestInfo('NPC001').progress, 24);
+  assert.throws(() => run(g, 'npcQuest', { id: 'NPC001' }), /Chưa đủ điều kiện/);
+  g.s.progress.kill += 1;
+  const stone = g.s.stone;
+  const done1 = run(g, 'npcQuest', { id: 'NPC001' });
+  assert.equal(done1.completed, true);
+  assert.equal(g.s.npcAffinities.NPC001, 10);
+  assert.ok(g.s.stone > stone);
+  assert.equal(g.s.npcQuests.NPC001.step, 1);
+
+  // bước 2 cần thiện cảm 20 và nộp 3 món NPC thích (HERB-001), tiêu hao thật
+  assert.equal(g.npcQuestInfo('NPC001').locked, true);
+  assert.throws(() => run(g, 'npcQuest', { id: 'NPC001' }), /thiện cảm 20/);
+  g.s.npcAffinities.NPC001 = 20;
+  const herb = g.count('HERB-001');
+  g.take('HERB-001', herb - 2);
+  assert.throws(() => run(g, 'npcQuest', { id: 'NPC001' }), /Chưa đủ điều kiện/);
+  g.add('HERB-001', 1);
+  assert.equal(g.npcQuestInfo('NPC001').ready, true);
+  run(g, 'npcQuest', { id: 'NPC001' });
+  assert.equal(g.count('HERB-001'), 0);
+  assert.equal(g.s.npcAffinities.NPC001, 35);
+
+  // bước 3: thiện cảm 55, hạ 120 yêu thú, nhận 3 đan; sau đó hết chuỗi
+  g.s.npcAffinities.NPC001 = 55;
+  run(g, 'npcQuest', { id: 'NPC001' });
+  g.s.progress.kill += 120;
+  const pills = g.count(H.pill(2));
+  const last = run(g, 'npcQuest', { id: 'NPC001' });
+  assert.equal(last.finished, true);
+  assert.equal(g.count(H.pill(2)), pills + 3);
+  assert.equal(g.npcQuestInfo('NPC001').done, true);
+  assert.throws(() => run(g, 'npcQuest', { id: 'NPC001' }), /hoàn tất/);
+});
+
+test('NPC: nhiệm vụ nộp linh thạch, truyền thụ và tiến độ săn không âm sau khi đặt lại kiếp', () => {
+  const g = rich();
+  g.s.npcAffinities.NPC002 = 60;
+  g.s.npcQuests.NPC002 = { step: 2, base: null };
+  const info = g.npcQuestInfo('NPC002');
+  assert.equal(info.def.need.type, 'stone');
+  assert.equal(info.cost, F.income_rate(g.s.realm) * 900);
+  const stone = g.s.stone;
+  run(g, 'npcQuest', { id: 'NPC002' });
+  assert.ok(g.s.stone < stone - info.cost + 1); // trả học phí rồi nhận lại tối đa phần thưởng nhỏ, không tăng
+  assert.ok(g.count('BT-003') >= 1 || g.s.learned['BT-003'] > 0);
+
+  g.s.npcAffinities.NPC002 = 60;
+  g.s.npcQuests.NPC002 = { step: 2, base: null };
+  run(g, 'npcOffer', { id: 'NPC002' });
+  const mastery = g.s.learned['BT-003'];
+  run(g, 'npcQuest', { id: 'NPC002' });
+  assert.ok(g.s.learned['BT-003'] > mastery, 'đã học thì thưởng cộng độ lĩnh ngộ');
+
+  const poor = rich();
+  poor.s.npcAffinities.NPC002 = 60;
+  poor.s.npcQuests.NPC002 = { step: 2, base: null };
+  poor.s.stone = 0;
+  assert.throws(() => run(poor, 'npcQuest', { id: 'NPC002' }), /Chưa đủ điều kiện/);
+
+  const reset = rich();
+  reset.s.npcQuests.NPC001 = { step: 0, base: 500 };
+  reset.s.progress.kill = 10; // bộ đếm đã đặt lại sau trọng sinh: mốc cũ không còn hiệu lực
+  assert.equal(reset.npcQuestInfo('NPC001').accepted, false);
+  assert.equal(reset.npcQuestInfo('NPC001').progress, 0);
+  assert.equal(run(reset, 'npcQuest', { id: 'NPC001' }).accepted, true);
+  reset.s.progress.kill = 40;
+  assert.equal(reset.npcQuestInfo('NPC001').progress, 25); // tiến độ chốt ở mục tiêu, không vượt
+  assert.throws(() => reset.npcQuestInfo('NPC999'), /không hợp lệ/);
+  assert.throws(() => C.execute(reset, { type: 'npcQuest', payload: { id: 'NPC001', extra: 1 } }, NOW), /không hợp lệ/);
+});
+
+test('NPC: thiện cảm giảm giá khi mua/học, kể cả thợ luyện đan thuê', () => {
+  const g = rich();
+  g.s.realm = 6; g.s.stage = 1; g.s.stone = 1e6; // đủ nhỏ để sai số số thực không che phép so sánh giá
+  const base = F.shop_buy_price(g.price('SEED-HERB-007'));
+  assert.equal(g.npcDiscount('NPC011'), 0);
+  assert.equal(g.npcPrice('NPC011'), base);
+  g.s.npcAffinities.NPC011 = 100;
+  assert.equal(g.npcDiscount('NPC011'), H.NPC_DISCOUNT_MAX);
+  assert.ok(Math.abs(g.npcPrice('NPC011') - base * (1 - H.NPC_DISCOUNT_MAX)) / base < 1e-9);
+  const stone = g.s.stone, seeds = g.count('SEED-HERB-007');
+  run(g, 'npcOffer', { id: 'NPC011' });
+  assert.ok(Math.abs((stone - g.s.stone) - base * .7) / base < 1e-6);
+  assert.equal(g.count('SEED-HERB-007'), seeds + 1);
+
+  // luyện đan thuê (NPC004) nay bán đan riêng của mình
+  g.s.stone = 1e11;
+  g.s.npcAffinities.NPC004 = 50;
+  const pill = g.count('PILL-004');
+  const out = run(g, 'npcOffer', { id: 'NPC004' });
+  assert.equal(out.role, 'luyện đan thuê');
+  assert.equal(g.count('PILL-004'), pill + 1);
+  assert.throws(() => run(g, 'npcOffer', { id: 'NPC001' }), /không có vật phẩm/);
+  const broke = rich();
+  broke.s.stone = 0;
+  assert.throws(() => run(broke, 'npcOffer', { id: 'NPC011' }), /linh thạch/);
+});
+
+test('NPC: tiến độ nhiệm vụ được giữ qua trọng sinh và được làm sạch khi tải', () => {
+  const g = rich();
+  g.s.npcQuests.NPC001 = { step: 2, base: 7 };
+  g.s.npcAffinities.NPC001 = 40;
+  g._prestige(true, 'Thử', NOW);
+  assert.deepEqual(g.s.npcQuests.NPC001, { step: 2, base: null });
+  assert.equal(g.s.npcAffinities.NPC001, 40);
+
+  const saved = JSON.parse(JSON.stringify(g.s));
+  saved.progress.kill = 50;
+  saved.npcQuests = { NPC001: { step: 99, base: 'x' }, NPC002: { step: 1, base: 12 }, FAKE: { step: 1, base: 0 }, NPC003: 'hỏng' };
+  const back = H.normalize(saved, NOW);
+  assert.deepEqual(back.npcQuests.NPC001, { step: 3, base: null });
+  assert.deepEqual(back.npcQuests.NPC002, { step: 1, base: 12 });
+  assert.equal(back.npcQuests.FAKE, undefined);
+  assert.equal(back.npcQuests.NPC003, undefined);
+  delete saved.npcQuests;
+  assert.deepEqual(H.normalize(saved, NOW).npcQuests, {});
 });

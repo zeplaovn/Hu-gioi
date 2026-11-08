@@ -30,7 +30,7 @@ engine/
   state/player.js          Schema V7, create, normalize V4–V7
   rules/                   Chín miền luật (mỗi lệnh thuộc đúng một miền)
     progression inventory crafting combat world adventures social time creation
-  protocol/commands.js     46 lệnh: schema payload, validate, execute
+  protocol/commands.js     49 lệnh: schema payload, validate, execute
 client/
   assets/ platform/        Ảnh, âm thanh, loading, bảo vệ nội dung
   persistence/             localStorage, dự phòng, xuất/nhập JSON
@@ -95,7 +95,7 @@ Trình duyệt dùng classic script để chạy được cả `file://` không 
 |---|---|
 | `data/` | Giữ nguyên dữ liệu và công thức cũ |
 | `client/ui`, `css/`, `media/` | Giữ nguyên |
-| `engine/` | Đã cài đặt đủ state V7, 9 miền luật và 46 lệnh; `HU_GAME.READY === true` (xem [engine-contract.md](engine-contract.md)) |
+| `engine/` | Đã cài đặt đủ state V7, 9 miền luật và 49 lệnh; `HU_GAME.READY === true` (xem [engine-contract.md](engine-contract.md)) |
 | `server/` | Chạy file tĩnh và `/api/health`; còn lại là khung |
 | Game chơi được | Có, offline qua `LocalSession`; `HU_GAME.MISSING` rỗng |
 

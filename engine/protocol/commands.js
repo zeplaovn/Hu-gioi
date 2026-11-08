@@ -61,12 +61,15 @@
     // adventures
     startDungeon: { id: string },
     abortDungeon: {},
+    enterDungeon: { id: string },
+    dungeonAct: { action: oneOf(['attack', 'power', 'guard', 'heal', 'retreat']) },
     // social
     meetFriend: { id: string },
     giftFriend: { id: string },
     discuss: { id: string },
     npcGift: { id: string, code },
     npcOffer: { id: string },
+    npcQuest: { id: string },
     duel: { id: string }
   });
 

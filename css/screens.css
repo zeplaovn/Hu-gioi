@@ -407,3 +407,41 @@ body.in-tribulation{overflow:hidden}
 .stat-definition dt{font-weight:700;color:#e6d4b4}
 .stat-definition dd{margin:0;color:#d4c8b9;overflow-wrap:anywhere}
 @media(max-width:560px){.stat-definition{grid-template-columns:1fr;gap:2px}}
+
+/* ===== BÍ CẢNH TƯƠNG TÁC & NHIỆM VỤ NPC ===== */
+.meter-bar.sta{--c:var(--bar-age)}
+.run-panel{border-color:#7e6933;background:linear-gradient(160deg,#2a1d18,#1d1411)}
+.run-floors{display:flex;gap:5px;margin:2px 0 10px}
+.run-floors i{flex:1;height:6px;border-radius:4px;background:#3a2a22;border:1px solid #5a4638}
+.run-floors i.done{background:var(--jade);border-color:var(--jade)}
+.run-floors i.now{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px #dcaa6388}
+.run-enemy{display:flex;align-items:center;gap:8px;margin:4px 0 6px;font-size:17px}
+.run-enemy.boss b{color:var(--gold)}
+.run-meter{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:8px;margin:5px 0;font-size:14px}
+.run-meter>span{color:#cdbfae}
+.run-meter>b{font-weight:600;min-width:84px;text-align:right;font-variant-numeric:tabular-nums}
+.run-meter .meter-bar{height:12px}
+.run-intent{margin:8px 0 10px;padding:8px 10px;border:1px solid #5e4d3c;border-radius:8px;background:#1e1511;color:#d3c7ba;font-size:14px;line-height:1.5}
+.run-intent small{display:block;color:#b4a28f}
+.run-intent.heavy{border-color:var(--danger);background:#2c1714;color:#ffd3c9}
+.run-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px;margin:12px 0 8px}
+.run-actions .btn{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;white-space:normal;line-height:1.25}
+.run-actions .btn small{display:block;font-size:12px;opacity:.82}
+.run-log{margin:10px 0;padding:8px 10px 8px 26px;border-left:2px solid #5e4d3c;background:#16100d;border-radius:0 8px 8px 0;max-height:150px;overflow:auto;font-size:13.5px;color:#cdbfae;line-height:1.5}
+.run-log li:first-child{color:#f1e6d4}
+.npc-quest{margin:10px 0;padding:10px 12px;border:1px solid #5e4d3c;border-radius:9px;background:#1e1511;display:flex;flex-direction:column;gap:5px}
+.npc-quest>b{font-size:15.5px;color:var(--gold)}
+.npc-quest p{margin:0;font-size:14px;line-height:1.5;color:#d3c7ba}
+.npc-quest .npc-quest-need{color:#f1e6d4}
+.npc-quest .npc-quest-reward{color:var(--jade)}
+.npc-quest .btn{align-self:flex-start;margin-top:4px;min-height:40px}
+.npc-quest.done{border-color:#3f5a46;background:#16211a}
+.npc-quest.done b{color:var(--jade)}
+.npc-quest.done small{color:#a9b9ad}
+@media(max-width:520px){
+  .run-meter{grid-template-columns:62px 1fr;row-gap:2px}
+  .run-meter>b{grid-column:2;text-align:left;min-width:0;font-size:12.5px;color:#b4a28f}
+  .run-actions{grid-template-columns:1fr 1fr}
+  .npc-quest .btn{align-self:stretch}
+}
+@media(prefers-reduced-motion:reduce){.run-floors i,.meter-bar>i{transition:none}}

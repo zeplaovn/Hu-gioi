@@ -2,10 +2,11 @@
 (function (root) {
   'use strict';
   const domain = 'social';
-  const commands = Object.freeze(['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'duel']);
+  const commands = Object.freeze(['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel']);
 
   function install(API) {
-    const H = API, F = H.F, { FRIENDS, DAO, RIVALS, PVP_CD, DISCUSS_CD, giftCost, DESIGN, item } = H;
+    const H = API, F = H.F, { FRIENDS, DAO, RIVALS, PVP_CD, DISCUSS_CD, giftCost, DESIGN, item, NPC_QUESTS, NPC_DISCOUNT_MAX } = H;
+    const TEACH_ROLES = ['dạy công pháp', 'dạy bí tịnh'], SELL_ROLES = ['bán đồ', 'luyện đan thuê'];
     const find = (list, id) => {
       const f = list.find(x => x.id === id);
       if (!f) throw Error('Đạo hữu không hợp lệ.');
@@ -66,16 +67,104 @@
         this.log('Tặng ' + x.name + ' cho ' + npc['tên NPC'] + ' · thiện cảm ' + (change >= 0 ? '+' : '') + change + '.');
         return { affinity: s.npcAffinities[id], change };
       },
+      /* Ưu đãi theo thiện cảm: tối đa NPC_DISCOUNT_MAX khi thiện cảm 100. */
+      npcDiscount(id) { return Math.min(NPC_DISCOUNT_MAX, (this.s.npcAffinities[id] || 0) * NPC_DISCOUNT_MAX / 100); },
+      npcPrice(id) {
+        const code = DESIGN.npc[id]?.offer;
+        if (!item(code)) throw Error('NPC không có vật phẩm để trao đổi.');
+        return F.shop_buy_price(this.price(code)) * (1 - this.npcDiscount(id));
+      },
       npcOffer(payload) {
         const id = payload.id, npc = DESIGN.npc[id], role = npc?.['vai trò'], code = npc?.offer, x = item(code);
-        if (!npc || !x || !['bán đồ', 'dạy công pháp', 'dạy bí tịnh'].includes(role)) throw Error('NPC không có vật phẩm để trao đổi.');
+        const sells = SELL_ROLES.includes(role), teaches = TEACH_ROLES.includes(role);
+        if (!npc || !x || !(sells || teaches)) throw Error('NPC không có vật phẩm để trao đổi.');
         if (x.tier > this.s.realm + 1) throw Error('Vật phẩm vượt quá một bậc cảnh giới.');
-        if (role !== 'bán đồ' && x.kind !== 'BT') throw Error('Bí tịch không hợp lệ.');
+        if (teaches && x.kind !== 'BT') throw Error('Bí tịch không hợp lệ.');
         if (this.count(code) >= 1e9) throw Error('Túi đã đầy vật phẩm này.');
-        this.buy({ code });
-        if (role !== 'bán đồ') this.learn({ code });
-        this.log(npc['tên NPC'] + (role === 'bán đồ' ? ' bán ' : ' truyền dạy ') + x.name + '.');
+        this.spend(this.npcPrice(id));
+        this.add(code);
+        if (teaches) this.learn({ code });
+        this.log(npc['tên NPC'] + (sells ? ' bán ' : ' truyền dạy ') + x.name + '.');
         return { code, role };
+      },
+      /* Món NPC thích đang có trong túi (không tính pháp bảo đang đeo), cộng mọi phẩm chất. */
+      npcGiftKeys(id) {
+        const likes = item(DESIGN.npc[id]?.likes);
+        if (!likes) return [];
+        return Object.keys(this.s.bag).filter(k => item(k)?.code === likes.code && !this.s.equipment.includes(k) && this.count(k) > 0);
+      },
+      npcGiftStock(id) { return this.npcGiftKeys(id).reduce((n, k) => n + this.count(k), 0); },
+      /* Trạng thái bước nhiệm vụ riêng hiện tại của NPC — chỉ đọc, UI dùng để vẽ. */
+      npcQuestInfo(id) {
+        const npc = DESIGN.npc[id], steps = NPC_QUESTS[npc?.['vai trò']];
+        if (!npc || !steps) throw Error('NPC không hợp lệ.');
+        const s = this.s, q = s.npcQuests[id] || { step: 0, base: null }, affinity = s.npcAffinities[id] || 0, def = steps[q.step] || null;
+        /* Mốc săn cũ lớn hơn số đã hạ hiện tại nghĩa là bộ đếm đã bị đặt lại (trọng sinh): coi như chưa nhận việc. */
+        const based = q.base !== null && q.base <= s.progress.kill;
+        const info = { id, step: q.step, total: steps.length, def, done: !def, accepted: based, affinity, locked: false, progress: 0, target: 0, ready: false, cost: 0 };
+        if (!def) return info;
+        const need = def.need;
+        info.locked = affinity < def.minAffinity;
+        if (need.type === 'kill') {
+          info.target = need.count;
+          info.progress = based ? Math.min(need.count, s.progress.kill - q.base) : 0;
+          info.ready = based && info.progress >= need.count;
+        } else if (need.type === 'gift') {
+          info.target = need.count;
+          info.progress = Math.min(need.count, this.npcGiftStock(id));
+          info.ready = info.progress >= need.count;
+        } else {
+          info.cost = F.income_rate(s.realm) * need.seconds;
+          info.target = info.cost;
+          info.progress = Math.min(info.cost, s.stone);
+          info.ready = s.stone >= info.cost;
+        }
+        return info;
+      },
+      npcQuest(payload) {
+        const id = payload.id, info = this.npcQuestInfo(id), s = this.s, npc = DESIGN.npc[id], name = npc['tên NPC'];
+        if (info.done) throw Error('Đã hoàn tất chuỗi nhiệm vụ của ' + name + '.');
+        if (info.locked) throw Error('Cần thiện cảm ' + info.def.minAffinity + ' với ' + name + ' để nhận việc này.');
+        const q = s.npcQuests[id] || (s.npcQuests[id] = { step: 0, base: null }), need = info.def.need;
+        if (need.type === 'kill' && !info.accepted) {
+          q.base = s.progress.kill;
+          this.log('Nhận việc của ' + name + ': ' + info.def.name + '.');
+          return { accepted: true, id, step: q.step, name: info.def.name };
+        }
+        if (!info.ready) throw Error('Chưa đủ điều kiện hoàn thành.');
+        if (need.type === 'gift') {
+          let left = need.count;
+          for (const key of this.npcGiftKeys(id)) {
+            const n = Math.min(left, this.count(key));
+            this.take(key, n);
+            left -= n;
+            if (!left) break;
+          }
+        } else if (need.type === 'stone') this.spend(info.cost);
+        const reward = info.def.reward, parts = [];
+        if (reward.affinity) {
+          const before = s.npcAffinities[id] || 0;
+          s.npcAffinities[id] = Math.min(100, before + reward.affinity);
+          parts.push('thiện cảm +' + (s.npcAffinities[id] - before));
+        }
+        if (reward.stone) {
+          const gain = F.income_rate(s.realm) * reward.stone;
+          s.stone += gain;
+          parts.push(F.format_linh_thach(gain));
+        }
+        if (reward.exp) parts.push('tu vi +' + F.fmt(this.gainExp(Math.max(1, this.need() * reward.exp))));
+        const it = reward.item, offer = npc.offer;
+        if (it?.pill) { this.add(H.pill(it.pill), it.count || 1); parts.push(item(H.pill(it.pill)).name + ' ×' + (it.count || 1)); }
+        if (it?.offer && item(offer)) { this.add(offer, it.offer); parts.push(item(offer).name + ' ×' + it.offer); }
+        if (it?.mastery && item(offer)) {
+          if (offer in s.learned) { s.learned[offer] = Math.min(1, s.learned[offer] + it.mastery); parts.push('lĩnh ngộ ' + item(offer).name + ' +' + Math.round(it.mastery * 100) + '%'); }
+          else { this.add(offer); parts.push(item(offer).name + ' ×1'); }
+        }
+        q.step++;
+        q.base = null;
+        const text = name + ' · ' + info.def.name + ': ' + parts.join(' · ') + '.';
+        this.log(text);
+        return { completed: true, id, step: q.step, text, finished: q.step >= info.total };
       },
       rivalPower(id, now = this.s.lastUpdate) {
         return Math.max(1, Math.round(this.stats(now).CP * find(RIVALS, id).power));

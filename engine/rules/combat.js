@@ -114,8 +114,10 @@
         }
         return { damage, won: false };
       },
-      strike(payload, now) { return this._strike(1, at(this, now), false); },
+      strike(payload, now) { this.assertNoRun(); return this._strike(1, at(this, now), false); },
+      assertNoRun() { if (this.s.dungeon.run) throw Error('Đang chiến đấu trong bí cảnh, chưa thể lịch luyện.'); },
       skill(payload, now) {
+        this.assertNoRun();
         now = at(this, now);
         const index = payload.index, s = this.s;
         if (!Number.isInteger(index) || index < 0 || index > 3) throw Error('Kỹ năng không hợp lệ.');
@@ -142,6 +144,7 @@
         return d['hiệu ứng'];
       },
       castManual(payload, now) {
+        this.assertNoRun();
         now = at(this, now);
         const key = payload.code, s = this.s, x = item(key), d = x?.design, c = effects(s);
         if (!x || d?.group !== 'công pháp' || !(key in s.learned) || !s.activeManuals.includes(key)) throw Error('Hãy lĩnh ngộ và vận hành công pháp.');

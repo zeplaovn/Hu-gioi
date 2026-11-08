@@ -37,7 +37,7 @@ Phần **engine phải cung cấp**:
 
 `client/persistence/local-store.js` bọc phiên: tự lưu `localStorage` (khóa `huGioiWorkspaceV1`, dự phòng `huGioiWorkspaceV1Backup`), xuất/nhập JSON, `preference(key, value)` cho cài đặt hiển thị. Nó gọi `H.create` và `H.normalize`, và mọi bản lưu đọc vào đều phải qua `H.normalize`.
 
-## 4. Lệnh (46)
+## 4. Lệnh (49)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -83,11 +83,14 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `temperRoot` | world | `index` |
 | `startDungeon` | adventures | `id` |
 | `abortDungeon` | adventures | — |
+| `enterDungeon` | adventures | `id` |
+| `dungeonAct` | adventures | `action` (`attack`/`power`/`guard`/`heal`/`retreat`) |
 | `meetFriend` | social | `id` |
 | `giftFriend` | social | `id` |
 | `discuss` | social | `id` |
 | `npcGift` | social | `id` |
 | `npcOffer` | social | `id` |
+| `npcQuest` | social | `id` |
 | `duel` | social | `id` |
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).

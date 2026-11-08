@@ -8,6 +8,7 @@
   const D = node ? require('../../data/catalog.js') : root.HU_CATALOG;
   const A = node ? require('../../data/adventures.js') : root.HU_ADVENTURE_DATA;
   const DESIGN = node ? require('../../data/design.js') : root.HU_DESIGN;
+  const social = node ? require('../../data/social.js') : root.HU_SOCIAL_DATA;
   const { RACES, LEGACY_RACES, TALENT_INFO, TALENT_MAX, META_UPGRADES, META_ACHIEVEMENTS, rootType } = C;
   const { item, pill } = D;
   const { ELEMENT_NAMES, DUNGEONS, SECTS, SECT_MISSIONS, ENCOUNTERS } = A;
@@ -52,7 +53,7 @@
   const adventureDefaults = () => ({
     sect: sectDefault(),
     rootCraft: { essence: [0, 0, 0, 0, 0], levels: [0, 0, 0, 0, 0] },
-    dungeon: { active: null, records: {}, last: null },
+    dungeon: { active: null, run: null, records: {}, last: null },
     encounter: { index: 0, usedAt: 0, clock: 0, total: 0, journal: {}, recent: [] }
   });
 
@@ -70,7 +71,7 @@
       offlineCap: 0, offlineEff: 0, age: 18, extraLife: 0, alchemySkill: 0, craftBoost: 0,
       craftQueue: [], garden: [], gardenSoils: ['đất thường', 'linh điền', 'hỏa địa', 'hàn đàm'],
       offlineKills: 0, yaoValue: 0, progress: { kill: 0, meditate: 0, travel: 1, breaks: 0, alchemy: 0 },
-      claimed: [], locations: [0], npcAffinities: {},
+      claimed: [], locations: [0], npcAffinities: {}, npcQuests: {},
       auction: { offers: {}, cycle: Math.floor(now / 3600000) },
       social: { friends: {}, pvp: { rating: 1000, wins: 0, losses: 0, streak: 0, best: 1000, lastAt: 0 }, lastDiscuss: 0 },
       meta: metaDefault(), designCombat: designCombatDefault(),
@@ -131,7 +132,7 @@
     };
     x.sect.last = cleanResult(old.last, SECT_MISSIONS);
 
-    x.dungeon = { active: null, records: {}, last: cleanResult(raw.dungeon?.last, DUNGEONS) };
+    x.dungeon = { active: null, run: null, records: {}, last: cleanResult(raw.dungeon?.last, DUNGEONS) };
     for (const d of DUNGEONS) {
       const r = raw.dungeon?.records?.[d.id];
       if (!object(r)) continue;
@@ -151,6 +152,22 @@
         hp: finite(a.hp, stats.HP, stats.HP),
         affinity: Math.max(-.35, Math.min(.6, Number(a.affinity) || 0))
       };
+    }
+
+    /* Chuyến bí cảnh tương tác (đánh từng lượt): giữ nguyên qua lưu/tải, loại bỏ nếu dữ liệu không hợp lệ. */
+    const rn = raw.dungeon?.run, runDef = DUNGEONS.find(d => d.id === rn?.id);
+    if (object(rn) && runDef && x.realm >= runDef.realm && !x.dungeon.active && !x.sect.mission) {
+      const enemyMax = finite(rn.enemyMax, 0, 1e60), staMax = Math.max(1, finite(rn.staMax, 100, 1e4));
+      if (enemyMax > 0) {
+        const floor = Math.max(1, integer(rn.floor, 1, runDef.floors));
+        x.dungeon.run = {
+          id: runDef.id, floor, enemyMax, enemyHp: Math.min(enemyMax, finite(rn.enemyHp, enemyMax, 1e60) || enemyMax),
+          sta: Math.min(staMax, finite(rn.sta, staMax, 1e4)), staMax, turn: integer(rn.turn, 0, 1e6),
+          intent: rn.intent === 'heavy' ? 'heavy' : 'light', healCd: integer(rn.healCd, 0, 10),
+          cleared: Math.min(floor - 1, integer(rn.cleared, 0, runDef.floors)),
+          log: Array.isArray(rn.log) ? rn.log.slice(0, 6).map(v => String(v).slice(0, 160)) : []
+        };
+      }
     }
 
     const e = object(raw.encounter) ? raw.encounter : {};
@@ -308,6 +325,13 @@
     x.social.lastDiscuss = finite(raw.social?.lastDiscuss, 0, now);
     if (object(raw.npcAffinities)) for (const [id, value] of Object.entries(raw.npcAffinities))
       if (Object.hasOwn(DESIGN.npc, id)) x.npcAffinities[id] = finite(value, 0, 100);
+    if (object(raw.npcQuests)) for (const [id, v] of Object.entries(raw.npcQuests)) {
+      const steps = Object.hasOwn(DESIGN.npc, id) && social.NPC_QUESTS[DESIGN.npc[id]['vai trò']];
+      if (!steps || !object(v)) continue;
+      const step = integer(v.step, 0, steps.length);
+      const base = v.base !== null && Number.isFinite(Number(v.base)) ? finite(v.base, 0, 1e15) : null;
+      x.npcQuests[id] = { step, base: step < steps.length && base !== null && base <= x.progress.kill ? base : null };
+    }
 
     x.meta = normalizeMeta(raw.meta, now);
     x.auction.cycle = integer(raw.auction?.cycle, x.auction.cycle, x.auction.cycle);

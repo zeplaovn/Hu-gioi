@@ -48,13 +48,13 @@
         else this.warnLife(maxLife);
         for (const key of s.activeManuals) s.learned[key] = Math.min(1, s.learned[key] + seconds / (F.realm_time(s.realm) * .5));
         if (s.sect.joined) s.stone += this.sectIncome() * seconds * eff;
-        if (s.auto && offline) {
+        if (s.auto && offline && !s.dungeon.run) {
           const wins = seconds * eff / (this.attackInterval() * 10) * F.win_probability(this.stats(start).CP, this.enemy().CP) + s.offlineKills;
           const n = Math.floor(wins);
           s.offlineKills = wins - n;
           if (n) this.collectLoot(n, true);
         }
-        if (s.auto && !offline) {
+        if (s.auto && !offline && !s.dungeon.run) {
           s.combatClock += seconds;
           const interval = this.attackInterval();
           let turns = 0;
@@ -65,8 +65,10 @@
           }
         }
         const st = this.stats(now), rt = this.rootEffects();
-        s.hp = Math.min(st.HP, s.hp + st.HP * (.008 + rt.regen) * seconds);
-        s.mp = Math.min(this.maxMp(), s.mp + this.maxMp() * .018 * (1 + rt.mpRegen) * seconds);
+        if (!s.dungeon.run) { // đang đánh bí cảnh từng lượt thì không tự hồi, tránh chờ đợi để hồi đầy
+          s.hp = Math.min(st.HP, s.hp + st.HP * (.008 + rt.regen) * seconds);
+          s.mp = Math.min(this.maxMp(), s.mp + this.maxMp() * .018 * (1 + rt.mpRegen) * seconds);
+        }
 
         const dungeon = this.finishDungeon(now);
         const encounters = this.advanceEncounters(seconds, now, eff);

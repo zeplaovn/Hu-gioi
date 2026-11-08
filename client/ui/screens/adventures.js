@@ -18,21 +18,51 @@
       (r.essence.some(Boolean) ? row('Tinh hoa', essenceText(r.essence)) : '') +
       '<button class="text-btn" data-go="character:roots">Tôi luyện linh căn ›</button>', { eyebrow: 'KẾT QUẢ GẦN NHẤT', cls: 'adventure-result' });
   }
+  /* Thanh chỉ số có nhãn chữ và vai trò meter để đọc được bằng trình đọc màn hình. */
+  const meter = (label, value, max, cls) => {
+    const v = Math.max(0, Math.min(max, value));
+    return `<div class="run-meter"><span>${label}</span><div class="meter-bar ${cls}" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="${Math.round(max)}" aria-valuenow="${Math.round(v)}"><i style="width:${max > 0 ? v / max * 100 : 0}%"></i></div><b>${num(v)} / ${num(max)}</b></div>`;
+  };
+  function runPanel() {
+    const s = UI.s(), g = UI.g(), run = s.dungeon.run, R = H.DUNGEON_RUN;
+    if (!run) return '';
+    const d = H.DUNGEONS.find(x => x.id === run.id), enemy = g.runEnemy(d, run.floor), st = g.stats();
+    const phase = enemy.id ? H.DESIGN.phase(enemy.id, run.enemyHp / run.enemyMax) : null;
+    const heavy = run.intent === 'heavy', mpCost = g.maxMp() * R.healMp;
+    const pips = Array.from({ length: d.floors }, (_, i) => `<i class="${i < run.cleared ? 'done' : i + 1 === run.floor ? 'now' : ''}" aria-hidden="true"></i>`).join('');
+    const act = (move, label, hint, off, style) => btn(`${label}<small>${hint}</small>`, 'dungeonAct', `data-move="${move}" aria-keyshortcuts="${['attack', 'power', 'guard', 'heal'].indexOf(move) + 1}"`, off, style);
+    const body = `<div class="run-floors" role="img" aria-label="Đã vượt ${run.cleared}/${d.floors} tầng">${pips}</div>
+      <div class="run-enemy ${enemy.boss ? 'boss' : ''}"><b>${esc(enemy.name)}</b>${enemy.boss ? '<span class="pill">Thủ lĩnh</span>' : ''}</div>
+      ${meter('Địch', run.enemyHp, run.enemyMax, 'hp')}
+      <p class="run-intent ${heavy ? 'heavy' : ''}" role="status">${heavy ? '⚠ Địch dồn sức tung đòn nặng — thủ thế sẽ đỡ gần hết.' : 'Địch tung đòn thường.'}${phase ? ' <small>' + esc(phase['kỹ năng giai đoạn']) + '</small>' : ''}</p>
+      ${meter('Sinh lực', s.hp, st.HP, 'hp')}${meter('Thể lực', run.sta, run.staMax, 'sta')}${meter('Linh khí', s.mp, g.maxMp(), 'mp')}
+      <div class="run-actions action-group">
+        ${act('attack', 'Đánh', '−' + R.attack + ' thể lực', run.sta < R.attack, 'btn-gold')}
+        ${act('power', 'Trọng kích ×2,2', '−' + R.power + ' thể lực', run.sta < R.power, 'btn-gold')}
+        ${act('guard', 'Thủ thế', '+' + R.guardGain + ' thể lực · đỡ đòn', false, 'btn-outline')}
+        ${act('heal', 'Hồi phục', run.healCd > 0 ? 'còn ' + run.healCd + ' lượt' : Math.round(R.healMp * 100) + '% linh khí', run.healCd > 0 || s.mp < mpCost, 'btn-outline')}
+      </div>
+      <p class="info-note">Phím tắt 1–4. Mỗi lượt thể lực tự hồi ${R.passiveGain}, qua tầng hồi thêm ${R.floorGain}. Đang đánh bí cảnh thì sinh lực và linh khí không tự hồi.</p>
+      <ol class="run-log" aria-live="polite" aria-label="Diễn biến lượt đánh">${run.log.map(v => `<li>${esc(v)}</li>`).join('')}</ol>
+      <div class="action-group">${btn('Rút lui giữ thưởng đã vượt', 'dungeonRetreat', '', false, 'btn-outline')}</div>`;
+    return card('Chiến đấu · ' + d.name + ' · tầng ' + run.floor + '/' + d.floors, body, { eyebrow: 'TỰ TAY CHIẾN ĐẤU · LƯỢT ' + (run.turn + 1), cls: 'run-panel' });
+  }
   function dungeons() {
-    const s = UI.s(), g = UI.g(), a = s.dungeon.active, active = H.DUNGEONS.find(d => d.id === a?.id);
-    const busy = !!a || !!s.sect.mission, hpOk = s.hp >= g.stats().HP * .5;
-    return `<p class="screen-lead">Vượt từng tầng, hạ thủ lĩnh để thu Tinh hoa. Chuyến đi hoàn tất tự động cả khi đóng game; chiến lực được chốt lúc khởi hành.</p>
+    const s = UI.s(), g = UI.g(), a = s.dungeon.active, active = H.DUNGEONS.find(d => d.id === a?.id), run = s.dungeon.run;
+    const busy = !!a || !!run || !!s.sect.mission, hpOk = s.hp >= g.stats().HP * .5;
+    return `<p class="screen-lead">Vượt từng tầng, hạ thủ lĩnh để thu Tinh hoa. Có thể để chuyến đi tự chạy (hoàn tất cả khi đóng game, chiến lực chốt lúc khởi hành) hoặc tự tay chiến đấu từng lượt: quản lý thể lực, thủ thế đúng lúc, thưởng thêm ${Math.round((H.DUNGEON_RUN.bonus - 1) * 100)}% và 1 Tinh hoa khi thông quan.</p>
+      ${runPanel()}
       ${active ? card('Đang thám hiểm · ' + active.name, clock(a) + `<p>Thủ lĩnh tầng ${active.floors}: ${active.boss}</p>` + btn('Rút lui', 'dungeonAbort', '', false, 'btn-outline'), { eyebrow: 'CHUYẾN ĐI' }) : ''}
       ${s.dungeon.last ? dungeonResult(s.dungeon.last) : ''}
-      ${s.sect.mission ? '<p class="info-note">Đang nhận nhiệm vụ tông môn. Hoàn tất hoặc hủy nhiệm vụ để vào bí cảnh.</p>' : !hpOk ? '<p class="info-note">Cần 50% sinh lực để khởi hành. Bạn đang tự hồi phục.</p>' : ''}
+      ${s.sect.mission ? '<p class="info-note">Đang nhận nhiệm vụ tông môn. Hoàn tất hoặc hủy nhiệm vụ để vào bí cảnh.</p>' : !hpOk && !run ? '<p class="info-note">Cần 50% sinh lực để khởi hành. Bạn đang tự hồi phục.</p>' : ''}
       <div class="adventure-grid">${H.DUNGEONS.map(d => {
-        const locked = s.realm < d.realm, r = s.dungeon.records[d.id], aff = g.affinity(d.element);
+        const locked = s.realm < d.realm, r = s.dungeon.records[d.id], aff = g.affinity(d.element), off = locked || busy || !hpOk;
         return card(d.name, `<p>${d.desc}</p><div class="adventure-tags"><span style="color:${color(d.element)}">${element(d.element)}</span><span>${d.floors} tầng · ${duration(d.seconds)}</span><span>${F.REALMS[d.realm]}</span></div>` +
           row('Thủ lĩnh', d.boss) + row('Tương khắc', signed(aff) + ' sát thương') +
           (locked ? '' : row('Dự kiến', g.estimateDungeon(d.id) + '/' + d.floors + ' tầng')) +
           row('Kỷ lục', (r?.best || 0) + '/' + d.floors + ' · ' + (r?.clears || 0) + ' lần thông quan') +
           `<p class="info-note">${r?.clears ? 'Thủ lĩnh cho 1–' + (d.floors >= 8 ? 3 : 2) + ' Tinh hoa.' : 'Thông quan đầu: thưởng ×2 và thêm 3 Tinh hoa.'}</p>` +
-          btn(locked ? 'Chưa mở' : a?.id === d.id ? 'Đang thám hiểm' : 'Khởi hành', 'dungeonStart', `data-id="${d.id}"`, locked || busy || !hpOk), { cls: locked ? 'adventure-locked' : '' });
+          `<div class="action-group">${btn(locked ? 'Chưa mở' : a?.id === d.id ? 'Đang thám hiểm' : 'Khởi hành tự động', 'dungeonStart', `data-id="${d.id}"`, off, 'btn-outline')}${locked ? '' : btn(run?.id === d.id ? 'Đang chiến đấu' : 'Tự tay chiến đấu', 'dungeonEnter', `data-id="${d.id}"`, off)}</div>`, { cls: locked ? 'adventure-locked' : '' });
       }).join('')}</div>`;
   }
 
@@ -139,8 +169,35 @@
     document.querySelectorAll('[data-act="sectMissionClaim"]').forEach(el => { el.disabled = !UI.s().sect.mission || UI.s().sect.mission.end > now; });
     document.querySelectorAll('[data-act="encounter"]').forEach(el => { el.disabled = UI.s().encounter.usedAt + 90000 > now; });
   }
-  UI.adventure = { dungeons, encounters, sect, roots, update };
+  UI.adventure = { dungeons, encounters, sect, roots, update, runPanel };
   UI.action('dungeonStart', (el, d) => { UI.command('startDungeon', { id: d.id }); UI.toast('Đã khởi hành. Kết quả sẽ tự ghi vào nhật ký.', { type: 'gold', title: 'Bí cảnh' }); });
+  UI.action('dungeonEnter', (el, d) => {
+    UI.command('enterDungeon', { id: d.id });
+    UI.toast('Vào bí cảnh. Thể lực cạn thì thủ thế để hồi sức; thấy cảnh báo đòn nặng nên thủ thế.', { type: 'gold', title: 'Bí cảnh' });
+  });
+  const RUN_KEYS = ['attack', 'power', 'guard', 'heal'];
+  UI.action('dungeonAct', (el, d) => {
+    const r = UI.command('dungeonAct', { action: d.move });
+    if (r.ended) {
+      UI.toast(r.ended.text, { type: r.ended.success ? 'loot' : r.ended.why === 'defeat' ? 'danger' : 'info', title: r.ended.success ? 'Thông quan bí cảnh' : 'Kết thúc chuyến bí cảnh' });
+      if (r.ended.success) UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+    } else if (r.floorCleared) UI.toast('Qua tầng ' + r.floorCleared + '. Thể lực hồi thêm ' + H.DUNGEON_RUN.floorGain + '.', { type: 'success', title: 'Bí cảnh' });
+  });
+  UI.action('dungeonRetreat', () => {
+    const run = UI.s().dungeon.run;
+    UI.modal('Rút lui khỏi bí cảnh?', '<p>Giữ phần thưởng của ' + (run?.cleared || 0) + ' tầng đã vượt; các tầng còn lại bỏ dở.</p>', () => {
+      const r = UI.command('dungeonAct', { action: 'retreat' });
+      UI.toast(r.ended.text, { type: 'info', title: 'Rút lui' });
+    }, 'Rút lui');
+    return UI.KEEP;
+  });
+  // Phím 1–4 chọn hành động khi bảng chiến đấu đang mở và không đang gõ chữ.
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.altKey || e.metaKey || !RUN_KEYS[Number(e.key) - 1]) return;
+    if (e.target.closest?.('input, textarea, select, [contenteditable]') || !document.querySelector('.run-panel')) return;
+    const b = document.querySelector('.run-panel [data-act="dungeonAct"][data-move="' + RUN_KEYS[Number(e.key) - 1] + '"]');
+    if (b && !b.disabled) { e.preventDefault(); b.click(); }
+  });
   UI.action('dungeonAbort', () => { UI.modal('Rút khỏi bí cảnh?', '<p>Chuyến đi hiện tại sẽ không có phần thưởng.</p>', () => UI.command('abortDungeon'), 'Rút lui'); return UI.KEEP; });
   UI.action('temperRoot', (el, d) => {
     const i = Number(d.index), level = UI.command('temperRoot', { index: i });

@@ -139,7 +139,7 @@
       _startSectMission(id, now) {
         const s = this.s, def = this.sectMissions().find(m => m.id === id);
         if (!s.sect.joined) throw Error('Chưa nhập tông.');
-        if (s.sect.mission || s.dungeon.active) throw Error('Hãy hoàn tất chuyến bí cảnh hoặc nhiệm vụ đang nhận.');
+        if (s.sect.mission || s.dungeon.active || s.dungeon.run) throw Error('Hãy hoàn tất chuyến bí cảnh hoặc nhiệm vụ đang nhận.');
         if (!def) throw Error('Nhiệm vụ chưa mở.');
         if (s.hp < this.stats().HP * .4) throw Error('Cần ít nhất 40% sinh lực.');
         s.sect.mission = {

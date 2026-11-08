@@ -234,7 +234,8 @@
   function nextSteps(s, g) {
     const out = [], st = g.stats ? g.stats() : null;
     if (st && s.hp < st.HP * .5) out.push('Sinh lực còn thấp: nghỉ ngơi hoặc dùng đan hồi phục trước khi đột phá hay vào bí cảnh.');
-    if (!s.dungeon?.active && !s.sect?.mission) out.push('Bí cảnh và nhiệm vụ tông môn đang trống: cả hai đều chạy cả khi bạn vắng mặt.');
+    if (s.dungeon?.run) out.push('Bạn đang đánh dở một chuyến bí cảnh: vào Thế giới → Bí cảnh để tiếp tục hoặc rút lui giữ thưởng.');
+    else if (!s.dungeon?.active && !s.sect?.mission) out.push('Bí cảnh và nhiệm vụ tông môn đang trống: cả hai đều chạy cả khi bạn vắng mặt.');
     if (s.sect?.mission && s.sect.mission.end <= Date.now()) out.push('Nhiệm vụ tông môn đã xong, vào Tông môn để nhận thưởng.');
     return out.slice(0, 3);
   }

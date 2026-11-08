@@ -38,16 +38,35 @@
   const sect = () => UI.adventure.sect();
   const encounter = () => UI.adventure.encounters();
   const dungeons = () => UI.adventure.dungeons();
+  /* Khối nhiệm vụ riêng của NPC: bước hiện tại, điều kiện, phần thưởng và nút nhận/hoàn thành. */
+  const npcQuestBlock = (n, q, like) => {
+    const g = UI.g(), s = UI.s();
+    if (q.done) return '<div class="npc-quest done"><b>✔ Đã hoàn tất chuỗi nhiệm vụ</b><small>Vẫn có thể tặng quà để tăng thiện cảm và hưởng ưu đãi.</small></div>';
+    const d = q.def, r = d.reward, need = d.need;
+    const desc = d.desc.replace('{npc}', n['tên NPC']).replace('{likes}', like?.name || 'món yêu thích');
+    const progress = need.type === 'kill' ? (q.accepted ? `Đã hạ ${num(q.progress)}/${num(q.target)} yêu thú` : `Cần hạ ${num(q.target)} yêu thú sau khi nhận việc`)
+      : need.type === 'gift' ? `Có ${num(q.progress)}/${num(q.target)} ${esc(like?.name || 'món yêu thích')}`
+        : `Học phí ${moneyHTML(q.cost)}`;
+    const item = r.item?.pill ? `${esc(H.item(H.pill(r.item.pill)).name)} ×${r.item.count || 1}`
+      : r.item?.offer ? `${esc(H.item(n.offer)?.name || 'vật phẩm của NPC')} ×${r.item.offer}`
+        : r.item?.mastery ? `Lĩnh ngộ ${esc(H.item(n.offer)?.name || 'công pháp')} +${Math.round(r.item.mastery * 100)}%` : '';
+    const rewards = [`thiện cảm +${r.affinity}`, r.stone ? moneyHTML(F.income_rate(s.realm) * r.stone) : '', r.exp ? `tu vi +${pct(r.exp)} cần thiết` : '', item].filter(Boolean).join(' · ');
+    const label = q.locked ? `Cần thiện cảm ${d.minAffinity}` : need.type === 'kill' && !q.accepted ? 'Nhận việc' : 'Hoàn thành';
+    return `<div class="npc-quest"><span class="eyebrow">NHIỆM VỤ ${q.step + 1}/${q.total}</span><b>${esc(d.name)}</b><p>${esc(desc)}</p>
+      <p class="npc-quest-need">${progress}</p><p class="npc-quest-reward">Thưởng: ${rewards}</p>
+      ${btn(label, 'npcQuest', `data-id="${esc(n['mã NPC'])}"`, q.locked || (q.accepted || need.type !== 'kill' ? !q.ready : false), 'btn-outline')}</div>`;
+  };
   const npcs = () => {
     const s=UI.s(),g=UI.g();
-    return `<p class="screen-lead">Gặp gỡ nhân vật Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100.</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).map(n=>{
-      const id=n['mã NPC'],like=H.item(n.likes),dislike=H.item(n.dislikes),offer=H.item(n.offer),role=n['vai trò'];
+    return `<p class="screen-lead">Gặp gỡ nhân vật Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100. Mỗi NPC có chuỗi nhiệm vụ riêng mở dần theo thiện cảm, và thiện cảm càng cao giá mua/học càng rẻ (tối đa −${Math.round(H.NPC_DISCOUNT_MAX*100)}%).</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).map(n=>{
+      const id=n['mã NPC'],like=H.item(n.likes),dislike=H.item(n.dislikes),offer=H.item(n.offer),role=n['vai trò'],disc=g.npcDiscount(id);
       const gifts=[[like,'Tặng món thích'],[dislike,'Tặng món không thích']].map(([x,label])=>{if(!x)return '';const key=Object.keys(s.bag).find(k=>H.item(k)?.code===x.code&&!s.equipment.includes(k)&&g.count(k)>0);return btn(label,'npcGift',`data-id="${esc(id)}" ${codeAttr(key||x.code)}`,!key,'btn-outline')}).join('');
-      const trade=offer&&['bán đồ','dạy công pháp','dạy bí tịnh'].includes(role)?btn((role==='bán đồ'?'Mua ':'Học ')+esc(offer.name)+' · '+moneyHTML(F.shop_buy_price(g.price(offer.code))),'npcOffer',`data-id="${esc(id)}"`,offer.tier>s.realm+1||s.stone<F.shop_buy_price(g.price(offer.code))):'';
-      const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="world:quests">Xem nhiệm vụ</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
+      const sells=['bán đồ','luyện đan thuê'].includes(role),teaches=['dạy công pháp','dạy bí tịnh'].includes(role),price=offer&&(sells||teaches)?g.npcPrice(id):0;
+      const trade=price?btn((teaches?'Học ':'Mua ')+esc(offer.name)+' · '+moneyHTML(price)+(disc>0?' <small>(−'+Math.round(disc*100)+'%)</small>':''),'npcOffer',`data-id="${esc(id)}"`,offer.tier>s.realm+1||s.stone<price):'';
+      const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="world:quests">Nhiệm vụ chung</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
       return card(esc(n['tên NPC']),`<div class="npc-profile"><img src="${esc(n.ảnh)}" alt="" loading="lazy" decoding="async"><p>${esc(n['bối cảnh'])}</p></div>`+
         row('Địa điểm',esc(n['địa điểm']))+row('Quan hệ',esc(n['quan hệ']))+row('Vai trò',esc(role))+row('Thiện cảm',num(s.npcAffinities[id]||0)+'/100')+
-        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+`<div class="action-group">${gifts}${trade}${link}</div>`,{eyebrow:esc(id)});
+        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+npcQuestBlock(n,g.npcQuestInfo(id),like)+`<div class="action-group">${gifts}${trade}${link}</div>`,{eyebrow:esc(id)});
     }).join('')}</div>`;
   };
 
@@ -76,7 +95,7 @@
     signature: tab => {
       const s = UI.s(), g = UI.g();
       return [s.realm, s.stage, s.sect.joined, s.sect.id, s.sect.earned, s.sect.contribution, s.sect.mission?.id || '', s.sect.mission?.end || 0, s.sect.blessing, s.sect.last?.at, s.sect.repeat, s.meta?.points || 0,
-        s.dungeon.active?.end || 0, s.dungeon.last?.at || 0, s.encounter.total, Math.floor(Date.now() / 864e5),
+        s.dungeon.active?.end || 0, s.dungeon.last?.at || 0, s.dungeon.run ? [s.dungeon.run.floor, s.dungeon.run.turn, Math.round(s.hp), Math.round(s.dungeon.run.sta)].join(',') : '', tab === 'npc' ? [s.progress.kill, JSON.stringify(s.npcQuests), Object.values(s.npcAffinities).join(',')].join('/') : '', s.encounter.total, Math.floor(Date.now() / 864e5),
         tab === 'dungeons' || tab === 'sect' ? Math.floor(s.hp / g.stats().HP * 10) : '', s.stone >= F.price_ha(s.realm)].join('|');
     }
   });
@@ -93,6 +112,14 @@
   UI.action('npcOffer', (el, d) => {
     const result=UI.command('npcOffer',{id:d.id});
     UI.toast((result.role==='bán đồ'?'Đã mua ':'Đã lĩnh ngộ ')+H.item(result.code).name+'.',{type:'success',title:'Gặp gỡ'});
+  });
+  UI.action('npcQuest', (el, d) => {
+    const r = UI.command('npcQuest', { id: d.id });
+    if (r.accepted) UI.toast('Đã nhận việc: ' + r.name + '. Hạ yêu thú ở Lịch luyện để hoàn thành.', { type: 'info', title: 'Nhiệm vụ NPC' });
+    else {
+      UI.toast(r.text, { type: 'loot', title: r.finished ? 'Hoàn tất chuỗi nhiệm vụ' : 'Nhiệm vụ NPC' });
+      UI.vfx?.stage({ kind: 'chien_dau', variant: r.finished ? 'phi_thang' : 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+    }
   });
   UI.action('bid', (el, d) => {
     UI.command('bid', { code: d.code });
