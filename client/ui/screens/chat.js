@@ -72,6 +72,66 @@
   UI.action('chatDisconnect', () => { error = ''; session.disconnect(); return UI.KEEP; });
   /* Bong bóng chat nổi ngoài màn chơi: bấm để mở khung nhỏ, đóng lại vẫn giữ kết nối và đếm tin mới. */
   const bubble = { el: null, panel: null, btn: null, badge: null, open: false, unread: 0, seen: 0 };
+  const POSITION_KEY = 'huGioiChatBubblePosition';
+  let dragSuppressClick = false;
+  const clampPos = (value, max) => Math.max(8, Math.min(Math.max(8, max - 64), value));
+  function bubblePosition(x, y, persist = false) {
+    if (!bubble.el) return;
+    const width = root.innerWidth || document.documentElement.clientWidth;
+    const height = root.innerHeight || document.documentElement.clientHeight;
+    x = clampPos(x, width);
+    y = clampPos(y, height);
+    bubble.el.classList.add('drag-positioned');
+    for (const [key, value] of Object.entries({ left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto' }))
+      bubble.el.style.setProperty(key, value, 'important');
+    // Popup luôn mở về phía có đủ khoảng trống.
+    const panel = bubble.panel, right = x > width / 2, down = y < Math.min(300, height / 2);
+    panel.style.left = right ? 'auto' : '0';
+    panel.style.right = right ? '0' : 'auto';
+    panel.style.top = down ? '65px' : 'auto';
+    panel.style.bottom = down ? 'auto' : '65px';
+    if (persist) {
+      try { root.localStorage?.setItem(POSITION_KEY, JSON.stringify({ x, y })); } catch { /* bảo vệ chế độ riêng tư */ }
+    }
+  }
+  function bubbleDraggable() {
+    let pos = null;
+    try { pos = JSON.parse(root.localStorage?.getItem(POSITION_KEY) || 'null'); } catch {}
+    if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) bubblePosition(pos.x, pos.y);
+    let gesture = null;
+    bubble.btn.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      const rect = bubble.el.getBoundingClientRect();
+      gesture = { id: e.pointerId, x: e.clientX, y: e.clientY, left: rect.left, top: rect.top, moved: false };
+      bubble.btn.setPointerCapture(e.pointerId);
+    });
+    bubble.btn.addEventListener('pointermove', e => {
+      if (!gesture || e.pointerId !== gesture.id) return;
+      const dx = e.clientX - gesture.x, dy = e.clientY - gesture.y;
+      if (!gesture.moved && Math.hypot(dx, dy) < 6) return;
+      gesture.moved = true;
+      bubble.btn.classList.add('dragging');
+      e.preventDefault();
+      bubblePosition(gesture.left + dx, gesture.top + dy);
+    });
+    const finish = e => {
+      if (!gesture || e.pointerId !== gesture.id) return;
+      if (gesture.moved) {
+        dragSuppressClick = true;
+        const rect = bubble.el.getBoundingClientRect();
+        bubblePosition(rect.left, rect.top, true);
+      }
+      gesture = null;
+      bubble.btn.classList.remove('dragging');
+    };
+    bubble.btn.addEventListener('pointerup', finish);
+    bubble.btn.addEventListener('pointercancel', finish);
+    root.addEventListener('resize', () => {
+      if (!bubble.el?.classList.contains('drag-positioned')) return;
+      const rect = bubble.el.getBoundingClientRect();
+      bubblePosition(rect.left, rect.top);
+    });
+  }
   function bubbleBuild() {
     if (bubble.el || !root.document) return;
     const el = document.createElement('div');
@@ -82,7 +142,11 @@
     bubble.el = el; bubble.btn = el.querySelector('.chat-bubble-btn'); bubble.panel = el.querySelector('.chat-bubble-panel'); bubble.badge = el.querySelector('.chat-bubble-badge');
     bubble.panel.querySelector('.chat-bubble-body').innerHTML = render();
     mount();
-    bubble.btn.addEventListener('click', () => bubbleToggle());
+    bubbleDraggable();
+    bubble.btn.addEventListener('click', e => {
+      if (dragSuppressClick) { dragSuppressClick = false; e.preventDefault(); e.stopPropagation(); return; }
+      bubbleToggle();
+    });
     el.querySelector('.chat-bubble-close').addEventListener('click', () => bubbleToggle(false));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && bubble.open) bubbleToggle(false); });
     session.subscribe(bubbleCount);
