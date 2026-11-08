@@ -47,8 +47,9 @@ test('Thế giới không còn tab Kỳ ngộ và Kỳ nhân; cả hai nằm tro
   assert.doesNotMatch(world, /\{ id: 'encounter', label: 'Kỳ ngộ'/);
   assert.doesNotMatch(world, /\{ id: 'npc', label: 'Kỳ nhân'/);
   assert.match(world, /UI\.lorePanels = \{ npcs, encounter \}/);
-  assert.match(combat, /UI\.lorePanels\?\.npcs\?\.\(e\.npcId\)/);
-  assert.match(combat, /e\?\.kind === 'encounter'/);
+  assert.match(combat, /Chọn nơi lịch luyện/);
+  assert.match(combat, /Nhật ký lịch luyện/);
+  assert.doesNotMatch(combat, /UI\.lorePanels\?\.npcs|enemyCard\(\)|skillbar\(\)/);
   assert.match(combat, /explorationCountdown/);
 });
 
@@ -58,8 +59,8 @@ test('loại bỏ nút Nhập định/Tự chiến và sử dụng nút Lịch l
   const combat=read('client/ui/screens/combat.js');
   const env=read('client/ui/environment.js');
   assert.doesNotMatch(html, /modeMeditate|modeFight|idleModeSwitch|autoCombatToggle/);
-  assert.match(shell, /UI\.command\('startExploration'\)/);
-  assert.match(shell, /const mode = exploring \? 'combat' : 'idle'/);
+  assert.match(combat, /UI\.command\('startExploration'\)/);
+  assert.match(shell, /const mode = \(exploring \|\| wins\.has\('combat'\)\) \? 'combat' : 'idle'/);
   assert.match(combat, /UI\.action\('exploreStart'/);
   assert.doesNotMatch(combat, /UI\.action\('auto'/);
   assert.match(env, /A\.BG\.combat/);
