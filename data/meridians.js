@@ -23,35 +23,35 @@
 
   /* [tên, tên ngắn, hệ, số huyệt, stat khi t = 100, hiệu ứng viên mãn] */
   const CHINH_KINH = [
-    ['Thủ Thái Âm Phế Kinh', 'Phế', 'Kim', 11, 'atk +3%, crit +1%', 'công pháp kim +3% sát thương'],
-    ['Thủ Dương Minh Đại Trường Kinh', 'Đại Trường', 'Kim', 20, 'def +3%, sta +3%', 'thải 5% tạp chất Z mỗi lần tu luyện'],
-    ['Túc Dương Minh Vị Kinh', 'Vị', 'Thổ', 45, 'hp +3%', 'đan hồi hp hiệu quả +5%'],
-    ['Túc Thái Âm Tỳ Kinh', 'Tỳ', 'Thổ', 21, 'def +3%, hp +2%', 'giảm 2% sát thương nhận vào'],
-    ['Thủ Thiếu Âm Tâm Kinh', 'Tâm', 'Hỏa', 9, 'atk +3%, crit_dame +3%', 'công pháp hỏa +3% sát thương'],
-    ['Thủ Thái Dương Tiểu Trường Kinh', 'Tiểu Trường', 'Hỏa', 19, 'mp +3%', 'đan tu vi hấp thụ +3%'],
-    ['Túc Thái Dương Bàng Quang Kinh', 'Bàng Quang', 'Thủy', 67, 'mp +3%, eva +1%', 'kháng độc +5%'],
-    ['Túc Thiếu Âm Thận Kinh', 'Thận', 'Thủy', 27, 'mp +3%, sta +4%', 'thọ nguyên +1%'],
+    ['Thủ Thái Âm Phế Kinh', 'Phế', 'Kim', 11, 'công kích +3%, bạo kích +1%', 'công pháp kim +3% sát thương'],
+    ['Thủ Dương Minh Đại Trường Kinh', 'Đại Trường', 'Kim', 20, 'phòng thủ +3%, thể lực +3%', 'thải 5% tạp chất mỗi lần tu luyện'],
+    ['Túc Dương Minh Vị Kinh', 'Vị', 'Thổ', 45, 'sinh lực +3%', 'đan hồi sinh lực hiệu quả +5%'],
+    ['Túc Thái Âm Tỳ Kinh', 'Tỳ', 'Thổ', 21, 'phòng thủ +3%, sinh lực +2%', 'giảm 2% sát thương nhận vào'],
+    ['Thủ Thiếu Âm Tâm Kinh', 'Tâm', 'Hỏa', 9, 'công kích +3%, sát thương bạo kích +3%', 'công pháp hỏa +3% sát thương'],
+    ['Thủ Thái Dương Tiểu Trường Kinh', 'Tiểu Trường', 'Hỏa', 19, 'linh lực +3%', 'đan tu vi hấp thụ +3%'],
+    ['Túc Thái Dương Bàng Quang Kinh', 'Bàng Quang', 'Thủy', 67, 'linh lực +3%, né tránh +1%', 'kháng độc +5%'],
+    ['Túc Thiếu Âm Thận Kinh', 'Thận', 'Thủy', 27, 'linh lực +3%, thể lực +4%', 'thọ nguyên +1%'],
     ['Thủ Quyết Âm Tâm Bào Kinh', 'Tâm Bào', 'Trung hòa', 9, 'giảm 1% sát thương nhận vào', 'kháng choáng +5%'],
-    ['Thủ Thiếu Dương Tam Tiêu Kinh', 'Tam Tiêu', 'Trung hòa', 23, 'tốc độ tu luyện +3%', 'hồi mp ngoài chiến đấu +5%'],
-    ['Túc Thiếu Dương Đởm Kinh', 'Đởm', 'Mộc', 44, 'crit +1%, eva +2%', 'công pháp mộc +3% hiệu quả'],
-    ['Túc Quyết Âm Can Kinh', 'Can', 'Mộc', 14, 'hp +3%, hồi máu +3%', 'hồi máu từ công pháp +5%']
+    ['Thủ Thiếu Dương Tam Tiêu Kinh', 'Tam Tiêu', 'Trung hòa', 23, 'tốc độ hấp thụ linh khí +3%', 'hồi linh lực ngoài chiến đấu +5%'],
+    ['Túc Thiếu Dương Đởm Kinh', 'Đởm', 'Mộc', 44, 'bạo kích +1%, né tránh +2%', 'công pháp mộc +3% hiệu quả'],
+    ['Túc Quyết Âm Can Kinh', 'Can', 'Mộc', 14, 'sinh lực +3%, hồi sinh lực +3%', 'hồi sinh lực từ công pháp +5%']
   ].map(([name, short, he, points, stat, perfect]) => ({ name, short, kind: 'chính kinh', he, rarity: 'phàm', opens: 'Luyện Khí', points, stat, perfect }));
 
   /* [tên, độ hiếm, stat khi t = 100, hiệu ứng viên mãn] (mở cùng lúc khi đạt Trúc Cơ, hệ trung hòa) */
   const KY_KINH = [
-    ['Nhâm Mạch', 'linh', 'mp +8%, hồi mp +5%', 'mở ô "hồi mp khi nghỉ"'],
-    ['Đốc Mạch', 'linh', 'atk +8%, crit +3%', 'đòn đầu tiên mỗi trận +10% sát thương'],
-    ['Xung Mạch', 'huyền', 'hp +10%, hồi máu +3%', 'hồi 3% hp khi hp < 30% (hồi chiêu 60s)'],
-    ['Đới Mạch', 'huyền', 'def +8%', 'kháng "phong mạch" +30%'],
-    ['Âm Kiều Mạch', 'địa', 'sta +10%, mp +5%', 'giảm 5% tiêu hao mp công pháp'],
-    ['Dương Kiều Mạch', 'địa', 'eva +5%, tốc độ ra chiêu +5%', 'né thành công: hồi 1% sta'],
+    ['Nhâm Mạch', 'linh', 'linh lực +8%, hồi linh lực +5%', 'mở ô "hồi linh lực khi nghỉ"'],
+    ['Đốc Mạch', 'linh', 'công kích +8%, bạo kích +3%', 'đòn đầu tiên mỗi trận +10% sát thương'],
+    ['Xung Mạch', 'huyền', 'sinh lực +10%, hồi sinh lực +3%', 'hồi 3% sinh lực khi sinh lực < 30% (hồi chiêu 60 giây)'],
+    ['Đới Mạch', 'huyền', 'phòng thủ +8%', 'kháng "phong mạch" +30%'],
+    ['Âm Kiều Mạch', 'địa', 'thể lực +10%, linh lực +5%', 'giảm 5% tiêu hao linh lực công pháp'],
+    ['Dương Kiều Mạch', 'địa', 'né tránh +5%, tốc độ ra chiêu +5%', 'né thành công: hồi 1% thể lực'],
     ['Âm Duy Mạch', 'địa', 'kháng độc/băng +10%', 'miễn nhiễm 1 hiệu ứng khống chế đầu tiên mỗi trận'],
-    ['Dương Duy Mạch', 'địa', 'crit_dame +15%', 'chí mạng có 10% tạo thêm 1 đòn đánh phụ']
+    ['Dương Duy Mạch', 'địa', 'sát thương bạo kích +15%', 'bạo kích có 10% tạo thêm 1 đòn đánh phụ']
   ].map(([name, rarity, stat, perfect]) => ({ name, short: name.replace(' Mạch', ''), kind: 'kỳ kinh', he: 'Trung hòa', rarity, opens: 'Trúc Cơ', points: null, stat, perfect }));
 
   const THIEN_MACH = {
     name: 'Hỗn Độn Thiên Mạch', kind: 'đặc thù', he: 'Hỗn Độn', rarity: 'thiên', opens: 'Khi có Hỗn Độn linh căn',
-    stat: 'hp +5%, mp +5%, atk +5%, def +5%', perfect: 'miễn tạp chất Z; mọi mạch cùng hệ được tính như "cùng hệ với linh căn"'
+    stat: 'sinh lực +5%, linh lực +5%, công kích +5%, phòng thủ +5%', perfect: 'miễn tạp chất; mọi mạch cùng hệ được tính như "cùng hệ với linh căn"'
   };
 
   /* Hệ số tốc độ tu luyện theo số hệ của linh căn (root.txt mục 4.1). */
