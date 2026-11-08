@@ -126,7 +126,7 @@
       const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="world:quests">Nhiệm vụ chung</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
       return card(esc(n['tên NPC']),`<div class="npc-profile"><img src="${esc(n.ảnh)}" alt="" loading="lazy" decoding="async"><p>${esc(n['bối cảnh'])}</p></div>`+
         row('Địa điểm',esc(n['địa điểm']))+row('Quan hệ',esc(n['quan hệ']))+row('Thân phận',esc(roleName))+row('Thiện cảm',num(s.npcAffinities[id]||0)+'/100')+
-        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+npcQuestBlock(n,g.npcQuestInfo(id),like)+`<div class="action-group">${gifts}${trade}${link}</div>`,{eyebrow:'KỲ NHÂN HẠ GIỚI'});
+        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+npcQuestBlock(n,g.npcQuestInfo(id),like)+`<div class="action-group">${btn('Trò chuyện', 'openNpcDialogue', `data-id="${esc(id)}"`, false, 'btn-gold')}${gifts}${trade}${link}</div>`,{eyebrow:'KỲ NHÂN HẠ GIỚI'});
     }).join('')}</div>`;
   };
 
