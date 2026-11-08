@@ -43,12 +43,13 @@ function sandbox({ load = true } = {}) {
   return { a, ui, state, hits, setClock: t => { clock = t; }, setReduced: x => { reduced = x; }, render: () => rerender?.() };
 }
 
-test('thiếu asset thì giữ nguyên sprite cũ, không phá FE', async () => {
+test('không phụ thuộc sprite pixel cũ kể cả khi ảnh tải chậm/lỗi', async () => {
   const e = sandbox({ load: false });
   await Promise.resolve();
-  assert.equal(e.a.heroFrames('nam', 0, 'dung_yen'), 3);
-  assert.equal(e.a.heroSrc('nam', 0, 'dung_yen', 2), 'legacy/nam/dung_yen/2');
-  assert.equal(e.ui.playerPack.has('nam'), false);
+  assert.equal(e.a.heroFrames('nam', 0, 'dung_yen'), 6);
+  assert.match(e.a.heroSrc('nam', 0, 'dung_yen', 2), /realistic\/nam\/thien_dinh\/00\.webp$/);
+  assert.equal(e.ui.playerPack.has('nam'), true);
+  assert.equal(e.ui.playerPack.has('nu'), true);
 });
 
 test('2 giới tính và 4 hành động dùng đúng bộ player.zip đã xử lý', async () => {

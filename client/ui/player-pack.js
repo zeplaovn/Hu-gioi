@@ -1,5 +1,5 @@
 /* Hư Giới — nhân vật bán hiện thực từ player.zip.
- * Không chỉnh gameplay hoặc schema. Thiếu ảnh mới thì giữ nguyên sprite gốc.
+ * Chỉ dùng bộ ảnh WebP mới; không còn phụ thuộc sprite pixel đời cũ.
  * Nạp sau boot.js để có thể bọc action du hành, ra đòn, tọa hóa và trọng sinh. */
 (function (root) {
   'use strict';
@@ -13,12 +13,6 @@
     nam: { thien_dinh: 250, di_bo: 170, tung_skill: 155, guc_nga: 200 },
     nu:  { thien_dinh: 180, di_bo: 150, tung_skill: 140, guc_nga: 220 }
   });
-  const original = {
-    heroFrames: A.heroFrames, heroSrc: A.heroSrc,
-    heroPortrait: A.heroPortrait, preloadHero: A.preloadHero
-  };
-  const available = { nam: false, nu: false };
-  const inspected = { nam: false, nu: false };
   const cache = new Map();
   const motion = {
     lastAction: '', lastGender: '', actionStart: 0,
@@ -26,7 +20,7 @@
   };
   const sex = g => g === 'nu' ? 'nu' : 'nam';
   const path = (g, action, i) => BASE + sex(g) + '/' + action + '/' + String(i).padStart(2, '0') + '.webp';
-  const has = g => !!available[sex(g)];
+  const has = () => true; // Toàn bộ 50 ảnh WebP có sẵn trong repository.
   const now = () => Date.now();
   function currentState() {
     try { return typeof UI.s === 'function' ? UI.s() : null; } catch { return null; }
@@ -87,26 +81,24 @@
     resetTimeline();
   }
 
-  // Giữ nguyên hợp đồng HU_ASSETS để màn tu luyện, chiến đấu, độ kiếp,
-  // onboarding và avatar cùng sử dụng một nguồn ảnh.
-  A.heroFrames = (g, zone, action = 'dung_yen') => has(g) && Object.hasOwn(ANIM, action)
-    ? COUNT : original.heroFrames(g, zone, action);
-  A.heroSrc = (g, zone, action = 'dung_yen', index = 0) => {
-    if (!has(g) || !Object.hasOwn(ANIM, action)) return original.heroSrc(g, zone, action, index);
+  // Bộ WebP mới là nguồn duy nhất. Bọc resolver chung để mọi giao diện
+  // (Tu luyện, Lịch luyện, Độ kiếp, ảnh đại diện) cùng hiển thị đạo thân.
+  A.heroFrames = () => COUNT;
+  A.heroSrc = (g, zone, action = 'dung_yen') => {
     const gender = sex(g), t = now();
     const name = effectiveAction(gender, action, t);
     return path(gender, name, frame(gender, name, t));
   };
-  A.heroPortrait = (g, zone) => has(g) ? BASE + sex(g) + '/portrait.webp' : original.heroPortrait(g, zone);
+  A.heroPortrait = g => BASE + sex(g) + '/portrait.webp';
   A.preloadHero = (g, zone, action = 'dung_yen') => {
-    if (!has(g) || !Object.hasOwn(ANIM, action)) return original.preloadHero(g, zone, action);
     if (typeof root.Image !== 'function') return [];
-    const key = sex(g) + '/' + ANIM[action];
+    const name = ANIM[action] || ANIM.dung_yen;
+    const key = sex(g) + '/' + name;
     if (!cache.has(key)) {
       cache.set(key, Array.from({ length: COUNT }, (_, i) => {
         const image = new root.Image();
         image.decoding = 'async';
-        image.src = path(g, ANIM[action], i);
+        image.src = path(g, name, i);
         return image;
       }));
     }
@@ -137,22 +129,13 @@
     return result;
   };
 
-  // Kiểm tra 1 khung/người trước khi bật bộ mới. Nhánh chưa có ảnh không bị vỡ UI.
-  function probe(g) {
-    if (inspected[g] || typeof root.Image !== 'function') return;
-    inspected[g] = true;
-    const image = new root.Image();
-    image.onload = () => { available[g] = true; render(); };
-    image.onerror = () => { available[g] = false; render(); };
-    image.src = path(g, 'thien_dinh', 0);
-  }
   function render() {
     const s = currentState();
     const g = sex(s?.gender);
     const doc = root.document;
     if (!doc) return;
-    doc.documentElement?.classList?.toggle('hg-realistic-player', has(g));
-    if (!s?.created || !has(g) || doc.hidden) return;
+    doc.documentElement?.classList?.toggle('hg-realistic-player', true);
+    if (!s?.created || doc.hidden) return;
     const mode = doc.getElementById('game')?.dataset.stage || 'idle';
     const raw = mode === 'combat' && s.auto ? 'tan_cong' : doc.getElementById('heroSprite')?.dataset.action || 'dung_yen';
     const hero = doc.getElementById('heroSprite');
@@ -173,7 +156,7 @@
     }
   }
   UI.playerPack = Object.freeze({ has, playWalk, playSkill, playDeath, clearDeath, render,
-    get availability() { return { nam: available.nam, nu: available.nu }; } });
-  probe('nam'); probe('nu');
+    get availability() { return { nam: true, nu: true }; } });
+  render();
   if (typeof root.setInterval === 'function') root.setInterval(render, 100);
 })(typeof window !== 'undefined' ? window : globalThis);
