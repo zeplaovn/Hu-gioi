@@ -27,9 +27,9 @@ test('kinh mạch diễn giải chỉ số bằng tiếng Việt, không lộ k�
 test('bảng chiến đấu giữ mã đối thủ nội bộ nhưng dùng tên huyền huyễn', () => {
   const combat = read('client/ui/screens/combat.js');
   const adventure = read('client/ui/screens/adventures.js');
-  assert.match(combat, /'boss': 'Thủ lĩnh', 'boss kiếp': 'Kiếp chủ'/);
-  assert.ok(combat.includes('data-kind="${k}"'));
-  assert.doesNotMatch(combat, /Tinh anh, boss và boss kiếp/);
+  assert.doesNotMatch(combat, /data-kind=|enemyCard\(\)/);
+  assert.match(combat, /Nhật ký lịch luyện/);
+  assert.match(read('engine/rules/time.js'), /exploring\.kind === 'monster'/);
   assert.match(adventure, /meter\('Linh lực', s\.mp/);
   assert.match(adventure, /'% linh lực'/);
   assert.doesNotMatch(adventure, /'Linh khí', s\.mp/);
@@ -58,7 +58,7 @@ test('trạm truyền âm thông báo tình trạng chưa kết nối mà không
 test('kỳ nhân và xã giao sử dụng lời thoại trung tính, hợp thế giới tu tiên', () => {
   const world = read('client/ui/screens/world.js');
   const social = read('data/social.js');
-  assert.match(world, /id: 'npc', label: 'Kỳ nhân'/);
+  assert.doesNotMatch(world, /id: 'npc', label: 'Kỳ nhân'/);
   assert.match(world, /row\('Thân phận',esc\(roleName\)\)/);
   assert.doesNotMatch(world, /title: 'Nhiệm vụ NPC'/);
   assert.match(social, /Linh khí quanh đạo hữu/);
@@ -66,7 +66,7 @@ test('kỳ nhân và xã giao sử dụng lời thoại trung tính, hợp thế
 });
 
 test('giữ nguyên cấu trúc thông số và tên khoá trò chơi', () => {
-  const skill = read('client/ui/screens/combat.js');
+  const skill = read('engine/rules/combat.js');
   const social = read('engine/rules/social.js');
   const save = read('engine/state/player.js');
   assert.match(skill, /UI\.command\('skill'/);
