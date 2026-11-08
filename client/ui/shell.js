@@ -914,11 +914,15 @@
     if (docTitle !== lastDocTitle) { lastDocTitle = docTitle; document.title = docTitle; }
   }
 
+  // Ghi nhớ chuyến đang diễn ra để tự trả về đài ngay cả khi bộ tự lưu
+  // đã kết toán chuyến trước vòng tick kế tiếp.
+  let lockedExplorationStart = null;
   function updateStage() {
     const s = UI.s(), g = UI.g();
     if (!s.created || !$('scene')) return;
     if (trib.pageOpen) return;
     const exploring = s.exploration?.active;
+    if (exploring) lockedExplorationStart = exploring.start;
     const mode = (exploring || wins.has('combat')) ? 'combat' : 'idle';
     if (mode !== lastStageMode) {
       heroAttackUntil = 0;
@@ -1662,12 +1666,15 @@
     if (!store.ready || document.hidden || store.locked) return;
     safe(() => {
       const beforeQi = UI.s().qi;
-      const wasExploring = !!UI.s().exploration?.active;
+      const wasExploring = !!UI.s().exploration?.active || lockedExplorationStart !== null;
       const report = store.catchUp();
       if (wasExploring && !UI.s().exploration?.active) {
-        go('idle');
-        toast('Đã kết thúc mười phút lịch luyện. Đạo thân trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
-        store.write();
+        lockedExplorationStart = null;
+        if (wins.has('combat') || UI.current === 'combat') {
+          go('idle');
+          toast('Đã kết thúc mười phút lịch luyện. Đạo thân trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
+          store.write();
+        }
       }
       if (trib.active) return;
       updateChrome();
