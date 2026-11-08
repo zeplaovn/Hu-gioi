@@ -1299,10 +1299,15 @@
       if (!this.pageOpen || ['running', 'settling'].includes(this.phase)) return;
       const result = this.result;
       const ok = !!result?.success;
+      const departedWorld = this.world;
       this.closePage();
       UI.go('idle');
       if (result) UI.toast(ok ? 'Thiên kiếp thành công · ' + UI.g().realmLabel() : 'Thiên kiếp thất bại · mất 15% tu vi.',
         { type: ok ? 'tribulation' : 'danger', title: ok ? 'Đột phá thành công' : 'Thiên kiếp thất bại' });
+      if (ok && H.STORY?.TRIBULATION) {
+        const key = departedWorld === 'linh_gioi' ? 'linh' : departedWorld === 'tien_gioi' ? 'tien' : 'ha';
+        UI.toast(H.STORY.TRIBULATION[key], { type: 'info', title: 'Thiên Thư · Vượt kiếp' });
+      }
     },
     show() { UI.go('tribulation'); },
     start() {
