@@ -1111,9 +1111,74 @@
     }
   }
 };
-  const DUNGEONS = {};
-  const ENCOUNTERS = {};
-  const TRIBULATION = {};
+  const DUNGEONS = {
+  "moc": {
+    "intro": "moc",
+    "boss": "Tuế Mộc Cổ Lâm phủ bóng lên những phiến đá cũ. Vòng tuổi cây già ghi lại những mùa biến động mà không một sử quan nào còn nhớ."
+  },
+  "thuy": {
+    "intro": "thuy",
+    "boss": "Mặc Uyên Hàn Đàm phẳng lặng đến mức phản chiếu những đám mây chưa tới. Bên dưới, thủy tộc vẫn canh giữ mạch linh tuyền cổ."
+  },
+  "hoa": {
+    "intro": "hoa",
+    "boss": "Chu Nham Địa Quật rạn nứt bởi nham lưu. Bậc đá đen dẫn xuống như dấu chân những người thợ từng làm việc trong lò khổng lồ."
+  },
+  "kim": {
+    "intro": "kim",
+    "boss": "Thiết Phong Kiếm Cốc đón người đến bằng gió sắc như đao. Trên vách dựng, những vết kiếm cổ vẫn chưa bị thời gian bào mòn."
+  },
+  "tho": {
+    "intro": "tho",
+    "boss": "Hậu Thổ Trầm Cung ngủ sâu dưới tầng đất hóa đá. Phù văn trên cột vẫn nguyên dù hành lang đã nghiêng lệch từ lâu."
+  },
+  "ma": {
+    "intro": "ma",
+    "boss": "Táng Nguyệt Ma Uyên sâu đến mức không nghe tiếng chim bay. Ma khí không thuộc ngũ hành khiến phương hướng cũng khó phân biệt."
+  },
+  "loi": {
+    "intro": "loi",
+    "boss": "Lôi Văn Phế Điện còn in những dấu cháy từ nghìn năm. Thiên lôi vẫn tìm tới các hoa văn đứt gãy như muốn hoàn thành điều dang dở."
+  },
+  "tien": {
+    "intro": "tien",
+    "boss": "Thái Sơ Tàng Phủ cất giữ những trang bia đá chưa được đọc hết. Sau từng cánh cửa là dấu tích của những người đi trước."
+  },
+  "kiephai": {
+    "intro": "kiephai",
+    "boss": "Vạn Kiếp Độ Hải không có bến đò; giữa sóng lôi chỉ những cột đá cũ nhắc đã từng có người thử vượt qua."
+  }
+};
+  const ENCOUNTERS = {
+  "suoi": "Bên dòng linh tuyền, một túi linh thạch khô ráo nằm giữa đá ướt. Đạo hữu nhìn quanh trước khi nhặt lấy.",
+  "nong": "Lão nông buông cuốc, chỉ cách điều tức giản dị giữa nhịp thở. Lời ông không cao siêu mà thật khó quên.",
+  "qua": "Trái cây dại chín dưới bóng lá, mang vị thanh giúp những mỏi mệt trên đường dần lắng xuống.",
+  "quynhan": "Vị tiền bối xa lạ để lại chút lộ phí, chẳng hỏi danh tính. Khi ngoảnh lại, người đã khuất sau khúc quanh.",
+  "duoc": "Giữa vách đá, linh thảo cúi mình trước gió. Đạo hữu kiên nhẫn nhận ra nơi nó bám rễ.",
+  "thien": "Tiếng giảng đạo vọng qua mái hiên. Một lời giản dị khiến điều rối ren trong lòng có chỗ thông suốt.",
+  "hat": "Linh điểu vụt qua và đánh rơi một hạt giống. Đạo hữu cất nó đi, nghĩ tới một mùa chưa đến.",
+  "lua": "Lời mời đổi chác quá hấp dẫn hóa ra không thật. Chút lộ phí đã mất trở thành bài học về sự vội tin.",
+  "chuong": "Chướng khí khép quanh lối núi. Thoát khỏi màn sương ấy, đạo hữu càng hiểu vì sao người trước luôn căn dặn phải nhìn gió.",
+  "ditich": "Trên nền di tích cũ, đạo niệm còn sót như câu nói chưa dứt. Đạo hữu ngồi lại để nghe trọn lời nhắn.",
+  "mach": "Đường đá khác màu hiện ra sau lớp đất, lộ một mạch linh thạch nhỏ cho người chịu cúi xuống nhìn.",
+  "dong": "Động phủ đã vắng chủ lâu ngày, vậy mà hộp linh đan vẫn còn niêm kín trên kệ đá.",
+  "caonhan": "Một vị cao nhân dừng chân, chỉ ra chỗ đạo căn chưa thông suốt, rồi lặng lẽ đi xa.",
+  "tuyen": "Nước linh tuyền mát lạnh rửa bụi đường. Cơ thể và tâm trí đều nhẹ nhõm sau một chuyến đi dài.",
+  "conghuong": "Trong khoảnh khắc ngắn ngủi, đạo căn và nhịp vận hành của thiên địa dường như chung một hơi thở.",
+  "thuongnhan": "Vị thương nhân bí ẩn để lại phần linh tài, nói rằng người đi xa cần biết dùng đúng món đồ.",
+  "thienthu": "Một trang Thiên Thư cổ xuất hiện giữa hoang phế. Nét chữ không nói hết đạo pháp, nhưng mở một lối suy ngẫm.",
+  "tho": "Trái trường thọ chín muồi trên cành cao, nhắc rằng sinh cơ bền bỉ không thể ép đến trong phút chốc.",
+  "phacanh": "Giữa khe đá, một viên linh đan nằm yên. Dẫu có ngoại vật tương trợ, bước phá cảnh vẫn phải tự mình đi.",
+  "trieu": "Linh khí dâng như thủy triều, khiến thung lũng đổi nhịp. Đạo hữu lặng lẽ điều tức rồi tiếp tục hành trình.",
+  "tinhhoa": "Năm dòng khí vận gặp nhau, kết thành tinh hoa hiếm thấy giữa đất trời.",
+  "tayan": "Giọt linh dịch ngưng trên thạch nhũ, mang hơi thở của thiên địa được tích lũy qua năm tháng.",
+  "tiennhan": "Hư ảnh tiên nhân hiện ra trong khoảnh khắc, để lại đôi lời chỉ điểm. Không biết danh tính, đạo hữu vẫn nhớ bài học."
+};
+  const TRIBULATION = {
+  "ha": "Lôi vân tan khỏi Hạ Giới. Đạo hữu đã bước qua thiên kiếp, song những lời hứa trước sơn môn vẫn theo mình trên đường mới.",
+  "linh": "Kiếp lôi ở Linh Giới đã lắng xuống. Những vết nứt của trời đất chưa khép, nhưng đạo tâm có thể đủ kiên định để nhìn thẳng vào chúng.",
+  "tien": "Thiên kiếp lắng xuống nơi Tiên Giới. Cảnh giới đổi thay, còn câu hỏi về cố hương và người ở lại vẫn cần chính đạo hữu trả lời."
+};
   const data = { ACTS, NPCS, DUNGEONS, ENCOUNTERS, TRIBULATION };
   root.HU_STORY_DATA = data;
   if (typeof module !== 'undefined' && module.exports) module.exports = data;
