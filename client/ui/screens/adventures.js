@@ -33,6 +33,7 @@
     const act = (move, label, hint, off, style) => btn(`${label}<small>${hint}</small>`, 'dungeonAct', `data-move="${move}" aria-keyshortcuts="${['attack', 'power', 'guard', 'heal'].indexOf(move) + 1}"`, off, style);
     const body = `<div class="run-floors" role="img" aria-label="Đã vượt ${run.cleared}/${d.floors} tầng">${pips}</div>
       <div class="run-enemy ${enemy.boss ? 'boss' : ''}"><b>${esc(enemy.name)}</b>${enemy.boss ? '<span class="pill">Thủ lĩnh</span>' : ''}</div>
+      ${enemy.boss ? '<p class="hu-dungeon-lore">' + esc(H.STORY.DUNGEONS[d.id]?.boss || '') + '</p>' : ''}
       ${meter('Địch', run.enemyHp, run.enemyMax, 'hp')}
       <p class="run-intent ${heavy ? 'heavy' : ''}" role="status">${heavy ? '⚠ Địch dồn sức tung đòn nặng — thủ thế sẽ đỡ gần hết.' : 'Địch tung đòn thường.'}${phase ? ' <small>' + esc(phase['kỹ năng giai đoạn']) + '</small>' : ''}</p>
       ${meter('Sinh lực', s.hp, st.HP, 'hp')}${meter('Thể lực', run.sta, run.staMax, 'sta')}${meter('Linh lực', s.mp, g.maxMp(), 'mp')}
@@ -57,7 +58,7 @@
       ${s.sect.mission ? '<p class="info-note">Đang nhận nhiệm vụ tông môn. Hoàn tất hoặc hủy nhiệm vụ để vào bí cảnh.</p>' : !hpOk && !run ? '<p class="info-note">Cần 50% sinh lực để khởi hành. Bạn đang tự hồi phục.</p>' : ''}
       <div class="adventure-grid">${H.DUNGEONS.map(d => {
         const locked = s.realm < d.realm, r = s.dungeon.records[d.id], aff = g.affinity(d.element), off = locked || busy || !hpOk;
-        return card(d.name, `<p>${d.desc}</p><div class="adventure-tags"><span style="color:${color(d.element)}">${element(d.element)}</span><span>${d.floors} tầng · ${duration(d.seconds)}</span><span>${F.REALMS[d.realm]}</span></div>` +
+        return card(d.name, `<p>${esc(d.desc)}</p><p class="hu-dungeon-lore">${esc(H.STORY.DUNGEONS[d.id]?.intro || '')}</p><div class="adventure-tags"><span style="color:${color(d.element)}">${element(d.element)}</span><span>${d.floors} tầng · ${duration(d.seconds)}</span><span>${F.REALMS[d.realm]}</span></div>` +
           row('Thủ lĩnh', d.boss) + row('Tương khắc', signed(aff) + ' sát thương') +
           (locked ? '' : row('Dự kiến', g.estimateDungeon(d.id) + '/' + d.floors + ' tầng')) +
           row('Kỷ lục', (r?.best || 0) + '/' + d.floors + ' · ' + (r?.clears || 0) + ' lần thông quan') +
@@ -72,11 +73,11 @@
       ${card('Dấu chân cơ duyên', row('Đã khám phá', Object.keys(e.journal).length + '/' + H.ENCOUNTERS.length) + row('Tổng kỳ ngộ', num(e.total)) + '<p class="info-note">Phần thưởng tự nhận và ghi vào Nhật ký tu tiên. Tu vi dừng ở ngưỡng đột phá.</p>')}
       ${card('Kỳ ngộ gần đây', e.recent.map(v => {
         const d = H.ENCOUNTERS.find(x => x.id === v.id), rarity = H.ENCOUNTER_RARITIES[d.rarity];
-        return `<article class="encounter-entry"><header><b style="color:${rarity.color}">${esc(d.name)}</b><small>${date(v.at)} · ${rarity.name}</small></header><p>${esc(v.text)}</p></article>`;
+        return `<article class="encounter-entry"><header><b style="color:${rarity.color}">${esc(d.name)}</b><small>${date(v.at)} · ${rarity.name}</small></header><p>${esc(v.text)}</p><p class="hu-dungeon-lore">${esc(H.STORY.ENCOUNTERS[v.id] || '')}</p></article>`;
       }).join('') || empty('Hãy bước vào Lịch luyện để tìm kiếm cơ duyên.'))}
       <details class="adventure-details"><summary>Sổ khám phá · ${Object.keys(e.journal).length}/${H.ENCOUNTERS.length}</summary><div class="adventure-grid">${H.ENCOUNTERS.map(d => {
         const seen = e.journal[d.id], rarity = H.ENCOUNTER_RARITIES[d.rarity];
-        return `<article class="discovery ${seen ? '' : 'undiscovered'}"><small style="color:${rarity.color}">${rarity.name}</small><h3>${seen ? d.name : 'Cơ duyên chưa biết'}</h3><p>${seen ? esc(d.desc) : 'Chờ thiên địa hé lộ.'}</p>${seen ? '<small>Đã gặp ' + num(seen.count) + ' lần · ' + date(seen.lastAt) + '</small>' : ''}</article>`;
+        return `<article class="discovery ${seen ? '' : 'undiscovered'}"><small style="color:${rarity.color}">${rarity.name}</small><h3>${seen ? d.name : 'Cơ duyên chưa biết'}</h3><p>${seen ? esc(d.desc) : 'Chờ thiên địa hé lộ.'}</p>${seen ? '<p class="hu-dungeon-lore">' + esc(H.STORY.ENCOUNTERS[d.id] || '') + '</p>' : ''}${seen ? '<small>Đã gặp ' + num(seen.count) + ' lần · ' + date(seen.lastAt) + '</small>' : ''}</article>`;
       }).join('')}</div></details>`;
   }
 
