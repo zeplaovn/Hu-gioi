@@ -87,15 +87,15 @@
         <p id="nameNote" class="name-note form-note" role="alert" hidden></p>
       </div>
       <div class="creation-divider talent-divider"><span>02</span> PHÂN BỔ THIÊN PHÚ <i></i></div>
-      <p id="pointsValue" class="points" role="status">Số điểm còn lại: 8</p>
+      <p id="pointsValue" class="points points-pending" role="status" tabindex="-1">Còn 8/8 điểm — cần phân bổ hết để bắt đầu.</p>
       <div id="statGrid" class="stat-grid" aria-label="Phân bổ thiên phú"></div>
       <p id="statHint" class="hint" aria-live="polite">Rê chuột hoặc chạm vào tên thiên phú để xem mô tả.</p>
       <div class="create-actions">
         <button type="button" id="previewGame" class="btn btn-gold btn-wide" hidden>Vào giao diện chính · Xem trước</button>
-        <button id="startNew" class="btn btn-gold btn-wide" type="submit">Bắt đầu tu tiên</button>
+        <button id="startNew" class="btn btn-gold btn-wide" type="submit" aria-describedby="pointsValue" disabled>Bắt đầu tu tiên</button>
         <button type="button" class="btn btn-outline btn-wide" id="continueGame" hidden>Tiếp tục hành trình đã lưu</button>
         <p id="engineNotice" class="engine-notice" role="status" hidden><b>Bản xem trước giao diện</b> · Luật chơi đang được hoàn thiện. Bạn có thể thử tạo đạo thân và xem giao diện chính, nhưng chưa thể chơi hay lưu tiến trình.</p>
-        <p class="foot-note">Điểm còn dư sẽ được phân ngẫu nhiên khi bắt đầu. Dữ liệu được lưu trên thiết bị này.</p>
+        <p class="foot-note">Bạn phải phân bổ đủ 8 điểm thiên phú để bắt đầu. Dữ liệu được lưu trên thiết bị này.</p>
       </div>
     </form>
     <dialog id="creationInfoDialog" class="creation-info-dialog" aria-labelledby="creationInfoTitle">

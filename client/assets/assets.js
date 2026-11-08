@@ -162,14 +162,30 @@
    * (trái → phải, trên → xuống). Giao diện giữ thẻ <img> nhưng src là ảnh trong suốt 128×128 và ảnh thật được cắt
    * bằng CSS (background-position tính theo %), nên đổi kích thước ô thế nào cũng đúng. Mã ngoài bảng dùng ảnh riêng. */
   const BLANK = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27128%27 height=%27128%27/%3E';
+  // Biểu tượng trung tính khi không tìm thấy mã item; không yêu cầu ảnh PNG không tồn tại.
+  const UNKNOWN_ITEM = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">' +
+    '<rect x="5" y="5" width="118" height="118" rx="17" fill="#1e2835" stroke="#baa476" stroke-width="3"/>' +
+    '<path d="M64 24 92 64 64 104 36 64Z" fill="#aa9167" fill-opacity=".23" stroke="#ecd5a2" stroke-width="5"/>' +
+    '<circle cx="64" cy="64" r="12" fill="#d9c18b"/></svg>');
+  const missingItem = () => ({ src: UNKNOWN_ITEM, style: '' });
   function itemImg(x) {
-    const ref = ITEM_DB.items[String(x && (x.imageCode || x.code) || '')];
-    if (!ref) return { src: BASE + 'item/vat_pham_nhiem_vu/QITEM-HD-01.png', style: '' };
+    const code = typeof x === 'string' ? x : (x && (x.imageCode || x.code)) || '';
+    const ref = ITEM_DB.items[String(code)];
+    if (typeof ref !== 'string' || !ref) return missingItem();
     const at = ref.indexOf('#');
     if (at < 0) return { src: BASE + ref, style: '' };
-    const sheet = ref.slice(0, at), k = Number(ref.slice(at + 1)) - ITEM_DB.indexBase, [cols, rows] = ITEM_DB.sheets[sheet];
-    const px = cols > 1 ? (k % cols) / (cols - 1) * 100 : 0, py = rows > 1 ? Math.floor(k / cols) / (rows - 1) * 100 : 0;
-    return { src: BLANK, style: `background:url(${BASE}item/${sheet}) ${px.toFixed(3)}% ${py.toFixed(3)}%/${cols * 100}% ${rows * 100}% no-repeat` };
+    const sheet = ref.slice(0, at), grid = ITEM_DB.sheets[sheet];
+    const slot = Number(ref.slice(at + 1)) - ITEM_DB.indexBase;
+    if (!grid || !Number.isInteger(slot) || slot < 0 || slot >= grid[0] * grid[1]) return missingItem();
+    const [cols, rows] = grid;
+    const px = cols > 1 ? (slot % cols) / (cols - 1) * 100 : 0;
+    const py = rows > 1 ? Math.floor(slot / cols) / (rows - 1) * 100 : 0;
+    return {
+      src: BLANK,
+      style: 'background:url("' + BASE + 'item/' + sheet + '") ' + px.toFixed(3) + '% ' +
+        py.toFixed(3) + '%/' + (cols * 100) + '% ' + (rows * 100) + '% no-repeat'
+    };
   }
   const itemSrc = x => itemImg(x).src;
 
