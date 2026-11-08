@@ -10,7 +10,7 @@
     const g = UI.g();
     return `<div class="skillbar" role="group" aria-label="Kỹ năng chiến đấu">
       ${SKILLS.map((k, i) => `<button class="skill-btn" id="skill${i}" data-act="skill" data-index="${i}" title="${esc(k.desc)}">
-        <img src="${A.skillIcon(i + 1)}" alt="" loading="lazy" decoding="async"><span><b>${k.name}</b><small>${num(g.maxMp() * k.mp)} linh khí · <span data-cooldown="${i}"></span></small></span><kbd>${i + 1}</kbd>
+        <img src="${A.skillIcon(i + 1)}" alt="" loading="lazy" decoding="async"><span><b>${k.name}</b><small>${num(g.maxMp() * k.mp)} linh lực · <span data-cooldown="${i}"></span></small></span><kbd>${i + 1}</kbd>
       </button>`).join('')}
       <button class="btn btn-gold strike-btn" data-act="strike">⚔ Công kích</button>
     </div>`;
@@ -48,7 +48,7 @@
       ${row('Yêu đan tích lũy', '<span id="yaoValue">0</span>')}
       ${drops}
       ${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0, 'btn-outline')}
-      <p class="info-note">Khi offline, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
+      <p class="info-note">Khi bạn rời game, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
   }
 
   function zoneCard() {
