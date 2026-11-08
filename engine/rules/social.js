@@ -57,7 +57,7 @@
       },
       npcGift(payload) {
         const id = payload.id, key = payload.code, npc = DESIGN.npc[id], x = item(key), s = this.s;
-        if (!npc || !x || !this.count(key)) throw Error('NPC hoặc vật phẩm không hợp lệ.');
+        if (!npc || !x || !this.count(key)) throw Error('Không tìm thấy vị đạo hữu hoặc vật phẩm phù hợp.');
         if (s.equipment.includes(key)) throw Error('Hãy tháo pháp bảo trước khi tặng.');
         const delta = x.code === npc.likes ? 5 : x.code === npc.dislikes ? -5 : 0;
         this.take(key);
@@ -71,13 +71,13 @@
       npcDiscount(id) { return Math.min(NPC_DISCOUNT_MAX, (this.s.npcAffinities[id] || 0) * NPC_DISCOUNT_MAX / 100); },
       npcPrice(id) {
         const code = DESIGN.npc[id]?.offer;
-        if (!item(code)) throw Error('NPC không có vật phẩm để trao đổi.');
+        if (!item(code)) throw Error('Vị đạo hữu này không có vật phẩm để trao đổi.');
         return F.shop_buy_price(this.price(code)) * (1 - this.npcDiscount(id));
       },
       npcOffer(payload) {
         const id = payload.id, npc = DESIGN.npc[id], role = npc?.['vai trò'], code = npc?.offer, x = item(code);
         const sells = SELL_ROLES.includes(role), teaches = TEACH_ROLES.includes(role);
-        if (!npc || !x || !(sells || teaches)) throw Error('NPC không có vật phẩm để trao đổi.');
+        if (!npc || !x || !(sells || teaches)) throw Error('Vị đạo hữu này không có vật phẩm để trao đổi.');
         if (x.tier > this.s.realm + 1) throw Error('Vật phẩm vượt quá một bậc cảnh giới.');
         if (teaches && x.kind !== 'BT') throw Error('Bí tịch không hợp lệ.');
         if (this.count(code) >= 1e9) throw Error('Túi đã đầy vật phẩm này.');
@@ -97,7 +97,7 @@
       /* Trạng thái bước nhiệm vụ riêng hiện tại của NPC — chỉ đọc, UI dùng để vẽ. */
       npcQuestInfo(id) {
         const npc = DESIGN.npc[id], steps = NPC_QUESTS[npc?.['vai trò']];
-        if (!npc || !steps) throw Error('NPC không hợp lệ.');
+        if (!npc || !steps) throw Error('Không tìm thấy vị đạo hữu này.');
         const s = this.s, q = s.npcQuests[id] || { step: 0, base: null }, affinity = s.npcAffinities[id] || 0, def = steps[q.step] || null;
         /* Mốc săn cũ lớn hơn số đã hạ hiện tại nghĩa là bộ đếm đã bị đặt lại (trọng sinh): coi như chưa nhận việc. */
         const based = q.base !== null && q.base <= s.progress.kill;

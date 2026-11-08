@@ -271,7 +271,7 @@
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
     const life = g.lifeInfo();
     row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm.');
-    if (!s.completed && life.left <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' nhân vật sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
+    if (!s.completed && life.left <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' đạo thân sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
 
     if (r.encounters?.length) {
       section('Kỳ ngộ (' + r.encounters.length + ')');
@@ -407,7 +407,7 @@
         UI.tutorial.start();
       } catch (error) {
         await UI.intro.close();
-        UI.toast('Không thể bắt đầu tu tiên: ' + error.message, { type: 'danger', title: 'Khởi tạo nhân vật' });
+        UI.toast('Chưa thể bước lên tiên lộ: ' + error.message, { type: 'danger', title: 'Lập đạo thân' });
         if (!$('welcome').hidden) $('nameInput').focus({ preventScroll: true });
       } finally {
         entering = false;
@@ -421,7 +421,7 @@
       if (entering) return;
       if (store.locked) throw Error('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.');
       const saved = store.load();
-      if (!saved) throw Error('Không tìm thấy bản lưu hợp lệ.');
+      if (!saved) throw Error('Không tìm thấy hành trình đã ghi nhận.');
       store.replace(saved);
       start();
     }));
@@ -497,15 +497,15 @@
     try {
       const value = await store.readImport(file);
       if (!value) return;
-      UI.modal('Nhập bản lưu', '<p>Thay nhân vật hiện tại bằng <b>' + esc(value.name) + '</b> · ' + F.REALMS[value.realm] + '.</p><p>Bản hiện tại được giữ trong ô dự phòng trước khi thay.</p>', () => {
+      UI.modal('Khôi phục hành trình', '<p>Thay nhân vật hiện tại bằng <b>' + esc(value.name) + '</b> · ' + F.REALMS[value.realm] + '.</p><p>Bản hiện tại được giữ trong ô dự phòng trước khi thay.</p>', () => {
         store.keepBeforeImport();
         store.replace(value);
         start();
-        UI.toast('Đã nhập bản lưu · ' + value.name + '.', { type: 'success', title: 'Bản lưu' });
+        UI.toast('Đã khôi phục hành trình · ' + value.name + '.', { type: 'success', title: 'Hành trình' });
         UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(120px,19vw,200px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
-      }, 'Nhập bản lưu', 'THIÊN MỆNH', { type: 'gold', symbol: '⛁', vfx: ['chien_dau', 'linh_phu'] });
+      }, 'Khôi phục hành trình', 'THIÊN MỆNH', { type: 'gold', symbol: '⛁', vfx: ['chien_dau', 'linh_phu'] });
     } catch (e) {
-      UI.toast('Không thể nhập bản lưu: ' + e.message, { type: 'danger', title: 'Lỗi bản lưu' });
+      UI.toast('Chưa thể khôi phục hành trình: ' + e.message, { type: 'danger', title: 'Khôi phục thất bại' });
     }
   }
 

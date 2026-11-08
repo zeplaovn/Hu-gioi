@@ -86,7 +86,7 @@
 
   /* Mô tả một bảng hiệu ứng {attack,hp,guard,rate,crit,dodge,regen} thành chữ: "Phòng thủ +12% · Sinh lực +5%". */
   UI.rootEffectText = (effects, weight = 1) => {
-    const labels = { attack: 'Công kích', hp: 'Sinh lực', mp: 'Linh khí', sta: 'Thể lực', guard: 'Phòng thủ', rate: 'Tốc tu', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
+    const labels = { attack: 'Công kích', hp: 'Sinh lực', mp: 'Linh lực', sta: 'Thể lực', guard: 'Phòng thủ', rate: 'Tốc độ hấp thụ linh khí', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
     return Object.entries(effects || {}).map(([k, v]) => (labels[k] || k) + ' +' + (v * weight * 100).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) +
       (['crit', 'dodge', 'regen'].includes(k) ? ' điểm %' : '%')).join(' · ');
   };

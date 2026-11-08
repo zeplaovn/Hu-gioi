@@ -110,7 +110,7 @@
         }
         if (s.hp <= 0) {
           s.hp = st.HP * .28; s.auto = false; s.enemyHp = enemy.HP; s.designCombat.enemyEffects = [];
-          this.log('Trọng thương, rút lui điều tức.');
+          this.log('Đạo thân trọng thương, đành lui về điều tức.');
         }
         return { damage, won: false };
       },
@@ -121,9 +121,9 @@
         now = at(this, now);
         const index = payload.index, s = this.s;
         if (!Number.isInteger(index) || index < 0 || index > 3) throw Error('Kỹ năng không hợp lệ.');
-        if (now < s.cooldowns[index]) throw Error('Kỹ năng đang hồi.');
+        if (now < s.cooldowns[index]) throw Error('Chiêu thức chưa kịp tụ đủ linh lực để thi triển.');
         const costs = [.12, .15, .18, .26], cd = [5, 7, 12, 15], cost = this.maxMp() * costs[index];
-        if (s.mp < cost) throw Error('Không đủ linh khí.');
+        if (s.mp < cost) throw Error('Linh lực không đủ để thi triển chiêu thức.');
         s.mp -= cost;
         s.cooldowns[index] = now + Math.max(cd[index], this.attackInterval()) * 1000;
         if (index === 2) s.hp = Math.min(this.stats().HP, s.hp + this.stats().HP * .26 * (1 + this.rootEffects().heal));
@@ -149,7 +149,7 @@
         const key = payload.code, s = this.s, x = item(key), d = x?.design, c = effects(s);
         if (!x || d?.group !== 'công pháp' || !(key in s.learned) || !s.activeManuals.includes(key)) throw Error('Hãy lĩnh ngộ và vận hành công pháp.');
         if (now < (c.manualCooldowns[key] || 0)) throw Error('Công pháp đang hồi chiêu.');
-        if (s.mp < d['tiêu hao mp']) throw Error('Không đủ linh khí.');
+        if (s.mp < d['tiêu hao mp']) throw Error('Linh lực không đủ để thi triển chiêu thức.');
         s.mp -= d['tiêu hao mp'];
         c.manualCooldowns[key] = now + d['hồi chiêu (giây)'] * 1000;
         if (d['công dụng'] === 'công kích') return this._strike(d.atk_multiplier, now, true, d['hệ']);

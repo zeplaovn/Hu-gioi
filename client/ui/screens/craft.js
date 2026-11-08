@@ -21,7 +21,7 @@
     return `<header class="workshop-banner" style="--art:url('${abs(art)}')">
       <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>${tab === 'dien' ? 'Gieo trồng · tưới nước · bón thổ · bắt sâu · thu hoạch.' : 'Mẻ luyện chế vẫn hoàn thành và chờ bạn nhận khi trở lại.'}</p></div>
       <div class="banner-stats">
-        <div><small>Kỹ năng luyện đan</small><b>${alchemySkill().toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</b></div>
+        <div><small>Đan thuật</small><b>${alchemySkill().toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</b></div>
         <div><small>Mẻ đang luyện</small><b>${s.craftQueue.length}/3</b></div>
         <div><small>Ô đang trồng</small><b>${s.garden.length}/4</b></div>
         <div><small>Tinh hoa lò</small><b>${s.craftBoost.toLocaleString('vi-VN', { maximumFractionDigits: 1 })}/2</b></div>
@@ -59,7 +59,7 @@
         <p>${esc(x.description)}</p>
         ${Object.entries(r.herbs).map(([key, n]) => row(esc(H.item(key).name), `<span class="${g.ingredientCount(key) >= n ? 'green-text' : 'danger-text'}">${g.ingredientCount(key)} / ${n}</span>`)).join('')}
         ${row('Chi phí', moneyHTML(r.stone))}${row('Thời gian', duration(r.time))}${row('Thành công', pct(g.craftChance(x.tier)))}
-        ${btn('Xếp một mẻ', 'craft', codeAttr(x.code), s.craftQueue.length >= 3 || !ok)}
+        ${btn('Xếp mẻ luyện', 'craft', codeAttr(x.code), s.craftQueue.length >= 3 || !ok)}
       </section>`;
     }).join('');
     return `<div class="list-head">${lists.controls({ categories: ['Tất cả'], placeholder: 'Tên đan hoặc mã' })}
@@ -99,7 +99,7 @@
       return `<div class="plot growing" data-plot="${i}" data-start="${p.plantedAt}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Linh thảo" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(H.item(p.herb).name)}</b>
         <div class="meter-bar job-bar"><i></i></div><span class="plot-status"></span>
         <div class="farm-meters"><label>Nước <meter class="farm-water" min="0" max="1" value="${p.water}"></meter></label><label>Đất <meter class="farm-soil" min="0" max="1" value="${p.soil}"></meter></label></div><small class="farm-pest"></small>
-        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 linh thạch')}${action('pest', 'Bắt sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
+        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 linh thạch')}${action('pest', 'Trừ sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
     }).join('');
     const seeds = Object.keys(s.bag).map(H.item).filter(x => x?.kind === 'SEED' && x.tier <= s.realm + 1).sort((a, b) => a.tier - b.tier);
     const seedRows = seeds.map(x => {
@@ -162,7 +162,7 @@
 
   UI.action('craft', (el, d) => {
     UI.command('craft', { code: d.code });
-    UI.toast('Đã xếp mẻ ' + H.item(d.code).name + '.', { type: 'success', title: 'Luyện đan' });
+    UI.toast('Đã xếp ' + H.item(d.code).name + ' vào lò luyện.', { type: 'success', title: 'Luyện đan' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('forge', (el, d) => {

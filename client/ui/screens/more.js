@@ -76,8 +76,8 @@
       <div class="screen-grid">
         ${card('Đài luận kiếm', `<div class="pvp-rating"><b>${num(pvp.rating)}</b><span>${pvpTier(pvp.rating)}</span></div>
           ${row('Thắng / Thua', num(pvp.wins) + ' / ' + num(pvp.losses))}${row('Chuỗi thắng', num(pvp.streak))}${row('Danh vọng cao nhất', num(pvp.best))}${row('Chiến lực của bạn', num(my))}
-          <p class="info-note">Mỗi trận hồi ${Math.round(PVP_CD / 1000)} giây. Thắng +18–25, thua −12–19 danh vọng.</p>`, { eyebrow: 'DANH VỌNG' })}
-        ${card('Quy tắc', `<p>Đối thủ được mô phỏng theo chiến lực hiện tại, nên mỗi cảnh giới đều có thử thách riêng.</p>${row('Thắng', 'Linh thạch · tu vi · danh vọng')}${row('Thua', 'Mất danh vọng, không mất tu vi')}${row('Trạng thái', ready ? 'Sẵn sàng' : live(pvp.lastAt + PVP_CD))}`, { eyebrow: 'LUẬT ĐẤU' })}
+          <p class="info-note">Sau mỗi trận cần điều tức ${Math.round(PVP_CD / 1000)} giây trước khi tái đấu. Thắng nhận 18–25 danh vọng; thua hao tổn 12–19 danh vọng.</p>`, { eyebrow: 'DANH VỌNG' })}
+        ${card('Quy tắc', `<p>Đối thủ trên Luận Kiếm Đài tương ứng với chiến lực hiện tại của bạn. Mỗi cảnh giới đều có những thử thách riêng.</p>${row('Thắng', 'Linh thạch · tu vi · danh vọng')}${row('Thua', 'Mất danh vọng, không mất tu vi')}${row('Trạng thái', ready ? 'Sẵn sàng' : live(pvp.lastAt + PVP_CD))}`, { eyebrow: 'LUẬT ĐẤU' })}
       </div>
       <div class="social-list pvp-list">${RIVALS.map(f => {
         const power = g.rivalPower(f.id), chance = F.win_probability(my, power);
@@ -85,7 +85,7 @@
           <div class="social-portrait small"><img src="${portrait(f)}" alt="${esc(f.name)}" loading="lazy" decoding="async"></div>
           <div class="social-copy"><span class="eyebrow">${esc(f.school)} · ${esc(F.REALMS[f.realm])}</span><h3>${esc(f.name)}</h3>
             <p>Chiến lực đối thủ <b>${num(power)}</b> · kỳ vọng thắng <b>${pct(chance)}</b></p>
-            <p class="info-note">Danh vọng nền ${num(f.rating)} · phần thưởng theo cảnh giới hiện tại.</p></div>
+            <p class="info-note">Danh vọng khởi đầu ${num(f.rating)} · phần thưởng theo cảnh giới hiện tại.</p></div>
           <div class="social-actions">${btn('Luận kiếm', 'moreDuel', `data-id="${f.id}"`, !ready)}<p class="cooldown">${ready ? 'Sẵn sàng' : live(pvp.lastAt + PVP_CD)}</p></div>
         </article>`;
       }).join('')}</div>`;

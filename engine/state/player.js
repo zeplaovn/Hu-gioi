@@ -360,7 +360,7 @@
     if (x.lastUpdate > now) {
       x.lastUpdate = now;
       x.lastSaved = now;
-      x.logs.unshift('Giờ máy lùi: không cộng tiến trình offline.');
+      x.logs.unshift('Đồng hồ thiết bị bị chỉnh lùi; quãng bế quan vừa qua không được tính.');
     }
     x.enemyHp = finite(raw.enemyHp);
     x.manualAt = finite(raw.manualAt, 0, now);
@@ -397,7 +397,7 @@
         };
       }) : [];
 
-    if (old) x.logs.unshift('Đã chuyển bản lưu V5 sang V6: giữ vật phẩm, đổi cảnh giới và tỷ lệ tu vi.');
+    if (old) x.logs.unshift('Dấu ấn hành trình cũ đã được tiếp nối; vật phẩm được giữ lại, cảnh giới và tu vi được hiệu chỉnh.');
 
     normalizeAdventures(x, raw, now, Game);
 

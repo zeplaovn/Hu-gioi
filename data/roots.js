@@ -23,18 +23,18 @@
   /* group: nhóm hiển thị; order: thứ hạng trong nhóm (cao = mạnh). */
   const GROUPS = [
     { id: 'ngu_hanh', name: 'Ngũ hành cơ bản', lead: 'Số hệ đạt từ 50 điểm quyết định loại. Càng ít hệ, linh lực càng tinh thuần.' },
-    { id: 'di', name: 'Dị linh căn', lead: 'Biến thể cao cấp của một hệ ngũ hành. Tốc tu ngang Thiên linh căn nhưng có thế mạnh riêng và chiến lực cao hơn.' },
-    { id: 'chi_ton', name: 'Chí tôn', lead: 'Cấp thần thoại, nằm trên mọi thang xếp hạng.' }
+    { id: 'di', name: 'Dị linh căn', lead: 'Biến thể cao cấp của một hệ ngũ hành. Khả năng hấp thụ linh khí sánh ngang Thiên linh căn nhưng có thế mạnh riêng và chiến lực cao hơn.' },
+    { id: 'chi_ton', name: 'Chí tôn', lead: 'Linh căn hiếm có bậc nhất, vượt ngoài ngũ hành thông thường.' }
   ];
   const TYPES = {
-    'Ngụy': { group: 'ngu_hanh', order: 0, how: 'Cả năm hệ đạt 50+', desc: 'Linh căn tạp: tốc tu thấp nhất, tạp chất nhiều. Có cơ hội hóa Hỗn Độn sau khi vượt lôi kiếp.' },
-    'Tứ hành': { group: 'ngu_hanh', order: 1, how: 'Bốn hệ đạt 50+', desc: 'Tiềm lực hạn chế, cần đan dược hỗ trợ để vượt bình cảnh.' },
-    'Tam hành': { group: 'ngu_hanh', order: 2, how: 'Ba hệ đạt 50+', desc: 'Chân linh căn: ổn định, đủ sức trúc cơ và tiến xa.' },
-    'Song': { group: 'ngu_hanh', order: 3, how: 'Hai hệ đạt 50+', desc: 'Tốc độ nhanh, dễ vượt các bình cảnh nhỏ.' },
-    'Thiên': { group: 'ngu_hanh', order: 4, how: 'Đúng một hệ thuần', desc: 'Một hệ ngũ hành thuần túy, tốc tu cực nhanh. Không có biến thể hay thế mạnh riêng như Dị.' },
-    'Dị': { group: 'di', order: 0, how: 'Một hệ gốc biến dị: Băng, Lôi, Phong hoặc Độc', desc: 'Khác Thiên linh căn ở chỗ mang thế mạnh đặc thù của biến thể.' },
-    'Âm Dương': { group: 'chi_ton', order: 0, how: 'Gieo khi tạo nhân vật (rất hiếm)', desc: 'Cân bằng hai thái cực, uy lực bộc phát vượt trội.' },
-    'Hỗn Độn': { group: 'chi_ton', order: 1, how: 'Không gieo được: ngũ hành biến dị sau lôi kiếp', desc: 'Giữ các hệ thành phần ban đầu; khắc ngũ hành và dị, không bị khắc.' }
+    'Ngụy': { group: 'ngu_hanh', order: 0, how: 'Cả năm hệ đều đạt từ 50 điểm', desc: 'Linh căn tạp: hấp thụ linh khí chậm, tạp chất dễ tích tụ. Có cơ hội hóa Hỗn Độn sau khi vượt lôi kiếp.' },
+    'Tứ hành': { group: 'ngu_hanh', order: 1, how: 'Bốn hệ đạt từ 50 điểm', desc: 'Tiềm lực hạn chế, cần đan dược hỗ trợ để vượt bình cảnh.' },
+    'Tam hành': { group: 'ngu_hanh', order: 2, how: 'Ba hệ đạt từ 50 điểm', desc: 'Chân linh căn: ổn định, đủ sức trúc cơ và tiến xa.' },
+    'Song': { group: 'ngu_hanh', order: 3, how: 'Hai hệ đạt từ 50 điểm', desc: 'Tốc độ nhanh, dễ vượt các bình cảnh nhỏ.' },
+    'Thiên': { group: 'ngu_hanh', order: 4, how: 'Đúng một hệ thuần', desc: 'Một hệ ngũ hành tinh thuần, hấp thụ linh khí cực nhanh. Không có biến thể hay thế mạnh riêng như Dị.' },
+    'Dị': { group: 'di', order: 0, how: 'Một hệ gốc biến dị: Băng, Lôi, Phong hoặc Độc', desc: 'Khác Thiên linh căn nhờ sở trường đặc thù của nguyên tố biến dị.' },
+    'Âm Dương': { group: 'chi_ton', order: 0, how: 'Có thể thức tỉnh khi lập đạo thân (cực hiếm)', desc: 'Cân bằng hai thái cực, uy lực bộc phát vượt trội.' },
+    'Hỗn Độn': { group: 'chi_ton', order: 1, how: 'Chỉ có thể thức tỉnh sau khi vượt lôi kiếp', desc: 'Giữ các hệ thành phần ban đầu; khắc ngũ hành và dị, không bị khắc.' }
   };
 
   /* Tên đầy đủ: Dị theo biến thể ("Băng Linh Căn"), các loại đặc biệt viết hoa, còn lại viết thường. */

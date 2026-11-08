@@ -35,14 +35,14 @@
       <div class="run-enemy ${enemy.boss ? 'boss' : ''}"><b>${esc(enemy.name)}</b>${enemy.boss ? '<span class="pill">Thủ lĩnh</span>' : ''}</div>
       ${meter('Địch', run.enemyHp, run.enemyMax, 'hp')}
       <p class="run-intent ${heavy ? 'heavy' : ''}" role="status">${heavy ? '⚠ Địch dồn sức tung đòn nặng — thủ thế sẽ đỡ gần hết.' : 'Địch tung đòn thường.'}${phase ? ' <small>' + esc(phase['kỹ năng giai đoạn']) + '</small>' : ''}</p>
-      ${meter('Sinh lực', s.hp, st.HP, 'hp')}${meter('Thể lực', run.sta, run.staMax, 'sta')}${meter('Linh khí', s.mp, g.maxMp(), 'mp')}
+      ${meter('Sinh lực', s.hp, st.HP, 'hp')}${meter('Thể lực', run.sta, run.staMax, 'sta')}${meter('Linh lực', s.mp, g.maxMp(), 'mp')}
       <div class="run-actions action-group">
-        ${act('attack', 'Đánh', '−' + R.attack + ' thể lực', run.sta < R.attack, 'btn-gold')}
+        ${act('attack', 'Xuất chiêu', '−' + R.attack + ' thể lực', run.sta < R.attack, 'btn-gold')}
         ${act('power', 'Trọng kích ×2,2', '−' + R.power + ' thể lực', run.sta < R.power, 'btn-gold')}
         ${act('guard', 'Thủ thế', '+' + R.guardGain + ' thể lực · đỡ đòn', false, 'btn-outline')}
-        ${act('heal', 'Hồi phục', run.healCd > 0 ? 'còn ' + run.healCd + ' lượt' : Math.round(R.healMp * 100) + '% linh khí', run.healCd > 0 || s.mp < mpCost, 'btn-outline')}
+        ${act('heal', 'Hồi phục', run.healCd > 0 ? 'còn ' + run.healCd + ' lượt' : Math.round(R.healMp * 100) + '% linh lực', run.healCd > 0 || s.mp < mpCost, 'btn-outline')}
       </div>
-      <p class="info-note">Phím tắt 1–4. Mỗi lượt thể lực tự hồi ${R.passiveGain}, qua tầng hồi thêm ${R.floorGain}. Đang đánh bí cảnh thì sinh lực và linh khí không tự hồi.</p>
+      <p class="info-note">Phím tắt 1–4. Mỗi lượt thể lực tự hồi ${R.passiveGain}, qua tầng hồi thêm ${R.floorGain}. Đang đánh bí cảnh thì sinh lực và linh lực không tự hồi.</p>
       <ol class="run-log" aria-live="polite" aria-label="Diễn biến lượt đánh">${run.log.map(v => `<li>${esc(v)}</li>`).join('')}</ol>
       <div class="action-group">${btn('Rút lui giữ thưởng đã vượt', 'dungeonRetreat', '', false, 'btn-outline')}</div>`;
     return card('Chiến đấu · ' + d.name + ' · tầng ' + run.floor + '/' + d.floors, body, { eyebrow: 'TỰ TAY CHIẾN ĐẤU · LƯỢT ' + (run.turn + 1), cls: 'run-panel' });
@@ -62,7 +62,7 @@
           (locked ? '' : row('Dự kiến', g.estimateDungeon(d.id) + '/' + d.floors + ' tầng')) +
           row('Kỷ lục', (r?.best || 0) + '/' + d.floors + ' · ' + (r?.clears || 0) + ' lần thông quan') +
           `<p class="info-note">${r?.clears ? 'Thủ lĩnh cho 1–' + (d.floors >= 8 ? 3 : 2) + ' Tinh hoa.' : 'Thông quan đầu: thưởng ×2 và thêm 3 Tinh hoa.'}</p>` +
-          `<div class="action-group">${btn(locked ? 'Chưa mở' : a?.id === d.id ? 'Đang thám hiểm' : 'Khởi hành tự động', 'dungeonStart', `data-id="${d.id}"`, off, 'btn-outline')}${locked ? '' : btn(run?.id === d.id ? 'Đang chiến đấu' : 'Tự tay chiến đấu', 'dungeonEnter', `data-id="${d.id}"`, off)}</div>`, { cls: locked ? 'adventure-locked' : '' });
+          `<div class="action-group">${btn(locked ? 'Chưa mở' : a?.id === d.id ? 'Đang thám hiểm' : 'Khởi hành tự động', 'dungeonStart', `data-id="${d.id}"`, off, 'btn-outline')}${locked ? '' : btn(run?.id === d.id ? 'Đang chiến đấu' : 'Thân chinh giao chiến', 'dungeonEnter', `data-id="${d.id}"`, off)}</div>`, { cls: locked ? 'adventure-locked' : '' });
       }).join('')}</div>`;
   }
 
@@ -135,7 +135,7 @@
     } else if (g.chaosChance() > 0) {
       extra = `<div class="root-chaos"><b>Con đường Hỗn Độn</b>` + row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) +
         row('Đã vượt lôi kiếp mà chưa hóa', num(s.chaosTries || 0) + ' lần') +
-        '<p class="info-note">Linh căn ngũ hành có cơ hội hóa sau khi vượt lôi kiếp đại cảnh giới. Cơ hội ban đầu là 1%; Vận Khí và bảo hiểm tăng tỉ lệ.</p></div>';
+        '<p class="info-note">Linh căn ngũ hành có cơ hội hóa sau khi vượt lôi kiếp đại cảnh giới. Cơ hội ban đầu là 1%; Vận Khí và kiếp vận tích lũy tăng cơ hội.</p></div>';
     }
     const body = `<p>${esc(info.desc)}</p>${row('Tốc độ hấp thụ linh khí', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
     const rank = (types, cur) => types.map(n => `<span class="root-chip ${cur === n ? 'is-current' : ''}">${esc(n)}</span>`).join('<span class="root-sep">›</span>');
@@ -155,7 +155,7 @@
       <div class="adventure-grid">${H.ELEMENT_NAMES.map((name, i) => {
         const on = els.includes(i), level = c.levels[i], cost = g.temperCost(i), max = level >= H.TEMPER_MAX;
         return card(`<span style="color:${color(i)}">${name}</span> · ${s.roots[i]} điểm`, row('Tôi luyện', level + '/' + H.TEMPER_MAX) + bar(level * 10) + row('Tinh hoa', num(c.essence[i])) +
-          (on ? `<p>${effectText(i, level)}</p>${!max ? '<p class="info-note">Cấp kế: ' + effectText(i, level + 1) + '</p>' : ''}` : '<p class="info-note">Hệ này chưa đạt 50 điểm.</p>') +
+          (on ? `<p>${effectText(i, level)}</p>${!max ? '<p class="info-note">Tầng tôi luyện kế tiếp: ' + effectText(i, level + 1) + '</p>' : ''}` : '<p class="info-note">Hệ này chưa đạt 50 điểm.</p>') +
           btn(!on ? 'Chưa có linh căn' : max ? 'Đã tối đa' : 'Tôi luyện · ' + cost + ' Tinh hoa', 'temperRoot', `data-index="${i}"`, !on || max || c.essence[i] < cost), { cls: on ? '' : 'adventure-locked' });
       }).join('')}</div>
       <details class="adventure-details"><summary>Ngũ hành & hệ số linh căn</summary>${card('Tương khắc', '<p>Kim → Mộc → Thổ → Thủy → Hỏa → Kim.</p><p>Khắc hệ +20%; bị khắc −20%. Dị khắc hệ gốc, Hỗn Độn khắc ngũ hành +10%.</p>')}</details>`;

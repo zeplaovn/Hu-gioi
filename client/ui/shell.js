@@ -930,7 +930,7 @@
       if ($('enemyBar')) $('enemyBar').style.width = clamp((s.enemyHp || enemy.HP) / enemy.HP * 100, 0, 100) + '%';
       if (autoToggle) {
         autoToggle.hidden = false;
-        autoToggle.textContent = s.auto ? '⚔ Tự chiến: bật · Bấm để dừng' : '☯ Tự chiến: tắt · Bấm để bật';
+        autoToggle.textContent = s.auto ? '⚔ Tự chiến đang vận hành · Chạm để dừng' : '☯ Tự chiến chưa vận hành · Chạm để bắt đầu';
         autoToggle.classList.toggle('fighting', s.auto);
         autoToggle.setAttribute('aria-pressed', String(s.auto));
       }
@@ -1180,7 +1180,7 @@
       $('tribEyebrow').textContent = s.completed ? 'THIÊN ĐẠO · ĐẠO QUẢ VIÊN MÃN' : major ? 'THIÊN ĐẠO · ĐẠI CẢNH GIỚI' : 'TIÊN LỘ · TIỂU CẢNH GIỚI';
       $('tribTitle').textContent = s.completed ? 'Đạo Tổ viên mãn' : major ? 'Thiên kiếp' : 'Đột phá tầng';
       $('tribSubtitle').textContent = this.nextLabel();
-      $('tribHeadTags').innerHTML = `<span>${pct(g.chance())} xác suất</span><span>${s.pity}/15 bảo hiểm</span><span>${events.reduce((n, e) => n + e.bolts, 0) || 0} đạo lôi</span><span>${pct(s.shield)} hộ thuẫn</span>`;
+      $('tribHeadTags').innerHTML = `<span>${pct(g.chance())} xác suất</span><span>${s.pity}/15 kiếp vận</span><span>${events.reduce((n, e) => n + e.bolts, 0) || 0} đạo lôi</span><span>${pct(s.shield)} hộ thuẫn</span>`;
       this.actor = { gender: s.gender, realm: s.realm };
       this.heroFrame();
       $('tribOverlayChance').textContent = pct(g.chance());
@@ -1422,7 +1422,7 @@
         $('tribSubtitle').textContent = g.realmLabel() + ' · đạo cơ chấn động';
         $('tribStatus').textContent = 'Đạo cơ chấn động, tu vi tổn hại.';
         $('tribResult').className = 'trib-result failure';
-        $('tribResult').innerHTML = `<h3 class="danger">Thất bại</h3><p>Mất 15% tu vi · bảo hiểm hiện tại ${s.pity}/15. Lần sau xác suất cao hơn.</p>`;
+        $('tribResult').innerHTML = `<h3 class="danger">Thất bại</h3><p>Mất 15% tu vi · kiếp vận tích lũy ${s.pity}/15. Lần độ kiếp sau sẽ có thêm trợ lực.</p>`;
         $('tribHpText').textContent = num(s.hp) + ' / ' + num(g.stats().HP);
         $('tribHpFill').style.width = clamp(s.hp / g.stats().HP * 100, 0, 100) + '%';
         $('tribShieldText').textContent = 'Đã tiêu hao';
@@ -1436,7 +1436,7 @@
       this.actor = { gender: s.gender, realm: s.realm };
       this.heroFrame();
       const events = result?.events || [];
-      $('tribHeadTags').innerHTML = `<span>${pct(result.chance)} xác suất</span><span>${s.pity}/15 bảo hiểm</span><span>${events.reduce((n, e) => n + e.bolts, 0)} đạo lôi</span><span>Hộ kiếp đã tiêu hao</span>`;
+      $('tribHeadTags').innerHTML = `<span>${pct(result.chance)} xác suất</span><span>${s.pity}/15 kiếp vận</span><span>${events.reduce((n, e) => n + e.bolts, 0)} đạo lôi</span><span>Hộ kiếp đã tiêu hao</span>`;
       $('tribOverlayChance').textContent = pct(result?.chance ?? g.chance());
       $('tribReduction').textContent = pct(s.reduction);
       $('tribShieldSummary').textContent = 'Đã tiêu hao';

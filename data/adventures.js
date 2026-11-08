@@ -52,7 +52,7 @@
   const SECTS = [
     { id: 'thanhvan', name: 'Thanh Vân Tông', desc: 'Chính đạo hộ thế · nhiệm vụ trừ yêu, hộ trận.', bonus: 'Công kích +3%', attack: .03 },
     { id: 'huyetsat', name: 'Huyết Sát Môn', desc: 'Lấy chiến dưỡng đạo · nhiệm vụ săn thú, luyện huyết.', bonus: 'Bạo kích +2 điểm %', crit: .02 },
-    { id: 'vanduoc', name: 'Vạn Dược Cốc', desc: 'Đan đạo dưỡng sinh · nhiệm vụ hái thuốc, cứu người.', bonus: 'Tốc tu +3%', rate: .03 }
+    { id: 'vanduoc', name: 'Vạn Dược Cốc', desc: 'Đan đạo dưỡng sinh · nhiệm vụ hái thuốc, cứu người.', bonus: 'Hấp thụ linh khí +3%', rate: .03 }
   ];
   const SECT_RANKS = [
     ['Ngoại môn đệ tử', 0, 1], ['Nội môn đệ tử', 180, 2], ['Chân truyền đệ tử', 650, 3],

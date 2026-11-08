@@ -4,13 +4,13 @@
 const PVP_CD=25000,DISCUSS_CD=120000;
 const FRIENDS=[
  {id:'trieu-nguyet',name:'Triệu Nguyệt',gender:'nu',realm:2,title:'Thanh Vân kiếm tu',line:'Một kiếm thanh minh, nguyện cùng đạo hữu soi rọi tiên lộ.'},
- {id:'ho-thanh',name:'Hồ Thanh',gender:'nam',realm:4,title:'Tán tu dược sư',line:'Ta giữ vườn thuốc, ngươi giữ đạo tâm. Gặp nhau là duyên.'},
+ {id:'ho-thanh',name:'Hồ Thanh',gender:'nam',realm:4,title:'Tán tu dược sư',line:'Ta chăm vườn linh thảo, đạo hữu giữ vững đạo tâm. Gặp nhau ắt là hữu duyên.'},
  {id:'bach-tuyet',name:'Bạch Tuyết',gender:'nu',realm:6,title:'Băng cốc truyền nhân',line:'Tuyết rơi vô thanh, nhưng lời hẹn của người ta nhớ rất rõ.'},
  {id:'mac-kiem',name:'Mạc Kiếm',gender:'nam',realm:8,title:'Kiếm si tán nhân',line:'Thiên hạ kiếm pháp vô cùng; có tri kỷ cùng luận mới thú.'}
 ];
 const DAO=[
  {id:'ly-van-du',name:'Lý Vân Du',gender:'nam',realm:1,school:'Kiếm đạo',line:'Đạo hữu, một chén trà đổi một tầng cảnh ngộ?'},
- {id:'to-mong',name:'Tô Mộng',gender:'nu',realm:3,school:'Đan đạo',line:'Linh khí quanh người huynh thật dễ chịu, cùng luận một chút chứ?'},
+ {id:'to-mong',name:'Tô Mộng',gender:'nu',realm:3,school:'Đan đạo',line:'Linh khí quanh đạo hữu thật tinh thuần. Có muốn cùng ta luận đạo một phen chăng?'},
  {id:'han-tu',name:'Hàn Tử',gender:'nam',realm:5,school:'Trận pháp',line:'Trận pháp không chỉ để vây địch, còn để giữ tâm.'},
  {id:'diep-lan',name:'Diệp Lan',gender:'nu',realm:7,school:'Âm dương',line:'Âm dương chuyển hóa, đạo hữu thấy được bao nhiêu phần?'},
  {id:'van-thuong',name:'Vân Thương',gender:'nam',realm:9,school:'Lôi pháp',line:'Sấm sét không đáng sợ; đáng sợ là tâm mình động trước sấm sét.'},
@@ -28,7 +28,7 @@ const giftCost=f=>120+f.realm*90;
    reward: affinity (thiện cảm), stone (thu nhập `seconds` giây), exp (% tu vi cần), item (xem engine/rules/social.js). */
 const NPC_QUESTS={
  'giao nhiệm vụ':[
-  {name:'Việc vặt đường xa',desc:'Quét sạch yêu thú quanh vùng để dân đi lại yên ổn.',need:{type:'kill',count:25},minAffinity:0,reward:{affinity:10,stone:600}},
+  {name:'Trừ họa trên đường núi',desc:'Quét sạch yêu thú quanh vùng để dân đi lại yên ổn.',need:{type:'kill',count:25},minAffinity:0,reward:{affinity:10,stone:600}},
   {name:'Quà tạ ơn',desc:'Mang món {likes} cho {npc} để kết tình.',need:{type:'gift',count:3},minAffinity:20,reward:{affinity:15,stone:1200,exp:.03}},
   {name:'Lời hẹn cuối',desc:'Giúp {npc} dẹp loạn yêu thú lần cuối, đổi lấy phần thưởng quý.',need:{type:'kill',count:120},minAffinity:55,reward:{affinity:20,stone:3600,exp:.06,item:{pill:2,count:3}}}
  ],
@@ -43,9 +43,9 @@ const NPC_QUESTS={
   {name:'Tâm truyền',desc:'Nộp linh thạch làm học phí để {npc} truyền tâm đắc.',need:{type:'stone',seconds:900},minAffinity:55,reward:{affinity:20,exp:.06,item:{mastery:.3}}}
  ],
  'bán đồ':[
-  {name:'Dẹp đường buôn',desc:'Diệt yêu thú chặn đường để {npc} vận hàng.',need:{type:'kill',count:25},minAffinity:0,reward:{affinity:10,stone:600}},
-  {name:'Mối quen lâu năm',desc:'Biếu {npc} ba phần {likes}.',need:{type:'gift',count:3},minAffinity:20,reward:{affinity:15,stone:1000}},
-  {name:'Hàng quý',desc:'Góp vốn để {npc} nhập lô hàng hiếm, chia lại cho đạo hữu.',need:{type:'stone',seconds:900},minAffinity:55,reward:{affinity:20,exp:.03,item:{offer:5}}}
+  {name:'Dẹp loạn thương đạo',desc:'Trừ yêu thú quấy nhiễu thương đạo, giúp {npc} thông đường vận chuyển linh vật.',need:{type:'kill',count:25},minAffinity:0,reward:{affinity:10,stone:600}},
+  {name:'Giao tình bền chặt',desc:'Biếu {npc} ba phần {likes}.',need:{type:'gift',count:3},minAffinity:20,reward:{affinity:15,stone:1000}},
+  {name:'Dị bảo thương hội',desc:'Góp linh thạch để {npc} đổi lấy dị bảo từ thương hội, rồi cùng chia phần lợi.',need:{type:'stone',seconds:900},minAffinity:55,reward:{affinity:20,exp:.03,item:{offer:5}}}
  ],
  'luyện đan thuê':[
   {name:'Gom linh thảo',desc:'Hạ yêu thú lấy dược liệu cho {npc}.',need:{type:'kill',count:25},minAffinity:0,reward:{affinity:10,stone:600}},
