@@ -49,7 +49,7 @@
       ${row('Yêu đan tích lũy', '<span id="yaoValue">0</span>')}
       ${drops}
       ${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0, 'btn-outline')}
-      <p class="info-note">Khi bạn rời game, chế độ tự chiến vẫn săn quái theo xác suất thắng và hiệu suất bế quan.</p>`, { eyebrow: 'THU HOẠCH' });
+      <p class="info-note">Yêu thú chỉ bị hạ khi bạn chủ động xuất chiêu. Trong chuyến lịch luyện, không tự chiến và không tích lũy tu vi thụ động.</p>`, { eyebrow: 'THU HOẠCH' });
   }
 
   function zoneCard() {
