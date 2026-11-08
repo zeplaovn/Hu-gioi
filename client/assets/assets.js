@@ -88,6 +88,8 @@
     tien_gioi: BG_BASE + 'tien_gioi/bg.webp',
     home: BG_BASE + 'background.webp',
     tribulation: BG_BASE + 'dai_loi_kiep.webp',
+    combat: BG_BASE + 'bi_canh.webp',
+    combatFallback: BG_BASE + 'bi_canh.png',
     forge: BG_BASE + 'room/luyen_khi.webp',
     talisman: BG_BASE + 'room/ve_phu.webp',
     garden: BASE + 'ui/linh_dien/BG.webp',
