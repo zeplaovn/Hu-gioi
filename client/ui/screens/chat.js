@@ -1,4 +1,4 @@
-/* Kênh thế giới demo: render văn bản thuần, giữ bản nháp khi reconnect/đổi màn. */
+/* Truyền âm vạn giới demo: render văn bản thuần, giữ bản nháp khi reconnect/đổi màn. */
 (function (root) {
   'use strict';
   const UI = root.HU_UI, { $, esc } = UI.kit;
@@ -7,12 +7,12 @@
   const labels = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', online: 'Đã kết nối', offline: 'Mất kết nối', unavailable: 'Hãy mở Hư Giới từ đường dẫn trực tuyến để truyền âm' };
 
   function render() {
-    return `<section class="chat-panel"><header class="chat-heading"><div><span class="eyebrow gold">TRUYỀN ÂM · DEMO</span><h2>Kênh thế giới</h2></div><span id="chatOnline" class="chat-online"></span></header>
-      <p class="info-note">Kênh trò chuyện giữa những đạo hữu đang online. Tính năng cần máy chủ chat riêng (đang được viết lại).</p>
+    return `<section class="chat-panel"><header class="chat-heading"><div><span class="eyebrow gold">TRUYỀN ÂM · VẠN GIỚI</span><h2>Truyền âm vạn giới</h2></div><span id="chatOnline" class="chat-online"></span></header>
+      <p class="info-note">Gửi lời truyền âm đến đạo hữu bốn phương. Chỉ có thể truyền tin khi kênh đã kết nối.</p>
       <div class="chat-connection"><span id="chatStatus" role="status"></span><button type="button" class="btn btn-outline" data-act="chatConnect" id="chatConnect">Kết nối</button><button type="button" class="btn btn-outline" data-act="chatDisconnect" id="chatDisconnect">Rời kênh</button></div>
-      ${!session.available ? '<p class="info-note">Máy chủ chat đang được viết lại, hiện chưa có dịch vụ trả lời tại <code>/api/chat/*</code>. Xem <code>docs/backend-plan.md</code>.</p>' : ''}
+      ${!session.available ? '<p class="info-note">Trạm truyền âm hiện chưa khai mở. Bạn chưa thể gửi hoặc nhận lời nhắn lúc này.</p>' : ''}
       <div id="chatFeed" class="chat-feed" role="log" aria-label="Tin nhắn kênh thế giới" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
-      <p id="chatEmpty" class="empty-note">Chưa có tin nhắn. Gửi lời chào đến các đạo hữu!</p>
+      <p id="chatEmpty" class="empty-note">Chưa có tin nhắn. Hãy gửi lời chào đến các vị đạo hữu!</p>
       <form id="chatForm" class="chat-form"><label for="chatInput">Lời truyền âm</label><div><input id="chatInput" type="text" maxlength="400" autocomplete="off" placeholder="Gửi lời đến đạo hữu bốn phương…" value="${esc(draft)}" aria-describedby="chatError chatLimit"><button type="submit" class="btn btn-gold" id="chatSend">Gửi</button></div><small id="chatLimit">Tối đa 400 ký tự · mỗi tin cách nhau 2 giây.</small></form>
       <p id="chatError" class="chat-error" role="status"></p></section>`;
   }
@@ -21,7 +21,7 @@
     const state = session.state, feed = $('chatFeed');
     $('chatStatus').textContent = labels[state.status];
     $('chatStatus').dataset.status = state.status;
-    $('chatOnline').textContent = state.online + ' đạo hữu online';
+    $('chatOnline').textContent = state.online + ' đạo hữu đang hiện diện';
     $('chatError').textContent = error || state.error;
     $('chatConnect').hidden = ['connecting', 'online'].includes(state.status) || !session.available;
     $('chatDisconnect').hidden = !['connecting', 'online', 'offline'].includes(state.status);
@@ -77,7 +77,7 @@
     const el = document.createElement('div');
     el.id = 'chatBubble'; el.className = 'chat-bubble';
     el.innerHTML = '<button type="button" class="chat-bubble-btn" aria-expanded="false" aria-controls="chatBubblePanel" aria-label="Mở chat thế giới"><img class="chat-bubble-icon" src="media/assets/ui/icon/chat/truyen-am.svg" width="36" height="36" alt="" aria-hidden="true" decoding="async"><i class="chat-bubble-badge" hidden>0</i></button>' +
-      '<div id="chatBubblePanel" class="chat-bubble-panel" role="dialog" aria-label="Kênh thế giới" hidden><button type="button" class="chat-bubble-close" aria-label="Thu nhỏ chat">×</button><div class="chat-bubble-body"></div></div>';
+      '<div id="chatBubblePanel" class="chat-bubble-panel" role="dialog" aria-label="Truyền âm vạn giới" hidden><button type="button" class="chat-bubble-close" aria-label="Thu nhỏ chat">×</button><div class="chat-bubble-body"></div></div>';
     document.body.appendChild(el);
     bubble.el = el; bubble.btn = el.querySelector('.chat-bubble-btn'); bubble.panel = el.querySelector('.chat-bubble-panel'); bubble.badge = el.querySelector('.chat-bubble-badge');
     bubble.panel.querySelector('.chat-bubble-body').innerHTML = render();
