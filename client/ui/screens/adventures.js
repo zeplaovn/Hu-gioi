@@ -85,7 +85,7 @@
     const header = card(d.name, `<p>${d.desc} <b class="gold">${d.bonus}</b></p>` + row('Chức vị', rank.name) + row('Cống hiến khả dụng', num(s.sect.contribution)) + row('Tổng đã kiếm', num(s.sect.earned)) +
       row('Thu nhập thụ động', moneyHTML(g.sectIncome()) + '/giây') +
       (rank.next ? bar((s.sect.earned - rank.at) / (rank.next.at - rank.at) * 100) + `<p class="info-note">Còn ${num(rank.next.at - s.sect.earned)} cống hiến đã kiếm để lên ${rank.next.name}.</p>` : '<p class="gold">Đã đạt chức vị tối cao.</p>') +
-      `<div class="action-group">${btn(s.sect.blessing ? 'Tắt chúc phúc' : 'Chúc phúc +10% tốc tu', 'blessing', '', false, 'btn-outline')}${btn('Cống hiến · ' + moneyHTML(F.price_ha(s.realm)), 'donate', '', s.stone < F.price_ha(s.realm), 'btn-outline')}</div>`);
+      `<div class="action-group">${btn(s.sect.blessing ? 'Tắt chúc phúc' : 'Chúc phúc +10% tốc độ hấp thụ linh khí', 'blessing', '', false, 'btn-outline')}${btn('Cống hiến · ' + moneyHTML(F.price_ha(s.realm)), 'donate', '', s.stone < F.price_ha(s.realm), 'btn-outline')}</div>`);
     const panels = { missions: missionBoard, shop: sectShop, ranks: () => card('Lộ trình chức vị', H.SECT_RANKS.map(r => row(r.name, num(r.at) + ' tổng cống hiến · bậc ' + r.tier)).join('') + '<p class="info-note">Cống hiến đã kiếm tính cả nhiệm vụ và quyên góp. Rời tông môn sẽ đặt lại chức vị, cống hiến và chúc phúc.</p>' + btn('Rời tông môn', 'sectLeave', '', !!s.sect.mission, 'btn-outline')) };
     return header + `<div class="action-group adventure-nav" role="group" aria-label="Bảng tông môn">${[['missions', 'Nhiệm vụ'], ['shop', 'Kho tông môn'], ['ranks', 'Chức vị']].map(([id, label]) => btn(label, 'sectPanel', `data-panel="${id}" aria-pressed="${sub === id}"`, false, sub === id ? 'btn-gold' : 'btn-outline')).join('')}</div>` +
       (s.sect.last && sub === 'missions' ? `<p class="adventure-result info-note">${esc(s.sect.last.text)}</p>` : '') + panels[sub]();
@@ -107,7 +107,7 @@
         row('Đã vượt lôi kiếp mà chưa hóa', num(s.chaosTries || 0) + ' lần') +
         '<p class="info-note">Linh căn ngũ hành có cơ hội hóa sau khi vượt lôi kiếp đại cảnh giới. Nền 1%; Vận Khí và bảo hiểm tăng tỉ lệ.</p></div>';
     }
-    const body = `<p>${esc(info.desc)}</p>${row('Tốc tu nền', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
+    const body = `<p>${esc(info.desc)}</p>${row('Tốc độ hấp thụ linh khí nền', '×' + F.LINH_CAN_RATE[type])}${combat > 1 ? row('Chiến lực', '×' + combat) : ''}${row('Chịu lôi kiếp', '×' + trib)}${extra}`;
     const rank = (types, cur) => types.map(n => `<span class="root-chip ${cur === n ? 'is-current' : ''}">${esc(n)}</span>`).join('<span class="root-sep">›</span>');
     const classes = `<div class="root-class"><b>Ngũ hành cơ bản</b><div>${rank(['Ngụy', 'Tứ hành', 'Tam hành', 'Song', 'Thiên'], type)}</div><p class="info-note">Theo số hệ đạt 50 điểm; Thiên là một hệ thuần, không biến thể.</p></div>` +
       `<div class="root-class"><b>Dị linh căn</b><div>${H.DI_KEYS.map(k => `<span class="root-chip ${type === 'Dị' && s.rootSub === k ? 'is-current' : ''}">${esc(H.DI_LINH_CAN[k].name)}</span>`).join('<span class="root-sep">·</span>')}</div><p class="info-note">Dị khắc hệ gốc và không bị hệ gốc khắc.</p></div>` +
@@ -117,7 +117,7 @@
 
   function roots() {
     const s = UI.s(), g = UI.g(), c = s.rootCraft, els = g.activeElements(), scale = 1 / Math.sqrt(Math.max(1, els.length));
-    const labels = { attack: 'Công kích', hp: 'Sinh lực', guard: 'Phòng thủ', rate: 'Tốc tu', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
+    const labels = { attack: 'Công kích', hp: 'Sinh lực', guard: 'Phòng thủ', rate: 'Tốc độ hấp thụ linh khí', crit: 'Bạo kích', dodge: 'Né tránh', regen: 'Hồi sinh lực/giây' };
     const effectText = (i, level) => Object.entries(H.TEMPER_EFFECTS[i]).map(([k, v]) => labels[k] + ' +' + (v * level * scale * 100).toLocaleString('vi-VN', { maximumFractionDigits: 2 }) + (['crit', 'dodge', 'regen'].includes(k) ? ' điểm %' : '%')).join(' · ');
     return `<div class="screen-grid">${rootOverview()}</div>
       <h3 class="root-section-title">Ngũ hành · tôi luyện từng hệ <small>(tách riêng khỏi Dị linh căn)</small></h3>
