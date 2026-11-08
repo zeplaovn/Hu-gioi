@@ -65,10 +65,10 @@ test('trạng thái đi bộ hoặc nghỉ thiền có nhịp ổn định và t
   assert.deepEqual([...found].sort(), ['di_chuyen', 'dung_yen']);
 });
 
-test('không thể rời bí cảnh bằng đóng cửa sổ, menu, hash hoặc phím tắt khi đang lịch luyện', () => {
+test('đang lịch luyện vẫn đóng khung và chuyển màn tự do; hết giờ thì báo hoàn tất', () => {
   const shell = read('client/ui/shell.js'), html = read('index.html'), css = read('css/shell.css');
-  assert.match(shell, /if \(id === 'combat' && UI\.s\(\)\.exploration\?\.active\)/);
-  assert.match(shell, /if \(UI\.s\(\)\.exploration\?\.active && id !== 'combat'\)/);
+  assert.doesNotMatch(shell.slice(shell.indexOf('    close(id) {'), shell.indexOf('closeOthers(')), /exploration\?\.active/, 'đóng khung không bị chặn');
+  assert.doesNotMatch(shell, /exploration\?\.active && id !== 'combat'/, 'không còn khóa chuyển màn');
   assert.match(shell, /if \(wasExploring && !UI\.s\(\)\.exploration\?\.active\)/);
   assert.match(shell, /go\('idle'\)/);
   assert.match(css, /#game\[data-stage="combat"\] #stage #enemyActor/);
@@ -80,7 +80,8 @@ test('không thể rời bí cảnh bằng đóng cửa sổ, menu, hash hoặc 
 test('khi nạp lại game, tiếp tục chuyến đang chạy hoặc tự về đài nếu đã hết giờ', () => {
   const boot = read('client/ui/boot.js');
   assert.match(boot, /const wasExploring = !!s\.exploration\?\.active/);
-  assert.match(boot, /const target = s\.exploration\?\.active \? 'combat' : wasExploring \? 'idle'/);
+  assert.match(boot, /wasExploring && !s\.exploration\?\.active && \(!requested \|\| requested === 'combat'\)/);
+  assert.match(boot, /requested \|\| \(s\.exploration\?\.active \? 'combat' : 'idle'\)/);
   assert.match(boot, /if \(wasExploring && !UI\.s\(\)\.exploration\?\.active\)/);
   assert.match(boot, /UI\.go\('idle'\)/);
 });
