@@ -5,7 +5,7 @@
   const commands = Object.freeze([
     'claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect',
     'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission',
-    'buySect', 'temperRoot'
+    'buySect', 'temperRoot', 'storyMark'
   ]);
 
   function install(API) {
@@ -17,8 +17,33 @@
     const at = (game, now) => Number.isFinite(now) ? now : game.s.lastUpdate;
     const pick = (xs, rng) => xs[Math.min(xs.length - 1, Math.floor(rng() * xs.length))];
     const sectDefault = H.sectDefault;
+    /* Một lệnh tự sự thuộc đúng miền world, không trao bất kỳ tài nguyên nào. */
+    const storyById = Object.fromEntries([
+      ...H.STORY.ACTS.flatMap(act => act.chapters.map(chapter => [chapter.id, chapter])),
+      ...Object.entries(H.STORY.NPCS).flatMap(([npcId, tiers]) =>
+        Object.entries(tiers).map(([tier, entry]) => [entry.id, {
+          ...entry, npcId, minAffinity: { stranger: 0, familiar: 20, confidant: 55 }[tier]
+        }]))
+    ]);
 
     Object.assign(H.Game.prototype, {
+      storyMark(payload) {
+        const entry = Object.hasOwn(storyById, payload.id) ? storyById[payload.id] : null;
+        if (!entry) throw Error('Không tìm thấy trang Thiên Thư này.');
+        if (entry.unlock && this.s.realm < entry.unlock.realm)
+          throw Error('Cảnh giới chưa đủ để đọc chương này.');
+        if (entry.npcId && (this.s.npcAffinities[entry.npcId] || 0) < entry.minAffinity)
+          throw Error('Thiện cảm chưa đủ để nghe câu chuyện này.');
+        if (payload.option !== undefined) {
+          if (!entry.choices?.some(choice => choice.id === payload.option))
+            throw Error('Lời đáp không hợp lệ.');
+          if (this.s.story.flags[payload.id] && this.s.story.flags[payload.id] !== payload.option)
+            throw Error('Lời đã ghi vào Thiên Thư không thể đổi.');
+          this.s.story.flags[payload.id] = payload.option;
+        }
+        this.s.story.read[payload.id] = true;
+        return { id: payload.id, option: this.s.story.flags[payload.id] || null };
+      },
       claimQuest(payload) {
         const s = this.s, q = QUESTS.find(q => q[0] === payload.id);
         if (!q || s.claimed.includes(q[0]) || s.progress[q[0]] < q[2]) throw Error('Chưa thể nhận thưởng.');
