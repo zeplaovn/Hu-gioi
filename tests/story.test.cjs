@@ -35,8 +35,8 @@ test('Vạn Kiếp Tàng Thư: ba hồi, 14 chương, mở đúng cảnh giới'
 
 test('Vạn Kiếp Tàng Thư: NPC, bí cảnh, kỳ ngộ và tất cả ID phải tồn tại', () => {
   assert.deepEqual(Object.keys(STORY.NPCS).sort(), Object.keys(D.npc).sort());
-  const ids = [...chapters, ...topics].map(x => x.id);
-  assert.equal(ids.length, new Set(ids).size, 'ID chương và hội thoại trùng nhau');
+  const ids = [...chapters, ...topics].flatMap(x => [x.id, ...(x.choices || []).map(choice => choice.id)]);
+  assert.equal(ids.length, new Set(ids).size, 'ID chương, hội thoại hoặc lựa chọn bị trùng');
   for (const [npcId, tiers] of Object.entries(STORY.NPCS)) {
     assert.ok(D.npc[npcId], npcId);
     assert.deepEqual(Object.keys(tiers).sort(), ['confidant', 'familiar', 'stranger']);
