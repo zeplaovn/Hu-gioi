@@ -13,7 +13,7 @@
     { id: 'quests', label: 'Nhiệm vụ', icon: '✦' },
     { id: 'sect', label: 'Tông môn', icon: '⌂' },
     { id: 'encounter', label: 'Kỳ ngộ', icon: '❂' },
-    { id: 'npc', label: 'NPC', icon: '♧' },
+    { id: 'npc', label: 'Kỳ nhân', icon: '♧' },
     { id: 'shop', label: 'Cửa hàng', icon: '◈' },
     { id: 'auction', label: 'Đấu giá', icon: '⚖' }
   ];
@@ -48,7 +48,7 @@
       : need.type === 'gift' ? `Có ${num(q.progress)}/${num(q.target)} ${esc(like?.name || 'món yêu thích')}`
         : `Học phí ${moneyHTML(q.cost)}`;
     const item = r.item?.pill ? `${esc(H.item(H.pill(r.item.pill)).name)} ×${r.item.count || 1}`
-      : r.item?.offer ? `${esc(H.item(n.offer)?.name || 'vật phẩm của NPC')} ×${r.item.offer}`
+      : r.item?.offer ? `${esc(H.item(n.offer)?.name || 'vật phẩm của vị đạo hữu')} ×${r.item.offer}`
         : r.item?.mastery ? `Lĩnh ngộ ${esc(H.item(n.offer)?.name || 'công pháp')} +${Math.round(r.item.mastery * 100)}%` : '';
     const rewards = [`thiện cảm +${r.affinity}`, r.stone ? moneyHTML(F.income_rate(s.realm) * r.stone) : '', r.exp ? `tu vi +${pct(r.exp)} cần thiết` : '', item].filter(Boolean).join(' · ');
     const label = q.locked ? `Cần thiện cảm ${d.minAffinity}` : need.type === 'kill' && !q.accepted ? 'Nhận việc' : 'Hoàn thành';
@@ -58,7 +58,7 @@
   };
   const npcs = () => {
     const s=UI.s(),g=UI.g();
-    return `<p class="screen-lead">Gặp gỡ nhân vật Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100. Mỗi NPC có chuỗi nhiệm vụ riêng mở dần theo thiện cảm, và thiện cảm càng cao giá mua/học càng rẻ (tối đa −${Math.round(H.NPC_DISCOUNT_MAX*100)}%).</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).map(n=>{
+    return `<p class="screen-lead">Gặp gỡ kỳ nhân nơi Hạ Giới. Quà yêu thích +5 thiện cảm; quà không thích −5, giới hạn 0–100. Mỗi vị có một chuỗi ủy thác riêng mở dần theo thiện cảm, và thiện cảm càng cao giá mua/học càng rẻ (tối đa −${Math.round(H.NPC_DISCOUNT_MAX*100)}%).</p><div class="adventure-grid">${Object.values(H.DESIGN.npc).map(n=>{
       const id=n['mã NPC'],like=H.item(n.likes),dislike=H.item(n.dislikes),offer=H.item(n.offer),role=n['vai trò'],disc=g.npcDiscount(id);
       const gifts=[[like,'Tặng món thích'],[dislike,'Tặng món không thích']].map(([x,label])=>{if(!x)return '';const key=Object.keys(s.bag).find(k=>H.item(k)?.code===x.code&&!s.equipment.includes(k)&&g.count(k)>0);return btn(label,'npcGift',`data-id="${esc(id)}" ${codeAttr(key||x.code)}`,!key,'btn-outline')}).join('');
       const sells=['bán đồ','luyện đan thuê'].includes(role),teaches=['dạy công pháp','dạy bí tịnh'].includes(role),price=offer&&(sells||teaches)?g.npcPrice(id):0;
@@ -66,14 +66,14 @@
       const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="world:quests">Nhiệm vụ chung</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
       return card(esc(n['tên NPC']),`<div class="npc-profile"><img src="${esc(n.ảnh)}" alt="" loading="lazy" decoding="async"><p>${esc(n['bối cảnh'])}</p></div>`+
         row('Địa điểm',esc(n['địa điểm']))+row('Quan hệ',esc(n['quan hệ']))+row('Vai trò',esc(role))+row('Thiện cảm',num(s.npcAffinities[id]||0)+'/100')+
-        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+npcQuestBlock(n,g.npcQuestInfo(id),like)+`<div class="action-group">${gifts}${trade}${link}</div>`,{eyebrow:esc(id)});
+        row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+npcQuestBlock(n,g.npcQuestInfo(id),like)+`<div class="action-group">${gifts}${trade}${link}</div>`,{eyebrow:'KỲ NHÂN HẠ GIỚI'});
     }).join('')}</div>`;
   };
 
   const shop = () => {
     const s = UI.s(), g = UI.g(), v = UI.view;
     const xs = H.ITEMS.filter(x => x.kind !== 'QITEM' && x.tier <= s.realm + 1 && lists.matches(x));
-    return `<p class="screen-lead">Mở đến một cảnh giới cao hơn. Giá mua = 120% giá trị. Số dư ${moneyHTML(s.stone)}.</p>${lists.controls({ quality: true })}${lists.pager(xs.length)}
+    return `<p class="screen-lead">Cửa hàng có thể bán vật phẩm cao hơn cảnh giới hiện tại một bậc. Giá mua bằng 120% giá trị vật phẩm. Số dư ${moneyHTML(s.stone)}.</p>${lists.controls({ quality: true })}${lists.pager(xs.length)}
       <div class="shop-list">${lists.slice(xs).map(x => {
         const key = ['PILL', 'EQ', 'BT', 'TAL'].includes(x.kind) ? H.keyFor(x.code, v.quality) : x.code;
         return `<article class="shop-item">${img(key)}<div><h3>${esc(x.name)}</h3><p>${x.category} · ${x.realm} · ${F.SUBPHAM[H.item(key).sub]} phẩm</p><p>${esc(x.description)}</p></div>${btn(moneyHTML(F.shop_buy_price(g.price(key))), 'buy', codeAttr(key))}</article>`;
