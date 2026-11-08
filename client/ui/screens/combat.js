@@ -12,29 +12,30 @@
       ${SKILLS.map((k, i) => `<button class="skill-btn" id="skill${i}" data-act="skill" data-index="${i}" title="${esc(k.desc)}">
         <img src="${A.skillIcon(i + 1)}" alt="" loading="lazy" decoding="async"><span><b>${k.name}</b><small>${num(g.maxMp() * k.mp)} linh lực · <span data-cooldown="${i}"></span></small></span><kbd>${i + 1}</kbd>
       </button>`).join('')}
-      <button class="btn btn-gold strike-btn" data-act="strike">⚔ Công kích</button>
+      <button class="btn btn-gold strike-btn" data-act="strike">⚔ Xuất chiêu</button>
     </div>`;
   }
 
   function enemyCard() {
     const s = UI.s(), g = UI.g(), enemy = g.enemy();
     const kinds = Object.keys(F.MONSTER_MULT);
+    const kindNames = { 'thường': 'Yêu thú', 'tinh anh': 'Tinh anh', 'boss': 'Thủ lĩnh', 'boss kiếp': 'Kiếp chủ' };
     return card(esc(enemy.name), `
       ${row('Cảnh giới', F.REALMS[s.zone])}
       ${enemy.designId ? row('Cấp / thuộc tính', num(enemy.level)+' · '+esc(enemy.elementName)) : ''}
       ${row('Sinh lực', '<span id="enemyHpText">—</span>')}
       ${row('Chiến lực đối thủ', num(enemy.CP))}
       ${enemy.designId?.startsWith('BS') ? row('Giai đoạn', '<span id="enemyPhaseText">—</span>') : ''}
-      <div class="kind-toolbar">${kinds.map(k => `<button class="btn ${k === s.enemyKind ? 'btn-gold' : 'btn-outline'}" data-act="enemyKind" data-kind="${k}">${k}</button>`).join('')}</div>
-      <p class="info-note">Tinh anh, boss và boss kiếp mạnh hơn nhưng rơi nhiều hơn. Đổi đối thủ sẽ làm mới trận.</p>`, { eyebrow: 'ĐỐI THỦ' });
+      <div class="kind-toolbar">${kinds.map(k => `<button class="btn ${k === s.enemyKind ? 'btn-gold' : 'btn-outline'}" data-act="enemyKind" data-kind="${k}">${kindNames[k] || k}</button>`).join('')}</div>
+      <p class="info-note">Tinh anh, thủ lĩnh và kiếp chủ có chiến lực cao hơn, nhưng mang theo chiến lợi phẩm quý hơn. Đổi đối thủ sẽ bắt đầu trận mới.</p>`, { eyebrow: 'ĐỐI THỦ' });
   }
 
   function powerCard() {
     const g = UI.g(), st = g.stats(), enemy = g.enemy();
     return card('Chiến lực', `
       ${row('Chiến lực', num(st.CP))}${row('Sinh lực / Công kích / Phòng thủ', num(st.HP) + ' / ' + num(st.ATK) + ' / ' + num(st.DEF))}
-      ${row('Bạo kích / Né', pct(st.CRIT) + ' / ' + pct(st.DODGE))}
-      ${row('Kỳ vọng thắng', pct(F.win_probability(st.CP, enemy.CP)))}`, { eyebrow: 'THÂN THỂ' });
+      ${row('Bạo kích / Né tránh', pct(st.CRIT) + ' / ' + pct(st.DODGE))}
+      ${row('Khả năng chiến thắng', pct(F.win_probability(st.CP, enemy.CP)))}`, { eyebrow: 'THÂN THỂ' });
   }
 
   function lootCard() {
