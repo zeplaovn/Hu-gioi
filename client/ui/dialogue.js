@@ -126,8 +126,8 @@
       current.index++; return renderLine();
     }
     const selected = UI.s().story.flags[entry.id];
-    if (entry.choices?.length && !selected) return renderChoices();
     if (!UI.s().story.read[entry.id]) UI.command('storyMark', { id: entry.id });
+    if (entry.choices?.length && !selected) return renderChoices();
     if (selected) return renderReply(entry.choices.find(x => x.id === selected)?.reply || '');
     if (current.type === 'npc') showTopics(npcId); else close();
   }
@@ -139,7 +139,7 @@
       '<div class="hu-dialogue-topics">' + entry.choices.map(choice =>
         '<button type="button" class="hu-dialogue-topic" data-dialogue="answer" data-option="' +
         esc(choice.id) + '"><b>' + esc(choice.label) + '</b></button>').join('') + '</div>' +
-      '<button type="button" class="btn btn-outline" data-dialogue="close">Để sau</button>');
+      '<button type="button" class="btn btn-outline" data-dialogue="' + (current.type === 'npc' ? 'topics' : 'close') + '">Để sau</button>');
   }
 
   function answer(option) {
