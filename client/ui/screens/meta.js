@@ -37,7 +37,7 @@
       <div class="screen-grid">${Object.entries(H.META_UPGRADES).map(([key, u]) => {
         const level = m.upgrades[key] || 0, cost = level >= u.max ? null : u.cost[level];
         return card(u.name, `
-          <div class="meta-upgrade-head"><span class="meta-upgrade-icon" aria-hidden="true">${u.icon}</span><div>${row('Cấp', level + '/' + u.max)}${row('Hiệu ứng', u.desc)}${row('Giá cấp kế', cost === null ? 'Đã tối đa' : cost + ' điểm')}</div></div>
+          <div class="meta-upgrade-head"><span class="meta-upgrade-icon" aria-hidden="true">${u.icon}</span><div>${row('Cấp', level + '/' + u.max)}${row('Hiệu ứng', u.desc)}${row('Thiên mệnh cần cho bậc kế', cost === null ? 'Đã tối đa' : cost + ' điểm')}</div></div>
           <div class="meta-pips" aria-hidden="true">${Array.from({ length: u.max }, (_, i) => `<i class="${i < level ? 'on' : ''}"></i>`).join('')}</div>
           <button class="btn ${cost === null ? 'btn-outline' : 'btn-gold'}" data-act="metaBuy" data-key="${key}" ${cost === null || m.points < cost ? 'disabled' : ''}>${cost === null ? 'Đã tối đa' : 'Nâng cấp · ' + cost + ' điểm'}</button>`,
           { eyebrow: 'VĨNH VIỄN' });
@@ -72,7 +72,7 @@
     const s = UI.s(), reward = F.dao_van(s.totalRunExp), remaining = Math.max(0, F.exp_for_dao_van(Math.max(10, reward + 1)) - s.totalRunExp);
     return `<p class="screen-lead">Mở từ 10 Đạo vận nhận được. Giữ công pháp đã lĩnh ngộ, thiên phú, nâng cấp bế quan khi vắng mặt và cài đặt.</p><div class="screen-grid">
       ${card('Chuyển thế', `${row('Tu vi thực nhận vòng này', num(s.totalRunExp))}${row('Phần thưởng', num(reward) + ' Đạo vận')}${row('Tu vi tới mốc kế tiếp', num(remaining))}${row('Số lần trọng sinh', s.rebirths)}${btn('Trọng sinh', 'prestige', '', reward < 10)}<p class="info-note">Đặt lại cảnh giới, tiền, túi đồ, nâng cấp thường và nhiệm vụ. Tu vi tràn ngưỡng đột phá không tính Đạo vận.</p>`)}
-      ${card('Bế quan vĩnh viễn', `${row('Đạo vận', num(s.daoVan))}${row('Thời gian bế quan tối đa', duration(F.offline_cap(s.offlineCap)))}${btn('+2 giờ · ' + (2 + s.offlineCap) + ' Đạo vận', 'offlineCap', '', s.offlineCap >= 8)}${row('Hiệu quả bế quan khi vắng mặt', pct(F.offline_efficiency(s.offlineEff)))}${btn('+5 điểm % · ' + (2 + s.offlineEff) + ' Đạo vận', 'offlineEff', '', s.offlineEff >= 8)}<p class="info-note">Tối đa 24 giờ và 100%. Tiêu Đạo vận sẽ giảm hệ số tốc độ hấp thụ linh khí tương ứng.</p>`)}</div>`;
+      ${card('Truyền thừa bế quan', `${row('Đạo vận', num(s.daoVan))}${row('Thời gian bế quan tối đa', duration(F.offline_cap(s.offlineCap)))}${btn('+2 giờ · ' + (2 + s.offlineCap) + ' Đạo vận', 'offlineCap', '', s.offlineCap >= 8)}${row('Hiệu quả bế quan khi vắng mặt', pct(F.offline_efficiency(s.offlineEff)))}${btn('+5 điểm % · ' + (2 + s.offlineEff) + ' Đạo vận', 'offlineEff', '', s.offlineEff >= 8)}<p class="info-note">Tối đa 24 giờ và 100%. Tiêu Đạo vận sẽ giảm hệ số tốc độ hấp thụ linh khí tương ứng.</p>`)}</div>`;
   }
   const body = { upgrades, achievements, history, prestige };
 
@@ -103,7 +103,7 @@
   });
   UI.action('offlineCap', () => {
     UI.command('upgradeOffline', { type: 'cap' });
-    UI.toast('Giới hạn bế quan · ' + duration(F.offline_cap(UI.s().offlineCap)) + '.', { type: 'success', title: 'Bế quan' });
+    UI.toast('Thời gian bế quan tối đa · ' + duration(F.offline_cap(UI.s().offlineCap)) + '.', { type: 'success', title: 'Bế quan' });
     UI.vfx?.effect('qi');
   });
   UI.action('offlineEff', () => {
