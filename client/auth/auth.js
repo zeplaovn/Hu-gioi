@@ -90,6 +90,7 @@
     if (busy) return;
     const email = $('authEmail').value.trim();
     const password = $('authPassword').value;
+    if (!SB.validEmail(email)) { notice('Email không hợp lệ. Ví dụ: ten@example.com.'); $('authEmail').focus(); return; }
     if (mode === 'signup') {
       if (password !== $('authConfirm').value) { notice('Mật khẩu nhập lại chưa trùng khớp.'); return; }
       if (!$('authPrivacy').checked || !$('authRelease').checked) {
