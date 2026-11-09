@@ -154,7 +154,7 @@
     const f = findRival(d.id);
     if (!f) throw Error('Không tìm thấy đối thủ này.');
     const r = await UI.command('duel', { id: d.id });
-    UI.toast((r.win ? 'Thắng ' : 'Thua ') + f.name + ' · danh vọng ' + (r.delta > 0 ? '+' : '') + r.delta +
+    UI.toast((r.win ? 'Thắng ' : 'Thua · tọa hóa vĩnh viễn trước ') + f.name + ' · danh vọng ' + (r.delta > 0 ? '+' : '') + r.delta +
       (r.win ? ' · +' + money(r.reward) + ' · +' + num(r.exp) + ' tu vi' : '') + '.',
       { type: r.win ? 'success' : 'danger', title: r.win ? 'Luận kiếm thắng' : 'Luận kiếm thua' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: r.win ? 'phi_thang' : 'ha_gioi', fps: 14, size: 'clamp(120px,19vw,200px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
