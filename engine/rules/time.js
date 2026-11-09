@@ -42,7 +42,8 @@
           // Đồng hồ chỉ tiến khi online. Đẩy lịch hẹn tương lai đúng bằng khoảng vắng mặt,
           // không cấp tu vi, tuổi, hồi máu, phần thưởng, kết quả RNG hoặc cooldown.
           const shift = delta => Number.isFinite(delta) ? delta + (now - start) : delta;
-          for (const b of [...s.buffs, ...s.debuffs]) if (b.end) b.end = shift(b.end);
+          for (const b of [...s.buffs, ...s.debuffs]) if (b.end && b.end > start) b.end = shift(b.end);
+          for (let i = 0; i < s.cooldowns.length; i++) if (s.cooldowns[i] > start) s.cooldowns[i] = shift(s.cooldowns[i]);
           for (const job of s.craftQueue) { if (job.start) job.start = shift(job.start); job.end = shift(job.end); }
           for (const plot of s.garden) { plot.plantedAt = shift(plot.plantedAt); plot.end = shift(plot.end); }
           if (s.exploration?.active) {
@@ -63,14 +64,22 @@
               if (effect.end) effect.end = shift(effect.end);
               if (effect.last) effect.last = shift(effect.last);
             }
-            for (const effect of [...(combat.buffs || []), ...(combat.enemyEffects || [])])
-              if (effect.end) effect.end = shift(effect.end);
+            for (const effect of [...(combat.buffs || []), ...(combat.enemyEffects || [])]) {
+              if (effect.end && effect.end > start) effect.end = shift(effect.end);
+              // Bảo toàn thời điểm DOT gần nhất, không dồn sát thương offline vào tick đầu khi trở lại.
+              if (effect.last && effect.last > 0) effect.last = shift(effect.last);
+            }
             if (combat.shieldEnd) combat.shieldEnd = shift(combat.shieldEnd);
             for (const timers of [combat.itemCooldowns, combat.manualCooldowns])
               for (const key of Object.keys(timers || {})) if (timers[key] > start) timers[key] = shift(timers[key]);
           }
-          if (s.manualAt > 0) s.manualAt = shift(s.manualAt);
-          if (s.social?.pvp?.lastAt) s.social.pvp.lastAt = shift(s.social.pvp.lastAt);
+          if (s.manualAt > start) s.manualAt = shift(s.manualAt);
+          if (s.social?.pvp?.lastAt && s.social.pvp.lastAt + H.PVP_CD > start)
+            s.social.pvp.lastAt = shift(s.social.pvp.lastAt);
+          for (const friend of Object.values(s.social?.friends || {}))
+            if (friend.discussAt > start) friend.discussAt = shift(friend.discussAt);
+          // Phiên đấu giá NPC theo giờ riêng của nhân vật; giờ offline không làm nhận hàng tự động.
+          if (s.auction) s.auction.pausedMs = Math.max(0, Number(s.auction.pausedMs) || 0) + now - start;
           s.lastUpdate = now;
           s.lastSaved = now;
           return { ...empty(), paused: true };
