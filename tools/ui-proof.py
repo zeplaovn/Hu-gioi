@@ -136,6 +136,9 @@ def run_set(browser, folder, name, url, width, height, mobile):
     )
     page = ctx.new_page()
     errors = []
+    expected_auth_404 = []
+    page.on("response", lambda res: expected_auth_404.append(res.url)
+            if res.status == 404 and res.url.endswith("/api/auth/session") else None)
     page.on("pageerror", lambda error: errors.append("pageerror: " + str(error)))
     page.on("console", lambda msg: errors.append("console.error: " + msg.text) if msg.type == "error" and "501" not in msg.text else None)
     outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors}
@@ -198,6 +201,13 @@ def run_set(browser, folder, name, url, width, height, mobile):
         except Exception:
             pass
     finally:
+        # Python http.server không có auth API; bỏ đúng một 404 đã được xác nhận
+        # qua response của /api/auth/session, không bỏ qua lỗi file game khác.
+        if expected_auth_404:
+            for i, err in enumerate(errors):
+                if err.startswith("console.error: Failed to load resource:") and "404" in err:
+                    errors.pop(i)
+                    break
         ctx.close()
     return outcome
 
