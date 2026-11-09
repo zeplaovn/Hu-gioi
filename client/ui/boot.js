@@ -37,7 +37,7 @@
   const freshCreation = () => ({
     name: H.randomName('nam'), nameAuto: true, gender: 'nam',
     age: randInt(14, 30), race: H.rollRace(), ...H.rollRoots(),
-    points: TALENT_MAX, talent: blankTalent()
+    points: TALENT_MAX, talent: blankTalent(), destiny: 'exp'
   });
   let creation = freshCreation();
   let rolling = '', entering = false;
@@ -206,6 +206,7 @@
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
     $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + '</span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
+    if ($('destinySelect')) $('destinySelect').value = creation.destiny;
     renderStats();
     syncName();
   }
@@ -408,7 +409,7 @@
       const profile = {
         name, gender: creation.gender, race: creation.race,
         roots: [...creation.roots], rootType: creation.rootType, rootSub: creation.rootSub || '',
-        age: creation.age, talent: { ...creation.talent }
+        age: creation.age, talent: { ...creation.talent }, destiny: creation.destiny
       };
       entering = true;
       const button = $('startNew'), label = button.textContent;
@@ -458,6 +459,7 @@
       creation.nameAuto = false;
       syncName();
     });
+    $('destinySelect')?.addEventListener('change', e => { creation.destiny = e.target.value; renderCreation(); });
     $('randomName').addEventListener('click', () => roll('name'));
     $('rollAge').addEventListener('click', () => roll('age'));
     $('rollRace').addEventListener('click', () => roll('race'));
