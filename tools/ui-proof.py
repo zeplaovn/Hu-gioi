@@ -27,12 +27,12 @@ CASES = [
 
 def enter_game(page, url):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
-    page.wait_for_timeout(13500)
+    page.locator('#loading').wait_for(state='hidden', timeout=45000)
     page.locator("#nameInput").fill("Vân Tiêu")
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
     page.locator("#startNew").click()
-    page.wait_for_timeout(15000)
+    page.locator('#gameLoading').wait_for(state='hidden', timeout=45000)
     page.keyboard.press("Escape")
     page.wait_for_timeout(2500)
     if page.locator("#tutorialSkip").is_visible():
@@ -89,6 +89,9 @@ def verify_log_float(page, folder, name, outcome):
     outcome["screenshots"].append(snap(page, folder, name, "log-minimized"))
     collapse_btn.click()
     assert "collapsed" not in (panel.get_attribute("class") or ""), "Không mở rộng được"
+    assert collapse_btn.evaluate(
+        "el => getComputedStyle(el, '::after').backgroundImage === 'none'"
+    ), "Chuông chưa ẩn sau khi mở thông báo"
     float_btn.click()
     assert "log-floating" not in (panel.get_attribute("class") or ""), "Không ghim lại được"
     assert float_btn.get_attribute("aria-pressed") == "false"
@@ -101,19 +104,13 @@ def verify_bubble(page, folder, name, outcome):
     trigger.click()
     assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
     if name.startswith("after_"):
-        assert trigger.is_visible(), "Icon chat biến mất khi mở bảng chat"
+        assert trigger.is_hidden(), "Icon chat phải ẩn khi đang mở cửa sổ"
         assert trigger.get_attribute("aria-expanded") == "true"
-        assert page.locator("#chatBubble .chat-bubble-icon").is_visible(), "Ảnh icon chat bị ẩn"
-        assert trigger.evaluate("""el => {
-          const r = el.getBoundingClientRect();
-          const atCenter = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-          return el.contains(atCenter);
-        }"""), "Bảng chat hoặc lớp khác che icon chat"
+        assert page.locator("#chatBubble .chat-bubble-icon").is_hidden(), "Hình icon chat chưa ẩn"
         outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
-        # Bấm lại đúng icon chat để đóng; xác nhận luôn nhìn thấy nút.
-        trigger.click()
-        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng qua icon"
-        assert trigger.is_visible(), "Icon chat mất sau khi đóng"
+        page.locator(".chat-bubble-close").click()
+        assert page.locator("#chatBubblePanel").is_hidden(), "Không đóng được bằng nút ×"
+        assert trigger.is_visible(), "Icon chat không trở lại sau khi đóng"
         outcome["chat_icon_persistent"] = True
     else:
         page.locator(".chat-bubble-close").click()
@@ -190,7 +187,7 @@ def main():
         try:
             uri = Path("index.html").resolve().as_uri()
             file_page.goto(uri, wait_until="domcontentloaded", timeout=45000)
-            file_page.wait_for_timeout(14000)
+            file_page.locator('#loading').wait_for(state='hidden', timeout=45000)
             report.append({"file_url": uri, "errors": file_errors, "welcome": file_page.locator("#welcome").count() > 0})
             file_page.screenshot(path=str(folder / "file-smoke.png"))
         except Exception as e:
