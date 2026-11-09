@@ -19,10 +19,10 @@ const TALENT_INFO=[
 ];
 const TALENT_MAX=8;
 const META_UPGRADES={
- exp:{name:'Đạo Tâm',icon:'✧',desc:'+3% tốc độ hấp thụ linh khí vĩnh viễn mỗi cấp.',cost:[2,3,5,7,10],max:5},
- stone:{name:'Túi Càn Khôn',icon:'◈',desc:'+20 linh thạch khởi đầu mỗi cấp.',cost:[1,2,3,4,6],max:5},
- life:{name:'Trường Sinh',icon:'❋',desc:'+5 năm thọ nguyên khởi đầu mỗi cấp.',cost:[2,3,4,6,8],max:5},
- luck:{name:'Thiên Vận',icon:'✦',desc:'+1 Vận Khí khởi đầu mỗi cấp.',cost:[3,5,8],max:3}
+ exp:{name:'Đạo Tâm',icon:'✧',desc:'+3% tốc độ hấp thụ linh khí trong kiếp hiện tại.',cost:[2,3,5,7,10],max:5},
+ stone:{name:'Túi Càn Khôn',icon:'◈',desc:'+20 linh thạch khi tạo nhân vật trong kiếp này.',cost:[1,2,3,4,6],max:5},
+ life:{name:'Trường Sinh',icon:'❋',desc:'+5 năm thọ nguyên trong kiếp hiện tại.',cost:[2,3,4,6,8],max:5},
+ luck:{name:'Thiên Vận',icon:'✦',desc:'+0,5% bạo kích và +0,3% xác suất đột phá trong kiếp này.',cost:[3,5,8],max:3}
 };
 const META_ACHIEVEMENTS=[
  {id:'first_break',name:'Phá vỡ tầng đầu',desc:'Đột phá thành công lần đầu.',points:1,check:s=>s.stage>1||s.realm>0},
