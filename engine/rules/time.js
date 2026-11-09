@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const domain = 'time';
-  const commands = Object.freeze([]);
+  const commands = Object.freeze(['setPreference']);
 
   function install(API) {
     const H = API, F = H.F;
@@ -10,6 +10,22 @@
     const empty = () => ({ seconds: 0, exp: 0, stone: 0, batches: 0, dungeon: null, encounters: [], sect: null, sectReady: false, died: false });
 
     Object.assign(H.Game.prototype, {
+      setPreference(payload) {
+        const { key, value } = payload;
+        const options = {
+          season: ['auto', 'spring', 'summer', 'autumn', 'winter'],
+          motionMode: ['auto', 'full', 'reduced'],
+          musicTrack: ['auto', 'hu_gioi', 'ngoc_hoa_tram', 'thien_thu']
+        };
+        const bools = ['seasonEffects', 'cultivationEffects', 'combatEffects', 'music'];
+        const valid = Object.hasOwn(options, key) ? options[key].includes(value)
+          : bools.includes(key) ? typeof value === 'boolean'
+            : key === 'musicVolume' ? Number.isInteger(value) && value >= 0 && value <= 100 : false;
+        if (!valid) throw Error('Cài đặt không hợp lệ.');
+        this.s.settings[key] = value;
+        if (key === 'motionMode') this.s.settings.reducedMotion = value === 'reduced';
+        return value;
+      },
       integrateRate(start, end, eff = 1) {
         const boundaries = uniq([start, end, ...this.s.buffs.filter(b => b.type === 'rate' && b.end > start && b.end < end).map(b => b.end)]).sort((a, b) => a - b);
         let gain = 0;
