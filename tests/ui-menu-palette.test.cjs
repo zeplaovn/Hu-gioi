@@ -15,9 +15,9 @@ test('icon chat không bị mất khi đang mở cửa sổ', () => {
   assert.match(chat,/bubble\.btn\.setAttribute\('aria-hidden', 'true'\)/);
 });
 
-test('gỡ lối vào menu Cài đặt nhưng giữ hệ thống cài đặt và lưu game', () => {
+test('Cài đặt chỉ vào qua nút ⚙ ở thanh trạng thái (không có mục menu, không phím tắt S); giữ hệ thống lưu game', () => {
   const html=read('index.html'), shell=read('client/ui/shell.js');
-  assert.doesNotMatch(html,/class="status-settings"/);
+  assert.match(html,/class="status-settings" data-window="settings"/);
   assert.doesNotMatch(shell,/const WINDOW_ORDER = \[[^\]]*'settings'/);
   assert.doesNotMatch(shell, /s: 'settings'/);
   assert.match(html,/client\/ui\/screens\/settings\.js/);

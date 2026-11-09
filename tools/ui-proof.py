@@ -138,7 +138,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
             assert page.locator('#menu [data-window="settings"]').count() == 0, "Menu Cài đặt vẫn hiện"
-            assert page.locator('.status-settings').count() == 0, "Nút Cài đặt ở thanh trạng thái vẫn hiện"
+            assert page.locator('.status-settings').count() == 1, "Nút Cài đặt ở thanh trạng thái bị mất"
         for key, section, tab in CASES:
             if section:
                 open_page(page, section)

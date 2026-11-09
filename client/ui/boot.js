@@ -65,6 +65,12 @@
     return out.length ? out.join(' · ') : 'cân bằng, không thiên lệch';
   };
 
+  /* Thọ nguyên quy ra thời gian thực (tính từ F.aging_speed qua H.lifePace), nói thẳng sự khắc nghiệt của Luyện Khí. */
+  function lifePaceText(race, age) {
+    const p = H.lifePace(race, 0, age);
+    return 'Một năm thọ nguyên ≈ ' + duration(p.secondsPerYear) + ' tu luyện liên tục; thọ nguyên Luyện Khí tính từ lúc sinh chỉ ≈ ' + duration(p.lifeSeconds) + ', nhập đạo ở tuổi ' + age + ' thì còn ≈ ' + duration(p.leftSeconds) + '. Linh căn kém mà thiếu đan dược trợ lực thì dễ tọa hóa ngay ở Luyện Khí; tộc thọ ngắn càng khó thoát.';
+  }
+
   /* Chủng tộc: danh sách đủ sáu tộc để so sánh; tộc hiện tại được nhấn mạnh. */
   function raceInfoHtml() {
     const cur = creation.race;
@@ -73,6 +79,7 @@
       '<div class="race-fx">' + esc(raceBonusText(id)) + '</div><div class="dim small">' + esc(RACE_DESC[id] || '') + '</div></div>').join('');
     return '<div class="info-title">Chủng tộc ' + esc(H.raceName(cur)) + '</div>' +
       '<div class="small">Thọ nguyên nền ~<b class="gold">' + H.raceLife(cur, 0) + '</b> năm. Thiên phú: <b>' + esc(raceBonusText(cur)) + '</b>.</div>' +
+      '<div class="small danger">' + esc(lifePaceText(cur, creation.age)) + '</div>' +
       '<div class="race-list">' + rows + '</div>' +
       '<div class="dim small">Gieo xúc xắc để đổi chủng tộc. Tỉ lệ gặp phản ánh độ hiếm của từng tộc.</div>';
   }
@@ -192,7 +199,7 @@
       b.setAttribute('aria-pressed', String(on));
     });
     $('ageValue').textContent = creation.age + ' tuổi';
-    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span><span class="field-sub">' + esc(raceBonusText(creation.race)) + ' · thọ ~' + H.raceLife(creation.race, 0) + ' năm</span>';
+    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span><span class="field-sub">' + esc(raceBonusText(creation.race)) + ' · thọ ~' + H.raceLife(creation.race, 0) + ' năm · còn ≈ ' + duration(H.lifePace(creation.race, 0, creation.age).leftSeconds) + ' tu luyện</span>';
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
     const M = root.HU_MERIDIANS, pv = meridianPreview();
     const active = ELEMENTS.map(([name], i) => ({ name, color: M ? M.HE_COLOR[name] : '#fff', value: creation.roots[i] })).filter(x => x.value >= 50);
@@ -270,7 +277,7 @@
     if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
     const life = g.lifeInfo();
-    row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm.');
+    row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm (1 năm ≈ ' + duration(1 / life.pace) + ' tu luyện liên tục).');
     if (!s.completed && (life.left <= 40 || life.seconds <= 1800)) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm (khoảng ' + duration(life.seconds) + ' tu luyện)' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' đạo thân sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới để nới thọ nguyên.');
 
     if (r.encounters?.length) {
