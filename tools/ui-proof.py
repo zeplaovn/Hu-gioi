@@ -34,6 +34,8 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             outcome["screenshots"].append(snap(page, folder, name, "auth-login"))
             page.locator('[data-auth-view="signup"]').click()
             outcome["screenshots"].append(snap(page, folder, name, "auth-signup"))
+        if page.locator("#authGuestRelease").count():
+            page.locator("#authGuestRelease").check()
         page.locator("#authGuest").click()
     page.locator("#nameInput").fill("Vân Tiêu")
     for _ in range(8):

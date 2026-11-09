@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Kiểm tra hợp đồng nguồn
         run: npm run check
       - name: Chạy toàn bộ test

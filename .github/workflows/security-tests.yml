@@ -1,0 +1,36 @@
+name: Security regression tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install supported Node LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify game source constraints
+        run: npm run check
+      - name: Run security and integration tests
+        run: npm test
+      - name: Check built static files contain legal pages but no server source
+        shell: bash
+        run: |
+          node tools/build-dist.cjs
+          test -f dist/client/legal/privacy.html
+          test -f dist/client/legal/release.html
+          test -f dist/client/auth/supabase.js
+          test -f dist/_headers
+          test ! -d dist/server
+          test ! -e dist/.hu-gioi/accounts.json

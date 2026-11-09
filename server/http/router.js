@@ -1,7 +1,6 @@
 /* Định tuyến: /api/* do dịch vụ xử lý, còn lại là file tĩnh. */
 'use strict';
 const { serveStatic } = require('./static.js');
-const { AuthService } = require('../services/auth-service.js');
 
 const json = (res, status, body) => {
   const data = JSON.stringify(body);
@@ -15,13 +14,17 @@ const json = (res, status, body) => {
   res.end(data);
 };
 
-function createRouter(routes = null, auth = new AuthService()) {
+function createRouter(routes = null, auth = null) {
+  // Tài khoản trình duyệt sử dụng Supabase. Chỉ bật legacy auth khi test
+  // hoặc chủ động truyền dịch vụ vào router; không phơi API demo trên production.
   const handlers = routes || {
-    'GET /api/health': () => ({ ok: true, service: 'hu-gioi', gameplay: false, auth: true }),
-    'GET /api/auth/session': req => ({ account: auth.session(req) }),
-    'POST /api/auth/signup': async (req, res) => ({ account: await auth.signup(req, res) }),
-    'POST /api/auth/login': async (req, res) => ({ account: await auth.login(req, res) }),
-    'POST /api/auth/logout': (req, res) => auth.logout(req, res)
+    'GET /api/health': () => ({ ok: true, service: 'hu-gioi', gameplay: false, auth: !!auth, supabaseClient: true }),
+    ...(auth ? {
+      'GET /api/auth/session': req => ({ account: auth.session(req) }),
+      'POST /api/auth/signup': async (req, res) => ({ account: await auth.signup(req, res) }),
+      'POST /api/auth/login': async (req, res) => ({ account: await auth.login(req, res) }),
+      'POST /api/auth/logout': (req, res) => auth.logout(req, res)
+    } : {})
   };
   return (req, res) => {
     const pathname = (req.url || '/').split('?')[0];

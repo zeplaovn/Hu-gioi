@@ -70,7 +70,9 @@ test('chỉ rõ trạng thái UI và quy tắc xóa mọi bản lưu khi tọa h
   assert.doesNotMatch(boot, /UI\.command\('reincarnate'\)/);
   assert.match(store, /activeBackup/);
   assert.match(store, /\.\.\.\(guest \? LEGACY : \[\]\)/);
-  assert.match(auth, /credentials: 'same-origin'/);
+  assert.match(auth, /SB\.login\(email, password\)/);
+  assert.match(auth, /authPrivacy/);
+  assert.match(auth, /authRelease/);
   assert.doesNotMatch(auth, /localStorage\.(?:setItem|getItem)/);
 });
 
