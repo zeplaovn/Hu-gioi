@@ -185,7 +185,7 @@
   });
   UI.action('dungeonRetreat', async () => {
     const run = UI.s().dungeon.run;
-    UI.modal('Rút lui khỏi bí cảnh?', '<p>Giữ phần thưởng của ' + (run?.cleared || 0) + ' tầng đã vượt; các tầng còn lại bỏ dở.</p>', () => {
+    UI.modal('Rút lui khỏi bí cảnh?', '<p>Giữ phần thưởng của ' + (run?.cleared || 0) + ' tầng đã vượt; các tầng còn lại bỏ dở.</p>', async () => {
       const r = await UI.command('dungeonAct', { action: 'retreat' });
       UI.toast(r.ended.text, { type: 'info', title: 'Rút lui' });
     }, 'Rút lui');
@@ -205,8 +205,8 @@
     UI.vfx?.ring('hero', color(i)); UI.vfx?.effect('qi');
   });
   UI.action('sectPanel', async (el, d) => { if (['missions', 'shop', 'ranks'].includes(d.panel)) UI.view.sectPanel = d.panel; });
-  UI.action('sectRepeat', async async () => { await UI.command('setSectRepeat', { enabled: !UI.s().sect.repeat }); });
+  UI.action('sectRepeat', async () => { await UI.command('setSectRepeat', { enabled: !UI.s().sect.repeat }); });
   UI.action('sectMissionAbort', async () => { UI.modal('Hủy nhiệm vụ?', '<p>Nhiệm vụ hiện tại không có phần thưởng; tự lặp sẽ tắt.</p>', async () => await UI.command('abortSectMission'), 'Hủy nhiệm vụ'); return UI.KEEP; });
-  UI.action('sectLeave', async () => { UI.modal('Rời tông môn?', '<p>Chức vị, cống hiến và chúc phúc sẽ đặt lại. Sau đó có thể chọn tông môn mới.</p>', async async () => { await UI.command('leaveSect'); UI.view.sectPanel = 'missions'; }, 'Rời tông môn'); return UI.KEEP; });
+  UI.action('sectLeave', async () => { UI.modal('Rời tông môn?', '<p>Chức vị, cống hiến và chúc phúc sẽ đặt lại. Sau đó có thể chọn tông môn mới.</p>', async () => { await UI.command('leaveSect'); UI.view.sectPanel = 'missions'; }, 'Rời tông môn'); return UI.KEEP; });
   UI.action('sectBuy', async (el, d) => { const r = await UI.command('buySect', { id: d.id, ...(d.element === undefined ? {} : { element: Number(d.element) }) }); UI.toast('Nhận ' + r.name + ' ×' + r.count + '.', { type: 'loot', title: 'Kho tông môn' }); });
 })(typeof window !== 'undefined' ? window : globalThis);
