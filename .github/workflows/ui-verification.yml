@@ -1,0 +1,55 @@
+name: UI mobile verification
+on:
+  pull_request:
+    paths:
+      - 'client/**'
+      - 'css/**'
+      - 'index.html'
+      - 'tools/ui-proof.py'
+      - '.github/workflows/ui-verification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Kiểm tra hợp đồng nguồn
+        run: npm run check
+      - name: Chạy toàn bộ test
+        run: npm test
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Chuẩn bị Playwright dành riêng cho CI
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Chụp trước/sau và kiểm tra file://
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch origin main --depth=1
+          mkdir -p /tmp/hu-gioi-base
+          git worktree add --detach /tmp/hu-gioi-base origin/main
+          python -m http.server 8000 --bind 127.0.0.1 --directory /tmp/hu-gioi-base > /tmp/hu-ui-before.log 2>&1 &
+          python -m http.server 8001 --bind 127.0.0.1 --directory "$PWD" > /tmp/hu-ui-after.log 2>&1 &
+          sleep 3
+          python tools/ui-proof.py --before http://127.0.0.1:8000 --after http://127.0.0.1:8001 --output ui-proof
+      - name: Lưu ảnh và báo cáo (kể cả khi có lỗi)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hu-gioi-ui-before-after
+          path: ui-proof/
+          retention-days: 7
