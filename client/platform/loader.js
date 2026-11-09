@@ -16,6 +16,27 @@
   let completed = 0, failures = 0, assetsReady = false, engine = 'pending', finished = false;
   const retained = [];
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  // Khôi phục các mẹo chơi nguyên bản; chỉ đồng hồ đổi mẹo, không tác động tiến độ.
+  const HINTS = [
+    'Ma thú về đêm mạnh và nguy hiểm hơn. Hãy chuẩn bị kỹ trước khi lịch luyện sau khi trời tối.',
+    'Hãy dùng đan dược để nâng cảnh giới khi tu vi tiến chậm.',
+    'Tu vi đầy ở viên mãn: bấm đột phá thủ công, cảnh giới lớn có thể gặp thiên kiếp.',
+    'Thọ nguyên cạn là hết đường tu. Đừng quên đan trường sinh và bế quan định kỳ.',
+    'Linh căn càng thuần, tốc độ tu luyện càng cao. Tạp chất tích tụ sẽ làm chậm tu vi.',
+    'Nghề phụ vẫn chạy khi bạn offline. Quay lại để nhận thành quả.',
+    'Linh khí mùa xuân dồi dào hơn; mùa đông tu luyện chậm lại.',
+    'Trang bị phẩm chất cao giúp sống sót qua các trận lịch luyện khó.'
+  ];
+  let hintIndex = Math.floor(Math.random() * HINTS.length);
+  const nextHint = () => HINTS[hintIndex++ % HINTS.length];
+  const rotateHints = element => {
+    element.textContent = nextHint();
+    const timer = setInterval(() => { element.textContent = nextHint(); }, 3200);
+    return () => clearInterval(timer);
+  };
+  const stopInitialHints = rotateHints(tip);
+  // Hàng phía trên thanh là thông tin nạp thật; dòng dưới dành riêng cho mẹo.
+  const phaseLabel = el.querySelector('.loading-row span');
 
   function draw(bar, number, meter, ratio, label) {
     const p = Math.max(0, Math.min(1, ratio)), n = Math.round(p * 100);
@@ -70,12 +91,14 @@
         : engine === 'failed' ? 'Engine không thể khởi tạo.'
           : failures ? 'Hoàn tất · ' + failures + ' ảnh lỗi, tiếp tục với hình dự phòng.' : 'Đã sẵn sàng.';
     draw(fill, pct, track, progress, label);
-    tip.textContent = label;
+    if (phaseLabel) phaseLabel.textContent = label;
   }
   function finish(failed = false) {
     if (finished) return;
     finished = true;
+    stopInitialHints();
     clearTimeout(engineDeadline);
+    if (phaseLabel) phaseLabel.textContent = failed ? 'Engine chưa sẵn sàng' : 'Hoàn tất chuẩn bị';
     if (!failed) {
       draw(fill, pct, track, 1, 'Tài nguyên và engine đã sẵn sàng');
       tip.textContent = failures ? 'Đã sẵn sàng · ' + failures + ' ảnh dùng hình dự phòng.' : 'Hoàn tất chuẩn bị.';
@@ -150,8 +173,8 @@
     meter.setAttribute('aria-label', 'Tiến độ chuẩn bị nhân vật');
     const hint = doc.createElement('p');
     hint.className = 'loading-hint';
-    hint.textContent = 'Linh căn càng thuần, tốc độ tu luyện càng cao.';
     status.after(hint);
+    const stopEntryHints = rotateHints(hint);
     draw(bar, number, meter, 0, 'Bắt đầu tải ảnh nhân vật');
     status.textContent = 'Đang tải hình nhân vật…';
     doc.body.appendChild(screen);
@@ -170,6 +193,7 @@
       draw(bar, number, meter, 1, 'Tài nguyên và engine đã sẵn sàng');
       status.textContent = result.failed ? 'Sẵn sàng · ' + result.failed + ' ảnh dùng hình dự phòng.' : 'Đã sẵn sàng.';
     } finally {
+      stopEntryHints();
       screen.setAttribute('aria-busy', 'false');
       screen.classList.add('done');
       await delay(180);
