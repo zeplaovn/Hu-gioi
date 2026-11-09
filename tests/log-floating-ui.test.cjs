@@ -26,3 +26,15 @@ test('khung nổi và icon chat không phụ thuộc atlas hoặc script ngoài'
   assert.match(svg, /viewBox="0 0 64 64"/);
   assert.equal((svg.match(/<circle /g) || []).length, 3);
 });
+
+test('icon chat và chuông thông báo nhỏ gọn vẫn có vùng nhấn đủ lớn', () => {
+  const css = read('css/tienhiep.css');
+  const bell = read('media/assets/ui/icon/notifications/bell.svg');
+  assert.match(css, /\.chat-bubble-btn\{width:44px;height:44px/);
+  assert.match(css, /\.chat-bubble-icon\{width:22px;height:22px\}/);
+  assert.match(css, /\.log-toggle::after\{[\s\S]*?bell\.svg/);
+  assert.match(css, /logPanel\.log-floating\.collapsed\{\s*width:44px;height:44px/);
+  assert.match(bell, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
+  assert.match(bell, /viewBox="0 0 24 24"/);
+  assert.match(bell, /<path/);
+});

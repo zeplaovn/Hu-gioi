@@ -386,3 +386,19 @@ body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:25px;height:25px}
 @media (prefers-reduced-motion:reduce){
   #game #logPanel.log-floating,#game #logPanel.log-floating *{transition:none}
 }
+
+/* Icon nổi nhỏ gọn; vùng nhấn vẫn đạt ít nhất 40-44px để dùng cảm ứng. */
+.chat-bubble-btn{width:44px;height:44px;min-width:44px;min-height:44px;padding:5px;border-radius:13px}
+.chat-bubble-icon{width:22px;height:22px}
+body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:20px;height:20px}
+#game #logPanel.log-floating.collapsed{
+  width:44px;height:44px;min-width:44px;min-height:44px;border-radius:12px;
+}
+#game #logPanel.log-floating.collapsed .log-head{height:44px;min-height:44px}
+#game #logPanel.log-floating.collapsed .log-toggle{
+  width:42px;height:42px;min-width:42px;min-height:42px;flex:0 0 42px;border-radius:11px;
+}
+#game #logPanel.log-floating.collapsed .log-toggle::after{
+  content:"";display:block;width:20px;height:20px;
+  background:url("../media/assets/ui/icon/notifications/bell.svg") center/contain no-repeat;
+}
