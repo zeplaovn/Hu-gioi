@@ -2,7 +2,7 @@
 
 Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-> **Hiện trạng (nhánh `rebuild/backend-skeleton`): engine đã sẵn sàng, game chơi được offline.** Giao diện, tài nguyên, dữ liệu thiết kế và công thức cân bằng được giữ lại; `engine/` đã cài đặt đủ 9 miền luật, 51 lệnh và schema V8 nên `HU_GAME.READY === true`. `server/` vẫn là khung cho chế độ online. Mở `index.html` để tạo đạo thân và chơi; bản lưu nằm trong trình duyệt. Hợp đồng engine: [docs/engine-contract.md](docs/engine-contract.md). Bản chơi được cuối cùng trước đợt dọn backend nằm ở commit `5f6b9bc` (nhánh `main`).
+> **Hiện trạng:** engine game chạy offline. Có màn **Tiên Tịch** để đăng nhập, đăng ký và chọn chơi không tài khoản. API tài khoản chỉ dùng được khi chạy máy chủ Node; gameplay và bản lưu vẫn nằm trên trình duyệt, chưa có đồng bộ tiến trình lên máy chủ. `PlayerService` online và cơ sở dữ liệu bền vững vẫn nằm trong kế hoạch [backend](docs/backend-plan.md).
 
 Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 
@@ -16,7 +16,9 @@ npm run check    # cú pháp JavaScript, ranh giới engine, thứ tự script
 npm test         # test hợp đồng, hành vi 9 miền luật, LocalSession và UI entry
 ```
 
-`npm start` phục vụ game tĩnh và `GET /api/health`. Cũng có thể mở thẳng [index.html](index.html) (`file://`) hoặc chạy `python3 -m http.server 8000 --bind 127.0.0.1`; game dùng HTML, CSS và JavaScript với classic scripts, không cần build. Game chạy offline qua `LocalSession`, tự lưu bằng `localStorage` và cộng tiến trình bế quan khi mở lại. Nếu `HU_GAME.READY` là `false` (ví dụ thiếu file engine), trang mở bản xem trước và in danh sách phần còn thiếu trong console.
+`npm start` phục vụ game tĩnh, `GET /api/health` và API **`/api/auth/signup`, `/login`, `/session`, `/logout`**. Mặc định dữ liệu tài khoản thử nghiệm được ghi vào `.hu-gioi/accounts.json` (không công khai, đã gitignore); có thể đổi đường dẫn bằng `HU_AUTH_FILE`. Mật khẩu dùng scrypt và token phiên chỉ được đặt trong cookie HttpOnly. Đây là **auth MVP cho một máy chủ Node**, không phải hệ thống tài khoản production đa instance — cần thay bằng database/AuthProvider trước khi triển khai thực tế.
+
+Có thể mở [index.html](index.html) (`file://`) hoặc dùng máy chủ tĩnh để **Vân du không tài khoản**. Login/Sign up không hoạt động khi không có API Node. Gameplay chạy offline qua `LocalSession`, tự lưu `localStorage` và cộng tiến trình khi mở lại. Nếu engine chưa READY, trang mở bản xem trước giao diện.
 
 ## Tính năng thiết kế
 
@@ -31,7 +33,7 @@ Các tính năng sau thuộc bản trước và là phạm vi mà engine mới p
 | Nhân vật | Hành trang, trang bị pháp bảo, công pháp chủ động, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; Dị khắc hệ gốc. |
 | Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Hạt trong bộ dữ liệu mới có thời gian, loại đất, độ khó và sản lượng riêng; các hạt còn lại tiếp tục dùng luật cũ. Cây được chăm an toàn khi bế quan. |
 | Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ, tông môn và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. |
-| Xuyên kiếp | Thọ nguyên, tọa hóa, chuyển thế, thành tựu, nâng cấp vĩnh viễn và lịch sử kiếp trước. Trọng sinh nằm trong **Thiên mệnh → Trọng sinh**. |
+| Xuyên kiếp | Trọng sinh chủ động trong **Thiên mệnh → Trọng sinh** theo luật gốc. **Tọa hóa vì cạn thọ nguyên** xóa toàn bộ tiến trình, Thiên mệnh và bản lưu dự phòng rồi trở về màn tạo nhân vật mới; không xóa tài khoản. |
 | Giao diện idle | Thanh tài nguyên (linh thạch, tu vi/giây, Đạo vận) có số chạy, thanh tu vi + dải chấm tầng, dock nâng cấp nhanh (Tốc tu ×1/×10/Tối đa, Hấp thu, Dùng đan) ngay trên sân khấu, nút lớn Đột phá đại cảnh giới, cầu linh khí bay vào thanh tu vi, chấm thông báo trên tab, popup Bế quan trở về có số đếm lên. Mã: `css/idle.css`, `client/ui/idle-hud.js`. |
 | Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile. Mỗi menu (Nhân vật, Nghề phụ, Thế giới, Cài đặt…) mở thành một trang riêng phủ vùng màn chơi, có nút ‹ Tu luyện để quay lại; menu thu gọn/mở bằng icon ☰ (nhớ lựa chọn). Lịch luyện vẫn hiện bảng dưới sân khấu để xem trận đánh. |
 
@@ -43,9 +45,9 @@ Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<gi
 
 - Game tự lưu bằng `localStorage`; vào **Cài đặt → Bản lưu** để **Lưu ngay**, **Xuất JSON** hoặc **Nhập JSON**.
 - Tệp xuất có tên `hu-gioi-save.json`. Nhập bản lưu hỗ trợ V4, V5, V6, V7 và V8, chuyển về schema **V8**.
-- Khóa chính: `huGioiWorkspaceV1`; khóa dự phòng: `huGioiWorkspaceV1Backup`. Bản hiện tại được giữ thêm trước khi nhập JSON.
+- Khách dùng `huGioiWorkspaceV1` và `huGioiWorkspaceV1Backup`. Với tài khoản đã đăng nhập, key được gắn hậu tố `:<accountId>` để người khác đăng nhập trên cùng trình duyệt không nạp nhầm bản lưu. Bản lưu vẫn chỉ tồn tại trong trình duyệt này.
 - Dữ liệu gắn với trình duyệt và địa chỉ chạy game. Dùng xuất/nhập JSON khi đổi thiết bị, trình duyệt hoặc chuyển giữa `file://` và HTTP.
-- Thiên mệnh được giữ qua trọng sinh; **Xóa tiến trình** trong Cài đặt xóa cả bản lưu và tiến trình xuyên kiếp trên thiết bị.
+- Thiên mệnh được giữ qua **trọng sinh chủ động**, nhưng **khi tọa hóa**, bấm Trở về Khởi Nguyên sẽ xóa tất cả dữ liệu game của người chơi hiện tại (cả chính/dự phòng) và mở lại tạo nhân vật. Tài khoản đăng nhập và tiến trình của các tài khoản khác không bị xóa.
 
 ## Cấu trúc mã nguồn
 
@@ -66,7 +68,7 @@ client/
   ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                    Khởi động
 server/                    Máy chủ HTTP
-  main.js http/              File tĩnh + /api/health
+  main.js http/              File tĩnh + /api/health + /api/auth/*
   services/ repositories/ chat/   Khung PlayerService, kho lưu trữ, chat
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
 tools/                     Kiểm tra, preload, import dữ liệu; pending-engine/ chờ engine mới
@@ -86,7 +88,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 
 ## Backend
 
-`server/` hiện có file tĩnh và `GET /api/health`. `PlayerService` (create/sync/command, `expectedRevision`, `requestId` idempotent), `PlayerRepository` (`transact/get/create`) và chat là khung giao diện. Kế hoạch online (stack, schema, API, xác thực, triển khai, lộ trình nhiều người chơi) ở [docs/backend-plan.md](docs/backend-plan.md). Gameplay hiện chạy offline qua `LocalSession`; chat client (`client/session/chat-session.js`) chờ máy chủ chat.
+`server/` hiện phục vụ file tĩnh, health và **API tài khoản Node cho máy chủ thử nghiệm**. `PlayerService` (create/sync/command, `expectedRevision`, `requestId` idempotent), `PlayerRepository` (`transact/get/create`) và chat vẫn là khung chưa hiện thực. Kế hoạch online (stack, schema, API, xác thực production, triển khai) ở [docs/backend-plan.md](docs/backend-plan.md). Gameplay hiện chạy offline qua `LocalSession`; đăng nhập không tự động đồng bộ bản lưu hay bảo vệ trạng thái game trên máy chủ.
 
 ## Tài liệu
 
