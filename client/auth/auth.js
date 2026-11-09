@@ -1,21 +1,28 @@
-/* Cổng vào Hư Giới: tài khoản HTTP same-origin hoặc tiếp tục chơi offline.
-   Không lưu mật khẩu/token trong localStorage. Bản lưu gameplay hiện vẫn ở thiết bị. */
+/* Hư Giới: Supabase Auth, xác nhận email và chấp thuận chính sách có kiểm chứng.
+   Chơi offline vẫn hoạt động khi Supabase không khả dụng. Không lưu mật khẩu. */
 (function (root) {
   'use strict';
   const $ = id => document.getElementById(id);
-  let account = null, enterGame = () => {}, exitGame = () => {}, bound = false, busy = false, mode = 'login';
+  const SB = root.HU_SUPABASE;
+  let account = null, pending = null, enterGame = () => {}, exitGame = () => {};
+  let bound = false, busy = false, mode = 'login';
 
-  function notice(text) {
+  function notice(text, good = false) {
     const el = $('authMessage');
     el.textContent = text || '';
     el.hidden = !text;
+    el.dataset.kind = good ? 'success' : 'error';
   }
   function selectMode(next) {
     mode = next === 'signup' ? 'signup' : 'login';
     $('authConfirmWrap').hidden = mode !== 'signup';
+    $('authLegalWrap').hidden = mode !== 'signup';
+    $('authConfirm').required = mode === 'signup';
+    $('authPrivacy').required = mode === 'signup';
+    $('authRelease').required = mode === 'signup';
     $('authSubmit').textContent = mode === 'signup' ? 'Lập tài khoản' : 'Bước vào Hư Giới';
     $('authTitle').textContent = mode === 'signup' ? 'Lập danh sách tiên tịch' : 'Trở lại tiên lộ';
-    $('authSubtitle').textContent = mode === 'signup' ? 'Ghi danh một đạo hữu giữa vạn giới.' : 'Đăng nhập để tiếp tục hành trình.';
+    $('authSubtitle').textContent = mode === 'signup' ? 'Đọc chính sách và xác nhận trước khi ghi danh.' : 'Đăng nhập để tiếp tục hành trình.';
     document.querySelectorAll('[data-auth-view]').forEach(b => {
       const chosen = b.dataset.authView === mode;
       b.classList.toggle('active', chosen);
@@ -24,14 +31,25 @@
     $('authPassword').setAttribute('autocomplete', mode === 'signup' ? 'new-password' : 'current-password');
     notice('');
   }
+  function showForm() {
+    pending = null;
+    $('authForm').hidden = false;
+    $('authConsentGate').hidden = true;
+    $('authTabs').hidden = false;
+    $('authGuest').hidden = false;
+    selectMode('login');
+  }
   function present() {
+    account = null;
     $('authGate').hidden = false;
     $('welcome').hidden = true;
     $('game').hidden = true;
     document.body.classList.remove('in-game');
-    selectMode('login');
+    $('authForm').reset();
+    showForm();
   }
   function enter(next) {
+    pending = null;
     account = next;
     $('authGate').hidden = true;
     $('authForm').reset();
@@ -39,48 +57,81 @@
     enterGame(account);
     $('nameInput')?.focus({ preventScroll: true });
   }
-  async function request(route, body) {
-    const response = await root.fetch('/api/auth/' + route, {
-      method: body === undefined ? 'GET' : 'POST', credentials: 'same-origin',
-      headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
-      body: body === undefined ? undefined : JSON.stringify(body),
-      cache: 'no-store'
-    });
-    let result;
-    try { result = await response.json(); } catch { throw Error('Không kết nối được dịch vụ tài khoản. Có thể chơi không tài khoản.'); }
-    if (!response.ok) throw Error(result.error || 'Không thể xác thực tài khoản.');
-    return result;
+  function requireConsent(next) {
+    pending = next;
+    $('authForm').hidden = true;
+    $('authTabs').hidden = true;
+    $('authGuest').hidden = true;
+    $('authConsentGate').hidden = false;
+    $('authConsentPrivacy').checked = false;
+    $('authConsentRelease').checked = false;
+    $('authTitle').textContent = 'Xác nhận chính sách';
+    $('authSubtitle').textContent = 'Tài khoản cần chấp thuận chính sách trước khi tiếp tục.';
+    notice('');
+    $('authConsentPrivacy').focus();
+  }
+  async function finish(next) {
+    if (!next?.id) throw Error('Supabase chưa xác minh tài khoản.');
+    const consent = await SB.accepted();
+    if (consent.has('privacy') && consent.has('release_terms')) enter(next);
+    else requireConsent(next);
   }
   async function submit(event) {
     event.preventDefault();
     if (busy) return;
     const email = $('authEmail').value.trim();
     const password = $('authPassword').value;
-    if (mode === 'signup' && password !== $('authConfirm').value) {
-      notice('Mật khẩu nhập lại chưa trùng khớp.'); return;
+    if (mode === 'signup') {
+      if (password !== $('authConfirm').value) { notice('Mật khẩu nhập lại chưa trùng khớp.'); return; }
+      if (!$('authPrivacy').checked || !$('authRelease').checked) {
+        notice('Cần tích chọn riêng cả hai chính sách trước khi tạo tài khoản.'); return;
+      }
     }
     busy = true;
     $('authSubmit').disabled = true;
     $('authForm').setAttribute('aria-busy', 'true');
     notice('');
     try {
-      const result = await request(mode, { email, password });
-      if (!result.account?.id) throw Error('Máy chủ chưa xác nhận tài khoản.');
-      enter(result.account);
+      if (mode === 'signup') {
+        const data = await SB.signup(email, password);
+        if (data?.access_token) {
+          await SB.accept({ id: data.user.id });
+          await finish({ id: data.user.id, email: data.user.email });
+        } else {
+          notice('Vui lòng kiểm tra email và xác nhận địa chỉ trước khi đăng nhập.', true);
+        }
+      } else {
+        await finish(await SB.login(email, password));
+      }
     } catch (error) {
-      notice(error instanceof TypeError ? 'Máy chủ tài khoản chưa hoạt động. Hãy dùng npm start hoặc chọn chơi không tài khoản.' : error.message);
+      notice(error instanceof TypeError ? 'Không kết nối được Supabase. Có thể chơi không tài khoản.' : error.message);
     } finally {
       busy = false;
       $('authSubmit').disabled = false;
       $('authForm').removeAttribute('aria-busy');
     }
   }
+  async function acceptPending() {
+    if (busy || !pending) return;
+    if (!$('authConsentPrivacy').checked || !$('authConsentRelease').checked) {
+      notice('Cần xác nhận từng chính sách để sử dụng tài khoản.'); return;
+    }
+    busy = true;
+    $('authConsentContinue').disabled = true;
+    try {
+      await SB.accept(pending);
+      enter(pending);
+    } catch (error) { notice(error.message); }
+    finally { busy = false; $('authConsentContinue').disabled = false; }
+  }
   async function logout() {
     if (busy) return;
-    if (account) {
-      try { await request('logout', {}); }
-      catch (error) { notice('Chưa thể đăng xuất: ' + error.message); return; }
-    }
+    busy = true;
+    try {
+      if (account || pending) await SB.logout();
+    } catch { /* local session is cleared by adapter even when offline */ }
+    finally { busy = false; }
+    pending = null;
     account = null;
     exitGame();
     present();
@@ -96,11 +147,13 @@
     $('authGuest').addEventListener('click', () => enter(null));
     $('switchAccount').addEventListener('click', logout);
     $('accountExit').addEventListener('click', logout);
+    $('authConsentContinue').addEventListener('click', acceptPending);
+    $('authConsentLogout').addEventListener('click', logout);
     present();
-    if (root.location.protocol === 'file:' || typeof root.fetch !== 'function') return;
-    request('session').then(result => {
-      if (!account && !$('authGate').hidden && result.account) enter(result.account);
-    }).catch(() => { /* Trang tĩnh vẫn chơi được bằng Chơi không tài khoản. */ });
+    if (root.location.protocol === 'file:' || typeof root.fetch !== 'function' || !SB) return;
+    SB.user().then(next => {
+      if (!account && !pending && !$('authGate').hidden && next) return finish(next);
+    }).catch(() => { /* Trang tĩnh vẫn hỗ trợ chơi không tài khoản */ });
   }
   root.HU_AUTH = { boot, logout, get account() { return account; } };
 })(typeof window !== 'undefined' ? window : globalThis);
