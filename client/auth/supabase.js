@@ -4,7 +4,7 @@
   'use strict';
   const URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
-  const VERSION = '2026-11-09-v4';
+  const VERSION = '2026-11-10-v5';
   const STORAGE = 'huGioiSupabaseSessionV1';
   function validEmail(raw) {
     if (typeof raw !== 'string' || raw.length < 6 || raw.length > 254 || /\s/.test(raw)) return false;

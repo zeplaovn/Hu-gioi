@@ -17,6 +17,8 @@ const DEFAULTS = Object.freeze({
   nextSyncInMs: 5000,
   maxStateBytes: 65536
 });
+const ERASE_CONFIRMATION = 'delete-my-game-data';
+const DELETE_ACCOUNT_CONFIRMATION = 'delete-my-account';
 const REQUEST_ID = /^[A-Za-z0-9_-]{1,128}$/;
 const isPlain = v => !!v && typeof v === 'object' && !Array.isArray(v) && [Object.prototype, null].includes(Object.getPrototypeOf(v));
 const invalid = (code, message) => new GameError(code, message);
@@ -92,6 +94,34 @@ class PlayerService {
     if (!new H.Game(this.#state(rec, this.clock())).isDead())
       throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
     return this.repo.deletePlayer(ownerId, playerId);
+  }
+
+  /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
+  exportData(ownerId) {
+    const data = this.repo.exportOwnerData(ownerId);
+    return {
+      format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
+      player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
+      pendingCreationTickets: data?.tickets || 0
+    };
+  }
+
+  /* Quyền xóa dữ liệu: khác resetAfterDeath, không yêu cầu nhân vật đã tọa hóa. Cần xác nhận rõ ràng. */
+  eraseData(ownerId, body) {
+    onlyKeys(body, ['confirm']);
+    if (body.confirm !== ERASE_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa dữ liệu.');
+    return { erased: true, ...this.repo.deleteOwnerData(ownerId) };
+  }
+
+  /* Xóa tài khoản: xóa dữ liệu gameplay trước (cục bộ, đáng tin), rồi xóa người dùng Supabase (kéo theo bản ghi chấp thuận).
+     Nếu bước Supabase lỗi, dữ liệu gameplay đã xóa và người dùng có thể gọi lại; thao tác idempotent. */
+  async deleteAccount(ownerId, body, accountAdmin) {
+    onlyKeys(body, ['confirm']);
+    if (body.confirm !== DELETE_ACCOUNT_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa tài khoản.');
+    if (!accountAdmin) throw new GameError('NOT_IMPLEMENTED', 'Máy chủ chưa bật xóa tài khoản tự động. Hãy gửi email yêu cầu.');
+    const erased = this.repo.deleteOwnerData(ownerId);
+    await accountAdmin.deleteUser(ownerId);
+    return { accountDeleted: true, ...erased };
   }
 
   /* ---------- Truy vấn ---------- */
@@ -293,4 +323,4 @@ class PlayerService {
     };
   }
 }
-module.exports = { PlayerService, snapshot, seededRng, canonical, assertStateSafe };
+module.exports = { PlayerService, ERASE_CONFIRMATION, DELETE_ACCOUNT_CONFIRMATION, snapshot, seededRng, canonical, assertStateSafe };

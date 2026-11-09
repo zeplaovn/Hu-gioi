@@ -88,8 +88,8 @@
 
   function legal() {
     return '<div class="screen-grid">' +
-      card('Dữ liệu cá nhân', '<p>Dữ liệu tài khoản được xác thực qua Supabase, còn dữ liệu nhân vật vẫn lưu trên thiết bị. Xem nội dung xử lý, quyền yêu cầu truy cập, chỉnh sửa, rút lại đồng ý và xóa dữ liệu.</p><p><a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Đọc Chính sách bảo vệ dữ liệu cá nhân (09/11/2026)</a></p>', { eyebrow: 'QUYỀN RIÊNG TƯ' }) +
-      card('Điều khoản phát hành', '<p>Thông tin bản thử nghiệm, vật phẩm ảo, phân loại độ tuổi và điều kiện phải hoàn thiện trước phát hành chính thức tại Việt Nam.</p><p><a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Đọc Điều khoản và chính sách phát hành (09/11/2026)</a></p>', { eyebrow: 'PHÁP LÝ' }) +
+      card('Dữ liệu cá nhân', '<p>Tài khoản được xác thực qua Supabase; nhân vật được lưu trên máy chủ game, không lưu trên thiết bị. Xem dữ liệu được xử lý ra sao và cách tải về hoặc xóa dữ liệu của bạn.</p><p><a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Đọc Chính sách quyền riêng tư (10/11/2026)</a></p>', { eyebrow: 'QUYỀN RIÊNG TƯ' }) +
+      card('Điều khoản sử dụng', '<p>Hư Giới là dự án phi lợi nhuận, miễn phí, không có thanh toán trực tuyến. Vật phẩm trong game không có giá trị quy đổi ra tiền.</p><p><a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Đọc Điều khoản sử dụng (10/11/2026)</a></p>', { eyebrow: 'PHÁP LÝ' }) +
       '</div>';
   }
 

@@ -1,10 +1,16 @@
 -- Applied to Supabase project rvrwfeblishqadkpzspb as migration
 -- add_hu_gioi_policy_acceptances on 2026-11-09.
 -- Do not run again on the same project without checking existing policies.
+-- Live constraint (last verified before v5): policy_version IN ('2026-11-09','2026-11-09-v2','2026-11-09-v3','2026-11-09-v4').
+-- v5 ('2026-11-10-v5') is NOT yet allowed live: run the ALTER below on the project BEFORE deploying code that uses it:
+--   alter table public.policy_acceptances drop constraint policy_acceptances_policy_version_check;
+--   alter table public.policy_acceptances add constraint policy_acceptances_policy_version_check
+--     check (policy_version in ('2026-11-09','2026-11-09-v2','2026-11-09-v3','2026-11-09-v4','2026-11-10-v5'));
+-- and only then change VERSION in server/auth/consent.js and client/auth/supabase.js together.
 create table if not exists public.policy_acceptances (
   user_id uuid not null references auth.users(id) on delete cascade,
   policy_kind text not null check (policy_kind in ('privacy', 'release_terms')),
-  policy_version text not null check (policy_version = '2026-11-09'),
+  policy_version text not null check (policy_version in ('2026-11-09', '2026-11-09-v2', '2026-11-09-v3', '2026-11-09-v4', '2026-11-10-v5')),
   accepted_at timestamptz not null default now(),
   primary key (user_id, policy_kind, policy_version)
 );

@@ -6,7 +6,7 @@
 
 - **Trình duyệt:** giao diện classic-script, `RemoteSession`; mọi tác vụ gameplay POST lên `/api/v1`, không có guest offline, không lưu snapshot nhân vật vào localStorage. Chỉ giữ Supabase access/refresh token trong sessionStorage.
 - **Node.js 24:** `server/main.js` chạy `PlayerService`, đồng hồ và RNG chỉ ở máy chủ; `node:sqlite` với WAL và file 0600 trong thư mục 0700; **chỉ một tiến trình ghi SQLite**.
-- **Supabase:** email/password Auth và PostgreSQL `policy_acceptances` RLS. Server xác minh JWT và hai bản chấp thuận `2026-11-09-v3` trước mỗi request online (positive cache 30 giây); v1/v2 vẫn lưu làm lịch sử.
+- **Supabase:** email/password Auth và PostgreSQL `policy_acceptances` RLS. Server xác minh JWT và hai bản chấp thuận `2026-11-10-v5` trước mỗi request online (positive cache 30 giây); v1/v2 vẫn lưu làm lịch sử.
 - **HTTPS:** cùng domain với frontend được khuyến nghị; nếu tách origin, cấu hình CORS `HU_ALLOWED_ORIGINS`, CSP `connect-src` và `window.HU_API_ORIGIN` từ nguồn cấu hình đáng tin cậy trước khi tải script. Không bao giờ đưa service-role/secret JWT vào JavaScript.
 
 ## Thiết lập bằng Docker Compose
@@ -19,7 +19,8 @@
 4. Chạy `docker compose up -d --build`. Phải kiểm tra volume `hugioi_player_data` có quyền thư mục `0700` và DB `0600`; nếu cấu hình volume sai, ứng dụng **chủ động từ chối mở DB**. Tại Linux host, sửa quyền thư mục/owner phù hợp user Node trong container (không đặt chmod 777).
 5. Dùng reverse proxy để chuyển toàn bộ `/api/v1/*` và file web trên cùng HTTPS domain đến Node 8000. Không mở port 8000 trực tiếp ra internet.
 6. Kiểm tra `GET https://<your-domain>/api/health` trả `gameplay: true`. Thử đăng ký và xác minh email, đăng nhập, chấp thuận 2 chính sách, tải `/api/v1/bootstrap`, gieo ticket, tạo nhân vật, gửi lệnh, tải lại và xác minh revision/tài nguyên từ server.
-7. Bật giám sát lỗi/độ trễ, backup nhất quán SQLite (dùng backup API, không copy file .sqlite thô khi WAL còn giao dịch), thử khôi phục trước khi cho người dùng thực.
+7. Bật giám sát lỗi/độ trễ. Sao lưu nhất quán bằng `node tools/backup-db.cjs --keep 7` (VACUUM INTO, kiểm tra toàn vẹn, quyền 0600, luân phiên giữ 7 bản; chạy bằng cron/systemd timer, ví dụ mỗi 6 giờ). Không copy file .sqlite thô khi WAL còn giao dịch. Thử khôi phục trước khi cho người dùng thực.
+8. **Trước khi triển khai phiên bản chính sách v5:** chạy lệnh ALTER trong `supabase/sql/policy_acceptances.sql` trên project Supabase để cho phép `2026-11-10-v5`; nếu chưa, người dùng sẽ không ghi được đồng ý và bị chặn ở màn đăng nhập.
 
 ## Cấu hình môi trường
 
@@ -30,6 +31,8 @@ PORT=8000
 SUPABASE_URL=https://rvrwfeblishqadkpzspb.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_<active-public-key>
 HU_DB_FILE=/data/game.sqlite
+# Tùy chọn, CHỈ ở máy chủ: bật POST /api/v1/me/delete-account (xóa cả tài khoản Supabase). Không commit, không đưa lên frontend.
+# SUPABASE_SERVICE_ROLE_KEY=<sb_secret_... hoặc service_role>
 # HU_ALLOWED_ORIGINS=https://frontend.example.com (nếu tách frontend và API)
 ```
 
@@ -46,7 +49,7 @@ Không bật `HU_LEGACY_AUTH` trên production. Nếu JWT Supabase còn ký HS25
 
 - Giao diện game hiện chuyển sang online thông qua `RemoteSession`, nhưng **chat thời gian thực, PvP giữa người chơi thật, tông môn chung và bảng xếp hạng thật chưa được triển khai**. Mục Giao du/luận kiếm hiện mô phỏng NPC. Không nên quảng cáo là MMO thật.
 - **Bản lưu offline cũ không tự nhập vào tài khoản online.** Thiết kế thủ tục di trú riêng có kiểm toán để tránh nhập state giả mạo hoặc nâng tài nguyên vô hạn.
-- **Chưa có chức năng tự xóa tài khoản và dữ liệu SQLite theo yêu cầu của người dùng**, cũng chưa có cơ chế đồng bộ việc xóa tài khoản Supabase sang SQLite; điều này cần hoàn thiện trước phát hành chính thức.
+- **Quyền dữ liệu cá nhân đã có API:** `GET /api/v1/me/export`, `POST /api/v1/me/erase`, `POST /api/v1/me/delete-account` (cần `SUPABASE_SERVICE_ROLE_KEY`; xóa SQLite rồi xóa người dùng Supabase). Chưa có nút trên giao diện; trong lúc đó người dùng có thể email yêu cầu. Xóa tài khoản trực tiếp trên dashboard Supabase vẫn **không** tự xóa SQLite, hãy gọi `/me/erase` hoặc xóa thủ công.
 - Chính sách pháp lý là bản dự thảo; email tiếp nhận hỗ trợ và yêu cầu dữ liệu là `zeplaovn@proton.me`, nhưng vẫn thiếu danh tính pháp lý và địa chỉ đơn vị vận hành; cần tư vấn thủ tục phát hành game phù hợp và đánh giá dữ liệu xuyên biên giới.
 - Triển khai duy nhất một instance SQLite. Scaling đa instance cần Postgres hoặc thiết kế giao dịch phân tán; không gắn chung volume SQLite nhiều container để cùng ghi.
 

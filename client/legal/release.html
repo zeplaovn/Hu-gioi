@@ -1,28 +1,47 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="referrer" content="no-referrer"><title>Điều khoản & chính sách phát hành · Hư Giới</title><link rel="stylesheet" href="../../css/legal.css"></head>
+<meta name="referrer" content="no-referrer"><title>Điều khoản sử dụng · Hư Giới</title><link rel="stylesheet" href="../../css/legal.css"></head>
 <body><main>
-<nav><a href="../../index.html">Trở về Hư Giới</a><a href="privacy.html">Chính sách bảo vệ dữ liệu</a></nav>
-<h1>Điều khoản sử dụng và chính sách phát hành</h1>
-<p><strong>Phiên bản online: 09/11/2026-v4.</strong> Điều khoản cho bản thử nghiệm trò chơi Hư Giới có gameplay bắt buộc kết nối máy chủ. Bản này cần đồng ý lại dù người chơi đã xác nhận điều khoản phiên bản cũ.</p>
-<p class="notice"><strong>Chưa xác nhận đủ điều kiện phát hành thương mại tại Việt Nam.</strong> Tên pháp lý và địa chỉ của đơn vị phát hành RedEye Studio; giấy phép/giấy chứng nhận và quyết định/xác nhận phát hành phù hợp phân loại G1–G4; kết quả phân loại độ tuổi và cảnh báo thời lượng chơi phải được hoàn thiện trước khi cung cấp dịch vụ chính thức. Văn bản này không phải giấy phép phát hành.</p>
-<h2>1. Phạm vi dịch vụ</h2>
-<p>Phiên bản này yêu cầu tài khoản Supabase đã xác minh, hai bản chấp thuận chính sách và kết nối API gameplay Node. Đồng hồ, kết quả ngẫu nhiên, tài nguyên và bản lưu nhân vật do máy chủ quyết định và được lưu vào SQLite riêng của dịch vụ; không phải bảng Supabase cloud save. Không cung cấp chế độ chơi khách offline hoặc khả năng dùng JSON bản lưu cũ để nhập trạng thái online. Khi máy chủ không khả dụng, game không phát sinh tiến trình đáng tin cậy trong trình duyệt.</p>
-<p><strong>Luật sinh tử một mạng:</strong> mỗi nhân vật chọn đúng một Thiên mệnh miễn phí tại Khởi Nguyên. Độ kiếp thất bại, thua trận luận kiếm (kể cả đối thủ NPC mô phỏng), HP về 0 trong chiến đấu/bí cảnh hoặc thọ nguyên cạn đều khiến nhân vật tọa hóa. Không có cơ chế hồi sinh, trọng sinh chủ động hoặc giữ vật phẩm/thành tựu qua cái chết. Người chơi chỉ có thể tạo nhân vật mới sau khi xóa nhân vật chết qua máy chủ; tài khoản Supabase vẫn tồn tại.</p>
-<p><strong>Offline không nhận tiến trình:</strong> khi tab ẩn, đóng hoặc vắng heartbeat máy chủ quá ngưỡng, tu luyện, tuổi, cooldown, thời gian sản xuất, lịch luyện và bí cảnh tạm dừng. Không có thưởng bế quan. Luận kiếm NPC là một lệnh nguyên tử, không thể hủy sau khi trả kết quả. Các thay đổi quan trọng này cần được chấp thuận riêng trong phiên bản mới.</p>
-<h2>2. Tài khoản và nghĩa vụ người chơi</h2>
-<p>Người dùng phải cung cấp thông tin tài khoản thuộc quyền sử dụng hợp pháp của mình, giữ bí mật mật khẩu, không truy cập trái phép tài khoản hoặc hạ tầng của người khác, không đăng tải nội dung vi phạm pháp luật Việt Nam. Người chơi muốn sử dụng game online phải có tài khoản đã xác minh và đồng ý các điều khoản phiên bản hiện hành. Hệ thống có thể tạm ngừng truy cập để khắc phục lỗi, ngăn lạm dụng hoặc tuân thủ yêu cầu pháp luật.</p>
-<p><strong>Điều kiện email đăng ký:</strong> phải nhập địa chỉ email hợp lệ về cấu trúc, thuộc quyền sử dụng của mình và hoàn tất xác minh email qua Supabase. Địa chỉ giả, sai định dạng hoặc không thể xác minh có thể bị từ chối cấp quyền sử dụng. Không được sử dụng địa chỉ email của người khác khi chưa được cho phép.</p>
-<p><strong>Giới hạn đăng nhập theo IP:</strong> gateway Node hiện cho phép tối đa <strong>10 lượt thử đăng nhập trong 15 phút trên cùng một IP</strong>, tính cả lượt thành công và thất bại. Khi vượt mức, hệ thống trả HTTP 429 và yêu cầu chờ đến khi hết cửa sổ giới hạn. Nhiều người dùng cùng mạng có thể chịu chung giới hạn, và quy tắc có thể được điều chỉnh để phòng chống lạm dụng. Biện pháp này bổ sung cho bảo vệ tích hợp của Supabase; để bảo đảm hạn mức trên mọi điểm truy cập, cần kích hoạt bảo vệ ở hạ tầng/người cung cấp danh tính.</p>
-<h2>3. Tuổi và thời lượng chơi</h2>
-<p>Việc phân loại độ tuổi, xác minh thông tin người chơi, bảo vệ trẻ em và giới hạn thời gian chơi (nếu áp dụng theo nhóm trò chơi và độ tuổi) phải được người vận hành thực hiện trước phát hành chính thức theo Nghị định 147/2024/NĐ-CP và các quy định sửa đổi hiện hành. Bản thử nghiệm chưa có cơ chế xác minh độ tuổi, do đó không được coi là đã đáp ứng yêu cầu phát hành game online tại Việt Nam.</p>
-<h2>4. Đơn vị ảo, giao dịch và nội dung</h2>
-<p>Linh thạch, vật phẩm và điểm thưởng trong bản hiện tại là dữ liệu mô phỏng gameplay, không phải tiền thật, tài sản số có thể rút hoặc phương tiện thanh toán. Không có chức năng nạp tiền hay chuyển nhượng vật phẩm giữa người chơi. Không tự ý mua, bán, quy đổi hoặc quảng cáo giao dịch vật phẩm/đơn vị ảo ngoài quy định pháp luật. Nhà phát hành phải có quyền sử dụng hợp pháp đối với mã nguồn, hình ảnh, âm thanh và nội dung game.</p>
-<h2>5. An toàn, bảo vệ dữ liệu và xử lý sự cố</h2>
-<p>Quyền xử lý dữ liệu cá nhân được mô tả riêng trong <a href="privacy.html">Chính sách bảo vệ dữ liệu</a>. Chúng tôi có thể ngưng các chức năng mạng khi phát hiện sự cố bảo mật; máy chủ có thể gián đoạn và bản lưu SQLite cần được sao lưu, khôi phục theo quy trình quản trị; chưa có cam kết đảm bảo dịch vụ liên tục.</p>
-<h2>6. Cập nhật, khiếu nại và chấm dứt</h2>
-<p>Thông tin về thay đổi điều khoản quan trọng sẽ được công bố và yêu cầu người dùng chấp thuận lại nếu cần. Email liên hệ về hỗ trợ, điều khoản và yêu cầu dữ liệu cá nhân: <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a>. Danh tính pháp lý, địa chỉ, quy trình và thời hạn giải quyết cần được hoàn thiện trước khi phát hành chính thức. Người dùng có thể ngừng chơi và đăng xuất. Cơ chế tự phục vụ xóa dữ liệu nhân vật SQLite và xóa tài khoản chưa hoàn thiện; cần công bố đầu mối tiếp nhận và quy trình xử lý yêu cầu trước khi cung cấp dịch vụ chính thức.</p>
-<h2>7. Căn cứ pháp luật và phát hành tại Việt Nam</h2>
-<p>Tham chiếu Nghị định 147/2024/NĐ-CP về quản lý, cung cấp, sử dụng dịch vụ Internet và thông tin trên mạng; các văn bản sửa đổi liên quan; Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15; Nghị định 356/2025/NĐ-CP; và quy định về sở hữu trí tuệ. <a href="https://game.gov.vn/tin-tuc/current-regulations-on-online-video-games-government-decree-1472024nd-cp-on-the-management-provision-and-use-of-internet-services-and-cyber-information-decree-147-38n3" target="_blank" rel="noopener noreferrer">Cổng thông tin chính thức về game online</a>.</p>
-<footer>Bản dự thảo thử nghiệm — chưa thay thế ý kiến tư vấn pháp lý hoặc giấy phép/xác nhận phát hành theo quy định.</footer>
+<nav><a href="../../index.html">Trở về Hư Giới</a><a href="privacy.html">Chính sách quyền riêng tư</a></nav>
+<h1>Điều khoản sử dụng</h1>
+<p><strong>Phiên bản 10/11/2026-v5.</strong> Có hiệu lực từ khi bạn đồng ý khi đăng ký hoặc đăng nhập. Bằng việc tạo tài khoản và chơi Hư Giới, bạn đồng ý với điều khoản này và <a href="privacy.html">Chính sách quyền riêng tư</a>.</p>
+<h2>1. Về Hư Giới</h2>
+<p>Hư Giới · Tiên Lộ Vô Tận là trò chơi idle tu tiên chơi trên trình duyệt, do <strong>RedEye Studio</strong> (“chúng tôi”) phát triển và vận hành như một <strong>dự án phi lợi nhuận</strong>. Trò chơi <strong>miễn phí hoàn toàn</strong>: không bán vật phẩm, không thu phí, không có thanh toán trực tuyến, không quảng cáo. Liên hệ: <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a>.</p>
+<h2>2. Tài khoản</h2>
+<ul>
+<li>Bạn cần đăng ký bằng một địa chỉ email thuộc quyền sử dụng của mình và xác nhận email để chơi. Mỗi tài khoản có một nhân vật.</li>
+<li>Bạn tự bảo mật mật khẩu và chịu trách nhiệm cho hoạt động dưới tài khoản của mình. Hãy đăng xuất khi dùng thiết bị chung.</li>
+<li>Người dưới 16 tuổi chỉ nên chơi khi có sự đồng ý và giám sát của cha mẹ hoặc người giám hộ.</li>
+<li>Bạn có thể xóa tài khoản bất cứ lúc nào theo hướng dẫn trong <a href="privacy.html">Chính sách quyền riêng tư</a>; việc xóa là vĩnh viễn và không thể khôi phục.</li>
+</ul>
+<h2>3. Cách trò chơi vận hành</h2>
+<ul>
+<li><strong>Máy chủ quyết định.</strong> Thời gian, kết quả ngẫu nhiên, tài nguyên và tiến trình nhân vật do máy chủ tính và lưu. Trình duyệt chỉ gửi thao tác và hiển thị kết quả.</li>
+<li><strong>Chỉ tiến triển khi online.</strong> Khi bạn đóng hoặc ẩn tab, hoặc mất kết nối với máy chủ, tu luyện, tuổi tác, chế tạo và mọi hoạt động có hẹn giờ đều tạm dừng. Không có thưởng khi vắng mặt.</li>
+<li><strong>Một mạng.</strong> Mỗi nhân vật chọn một Thiên mệnh khi tạo. Độ kiếp thất bại, thua luận kiếm, sinh lực về 0 hoặc hết thọ nguyên khiến nhân vật tọa hóa vĩnh viễn; không có hồi sinh hay trọng sinh. Sau khi tọa hóa, bạn có thể xóa nhân vật đó và tạo nhân vật mới; tài khoản vẫn giữ nguyên.</li>
+<li>Người chơi khác, PvP, chat và bảng xếp hạng hiện có thể là NPC hoặc mô phỏng; chúng tôi không cam kết đó là người thật.</li>
+</ul>
+<h2>4. Vật phẩm và đơn vị ảo</h2>
+<p>Linh thạch, vật phẩm, công pháp, thành tựu… chỉ là dữ liệu trong trò chơi. Chúng <strong>không có giá trị quy đổi ra tiền</strong>, không phải tài sản có thể mua bán, chuyển nhượng hay rút ra. Bạn không được mua, bán, trao đổi hoặc kinh doanh tài khoản, vật phẩm hay đơn vị ảo bằng tiền thật hoặc giá trị khác ngoài trò chơi.</p>
+<h2>5. Hành vi không được phép</h2>
+<ul>
+<li>Gian lận: dùng phần mềm, mã tự động (bot), chỉnh sửa dữ liệu hoặc lạm dụng lỗi để có lợi thế; giả mạo yêu cầu gửi lên máy chủ.</li>
+<li>Tấn công, dò quét, làm quá tải hoặc truy cập trái phép vào dịch vụ, tài khoản hoặc dữ liệu của người khác.</li>
+<li>Chiếm dụng email hoặc danh tính của người khác; đặt đạo hiệu hay đăng nội dung vi phạm pháp luật Việt Nam, xúc phạm, kích động hoặc xâm phạm quyền của người khác.</li>
+<li>Sao chép, phân phối lại mã nguồn, hình ảnh, âm thanh, nội dung của trò chơi ngoài phạm vi pháp luật cho phép.</li>
+</ul>
+<p>Để bảo vệ dịch vụ, chúng tôi áp dụng giới hạn tốc độ (ví dụ giới hạn số lần đăng nhập theo địa chỉ IP) và có thể cảnh báo, tạm khóa hoặc xóa tài khoản vi phạm. Nếu cho rằng quyết định chưa đúng, bạn có thể khiếu nại qua email.</p>
+<h2>6. Sở hữu trí tuệ</h2>
+<p>Trò chơi, nội dung, hình ảnh, âm thanh và mã nguồn thuộc quyền của RedEye Studio hoặc bên cấp phép. Bạn được quyền chơi cá nhân, phi thương mại. Tên nhân vật bạn đặt vẫn là của bạn, nhưng bạn cho phép chúng tôi hiển thị trong trò chơi.</p>
+<h2>7. Dữ liệu cá nhân</h2>
+<p>Việc thu thập và xử lý dữ liệu được mô tả trong <a href="privacy.html">Chính sách quyền riêng tư</a>, bao gồm quyền xem, tải về, xóa dữ liệu và xóa tài khoản của bạn. Chúng tôi xử lý dữ liệu theo Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định 356/2025/NĐ-CP.</p>
+<h2>8. Tính sẵn sàng và thay đổi dịch vụ</h2>
+<p>Đây là dự án phi lợi nhuận do nhóm nhỏ vận hành nên dịch vụ được cung cấp “nguyên trạng”, <strong>không cam kết hoạt động liên tục</strong> hay không có lỗi. Chúng tôi có thể bảo trì, cập nhật, điều chỉnh cân bằng, đặt lại dữ liệu khi có lỗi nghiêm trọng, hoặc thay đổi/ngừng một phần hay toàn bộ dịch vụ. Khi ngừng hẳn, chúng tôi sẽ thông báo trước một thời gian hợp lý và xóa hoặc ẩn danh dữ liệu cá nhân theo chính sách quyền riêng tư. Trong phạm vi pháp luật cho phép, chúng tôi không chịu trách nhiệm cho thiệt hại gián tiếp phát sinh từ việc mất tiến trình hoặc gián đoạn dịch vụ.</p>
+<h2>9. Cân bằng thời gian chơi</h2>
+<p>Trò chơi tu luyện khi bạn online, vì vậy hãy chú ý nghỉ ngơi, học tập và sinh hoạt. Bạn có thể đóng tab bất cứ lúc nào để tạm dừng tiến trình mà không bị phạt.</p>
+<h2>10. Thay đổi điều khoản</h2>
+<p>Khi điều khoản thay đổi đáng kể, chúng tôi công bố phiên bản mới và yêu cầu bạn đồng ý lại trước khi tiếp tục chơi. Nếu không đồng ý, bạn có thể ngừng chơi và yêu cầu xóa dữ liệu.</p>
+<h2>11. Luật áp dụng và khiếu nại</h2>
+<p>Điều khoản này tuân theo pháp luật Việt Nam, trong đó có các quy định về quản lý, cung cấp, sử dụng dịch vụ Internet và thông tin trên mạng (Nghị định 147/2024/NĐ-CP). Mọi thắc mắc, góp ý hoặc khiếu nại xin gửi <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a>; chúng tôi sẽ cố gắng giải quyết thiện chí qua thương lượng trước khi các bên tìm đến cơ quan có thẩm quyền.</p>
+<footer>Hư Giới · RedEye Studio · Dự án phi lợi nhuận, miễn phí, không có thanh toán trực tuyến.</footer>
 </main></body></html>

@@ -21,6 +21,9 @@ const LIMITS = Object.freeze({
   sync: { capacity: 8, perMinute: 4 },         // 4 lần/phút, dồn tối đa 8
   preview: { capacity: 5, perMinute: 6 },
   read: { capacity: 30, perMinute: 60 },
-  create: { capacity: 3, perMinute: 3 }
+  create: { capacity: 3, perMinute: 3 },
+  ip: { capacity: 120, perMinute: 120 },       // mọi request /api/v1, kể cả chưa đăng nhập: chặn dò token/quét
+  export: { capacity: 3, perMinute: 1 },
+  erase: { capacity: 5, perMinute: 2 }
 });
 module.exports = { RateLimiter, LIMITS };
