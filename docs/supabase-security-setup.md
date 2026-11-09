@@ -50,3 +50,11 @@ Bản `2026-11-09` cũ được giữ trong bảng để làm lịch sử, nhưn
 ## Giao thức tử vong V9 / chính sách v3
 
 Migration `allow_v3_permadeath_policy_consent` mở rộng constraint để giữ nguyên chấp thuận v1/v2 và ghi nhận `2026-11-09-v3`. Chính sách v3 công bố tọa hóa vĩnh viễn và tiến trình offline đóng băng. Frontend và API yêu cầu đủ hai bản v3; không suy diễn đồng ý mới từ bản cũ. Email hỗ trợ và yêu cầu dữ liệu: `zeplaovn@proton.me`.
+
+## Chính sách v4 — email hợp lệ và giới hạn IP khi đăng nhập
+
+- Bản chấp thuận `2026-11-09-v4` được yêu cầu ở cả frontend và consent verifier backend; migration `allow_v4_email_ip_auth_consent` mở rộng constraint (không xóa consent v1-v3).
+- Đăng ký: chỉ chấp nhận địa chỉ email có cú pháp hợp lệ ở giao diện; Supabase Auth yêu cầu người sở hữu xác nhận email. Đây không phải kiểm tra SMTP/MX hoặc xác minh email có tồn tại trước khi gửi thư.
+- Đăng nhập: `/api/auth/supabase-login` qua Node same-origin, 10 lượt thử mỗi IP trong 15 phút, 429 + Retry-After khi vượt mức. Bộ đếm tạm RAM, không lưu mật khẩu hay token. Proxy `X-Forwarded-For` chỉ được tin nếu socket đến từ `HU_AUTH_TRUSTED_PROXY_IPS` đã cấu hình và reverse proxy **ghi đè** header do khách gửi. Không đưa IP vào `policy_acceptances`.
+- Supabase vẫn công khai các endpoint xác thực. Bảo vệ gateway Node không tự giới hạn request trực tiếp từ kẻ khác đến Supabase; vào Authentication → Rate Limits và Security and Protection để cấu hình giới hạn upstream, CAPTCHA và chống lạm dụng. Đừng tuyên bố kiểm soát toàn bộ IP nếu chưa có limit tại provider hoặc edge.
+- Khách hàng dùng chung NAT sẽ dùng chung quota. Khi nhiều instance Node, phải dùng bộ giới hạn dùng chung hoặc WAF/edge. Khi chỉ triển khai static Cloudflare, endpoint cùng origin không tồn tại và login sẽ không hoạt động; cần backend Node được public an toàn.
