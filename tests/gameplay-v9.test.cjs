@@ -95,3 +95,22 @@ test('V4–V8 saves can normalize to V9 without granting fresh destiny points', 
   }
   assert.equal(H.normalize(g.s, NOW).destiny, 'exp');
 });
+
+test('offline also freezes ability cooldowns, NPC discussions and auction cycle', () => {
+  const g = character(() => .5);
+  g.s.cooldowns[0] = NOW + 30_000;
+  g.s.social.friends['trieu-nguyet'] = { affinity: 30, metAt: NOW, giftAt: 0, discussAt: NOW + 40_000 };
+  g.s.social.pvp.lastAt = NOW;
+  g.s.auction.offers['EQ-001'] = 100;
+  const cycle = g.s.auction.cycle, cooldown = g.s.cooldowns[0];
+  const away = 7200_000;
+  const pause = g.advance(NOW + away, true);
+  assert.equal(pause.paused, true);
+  assert.equal(g.s.cooldowns[0], cooldown + away);
+  assert.equal(g.s.social.friends['trieu-nguyet'].discussAt, NOW + 40_000 + away);
+  assert.equal(g.s.auction.cycle, cycle);
+  assert.equal(g.s.auction.pausedMs, away);
+  g.advance(NOW + away + 1000);
+  assert.equal(g.s.auction.cycle, cycle, 'NPC auction does not settle after two hours offline');
+  assert.equal(g.s.auction.offers['EQ-001'], 100);
+});
