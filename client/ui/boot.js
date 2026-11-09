@@ -385,6 +385,7 @@
     const target = wasExploring && !s.exploration?.active && (!requested || requested === 'combat')
       ? 'idle' : requested || (s.exploration?.active ? 'combat' : 'idle');
     UI.go(target, { silent: true });
+    if (UI.g().isDead()) UI.onDeath?.(r);
     if (wasExploring) {
       try { root.history?.replaceState(null, '', '#' + target); } catch { /* file:// */ }
     }
