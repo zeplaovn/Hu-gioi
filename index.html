@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#191816">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'self'; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="Hư Giới — game idle tu tiên một người chơi, chạy hoàn toàn trong trình duyệt.">
 <title>Hư Giới · Tiên Lộ Vô Tận</title>
 <link rel="icon" href="data:,">
@@ -55,7 +55,7 @@
       <span class="auth-kicker">THIÊN THƯ / TIÊN TỊCH</span>
       <h1 id="authTitle">Trở lại tiên lộ</h1>
       <p id="authSubtitle" class="auth-subtitle">Đăng nhập để tiếp tục hành trình.</p>
-      <div class="auth-tabs" role="tablist" aria-label="Đăng nhập hoặc đăng ký">
+      <div id="authTabs" class="auth-tabs" role="tablist" aria-label="Đăng nhập hoặc đăng ký">
         <button type="button" role="tab" data-auth-view="login" class="active" aria-selected="true">Đăng nhập</button>
         <button type="button" role="tab" data-auth-view="signup" aria-selected="false">Đăng ký</button>
       </div>
@@ -69,12 +69,24 @@
         <label id="authConfirmWrap" for="authConfirm" hidden>Nhập lại mật khẩu
           <input id="authConfirm" name="confirm" type="password" minlength="10" maxlength="128" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
         </label>
+        <div id="authLegalWrap" class="auth-legal" hidden>
+          <label class="auth-check" for="authPrivacy"><input id="authPrivacy" type="checkbox" required><span>Tôi đã đọc và đồng ý với <a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Chính sách bảo vệ dữ liệu cá nhân</a> (09/11/2026).</span></label>
+          <label class="auth-check" for="authRelease"><input id="authRelease" type="checkbox" required><span>Tôi đồng ý với <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng và chính sách phát hành Hư Giới</a> (09/11/2026).</span></label>
+          <p class="auth-legal-note">Không tích sẵn. Bạn có thể chọn chơi offline mà không cần đăng ký.</p>
+        </div>
         <p id="authMessage" class="auth-message" role="alert" hidden></p>
         <button id="authSubmit" class="auth-submit" type="submit">Bước vào Hư Giới</button>
       </form>
+      <div id="authConsentGate" class="auth-consent-gate" hidden>
+        <p>Tài khoản đã được xác minh nhưng chưa có bản ghi chấp thuận chính sách hiện hành. Đọc từng văn bản và xác nhận riêng để tiếp tục.</p>
+        <label class="auth-check" for="authConsentPrivacy"><input id="authConsentPrivacy" type="checkbox"><span>Tôi đồng ý <a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Chính sách bảo vệ dữ liệu cá nhân</a>.</span></label>
+        <label class="auth-check" for="authConsentRelease"><input id="authConsentRelease" type="checkbox"><span>Tôi đồng ý <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng và chính sách phát hành</a>.</span></label>
+        <button id="authConsentContinue" type="button" class="auth-guest">Xác nhận và tiếp tục</button>
+        <button id="authConsentLogout" type="button" class="auth-guest">Đăng xuất / từ chối</button>
+      </div>
       <div class="auth-divider">HOẶC</div>
       <button id="authGuest" type="button" class="auth-guest">Vân du không tài khoản</button>
-      <p class="auth-caption">Đạo hữu có thể chơi trên thiết bị này mà không cần tài khoản. Tiến trình vẫn lưu cục bộ; đăng ký không đồng bộ bản lưu lên máy chủ.</p>
+      <p class="auth-caption">Đạo hữu có thể chơi offline mà không cần tài khoản. Tiến trình vẫn lưu trên thiết bị, không tự đồng bộ lên Supabase. <a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Quyền riêng tư</a> · <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Chính sách phát hành</a></p>
     </div>
   </div>
 </section>
@@ -392,6 +404,7 @@
 <script src="client/assets/item-index.js"></script>
 <script src="client/assets/assets.js"></script>
 <script src="client/session/local-session.js"></script>
+<script src="client/auth/supabase.js"></script>
 <script src="client/auth/auth.js"></script>
 <script src="client/session/chat-session.js"></script>
 <script src="client/persistence/local-store.js"></script>
