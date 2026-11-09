@@ -13,7 +13,7 @@ const { RateLimiter, LIMITS } = require('./rate-limit.js');
 
 const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|reset-after-death)$`, 'i');
+const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|pause|reset-after-death)$`, 'i');
 
 function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
   const allowed = new Set(allowedOrigins);
@@ -78,6 +78,7 @@ function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter
         case 'create': limit('create:' + who, LIMITS.create); out = service.createPlayer(who, body); status = 201; break;
         case 'state': limit('read:' + who, LIMITS.read); out = service.state(who, route.id); break;
         case 'sync': limit('sync:' + who, LIMITS.sync); out = service.sync(who, route.id, body); break;
+        case 'pause': limit('sync:' + who, LIMITS.sync); out = service.pause(who, route.id); break;
         case 'commands': limit('cmd:' + who, LIMITS.command); out = service.command(who, route.id, body); break;
         case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = service.resetAfterDeath(who, route.id); break;
       }
