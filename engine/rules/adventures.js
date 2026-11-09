@@ -47,7 +47,7 @@
           if (enemyHp > 0) break;
           floors = floor;
         }
-        return { floors, hp: Math.max(st.HP * .1, hp) };
+        return { floors, hp: Math.max(0, hp) };
       },
       estimateDungeon(id) {
         const d = DUNGEONS.find(x => x.id === id);
@@ -108,10 +108,15 @@
         const s = this.s, a = s.dungeon.active;
         if (!a || now < a.end) return null;
         const d = DUNGEONS.find(x => x.id === a.id), rng = seedRng(a.seed), sim = this.simulateDungeon(d, a, rng);
+        s.dungeon.active = null;
+        if (sim.hp <= 0) {
+          s.hp = 0; this.markDeath('combat', now);
+          this.log('Bí cảnh đoạt mạng đạo thân; không có phần thưởng.');
+          return { id: d.id, died: true, why: 'combat', success: false, floors: sim.floors };
+        }
         const result = this.grantDungeonReward(d, sim.floors, a.end, rng);
         const maxHp = this.stats(now).HP, loss = Math.max(0, a.hp - sim.hp) / a.stats.HP;
-        s.hp = Math.min(maxHp, Math.max(maxHp * .1, s.hp - maxHp * loss) + maxHp * (.008 + this.rootEffects().regen) * Math.min(F.offline_cap(s.offlineCap), (now - a.end) / 1000));
-        s.dungeon.active = null;
+        s.hp = Math.max(0, Math.min(maxHp, s.hp - maxHp * loss));
         return result;
       },
       /* Đối thủ của một tầng trong chuyến tương tác. Chỉ số quy theo cảnh giới bí cảnh để người vừa đủ cảnh giới đánh được;
@@ -208,9 +213,12 @@
         run.sta = Math.min(run.staMax, run.sta + RUN.passiveGain);
         run.intent = this.rollIntent(enemy.boss);
         if (s.hp <= 0) {
-          s.hp = st.HP * .28;
-          say('Trọng thương, buộc phải rút lui.');
-          return { dealt, healed, taken, ended: this._endRun(d, now, 'defeat') };
+          s.hp = 0;
+          this.markDeath('combat', now);
+          s.dungeon.run = null;
+          say('Sinh lực cạn trong bí cảnh. Đạo thân tọa hóa.');
+          this.log('Bí cảnh đoạt mạng đạo thân; không có phần thưởng.');
+          return { dealt, healed, taken, died: true, ended: { why: 'combat', died: true } };
         }
         return { dealt, healed, taken };
       },
@@ -263,7 +271,7 @@
       },
       advanceEncounters(seconds, now, eff = 1) {
         const s = this.s, e = s.encounter, before = e.clock;
-        e.clock += Math.min(seconds, F.offline_cap(s.offlineCap)) * eff;
+        e.clock += seconds * eff;
         const count = Math.floor(e.clock / ENCOUNTER_INTERVAL), found = [];
         e.clock %= ENCOUNTER_INTERVAL;
         if (!count) return found;
