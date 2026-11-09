@@ -163,8 +163,9 @@
         let result;
         try { result = await this.request('/players/' + this.playerId + '/commands', 'POST', body); }
         catch (error) {
-          if (error.code === 'REVISION_CONFLICT') {
-            // Không tự gửi lại lệnh trên revision mới; yêu cầu người chơi thử lại.
+          if (error.code === 'REVISION_CONFLICT' || Number.isSafeInteger(error.details?.currentRevision)) {
+            // Một lệnh bị từ chối vẫn có thể lưu heartbeat online ở server.
+            // Đọc revision mới, tuyệt đối không tự động gửi lại intent cũ.
             const fresh = await this.request('/players/' + this.playerId + '/state');
             this.apply(fresh);
           }
@@ -176,12 +177,13 @@
     }
     pause() {
       if (!this.ready || this.paused) return Promise.resolve();
+      const playerId = this.playerId, accountId = this.accountId;
       this.paused = true;
-      // Gửi thông báo rời trận có xác thực; nếu request thất bại,
-      // lease 15s của máy chủ tự dừng tiến trình.
+      // Bảo vệ khỏi race khi người chơi đổi tài khoản lúc request đang xếp hàng.
       return this.run(async () => {
-        const response = await this.request('/players/' + this.playerId + '/pause', 'POST', {}, { keepalive: true });
-        this.apply(response);
+        if (this.playerId !== playerId || this.accountId !== accountId) return;
+        const response = await this.request('/players/' + playerId + '/pause', 'POST', {}, { keepalive: true });
+        if (this.playerId === playerId && this.accountId === accountId) this.apply(response);
       });
     }
     drainAchievements() { return this.achievements.splice(0); }
