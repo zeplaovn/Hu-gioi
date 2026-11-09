@@ -73,7 +73,7 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             page.locator("#authPassword").fill("ci-test-password-1234")
             page.locator("#authSubmit").click()
             page.locator("#welcome").wait_for(state="visible", timeout=20000)
-    page.locator("#nameInput").fill("Vân Tiêu")
+    page.locator("#nameInput").fill("Vân " + name.removeprefix("after_") if name and name.startswith("after_") else "Vân Tiêu")
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
     page.locator("#startNew").click()
