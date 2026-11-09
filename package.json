@@ -6,6 +6,8 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "start": "node server/main.js",
+    "build": "node tools/build-dist.cjs",
+    "build:min": "node tools/build-dist.cjs --minify",
     "check": "node --test tests/sources.test.cjs",
     "test": "node --test tests/*.test.cjs"
   }
