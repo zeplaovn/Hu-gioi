@@ -573,6 +573,7 @@
   }
 
   function showForAccount(account) {
+    creation = freshCreation();
     store.setAccount(account?.id);
     $('accountLabel').textContent = account?.email || 'Vân du không tài khoản';
     $('accountExit').textContent = account ? 'Đăng xuất' : 'Tài khoản';
@@ -586,6 +587,7 @@
     renderCreation();
   }
   function leaveAccount() {
+    if (store.ready && !store.locked) { store.catchUp(); store.write(); }
     store.ready = false;
     UI.tutorial?.close();
     UI.windows?.closeAll();
