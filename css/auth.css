@@ -72,3 +72,6 @@
 .auth-legal-note { margin:0; color:#aeb5aa; font-size:11px; }
 .auth-consent-gate p { color:#d9d1c2; font-size:13px; line-height:1.7; }
 .auth-message[data-kind="success"] { color:#b8e4bc; }
+
+/* [hidden] phải thắng quy tắc display:flex của form và consent. */
+.auth-form label[hidden], .auth-message[hidden] { display:none !important; }
