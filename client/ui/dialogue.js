@@ -31,9 +31,9 @@
       event.preventDefault();
       const action = b.dataset.dialogue;
       if (action === 'close') close();
-      else if (action === 'next') next();
+      else if (action === 'next') UI.safe(() => next());
       else if (action === 'topic') openTopic(b.dataset.id);
-      else if (action === 'answer') answer(b.dataset.option);
+      else if (action === 'answer') UI.safe(() => answer(b.dataset.option));
       else if (action === 'topics' && current?.npcId) showTopics(current.npcId);
     });
     return panel;
