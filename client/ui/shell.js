@@ -985,7 +985,7 @@
     }
     $('topRate').textContent = s.exploration?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
-    $('topDaoVan').textContent = num(s.daoVan);
+    $('topDaoVan').textContent = H.META_UPGRADES[s.destiny]?.name || 'Không có';
     $('topQiFill').style.width = p + '%';
     $('topQiFill').parentElement.classList.toggle('full', p >= 100);
     $('topQiText').textContent = num(s.qi) + ' / ' + num(need);
@@ -1020,7 +1020,7 @@
       bb.classList.toggle('ready', can);
       bb.classList.toggle('auto', !s.completed && !peak);
       $('breakLabel').textContent = s.completed ? 'Đã chứng đạo' : peak ? 'Đột phá đại cảnh giới' : 'Tự động đột phá';
-      $('breakHint').textContent = s.completed ? 'Trọng sinh để mở vòng mới' : peak ? (can ? 'Viên mãn · bấm để nhận thiên kiếp' : 'Viên mãn · chưa đủ tu vi') : 'Tầng ' + s.stage + '/' + F.STAGES[s.realm] + ' · tự động';
+      $('breakHint').textContent = s.completed ? 'Đạo quả viên mãn' : peak ? (can ? 'Viên mãn · bấm để nhận thiên kiếp' : 'Viên mãn · chưa đủ tu vi') : 'Tầng ' + s.stage + '/' + F.STAGES[s.realm] + ' · tự động';
     }
     const badge = (id, text, on) => {
       const el = document.querySelector('#menu [data-badge="' + id + '"]');
@@ -1281,7 +1281,7 @@
       $('tribQiText').textContent = num(s.qi) + ' / ' + num(need);
       $('tribQiFill').style.width = clamp(s.qi / need * 100, 0, 100) + '%';
       const ready = this.canStart();
-      $('tribEligibility').textContent = s.completed ? 'Đạo quả viên mãn · mở Trọng sinh trong phần chuẩn bị.'
+      $('tribEligibility').textContent = s.completed ? 'Đạo quả viên mãn · không có cơ chế trọng sinh.'
         : !ready ? 'Còn ' + duration(F.time_to_goal(need, s.qi, UI.g().rate())) + ' tu luyện để đột phá.'
           : this.major() ? 'Đã đủ tu vi · mở phần chuẩn bị để dùng đan / phù hộ kiếp.' : 'Đã đủ tu vi · sẵn sàng đột phá tầng nhỏ.';
       const minorQi = $('tribMinorQi'), minorFill = $('tribMinorQiFill');
@@ -1317,14 +1317,14 @@
       $('tribEyebrow').textContent = s.completed ? 'THIÊN ĐẠO · ĐẠO QUẢ VIÊN MÃN' : major ? 'THIÊN ĐẠO · ĐẠI CẢNH GIỚI' : 'TIÊN LỘ · TIỂU CẢNH GIỚI';
       $('tribTitle').textContent = s.completed ? 'Đạo Tổ viên mãn' : major ? 'Thiên kiếp' : 'Đột phá tầng';
       $('tribSubtitle').textContent = this.nextLabel();
-      $('tribHeadTags').innerHTML = `<span${odds.doomed ? ' class="danger-text"' : ''}>${odds.doomed ? '0% · chưa đủ hộ kiếp' : pct(odds.chance) + ' xác suất'}</span><span>${s.pity}/15 kiếp vận</span><span>${events.reduce((n, e) => n + e.bolts, 0) || 0} đạo lôi</span><span>${pct(s.shield)} hộ thuẫn</span>`;
+      $('tribHeadTags').innerHTML = `<span${odds.doomed ? ' class="danger-text"' : ''}>${odds.doomed ? '0% · chưa đủ hộ kiếp' : pct(odds.chance) + ' xác suất'}</span><span>Thất bại = tọa hóa</span><span>${events.reduce((n, e) => n + e.bolts, 0) || 0} đạo lôi</span><span>${pct(s.shield)} hộ thuẫn</span>`;
       this.actor = { gender: s.gender, realm: s.realm };
       this.heroFrame();
       $('tribOverlayChance').textContent = odds.doomed ? '0% (chưa đủ hộ kiếp)' : pct(odds.chance);
       $('tribOverlayChance').classList.toggle('danger-text', odds.doomed);
       $('tribReduction').textContent = pct(s.reduction);
       $('tribShieldSummary').textContent = pct(s.shield) + ' sinh lực';
-      $('tribPitySummary').textContent = s.pity + '/15';
+      $('tribPitySummary').textContent = 'Không tích lũy';
       $('tribHpText').textContent = num(s.hp) + ' / ' + num(st.HP);
       $('tribHpFill').style.width = clamp(s.hp / st.HP * 100, 0, 100) + '%';
       $('tribShieldText').textContent = pct(s.shield) + ' sinh lực';
@@ -1335,7 +1335,7 @@
         `<li><b>${esc(e.name)}</b><span>${e.bolts} đạo · <em class="${e.success ? 'green-text' : 'danger-text'}">${e.success ? '✓ đủ sức' : '✗ chưa đủ sức'}</em></span></li>`).join('')
         : '<li><b>Không có lôi kiếp</b><span>Đột phá chỉ dựa vào xác suất</span></li>';
       this.progress(0);
-      $('tribStatus').textContent = s.completed ? 'Đạo Tổ đã chứng đạo. Hãy trọng sinh để mở vòng mới.'
+      $('tribStatus').textContent = s.completed ? 'Đạo Tổ đã chứng đạo · kiếp này viên mãn.'
         : !major ? 'Tầng này không có lôi kiếp. Đột phá tại chỗ, ghi vào nhật ký.'
           : !can ? 'Tu vi chưa đầy. Hãy tiếp tục nhập định và chuẩn bị hộ kiếp.'
             : odds.doomed ? 'Hộ kiếp chưa đủ cho: ' + odds.failing.join(', ') + '. Dẫn lôi lúc này chắc chắn thất bại và mất 15% tu vi. Hãy dùng đan/phù hộ kiếp phẩm cao hơn trước.'
@@ -1423,7 +1423,8 @@
       const departedWorld = this.world;
       this.closePage();
       UI.go('idle');
-      if (result) UI.toast(ok ? 'Thiên kiếp thành công · ' + UI.g().realmLabel() : 'Thiên kiếp thất bại · mất 15% tu vi.',
+      if (UI.pendingDeathReport) { const report = UI.pendingDeathReport; UI.pendingDeathReport = null; UI.onDeath?.(report); }
+      if (result) UI.toast(ok ? 'Thiên kiếp thành công · ' + UI.g().realmLabel() : 'Thiên kiếp thất bại · đạo thân tọa hóa vĩnh viễn.',
         { type: ok ? 'tribulation' : 'danger', title: ok ? 'Đột phá thành công' : 'Thiên kiếp thất bại' });
       if (ok && H.STORY?.TRIBULATION) {
         const key = departedWorld === 'linh_gioi' ? 'linh' : departedWorld === 'tien_gioi' ? 'tien' : 'ha';
@@ -1434,12 +1435,12 @@
     async start(confirmed = false) {
       if (!this.pageOpen || this.active || this.phase === 'running') return;
       const s = UI.s(), g = UI.g();
-      if (s.completed) { UI.toast('Đạo Tổ đã chứng đạo. Hãy trọng sinh.', { type: 'info' }); return; }
+      if (s.completed) { UI.toast('Đạo Tổ đã chứng đạo · kiếp này viên mãn.', { type: 'info' }); return; }
       if (!this.major()) { UI.actions.break?.({ dataset: {} }); return; }
       if (s.qi < g.need()) { UI.toast('Tu vi chưa đầy. Hãy tiếp tục nhập định.', { type: 'danger' }); this.renderPrep(); return; }
       const odds = g.breakthroughOdds();
       if (odds.doomed && !confirmed) {
-        modal('Hộ kiếp chưa đủ sức', `<p>${esc(odds.failing.join(', '))} vượt quá sức chịu của đạo thân. Xác suất nền ${pct(odds.base)} không còn ý nghĩa: lôi kiếp là phép thử cố định nên lần này <b>chắc chắn thất bại</b>, mất 15% tu vi và tích thêm một bậc kiếp vận.</p><p>Hãy dùng đan hoặc phù hộ kiếp phẩm cao hơn để tăng khiên và giảm sát thương, rồi quay lại.</p>`,
+        modal('Hộ kiếp chưa đủ sức', `<p>${esc(odds.failing.join(', '))} vượt quá sức chịu của đạo thân. Xác suất nền ${pct(odds.base)} không còn ý nghĩa: lôi kiếp là phép thử cố định nên lần này <b>chắc chắn thất bại và đạo thân tọa hóa vĩnh viễn</b>. Toàn bộ tiến trình kiếp này bị xóa.</p><p>Hãy dùng đan hoặc phù hộ kiếp phẩm cao hơn để tăng khiên và giảm sát thương, rồi quay lại.</p>`,
           () => trib.start(true), 'Vẫn dẫn lôi', 'THIÊN KIẾP', { type: 'danger' });
         return;
       }
@@ -1573,7 +1574,7 @@
         $('tribSubtitle').textContent = g.realmLabel() + ' · đạo cơ chấn động';
         $('tribStatus').textContent = 'Đạo cơ chấn động, tu vi tổn hại.';
         $('tribResult').className = 'trib-result failure';
-        $('tribResult').innerHTML = `<h3 class="danger">Thất bại</h3><p>Mất 15% tu vi · kiếp vận tích lũy ${s.pity}/15. Lần độ kiếp sau sẽ có thêm trợ lực.</p>`;
+        $('tribResult').innerHTML = `<h3 class="danger">Tọa hóa</h3><p>Thất bại độ kiếp đồng nghĩa mất mạng vĩnh viễn. Kiếp này chấm dứt, không có lần thử lại.</p>`;
         $('tribHpText').textContent = num(s.hp) + ' / ' + num(g.stats().HP);
         $('tribHpFill').style.width = clamp(s.hp / g.stats().HP * 100, 0, 100) + '%';
         $('tribShieldText').textContent = 'Đã tiêu hao';
@@ -1587,14 +1588,14 @@
       this.actor = { gender: s.gender, realm: s.realm };
       this.heroFrame();
       const events = result?.events || [];
-      $('tribHeadTags').innerHTML = `<span>${pct(result.chance)} xác suất</span><span>${s.pity}/15 kiếp vận</span><span>${events.reduce((n, e) => n + e.bolts, 0)} đạo lôi</span><span>Hộ kiếp đã tiêu hao</span>`;
+      $('tribHeadTags').innerHTML = `<span>${pct(result.chance)} xác suất</span><span>Thất bại = tọa hóa</span><span>${events.reduce((n, e) => n + e.bolts, 0)} đạo lôi</span><span>Hộ kiếp đã tiêu hao</span>`;
       $('tribOverlayChance').textContent = pct(result?.chance ?? g.chance());
       $('tribReduction').textContent = pct(s.reduction);
       $('tribShieldSummary').textContent = 'Đã tiêu hao';
       $('tribPitySummary').textContent = s.pity + '/15';
       $('tribCounter').textContent = result.success ? 'Đạo tâm bất diệt' : 'Tĩnh tâm dưỡng sức';
       this.updateQi();
-      $('tribEligibility').textContent = 'Kết quả đã được lưu · trở về tiên sơn để tiếp tục hành trình.';
+      $('tribEligibility').textContent = result.success ? 'Kết quả đã lưu · trở lại tu luyện.' : 'Đạo thân đã tọa hóa · khép lại kiếp này.';
       $('tribResult').focus({ preventScroll: true });
       store.write();
     },
