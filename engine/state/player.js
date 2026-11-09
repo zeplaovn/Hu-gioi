@@ -66,7 +66,7 @@
 
   function createBase(now) {
     return {
-      version: VERSION, death: null, destiny: 'none', created: false, name: 'Hàn Thiên Sơn', gender: 'nam', race: 'nhan',
+      version: VERSION, death: null, destiny: 'none', presencePaused: false, created: false, name: 'Hàn Thiên Sơn', gender: 'nam', race: 'nhan',
       roots: [72, 41, 38, 55, 47], rootType: 'Song', rootSub: '', chaosTries: 0,
       talent: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0 },
       realm: 0, stage: 1, qi: 0, hp: 100, mp: 100, stone: 380, jade: 6, zone: 0,
@@ -214,6 +214,7 @@
 
     const x = create(now), old = raw.version < 6;
     x.created = true;
+    x.presencePaused = !!raw.presencePaused;
     x.destiny = Object.hasOwn(META_UPGRADES, raw.destiny) ? raw.destiny : 'none';
     if (object(raw.death) && ['tribulation', 'pvp', 'combat', 'lifespan'].includes(raw.death.cause)) x.death = { cause: raw.death.cause, at: finite(raw.death.at, now, now) };
     x.name = String(raw.name || x.name).slice(0, 24);
