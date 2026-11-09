@@ -13,22 +13,7 @@ const { RateLimiter, LIMITS } = require('./rate-limit.js');
 
 const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|reset-after-death)/* API gameplay /api/v1 (docs/backend-plan.md §6). Một người chơi cho mỗi tài khoản.
-     GET  /api/v1/bootstrap
-     POST /api/v1/creation/preview
-     POST /api/v1/players
-     GET  /api/v1/players/{id}/state
-     POST /api/v1/players/{id}/sync
-     POST /api/v1/players/{id}/commands
-   Xác thực qua Bearer JWT hoặc cookie (xem server/auth/principal.js). Lỗi theo envelope { error: { code, message, requestId, retryable } }. */
-'use strict';
-const crypto = require('node:crypto');
-const { GameError, toEnvelope } = require('../errors.js');
-const { RateLimiter, LIMITS } = require('./rate-limit.js');
-
-const MAX_BODY = 64 * 1024;
-const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-, 'i');
+const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|reset-after-death)$`, 'i');
 
 function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
   const allowed = new Set(allowedOrigins);
