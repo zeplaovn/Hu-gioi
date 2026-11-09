@@ -1,6 +1,6 @@
 /* HƯ GIỚI · NẠP TÀI NGUYÊN
- * Không tính tiến độ theo thời gian. Ảnh phải tải và giải mã xong; 100%
- * chỉ xuất hiện khi engine/game UI đã được khởi tạo. Hỗ trợ file://. */
+ * Tiến độ tài nguyên đo theo xử lý thực; 100% chỉ khi engine sẵn sàng
+ * và người chơi đã xem đủ 8 mẹo, mỗi mẹo 3,2 giây. Hỗ trợ file://. */
 (function (root) {
   'use strict';
   const doc = root.document, el = doc?.getElementById('loading');
