@@ -54,12 +54,12 @@ function run(g, type, payload = {}, now = NOW) {
   return C.execute(g, { type, payload }, now);
 }
 
-test('hợp đồng: engine READY, đủ 51 lệnh và phân miền rõ ràng', () => {
+test('hợp đồng: engine READY, đủ 48 lệnh và phân miền rõ ràng', () => {
   assert.equal(H.READY, true);
   assert.deepEqual(H.MISSING, []);
-  assert.equal(H.VERSION, 8);
-  assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8]);
-  assert.equal(C.types.length, 52);
+  assert.equal(H.VERSION, 9);
+  assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8, 9]);
+  assert.equal(C.types.length, 48);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -68,7 +68,7 @@ test('hợp đồng: engine READY, đủ 51 lệnh và phân miền rõ ràng', 
   for (const name of ['advance', 'isDead', 'checkMeta']) assert.equal(typeof H.Game.prototype[name], 'function', name);
 
   const expected = {
-    progression: ['absorb', 'upgrade', 'upgradeOffline', 'buyMeta', 'breakthrough', 'prestige', 'reincarnate', 'setAuto'],
+    progression: ['absorb', 'upgrade', 'breakthrough', 'setAuto'],
     inventory: ['buy', 'sell', 'equip', 'learn', 'activate', 'use', 'sellYao', 'bid'],
     crafting: ['craft', 'forge', 'garden'],
     combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration'],
@@ -289,58 +289,46 @@ test('progression: hấp thụ, nâng cấp, đột phá thất bại/thành cô
   g.rng = () => 0.999999;
   const failed = run(g, 'breakthrough');
   assert.equal(failed.success, false);
-  assert.ok(g.s.qi < g.need());
-  assert.equal(g.s.pity, 1);
-
-  g.s.qi = g.need();
-  g.rng = () => 0;
-  const realm = g.s.realm;
-  const success = run(g, 'breakthrough');
-  assert.equal(success.success, true);
-  assert.equal(g.s.realm, realm + 1);
-  assert.equal(g.s.stage, 1);
-  assert.equal(g.s.qi, 0);
+  assert.equal(g.s.death.cause, 'tribulation');
+  assert.equal(g.isDead(), true);
   assert.equal(g.s.pity, 0);
+  assert.throws(() => run(g, 'buy', { code: 'HERB-001' }), /tọa hóa/);
 
-  const achievements = g.checkMeta();
+  const victor = rich();
+  victor.s.stage = F.STAGES[victor.s.realm];
+  victor.s.qi = victor.need();
+  victor.rng = () => 0;
+  const realm = victor.s.realm;
+  const success = run(victor, 'breakthrough');
+  assert.equal(success.success, true);
+  assert.equal(victor.s.realm, realm + 1);
+  assert.equal(victor.s.stage, 1);
+  assert.equal(victor.s.qi, 0);
+  assert.equal(victor.s.pity, 0);
+  assert.equal(victor.s.death, null);
+
+  const achievements = victor.checkMeta();
   assert.ok(achievements.some(a => a.id === 'first_break'));
-  assert.ok(g.s.meta.points >= 1);
-  assert.deepEqual(g.checkMeta(), []);
+  assert.equal(victor.s.meta.points, 100, 'điểm cũ không tăng thêm');
+  assert.deepEqual(victor.checkMeta(), []);
 
-  g.s.progress.kill = 100;
-  assert.ok(g.checkMeta().some(a => a.id === 'kills_100'));
+  victor.s.progress.kill = 100;
+  assert.ok(victor.checkMeta().some(a => a.id === 'kills_100'));
 });
 
-test('progression: Thiên mệnh, trọng sinh giữ meta và đổi vận may', () => {
+test('Thiên mệnh chọn lúc tạo, không được trọng sinh hoặc nâng bế quan', () => {
+  for (const key of Object.keys(H.META_UPGRADES)) {
+    const s = H.createCharacter({ ...PROFILE, destiny: key }, NOW, seeded(5));
+    assert.equal(s.destiny, key);
+    assert.equal(s.meta.upgrades[key], 1);
+    assert.equal(Object.values(s.meta.upgrades).filter(Boolean).length, 1);
+    assert.equal(s.meta.points, 0);
+  }
+  assert.throws(() => H.createCharacter({ ...PROFILE, destiny: 'hacked' }, NOW, seeded(5)), /Thiên mệnh/);
   const g = rich();
-  const points = g.s.meta.points;
-  const bought = run(g, 'buyMeta', { key: 'exp' });
-  assert.equal(bought.level, 1);
-  assert.equal(g.s.meta.upgrades.exp, 1);
-  assert.equal(g.s.meta.points, points - 2);
-  g.s.meta.upgrades.exp = H.META_UPGRADES.exp.max;
-  assert.throws(() => run(g, 'buyMeta', { key: 'exp' }), /tối đa/);
-  assert.throws(() => run(g, 'buyMeta', { key: 'khong-co' }), { code: 'INVALID_COMMAND' });
-
-  g.s.totalRunExp = 1e12;
-  g.s.realm = 3;
-  const oldName = g.s.name;
-  const oldDaoVan = g.s.daoVan;
-  const reward = run(g, 'prestige');
-  assert.ok(reward >= 10);
-  assert.equal(g.s.rebirths, 1);
-  assert.equal(g.s.name, oldName);
-  assert.equal(g.s.daoVan, oldDaoVan + reward);
-  assert.ok(g.s.meta.history.length >= 1);
-  assert.ok(g.s.meta.points > 0);
-  assert.equal(g.s.qi <= g.need(), true);
-
-  const cap = g.s.offlineCap;
-  run(g, 'upgradeOffline', { type: 'cap' });
-  assert.equal(g.s.offlineCap, cap + 1);
-  assert.ok(g.s.daoVan < oldDaoVan + reward);
+  for (const type of ['buyMeta', 'prestige', 'reincarnate', 'upgradeOffline'])
+    assert.throws(() => run(g, type), { code: 'INVALID_COMMAND' });
   assert.equal(run(g, 'setAuto', { enabled: true }), true);
-  assert.equal(g.s.auto, true);
 });
 
 test('inventory: mua bán, trang bị, học công pháp và đấu giá', () => {
@@ -414,10 +402,14 @@ test('crafting: luyện đan theo hàng đợi, linh điền và rèn pháp bả
   g.s.craftBoost = 0;
   run(g, 'use', { code: 'SEED-HERB-001' });
   assert.equal(g.s.garden.length, 1);
+  const beforePause = g.s.garden[0].end;
   g.advance(NOW + 700000, true);
-  const info = g.gardenInfo(g.s.garden[0], NOW + 700000);
+  assert.equal(g.s.garden[0].end, beforePause + Math.max(0, NOW + 700000 - end));
+  assert.equal(g.gardenInfo(g.s.garden[0], NOW + 700000).ripe, false);
+  g.advance(g.s.garden[0].end);
+  const info = g.gardenInfo(g.s.garden[0], g.s.lastUpdate);
   assert.equal(info.ripe, true);
-  const harvest = run(g, 'garden', { slot: 0, action: 'harvest' }, NOW + 700000);
+  const harvest = run(g, 'garden', { slot: 0, action: 'harvest' }, g.s.lastUpdate);
   assert.ok(harvest.count >= 3);
   assert.equal(g.s.garden.length, 0);
 
@@ -659,9 +651,8 @@ test('browser: nạp classic script đúng thứ tự index.html và chạy Loca
   now += 1000;
   session.advance();
   assert.ok(events.some(event => event.type === 'death'));
-  session.dispatch('reincarnate');
-  assert.equal(session.game.s.rebirths, 1);
-  assert.equal(session.game.isDead(), false);
+  assert.throws(() => session.dispatch('reincarnate'), { code: 'INVALID_COMMAND' });
+  assert.equal(session.game.isDead(), true);
 });
 
 test('progression: tự đột phá nhiều tầng liên tiếp và dừng ở tầng cuối đại cảnh giới', () => {
@@ -802,8 +793,9 @@ test('bí cảnh tương tác: thông quan, rút lui và thất bại đều ch�
   run(lose, 'enterDungeon', { id: 'moc' });
   lose.s.hp = 1; // sinh lực cạn giữa chừng: bị đánh trúng một lần là thất bại
   const lost = playOut(lose, g => g.s.dungeon.run.sta >= 8 ? 'attack' : 'guard');
-  assert.ok(lost && !lost.success && lost.why === 'defeat');
-  assert.ok(lose.s.hp > 0 && lose.s.hp <= lose.stats().HP * .3);
+  assert.ok(lost && lost.died && lost.why === 'combat');
+  assert.equal(lose.s.hp, 0);
+  assert.equal(lose.s.death.cause, 'combat');
   assert.equal(lose.s.dungeon.run, null);
 });
 
@@ -958,13 +950,11 @@ test('NPC: thiện cảm giảm giá khi mua/học, kể cả thợ luyện đan
   assert.throws(() => run(broke, 'npcOffer', { id: 'NPC011' }), /linh thạch/);
 });
 
-test('NPC: tiến độ nhiệm vụ được giữ qua trọng sinh và được làm sạch khi tải', () => {
+test('NPC: tiến độ nhiệm vụ chỉ tồn tại trong kiếp hiện tại và được làm sạch khi tải', () => {
   const g = rich();
   g.s.npcQuests.NPC001 = { step: 2, base: 7 };
   g.s.npcAffinities.NPC001 = 40;
-  g._prestige(true, 'Thử', NOW);
-  assert.deepEqual(g.s.npcQuests.NPC001, { step: 2, base: null });
-  assert.equal(g.s.npcAffinities.NPC001, 40);
+  assert.throws(() => run(g, 'prestige'), { code: 'INVALID_COMMAND' });
 
   const saved = JSON.parse(JSON.stringify(g.s));
   saved.progress.kill = 50;
