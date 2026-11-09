@@ -144,10 +144,11 @@
           if (bleed) s.designCombat.bleed = { pct: Number(bleed[1].replace(',', '.')) / 100, last: now, end: now + Number(bleed[2].replace(',', '.')) * 1000 };
         }
         if (s.hp <= 0) {
-          s.hp = st.HP * .28; s.auto = false; s.enemyHp = enemy.HP; s.designCombat.enemyEffects = [];
-          this.log('Đạo thân trọng thương, đành lui về điều tức.');
+          s.hp = 0; s.auto = false; s.designCombat.enemyEffects = [];
+          this.markDeath('combat', now);
+          this.log('Sinh lực cạn trong giao chiến. Đạo thân tọa hóa.');
         }
-        return { damage, won: false };
+        return { damage, won: false, died: this.isDead() };
       },
       strike(payload, now) { this.assertNoRun(); return this._strike(1, at(this, now), false); },
       assertNoRun() { if (this.s.dungeon.run) throw Error('Đang chiến đấu trong bí cảnh, chưa thể lịch luyện.');
@@ -243,6 +244,7 @@
           e.last = Math.max(e.last, Math.min(now, e.end));
         }
         c.enemyEffects = c.enemyEffects.filter(e => e.end > now);
+        if (s.hp <= 0) { s.hp = 0; this.markDeath('combat', now); return; }
         if (hadEnemy && s.enemyHp === 0) {
           this.collectLoot();
           c.enemyEffects = [];
