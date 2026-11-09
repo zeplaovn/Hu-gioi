@@ -1431,7 +1431,7 @@
       }
     },
     show() { UI.go('tribulation'); },
-    start(confirmed = false) {
+    async start(confirmed = false) {
       if (!this.pageOpen || this.active || this.phase === 'running') return;
       const s = UI.s(), g = UI.g();
       if (s.completed) { UI.toast('Đạo Tổ đã chứng đạo. Hãy trọng sinh.', { type: 'info' }); return; }
@@ -1448,7 +1448,7 @@
       const oldRealm = s.realm, oldRoot = s.rootType, oldReduction = s.reduction;
       this.world = world;
       this.preload();
-      const result = UI.command('breakthrough');
+      const result = await UI.command('breakthrough');
       this.result = result;
       this.active = true;
       this.phase = 'running';
@@ -1624,30 +1624,35 @@
      HÀNH ĐỘNG
      ====================================================================== */
   function safe(fn) {
-    try { return fn(); } catch (e) { toast(e.message); console.warn('Hư Giới:', e.message); }
+    try {
+      const result = fn();
+      if (result && typeof result.then === 'function')
+        return result.catch(e => { toast(e.message); console.warn('Hư Giới:', e.message); return UI.KEEP; });
+      return result;
+    } catch (e) { toast(e.message); console.warn('Hư Giới:', e.message); return UI.KEEP; }
   }
 
-  function run(name, el) {
+  async function run(name, el) {
     if (name === 'resetAfterDeath') { if (UI.resetAfterDeath) safe(() => UI.resetAfterDeath()); return; }
     if (name === 'modalClose') { closeModal(); return; }
     if (name === 'modalConfirm') {
       if ($('modalLayer').hidden) return;
       const fn = modalAction;
       closeModal();
-      if (fn && !store.locked) { store.catchUp(); safe(fn); store.write(); refresh(); }
+      if (fn && !store.locked) { store.catchUp(); await safe(fn); store.write(); refresh(); }
       return;
     }
     if (!$('modalLayer').hidden) return;
     if (store.locked) { toast('Một tab khác đang chơi. Đóng tab kia rồi tải lại trang.'); return; }
     if (trib.pageOpen) {
-      if (name === 'tribStart') { trib.start(); return; }
+      if (name === 'tribStart') { await safe(() => trib.start()); return; }
       if (name === 'tribClose' || name === 'tribReturn' || name === 'tribBack') { trib.close(); return; }
       if (trib.active) return;
     } else if (trib.active) return;
     store.catchUp();
     const handler = UI.actions[name];
     if (!handler) return;
-    const result = safe(() => handler(el, el?.dataset || {}));
+    const result = await safe(() => handler(el, el?.dataset || {}));
     if (result === UI.KEEP) return;
     store.write();
     if (result === UI.SOFT) soft(); else refresh();
