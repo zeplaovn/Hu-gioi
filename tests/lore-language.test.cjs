@@ -42,8 +42,8 @@ test('màn thiên kiếp khớp luật tự động vượt tiểu cảnh, khôn
   assert.match(progression, /autoStage\(\)/);
   assert.match(trib, /đạo thân tự vượt qua bình cảnh tiểu cảnh giới/);
   assert.doesNotMatch(trib, /Tầng nhỏ không triệu hồi lôi kiếp\. Đột phá dựa hoàn toàn vào xác suất/);
-  assert.match(trib, /Kiếp vận tích lũy/);
-  assert.match(shell, /\$\{s\.pity\}\/15 kiếp vận/);
+  assert.match(trib, /Thất bại khiến đạo thân tọa hóa/);
+  assert.match(shell, /tọa hóa vĩnh viễn/);
   assert.doesNotMatch(shell, /bảo hiểm hiện tại/);
 });
 
