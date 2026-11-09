@@ -166,6 +166,31 @@ def run_set(browser, folder, name, url, width, height, mobile):
                 "(buttons) => buttons.filter(b => b.scrollWidth > b.clientWidth + 2).map(b => b.textContent.trim())"
             )
             outcome["overflow_buttons"] = issues
+            # Tọa hóa thực: reset ngay cả Thiên mệnh, cài đặt và bản lưu dự phòng.
+            if width == 1366:
+                page.evaluate("""() => {
+                    const ui = window.HU_UI;
+                    ui.s().meta.points = 999;
+                    ui.s().settings.music = false;
+                    ui.s().age = ui.g().maxLife() + 1;
+                    ui.s().lastUpdate = Date.now() - 3000;
+                }""")
+                death = page.locator('[data-act="resetAfterDeath"]')
+                death.wait_for(state="visible", timeout=5000)
+                outcome["screenshots"].append(snap(page, folder, name, "death"))
+                death.click()
+                assert page.locator("#welcome").is_visible(), "Tọa hóa không về tạo nhân vật"
+                assert page.locator("#game").is_hidden(), "Game vẫn hiện sau tọa hóa"
+                assert page.locator("#continueGame").is_hidden(), "Vẫn còn bản lưu sau tọa hóa"
+                reset = page.evaluate("""() => ({
+                    created: window.HU_UI.s().created,
+                    points: window.HU_UI.s().meta.points,
+                    music: window.HU_UI.s().settings.music,
+                    ready: window.HU_UI.store.ready
+                })""")
+                assert reset == {"created": False, "points": 0, "music": True, "ready": False}, reset
+                outcome["death_reset"] = True
+                outcome["screenshots"].append(snap(page, folder, name, "back-to-creation"))
     except Exception as exc:
         outcome["exception"] = str(exc)
         try:
