@@ -3,13 +3,15 @@
 'use strict';
 const { GameError } = require('../errors.js');
 
-function createPrincipalResolver({ jwt = null, legacy = null } = {}) {
+function createPrincipalResolver({ jwt = null, legacy = null, verifyConsent = null } = {}) {
   return async function resolve(req) {
     const header = String(req.headers.authorization || '');
     if (header) {
       const m = /^Bearer ([A-Za-z0-9._-]+)$/.exec(header);
       if (!m || !jwt) throw new GameError('UNAUTHENTICATED', 'Thiếu hoặc sai thông tin đăng nhập.');
-      return { accountId: (await jwt.verify(m[1])).sub, via: 'jwt' };
+      const claims = await jwt.verify(m[1]);
+      if (verifyConsent) await verifyConsent(m[1], claims.sub);
+      return { accountId: claims.sub, via: 'jwt' };
     }
     if (legacy) {
       const account = legacy.session(req);
