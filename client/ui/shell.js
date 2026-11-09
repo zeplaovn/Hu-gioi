@@ -725,7 +725,7 @@
     if (active && menu.dataset.current !== selected) {
       menu.dataset.current = selected;
       const left = active.offsetLeft;
-      menu.scrollTo({ left: Math.max(0, left + active.offsetWidth / 2 - menu.clientWidth / 2), behavior: 'instant' });
+      menu.scrollTo({ left: Math.max(0, left + active.offsetWidth / 2 - menu.clientWidth / 2), behavior: 'auto' });
     }
     updateMenuOverflow();
   }
