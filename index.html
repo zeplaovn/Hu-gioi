@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d0907">
+<meta name="theme-color" content="#191816">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'self'; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="Hư Giới — game idle tu tiên một người chơi, chạy hoàn toàn trong trình duyệt.">
@@ -154,7 +154,6 @@
     </button>
     <div class="status-foot">
       <span class="save-state" id="saveState" role="status">Tự động lưu</span>
-      <button class="status-settings" data-window="settings" aria-label="Cài đặt">⚙</button>
     </div>
   </section>
 
@@ -194,6 +193,7 @@
       <div class="log-title"><span class="eyebrow gold">THIÊN MỆNH</span><b id="logTitle">Nhật ký tu tiên</b></div>
       <div class="log-tools">
         <span class="log-count" id="logCount" aria-live="polite">0</span>
+        <button type="button" id="logFloatToggle" class="log-float-toggle" aria-pressed="false" aria-label="Đưa nhật ký thành cửa sổ nổi" title="Đưa nhật ký thành cửa sổ nổi">↗</button>
         <button type="button" id="logToggle" class="log-toggle" aria-expanded="true" aria-controls="logFeed" title="Thu gọn nhật ký" aria-label="Thu gọn nhật ký">▾</button>
       </div>
     </header>

@@ -23,9 +23,6 @@ CASES = [
     ("craft-dan", "craft", "dan"),
     ("craft-khi", "craft", "khi"),
     ("craft-dien", "craft", "dien"),
-    ("settings-season", "settings", "season"),
-    ("settings-audio", "settings", "audio"),
-    ("settings-guide", "settings", "guide"),
 ]
 
 def enter_game(page, url):
@@ -68,13 +65,59 @@ def snap(page, folder, prefix, name, where="top"):
     page.screenshot(path=str(file), animations="disabled")
     return str(file)
 
-def verify_bubble(page, outcome):
+def verify_log_float(page, folder, name, outcome):
+    panel = page.locator("#logPanel")
+    float_btn = page.locator("#logFloatToggle")
+    collapse_btn = page.locator("#logToggle")
+    assert float_btn.is_visible(), "Thiếu nút đưa nhật ký nổi"
+    float_btn.click()
+    assert "log-floating" in (panel.get_attribute("class") or ""), "Nhật ký không nổi"
+    assert float_btn.get_attribute("aria-pressed") == "true"
+    outcome["screenshots"].append(snap(page, folder, name, "log-floating"))
+    header = page.locator("#logPanel .log-head")
+    rect = header.bounding_box()
+    assert rect, "Không tìm thấy vùng kéo nhật ký"
+    page.mouse.move(rect["x"] + 35, rect["y"] + 18)
+    page.mouse.down()
+    page.mouse.move(rect["x"] + 57, rect["y"] - 24, steps=5)
+    page.mouse.up()
+    pos = panel.bounding_box()
+    assert pos and pos["x"] >= 0 and pos["y"] >= 0, "Nhật ký bị kéo khỏi màn hình"
+    collapse_btn.click()
+    assert "collapsed" in (panel.get_attribute("class") or ""), "Không thu gọn được"
+    assert collapse_btn.get_attribute("aria-expanded") == "false"
+    outcome["screenshots"].append(snap(page, folder, name, "log-minimized"))
+    collapse_btn.click()
+    assert "collapsed" not in (panel.get_attribute("class") or ""), "Không mở rộng được"
+    float_btn.click()
+    assert "log-floating" not in (panel.get_attribute("class") or ""), "Không ghim lại được"
+    assert float_btn.get_attribute("aria-pressed") == "false"
+    outcome["log_float_toggle_drag"] = True
+
+
+def verify_bubble(page, folder, name, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
     assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
-    page.locator(".chat-bubble-close").click()
-    assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng"
+    if name.startswith("after_"):
+        assert trigger.is_visible(), "Icon chat biến mất khi mở bảng chat"
+        assert trigger.get_attribute("aria-expanded") == "true"
+        assert page.locator("#chatBubble .chat-bubble-icon").is_visible(), "Ảnh icon chat bị ẩn"
+        assert trigger.evaluate("""el => {
+          const r = el.getBoundingClientRect();
+          const atCenter = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+          return el.contains(atCenter);
+        }"""), "Bảng chat hoặc lớp khác che icon chat"
+        outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
+        # Bấm lại đúng icon chat để đóng; xác nhận luôn nhìn thấy nút.
+        trigger.click()
+        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng qua icon"
+        assert trigger.is_visible(), "Icon chat mất sau khi đóng"
+        outcome["chat_icon_persistent"] = True
+    else:
+        page.locator(".chat-bubble-close").click()
+        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng"
     outcome["chat_toggle"] = True
 
 def run_set(browser, folder, name, url, width, height, mobile):
@@ -90,7 +133,11 @@ def run_set(browser, folder, name, url, width, height, mobile):
     outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors}
     try:
         enter_game(page, url)
-        verify_bubble(page, outcome)
+        verify_bubble(page, folder, name, outcome)
+        if name.startswith('after_'):
+            verify_log_float(page, folder, name, outcome)
+            assert page.locator('#menu [data-window="settings"]').count() == 0, "Menu Cài đặt vẫn hiện"
+            assert page.locator('.status-settings').count() == 0, "Nút Cài đặt ở thanh trạng thái vẫn hiện"
         for key, section, tab in CASES:
             if section:
                 open_page(page, section)

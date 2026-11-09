@@ -312,3 +312,176 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
   .win.page .tabbar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;max-width:100%;scrollbar-width:thin}
   .win.page .tabbar .tab{flex-shrink:0}
 }
+
+
+/* ===== NHẬT KÝ THÔNG BÁO: KHUNG NỔI CÓ THỂ KÉO VÀ THU GỌN ===== */
+/* Khung chín phần: bốn góc + bốn viền + mặt trung tâm vẽ bằng CSS,
+   tránh phụ thuộc atlas ảnh và không kéo giãn chữ hay nội dung. */
+#game #logPanel{
+  background:var(--corners),var(--paper-grain),linear-gradient(160deg,#261a15,#17100d);
+}
+#game #logPanel .log-head{min-height:44px}
+#game #logPanel .log-tools{gap:4px}
+#game #logPanel .log-float-toggle,
+#game #logPanel .log-toggle{
+  display:grid;place-items:center;flex:0 0 40px;
+  width:40px;height:40px;min-width:40px;min-height:40px;padding:0;
+  border-radius:9px;border:1px solid #67513b;background:#2d211a;
+  color:#eee0c7;font:700 20px/1 var(--font);
+}
+#game #logPanel .log-float-toggle:hover,
+#game #logPanel .log-toggle:hover{border-color:var(--gold);color:var(--gold)}
+#game #logPanel .log-float-toggle:focus-visible,
+#game #logPanel .log-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#game #logPanel.log-floating{
+  position:fixed;grid-area:auto;z-index:145;pointer-events:auto;
+  display:flex;flex-direction:column;
+  width:min(360px,calc(100vw - 24px));
+  height:min(300px,calc(100dvh - 24px));
+  min-width:0;min-height:0;margin:0;
+  overflow:hidden;border:1px solid #806646;border-radius:15px;
+  box-shadow:0 18px 45px #000c,0 0 0 1px #ffffff09;
+}
+#game #logPanel.log-floating .log-head{cursor:grab;touch-action:none;user-select:none}
+#game #logPanel.log-floating.log-dragging .log-head{cursor:grabbing}
+#game #logPanel.log-floating .log-wrap{flex:1 1 auto;min-height:0}
+#game #logPanel.log-floating.collapsed{
+  width:48px;height:48px;min-width:48px;min-height:48px;
+  overflow:visible;border-radius:14px;
+}
+#game #logPanel.log-floating.collapsed .log-head{
+  height:48px;min-height:48px;padding:0;justify-content:center;border-bottom:0;
+}
+#game #logPanel.log-floating.collapsed .log-title,
+#game #logPanel.log-floating.collapsed .log-float-toggle,
+#game #logPanel.log-floating.collapsed .log-wrap{display:none}
+#game #logPanel.log-floating.collapsed .log-tools{display:contents}
+#game #logPanel.log-floating.collapsed .log-toggle{
+  width:46px;height:46px;min-width:46px;min-height:46px;
+  flex:0 0 46px;border:0;border-radius:13px;background:transparent;
+  color:#e4d0a7;font-size:0;transform:none;
+}
+#game #logPanel.log-floating.collapsed .log-toggle::after{
+  content:"▤";font:700 24px/1 var(--font);
+}
+#game #logPanel.log-floating.collapsed .log-count:not(.has-new){display:none}
+#game #logPanel.log-floating.collapsed .log-count.has-new{
+  position:absolute;top:-7px;right:-7px;z-index:2;pointer-events:none;
+  background:#3b2c17;color:#ffe3a4;border-radius:999px;
+}
+#game.page-open #logPanel.log-floating{visibility:visible}
+#game[data-layout="portrait"].log-floating{grid-template-rows:auto minmax(0,1fr) 0 auto}
+#game[data-layout="landscape"].log-floating{grid-template-rows:auto minmax(0,1fr) 0}
+#game[data-layout="wide"].log-floating{grid-template-rows:minmax(0,1fr) 0}
+body.in-game.log-floating{--log-panel-h:0px}
+
+/* Biểu tượng chat: một bong bóng ba chấm, không họa tiết rườm rà. */
+.chat-bubble-btn{
+  border-radius:16px;background:#183d36;border-color:#b89b65;
+  box-shadow:0 5px 15px #0009,inset 0 1px 0 #ffffff18;
+}
+.chat-bubble-icon{width:30px;height:30px;filter:none}
+.chat-bubble-btn:hover{transform:none;box-shadow:0 5px 17px #000a,0 0 0 1px #d8bc7a66}
+body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:25px;height:25px}
+@media (prefers-reduced-motion:reduce){
+  #game #logPanel.log-floating,#game #logPanel.log-floating *{transition:none}
+}
+
+/* Icon nổi nhỏ gọn; vùng nhấn vẫn đạt ít nhất 40-44px để dùng cảm ứng. */
+#game #logPanel .log-float-toggle,#game #logPanel .log-toggle{font-size:16px}
+.chat-bubble-btn{width:44px;height:44px;min-width:44px;min-height:44px;padding:5px;border-radius:13px}
+.chat-bubble-icon{width:22px;height:22px}
+body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:20px;height:20px}
+#game #logPanel.log-floating.collapsed{
+  width:44px;height:44px;min-width:44px;min-height:44px;border-radius:12px;
+}
+#game #logPanel.log-floating.collapsed .log-head{height:44px;min-height:44px}
+#game #logPanel.log-floating.collapsed .log-toggle{
+  width:42px;height:42px;min-width:42px;min-height:42px;flex:0 0 42px;border-radius:11px;
+}
+#game #logPanel.log-floating.collapsed .log-toggle::after{
+  content:"";display:block;width:20px;height:20px;
+  background:url("../media/assets/ui/icon/notifications/bell.svg") center/contain no-repeat;
+}
+
+
+/* ===== BẢNG MÀU DỊU MẮT: nâu than trung tính, chữ giấy ấm, nhấn ít bão hòa ===== */
+/* Giảm nhiễu và hào quang mạnh, nhưng không lọc màu ảnh nền hay nhân vật. */
+:root{
+  --bg:#191816;--panel:#24221f;--inset:#1c1b19;
+  --line:#4b4741;--line2:#60594f;
+  --text:#e5dfd5;--muted:#bdb2a2;--dim:#b5ab9c;
+  --gold:#d1b68c;--jade:#acc9b4;--cyan:#c4beb2;--danger:#dfa69c;
+  --seal:#976c5c;--seal-deep:#6e4c40;--paper:#e8e0d4;
+  --brass:#a89578;--brass-dim:#6d6052;--brass-soft:#a8957830;
+  --paper-grain:linear-gradient(#ffffff02,#ffffff02);
+}
+body{background:radial-gradient(ellipse 65% 55% at 20% 0%,#413d3514,transparent 75%),var(--bg)}
+::-webkit-scrollbar-thumb{background:#5e5750;border-color:#201d1a}
+*{scrollbar-color:#5e5750 transparent}
+#game #status,#game #logPanel,#game #menu{
+  border-color:#4c4741;
+  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#282521,#211e1b);
+  box-shadow:0 4px 16px #0005,inset 0 1px 0 #ffffff07;
+}
+#game #logPanel{background:var(--corners),var(--paper-grain),linear-gradient(165deg,#282521,#211e1b)}
+#game #stage{border-color:#575046;box-shadow:0 7px 20px #0007,inset 0 0 28px #0005}
+.card,.win:not(.page){
+  background:var(--paper-grain),linear-gradient(160deg,#2a2722,#24211e);
+  border-color:#504b43;box-shadow:0 3px 12px #0003;
+}
+.win.page{background:linear-gradient(160deg,#272420,#1c1b19)}
+.win.page>header{background:linear-gradient(180deg,#302b26,#25221e);border-bottom-color:#554c43}
+.page-nav button{background:#302b26;border-color:#544c42;color:#dbd0c1}
+.page-nav button.on{background:#3a342b;border-color:#a89578;color:var(--gold)}
+#game #logPanel .log-head{border-bottom-color:#51483e}
+.log-entry{border-left-color:#6a5e51;background:transparent}
+.log-entry:first-child{background:linear-gradient(90deg,#a8957818,transparent 72%)}
+.log-text,.log-entry:first-child .log-text{color:#e1d9cd}
+.log-time{color:#b9ad9e;opacity:1}
+.log-tag{transform:none;box-shadow:none}
+.log-entry.success .log-tag,.log-entry.loot .log-tag{background:#385849;color:#dce8df}
+.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#655638;color:#f0dfba}
+.log-entry.danger .log-tag{background:#784b44;color:#f1d6d0}
+.btn-gold{
+  background:linear-gradient(180deg,#8f6152,#765145);
+  border-color:#a97b69;color:#f4e9dd;text-shadow:none;
+  box-shadow:inset 0 1px 0 #ffffff12;
+}
+.btn-gold:not(:disabled):hover{
+  background:linear-gradient(180deg,#996e5e,#805949);
+  box-shadow:0 3px 11px #0004;
+}
+.btn-outline{background:#2d2925;border-color:#5d554b;color:#e0d7cc}
+.btn-outline:not(:disabled):hover{background:#37312b;border-color:#907a62}
+#btn-break.ready:not(.auto),.peak-cta{
+  background:linear-gradient(160deg,#695c45,#4b4131);
+  border-color:#ad9873;box-shadow:0 0 0 1px #0005,0 4px 12px #0004;
+}
+.peak-cta{animation:none}
+#status .status-progress .bar>i{box-shadow:none;background:linear-gradient(90deg,#4e7862,#93b59a)}
+#status .vital-row .meter>i{box-shadow:none}
+#stage .idle-chip{box-shadow:0 2px 8px #0006,inset 0 1px 0 #ffffff09}
+.chat-bubble{z-index:170}
+.chat-bubble .chat-bubble-btn{
+  position:relative;z-index:2;visibility:visible;opacity:1;
+  background:#315149;border-color:#a89578;
+  box-shadow:0 4px 12px #0007;
+}
+.chat-bubble.open .chat-bubble-btn,
+body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
+  display:grid;visibility:visible;opacity:1;pointer-events:auto;
+  border-color:#c1aa84;box-shadow:0 3px 12px #0008,0 0 0 1px #bdad9155;
+}
+.chat-bubble-panel{z-index:1;border-color:#61594f;background:#282521;box-shadow:0 9px 26px #0008}
+.chat-bubble-panel::after{background:#282521;border-color:#61594f}
+.chat-feed{background:#1f1d1a;border-color:#554d43}
+.chat-message{background:#302b26;border-color:#524b43}
+.chat-message.mine{background:#38372c;border-color:#8f805e}
+.chat-message p{color:#e0d9cf}
+.chat-form input{background:#201e1c;border-color:#665b50;color:#e5dfd5}
+.toast-item{background:linear-gradient(135deg,#302a25f4,#24211ef2);border-color:#5b5146}
+.win.page .win-body{color:var(--text)}
+@media (prefers-reduced-motion:reduce){
+  .chat-bubble.has-new .chat-bubble-btn{animation:none}
+}

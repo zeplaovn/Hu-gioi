@@ -117,13 +117,16 @@
   /* ======================================================================
      NHẬT KÝ THÔNG BÁO
      ====================================================================== */
-  const LOG_MAX = 60, LOG_KEY = 'huGioiLogCollapsed';
+  const LOG_MAX = 60, LOG_KEY = 'huGioiLogCollapsed', LOG_FLOAT_KEY = 'huGioiLogFloating';
   const LOG_TAG = { tribulation: 'KIẾP', danger: 'NGUY', loot: 'THU', success: 'THÀNH', gold: 'DUYÊN', info: 'TIN' };
   const logState = {
     live: false, bound: false, owner: null, queue: [], current: null, timer: 0,
     follow: true, unseen: 0, count: 0, collapsed: false,
     engineRecent: new Map(), toastRecent: new Map(), lastPrune: 0
   };
+  // Trạng thái chỉ thuộc giao diện; dữ liệu tu luyện và bản lưu không thay đổi.
+  const logFloatState = { floating: false, x: null, y: null, loaded: false };
+  let logDrag = null, suppressLogToggleClick = false;
 
   function classifyLog(text) {
     if (/thất bại|trọng thương|tổn hại|không đủ|chưa đủ|rút lui|lỗi|hỏng|nguy hiểm/i.test(text)) return 'danger';
@@ -202,7 +205,96 @@
       if (feed) feed.scrollTop = feed.scrollHeight;
     }
     updateLogChrome();
+    if (logFloatState.floating) positionFloatingLog();
     if (persist) try { localStorage.setItem(LOG_KEY, logState.collapsed ? '1' : '0'); } catch { /* bỏ qua */ }
+  }
+
+
+  /* Cắt khung thông báo theo kiểu 9 vùng co giãn bằng CSS; không cắt ảnh
+     atlas vì repo không có atlas dành cho .box. Bố cục và tọa độ là thuần UI. */
+  function positionFloatingLog(x = logFloatState.x, y = logFloatState.y) {
+    const panel = $('logPanel');
+    if (!panel || !logFloatState.floating) return;
+    const width = root.innerWidth || document.documentElement.clientWidth;
+    const height = root.innerHeight || document.documentElement.clientHeight;
+    const maxX = Math.max(8, width - panel.offsetWidth - 8);
+    const maxY = Math.max(8, height - panel.offsetHeight - 8);
+    const defaultX = maxX;
+    const defaultY = Math.max(8, height - panel.offsetHeight - (width < 700 ? 144 : 40));
+    logFloatState.x = Math.max(8, Math.min(maxX, Number.isFinite(x) ? x : defaultX));
+    logFloatState.y = Math.max(8, Math.min(maxY, Number.isFinite(y) ? y : defaultY));
+    panel.style.left = Math.round(logFloatState.x) + 'px';
+    panel.style.top = Math.round(logFloatState.y) + 'px';
+  }
+
+  function saveFloatingLog() {
+    try {
+      localStorage.setItem(LOG_FLOAT_KEY, JSON.stringify({
+        floating: logFloatState.floating, x: logFloatState.x, y: logFloatState.y
+      }));
+    } catch { /* quyền lưu bị chặn: vẫn dùng được trong phiên hiện tại */ }
+  }
+
+  function setLogFloating(floating, persist = true) {
+    const panel = $('logPanel'), game = $('game'), btn = $('logFloatToggle');
+    if (!panel) return;
+    logFloatState.floating = !!floating;
+    panel.classList.toggle('log-floating', logFloatState.floating);
+    game?.classList.toggle('log-floating', logFloatState.floating);
+    document.body.classList.toggle('log-floating', logFloatState.floating);
+    if (btn) {
+      btn.textContent = logFloatState.floating ? '↙' : '↗';
+      btn.setAttribute('aria-pressed', String(logFloatState.floating));
+      const text = logFloatState.floating ? 'Ghim nhật ký về dưới sân khấu' : 'Đưa nhật ký thành cửa sổ nổi';
+      btn.setAttribute('aria-label', text);
+      btn.title = text;
+    }
+    if (logFloatState.floating) positionFloatingLog();
+    else {
+      panel.style.removeProperty('top');
+      panel.style.removeProperty('left');
+    }
+    if (persist) saveFloatingLog();
+  }
+
+  function bindFloatingLog() {
+    const panel = $('logPanel'), head = panel?.querySelector('.log-head');
+    if (!panel || !head) return;
+    $('logFloatToggle')?.addEventListener('click', () => setLogFloating(!logFloatState.floating));
+    head.addEventListener('pointerdown', e => {
+      if (!logFloatState.floating || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      const toggle = e.target.closest('#logToggle');
+      if (e.target.closest('button') && !(logState.collapsed && toggle)) return;
+      const rect = panel.getBoundingClientRect();
+      logDrag = { id: e.pointerId, startX: e.clientX, startY: e.clientY,
+        left: rect.left, top: rect.top, moved: false };
+      const capture = toggle || head;
+      try { capture.setPointerCapture(e.pointerId); } catch { logDrag = null; }
+    });
+    head.addEventListener('pointermove', e => {
+      if (!logDrag || e.pointerId !== logDrag.id) return;
+      const dx = e.clientX - logDrag.startX, dy = e.clientY - logDrag.startY;
+      if (!logDrag.moved && Math.hypot(dx, dy) < 6) return;
+      logDrag.moved = true;
+      panel.classList.add('log-dragging');
+      e.preventDefault();
+      positionFloatingLog(logDrag.left + dx, logDrag.top + dy);
+    });
+    const finish = e => {
+      if (!logDrag || e.pointerId !== logDrag.id) return;
+      if (logDrag.moved) {
+        suppressLogToggleClick = true;
+        saveFloatingLog();
+        // Một cú kéo không được vô tình mở/đóng nhật ký.
+        root.setTimeout(() => { suppressLogToggleClick = false; }, 0);
+      }
+      logDrag = null;
+      panel.classList.remove('log-dragging');
+    };
+    head.addEventListener('pointerup', finish);
+    head.addEventListener('pointercancel', finish);
+    root.addEventListener('resize', () => positionFloatingLog());
+    root.addEventListener('orientationchange', () => positionFloatingLog());
   }
 
   function pumpLog(force = false) {
@@ -291,7 +383,11 @@
         if (near) logState.unseen = 0;
         updateLogChrome();
       }, { passive: true });
-      $('logToggle')?.addEventListener('click', () => setLogCollapsed(!logState.collapsed));
+      $('logToggle')?.addEventListener('click', e => {
+        if (suppressLogToggleClick) { suppressLogToggleClick = false; e.preventDefault(); return; }
+        setLogCollapsed(!logState.collapsed);
+      });
+      bindFloatingLog();
       $('logJump')?.addEventListener('click', () => {
         logState.follow = true;
         logState.unseen = 0;
@@ -301,6 +397,18 @@
       });
     }
     try { logState.collapsed = localStorage.getItem(LOG_KEY) === '1'; } catch { logState.collapsed = false; }
+    if (!logFloatState.loaded) {
+      logFloatState.loaded = true;
+      try {
+        const saved = JSON.parse(localStorage.getItem(LOG_FLOAT_KEY) || 'null');
+        if (saved && typeof saved.floating === 'boolean') {
+          logFloatState.floating = saved.floating;
+          if (Number.isFinite(saved.x)) logFloatState.x = saved.x;
+          if (Number.isFinite(saved.y)) logFloatState.y = saved.y;
+        }
+      } catch { /* giữ mặc định khi dữ liệu vị trí không hợp lệ */ }
+    }
+    setLogFloating(logFloatState.floating, false);
     setLogCollapsed(logState.collapsed, false);
     if (!logState.timer) logState.timer = root.setInterval(pumpLog, 24);
   }
@@ -413,7 +521,7 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'settings'];
+  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world'];
   const WINDOW_SIZE = { idle: 470, combat: 590, craft: 700, character: 670, world: 740, settings: 580, meta: 760, more: 660 };
   const BADGED = ['combat', 'craft'];
 
@@ -1632,7 +1740,7 @@
       // Lịch luyện không còn thanh kỹ năng chiến đấu.
       return;
     }
-    const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world', s: 'settings' };
+    const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world' };
     if (map[key]) safe(() => go(map[key]));
   });
 
