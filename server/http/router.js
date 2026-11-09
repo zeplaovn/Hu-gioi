@@ -14,7 +14,7 @@ const json = (res, status, body) => {
   res.end(data);
 };
 
-function createRouter(routes = null, auth = null, gameApi = null) {
+function createRouter(routes = null, auth = null, gameApi = null, loginGateway = null) {
   // Tài khoản trình duyệt sử dụng Supabase. Chỉ bật legacy auth khi test
   // hoặc chủ động truyền dịch vụ vào router; không phơi API demo trên production.
   const handlers = routes || {
@@ -28,6 +28,10 @@ function createRouter(routes = null, auth = null, gameApi = null) {
   };
   return (req, res) => {
     const pathname = (req.url || '/').split('?')[0];
+    if (pathname === '/api/auth/supabase-login' && loginGateway) {
+      loginGateway.handle(req, res).catch(() => { if (!res.writableEnded) json(res, 503, { error: 'Dịch vụ xác thực đang gặp sự cố.' }); });
+      return;
+    }
     if (gameApi && pathname.startsWith('/api/v1/')) {
       gameApi.handle(req, res, pathname).catch(() => { if (!res.writableEnded) json(res, 500, { error: 'Máy chủ đang gặp lỗi.' }); });
       return;
