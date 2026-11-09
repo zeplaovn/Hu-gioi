@@ -67,7 +67,7 @@ test('after login consent is individually recorded and scoped to user', async ()
   await sb.accept(user);
   assert.equal(records.length, 2);
   assert.deepEqual(records.map(x => x.policy_kind).sort(), ['privacy', 'release_terms']);
-  assert.ok(records.every(x => x.user_id === ID && x.policy_version === '2026-11-09-v3'));
+  assert.ok(records.every(x => x.user_id === ID && x.policy_version === '2026-11-09-v4'));
   assert.ok(requests.filter(x => x.input.includes('policy_acceptances')).every(x => x.init.headers.Authorization === 'Bearer access'));
   assert.equal((await sb.accepted()).size, 2);
   await sb.accept(user);
