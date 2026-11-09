@@ -7,7 +7,8 @@
   const TABS = [
     { id: 'season', label: 'Tứ thời', icon: '✿' },
     { id: 'audio', label: 'Âm thanh', icon: '♪' },
-    { id: 'guide', label: 'Hướng dẫn', icon: '?' }
+    { id: 'guide', label: 'Hướng dẫn', icon: '?' },
+    { id: 'legal', label: 'Pháp lý', icon: '§' }
   ];
   const SEASONS = [
     ['spring', 'Xuân', '❀'],
@@ -85,7 +86,14 @@
     </div>`;
   }
 
-  const body = { season, audio, guide };
+  function legal() {
+    return '<div class="screen-grid">' +
+      card('Dữ liệu cá nhân', '<p>Dữ liệu tài khoản được xác thực qua Supabase, còn dữ liệu nhân vật vẫn lưu trên thiết bị. Xem nội dung xử lý, quyền yêu cầu truy cập, chỉnh sửa, rút lại đồng ý và xóa dữ liệu.</p><p><a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Đọc Chính sách bảo vệ dữ liệu cá nhân (09/11/2026)</a></p>', { eyebrow: 'QUYỀN RIÊNG TƯ' }) +
+      card('Điều khoản phát hành', '<p>Thông tin bản thử nghiệm, vật phẩm ảo, phân loại độ tuổi và điều kiện phải hoàn thiện trước phát hành chính thức tại Việt Nam.</p><p><a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Đọc Điều khoản và chính sách phát hành (09/11/2026)</a></p>', { eyebrow: 'PHÁP LÝ' }) +
+      '</div>';
+  }
+
+  const body = { season, audio, guide, legal };
   UI.register({
     id: 'settings', label: 'Cài đặt', icon: 'ICON-MENU-006', eyebrow: 'THIẾT LẬP', nav: false, tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">THIẾT LẬP</span><h2>Cài đặt</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,
