@@ -968,7 +968,7 @@
     syncLogOwner();
     const unlocked = UI.session.drainAchievements();
     if (unlocked.length) {
-      unlocked.slice(0, 2).forEach(a => toast('Mở thành tựu · ' + a.name + ' · +' + a.points + ' điểm Thiên mệnh.', { type: 'gold', title: 'Thành tựu', duration: 5200 }));
+      unlocked.slice(0, 2).forEach(a => toast('Mở thành tựu kiếp này · ' + a.name + '.', { type: 'gold', title: 'Thành tựu', duration: 5200 }));
       if (unlocked.length > 2) toast('+' + (unlocked.length - 2) + ' thành tựu khác vừa mở.', { type: 'gold', title: 'Thành tựu', duration: 5200 });
     }
     const need = g.need(), p = clamp(s.qi / need * 100, 0, 100), readyQi = p >= 100 && !s.completed;
