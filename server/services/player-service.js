@@ -86,6 +86,14 @@ class PlayerService {
     this.onError = onError;
   }
 
+  /* Tọa hóa thực: chỉ người sở hữu có nhân vật đã hết thọ nguyên mới có thể xóa để tạo lại. */
+  resetAfterDeath(ownerId, playerId) {
+    const rec = this.#own(this.repo.get(playerId), ownerId);
+    if (!new H.Game(this.#state(rec, this.clock())).isDead())
+      throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
+    return this.repo.deletePlayer(ownerId, playerId);
+  }
+
   /* ---------- Truy vấn ---------- */
   bootstrap(ownerId) {
     const rec = this.repo.getByOwner(ownerId);
