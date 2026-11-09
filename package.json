@@ -4,7 +4,7 @@
   "private": true,
   "description": "Hư Giới — game idle tu tiên: client, dữ liệu thiết kế, engine luật dùng chung và máy chủ",
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "scripts": {
     "start": "node server/main.js",
