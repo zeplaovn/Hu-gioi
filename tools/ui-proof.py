@@ -25,9 +25,16 @@ CASES = [
     ("craft-dien", "craft", "dien"),
 ]
 
-def enter_game(page, url):
+def enter_game(page, url, folder=None, name=None, outcome=None):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
+    # Màn Tiên Tịch: chụp Đăng nhập/Đăng ký và vào chế độ offline để kiểm luồng game cũ.
+    if page.locator("#authGate").count() and page.locator("#authGate").is_visible():
+        if folder is not None and outcome is not None:
+            outcome["screenshots"].append(snap(page, folder, name, "auth-login"))
+            page.locator('[data-auth-view="signup"]').click()
+            outcome["screenshots"].append(snap(page, folder, name, "auth-signup"))
+        page.locator("#authGuest").click()
     page.locator("#nameInput").fill("Vân Tiêu")
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
@@ -133,7 +140,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
     page.on("console", lambda msg: errors.append("console.error: " + msg.text) if msg.type == "error" and "501" not in msg.text else None)
     outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors}
     try:
-        enter_game(page, url)
+        enter_game(page, url, folder, name, outcome)
         verify_bubble(page, folder, name, outcome)
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
