@@ -23,9 +23,6 @@ CASES = [
     ("craft-dan", "craft", "dan"),
     ("craft-khi", "craft", "khi"),
     ("craft-dien", "craft", "dien"),
-    ("settings-season", "settings", "season"),
-    ("settings-audio", "settings", "audio"),
-    ("settings-guide", "settings", "guide"),
 ]
 
 def enter_game(page, url):
@@ -98,13 +95,26 @@ def verify_log_float(page, folder, name, outcome):
     outcome["log_float_toggle_drag"] = True
 
 
-def verify_bubble(page, outcome):
+def verify_bubble(page, folder, name, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
     assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
-    page.locator(".chat-bubble-close").click()
-    assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng"
+    assert trigger.is_visible(), "Icon chat biến mất khi mở bảng chat"
+    assert trigger.get_attribute("aria-expanded") == "true"
+    assert page.locator("#chatBubble .chat-bubble-icon").is_visible(), "Ảnh icon chat bị ẩn"
+    assert trigger.evaluate("""el => {
+      const r = el.getBoundingClientRect();
+      const elAtCenter = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return el.contains(elAtCenter);
+    }"""), "Bảng chat hoặc lớp khác che icon chat"
+    if name.startswith("after_"):
+        outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
+    # Bấm lại đúng icon chat: phải đóng được, không cần tìm nút X.
+    trigger.click()
+    assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng qua icon"
+    assert trigger.is_visible(), "Icon chat mất sau khi đóng"
+    outcome["chat_icon_persistent"] = True
     outcome["chat_toggle"] = True
 
 def run_set(browser, folder, name, url, width, height, mobile):
@@ -120,9 +130,11 @@ def run_set(browser, folder, name, url, width, height, mobile):
     outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors}
     try:
         enter_game(page, url)
-        verify_bubble(page, outcome)
+        verify_bubble(page, folder, name, outcome)
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
+            assert page.locator('#menu [data-window="settings"]').count() == 0, "Menu Cài đặt vẫn hiện"
+            assert page.locator('.status-settings').count() == 0, "Nút Cài đặt ở thanh trạng thái vẫn hiện"
         for key, section, tab in CASES:
             if section:
                 open_page(page, section)

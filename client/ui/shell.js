@@ -521,7 +521,7 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'settings'];
+  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world'];
   const WINDOW_SIZE = { idle: 470, combat: 590, craft: 700, character: 670, world: 740, settings: 580, meta: 760, more: 660 };
   const BADGED = ['combat', 'craft'];
 
@@ -1740,7 +1740,7 @@
       // Lịch luyện không còn thanh kỹ năng chiến đấu.
       return;
     }
-    const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world', s: 'settings' };
+    const map = { t: 'idle', l: 'combat', n: 'craft', c: 'character', i: 'character:bag', m: 'world' };
     if (map[key]) safe(() => go(map[key]));
   });
 

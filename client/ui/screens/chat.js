@@ -167,6 +167,8 @@
     bubble.open = force === undefined ? !bubble.open : !!force;
     bubble.panel.hidden = !bubble.open;
     bubble.btn.setAttribute('aria-expanded', String(bubble.open));
+    bubble.btn.setAttribute('aria-label', bubble.open ? 'Thu nhỏ chat thế giới' : 'Mở chat thế giới');
+    bubble.btn.title = bubble.open ? 'Thu nhỏ chat thế giới' : 'Mở chat thế giới';
     bubble.el.classList.toggle('open', bubble.open);
     bubbleCount();
     if (bubble.open) { update(); const f = $('chatFeed'); if (f) f.scrollTop = f.scrollHeight; }

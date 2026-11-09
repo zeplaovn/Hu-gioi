@@ -403,3 +403,85 @@ body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:20px;height:20px}
   content:"";display:block;width:20px;height:20px;
   background:url("../media/assets/ui/icon/notifications/bell.svg") center/contain no-repeat;
 }
+
+
+/* ===== BẢNG MÀU DỊU MẮT: nâu than trung tính, chữ giấy ấm, nhấn ít bão hòa ===== */
+/* Giảm nhiễu và hào quang mạnh, nhưng không lọc màu ảnh nền hay nhân vật. */
+:root{
+  --bg:#191816;--panel:#24221f;--inset:#1c1b19;
+  --line:#4b4741;--line2:#60594f;
+  --text:#e5dfd5;--muted:#bdb2a2;--dim:#b5ab9c;
+  --gold:#d1b68c;--jade:#acc9b4;--cyan:#c4beb2;--danger:#dfa69c;
+  --seal:#976c5c;--seal-deep:#6e4c40;--paper:#e8e0d4;
+  --brass:#a89578;--brass-dim:#6d6052;--brass-soft:#a8957830;
+  --paper-grain:linear-gradient(#ffffff02,#ffffff02);
+}
+body{background:radial-gradient(ellipse 65% 55% at 20% 0%,#413d3514,transparent 75%),var(--bg)}
+::-webkit-scrollbar-thumb{background:#5e5750;border-color:#201d1a}
+*{scrollbar-color:#5e5750 transparent}
+#game #status,#game #logPanel,#game #menu{
+  border-color:#4c4741;
+  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#282521,#211e1b);
+  box-shadow:0 4px 16px #0005,inset 0 1px 0 #ffffff07;
+}
+#game #logPanel{background:var(--corners),var(--paper-grain),linear-gradient(165deg,#282521,#211e1b)}
+#game #stage{border-color:#575046;box-shadow:0 7px 20px #0007,inset 0 0 28px #0005}
+.card,.win:not(.page){
+  background:var(--paper-grain),linear-gradient(160deg,#2a2722,#24211e);
+  border-color:#504b43;box-shadow:0 3px 12px #0003;
+}
+.win.page{background:linear-gradient(160deg,#272420,#1c1b19)}
+.win.page>header{background:linear-gradient(180deg,#302b26,#25221e);border-bottom-color:#554c43}
+.page-nav button{background:#302b26;border-color:#544c42;color:#dbd0c1}
+.page-nav button.on{background:#3a342b;border-color:#a89578;color:var(--gold)}
+#game #logPanel .log-head{border-bottom-color:#51483e}
+.log-entry{border-left-color:#6a5e51;background:transparent}
+.log-entry:first-child{background:linear-gradient(90deg,#a8957818,transparent 72%)}
+.log-text,.log-entry:first-child .log-text{color:#e1d9cd}
+.log-time{color:#b9ad9e;opacity:1}
+.log-tag{transform:none;box-shadow:none}
+.log-entry.success .log-tag,.log-entry.loot .log-tag{background:#385849;color:#dce8df}
+.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#655638;color:#f0dfba}
+.log-entry.danger .log-tag{background:#784b44;color:#f1d6d0}
+.btn-gold{
+  background:linear-gradient(180deg,#8f6152,#765145);
+  border-color:#a97b69;color:#f4e9dd;text-shadow:none;
+  box-shadow:inset 0 1px 0 #ffffff12;
+}
+.btn-gold:not(:disabled):hover{
+  background:linear-gradient(180deg,#996e5e,#805949);
+  box-shadow:0 3px 11px #0004;
+}
+.btn-outline{background:#2d2925;border-color:#5d554b;color:#e0d7cc}
+.btn-outline:not(:disabled):hover{background:#37312b;border-color:#907a62}
+#btn-break.ready:not(.auto),.peak-cta{
+  background:linear-gradient(160deg,#695c45,#4b4131);
+  border-color:#ad9873;box-shadow:0 0 0 1px #0005,0 4px 12px #0004;
+}
+.peak-cta{animation:none}
+#status .status-progress .bar>i{box-shadow:none;background:linear-gradient(90deg,#4e7862,#93b59a)}
+#status .vital-row .meter>i{box-shadow:none}
+#stage .idle-chip{box-shadow:0 2px 8px #0006,inset 0 1px 0 #ffffff09}
+.chat-bubble{z-index:170}
+.chat-bubble .chat-bubble-btn{
+  position:relative;z-index:2;visibility:visible;opacity:1;
+  background:#315149;border-color:#a89578;
+  box-shadow:0 4px 12px #0007;
+}
+.chat-bubble.open .chat-bubble-btn,
+body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
+  display:grid;visibility:visible;opacity:1;pointer-events:auto;
+  border-color:#c1aa84;box-shadow:0 3px 12px #0008,0 0 0 1px #bdad9155;
+}
+.chat-bubble-panel{z-index:1;border-color:#61594f;background:#282521;box-shadow:0 9px 26px #0008}
+.chat-bubble-panel::after{background:#282521;border-color:#61594f}
+.chat-feed{background:#1f1d1a;border-color:#554d43}
+.chat-message{background:#302b26;border-color:#524b43}
+.chat-message.mine{background:#38372c;border-color:#8f805e}
+.chat-message p{color:#e0d9cf}
+.chat-form input{background:#201e1c;border-color:#665b50;color:#e5dfd5}
+.toast-item{background:linear-gradient(135deg,#302a25f4,#24211ef2);border-color:#5b5146}
+.win.page .win-body{color:var(--text)}
+@media (prefers-reduced-motion:reduce){
+  .chat-bubble.has-new .chat-bubble-btn{animation:none}
+}
