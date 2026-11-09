@@ -388,6 +388,7 @@ body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:25px;height:25px}
 }
 
 /* Icon nổi nhỏ gọn; vùng nhấn vẫn đạt ít nhất 40-44px để dùng cảm ứng. */
+#game #logPanel .log-float-toggle,#game #logPanel .log-toggle{font-size:16px}
 .chat-bubble-btn{width:44px;height:44px;min-width:44px;min-height:44px;padding:5px;border-radius:13px}
 .chat-bubble-icon{width:22px;height:22px}
 body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:20px;height:20px}
