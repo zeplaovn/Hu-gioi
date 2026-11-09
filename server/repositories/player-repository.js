@@ -24,6 +24,7 @@ class PlayerRepository {
   issueTicket() { throw notImplemented('issueTicket'); }
   createWithTicket() { throw notImplemented('createWithTicket'); }
   transact() { throw notImplemented('transact'); }
+  deletePlayer() { throw notImplemented('deletePlayer'); }
   purgeExpired() { throw notImplemented('purgeExpired'); }
   close() {}
 }
