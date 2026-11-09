@@ -21,11 +21,19 @@
       if (note) note.textContent = 'Giao diện hoặc luật chơi chưa sẵn sàng; hiện chưa thể bắt đầu tu tiên.';
     }
     console.warn('Hư Giới: engine chưa READY. Thiếu:', H && H.MISSING);
+    root.HU_LOADER?.engineReady?.({ ready: false });
     return;
   }
   if (!UI || typeof UI.boot !== 'function') {
     console.error('Hư Giới: thiếu lớp giao diện. Kiểm tra thứ tự thẻ script.');
+    root.HU_LOADER?.engineReady?.({ ready: false });
     return;
   }
-  UI.boot();
+  try {
+    UI.boot();
+    root.HU_LOADER?.engineReady?.({ ready: true });
+  } catch (error) {
+    root.HU_LOADER?.engineReady?.({ ready: false });
+    throw error;
+  }
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -485,3 +485,12 @@ body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
 @media (prefers-reduced-motion:reduce){
   .chat-bubble.has-new .chat-bubble-btn{animation:none}
 }
+
+
+/* Ẩn icon nổi khi mở khung. Giữ chỗ neo bằng visibility để bảng không nhảy. */
+.chat-bubble.open .chat-bubble-btn,
+body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
+  visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+/* Chuông thông báo chỉ xuất hiện khi khung được thu gọn. */
+#game #logPanel.log-floating:not(.collapsed) .log-toggle::after{content:none;background:none}
