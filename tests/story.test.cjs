@@ -26,7 +26,7 @@ const topics = Object.values(STORY.NPCS).flatMap(x => Object.values(x));
 
 test('tài liệu hợp đồng liệt kê đúng mọi lệnh protocol', () => {
   const doc = readFileSync(join(__dirname, '../docs/engine-contract.md'), 'utf8');
-  const listed = [...doc.matchAll(/^\| `(\w+)` \| (?:progression|inventory|crafting|combat|world|adventures|social) \|/gm)]
+  const listed = [...doc.matchAll(/^\| `(\w+)` \| (?:progression|inventory|crafting|combat|world|adventures|social|time) \|/gm)]
     .map(match => match[1]);
   assert.deepEqual([...new Set(listed)].sort(), [...C.types].sort());
   assert.equal(listed.length, C.types.length, 'bảng tài liệu không được lặp lệnh');
@@ -79,7 +79,7 @@ test('Vạn Kiếp Tàng Thư: nội dung không lộ chỉ số kỹ thuật v�
 test('protocol: lệnh storyMark đúng một miền, kiểm tra cảnh giới, thiện cảm và lựa chọn', () => {
   const g = make();
   assert.equal(H.OWNERS.storyMark, 'world');
-  assert.equal(C.types.length, 51);
+  assert.equal(C.types.length, 52);
   assert.deepEqual(g.s.story, { read: {}, flags: {} });
   assert.equal(run(g, 'ha-01').id, 'ha-01');
   assert.equal(g.s.story.read['ha-01'], true);
