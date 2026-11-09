@@ -32,7 +32,7 @@
         <div class="settings-row"><label for="motionSetting">Chuyển động</label>${select('motionSetting', st.motionMode, [['auto', 'Theo cài đặt thiết bị'], ['full', 'Đầy đủ'], ['reduced', 'Giảm chuyển động']])}</div>
         <p class="info-note" id="motionStatus">${UI.isReduced() ? 'Đang giảm chuyển động: lá, linh khí và hiệu ứng khung hình ở trạng thái tĩnh.' : 'Đang bật đầy đủ: lá rơi, linh khí và hiệu ứng chiến đấu chuyển động.'}</p>`, { eyebrow: 'CẢNH SẮC' })}
       ${card('Chuyển động và hiển thị', `<p>Nếu thiết bị hoạt động chậm, hãy chọn <b>Giảm chuyển động</b>. Việc tu luyện và hoạt động nghề phụ vẫn tiếp tục bình thường.</p>
-        <p class="info-note">Hành trình của bạn được ghi nhớ trên thiết bị và tự tiếp nối khi trở lại.</p>`, { eyebrow: 'THIẾT BỊ' })}
+        <p class="info-note">Tiến trình và cài đặt được ghi trên máy chủ game. Khi đăng nhập từ thiết bị khác, hành trình được tải lại theo tài khoản đã xác minh.</p>`, { eyebrow: 'THIẾT BỊ' })}
     </div>`;
   }
 
