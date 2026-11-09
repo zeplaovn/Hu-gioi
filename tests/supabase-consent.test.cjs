@@ -91,6 +91,8 @@ test('legal pages, CSP and checkbox binding are present in shipping files', () =
   assert.match(html, /id="authPrivacy" type="checkbox" required/);
   assert.match(html, /id="authRelease" type="checkbox" required/);
   assert.match(html, /id="authConsentGate"/);
+  assert.match(html, /id="authGuestRelease" type="checkbox"/);
+  assert.match(auth, /authGuestRelease/);
   assert.ok(html.indexOf('client/auth/supabase.js') < html.indexOf('client/auth/auth.js'));
   assert.match(auth, /await SB\.accept\(pending\)/);
   assert.match(headers, /connect-src 'self' https:\/\/rvrwfeblishqadkpzspb\.supabase\.co/);
