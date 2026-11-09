@@ -6,6 +6,17 @@
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
   const VERSION = '2026-11-09-v3';
   const STORAGE = 'huGioiSupabaseSessionV1';
+  function validEmail(raw) {
+    if (typeof raw !== 'string' || raw.length < 6 || raw.length > 254 || /\s/.test(raw)) return false;
+    const parts = raw.split('@');
+    if (parts.length !== 2) return false;
+    const [local, domain] = parts;
+    if (!local || local.length > 64 || local.startsWith('.') || local.endsWith('.') || local.includes('..') ||
+        !/^[a-zA-Z0-9!#$%&'*+/=?^_\x60{|}~.-]+$/.test(local)) return false;
+    const labels = domain.split('.');
+    return domain.length <= 253 && labels.length > 1 && /^[a-zA-Z]{2,63}$/.test(labels[labels.length - 1]) &&
+      labels.every(label => label.length <= 63 && /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(label));
+  }
   let current = null;
   try { current = JSON.parse(root.sessionStorage?.getItem(STORAGE) || 'null'); } catch { /* private mode */ }
 
@@ -91,6 +102,7 @@
   }
 
   async function signup(email, password) {
+    if (!validEmail(email)) throw Error('Email không hợp lệ. Vui lòng nhập địa chỉ email đúng định dạng.');
     const redirect = root.location?.protocol === 'https:' || root.location?.hostname === 'localhost'
       ? '?redirect_to=' + encodeURIComponent(root.location.origin + root.location.pathname)
       : '';
@@ -101,9 +113,21 @@
     return data;
   }
   async function login(email, password) {
-    const data = await request('/auth/v1/token?grant_type=password', {
-      method: 'POST', body: { email, password }
+    if (!validEmail(email)) throw Error('Email không hợp lệ. Vui lòng nhập địa chỉ email đúng định dạng.');
+    const response = await root.fetch('/api/auth/supabase-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'
     });
+    let data;
+    try { data = await response.json(); } catch { data = null; }
+    if (!response.ok) {
+      const message = response.status === 429 ? 'IP đã đăng nhập quá nhiều lần. Hãy thử lại sau.'
+        : data?.error || 'Dịch vụ đăng nhập chưa sẵn sàng.';
+      throw Object.assign(Error(message), { status: response.status });
+    }
+    if (!data?.access_token || !data?.refresh_token) throw Error('Máy chủ chưa trả phiên đăng nhập hợp lệ.');
     persist(data);
     return user();
   }
@@ -139,5 +163,5 @@
       persist(null);
     }
   }
-  root.HU_SUPABASE = { user, signup, login, accepted, accept, logout, accessToken: token, VERSION };
+  root.HU_SUPABASE = { user, signup, login, accepted, accept, logout, accessToken: token, validEmail, VERSION };
 })(typeof window !== 'undefined' ? window : globalThis);
