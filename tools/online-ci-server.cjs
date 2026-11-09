@@ -12,8 +12,10 @@ const repo = new SqlitePlayers(':memory:');
 const service = new PlayerService({ repository: repo, contentVersion: computeContentVersion() });
 const api = createGameApi({
   service,
-  resolvePrincipal: async req => req.headers.authorization === 'Bearer ci-access-token'
-    ? { accountId: 'ci-browser-user', via: 'test' } : null,
+  resolvePrincipal: async req => {
+    const match = /^Bearer (ci-access-token-[A-Za-z0-9_-]{4,100})$/.exec(String(req.headers.authorization || ''));
+    return match ? { accountId: match[1], via: 'test' } : null;
+  },
   log: error => console.error('[CI API]', error)
 });
 const server = http.createServer(createRouter(null, null, api));
