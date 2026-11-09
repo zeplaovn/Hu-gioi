@@ -25,6 +25,35 @@ CASES = [
     ("craft-dien", "craft", "dien"),
 ]
 
+def mock_supabase(page, name):
+    # Browser-only CI fixture. External Supabase Auth is never called with real accounts.
+    token = 'ci-access-token-' + ''.join(c if c.isalnum() or c in '_-' else '_' for c in name)
+    user_id = '11111111-2222-4333-8444-555555555555'
+    def respond(route):
+        request = route.request
+        origin = request.headers.get('origin', 'http://127.0.0.1:8001')
+        headers = {
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'apikey, authorization, content-type',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store'
+        }
+        if request.method == 'OPTIONS':
+            return route.fulfill(status=204, headers=headers, body='')
+        pathname = request.url.split('?', 1)[0]
+        if pathname.endswith('/auth/v1/token'):
+            body = {'access_token': token, 'refresh_token': 'ci-refresh', 'expires_in': 3600}
+        elif pathname.endswith('/auth/v1/user'):
+            body = {'id': user_id, 'email': 'ci@example.invalid'}
+        elif pathname.endswith('/rest/v1/policy_acceptances'):
+            body = [{'policy_kind': 'privacy'}, {'policy_kind': 'release_terms'}]
+        else:
+            return route.fulfill(status=404, headers=headers, body='{"message":"Unexpected test request"}')
+        route.fulfill(status=200, headers=headers, body=json.dumps(body))
+    page.route('https://rvrwfeblishqadkpzspb.supabase.co/**', respond)
+
+
 def enter_game(page, url, folder=None, name=None, outcome=None):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
@@ -34,9 +63,16 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             outcome["screenshots"].append(snap(page, folder, name, "auth-login"))
             page.locator('[data-auth-view="signup"]').click()
             outcome["screenshots"].append(snap(page, folder, name, "auth-signup"))
-        if page.locator("#authGuestRelease").count():
-            page.locator("#authGuestRelease").check()
-        page.locator("#authGuest").click()
+        if page.locator("#authGuest").count():
+            if page.locator("#authGuestRelease").count():
+                page.locator("#authGuestRelease").check()
+            page.locator("#authGuest").click()
+        else:
+            page.locator('[data-auth-view="login"]').click()
+            page.locator("#authEmail").fill("ci@example.invalid")
+            page.locator("#authPassword").fill("ci-test-password-1234")
+            page.locator("#authSubmit").click()
+            page.locator("#welcome").wait_for(state="visible", timeout=20000)
     page.locator("#nameInput").fill("Vân Tiêu")
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
@@ -137,6 +173,8 @@ def run_set(browser, folder, name, url, width, height, mobile):
         device_scale_factor=1, reduced_motion="reduce",
     )
     page = ctx.new_page()
+    if name.startswith('after_'):
+        mock_supabase(page, name)
     errors = []
     expected_auth_404 = []
     page.on("response", lambda res: expected_auth_404.append(res.url)
@@ -172,7 +210,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
             )
             outcome["overflow_buttons"] = issues
             # Tọa hóa thực: reset ngay cả Thiên mệnh, cài đặt và bản lưu dự phòng.
-            if width == 1366:
+            if width == 1366 and not name.startswith('after_'):
                 page.evaluate("""() => {
                     const ui = window.HU_UI;
                     ui.s().meta.points = 999;
