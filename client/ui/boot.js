@@ -513,8 +513,10 @@
     $('welcome').hidden = false;
     renderCreation();
   }
-  function leaveAccount() {
-    if (store.ready && !store.locked) UI.session.pause().catch(() => {});
+  async function leaveAccount() {
+    if (store.ready && !store.locked) {
+      try { await UI.session.pause(); } catch { /* server tự đóng băng sau heartbeat timeout */ }
+    }
     store.ready = false;
     UI.tutorial?.close();
     UI.windows?.closeAll();
