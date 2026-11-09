@@ -2,23 +2,23 @@
 
 Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-> **Hiện trạng:** engine game chạy offline trong trình duyệt (`LocalSession`) và đã có **backend gameplay server-authoritative** (`/api/v1`, SQLite, `PlayerService`): máy chủ giữ đồng hồ, RNG, tiến trình bế quan và phần thưởng. **Client chưa có `RemoteSession`**, nên bản chơi trên trình duyệt vẫn lưu cục bộ; API sẵn sàng để nối. Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
+> **Trên nhánh online:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Để chơi thực sự trên internet cần triển khai Node backend HTTPS**; Cloudflare static-only không cung cấp API. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
 
-Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
+Repository: [zeplaovn/Hugioi](https://github.com/zeplaovn/Hugioi).
 
 ## Chạy dự án
 
-Yêu cầu **Node.js 20+**. Không cần `npm install`.
+Yêu cầu **Node.js 24+**. Không cần `npm install` để chạy Node backend. Cần cấu hình `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` và volume SQLite riêng; xem `.env.example` và `docs/online-deployment.md`.
 
 ```sh
 npm start        # máy chủ tại http://127.0.0.1:8000 (HOST, PORT tùy chọn)
 npm run check    # cú pháp JavaScript, ranh giới engine, thứ tự script
-npm test         # test hợp đồng, hành vi 9 miền luật, LocalSession và UI entry
+npm test         # test backend /api/v1, RemoteSession, engine và giao diện
 ```
 
-`npm start` phục vụ game tĩnh, `GET /api/health` và API **`/api/auth/signup`, `/login`, `/session`, `/logout`**. Mặc định dữ liệu tài khoản thử nghiệm được ghi vào `.hu-gioi/accounts.json` (không công khai, đã gitignore); có thể đổi đường dẫn bằng `HU_AUTH_FILE`. Mật khẩu dùng scrypt và token phiên chỉ được đặt trong cookie HttpOnly. Đây là **auth MVP cho một máy chủ Node**, không phải hệ thống tài khoản production đa instance — cần thay bằng database/AuthProvider trước khi triển khai thực tế.
+`npm start` phục vụ giao diện và `/api/v1/*` khi cấu hình Supabase. Auth dùng Supabase JWT và hai bản ghi đồng ý chính sách. Backend từ chối hoạt động online khi thiếu xác thực hoặc quyền consent. Không bật `HU_LEGACY_AUTH` trong production.
 
-Có thể mở [index.html](index.html) (`file://`) hoặc dùng máy chủ tĩnh để **Vân du không tài khoản**. Login/Sign up không hoạt động khi không có API Node. Gameplay chạy offline qua `LocalSession`, tự lưu `localStorage` và cộng tiến trình khi mở lại. Nếu engine chưa READY, trang mở bản xem trước giao diện.
+`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend tính bế quan và lưu tiến trình liên tục.
 
 ## Tính năng thiết kế
 
@@ -43,11 +43,11 @@ Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<gi
 
 ## Lưu và chuyển tiến trình
 
-- Game tự lưu bằng `localStorage`; vào **Cài đặt → Bản lưu** để **Lưu ngay**, **Xuất JSON** hoặc **Nhập JSON**.
-- Tệp xuất có tên `hu-gioi-save.json`. Nhập bản lưu hỗ trợ V4, V5, V6, V7 và V8, chuyển về schema **V8**.
-- Khách dùng `huGioiWorkspaceV1` và `huGioiWorkspaceV1Backup`. Với tài khoản đã đăng nhập, key được gắn hậu tố `:<accountId>` để người khác đăng nhập trên cùng trình duyệt không nạp nhầm bản lưu. Bản lưu vẫn chỉ tồn tại trong trình duyệt này.
-- Dữ liệu gắn với trình duyệt và địa chỉ chạy game. Dùng xuất/nhập JSON khi đổi thiết bị, trình duyệt hoặc chuyển giữa `file://` và HTTP.
-- Thiên mệnh được giữ qua **trọng sinh chủ động**, nhưng **khi tọa hóa**, bấm Trở về Khởi Nguyên sẽ xóa tất cả dữ liệu game của người chơi hiện tại (cả chính/dự phòng) và mở lại tạo nhân vật. Tài khoản đăng nhập và tiến trình của các tài khoản khác không bị xóa.
+- Giao diện **không ghi bản nhân vật vào `localStorage`**. Snapshot chỉ được hiển thị trong bộ nhớ; Node backend lưu dữ liệu trong SQLite trên volume của máy chủ.
+- Chuyển thiết bị: đăng nhập lại tài khoản Supabase trên cùng tên miền backend để mở nhân vật.
+- **Không tự động nhập các bản lưu offline cũ**. Không lấy JSON phía client làm trạng thái tin cậy; cần một quy trình nhập có xác thực/kiểm toán riêng nếu sẽ hỗ trợ di trú.
+- **Tọa hóa:** chỉ khi server xác nhận nhân vật đã chết mới cho xóa nhân vật SQLite để tạo lại. Tài khoản Supabase vẫn tồn tại.
+- Cần thực hiện backup/restore database và quy trình xóa dữ liệu theo yêu cầu trước phát hành thương mại.
 
 ## Cấu trúc mã nguồn
 
@@ -60,11 +60,11 @@ engine/                    Luật chơi dùng chung cho client và server
   game.js                    Ghép data + state + rules; báo READY / MISSING
   state/                     Schema V8, create, normalize V4–V8
   rules/                     9 miền: progression inventory crafting combat world adventures social time creation
-  protocol/                  51 lệnh: schema payload, validate, execute
+  protocol/                  52 lệnh: schema payload, validate, execute
 client/
   assets/ platform/          Ảnh, âm thanh, loading, bảo vệ nội dung
-  persistence/               localStorage, dự phòng, xuất/nhập JSON
-  session/                   LocalSession (offline) và ChatSession (HTTP/SSE)
+  persistence/               RemoteStore (bản LocalStore cũ giữ để kiểm toán)
+  session/                   RemoteSession (online) và ChatSession (HTTP/SSE)
   ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                    Khởi động
 server/                    Máy chủ HTTP
@@ -113,7 +113,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 
 Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
-**Chưa có:** `RemoteSession` ở client, batch lệnh, nhập save offline, bảng xếp hạng, chat/PvP/tông môn dùng chung, admin API, WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
+**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 52 lệnh engine, sync, reset sau tọa hóa, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
 
 ## Tài liệu
 
