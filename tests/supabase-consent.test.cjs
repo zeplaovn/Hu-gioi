@@ -13,7 +13,7 @@ function createAdapter(initialHash = '') {
   const records = [];
   const requests = [];
   const storage = new Map();
-  const location = { protocol: 'https:', origin: 'https://game.example.invalid', pathname: '/', hash: initialHash };
+  const location = { protocol: 'https:', origin: 'https://game.example.invalid', pathname: '/', search: '', hash: initialHash };
   const window = {
     location,
     sessionStorage: {
