@@ -7,6 +7,7 @@
      HU_LEGACY_AUTH=1       bật AuthService cookie thử nghiệm thay cho Supabase (chỉ dev/test)
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
+     HU_AUTH_TRUSTED_PROXY_IPS  danh sách IP proxy được phép khai báo X-Forwarded-For
      HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 15000)
    Không đặt cấu hình xác thực → API gameplay tắt, chỉ phục vụ file tĩnh. */
 'use strict';
@@ -21,6 +22,7 @@ function buildGameApi(env = process.env) {
   const { SqlitePlayers } = require('./repositories/sqlite-players.js');
   const { PlayerService } = require('./services/player-service.js');
   const { createGameApi } = require('./http/game-api.js');
+  const { createSupabaseLoginGateway } = require('./http/supabase-login.js');
   const { computeContentVersion } = require('./content-version.js');
   const { AuthService } = require('./services/auth-service.js');
 
@@ -28,7 +30,7 @@ function buildGameApi(env = process.env) {
     throw Error('Không bật HU_LEGACY_AUTH trong production.');
   const jwt = verifierFromEnv(env);
   const legacy = env.HU_LEGACY_AUTH === '1' ? new AuthService() : null;
-  if (!jwt && !legacy) return { auth: null, gameApi: null, close() {} };
+  if (!jwt && !legacy) return { auth: null, gameApi: null, loginGateway: null, close() {} };
   const verifyConsent = jwt ? createConsentVerifier({
     url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY
   }).check : null;
@@ -48,18 +50,22 @@ function buildGameApi(env = process.env) {
   purge.unref();
   repository.purgeExpired(Date.now());
   const allowedOrigins = String(env.HU_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const loginGateway = jwt ? createSupabaseLoginGateway({
+    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY,
+    trustedProxyIps: String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(x => x.trim()).filter(Boolean)
+  }) : null;
   const gameApi = createGameApi({
     service, resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
     log: err => console.error('[game-api]', err.cause?.stack || err.stack || err)
   });
-  return { auth: legacy, gameApi, close() { clearInterval(purge); repository.close(); } };
+  return { auth: legacy, gameApi, loginGateway, close() { clearInterval(purge); repository.close(); } };
 }
 
 if (require.main === module) {
   const host = process.env.HOST || '127.0.0.1';
   const port = Number(process.env.PORT || 8000);
-  const { auth, gameApi, close } = buildGameApi();
-  const server = http.createServer(createRouter(null, auth, gameApi));
+  const { auth, gameApi, loginGateway, close } = buildGameApi();
+  const server = http.createServer(createRouter(null, auth, gameApi, loginGateway));
   server.listen(port, host, () => console.log(`Hư Giới tại http://${host}:${port} · gameplay ${gameApi ? 'BẬT' : 'tắt (chưa cấu hình xác thực)'}`));
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => { close(); process.exit(0); }));
 }
