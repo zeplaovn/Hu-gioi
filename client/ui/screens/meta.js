@@ -104,29 +104,29 @@
     }
   });
 
-  UI.action('metaBuy', (el, d) => {
-    const r = UI.command('buyMeta', { key: d.key });
+  UI.action('metaBuy', async (el, d) => {
+    const r = await UI.command('buyMeta', { key: d.key });
     UI.toast('Thiên mệnh · ' + H.META_UPGRADES[r.key].name + ' cấp ' + r.level + '.', { type: 'gold', title: 'Thiên mệnh' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
 
-  UI.action('prestige', () => {
+  UI.action('prestige', async () => {
     const reward = F.dao_van(UI.s().totalRunExp);
-    UI.modal('Xác nhận trọng sinh', `<p>Nhận <b>${num(reward)} Đạo vận</b>. Cảnh giới, túi đồ và tiền thường đặt lại.</p>`, () => {
-      UI.command('prestige');
+    UI.modal('Xác nhận trọng sinh', `<p>Nhận <b>${num(reward)} Đạo vận</b>. Cảnh giới, túi đồ và tiền thường đặt lại.</p>`, async () => {
+      await UI.command('prestige');
       UI.toast('Đã chuyển thế · nhận ' + num(reward) + ' Đạo vận.', { type: 'gold', title: 'Trọng sinh' });
       UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(140px,22vw,240px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
       UI.go('idle');
     }, 'Trọng sinh', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_phu'] });
     return UI.KEEP;
   });
-  UI.action('offlineCap', () => {
-    UI.command('upgradeOffline', { type: 'cap' });
+  UI.action('offlineCap', async () => {
+    await UI.command('upgradeOffline', { type: 'cap' });
     UI.toast('Thời gian bế quan tối đa · ' + duration(F.offline_cap(UI.s().offlineCap)) + '.', { type: 'success', title: 'Bế quan' });
     UI.vfx?.effect('qi');
   });
-  UI.action('offlineEff', () => {
-    UI.command('upgradeOffline', { type: 'eff' });
+  UI.action('offlineEff', async () => {
+    await UI.command('upgradeOffline', { type: 'eff' });
     UI.toast('Hiệu quả bế quan khi vắng mặt · ' + pct(F.offline_efficiency(UI.s().offlineEff)) + '.', { type: 'success', title: 'Bế quan' });
     UI.vfx?.effect('qi');
   });
