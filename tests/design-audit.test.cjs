@@ -8,7 +8,7 @@ const H = require('../engine/game.js');
 const F = H.F;
 const NOW = 1_700_000_000_000;
 const seeded = (seed = 7) => { let x = seed >>> 0; return () => ((x = (Math.imul(x, 1664525) + 1013904223) >>> 0) / 4294967296); };
-const PROFILE = { name: 'Hư Không', gender: 'nam', age: 18, race: 'nhan', roots: [72, 61, 55, 44, 33], rootType: 'Song', talent: { tuongMao: 2, phucDuyen: 2, canCot: 2, ngoTinh: 1, vanKhi: 1 } };
+const PROFILE = { name: 'Hư Không', gender: 'nam', age: 18, race: 'nhan', roots: [72, 61, 45, 44, 33], rootType: 'Song', talent: { tuongMao: 2, phucDuyen: 2, canCot: 2, ngoTinh: 1, vanKhi: 1 } };
 const make = () => { const rng = seeded(); return new H.Game(H.createCharacter({ ...PROFILE, talent: { ...PROFILE.talent }, roots: [...PROFILE.roots] }, NOW, rng), rng); };
 const atPeak = (g, realm) => { g.s.realm = realm; g.s.stage = F.STAGES[realm]; g.s.shield = 0; g.s.reduction = 0; return g; };
 
