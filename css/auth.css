@@ -75,3 +75,10 @@
 
 /* [hidden] phải thắng quy tắc display:flex của form và consent. */
 .auth-form label[hidden], .auth-message[hidden] { display:none !important; }
+
+/* Chơi khách cần chấp thuận điều khoản nhưng không bị buộc đăng ký email. */
+.auth-guest-wrap { display:flex; flex-direction:column; gap:12px; }
+.auth-guest-wrap[hidden] { display:none !important; }
+.auth-guest-wrap .auth-check { display:flex; flex-direction:row; gap:10px; align-items:flex-start; color:#d9d1c2; font:500 12px/1.6 var(--font,sans-serif); }
+.auth-guest-wrap .auth-check input { width:20px; height:20px; min-height:20px; flex:0 0 20px; margin:2px 0 0; accent-color:#d2b475; }
+.auth-guest-wrap .auth-check a { color:#e5ca92; text-decoration:underline; text-underline-offset:3px; }
