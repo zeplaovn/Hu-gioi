@@ -149,9 +149,9 @@
   /* ======================================================================
      4. PHIÊN CHƠI
      ====================================================================== */
-  const session = new root.HU_LOCAL_SESSION.LocalSession();
+  const session = new root.HU_REMOTE_SESSION.RemoteSession();
   UI.session = session;
-  UI.store = root.HU_LOCAL_STORE.createStore(session, message => UI.toast(message));
+  UI.store = root.HU_REMOTE_STORE.createStore(session, message => UI.toast(message));
   // Chỉ đọc khi render; mọi thay đổi gameplay đi qua command().
   UI.g = () => session.game;
   UI.s = () => session.game.s;
