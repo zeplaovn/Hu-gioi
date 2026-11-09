@@ -84,7 +84,7 @@ test('khi nạp lại game, tiếp tục chuyến đang chạy hoặc tự về 
   assert.match(boot, /requested \|\| \(s\.exploration\?\.active \? 'combat' : 'idle'\)/);
   assert.match(boot, /const wasExploring = !!s\.exploration\?\.active/);
   assert.match(boot, /UI\.session\.pause\(\)/);
-  assert.match(boot, /UI\.go\('idle'\)/);
+  assert.match(boot, /UI\.session\.synchronize\(true\)/);
 });
 
 test('chỉ được đổi nơi trước khi khởi hành; chạm trán yêu thú được kết toán khi trở về', () => {
