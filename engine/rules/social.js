@@ -186,8 +186,9 @@
         const reward = win ? Math.max(1, Math.round(F.loot_linh_thach(this.s.realm, 'tinh anh') * 2)) : 0;
         if (reward) this.s.stone += reward;
         const exp = win ? this.gainExp(Math.max(1, this.need() * .01)) : 0;
-        this.log(win ? 'Thắng luận kiếm: danh vọng +' + delta + '.' : 'Thua luận kiếm: danh vọng ' + delta + '.');
-        return { win, delta, rating: pvp.rating, best: pvp.best, reward, exp, my, power };
+        if (!win) this.markDeath('pvp', now);
+        this.log(win ? 'Thắng luận kiếm: danh vọng +' + delta + '.' : 'Thua luận kiếm: đạo thân tọa hóa, toàn bộ kiếp này chấm dứt.');
+        return { win, died: !win, delta, rating: pvp.rating, best: pvp.best, reward, exp, my, power };
       }
     });
   }
