@@ -7,8 +7,9 @@ const path = require('node:path');
 const loaderSource = fs.readFileSync(path.join(__dirname, '../client/platform/loader.js'), 'utf8');
 
 function harness() {
-  const images = [], events = [];
-  const elements = new Map();
+  const images = [], events = [], intervals = new Map();
+  let nextInterval = 0;
+  const phaseLabel = { textContent: '' };
   const status = { textContent: '', style: {}, attrs: {}, setAttribute(k, v) { this.attrs[k] = v; } };
   const bar = { style: {} };
   const pct = { textContent: '' };
@@ -24,7 +25,7 @@ function harness() {
     },
     setAttribute(k, v) { this.attrs[k] = v; },
     querySelector(selector) {
-      return { '.loading-fill': bar, '.loading-pct': pct, '.loading-track': status, '.loading-tip': tip }[selector];
+      return { '.loading-fill': bar, '.loading-pct': pct, '.loading-track': status, '.loading-tip': tip, '.loading-row span': phaseLabel }[selector];
     }
   };
   const note = { hidden: true, textContent: '' };
@@ -42,9 +43,11 @@ function harness() {
   vm.runInNewContext(loaderSource, {
     window: root, document: doc, Image: FakeImage, Event: FakeEvent,
     setTimeout: () => 1, clearTimeout: () => {},
+    setInterval: callback => { const id = ++nextInterval; intervals.set(id, callback); return id; },
+    clearInterval: id => { intervals.delete(id); },
     requestAnimationFrame: callback => callback()
   }, { filename: 'loader.js' });
-  return { root, images, events, loading, pct, status, tip, note };
+  return { root, images, events, loading, pct, status, tip, phaseLabel, intervals, note };
 }
 
 async function flush() {
@@ -95,4 +98,33 @@ test('ảnh hỏng không làm kẹt; engine lỗi không được báo hoàn t�
   assert.notEqual(h.pct.textContent, '100%');
   assert.equal(h.note.hidden, false);
   assert.deepEqual(h.events, []);
+});
+
+test('khôi phục 8 mẹo luân phiên, không làm giả phần trăm tải ảnh', async () => {
+  const h = harness();
+  const first = h.tip.textContent;
+  assert.ok(first.length > 25, 'Mẹo phải hiện ngay khi bắt đầu loading');
+  assert.match(h.phaseLabel.textContent, /Đã xử lý 0\/3 ảnh/);
+  assert.equal(h.intervals.size, 1, 'Có một timer riêng chỉ để đổi mẹo');
+  const rotate = [...h.intervals.values()][0];
+  rotate();
+  assert.notEqual(h.tip.textContent, first, 'Mẹo mới phải khác mẹo vừa hiện');
+  assert.equal(h.pct.textContent, '0%', 'Đổi mẹo không ảnh hưởng phần trăm thật');
+  h.root.HU_LOADER.engineReady({ ready: true });
+  h.images.filter(img => typeof img.onload === 'function').forEach(img => img.onload());
+  await flush();
+  assert.equal(h.intervals.size, 0, 'Dừng đổi mẹo khi loading hoàn tất');
+  assert.equal(h.pct.textContent, '100%');
+});
+
+test('bộ mẹo cũ trở lại ở cả loading khởi động và tạo nhân vật', () => {
+  assert.match(loaderSource, /Ma thú về đêm mạnh và nguy hiểm hơn/);
+  assert.match(loaderSource, /Nghề phụ vẫn chạy khi bạn offline/);
+  assert.match(loaderSource, /Trang bị phẩm chất cao giúp sống sót/);
+  const hints = loaderSource.match(/    '[^\n]+',/g) || [];
+  assert.equal(hints.length, 8);
+  assert.match(loaderSource, /const stopInitialHints = rotateHints\(tip\)/);
+  assert.match(loaderSource, /const stopEntryHints = rotateHints\(hint\)/);
+  assert.match(loaderSource, /stopEntryHints\(\)/);
+  assert.match(loaderSource, /3200/);
 });
