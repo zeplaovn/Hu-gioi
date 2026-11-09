@@ -305,8 +305,10 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
 
 /* C7: Hiện tên trang, cho tab con cuộn ngang một hàng trên điện thoại. */
 @media(max-width:760px){
-  .win.page>header>b{display:inline-flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
-  .win.page>header>b span{display:inline;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .win.page>header{gap:6px}
+  .win.page>header>b{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;white-space:nowrap}
+  .win.page>header>b span{display:inline;max-width:none;overflow:visible;text-overflow:clip;white-space:nowrap}
+  .win.page .page-nav{flex:1 1 auto;min-width:0}
   .win.page .tabbar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;max-width:100%;scrollbar-width:thin}
   .win.page .tabbar .tab{flex-shrink:0}
 }
