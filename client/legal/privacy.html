@@ -12,7 +12,8 @@
 <ul>
 <li><strong>Tài khoản:</strong> email, định danh tài khoản, thông tin xác thực do Supabase Auth quản lý, thời điểm đăng nhập và thông tin kỹ thuật cần thiết để chống lạm dụng. Mục đích: đăng ký, xác minh email, đăng nhập và bảo vệ tài khoản.</li>
 <li><strong>Ghi nhận chấp thuận:</strong> định danh tài khoản, loại và phiên bản chính sách, thời điểm cơ sở dữ liệu ghi nhận. Mục đích: chứng minh nội dung chấp thuận và thực thi quyền của người dùng. Không chủ động ghi IP hoặc user-agent vào bảng chấp thuận.</li>
-<li><strong>Dữ liệu trò chơi:</strong> nhân vật, tiến trình và thiết lập game hiện được lưu tại localStorage trên thiết bị; chưa đồng bộ lên Supabase. Người dùng có thể xóa bằng tính năng của game hoặc trình duyệt.</li>
+<li><strong>Dữ liệu trò chơi:</strong> bản chơi trên giao diện hiện tại lưu nhân vật, tiến trình và thiết lập game trong localStorage trên thiết bị; chưa tự đồng bộ lên Supabase. Người dùng có thể xóa bản lưu cục bộ bằng tính năng game hoặc trình duyệt.</li>
+<li><strong>Backend gameplay thử nghiệm (chưa kết nối với giao diện):</strong> nếu được triển khai và người dùng sử dụng API online, máy chủ Node có thể lưu định danh tài khoản, đạo hiệu, trạng thái nhân vật, số phiên bản cập nhật, lịch sử lệnh và thời gian xử lý trong SQLite. Khóa tạo kết quả ngẫu nhiên chỉ lưu phía máy chủ. Dữ liệu SQLite không được xóa tự động khi xóa tài khoản Supabase; đơn vị vận hành cần cung cấp quy trình xóa phù hợp trước khi mở tính năng này công khai.</li>
 </ul>
 <p>Hư Giới hiện không sử dụng dữ liệu tài khoản để quảng cáo hoặc bán dữ liệu cá nhân. Nếu sau này có hoạt động tiếp thị hay mục đích xử lý mới, phải thông báo và xin chấp thuận riêng khi pháp luật yêu cầu.</p>
 <h2>3. Căn cứ xử lý và quyền lựa chọn</h2>
