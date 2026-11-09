@@ -46,7 +46,7 @@ test('Cài đặt không hiển thị Bản lưu; cơ chế tự lưu được g
   const s = read('client/ui/screens/settings.js');
   const store = read('client/persistence/local-store.js');
   assert.doesNotMatch(s, /id: 'save'|function save\(\)|action\('export'|action\('import'/);
-  assert.match(s, /const body = \{ season, audio, guide \}/);
+  assert.match(s, /const body = \{ season, audio, guide, legal \}/);
   assert.doesNotMatch(s, /WebGL|localStorage|HỆ THỐNG|file JSON/);
   assert.match(store, /write\(\) \{/);
 });
