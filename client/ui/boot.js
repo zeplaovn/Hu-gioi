@@ -271,7 +271,7 @@
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
     const life = g.lifeInfo();
     row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm.');
-    if (!s.completed && life.left <= 40) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' đạo thân sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới hoặc dùng Thọ Nguyên Đan.');
+    if (!s.completed && (life.left <= 40 || life.seconds <= 1800)) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm (khoảng ' + duration(life.seconds) + ' tu luyện)' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' đạo thân sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới để nới thọ nguyên.');
 
     if (r.encounters?.length) {
       section('Kỳ ngộ (' + r.encounters.length + ')');

@@ -84,7 +84,7 @@ test('hợp đồng: engine READY, đủ 51 lệnh và phân miền rõ ràng', 
 
 test('hợp đồng: mọi phương thức truy vấn UI đang gọi đều tồn tại và chạy được', () => {
   const g = rich();
-  const queries = ['npcQuestInfo', 'npcPrice', 'npcDiscount', 'runEnemy', 'stats', 'need', 'rate', 'price', 'count', 'ingredientCount', 'maxMp', 'realmLabel', 'enemy', 'chance', 'chaosChance', 'craftChance', 'missionChance', 'encounterChance', 'discussGain', 'attackInterval', 'lifeInfo', 'upgradeBase', 'tribulation', 'temperCost', 'recipe', 'forgeRecipe', 'activeElements', 'manualEffects', 'affinity', 'rivalPower', 'lots', 'estimateDungeon', 'featuredMission', 'sectDefinition', 'sectRank', 'sectMissions', 'sectShopOffer', 'sectIncome'];
+  const queries = ['npcQuestInfo', 'npcPrice', 'npcDiscount', 'runEnemy', 'stats', 'need', 'rate', 'price', 'count', 'ingredientCount', 'maxMp', 'realmLabel', 'enemy', 'chance', 'chaosChance', 'craftChance', 'missionChance', 'encounterChance', 'discussGain', 'attackInterval', 'lifeInfo', 'upgradeBase', 'tribulation', 'breakthroughOdds', 'temperCost', 'recipe', 'forgeRecipe', 'activeElements', 'manualEffects', 'affinity', 'rivalPower', 'lots', 'estimateDungeon', 'featuredMission', 'sectDefinition', 'sectRank', 'sectMissions', 'sectShopOffer', 'sectIncome'];
   for (const name of queries) assert.equal(typeof g[name], 'function', name);
   assert.ok(g.stats().HP > 0);
   assert.ok(g.need() > 0);
