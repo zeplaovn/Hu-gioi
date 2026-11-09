@@ -116,9 +116,12 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 
 **Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
 
+Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaovn@proton.me](mailto:zeplaovn@proton.me)**. Chính sách quyền riêng tư và điều khoản trực tuyến phiên bản `2026-11-09-v3` yêu cầu chấp thuận lại do thay đổi luật tử vong vĩnh viễn và ngừng nhận tiến trình offline.
+
 ## Tài liệu
 
 - [Kiến trúc](docs/architecture.md): các lớp, thư mục, luồng lệnh, cách nạp module, thêm lệnh.
+- [Gameplay V9: một mạng, online-only](docs/gameplay-v9.md): quy tắc sinh tử, tạm dừng offline và các lựa chọn thiết kế cần xác nhận.
 - [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (48 lệnh, API `HU_GAME`, state, bản lưu).
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
 - [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
