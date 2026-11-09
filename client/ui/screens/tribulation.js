@@ -97,7 +97,7 @@
     if (note) note.textContent = c >= .98 ? 'đã đạt giới hạn' : 'giới hạn 98%';
   }
 
-  function request() {
+  async function request() {
     const s = UI.s(), g = UI.g();
     if (s.completed) throw Error('Đạo Tổ đã chứng đạo. Có thể trọng sinh.');
     if (s.qi < g.need()) throw Error('Tu vi chưa đầy.');
@@ -111,7 +111,7 @@
       return UI.KEEP;
     }
     /* Tiểu cảnh giới: đột phá trực tiếp, không hộp thoại kết quả. Nhật ký là nơi công bố. */
-    const result = UI.command('breakthrough');
+    const result = await UI.command('breakthrough');
     const world = A.tribWorld ? A.tribWorld(s.realm) : 'ha_gioi';
     const onTrib = !!UI.tribulation?.pageOpen;
     const target = onTrib ? 'trib' : 'hero';
@@ -144,5 +144,5 @@
   });
 
   UI.tribulationScreen = { render, prepItems, stageName };
-  UI.action('break', () => request());
+  UI.action('break', async () => request());
 })(typeof window !== 'undefined' ? window : globalThis);
