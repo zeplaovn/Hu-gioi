@@ -105,7 +105,7 @@ Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDe
 
 Các phép tính/tra cứu chỉ-đọc mà UI gọi trên `UI.g()` (tức `session.game`). Danh sách trích bằng tìm kiếm trong mã `client/ui`; `tests/engine.test.cjs` kiểm tra tất cả đều tồn tại và chạy được.
 
-`stats`, `need`, `rate`, `price`, `count`, `ingredientCount`, `maxMp`, `realmLabel`, `enemy`, `chance`, `chaosChance`, `craftChance`, `missionChance`, `encounterChance`, `discussGain`, `attackInterval`, `lifeInfo`, `upgradeBase`, `tribulation`, `temperCost`, `recipe`, `forgeRecipe`, `gardenInfo`, `activeElements`, `manualEffects`, `affinity`, `rivalPower`, `lots`, `estimateDungeon`, `featuredMission`, `sectDefinition`, `sectRank`, `sectMissions`, `sectShopOffer`, `sectIncome`.
+`stats`, `need`, `rate`, `price`, `count`, `ingredientCount`, `maxMp`, `realmLabel`, `enemy`, `chance`, `chaosChance`, `craftChance`, `missionChance`, `encounterChance`, `discussGain`, `attackInterval`, `lifeInfo`, `upgradeBase`, `tribulation`, `breakthroughOdds`, `temperCost`, `recipe`, `forgeRecipe`, `gardenInfo`, `activeElements`, `manualEffects`, `affinity`, `rivalPower`, `lots`, `estimateDungeon`, `featuredMission`, `sectDefinition`, `sectRank`, `sectMissions`, `sectShopOffer`, `sectIncome`.
 
 ## 6. Trường state UI đang đọc (`UI.s()`)
 

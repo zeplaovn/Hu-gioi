@@ -16,10 +16,13 @@
   function nearGoals() {
     const s = UI.s(), g = UI.g(), need = g.need(), goals = [];
     if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Có thể trọng sinh để mở vòng mới.', go: 'meta:prestige', cta: 'Trọng sinh' });
-    else if (s.qi >= need) goals.push({ icon: '⚡', text: `Tu vi đã đầy · xác suất ${pct(g.chance())}.`, go: 'tribulation', cta: 'Thiên kiếp' });
+    else if (s.qi >= need) {
+      const odds = g.breakthroughOdds();
+      goals.push({ icon: '⚡', text: odds.doomed ? `Tu vi đã đầy nhưng hộ kiếp chưa đủ sức (${odds.failing.join(', ')}). Dẫn lôi lúc này chắc thất bại.` : `Tu vi đã đầy · xác suất ${pct(odds.chance)}.`, go: 'tribulation', cta: odds.doomed ? 'Chuẩn bị hộ kiếp' : 'Thiên kiếp' });
+    }
     else goals.push({ icon: '☯', text: `Còn khoảng ${duration(F.time_to_goal(need, s.qi, g.rate()))} đến ${g.isPeakStage() ? 'lúc độ kiếp đại cảnh giới' : 'tầng kế (tự động đột phá)'}.`, go: 'character:skills', cta: 'Công pháp' });
     const life = g.lifeInfo();
-    if (!s.completed && life.left <= 40) goals.unshift({ icon: '⌛', text: `Thọ nguyên còn ${num(Math.floor(life.left))} năm${Number.isFinite(life.safeSeconds) ? ` · vắng mặt quá ${duration(life.safeSeconds)} sẽ tọa hóa` : ''}.`, go: 'character:bag', cta: 'Hành trang' });
+    if (!s.completed && (life.left <= 40 || life.seconds <= 1800)) goals.unshift({ icon: '⌛', text: `Thọ nguyên còn ${num(Math.floor(life.left))} năm, khoảng ${duration(life.seconds)} nữa sẽ tọa hóa${Number.isFinite(life.safeSeconds) ? ` (vắng mặt quá ${duration(life.safeSeconds)} cũng tọa hóa)` : ''}.`, go: 'character:bag', cta: 'Hành trang' });
     const claimable = QUESTS.filter(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]).length;
     if (claimable) goals.push({ icon: '✦', text: `${claimable} nhiệm vụ đã đủ điều kiện nhận thưởng.`, go: 'world:quests', cta: 'Nhận' });
     const job = s.craftQueue[0];
