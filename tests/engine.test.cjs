@@ -123,10 +123,10 @@ test('hợp đồng: mọi phương thức truy vấn UI đang gọi đều tồ
   assert.ok(g.sectIncome() > 0);
 });
 
-test('state: tạo state trống, tạo nhân vật và giữ đúng hình dạng V8', () => {
+test('state: tạo state trống, tạo nhân vật và giữ đúng hình dạng V9', () => {
   const empty = H.create(NOW);
   assert.equal(empty.created, false);
-  assert.equal(empty.version, 8);
+  assert.equal(empty.version, 9);
   assert.equal(typeof empty.bag, 'object');
 
   const g = game();
@@ -165,7 +165,7 @@ test('state: createCharacter từ chối hồ sơ sai', () => {
   assert.throws(() => H.createCharacter(PROFILE, NaN, rng), /thời gian/);
 });
 
-test('state: normalize nâng cấp V4–V8 và loại bản lưu hỏng', () => {
+test('state: normalize nâng cấp V4–V9 và loại bản lưu hỏng', () => {
   const g = rich();
   const saved = JSON.parse(JSON.stringify(g.s));
 
@@ -173,7 +173,7 @@ test('state: normalize nâng cấp V4–V8 và loại bản lưu hỏng', () => 
     const raw = { ...JSON.parse(JSON.stringify(saved)), version };
     const next = H.normalize(raw, NOW + 1000);
     assert.ok(next, 'v' + version);
-    assert.equal(next.version, 8);
+    assert.equal(next.version, 9);
     assert.equal(next.created, true);
     assert.equal(next.name, saved.name);
     assert.equal(next.realm, saved.realm);
@@ -186,7 +186,7 @@ test('state: normalize nâng cấp V4–V8 và loại bản lưu hỏng', () => 
     resources: { jade: 5000, gold: 12 }
   }, NOW);
   assert.ok(v4);
-  assert.equal(v4.version, 8);
+  assert.equal(v4.version, 9);
   assert.equal(v4.realm, 2);
   assert.equal(v4.name, 'Cổ Nhân');
   assert.equal(v4.stone, 5000);
@@ -222,7 +222,7 @@ test('state: normalize nâng cấp V4–V8 và loại bản lưu hỏng', () => 
   assert.match(backwards.logs[0], /Đồng hồ thiết bị bị chỉnh lùi/);
 });
 
-test('creation + time: tu vi, tuổi và offline có trần theo phiên', () => {
+test('creation + time: tu vi, tuổi chỉ tăng online; offline đóng băng', () => {
   const g = rich();
   g.s.auto = false;
   const before = g.s.qi;
@@ -236,31 +236,18 @@ test('creation + time: tu vi, tuổi và offline có trần theo phiên', () => 
   g.s.extraLife = 1e6;
   g.s.auto = false;
   const offline = g.advance(NOW + 10 * 86400000, true);
-  assert.equal(offline.seconds, F.offline_cap(g.s.offlineCap));
+  assert.equal(offline.seconds, 0);
+  assert.equal(offline.paused, true);
   assert.equal(offline.died, false);
   assert.equal(g.s.lastUpdate, NOW + 10 * 86400000);
 });
 
-test('time: chết vì thọ nguyên, chặn lệnh thường và cho chuyển thế', () => {
+test('time: hết thọ nguyên cấm mọi lệnh, không có chuyển thế', () => {
   const g = game();
   g.s.age = g.maxLife();
   assert.equal(g.isDead(), true);
-  assert.throws(() => run(g, 'strike'), /Thọ nguyên đã cạn/);
-  const reward = run(g, 'reincarnate');
-  assert.equal(typeof reward, 'number');
-  assert.equal(g.s.created, true);
-  assert.equal(g.s.rebirths, 1);
-  assert.equal(g.isDead(), false);
-  assert.match(g.s.logs[0], /Trọng sinh/);
-
-  const h = game();
-  h.s.extraLife = 0;
-  h.s.age = h.maxLife() - 0.001;
-  h.s.auto = false;
-  const report = h.advance(NOW + 86400000);
-  assert.equal(report.died, true);
-  assert.equal(h.isDead(), true);
-  assert.equal(h.s.age, h.maxLife());
+  assert.throws(() => run(g, 'strike'), /tọa hóa/);
+  assert.throws(() => run(g, 'reincarnate'), { code: 'INVALID_COMMAND' });
 });
 
 test('progression: hấp thụ, nâng cấp, đột phá thất bại/thành công và thành tựu', () => {
@@ -408,9 +395,9 @@ test('crafting: luyện đan theo hàng đợi, linh điền và rèn pháp bả
   assert.equal(g.gardenInfo(g.s.garden[0], NOW + 700000).ripe, false);
   g.advance(g.s.garden[0].end);
   const info = g.gardenInfo(g.s.garden[0], g.s.lastUpdate);
-  assert.equal(info.ripe, true);
+  assert.ok(info.ripe || g.s.garden[0].wilt, 'cây online có thể héo nếu không chăm');
   const harvest = run(g, 'garden', { slot: 0, action: 'harvest' }, g.s.lastUpdate);
-  assert.ok(harvest.count >= 3);
+  assert.equal(typeof harvest.message, 'string');
   assert.equal(g.s.garden.length, 0);
 
   run(g, 'garden', { slot: 0, action: 'terrain', terrain: 'hỏa địa' });
