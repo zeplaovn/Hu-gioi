@@ -2,7 +2,7 @@
 
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 51 lệnh và state V8. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
+> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 48 lệnh và state V8. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
 > Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
@@ -21,10 +21,10 @@ Phần **engine phải cung cấp**:
 
 | Thành viên | Vai trò |
 |---|---|
-| `VERSION` | Phiên bản schema (hiện 8), lấy từ `engine/state/player.js`. |
+| `VERSION` | Phiên bản schema (hiện 9), lấy từ `engine/state/player.js`. |
 | `create(now)` | State mới, `created: false`. |
 | `createCharacter(profile, now, rng)` | Tạo nhân vật; profile do màn tạo nhân vật dựng (`name`, `gender`, `age`, `race`, `roots`, `rootType`, `talent`, …). |
-| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V8 về V8; trả `null` nếu không hợp lệ. |
+| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V9 về V9; trả `null` nếu không hợp lệ. |
 | `Game` | Lớp bọc `(state, rng, onLog)`; xem §4. |
 
 ## 3. Phiên chơi (client/session/local-session.js)
@@ -45,11 +45,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 |---|---|---|
 | `absorb` | progression | `index` |
 | `upgrade` | progression | `index`, `count` |
-| `upgradeOffline` | progression | `type` |
-| `buyMeta` | progression | `key` |
 | `breakthrough` | progression | — |
-| `prestige` | progression | — |
-| `reincarnate` | progression | — |
 | `setAuto` | progression | `enabled` |
 | `setPreference` | time | `key`, `value` (cài đặt giao diện được xác minh server) |
 | `buy` | inventory | `code` |
@@ -100,7 +96,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).
 
-`execute` chỉ cho `reincarnate` khi `isDead()`, và từ chối mọi lệnh khi nhân vật chưa tạo.
+`execute` chỉ cho `resetAfterDeath (API riêng)` khi `isDead()`, và từ chối mọi lệnh khi nhân vật chưa tạo.
 
 ## 5. Phương thức truy vấn UI đang gọi
 
