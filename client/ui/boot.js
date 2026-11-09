@@ -403,7 +403,9 @@
         for (const action of ['dung_yen', 'di_chuyen', 'tan_cong']) {
           for (let i = 0; i < A.heroFrames(profile.gender, 0, action); i++) images.push(A.heroSrc(profile.gender, 0, action, i));
         }
-        await root.HU_LOADER.enter(images, () => {});
+        await root.HU_LOADER.enter(images, () => {
+          if (!H.READY) throw new Error('Engine chưa sẵn sàng.');
+        });
         const introDone = UI.intro.play();
         UI.intro.focus();
         await introDone;

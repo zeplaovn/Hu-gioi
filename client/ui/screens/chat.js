@@ -167,11 +167,21 @@
     bubble.open = force === undefined ? !bubble.open : !!force;
     bubble.panel.hidden = !bubble.open;
     bubble.btn.setAttribute('aria-expanded', String(bubble.open));
-    bubble.btn.setAttribute('aria-label', bubble.open ? 'Thu nhỏ chat thế giới' : 'Mở chat thế giới');
-    bubble.btn.title = bubble.open ? 'Thu nhỏ chat thế giới' : 'Mở chat thế giới';
+    bubble.btn.setAttribute('aria-label', 'Mở chat thế giới');
+    bubble.btn.title = 'Mở chat thế giới';
     bubble.el.classList.toggle('open', bubble.open);
+    bubble.btn.tabIndex = bubble.open ? -1 : 0;
     bubbleCount();
-    if (bubble.open) { update(); const f = $('chatFeed'); if (f) f.scrollTop = f.scrollHeight; }
+    if (bubble.open) {
+      update();
+      const f = $('chatFeed');
+      if (f) f.scrollTop = f.scrollHeight;
+      bubble.panel.querySelector('.chat-bubble-close')?.focus({ preventScroll: true });
+      bubble.btn.setAttribute('aria-hidden', 'true');
+    } else {
+      bubble.btn.removeAttribute('aria-hidden');
+      bubble.btn.focus({ preventScroll: true });
+    }
   }
   UI.chatBubble = { open: () => bubbleToggle(true), close: () => bubbleToggle(false), toggle: () => bubbleToggle() };
   /* Chỉ hiện khi đã vào game (có #game hiển thị), nên dựng sau khi nhân vật được tạo. */
