@@ -86,7 +86,10 @@
         <button id="authConsentLogout" type="button" class="auth-guest">Đăng xuất / từ chối</button>
       </div>
       <div class="auth-divider">HOẶC</div>
-      <button id="authGuest" type="button" class="auth-guest">Vân du không tài khoản</button>
+      <div id="authGuestWrap" class="auth-guest-wrap">
+        <label class="auth-check" for="authGuestRelease"><input id="authGuestRelease" type="checkbox"><span>Tôi đồng ý với <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng Hư Giới</a> để chơi không tài khoản.</span></label>
+        <button id="authGuest" type="button" class="auth-guest">Vân du không tài khoản</button>
+      </div>
       <p class="auth-caption">Đạo hữu có thể chơi offline mà không cần tài khoản. Tiến trình vẫn lưu trên thiết bị, không tự đồng bộ lên Supabase. <a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Quyền riêng tư</a> · <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Chính sách phát hành</a></p>
     </div>
   </div>
