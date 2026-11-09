@@ -1,4 +1,4 @@
-/* Miền luật: progression — tu vi theo thời gian, đột phá, độ kiếp, Thiên mệnh, trọng sinh,
+/* Miền luật: progression — tu vi online, đột phá, độ kiếp và tử vong vĩnh viễn,
    nâng cấp và thành tựu. Lệnh nhận (payload, now); now do phiên chơi cung cấp. */
 (function (root) {
   'use strict';
@@ -11,7 +11,7 @@
 
     Object.assign(H.Game.prototype, {
       need() { return F.exp_need(this.s.realm, this.s.stage - 1); },
-      /* Cộng tu vi. Tiểu cảnh giới tự động đột phá khi đầy tu vi (kể cả nhiều tầng liên tiếp khi bế quan);
+      /* Cộng tu vi khi online. Tiểu cảnh giới tự động đột phá khi đầy tu vi;
          tu vi chỉ dừng lại ở tầng cuối của đại cảnh giới, chờ người chơi bấm Đột phá thủ công. */
       gainExp(value) {
         let left = Math.max(0, Number(value) || 0), total = 0, guard = 0;
