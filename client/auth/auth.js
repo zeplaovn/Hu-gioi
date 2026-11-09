@@ -39,7 +39,8 @@
     $('authForm').hidden = false;
     $('authConsentGate').hidden = true;
     $('authTabs').hidden = false;
-    $('authGuest').hidden = false;
+    $('authGuestWrap').hidden = false;
+    $('authGuestRelease').checked = false;
     selectMode('login');
   }
   function present() {
@@ -64,7 +65,7 @@
     pending = next;
     $('authForm').hidden = true;
     $('authTabs').hidden = true;
-    $('authGuest').hidden = true;
+    $('authGuestWrap').hidden = true;
     $('authConsentGate').hidden = false;
     $('authConsentPrivacy').checked = false;
     $('authConsentRelease').checked = false;
@@ -147,7 +148,12 @@
     bound = true;
     $('authForm').addEventListener('submit', submit);
     document.querySelectorAll('[data-auth-view]').forEach(b => b.addEventListener('click', () => selectMode(b.dataset.authView)));
-    $('authGuest').addEventListener('click', () => enter(null));
+    $('authGuest').addEventListener('click', () => {
+      if (!$('authGuestRelease').checked) {
+        notice('Hãy đồng ý với Điều khoản sử dụng trước khi chơi offline.'); return;
+      }
+      enter(null);
+    });
     $('switchAccount').addEventListener('click', logout);
     $('accountExit').addEventListener('click', logout);
     $('authConsentContinue').addEventListener('click', acceptPending);
