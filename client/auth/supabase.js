@@ -64,15 +64,11 @@
   }
   async function callback() {
     if (!root.location || !/(?:^#|&)access_token=/.test(root.location.hash)) return;
-    const values = new URLSearchParams(root.location.hash.slice(1));
-    const data = {
-      access_token: values.get('access_token'),
-      refresh_token: values.get('refresh_token'),
-      expires_in: Number(values.get('expires_in')) || 3600
-    };
-    if (data.access_token && data.refresh_token) persist(data);
-    // Remove tokens immediately from address bar and browser history.
+    // Sign-up confirmation links may carry a session in the URL fragment.
+    // Never adopt unsolicited credentials (login-CSRF/account-confusion risk).
+    // Supabase has already verified the email; require explicit password login.
     root.history?.replaceState(null, '', root.location.pathname + root.location.search);
+    root.HU_SUPABASE_EMAIL_CONFIRMED = true;
   }
 
   async function user() {
