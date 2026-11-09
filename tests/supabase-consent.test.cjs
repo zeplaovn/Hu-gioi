@@ -24,7 +24,7 @@ function createAdapter(initialHash = '') {
     history: { replaceState(_a, _b, path) { location.hash = ''; location.changedTo = path; } },
     fetch: async (input, init) => {
       requests.push({ input, init });
-      const url = new URL(input);
+      const url = new URL(input, location.origin);
       const route = url.pathname;
       let status = 200, result;
       if (route.endsWith('/auth/v1/signup')) result = { user: USER };
