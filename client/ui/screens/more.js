@@ -125,35 +125,35 @@
   const findDao = id => DAO.find(f => f.id === id);
   const findRival = id => RIVALS.find(f => f.id === id);
 
-  UI.action('moreMeet', (el, d) => {
+  UI.action('moreMeet', async (el, d) => {
     const f = findFriend(d.id);
     if (!f) throw Error('Không tìm thấy vị đạo hữu này.');
-    UI.command('meetFriend', { id: d.id });
+    await UI.command('meetFriend', { id: d.id });
     UI.toast('Đã kết giao với ' + f.name + '.', { type: 'success', title: 'Tri kỷ' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
 
-  UI.action('moreGift', (el, d) => {
+  UI.action('moreGift', async (el, d) => {
     const f = findFriend(d.id);
     if (!f) throw Error('Không tìm thấy vị đạo hữu này.');
-    const aff = UI.command('giftFriend', { id: d.id });
+    const aff = await UI.command('giftFriend', { id: d.id });
     UI.toast('Tặng lễ ' + f.name + ' · tình nghĩa ' + aff + '/100.', { type: 'gold', title: 'Tri kỷ' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
 
-  UI.action('moreDiscuss', (el, d) => {
+  UI.action('moreDiscuss', async (el, d) => {
     const f = findDao(d.id);
     if (!f) throw Error('Không tìm thấy vị đạo hữu này.');
-    const r = UI.command('discuss', { id: d.id });
+    const r = await UI.command('discuss', { id: d.id });
     UI.toast('Luận đạo cùng ' + f.name + ' · tu vi +' + num(r.gain) + '.', { type: 'success', title: 'Đạo hữu' });
     UI.vfx?.effect('qi');
     UI.vfx?.ring('hero', '#70d4e8');
   });
 
-  UI.action('moreDuel', (el, d) => {
+  UI.action('moreDuel', async (el, d) => {
     const f = findRival(d.id);
     if (!f) throw Error('Không tìm thấy đối thủ này.');
-    const r = UI.command('duel', { id: d.id });
+    const r = await UI.command('duel', { id: d.id });
     UI.toast((r.win ? 'Thắng ' : 'Thua ') + f.name + ' · danh vọng ' + (r.delta > 0 ? '+' : '') + r.delta +
       (r.win ? ' · +' + money(r.reward) + ' · +' + num(r.exp) + ' tu vi' : '') + '.',
       { type: r.win ? 'success' : 'danger', title: r.win ? 'Luận kiếm thắng' : 'Luận kiếm thua' });
