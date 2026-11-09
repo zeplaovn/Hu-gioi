@@ -18,7 +18,7 @@ npm test         # test backend /api/v1, RemoteSession, engine và giao diện
 
 `npm start` phục vụ giao diện và `/api/v1/*` khi cấu hình Supabase. Auth dùng Supabase JWT và hai bản ghi đồng ý chính sách. Backend từ chối hoạt động online khi thiếu xác thực hoặc quyền consent. Không bật `HU_LEGACY_AUTH` trong production.
 
-`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
+**Đăng nhập an toàn (chính sách v4):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Static-only không phục vụ gateway; bắt buộc chạy Node cùng origin và bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
 
 ## Tính năng thiết kế
 
