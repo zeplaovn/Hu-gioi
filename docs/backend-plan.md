@@ -4,6 +4,8 @@
 > Phạm vi: game chính trong repository này  
 > Mục tiêu: đưa game idle tu tiên một người chơi hiện tại thành game online nhiều người chơi, server-authoritative, vẫn dùng chung bộ luật `engine/`.
 
+> **Cập nhật triển khai MVP (Node + SQLite):** đã có `PlayerService` server-authoritative, `SqlitePlayers` (giao dịch BEGIN IMMEDIATE, receipt, ticket tạo nhân vật), xác minh JWT Supabase (HS256/JWKS), API `/api/v1` (bootstrap, creation/preview, players, state, sync, commands), rate limit, CORS allowlist và test (`tests/player-service.test.cjs`, `tests/game-api.test.cjs`). Khác kế hoạch: SQLite thay PostgreSQL cho một instance (cùng hợp đồng repository), rate limit trong bộ nhớ, chưa có batch/import/leaderboard/WS/Redis/outbox. Các mục dưới đây vẫn là thiết kế đích; hạng mục chưa làm ghi ở README → Backend.
+
 > **Cập nhật giai đoạn giao diện tài khoản:** đã có trang Login/Sign up và API Node lưu người dùng/cookie tối giản để phát triển một instance; **chưa** có DB auth_sessions theo đặc tả, refresh/rotation production, server-authoritative gameplay hoặc cloud save. Các đầu việc AuthProvider, DB và RemoteSession dưới đây vẫn phải thực hiện trước khi mở online.
 
 ---

@@ -78,7 +78,7 @@ class AuthService {
   }
   cookie(req, token, age = MAX_AGE) {
     const secure = (req.socket.encrypted || process.env.NODE_ENV === 'production') ? '; Secure' : '';
-    return COOKIE + '=' + token + '; Path=/api/auth; HttpOnly; SameSite=Strict; Max-Age=' + age + secure;
+    return COOKIE + '=' + token + '; Path=/api; HttpOnly; SameSite=Strict; Max-Age=' + age + secure;
   }
   token(req) {
     const c = String(req.headers.cookie || '').split(';').map(v => v.trim()).find(v => v.startsWith(COOKIE + '='));

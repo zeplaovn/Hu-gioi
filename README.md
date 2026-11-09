@@ -2,7 +2,7 @@
 
 Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
 
-> **Hiện trạng:** engine game chạy offline. Có màn **Tiên Tịch** để đăng nhập, đăng ký và chọn chơi không tài khoản. API tài khoản chỉ dùng được khi chạy máy chủ Node; gameplay và bản lưu vẫn nằm trên trình duyệt, chưa có đồng bộ tiến trình lên máy chủ. `PlayerService` online và cơ sở dữ liệu bền vững vẫn nằm trong kế hoạch [backend](docs/backend-plan.md).
+> **Hiện trạng:** engine game chạy offline trong trình duyệt (`LocalSession`) và đã có **backend gameplay server-authoritative** (`/api/v1`, SQLite, `PlayerService`): máy chủ giữ đồng hồ, RNG, tiến trình bế quan và phần thưởng. **Client chưa có `RemoteSession`**, nên bản chơi trên trình duyệt vẫn lưu cục bộ; API sẵn sàng để nối. Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
 
 Repository: [zeplaovn/Hu-gioi](https://github.com/zeplaovn/Hu-gioi).
 
@@ -68,8 +68,8 @@ client/
   ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                    Khởi động
 server/                    Máy chủ HTTP
-  main.js http/              File tĩnh + /api/health + /api/auth/*
-  services/ repositories/ chat/   Khung PlayerService, kho lưu trữ, chat
+  main.js http/              File tĩnh + /api/health + /api/auth/* (thử nghiệm) + /api/v1/*
+  auth/ http/ services/ repositories/   JWT, API /api/v1, PlayerService, kho SQLite; chat/ vẫn là khung
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
 tools/                     Kiểm tra, preload, import dữ liệu; pending-engine/ chờ engine mới
 docs/                      Tài liệu
@@ -88,7 +88,29 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 
 ## Backend
 
-`server/` hiện phục vụ file tĩnh, health và **API tài khoản Node cho máy chủ thử nghiệm**. `PlayerService` (create/sync/command, `expectedRevision`, `requestId` idempotent), `PlayerRepository` (`transact/get/create`) và chat vẫn là khung chưa hiện thực. Kế hoạch online (stack, schema, API, xác thực production, triển khai) ở [docs/backend-plan.md](docs/backend-plan.md). Gameplay hiện chạy offline qua `LocalSession`; đăng nhập không tự động đồng bộ bản lưu hay bảo vệ trạng thái game trên máy chủ.
+`server/` phục vụ file tĩnh, `/api/health` và **API gameplay `/api/v1`**. API chỉ bật khi có cấu hình xác thực; không cấu hình thì chỉ chạy file tĩnh (`/api/v1/*` trả 404). Không cần `npm install`; kho lưu trữ dùng `node:sqlite` có sẵn trong Node.
+
+| Biến môi trường | Ý nghĩa |
+|---|---|
+| `SUPABASE_URL` | URL project Supabase; suy ra issuer và JWKS để xác minh JWT (ES256/RS256) |
+| `SUPABASE_JWT_SECRET` | Tùy chọn, cho project còn dùng HS256 |
+| `HU_LEGACY_AUTH=1` | Dùng AuthService cookie thử nghiệm thay Supabase (chỉ dev/test) |
+| `HU_DB_FILE` | Đường dẫn SQLite, mặc định `.hu-gioi/game.sqlite` (không được nằm trong thư mục công khai) |
+| `HU_ALLOWED_ORIGINS` | Origin được gọi API khi game tĩnh ở domain khác (CORS), phân cách bằng dấu phẩy |
+| `HU_ONLINE_GRACE_MS` | Quá ngưỡng này kể từ lần thấy gần nhất thì tính offline (cap + hiệu suất offline), mặc định 300000 |
+
+| Method | Path | Mục đích |
+|---|---|---|
+| GET | `/api/v1/bootstrap` | Phiên bản giao thức/nội dung, giờ máy chủ, nhân vật của tài khoản |
+| POST | `/api/v1/creation/preview` | Máy chủ gieo tuổi, chủng tộc, linh căn; trả ticket 10 phút (5 lần/ngày) |
+| POST | `/api/v1/players` | Tạo nhân vật từ ticket + đạo hiệu/giới tính/thiên phú |
+| GET | `/api/v1/players/{id}/state` | Snapshot hiện tại, không catch-up |
+| POST | `/api/v1/players/{id}/sync` | Catch-up bế quan theo đồng hồ máy chủ, trả snapshot |
+| POST | `/api/v1/players/{id}/commands` | Một lệnh `{ protocolVersion, requestId, expectedRevision, type, payload }` |
+
+Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
+
+**Chưa có:** `RemoteSession` ở client, batch lệnh, nhập save offline, bảng xếp hạng, chat/PvP/tông môn dùng chung, admin API, WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
 
 ## Tài liệu
 
