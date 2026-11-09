@@ -31,7 +31,9 @@ Cần hoàn tất hồ sơ xử lý dữ liệu cá nhân (bao gồm đánh giá
 - **Tách đồng ý và điều khoản:** hệ thống ghi 2 dòng khi tài khoản đã xác minh email. Trường `accepted_at` do PostgreSQL cấp. Chưa ghi việc từ chối/rút lại đồng ý vì chưa có endpoint tự phục vụ xóa hoặc rút.
 - **Session:** access/refresh token Supabase được lưu tạm bằng `sessionStorage`. Dễ bị đọc nếu có XSS trên cùng origin; CSP và lọc đầu vào là điều kiện cần, không phải bảo đảm tuyệt đối. Phiên có thể tiếp tục tồn tại ở tab cho đến khi đóng tab/đăng xuất.
 - **Không dùng metadata do client gửi làm cơ sở phân quyền.** Quyền đọc/ghi dòng chấp thuận chỉ dựa trên `auth.uid()` từ JWT đã được Supabase xác thực.
-- **Dữ liệu nhân vật là dữ liệu offline không đáng tin cậy về mặt cạnh tranh.** Không sử dụng làm nguồn tính tiền, nạp/rút, thứ hạng hay trao thưởng online khi chưa có backend kiểm chứng.
+- **Dữ liệu nhân vật trong giao diện hiện vẫn là dữ liệu offline không đáng tin cậy về mặt cạnh tranh.** API Node thử nghiệm `/api/v1` có `PlayerService` server-authoritative nhưng chưa có `RemoteSession`, không tự chuyển bản lưu localStorage sang backend.
+- **API Node yêu cầu chấp thuận tại máy chủ.** Với `SUPABASE_URL` và `SUPABASE_PUBLISHABLE_KEY` (publishable, không phải service_role), JWT được xác minh và API yêu cầu đủ hai bản ghi `privacy`/`release_terms` phiên bản `2026-11-09` bằng RLS; từ chối truy cập khi Supabase không phản hồi. Kho SQLite bắt buộc nằm trong thư mục quyền `0700`, tệp DB `0600`.
+- **Trước phát hành online:** cần quy trình tự phục vụ rút chấp thuận/xóa tài khoản và xóa dữ liệu gameplay trong SQLite, xác minh phân loại game và giấy phép cần thiết. Xóa tài khoản Supabase hiện **không** tự động xóa bản lưu SQLite.
 - **Chính sách phiên bản:** khi thay đổi nội dung trọng yếu, phải sửa `VERSION` trong adapter, cả hai trang pháp lý và schema/constraint được thiết kế; cân nhắc di trú policy version để không khóa đăng nhập.
 - **Không đưa mã nguồn gốc lên web root.** Dùng `dist/` do script build, cấu hình `_headers` và `wrangler.jsonc`.
 
