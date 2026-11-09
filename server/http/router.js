@@ -14,11 +14,11 @@ const json = (res, status, body) => {
   res.end(data);
 };
 
-function createRouter(routes = null, auth = null) {
+function createRouter(routes = null, auth = null, gameApi = null) {
   // Tài khoản trình duyệt sử dụng Supabase. Chỉ bật legacy auth khi test
   // hoặc chủ động truyền dịch vụ vào router; không phơi API demo trên production.
   const handlers = routes || {
-    'GET /api/health': () => ({ ok: true, service: 'hu-gioi', gameplay: false, auth: !!auth, supabaseClient: true }),
+    'GET /api/health': () => ({ ok: true, service: 'hu-gioi', gameplay: !!gameApi, auth: !!auth, supabaseClient: true }),
     ...(auth ? {
       'GET /api/auth/session': req => ({ account: auth.session(req) }),
       'POST /api/auth/signup': async (req, res) => ({ account: await auth.signup(req, res) }),
@@ -28,6 +28,10 @@ function createRouter(routes = null, auth = null) {
   };
   return (req, res) => {
     const pathname = (req.url || '/').split('?')[0];
+    if (gameApi && pathname.startsWith('/api/v1/')) {
+      gameApi.handle(req, res, pathname).catch(() => { if (!res.writableEnded) json(res, 500, { error: 'Máy chủ đang gặp lỗi.' }); });
+      return;
+    }
     const handler = handlers[`${req.method} ${pathname}`];
     if (handler) {
       Promise.resolve().then(() => handler(req, res)).then(value => {
