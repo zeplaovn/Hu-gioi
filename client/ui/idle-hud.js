@@ -105,6 +105,9 @@
       if (tier !== state.coinTier) { state.coinTier = tier; ico.innerHTML = `<img src="${esc(A.moneyIcon(tier))}" alt="" decoding="async">`; }
     });
     $('chipStone').setAttribute('aria-label', 'Linh thạch ' + money(s.stone));
+    $('chipStone').title = 'Linh thạch: đơn vị Hạ, Trung, Thượng · ' + money(s.stone);
+    $('chipDao').setAttribute('aria-label', 'Đạo vận ' + num(s.daoVan));
+    $('chipDao').title = 'Đạo vận: ' + num(s.daoVan);
     $('chipRateVal').textContent = '+' + num(g.rate()) + '/giây';
     tween('dao', s.daoVan, v => { $('chipDaoVal').textContent = num(Math.round(v)); });
   }

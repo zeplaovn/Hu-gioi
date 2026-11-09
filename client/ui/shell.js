@@ -679,6 +679,8 @@
     }).join('') +
       '<button type="button" id="moreMenuBtn" class="menu-more" title="Thêm" aria-label="Thêm" aria-haspopup="true" aria-expanded="false" aria-controls="moreMenu"><span class="ico" aria-hidden="true">⋯</span><span>Thêm</span></button>';
     applyMenuState(false);
+    menu.addEventListener('scroll', updateMenuOverflow, { passive: true });
+    root.addEventListener('resize', updateMenuOverflow);
     markMenu();
   }
 
@@ -696,7 +698,7 @@
       toggle.setAttribute('aria-expanded', String(!collapsed));
       toggle.setAttribute('aria-label', label);
       toggle.title = label;
-      toggle.querySelector('.ico').textContent = collapsed ? '☰' : '✕';
+      toggle.querySelector('.ico').textContent = collapsed ? '▸' : '☰';
     }
   }
   function toggleMenu() {
@@ -705,6 +707,27 @@
     applyMenuState(collapsed);
     try { localStorage.setItem('huGioiMenuCollapsed', collapsed ? '1' : '0'); } catch { /* bỏ qua */ }
     requestAnimationFrame(() => { wins.fit(); trib.layoutScene(); });
+  }
+
+  /* Menu ngang: chỉ hiện vệt mờ ở mép khi còn mục chưa nhìn thấy.
+     Mục đang mở luôn được cuộn vào giữa nếu người chơi chuyển trang. */
+  function updateMenuOverflow() {
+    const menu = $('menu'), game = $('game');
+    if (!menu || game?.dataset.layout !== 'portrait' || game?.dataset.menu === 'collapsed') return;
+    menu.dataset.moreLeft = String(menu.scrollLeft > 2);
+    menu.dataset.moreRight = String(menu.scrollLeft + menu.clientWidth < menu.scrollWidth - 2);
+  }
+  function keepSelectedMenuVisible() {
+    const menu = $('menu'), game = $('game');
+    if (!menu || game?.dataset.layout !== 'portrait' || game?.dataset.menu === 'collapsed') return;
+    const active = menu.querySelector('button.on');
+    const selected = active?.dataset.window || active?.id || '';
+    if (active && menu.dataset.current !== selected) {
+      menu.dataset.current = selected;
+      const left = active.offsetLeft - menu.offsetLeft;
+      menu.scrollTo({ left: Math.max(0, left + active.offsetWidth / 2 - menu.clientWidth / 2), behavior: 'instant' });
+    }
+    updateMenuOverflow();
   }
 
   function markMenu() {
@@ -721,6 +744,7 @@
       moreBtn.classList.toggle('on', on);
       moreBtn.setAttribute('aria-pressed', String(on));
     }
+    root.requestAnimationFrame(keepSelectedMenuVisible);
   }
 
   function closeMoreMenu({ focus = false } = {}) {

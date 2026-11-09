@@ -125,7 +125,9 @@
 
   function render(tab) {
     const body = tab === 'khi' && !UI.g().featureOpen('forge') ? lockedFeature('forge') : tab === 'khi' ? forge() : tab === 'dien' ? garden() : furnaces() + recipes();
-    return banner(tab) + tabs(TABS, tab) + `<div class="screen-body">${body}</div>`;
+    const visibleTabs = TABS.map(t => t.id === 'khi' && !UI.g().featureOpen('forge')
+      ? { ...t, label: '🔒 ' + t.label, badge: 'Mở ở ' + F.REALMS[H.FEATURES.forge.realm] } : t);
+    return banner(tab) + tabs(visibleTabs, tab) + `<div class="screen-body">${body}</div>`;
   }
 
   function update() {
