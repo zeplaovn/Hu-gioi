@@ -8,11 +8,11 @@ const read = p => fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 test('icon chat không bị mất khi đang mở cửa sổ', () => {
   const css=read('css/tienhiep.css');
   const chat=read('client/ui/screens/chat.js');
-  assert.match(css,/\\.chat-bubble\\.open \\.chat-bubble-btn,[\\s\\S]*?visibility:hidden!important;opacity:0!important/);
+  assert.match(css,/\.chat-bubble\.open \.chat-bubble-btn,[\s\S]*?visibility:hidden!important;opacity:0!important/);
   assert.match(css,/\.chat-bubble\{z-index:170\}/);
   assert.match(css,/\.chat-bubble-panel\{z-index:1/);
   assert.match(chat,/bubble\.btn\.setAttribute\('aria-expanded', String\(bubble\.open\)\)/);
-  assert.match(chat,/bubble\\.btn\\.setAttribute\\('aria-hidden', 'true'\\)/);
+  assert.match(chat,/bubble\.btn\.setAttribute\('aria-hidden', 'true'\)/);
 });
 
 test('gỡ lối vào menu Cài đặt nhưng giữ hệ thống cài đặt và lưu game', () => {
