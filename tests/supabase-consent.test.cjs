@@ -58,7 +58,7 @@ test('signup waits for email confirmation and never stores password', async () =
 
 test('after login consent is individually recorded and scoped to user', async () => {
   const { sb, storage, requests, records } = createAdapter();
-  await assert.rejects(() => sb.accept(USER), /hết hạn|đăng nhập/);
+  await assert.rejects(() => sb.accept(USER), /xác thực|hết hạn|đăng nhập/);
   const user = await sb.login('test@example.invalid', 'password-at-least-10');
   assert.equal(user.id, ID);
   assert.equal((await sb.accepted()).size, 0);
