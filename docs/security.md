@@ -18,6 +18,9 @@ Cách duy nhất để một phần luật chơi và dữ liệu không rời m�
 
 ## Triển khai
 
+**Cloudflare Worker (đã cấu hình sẵn):** `wrangler.jsonc` trỏ `assets.directory` vào `dist/` và tự chạy `npm run build:min` trước khi deploy. Chạy `npm install` một lần, rồi `npm run deploy`. Nối GitHub thì đặt build command `npm install` và deploy command `npx wrangler deploy`. Worker đọc `dist/_headers` nên CSP và header bảo mật vẫn áp dụng. Không đổi `directory` sang `./`.
+
+
 - Cloudflare Pages / Netlify / Vercel: build command `npm run build:min`, output directory `dist`. Nếu để output là gốc repo thì `server/`, `tests/`, `docs/`, `tools/` và các bảng `.xlsx` sẽ bị tải được, vì `_headers` không chặn được file.
 - Tắt chỉ mục thư mục (directory listing) và không bật source map trên host.
 - nginx: chỉ `root` vào `dist/`.

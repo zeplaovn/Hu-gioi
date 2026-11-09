@@ -1,0 +1,14 @@
+{
+  // Worker chỉ phục vụ thư mục dist/ (do `npm run build:min` tạo), không bao giờ phục vụ gốc repo.
+  // Không có mã Worker: Cloudflare tự trả file tĩnh và áp dụng dist/_headers (CSP, nosniff, cache).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hu-gioi",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "build": {
+    "command": "npm run build:min"
+  }
+}

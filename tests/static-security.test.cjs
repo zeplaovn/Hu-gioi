@@ -80,3 +80,16 @@ test('mọi phản hồi có header bảo mật; HEAD không trả thân', async
 test('phương thức ghi bị từ chối', async () => {
   for (const method of ['POST', 'PUT', 'DELETE', 'PATCH']) assert.equal((await get('/index.html', method)).status, 405, method);
 });
+
+test('wrangler.jsonc chỉ phục vụ dist/ và dist có _headers sau khi build', () => {
+  const { readFileSync, existsSync } = require('node:fs');
+  const { join } = require('node:path');
+  const { execFileSync } = require('node:child_process');
+  const root = join(__dirname, '..');
+  const conf = readFileSync(join(root, 'wrangler.jsonc'), 'utf8').replace(/^\s*\/\/.*$/gm, '');
+  assert.equal(JSON.parse(conf).assets.directory, './dist');
+  execFileSync(process.execPath, [join(root, 'tools/build-dist.cjs')], { stdio: 'pipe' });
+  assert.ok(existsSync(join(root, 'dist/_headers')));
+  assert.ok(existsSync(join(root, 'dist/index.html')));
+  for (const leak of ['server', 'tests', 'docs', 'tools', 'package.json', 'wrangler.jsonc']) assert.equal(existsSync(join(root, 'dist', leak)), false, leak);
+});

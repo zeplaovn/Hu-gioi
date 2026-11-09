@@ -46,4 +46,7 @@ Thumbs.db
 
 # Công cụ AI cục bộ (tùy chọn)
 .opencode/
-.hu-gioi/
+
+# Cloudflare Worker
+.wrangler/
+.dev.vars
