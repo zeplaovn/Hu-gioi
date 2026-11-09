@@ -104,7 +104,8 @@ test('đang lịch luyện vẫn không được đổi vùng hoặc khởi hàn
 test('khôi phục hoặc trở lại tab không tự cướp trang người chơi đang xem', () => {
   const boot = read('client/ui/boot.js');
   assert.match(boot, /const requested = UI\.screens\[hash\[0\]\]/);
-  assert.match(boot, /if \(UI\.current === 'combat' \|\| UI\.windows\.has\('combat'\)\) UI\.go\('idle'\)/);
+  assert.match(boot, /UI\.session\.synchronize\(true\)/);
+  assert.doesNotMatch(boot, /showOfflineReport\(/);
   assert.doesNotMatch(boot, /else if \(UI\.s\(\)\.exploration\?\.active\) UI\.go\('combat'/);
 });
 

@@ -33,12 +33,11 @@
     return card('Xác suất đột phá', `
       <div class="trib-chance-line"><b id="tribPrepChance">${pct(g.chance())}</b><span id="tribPrepChanceNote">giới hạn 98%</span></div>
       ${row('Xác suất hiện tại', pct(g.chance()))}
-      ${row('Kiếp vận tích lũy', s.pity + '/15')}${bar(s.pity / 15 * 100)}
       ${row('Trợ lực từ đan dược', num(s.breakBonus))}
       ${row('Chúc phúc tông môn', s.sect.blessing ? '+10%' : 'Chưa bật')}
       ${row('Hệ số chịu kiếp của linh căn', '×' + (F.LINH_CAN_TRIB[s.rootType] || 1))}
       ${g.chaosChance() > 0 ? row('Cơ hội hóa Hỗn Độn (lôi kiếp kế tiếp)', pct(g.chaosChance())) + `<p class="info-note">Linh căn ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp. Vận Khí và kiếp vận tích lũy tăng cơ hội.</p>` : ''}
-      <p class="info-note">Thất bại hao tổn 15% tu vi nhưng tích thêm 1 bậc kiếp vận cho lần đột phá sau (tối đa 15 bậc). Xác suất không vượt quá 98%; Vận Khí vẫn hỗ trợ khi xác suất đã đạt 95%.</p>`, { eyebrow: 'TỈ LỆ' });
+      <p class="info-note">Thất bại khiến đạo thân tọa hóa ngay lập tức: mất toàn bộ tiến trình nhân vật, không hồi sinh, không có lần thử kế tiếp. Xác suất không vượt quá 98%; Vận Khí vẫn hỗ trợ khi xác suất đã đạt 95%.</p>`, { eyebrow: 'TỈ LỆ' });
   }
 
   function defenseCard() {
@@ -77,8 +76,8 @@
   function completedCard() {
     return card('Đạo Tổ viên mãn', `
       <p>Đạo cơ đã hợp nhất với Thiên đạo. Không còn lôi kiếp nào có thể lay chuyển bạn.</p>
-      <p class="info-note">Trọng sinh để nhận Đạo vận, mở vòng tu hành mới với tốc độ cao hơn.</p>
-      <div class="action-group"><button class="btn btn-gold" data-go="meta:prestige">Mở Trọng sinh</button><button class="btn btn-outline" data-go="idle">Về tiên sơn</button></div>`, { eyebrow: 'ĐẠO TỔ', cls: 'wide' });
+      <p class="info-note">Đạo quả viên mãn. Không còn cơ chế trọng sinh chủ động.</p>
+      <div class="action-group"><button class="btn btn-outline" data-go="idle">Về tiên sơn</button></div>`, { eyebrow: 'ĐẠO TỔ', cls: 'wide' });
   }
 
   function render() {
@@ -99,13 +98,13 @@
 
   async function request() {
     const s = UI.s(), g = UI.g();
-    if (s.completed) throw Error('Đạo Tổ đã chứng đạo. Có thể trọng sinh.');
+    if (s.completed) throw Error('Đạo Tổ đã chứng đạo; kiếp này viên mãn.');
     if (s.qi < g.need()) throw Error('Tu vi chưa đầy.');
     if (s.stage === F.STAGES[s.realm]) {
       const next = s.realm < 13 ? F.REALMS[s.realm + 1] : 'Đạo Tổ';
       UI.modal('Thiên kiếp giáng thế',
         `<p>Đại cảnh giới <b>${esc(F.REALMS[s.realm])}</b> đã đủ duyên. Thiên đạo triệu hồi lôi kiếp để bước vào <b>${esc(next)}</b>.</p>` +
-        `<p>Nhận kiếp sẽ mở Độ kiếp đài. Thất bại mất 15% tu vi; đan và phù hộ kiếp chỉ phát huy tác dụng trên đài.</p>`,
+        `<p>Nhận kiếp sẽ mở Độ kiếp đài. Thất bại khiến đạo thân tọa hóa vĩnh viễn và xóa toàn bộ tiến trình kiếp này; đan và phù chỉ hỗ trợ trước khi nhập kiếp.</p>`,
         () => UI.go('tribulation'), 'Nhận thiên kiếp', 'THIÊN ĐẠO',
         { type: 'gold', symbol: '⚡', vfx: ['loi_kiep', 'ha_gioi'] });
       return UI.KEEP;
@@ -129,7 +128,7 @@
     } else {
       UI.vfx?.effect('hit', target);
       UI.vfx?.screenFlash('flash-red', 420);
-      UI.vfx?.float('Thất bại · mất 15% tu vi', target);
+      UI.vfx?.float('Thất bại · tọa hóa vĩnh viễn', target);
     }
     return undefined;
   }

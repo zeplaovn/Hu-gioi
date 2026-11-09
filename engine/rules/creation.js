@@ -37,9 +37,14 @@
       }
       if (total > H.TALENT_MAX) throw Error('Thiên phú vượt quá 8 điểm.');
       if (total !== H.TALENT_MAX) throw Error('Phải phân bổ đủ 8 điểm thiên phú trước khi vào game.');
+      const destiny = profile.destiny === undefined ? 'none' : profile.destiny;
+      if (destiny !== 'none' && !Object.hasOwn(H.META_UPGRADES, destiny)) throw Error('Thiên mệnh khởi nguyên không hợp lệ.');
       const s = H.create(now);
+      s.destiny = destiny;
+      if (destiny !== 'none') s.meta.upgrades[destiny] = 1;
+      s.extraLife = (s.meta.upgrades.life || 0) * 5;
       Object.assign(s, { name, gender: profile.gender, race: profile.race, roots: [...profile.roots], rootType: profile.rootType, rootSub, age: profile.age, talent, created: true });
-      s.stone = H.startStone(talent);
+      s.stone = H.startStone(talent, s.meta);
       const g = new H.Game(s, rng);
       g.add('MAT-001', 8);
       g.add('INK-HG', 2);

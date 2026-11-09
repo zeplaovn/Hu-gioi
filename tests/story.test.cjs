@@ -79,7 +79,7 @@ test('Vạn Kiếp Tàng Thư: nội dung không lộ chỉ số kỹ thuật v�
 test('protocol: lệnh storyMark đúng một miền, kiểm tra cảnh giới, thiện cảm và lựa chọn', () => {
   const g = make();
   assert.equal(H.OWNERS.storyMark, 'world');
-  assert.equal(C.types.length, 52);
+  assert.equal(C.types.length, 48);
   assert.deepEqual(g.s.story, { read: {}, flags: {} });
   assert.equal(run(g, 'ha-01').id, 'ha-01');
   assert.equal(g.s.story.read['ha-01'], true);
@@ -102,25 +102,22 @@ test('protocol: lệnh storyMark đúng một miền, kiểm tra cảnh giới, 
   assert.equal(g.s.story.flags[npc.confidant.id], choice);
 });
 
-test('bản lưu V7 nâng lên V8, làm sạch cờ sai, giữ Thiên Thư qua trọng sinh', () => {
+test('bản lưu V7 nâng lên V9, làm sạch cờ sai, không có trọng sinh', () => {
   const g = make();
   run(g, 'ha-01');
   const saved = JSON.parse(JSON.stringify(g.s));
   const clean = H.normalize(saved, NOW + 1000);
-  assert.equal(clean.version, 8);
+  assert.equal(clean.version, 9);
   assert.equal(clean.story.read['ha-01'], true);
   const legacy = { ...saved, version: 7 };
   delete legacy.story;
   const upgraded = H.normalize(legacy, NOW + 1000);
-  assert.equal(upgraded.version, 8);
+  assert.equal(upgraded.version, 9);
   assert.deepEqual(upgraded.story, { read: {}, flags: {} });
   const dirty = H.normalize({ ...saved, story: {
     read: { 'ha-01': true, evil: true },
     flags: { 'ha-01': 'unknown', 'npc-NPC005-tri-ky': 'unknown', evil: 'unsafe' }
   } }, NOW + 1000);
   assert.deepEqual(dirty.story, { read: { 'ha-01': true }, flags: {} });
-  g.s.totalRunExp = H.F.exp_for_dao_van(20);
-  g.s.extraLife = 1e6;
-  C.execute(g, { type: 'prestige', payload: {} }, NOW);
-  assert.equal(g.s.story.read['ha-01'], true);
+  assert.throws(() => C.validate({ type: 'prestige', payload: {} }), { code: 'INVALID_COMMAND' });
 });

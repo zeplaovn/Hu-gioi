@@ -1,8 +1,8 @@
 # Hư Giới · Tiên Lộ Vô Tận
 
-Game idle tu tiên bằng tiếng Việt, chạy trên trình duyệt với giao diện tiên hiệp tông tối. Người chơi tạo đạo thân, tu luyện, lịch luyện, vượt thiên kiếp và tích lũy Thiên mệnh qua nhiều kiếp.
+Game idle tu tiên online bằng tiếng Việt: mỗi nhân vật chỉ có một mạng. Người chơi chọn một Thiên mệnh khi tạo nhân vật, tu luyện và vượt thiên kiếp; tọa hóa xóa trọn tiến trình nhân vật, không có trọng sinh.
 
-> **Trên nhánh online:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Để chơi thực sự trên internet cần triển khai Node backend HTTPS**; Cloudflare static-only không cung cấp API. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
+> **Trạng thái mã nguồn:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Để chơi thực sự trên internet cần triển khai Node backend HTTPS**; Cloudflare static-only không cung cấp API. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
 
 Repository: [zeplaovn/Hugioi](https://github.com/zeplaovn/Hugioi).
 
@@ -18,7 +18,7 @@ npm test         # test backend /api/v1, RemoteSession, engine và giao diện
 
 `npm start` phục vụ giao diện và `/api/v1/*` khi cấu hình Supabase. Auth dùng Supabase JWT và hai bản ghi đồng ý chính sách. Backend từ chối hoạt động online khi thiếu xác thực hoặc quyền consent. Không bật `HU_LEGACY_AUTH` trong production.
 
-`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend tính bế quan và lưu tiến trình liên tục.
+`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
 
 ## Tính năng thiết kế
 
@@ -26,15 +26,15 @@ Các tính năng sau thuộc bản trước và là phạm vi mà engine mới p
 
 | Nhóm | Nội dung |
 |---|---|
-| Khởi nguyên | Logo ảnh `logo.webp`; ô Chủng tộc/Linh căn hiện thông số (tốc tu, tinh khiết) và mở bảng so sánh; mục **Kinh mạch** xem trước 12 chính kinh theo hệ, mạch cùng hệ/sinh hệ và tốc độ tích tạp chất (dữ liệu `data/meridians.js`, theo root.txt; chưa là trạng thái engine). Intro cinematic 5 chương; loading tối thiểu 10,9 giây. Tạo đạo hiệu, giới tính, tuổi, chủng tộc, linh căn và phân bổ thiên phú. Nhấn ô chủng tộc hoặc linh căn để xem giải thích. Không còn gieo Âm Dương khi tạo mới; bản lưu cũ vẫn được giữ. |
-| Tu luyện | Tự tăng tu vi, bế quan khi vắng mặt, báo cáo tiến trình và giới hạn tu vi tại ngưỡng đột phá. |
-| Cảnh giới | Tiểu cảnh giới (tầng) **tự động đột phá** khi đủ tu vi, kể cả nhiều tầng liên tiếp lúc bế quan. Đến tầng cuối (viên mãn) tu vi dừng ở ngưỡng và người chơi phải **bấm tay** đột phá đại cảnh giới: có xác nhận, trang độ kiếp riêng, hiệu ứng và kết quả. VFX đột phá nhỏ và giai đoạn tụ linh quang trên độ kiếp đài kéo dài thêm 5 giây; chế độ giảm chuyển động vẫn được tôn trọng. |
+| Khởi nguyên | Logo ảnh `logo.webp`; ô Chủng tộc/Linh căn hiện thông số (tốc tu, tinh khiết) và mở bảng so sánh; mục **Kinh mạch** xem trước 12 chính kinh theo hệ, mạch cùng hệ/sinh hệ và tốc độ tích tạp chất (dữ liệu `data/meridians.js`, theo root.txt; chưa là trạng thái engine). Intro cinematic 5 chương; loading tối thiểu 10,9 giây. Tạo đạo hiệu, giới tính, tuổi, chủng tộc, linh căn, chọn một Thiên mệnh miễn phí và phân bổ thiên phú. Nhấn ô chủng tộc hoặc linh căn để xem giải thích. Không còn gieo Âm Dương khi tạo mới; bản lưu cũ vẫn được giữ. |
+| Tu luyện | Tự tăng tu vi **khi online**; khi offline hoặc tab ẩn, dừng tu luyện, tuổi tác, chiến đấu và tất cả tiến trình có hẹn giờ. |
+| Cảnh giới | Tiểu cảnh giới (tầng) **tự động đột phá** khi đủ tu vi, kể cả nhiều tầng liên tiếp khi còn online. Đến tầng cuối (viên mãn) tu vi dừng ở ngưỡng và người chơi phải **bấm tay** đột phá đại cảnh giới: có xác nhận, trang độ kiếp riêng, hiệu ứng và kết quả. VFX đột phá nhỏ và giai đoạn tụ linh quang trên độ kiếp đài kéo dài thêm 5 giây; chế độ giảm chuyển động vẫn được tôn trọng. |
 | Lịch luyện | Công kích, kỹ năng, chiến đấu tự động, yêu thú, chiến lợi phẩm, Sinh lực và Linh khí. |
 | Nhân vật | Hành trang, trang bị pháp bảo, công pháp chủ động, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; Dị khắc hệ gốc. |
-| Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Hạt trong bộ dữ liệu mới có thời gian, loại đất, độ khó và sản lượng riêng; các hạt còn lại tiếp tục dùng luật cũ. Cây được chăm an toàn khi bế quan. |
+| Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Công đoạn chế tạo, chăm cây và mọi thời hạn được tạm dừng khi offline; không có thưởng bế quan. |
 | Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ, tông môn và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. |
-| Xuyên kiếp | Trọng sinh chủ động trong **Thiên mệnh → Trọng sinh** theo luật gốc. **Tọa hóa vì cạn thọ nguyên** xóa toàn bộ tiến trình, Thiên mệnh và bản lưu dự phòng rồi trở về màn tạo nhân vật mới; không xóa tài khoản. |
-| Giao diện idle | Thanh tài nguyên (linh thạch, tu vi/giây, Đạo vận) có số chạy, thanh tu vi + dải chấm tầng, dock nâng cấp nhanh (Tốc tu ×1/×10/Tối đa, Hấp thu, Dùng đan) ngay trên sân khấu, nút lớn Đột phá đại cảnh giới, cầu linh khí bay vào thanh tu vi, chấm thông báo trên tab, popup Bế quan trở về có số đếm lên. Mã: `css/idle.css`, `client/ui/idle-hud.js`. |
+| Tọa hóa vĩnh viễn | Thất bại thiên kiếp, thua PvP NPC, HP bằng 0 khi chiến đấu/bí cảnh hoặc thọ nguyên cạn đều dẫn tới tử vong. Người chơi chỉ có thể xóa nhân vật đã chết trên máy chủ và tạo kiếp mới; **không có trọng sinh hoặc giữ lại Thiên mệnh**, tài khoản Supabase vẫn còn. |
+| Giao diện idle | Thanh tài nguyên (linh thạch, tu vi/giây, Thiên mệnh đã chọn) có số chạy, thanh tu vi + dải chấm tầng, dock nâng cấp nhanh (Tốc tu ×1/×10/Tối đa, Hấp thu, Dùng đan) ngay trên sân khấu, nút lớn Đột phá đại cảnh giới, cầu linh khí bay vào thanh tu vi, chấm thông báo trên tab. Mã: `css/idle.css`, `client/ui/idle-hud.js`. |
 | Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile. Mỗi menu (Nhân vật, Nghề phụ, Thế giới, Cài đặt…) mở thành một trang riêng phủ vùng màn chơi, có nút ‹ Tu luyện để quay lại; menu thu gọn/mở bằng icon ☰ (nhớ lựa chọn). Lịch luyện vẫn hiện bảng dưới sân khấu để xem trận đánh. |
 
 Menu **Thêm** gồm: **Chat online · Tri kỷ · Đạo hữu · Tông môn · PvP · Bảng xếp hạng**. Giao du, PvP, bảng xếp hạng và đấu giá hiện phục vụ chế độ mô phỏng một người chơi.
@@ -58,9 +58,9 @@ index.html                 Điểm vào trình duyệt và thứ tự nạp scri
 data/                      Dữ liệu thiết kế và công thức cân bằng (thuần dữ liệu)
 engine/                    Luật chơi dùng chung cho client và server
   game.js                    Ghép data + state + rules; báo READY / MISSING
-  state/                     Schema V8, create, normalize V4–V8
+  state/                     Schema V9, create, normalize V4–V9
   rules/                     9 miền: progression inventory crafting combat world adventures social time creation
-  protocol/                  52 lệnh: schema payload, validate, execute
+  protocol/                  Protocol v2, 48 lệnh: schema payload, validate, execute
 client/
   assets/ platform/          Ảnh, âm thanh, loading, bảo vệ nội dung
   persistence/               RemoteStore (bản LocalStore cũ giữ để kiểm toán)
@@ -98,7 +98,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 | `HU_LEGACY_AUTH=1` | Dùng AuthService cookie thử nghiệm thay Supabase (chỉ dev/test) |
 | `HU_DB_FILE` | Đường dẫn SQLite, mặc định `.hu-gioi/game.sqlite` (không được nằm trong thư mục công khai) |
 | `HU_ALLOWED_ORIGINS` | Origin được gọi API khi game tĩnh ở domain khác (CORS), phân cách bằng dấu phẩy |
-| `HU_ONLINE_GRACE_MS` | Quá ngưỡng này kể từ lần thấy gần nhất thì tính offline (cap + hiệu suất offline), mặc định 300000 |
+| `HU_ONLINE_GRACE_MS` | Sau ngưỡng vắng heartbeat thì đóng băng thời gian game, mặc định 15000 ms; tab ẩn gửi tín hiệu pause ngay |
 
 | Method | Path | Mục đích |
 |---|---|---|
@@ -106,25 +106,29 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 | POST | `/api/v1/creation/preview` | Máy chủ gieo tuổi, chủng tộc, linh căn; trả ticket 10 phút (5 lần/ngày) |
 | POST | `/api/v1/players` | Tạo nhân vật từ ticket + đạo hiệu/giới tính/thiên phú |
 | GET | `/api/v1/players/{id}/state` | Snapshot hiện tại, không catch-up |
-| POST | `/api/v1/players/{id}/sync` | Catch-up bế quan theo đồng hồ máy chủ, trả snapshot |
+| POST | `/api/v1/players/{id}/sync` | Đồng bộ online; nếu đã offline thì chỉ điều chỉnh mốc giờ và tạm dừng mọi tiến trình |
+| POST | `/api/v1/players/{id}/pause` | Tạm dừng có xác thực khi tab ẩn/đóng; server cũng tự đóng băng khi hết heartbeat |
 | POST | `/api/v1/players/{id}/commands` | Một lệnh `{ protocolVersion, requestId, expectedRevision, type, payload }` |
 
 Đảm bảo: API JWT chỉ hoạt động khi máy chủ xác minh được cả hai bản chấp thuận chính sách `privacy` và `release_terms` phiên bản `2026-11-09`. Không thể vượt qua bằng cách bỏ qua checkbox frontend; Supabase gián đoạn thì API từ chối tạm thời. `HU_LEGACY_AUTH=1` chỉ dùng phát triển, bị chặn khi `NODE_ENV=production`. Đặt thư mục SQLite quyền `0700` và tệp DB quyền `0600`; API không thể hoạt động trên Cloudflare static-only khi chưa triển khai Node riêng.
 
 Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
-**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 52 lệnh engine, sync, reset sau tọa hóa, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
+**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
+
+Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaovn@proton.me](mailto:zeplaovn@proton.me)**. Chính sách quyền riêng tư và điều khoản trực tuyến phiên bản `2026-11-09-v3` yêu cầu chấp thuận lại do thay đổi luật tử vong vĩnh viễn và ngừng nhận tiến trình offline.
 
 ## Tài liệu
 
 - [Kiến trúc](docs/architecture.md): các lớp, thư mục, luồng lệnh, cách nạp module, thêm lệnh.
-- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (51 lệnh, API `HU_GAME`, state, bản lưu).
+- [Gameplay V9: một mạng, online-only](docs/gameplay-v9.md): quy tắc sinh tử, tạm dừng offline và các lựa chọn thiết kế cần xác nhận.
+- [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (48 lệnh, API `HU_GAME`, state, bản lưu).
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
 - [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
 - [data/README.md](data/README.md): dữ liệu thiết kế và công thức cân bằng.
 
 ## Thiên Thư · Vạn Kiếp Tàng Thư
 
-Vào **Thiên Mệnh → Thiên Thư** để đọc 14 chương qua Hạ Giới, Linh Giới và Tiên Giới. Chương mở theo cảnh giới; trang đã đọc được giữ qua trọng sinh. Ba lựa chọn cốt truyện lưu lời hẹn nhưng không đổi chỉ số hay phần thưởng.
+Vào **Thiên Mệnh → Thiên Thư** để đọc 14 chương qua Hạ Giới, Linh Giới và Tiên Giới. Chương mở theo cảnh giới; trang đã đọc chỉ tồn tại trong kiếp nhân vật hiện tại. Ba lựa chọn cốt truyện lưu lời hẹn nhưng không đổi chỉ số hay phần thưởng.
 
-Trong **Thế giới → NPC**, chọn **Trò chuyện** để gặp 10 kỳ nhân qua ba mức thiện cảm (0, 20, 55). Hội thoại nhiều lượt gồm câu đáp của người chơi, chủ đề và lựa chọn lưu qua engine. Bí cảnh và kỳ ngộ có lời dẫn bổ sung trong các bảng hiện có. Nội dung ở `data/story.js`, một lệnh mới `storyMark` thuộc miền `world`; có thể chạy offline bằng `file://`.
+Trong **Thế giới → NPC**, chọn **Trò chuyện** để gặp 10 kỳ nhân qua ba mức thiện cảm (0, 20, 55). Hội thoại nhiều lượt gồm câu đáp của người chơi, chủ đề và lựa chọn lưu qua engine. Bí cảnh và kỳ ngộ có lời dẫn bổ sung trong các bảng hiện có. Nội dung ở `data/story.js`, một lệnh mới `storyMark` thuộc miền `world`; không hỗ trợ chơi offline qua `file://`.

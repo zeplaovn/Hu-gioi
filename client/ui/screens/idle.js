@@ -15,7 +15,7 @@
 
   function nearGoals() {
     const s = UI.s(), g = UI.g(), need = g.need(), goals = [];
-    if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Có thể trọng sinh để mở vòng mới.', go: 'meta:prestige', cta: 'Trọng sinh' });
+    if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Đạo quả kiếp này đã viên mãn.', go: 'meta:destiny', cta: 'Thiên mệnh' });
     else if (s.qi >= need) {
       const odds = g.breakthroughOdds();
       goals.push({ icon: '⚡', text: odds.doomed ? `Tu vi đã đầy nhưng hộ kiếp chưa đủ sức (${odds.failing.join(', ')}). Dẫn lôi lúc này chắc thất bại.` : `Tu vi đã đầy · xác suất ${pct(odds.chance)}.`, go: 'tribulation', cta: odds.doomed ? 'Chuẩn bị hộ kiếp' : 'Thiên kiếp' });
@@ -40,7 +40,7 @@
       ${bar(0, 'qi', 'idleQiBar')}
       ${row('Còn lại', '<span id="idleEta">—</span>')}
       ${row('Xác suất đột phá', '<span id="idleChance">—</span>')}
-      ${row('Kiếp vận tích lũy', '<span id="idlePity">0/15</span>')}`, { eyebrow: 'ĐẠO CẢNH', cls: 'qi-card' });
+      ${row('Thiên kiếp', '<span id="idlePity">Thất bại = tọa hóa</span>')}`, { eyebrow: 'ĐẠO CẢNH', cls: 'qi-card' });
   }
 
   function boostCard() {
@@ -94,7 +94,7 @@
     $('idleQiBar').style.width = p + '%';
     $('idleEta').textContent = s.completed ? '—' : p >= 100 ? 'Đã đầy' : duration(F.time_to_goal(need, s.qi, g.rate()));
     $('idleChance').textContent = pct(g.chance());
-    $('idlePity').textContent = s.pity + '/15';
+    $('idlePity').textContent = 'Thất bại = tọa hóa';
     $('idleJournal').innerHTML = s.logs.slice(0, 6).map(v => `<div><time>✦</time>${esc(v)}</div>`).join('');
   }
 

@@ -1,5 +1,8 @@
 # Kế hoạch thiết kế backend — Hư Giới
 
+> **Cập nhật 09/11/2026 — tài liệu kiến trúc lịch sử, không còn là luật gameplay hiện hành.** Phần mô tả bế quan nhận thưởng khi offline, cho phép `reincarnate`/`prestige`, 49/51/52 lệnh, schema V8 và ngưỡng grace 300 giây là thiết kế cũ. Luật được triển khai trên nhánh V9 là: **48 lệnh/protocol 2, tử vong vĩnh viễn, tạm dừng hoàn toàn khi offline, Thiên mệnh chọn lúc tạo**. Xem [gameplay-v9.md](gameplay-v9.md), [engine-contract.md](engine-contract.md), [online-deployment.md](online-deployment.md). Các mục còn lại chỉ mang tính tham khảo cho phát triển backend tương lai.
+
+
 > Trạng thái: đề xuất thiết kế, chưa triển khai. Engine chung đã sẵn sàng (`HU_GAME.READY === true`); `server/` vẫn là khung (xem [architecture.md](architecture.md), [engine-contract.md](engine-contract.md)); các mô tả "hiện có" trong tài liệu này tham chiếu cài đặt cũ ở commit `5f6b9bc`.
 > Phạm vi: game chính trong repository này  
 > Mục tiêu: đưa game idle tu tiên một người chơi hiện tại thành game online nhiều người chơi, server-authoritative, vẫn dùng chung bộ luật `engine/`.

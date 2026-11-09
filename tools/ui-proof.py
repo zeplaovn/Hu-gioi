@@ -177,11 +177,13 @@ def run_set(browser, folder, name, url, width, height, mobile):
         mock_supabase(page, name)
     errors = []
     expected_auth_404 = []
+    http_404_urls = []
+    page.on("response", lambda res: http_404_urls.append(res.url) if res.status == 404 else None)
     page.on("response", lambda res: expected_auth_404.append(res.url)
             if res.status == 404 and res.url.endswith("/api/auth/session") else None)
     page.on("pageerror", lambda error: errors.append("pageerror: " + str(error)))
     page.on("console", lambda msg: errors.append("console.error: " + msg.text) if msg.type == "error" and "501" not in msg.text else None)
-    outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors}
+    outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors, "http_404_urls": http_404_urls}
     try:
         enter_game(page, url, folder, name, outcome)
         verify_bubble(page, folder, name, outcome)

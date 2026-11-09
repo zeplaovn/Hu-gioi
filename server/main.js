@@ -7,7 +7,7 @@
      HU_LEGACY_AUTH=1       bật AuthService cookie thử nghiệm thay cho Supabase (chỉ dev/test)
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
-     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì tính offline (mặc định 300000)
+     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 15000)
    Không đặt cấu hình xác thực → API gameplay tắt, chỉ phục vụ file tĩnh. */
 'use strict';
 const http = require('node:http');

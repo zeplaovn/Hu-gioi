@@ -1,4 +1,4 @@
-/* Miền luật: time — tick, bế quan và offline. Chỉ bên sở hữu phiên cung cấp đồng hồ. */
+/* Miền luật: time — chỉ tiến triển khi online; vắng mặt đóng băng mọi bộ đếm. Chỉ bên sở hữu phiên cung cấp đồng hồ. */
 (function (root) {
   'use strict';
   const domain = 'time';
@@ -38,6 +38,52 @@
         let start = s.lastUpdate, elapsed = Math.max(0, (now - start) / 1000);
         if (now < start) { s.lastUpdate = now; return empty(); }
         if (!elapsed) return empty();
+        if (offline) {
+          // Đồng hồ chỉ tiến khi online. Đẩy lịch hẹn tương lai đúng bằng khoảng vắng mặt,
+          // không cấp tu vi, tuổi, hồi máu, phần thưởng, kết quả RNG hoặc cooldown.
+          const shift = delta => Number.isFinite(delta) ? delta + (now - start) : delta;
+          for (const b of [...s.buffs, ...s.debuffs]) if (b.end && b.end > start) b.end = shift(b.end);
+          for (let i = 0; i < s.cooldowns.length; i++) if (s.cooldowns[i] > start) s.cooldowns[i] = shift(s.cooldowns[i]);
+          for (const job of s.craftQueue) { if (job.start) job.start = shift(job.start); job.end = shift(job.end); }
+          for (const plot of s.garden) { plot.plantedAt = shift(plot.plantedAt); plot.end = shift(plot.end); }
+          if (s.exploration?.active) {
+            s.exploration.active.start = shift(s.exploration.active.start);
+            s.exploration.active.end = shift(s.exploration.active.end);
+          }
+          if (s.sect.mission) {
+            s.sect.mission.start = shift(s.sect.mission.start);
+            s.sect.mission.end = shift(s.sect.mission.end);
+          }
+          if (s.dungeon.active) {
+            s.dungeon.active.start = shift(s.dungeon.active.start);
+            s.dungeon.active.end = shift(s.dungeon.active.end);
+          }
+          const combat = s.designCombat;
+          if (combat) {
+            for (const effect of [combat.heal, combat.bleed]) if (effect) {
+              if (effect.end) effect.end = shift(effect.end);
+              if (effect.last) effect.last = shift(effect.last);
+            }
+            for (const effect of [...(combat.buffs || []), ...(combat.enemyEffects || [])]) {
+              if (effect.end && effect.end > start) effect.end = shift(effect.end);
+              // Bảo toàn thời điểm DOT gần nhất, không dồn sát thương offline vào tick đầu khi trở lại.
+              if (effect.last && effect.last > 0) effect.last = shift(effect.last);
+            }
+            if (combat.shieldEnd) combat.shieldEnd = shift(combat.shieldEnd);
+            for (const timers of [combat.itemCooldowns, combat.manualCooldowns])
+              for (const key of Object.keys(timers || {})) if (timers[key] > start) timers[key] = shift(timers[key]);
+          }
+          if (s.manualAt > start) s.manualAt = shift(s.manualAt);
+          if (s.social?.pvp?.lastAt && s.social.pvp.lastAt + H.PVP_CD > start)
+            s.social.pvp.lastAt = shift(s.social.pvp.lastAt);
+          for (const friend of Object.values(s.social?.friends || {}))
+            if (friend.discussAt > start) friend.discussAt = shift(friend.discussAt);
+          // Phiên đấu giá NPC theo giờ riêng của nhân vật; giờ offline không làm nhận hàng tự động.
+          if (s.auction) s.auction.pausedMs = Math.max(0, Number(s.auction.pausedMs) || 0) + now - start;
+          s.lastUpdate = now;
+          s.lastSaved = now;
+          return { ...empty(), paused: true };
+        }
         s.auto = false; // Không còn tự chiến khi nhập định.
         const exploring = s.exploration?.active;
         if (exploring) {
@@ -87,8 +133,8 @@
         }
         for (let i = 0; i < 400 && this.autoStage(); i++); // bản lưu cũ có tu vi đầy ở tiểu cảnh giới
 
-        let seconds = offline ? Math.min(elapsed, F.offline_cap(s.offlineCap)) : elapsed;
-        const eff = offline ? F.offline_efficiency(s.offlineEff) : 1;
+        let seconds = elapsed;
+        const eff = 1;
         const maxLife = this.maxLife(), pace = F.aging_speed(s.realm);
         let died = false;
         if (!s.completed && pace > 0 && s.age + pace * seconds >= maxLife) {
@@ -96,6 +142,7 @@
           died = true;
           if (seconds <= 0) {
             s.age = Math.max(s.age, maxLife);
+            this.markDeath('lifespan', now);
             s.lastUpdate = now;
             s.lastSaved = now;
             return { ...empty(), died: true };
@@ -107,21 +154,15 @@
         s.progress.meditate += seconds;
         s.tick += seconds;
         s.age += pace * seconds;
-        if (died) s.age = maxLife;
+        if (died) { s.age = maxLife; this.markDeath('lifespan', now); }
         else this.warnLife(maxLife);
         for (const key of s.activeManuals) s.learned[key] = Math.min(1, s.learned[key] + seconds / (F.realm_time(s.realm) * .5));
         if (s.sect.joined) s.stone += this.sectIncome() * seconds * eff;
-        if (s.auto && offline && !s.dungeon.run) {
-          const wins = seconds * eff / (this.attackInterval() * 10) * F.win_probability(this.stats(start).CP, this.enemy().CP) + s.offlineKills;
-          const n = Math.floor(wins);
-          s.offlineKills = wins - n;
-          if (n) this.collectLoot(n, true);
-        }
         if (s.auto && !offline && !s.dungeon.run) {
           s.combatClock += seconds;
           const interval = this.attackInterval();
           let turns = 0;
-          while (s.auto && s.combatClock >= interval && turns < 300) {
+          while (s.auto && !this.isDead() && s.combatClock >= interval && turns < 300) {
             s.combatClock -= interval;
             this._strike(1, now, true);
             turns++;
@@ -133,6 +174,10 @@
           s.mp = Math.min(this.maxMp(), s.mp + this.maxMp() * .018 * (1 + rt.mpRegen) * seconds);
         }
 
+        if (this.isDead()) {
+          s.lastUpdate = now; s.lastSaved = now;
+          return { ...empty(), died: true, cause: s.death?.cause || 'lifespan' };
+        }
         const dungeon = this.finishDungeon(now);
         // Kỳ ngộ chỉ phát sinh khi gieo cơ duyên trong Lịch luyện; không còn xuất hiện từ tu vi thụ động.
         const encounters = [];

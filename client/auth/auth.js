@@ -136,13 +136,14 @@
   async function logout() {
     if (busy) return;
     busy = true;
+    // Thông báo tạm dừng khi JWT Supabase vẫn còn hiệu lực.
+    try { await exitGame(); } catch { /* lease server tự đóng khi mất kết nối */ }
     try {
       if (account || pending) await SB.logout();
-    } catch { /* local session is cleared by adapter even when offline */ }
+    } catch { /* adapter luôn xóa token cục bộ trong finally */ }
     finally { busy = false; }
     pending = null;
     account = null;
-    exitGame();
     present();
     $('authEmail').focus({ preventScroll: true });
   }

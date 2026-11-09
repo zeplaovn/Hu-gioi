@@ -10,11 +10,11 @@ const { GameError } = require('../errors.js');
 
 const DAY = 24 * 3600 * 1000;
 const DEFAULTS = Object.freeze({
-  onlineGraceMs: 300000,     // quá ngưỡng này kể từ lần thấy gần nhất → tính là offline (cap + hiệu suất offline)
+  onlineGraceMs: 15000,      // sau 15s không heartbeat từ JWT: không tính tiếp tiến trình (grace cho mạng trễ)
   receiptTtlMs: 7 * DAY,
   ticketTtlMs: 10 * 60000,
   previewsPerDay: 5,
-  nextSyncInMs: 30000,
+  nextSyncInMs: 5000,
   maxStateBytes: 65536
 });
 const REQUEST_ID = /^[A-Za-z0-9_-]{1,128}$/;
@@ -86,7 +86,7 @@ class PlayerService {
     this.onError = onError;
   }
 
-  /* Tọa hóa thực: chỉ người sở hữu có nhân vật đã hết thọ nguyên mới có thể xóa để tạo lại. */
+  /* Tọa hóa thực: xóa được bất kỳ tử vong nào đã được engine xác nhận. */
   resetAfterDeath(ownerId, playerId) {
     const rec = this.#own(this.repo.get(playerId), ownerId);
     if (!new H.Game(this.#state(rec, this.clock())).isDead())
@@ -122,9 +122,11 @@ class PlayerService {
     return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview };
   }
 
-  /* age, race, linh căn lấy từ ticket do máy chủ gieo; client chỉ chọn đạo hiệu, giới tính và thiên phú. */
+  /* Tuổi/chủng tộc/linh căn từ ticket; tên, giới tính, thiên phú và 1 Thiên mệnh do client chọn. */
   createPlayer(ownerId, body) {
-    onlyKeys(body, ['ticketId', 'name', 'gender', 'talent']);
+    onlyKeys(body, ['ticketId', 'name', 'gender', 'talent', 'destiny']);
+    if (typeof body.destiny !== 'string' || !Object.hasOwn(H.META_UPGRADES, body.destiny))
+      throw invalid('INVALID_PROFILE', 'Hãy chọn một Thiên mệnh khởi nguyên hợp lệ.');
     if (typeof body.ticketId !== 'string' || body.ticketId.length > 64) throw invalid('INVALID_REQUEST', 'Thiếu phiếu khởi nguyên.');
     if (body.talent !== undefined && !isPlain(body.talent)) throw invalid('INVALID_PROFILE', 'Thiên phú không hợp lệ.');
     const now = this.clock();
@@ -133,7 +135,7 @@ class PlayerService {
       build: preview => {
         const seed = crypto.randomBytes(32).toString('hex'), rng = seededRng(seed, 0);
         let state;
-        try { state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent }, now, rng); }
+        try { state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny }, now, rng); }
         catch (err) { throw invalid('INVALID_PROFILE', err.message); }
         assertStateSafe(state, this.cfg.maxStateBytes);
         return { name: state.name, state, schemaVersion: H.VERSION, contentVersion: this.contentVersion, rngSeed: seed, rngCounter: rng.counter() };
@@ -142,7 +144,7 @@ class PlayerService {
     return { ...this.#response({ rec, revision: rec.revision, now, state: rec.state, logs: rec.state.logs.slice(0, 2) }), playerId: rec.id };
   }
 
-  /* ---------- Đồng bộ (catch-up bế quan) ---------- */
+  /* ---------- Đồng bộ: heartbeat JWT, tuyệt đối không tính thời gian offline ---------- */
   sync(ownerId, playerId, body = {}) {
     onlyKeys(body, ['lastRevision']);
     if (body.lastRevision !== undefined && !(Number.isSafeInteger(body.lastRevision) && body.lastRevision >= 0)) throw invalid('INVALID_REQUEST', 'lastRevision không hợp lệ.');
@@ -153,8 +155,15 @@ class PlayerService {
       const run = this.#run(rec, now);
       let report, achievements = [];
       try {
-        report = run.game.advance(now, run.offline);
-        achievements = run.game.checkMeta(now);
+        if (run.game.isDead()) {
+          if (!run.game.s.death) run.game.markDeath('lifespan', now);
+          run.game.s.lastUpdate = now;
+          report = { died: true, cause: run.game.s.death?.cause || 'lifespan' };
+        } else {
+          report = run.game.advance(now, run.offline);
+          if (!run.game.isDead()) achievements = run.game.checkMeta(now);
+        }
+        run.game.s.presencePaused = false;
       } catch (err) {
         const e = classify(err);
         if (e.code === 'INTERNAL') this.onError(err);
@@ -169,6 +178,24 @@ class PlayerService {
     });
     if (out.error) throw out.error;
     return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, report: out.report, logs: out.logs, achievements: out.achievements, died: out.died });
+  }
+
+  /* Xác nhận ngừng chơi: tab ẩn/đóng. Đóng băng timers, kể cả khi quay lại ngay. */
+  pause(ownerId, playerId) {
+    const now = this.clock();
+    const out = this.repo.transact(playerId, tx => {
+      const rec = this.#own(tx.record, ownerId), run = this.#run(rec, now);
+      if (!run.game.isDead()) run.game.advance(now, run.offline);
+      else run.game.s.lastUpdate = now;
+      run.game.s.presencePaused = true;
+      assertStateSafe(run.game.s, this.cfg.maxStateBytes);
+      const revision = rec.revision + 1;
+      return {
+        save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
+        value: { rec, revision, state: run.game.s }
+      };
+    });
+    return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, died: new H.Game(out.state).isDead() });
   }
 
   /* ---------- Lệnh gameplay ---------- */
@@ -189,17 +216,29 @@ class PlayerService {
       });
       let report, result = null, achievements = [], failure = null;
       try {
+        if (run.game.isDead()) throw new GameError('PLAYER_DEAD', 'Đạo thân đã tọa hóa; hãy trở về Khởi Nguyên.');
         report = run.game.advance(now, run.offline);
-        if (run.game.isDead() && command.type !== 'reincarnate') failure = new GameError('PLAYER_DEAD', 'Thọ nguyên đã cạn. Hãy chuyển thế.');
-        else { result = C.execute(run.game, command, now); achievements = run.game.checkMeta(now); }
+        run.game.s.presencePaused = false;
+        if (run.game.isDead()) {
+          // Thọ nguyên cạn ngay trên heartbeat/lệnh: ghi chết và trả snapshot
+          // thay vì ném lỗi làm trình duyệt không nhận kết quả.
+          result = { died: true, cause: run.game.s.death?.cause || 'lifespan' };
+        } else {
+          result = C.execute(run.game, command, now);
+          if (!run.game.isDead()) achievements = run.game.checkMeta(now);
+        }
       } catch (err) { failure = classify(err); if (failure.code === 'INTERNAL') this.onError(err); }
 
-      if (failure?.code === 'PLAYER_DEAD') { // phần catch-up đã xảy ra thật: ghi lại cái chết rồi mới báo lỗi
-        assertStateSafe(run.game.s, this.cfg.maxStateBytes);
-        failure.details = { currentRevision: rec.revision + 1, died: true };
-        return { save: save(rec.revision + 1), value: { error: failure } };
-      }
-      if (failure) { // hoàn tác state, nhưng vẫn tiến bộ đếm RNG để không thể thử lại cùng kết quả ngẫu nhiên
+      if (failure) {
+        // Không làm mất phần thời gian thực mà máy chủ đã xác nhận khi lệnh
+        // không hợp lệ. Luôn lưu heartbeat và trạng thái để tránh time-freeze
+        // bằng cách spam lệnh lỗi.
+        if (failure.code === 'PLAYER_DEAD') return { touch: { rngCounter: rec.rngCounter, lastSeenAt: now }, value: { error: failure } };
+        if (JSON.stringify(run.game.s) !== JSON.stringify(rec.state)) {
+          assertStateSafe(run.game.s, this.cfg.maxStateBytes);
+          failure.details = { ...(failure.details || {}), currentRevision: rec.revision + 1 };
+          return { save: save(rec.revision + 1), value: { error: failure } };
+        }
         return { touch: { rngCounter: run.rng.counter(), lastSeenAt: now }, value: { error: failure } };
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
@@ -234,7 +273,8 @@ class PlayerService {
   }
   #run(rec, now) {
     const rng = seededRng(rec.rngSeed, rec.rngCounter), logs = [];
-    return { rng, logs, game: new H.Game(this.#state(rec, now), rng, m => logs.push(m)), offline: now - rec.lastSeenAt > this.cfg.onlineGraceMs };
+    const state = this.#state(rec, now);
+    return { rng, logs, game: new H.Game(state, rng, m => logs.push(m)), offline: !!state.presencePaused || now - rec.lastSeenAt > this.cfg.onlineGraceMs };
   }
   #envelope(body) {
     onlyKeys(body, ['protocolVersion', 'requestId', 'expectedRevision', 'type', 'payload']);

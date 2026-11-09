@@ -2,13 +2,13 @@
 
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 51 lệnh và state V8. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
+> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 48 lệnh và state V9. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
 > Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
 ## 1. Ranh giới
 
-- `engine/` không dùng DOM, `localStorage`, mạng, timer hay `Date.now()`/`Math.random()` trực tiếp. Thời gian (`now`) và RNG do bên sở hữu phiên cung cấp: `LocalSession` ở client, `PlayerService` ở server.
+- `engine/` không dùng DOM, `localStorage`, mạng, timer hay `Date.now()`/`Math.random()` trực tiếp. Thời gian (`now`) và RNG trong gameplay online do `PlayerService` ở Node cung cấp. Trình duyệt chỉ dùng `RemoteSession` để hiển thị snapshot và gửi intent.
 - `engine/` chạy trong Node (CommonJS `require`) và trình duyệt (classic script, `file://`). Mỗi file dùng mẫu `(function (root) { … })(window | globalThis)` và gán vào `root.HU_*` cùng `module.exports`.
 - `engine/` đọc dữ liệu từ `data/`, không bao giờ ngược lại.
 - Payload lệnh không chứa `now`, RNG, giá, phần thưởng hay state (xem `engine/protocol/commands.js`).
@@ -21,23 +21,21 @@ Phần **engine phải cung cấp**:
 
 | Thành viên | Vai trò |
 |---|---|
-| `VERSION` | Phiên bản schema (hiện 8), lấy từ `engine/state/player.js`. |
+| `VERSION` | Phiên bản schema (hiện 9), lấy từ `engine/state/player.js`. |
 | `create(now)` | State mới, `created: false`. |
 | `createCharacter(profile, now, rng)` | Tạo nhân vật; profile do màn tạo nhân vật dựng (`name`, `gender`, `age`, `race`, `roots`, `rootType`, `talent`, …). |
-| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V8 về V8; trả `null` nếu không hợp lệ. |
+| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V9 về V9; trả `null` nếu không hợp lệ. |
 | `Game` | Lớp bọc `(state, rng, onLog)`; xem §4. |
 
-## 3. Phiên chơi (client/session/local-session.js)
+## 3. Phiên gameplay online (`client/session/remote-session.js`)
 
-`LocalSession` là adapter đồng bộ, do client sở hữu đồng hồ và RNG:
+`RemoteSession` dùng Supabase JWT với `/api/v1`: `connect(account)`, `previewCreation()`, `create(profile)`, `dispatch(type,payload)`, `synchronize(force)`, `pause()`, `resetAfterDeath()`, `subscribe(fn)`, `drainAchievements()`. Các thao tác là Promise và được tuần tự hóa theo revision của máy chủ.
 
-- `game`, `ready`, `subscribe(fn)`, `replace(state)`, `create(profile)`, `dispatch(type, payload)`, `advance(now, offline)`, `drainAchievements()`.
-- Sự kiện phát ra: `{ type: 'log', message }` mỗi khi `Game.log()` được gọi, và `{ type: 'death', report }` khi `isDead()` sau `advance`.
-- `dispatch` = `validate` → `advance(now)` → `execute` → thu thành tựu qua `checkMeta()`.
+`client/persistence/remote-store.js` cung cấp facade cho UI mà **không lưu trạng thái nhân vật vào localStorage**. Chỉ backend giữ RNG, đồng hồ, state và giao dịch SQLite. Tab ẩn gửi `pause`, heartbeat sau khoảng 5 giây, server grace mặc định 15 giây; khi offline không tăng tài nguyên hay tuổi.
 
-`client/persistence/local-store.js` bọc phiên: tự lưu `localStorage` (khóa `huGioiWorkspaceV1`, dự phòng `huGioiWorkspaceV1Backup`), xuất/nhập JSON, `preference(key, value)` cho cài đặt hiển thị. Nó gọi `H.create` và `H.normalize`, và mọi bản lưu đọc vào đều phải qua `H.normalize`.
+`LocalSession` và `LocalStore` chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
 
-## 4. Lệnh (51)
+## 4. Lệnh (48, protocol V2)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -45,11 +43,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 |---|---|---|
 | `absorb` | progression | `index` |
 | `upgrade` | progression | `index`, `count` |
-| `upgradeOffline` | progression | `type` |
-| `buyMeta` | progression | `key` |
 | `breakthrough` | progression | — |
-| `prestige` | progression | — |
-| `reincarnate` | progression | — |
 | `setAuto` | progression | `enabled` |
 | `setPreference` | time | `key`, `value` (cài đặt giao diện được xác minh server) |
 | `buy` | inventory | `code` |
@@ -100,7 +94,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).
 
-`execute` chỉ cho `reincarnate` khi `isDead()`, và từ chối mọi lệnh khi nhân vật chưa tạo.
+`execute` **từ chối tất cả 48 lệnh khi `isDead()`**, không có lệnh hồi sinh. `resetAfterDeath` là endpoint backend riêng chỉ dùng sau khi máy chủ xác nhận chết và chủ tài khoản yêu cầu xóa.
 
 ## 5. Phương thức truy vấn UI đang gọi
 
@@ -110,26 +104,26 @@ Các phép tính/tra cứu chỉ-đọc mà UI gọi trên `UI.g()` (tức `sess
 
 ## 6. Trường state UI đang đọc (`UI.s()`)
 
-Tên: `name`, `gender`, `age`, `race`, `created`, `roots`, `rootType`, `rootSub`, `rootCraft`, `talent`, `chaosTries`.
+Tên: `name`, `gender`, `age`, `race`, `created`, `destiny`, `death`, `roots`, `rootType`, `rootSub`, `rootCraft`, `talent`, `chaosTries`.
 Cảnh giới và tu luyện: `realm`, `stage`, `qi`, `progress`, `totalRunExp`, `breakBonus`, `pity`, `daoVan`, `rebirths`, `extraLife`, `tech`, `auto`, `tick`.
 Chiến đấu: `hp`, `mp`, `shield`, `reduction`, `zone`, `enemyKind`, `enemyNum`, `enemyHp`, `cooldowns`, `designCombat`, `activeManuals`, `encounter`, `dungeon`.
 Kinh tế và hành trang: `stone`, `bag`, `equipment`, `learned`, `yaoValue`, `claimed`, `completed`, `auction`, `pillUses`, `pillRealmExp`.
 Nghề phụ: `alchemySkill`, `craftQueue`, `craftBoost`, `garden`, `gardenSoils`.
 Thế giới và xã hội: `sect`, `social`, `npcAffinities`.
-Xuyên kiếp và ngoại tuyến: `meta`, `offlineCap`, `offlineEff`.
+Kiếp hiện tại: `meta` (thành tựu không cấp điểm), `destiny` (Thiên mệnh lúc tạo), `death` (nguyên nhân tử vong), `presencePaused` (tạm dừng server). `offlineCap`, `offlineEff` và `daoVan` chỉ còn để đọc dữ liệu cũ.
 Hệ thống: `settings`, `logs`, `lastUpdate`, `lastSaved`.
 
 Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/state/player.js` (`createBase`, `normalize`).
 
 ## 7. Bản lưu
 
-- Schema hiện hành V8; nhập được V4, V5, V6, V7, V8 (`SUPPORTED_VERSIONS`).
-- `normalize` phải chống khóa nguy hiểm, giới hạn số, độ sâu và kích thước (phần kiểm tra JSON an toàn nằm ở `local-store.js`, phần làm sạch giá trị nằm ở `normalize`).
-- Thiên mệnh (`meta`) được giữ qua trọng sinh.
+- Schema hiện hành V9; normalize V4, V5, V6, V7, V8, V9 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
+- `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu SQLite được ghi ở server theo giao dịch.
+- Thiên mệnh được chọn một lần tại tạo nhân vật. Không có `prestige`/`reincarnate` hay tích lũy thành tựu xuyên kiếp.
 
 ## 8. Thứ tự đã triển khai
 
-1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V8).
+1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V9).
 2. `rules/time.js` và `rules/creation.js`: `advance`, `isDead`, `createCharacter`.
 3. `rules/progression.js`: tu luyện, đột phá, độ kiếp, thiên mệnh.
 4. `rules/inventory.js`, `rules/crafting.js`, `rules/combat.js`.
