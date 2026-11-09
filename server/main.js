@@ -3,6 +3,7 @@
    Biến môi trường gameplay:
      SUPABASE_URL           URL project Supabase (suy ra issuer + JWKS để xác minh JWT)
      SUPABASE_JWT_SECRET    (tùy chọn) secret HS256 cho project chưa dùng khóa bất đối xứng
+     SUPABASE_PUBLISHABLE_KEY  key public của project để xác minh chấp thuận RLS
      HU_LEGACY_AUTH=1       bật AuthService cookie thử nghiệm thay cho Supabase (chỉ dev/test)
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
@@ -16,15 +17,21 @@ const { createRouter } = require('./http/router.js');
 function buildGameApi(env = process.env) {
   const { verifierFromEnv } = require('./auth/jwt.js');
   const { createPrincipalResolver } = require('./auth/principal.js');
+  const { createConsentVerifier } = require('./auth/consent.js');
   const { SqlitePlayers } = require('./repositories/sqlite-players.js');
   const { PlayerService } = require('./services/player-service.js');
   const { createGameApi } = require('./http/game-api.js');
   const { computeContentVersion } = require('./content-version.js');
   const { AuthService } = require('./services/auth-service.js');
 
+  if (env.HU_LEGACY_AUTH === '1' && env.NODE_ENV === 'production')
+    throw Error('Không bật HU_LEGACY_AUTH trong production.');
   const jwt = verifierFromEnv(env);
   const legacy = env.HU_LEGACY_AUTH === '1' ? new AuthService() : null;
   if (!jwt && !legacy) return { auth: null, gameApi: null, close() {} };
+  const verifyConsent = jwt ? createConsentVerifier({
+    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY
+  }).check : null;
 
   const file = env.HU_DB_FILE || path.resolve(process.cwd(), '.hu-gioi', 'game.sqlite');
   const publicRoot = path.resolve(__dirname, '..');
@@ -42,7 +49,7 @@ function buildGameApi(env = process.env) {
   repository.purgeExpired(Date.now());
   const allowedOrigins = String(env.HU_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const gameApi = createGameApi({
-    service, resolvePrincipal: createPrincipalResolver({ jwt, legacy }), allowedOrigins,
+    service, resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
     log: err => console.error('[game-api]', err.cause?.stack || err.stack || err)
   });
   return { auth: legacy, gameApi, close() { clearInterval(purge); repository.close(); } };
