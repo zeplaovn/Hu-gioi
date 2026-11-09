@@ -28,7 +28,7 @@ function createAdapter(initialHash = '') {
       const route = url.pathname;
       let status = 200, result;
       if (route.endsWith('/auth/v1/signup')) result = { user: USER };
-      else if (route.endsWith('/auth/v1/token')) result = { access_token: 'access', refresh_token: 'refresh', expires_in: 3600 };
+      else if (route.endsWith('/auth/v1/token') || route.endsWith('/api/auth/supabase-login')) result = { access_token: 'access', refresh_token: 'refresh', expires_in: 3600 };
       else if (route.endsWith('/auth/v1/user')) {
         if (!init.headers.Authorization) { status = 401; result = { msg: 'No token' }; }
         else result = USER;
@@ -61,6 +61,8 @@ test('after login consent is individually recorded and scoped to user', async ()
   await assert.rejects(() => sb.accept(USER), /xác thực|hết hạn|đăng nhập/);
   const user = await sb.login('test@example.invalid', 'password-at-least-10');
   assert.equal(user.id, ID);
+  assert.ok(requests.some(x => x.input === '/api/auth/supabase-login'));
+  assert.ok(!requests.some(x => x.input.includes('grant_type=password')), 'login cannot bypass the app IP limiter');
   assert.equal((await sb.accepted()).size, 0);
   await sb.accept(user);
   assert.equal(records.length, 2);
@@ -99,4 +101,14 @@ test('legal pages, CSP and checkbox binding are present in shipping files', () =
   assert.match(ignored, /\.hu-gioi\//);
   assert.match(fs.readFileSync(path.join(root, 'client/legal/privacy.html'), 'utf8'), /91\/2025\/QH15/);
   assert.match(fs.readFileSync(path.join(root, 'client/legal/release.html'), 'utf8'), /147\/2024\/NĐ-CP/);
+});
+
+test('registration rejects malformed email before any network request', async () => {
+  const { sb, requests } = createAdapter();
+  for (const email of ['x', 'a@@b.com', 'a..b@example.com', 'a@-invalid.com', 'a@host', 'a@host..com', 'a b@example.com']) {
+    await assert.rejects(() => sb.signup(email, 'long-password'), /Email không hợp lệ/, email);
+    await assert.rejects(() => sb.login(email, 'long-password'), /Email không hợp lệ/, email);
+  }
+  assert.equal(requests.length, 0);
+  assert.equal(sb.validEmail('Dao.Huu+1@example.com'), true);
 });
