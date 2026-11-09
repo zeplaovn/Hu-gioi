@@ -81,7 +81,7 @@
         <p>• Đan cấp thấp vẫn dùng được nhưng hiệu quả giảm theo chênh lệch cảnh giới.</p>
         <p>• Kiếp vận tích lũy tăng một bậc sau mỗi lần đột phá thất bại, tối đa 15 bậc.</p>
         <p>• Tông môn mang lại linh thạch định kỳ và chúc phúc +10% tốc độ hấp thụ linh khí.</p>
-        <p>• Trọng sinh giữ công pháp, thiên phú, nâng cấp tu luyện khi vắng mặt, Thiên mệnh và cài đặt.</p>`, { eyebrow: 'GHI NHỚ' })}
+        <p>• Chủ động Trọng sinh vẫn giữ những gì luật Trọng sinh cho phép. Khi <b>tọa hóa vì hết thọ nguyên</b>, toàn bộ dữ liệu game được xóa và quay về tạo nhân vật; tài khoản vẫn còn.</p>`, { eyebrow: 'GHI NHỚ' })}
     </div>`;
   }
 

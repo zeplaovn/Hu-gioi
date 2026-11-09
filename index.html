@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="css/loading.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/welcome.css">
+<link rel="stylesheet" href="css/auth.css">
 <link rel="stylesheet" href="css/creation.css">
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/screens.css">
@@ -38,7 +39,47 @@
 <noscript><style>#loading{display:none}</style></noscript>
 <noscript><p class="no-js">Trò chơi cần JavaScript để hoạt động.</p></noscript>
 
-<section id="welcome" class="welcome" aria-labelledby="welcomeTitle">
+<section id="authGate" class="auth-gate" aria-labelledby="authTitle">
+  <div class="auth-scroll">
+    <aside class="auth-story" aria-label="Lời dẫn tiên lộ">
+      <img class="auth-logo" src="media/assets/world/bg/logo.webp" alt="Hư Giới" decoding="async">
+      <div class="auth-story-copy">
+        <span class="auth-kicker">TIÊN LỘ VÔ TẬN · VẠN GIỚI HỮU DUYÊN</span>
+        <h2>Một niệm khởi đạo.<br><em>Vạn kiếp trường sinh.</em></h2>
+        <p>Giữa thiên địa vô cùng, mỗi đạo hữu đều có một tiên lộ. Lưu lại tiên tịch, khởi đầu hành trình tu hành của riêng mình.</p>
+      </div>
+      <span class="auth-story-footer">HƯ GIỚI · THANH VÂN SƠN · HẠ GIỚI</span>
+    </aside>
+    <div class="auth-panel">
+      <div class="auth-seal" aria-hidden="true">仙</div>
+      <span class="auth-kicker">THIÊN THƯ / TIÊN TỊCH</span>
+      <h1 id="authTitle">Trở lại tiên lộ</h1>
+      <p id="authSubtitle" class="auth-subtitle">Đăng nhập để tiếp tục hành trình.</p>
+      <div class="auth-tabs" role="tablist" aria-label="Đăng nhập hoặc đăng ký">
+        <button type="button" role="tab" data-auth-view="login" class="active" aria-selected="true">Đăng nhập</button>
+        <button type="button" role="tab" data-auth-view="signup" aria-selected="false">Đăng ký</button>
+      </div>
+      <form id="authForm" class="auth-form">
+        <label for="authEmail">Email
+          <input id="authEmail" name="email" type="email" placeholder="daohuu@example.com" maxlength="254" autocomplete="email" required>
+        </label>
+        <label for="authPassword">Mật khẩu
+          <input id="authPassword" name="password" type="password" minlength="10" maxlength="128" placeholder="Ít nhất 10 ký tự" autocomplete="current-password" required>
+        </label>
+        <label id="authConfirmWrap" for="authConfirm" hidden>Nhập lại mật khẩu
+          <input id="authConfirm" name="confirm" type="password" minlength="10" maxlength="128" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
+        </label>
+        <p id="authMessage" class="auth-message" role="alert" hidden></p>
+        <button id="authSubmit" class="auth-submit" type="submit">Bước vào Hư Giới</button>
+      </form>
+      <div class="auth-divider">HOẶC</div>
+      <button id="authGuest" type="button" class="auth-guest">Vân du không tài khoản</button>
+      <p class="auth-caption">Đạo hữu có thể chơi trên thiết bị này mà không cần tài khoản. Tiến trình vẫn lưu cục bộ; đăng ký không đồng bộ bản lưu lên máy chủ.</p>
+    </div>
+  </div>
+</section>
+
+<section id="welcome" class="welcome" aria-labelledby="welcomeTitle" hidden>
   <div class="welcome-bg" aria-hidden="true"></div>
   <div class="welcome-veil" aria-hidden="true"></div>
   <div class="welcome-card create-screen">
@@ -91,7 +132,8 @@
       <p id="pointsValue" class="points points-pending" role="status" tabindex="-1">Còn 8/8 điểm — cần phân bổ hết để bắt đầu.</p>
       <div id="statGrid" class="stat-grid" aria-label="Phân bổ thiên phú"></div>
       <p id="statHint" class="hint" aria-live="polite">Rê chuột hoặc chạm vào tên thiên phú để xem mô tả.</p>
-      <div class="create-actions">
+      <div class="account-switch"><span id="accountLabel">Vân du không tài khoản</span><button type="button" id="switchAccount">Đổi tài khoản</button></div>
+       <div class="create-actions">
         <button type="button" id="previewGame" class="btn btn-gold btn-wide" hidden>Vào giao diện chính · Xem trước</button>
         <button id="startNew" class="btn btn-gold btn-wide" type="submit" aria-describedby="pointsValue" disabled>Bắt đầu tu tiên</button>
         <button type="button" class="btn btn-outline btn-wide" id="continueGame" hidden>Tiếp tục hành trình đã lưu</button>
@@ -154,6 +196,7 @@
     </button>
     <div class="status-foot">
       <span class="save-state" id="saveState" role="status">Tự động lưu</span>
+      <button type="button" class="account-exit" id="accountExit">Đăng xuất / Đổi tài khoản</button>
       <button class="status-settings" data-window="settings" aria-label="Cài đặt">⚙</button>
     </div>
   </section>
@@ -345,6 +388,7 @@
 <script src="client/assets/item-index.js"></script>
 <script src="client/assets/assets.js"></script>
 <script src="client/session/local-session.js"></script>
+<script src="client/auth/auth.js"></script>
 <script src="client/session/chat-session.js"></script>
 <script src="client/persistence/local-store.js"></script>
 <script src="client/ui/core.js"></script>

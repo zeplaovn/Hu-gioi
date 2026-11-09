@@ -34,11 +34,12 @@
   const rootLabel = (type, sub) => H.rootLabel(type, sub);
   const pctText = v => (v > 0 ? '+' : '') + Math.round(v * 100) + '%';
 
-  let creation = {
+  const freshCreation = () => ({
     name: H.randomName('nam'), nameAuto: true, gender: 'nam',
     age: randInt(14, 30), race: H.rollRace(), ...H.rollRoots(),
     points: TALENT_MAX, talent: blankTalent()
-  };
+  });
+  let creation = freshCreation();
   let rolling = '', entering = false;
 
   function nameError() {
@@ -308,47 +309,53 @@
   }
 
   /* ======================================================================
-     TỌA HÓA · hết thọ nguyên
-     Engine dừng đồng hồ đúng lúc thọ nguyên cạn (advance trả về died). Hộp thoại này bắt buộc:
-     người chơi phải chuyển thế (dùng lại cơ chế trọng sinh) mới chơi tiếp.
+     TỌA HÓA · một kiếp đã kết thúc, xóa toàn bộ tiến trình kiếp cũ.
+     Không dùng lệnh trọng sinh (lệnh đó cố tình giữ meta/đạo vận).
      ====================================================================== */
   let deathOpen = false;
   UI.onDeath = function (r) {
-    if (deathOpen) return;
+    if (deathOpen || !store.ready) return;
     UI.tutorial?.close();
     const s = UI.s(), g = UI.g();
     deathOpen = true;
-    const reward = F.dao_van(s.totalRunExp), points = Math.max(1, Math.floor(reward / 5)) + Math.floor(s.realm / 2);
     const lead = r && r.seconds >= 20
-      ? 'Trong lúc bế quan, thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Thân xác tan thành linh khí giữa đất trời.'
-      : 'Thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Bạn ngồi hóa giữa đất trời, thân xác tan thành linh khí.';
+      ? 'Trong lúc bế quan, thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn.'
+      : 'Thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Đạo thân trở về cát bụi.';
     UI.modal('Tọa hóa',
       '<p>' + lead + '</p>' +
       '<div class="offline-list">' +
         '<div><span>Hưởng thọ</span><b>' + num(Math.floor(s.age)) + ' tuổi</b></div>' +
-        '<div><span>Cảnh giới đạt được</span><b>' + esc(g.realmLabel()) + '</b></div>' +
+        '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
-        '<div><span>Đạo vận nhận được</span><b>+' + num(reward) + '</b></div>' +
-        '<div><span>Điểm Thiên mệnh</span><b>+' + num(points) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Công pháp, thiên phú, nâng cấp bế quan, Thiên mệnh và cài đặt được giữ lại. Cảnh giới, túi đồ và linh thạch đặt lại.</p>' +
-      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="reincarnate">Chuyển thế</button></div>',
+      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, thiên phú, Đạo vận, Thiên mệnh, thành tựu, cài đặt và các bản lưu dự phòng. Tài khoản đăng nhập không bị xóa.</p>' +
+      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Trở về Khởi Nguyên</button></div>',
       null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
-    document.querySelector('[data-act="reincarnate"]')?.focus();
+    document.querySelector('[data-act="resetAfterDeath"]')?.focus();
   };
-  UI.reincarnate = function () {
-    if (!deathOpen) return;
-    const reward = F.dao_van(UI.s().totalRunExp);
-    UI.command('reincarnate');
+  UI.resetAfterDeath = function () {
+    if (!deathOpen || store.locked) return;
+    /* Chặn tất cả vòng lặp auto-save ngay trước khi thay trạng thái. */
+    store.ready = false;
+    store.clearAll();
+    store.fresh();
     UI.closeModal(true);
     deathOpen = false;
-    store.write();
     UI.windows?.closeAll();
-    UI.toast('Đã chuyển thế · nhận ' + num(reward) + ' Đạo vận. Một kiếp mới bắt đầu.', { type: 'gold', title: 'Tọa hóa' });
-    UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(140px,22vw,240px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
-    const avatar = $('avatar');
-    if (avatar) avatar.src = A.heroPortrait(UI.s().gender, UI.s().realm);
-    UI.go('idle');
+    UI.tabState = {};
+    UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
+    UI.current = 'idle';
+    creation = freshCreation();
+    rolling = '';
+    $('continueGame').hidden = true;
+    $('continueGame').title = '';
+    $('welcomeRebirth').textContent = 'Đây là lần trùng sinh thứ 1 của bạn';
+    $('game').hidden = true;
+    $('welcome').hidden = false;
+    document.body.classList.remove('in-game');
+    try { root.history?.replaceState(null, '', root.location.pathname + root.location.search); } catch { /* file:// */ }
+    renderCreation();
+    $('nameInput')?.focus({ preventScroll: true });
   };
 
   function start() {
@@ -565,19 +572,37 @@
     }
   }
 
+  function showForAccount(account) {
+    store.setAccount(account?.id);
+    $('accountLabel').textContent = account?.email || 'Vân du không tài khoản';
+    $('accountExit').textContent = account ? 'Đăng xuất' : 'Tài khoản';
+    const saved = store.load();
+    $('continueGame').hidden = !saved;
+    $('welcomeRebirth').textContent = saved
+      ? 'Đây là lần trùng sinh thứ ' + (saved.rebirths + 1) + ' của bạn'
+      : 'Đây là lần trùng sinh thứ 1 của bạn';
+    $('continueGame').title = saved ? 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm] : '';
+    $('welcome').hidden = false;
+    renderCreation();
+  }
+  function leaveAccount() {
+    store.ready = false;
+    UI.tutorial?.close();
+    UI.windows?.closeAll();
+    if (!$('modalLayer').hidden) UI.closeModal(true);
+    store.fresh();
+    $('game').hidden = true;
+    $('welcome').hidden = true;
+    document.body.classList.remove('in-game');
+  }
   function boot() {
     buildStats();
     bindCreation();
     bindSettings();
     bindLifecycle();
-    const saved = store.load();
-    $('continueGame').hidden = !saved;
-    if (saved) {
-      $('continueGame').title = 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm];
-      $('welcomeRebirth').textContent = `Đây là lần trùng sinh thứ ${saved.rebirths + 1} của bạn`;
-    }
-    renderCreation();
     UI.booted = true;
+    root.HU_AUTH?.boot({ onEnter: showForAccount, onExit: leaveAccount });
+    if (!root.HU_AUTH) showForAccount(null);
   }
 
   UI.boot = boot;
@@ -587,6 +612,8 @@
     bindCreation();
     renderCreation();
     UI.mainPreview?.bind();
+    root.HU_AUTH?.boot({ onEnter: () => { $('welcome').hidden = false; }, onExit: () => { $('welcome').hidden = true; $('game').hidden = true; } });
+    if (!root.HU_AUTH) $('welcome').hidden = false;
   };
   UI.renderCreation = renderCreation;
   UI.creation = () => creation;
