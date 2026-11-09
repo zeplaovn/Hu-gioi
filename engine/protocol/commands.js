@@ -8,7 +8,7 @@
   const C = node ? require('../../data/character.js') : root.HU_CHARACTER;
   const D = node ? require('../../data/catalog.js') : root.HU_CATALOG;
 
-  const VERSION = 1;
+  const VERSION = 2;
   const isObject = v => v && typeof v === 'object' && !Array.isArray(v) && [Object.prototype, null].includes(Object.getPrototypeOf(v));
   const string = v => typeof v === 'string' && v.length > 0 && v.length <= 80;
   const integer = (min, max) => v => Number.isSafeInteger(v) && v >= min && v <= max;
@@ -23,11 +23,7 @@
     // progression
     absorb: { index: integer(0, F.COINS.length - 1) },
     upgrade: { index: integer(0, 3), count: v => v === 'max' || integer(1, 20)(v) },
-    upgradeOffline: { type: oneOf(['cap', 'eff']) },
-    buyMeta: { key: oneOf(Object.keys(C.META_UPGRADES)) },
     breakthrough: {},
-    prestige: {},
-    reincarnate: {},
     setAuto: { enabled: boolean },
     setPreference: { key: oneOf(['season', 'seasonEffects', 'cultivationEffects', 'combatEffects', 'motionMode', 'music', 'musicVolume', 'musicTrack']), value: v => typeof v === 'string' || typeof v === 'boolean' || Number.isFinite(v) },
     // inventory
@@ -98,7 +94,7 @@
     const c = validate(command);
     if (!Number.isFinite(now) || now < 0) invalid();
     if (!game.s.created) throw Error('Chưa tạo nhân vật.');
-    if (game.isDead() && c.type !== 'reincarnate') throw Error('Thọ nguyên đã cạn. Hãy chuyển thế.');
+    if (game.isDead()) throw Error('Đạo thân đã tọa hóa. Hãy trở về Khởi Nguyên.');
     const pausedActions = ['absorb', 'upgrade', 'craft', 'forge', 'garden', 'startDungeon', 'enterDungeon',
       'startSectMission', 'breakthrough', 'manualEncounter', 'use', 'setAuto'];
     if (game.s.exploration?.active && pausedActions.includes(c.type))
