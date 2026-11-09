@@ -33,12 +33,16 @@ def enter_game(page, url):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
     page.locator("#startNew").click()
     page.locator('#gameLoading').wait_for(state='hidden', timeout=45000)
-    page.keyboard.press("Escape")
-    page.wait_for_timeout(2500)
-    if page.locator("#tutorialSkip").is_visible():
-        page.locator("#tutorialSkip").click()
-    else:
-        page.keyboard.press("Escape")
+    # Không dựa vào thời gian chờ cố định: mở đầu được tạo ngay sau loading.
+    intro = page.locator('#storyIntro')
+    intro.wait_for(state='visible', timeout=15000)
+    intro.press('Escape')
+    intro.wait_for(state='detached', timeout=15000)
+    # Nhân vật được tạo sau intro; lúc này tutorial mới khởi tạo.
+    tutorial = page.locator('#tutorialLayer')
+    tutorial.wait_for(state='visible', timeout=15000)
+    page.locator('#tutorialSkip').click()
+    tutorial.wait_for(state='detached', timeout=15000)
     page.locator("#menu button").first.wait_for(state="visible", timeout=25000)
 
 def open_page(page, section):
