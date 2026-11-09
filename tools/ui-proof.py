@@ -68,6 +68,36 @@ def snap(page, folder, prefix, name, where="top"):
     page.screenshot(path=str(file), animations="disabled")
     return str(file)
 
+def verify_log_float(page, folder, name, outcome):
+    panel = page.locator("#logPanel")
+    float_btn = page.locator("#logFloatToggle")
+    collapse_btn = page.locator("#logToggle")
+    assert float_btn.is_visible(), "Thiếu nút đưa nhật ký nổi"
+    float_btn.click()
+    assert "log-floating" in (panel.get_attribute("class") or ""), "Nhật ký không nổi"
+    assert float_btn.get_attribute("aria-pressed") == "true"
+    outcome["screenshots"].append(snap(page, folder, name, "log-floating"))
+    header = page.locator("#logPanel .log-head")
+    rect = header.bounding_box()
+    assert rect, "Không tìm thấy vùng kéo nhật ký"
+    page.mouse.move(rect["x"] + 35, rect["y"] + 18)
+    page.mouse.down()
+    page.mouse.move(rect["x"] + 57, rect["y"] - 24, steps=5)
+    page.mouse.up()
+    pos = panel.bounding_box()
+    assert pos and pos["x"] >= 0 and pos["y"] >= 0, "Nhật ký bị kéo khỏi màn hình"
+    collapse_btn.click()
+    assert "collapsed" in (panel.get_attribute("class") or ""), "Không thu gọn được"
+    assert collapse_btn.get_attribute("aria-expanded") == "false"
+    outcome["screenshots"].append(snap(page, folder, name, "log-minimized"))
+    collapse_btn.click()
+    assert "collapsed" not in (panel.get_attribute("class") or ""), "Không mở rộng được"
+    float_btn.click()
+    assert "log-floating" not in (panel.get_attribute("class") or ""), "Không ghim lại được"
+    assert float_btn.get_attribute("aria-pressed") == "false"
+    outcome["log_float_toggle_drag"] = True
+
+
 def verify_bubble(page, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
     trigger.wait_for(state="visible", timeout=15000)
@@ -91,6 +121,8 @@ def run_set(browser, folder, name, url, width, height, mobile):
     try:
         enter_game(page, url)
         verify_bubble(page, outcome)
+        if name.startswith('after_'):
+            verify_log_float(page, folder, name, outcome)
         for key, section, tab in CASES:
             if section:
                 open_page(page, section)
