@@ -54,3 +54,21 @@
   .auth-gate { overflow:visible; align-items:start; }
   .auth-scroll { min-height:0; }
 }
+
+
+/* Hai văn bản được chấp thuận độc lập; không sử dụng ô đã tích sẵn. */
+.auth-form[hidden], .auth-tabs[hidden], .auth-legal[hidden], .auth-consent-gate[hidden], .auth-guest[hidden] { display:none !important; }
+.auth-legal, .auth-consent-gate { display:flex; flex-direction:column; gap:12px; }
+.auth-form .auth-check, .auth-consent-gate .auth-check {
+  display:flex; flex-direction:row; align-items:flex-start; gap:11px;
+  color:#d9d1c2; font:500 12px/1.6 var(--font,sans-serif); cursor:pointer;
+}
+.auth-form .auth-check input, .auth-consent-gate .auth-check input {
+  flex:0 0 20px; width:20px; min-height:20px; height:20px; margin:2px 0 0;
+  accent-color:#d2b475; cursor:pointer;
+}
+.auth-legal a, .auth-consent-gate a, .auth-caption a { color:#e5ca92; text-decoration:underline; text-underline-offset:3px; }
+.auth-legal a:focus-visible, .auth-consent-gate a:focus-visible, .auth-caption a:focus-visible { outline:2px solid #e6c88b; }
+.auth-legal-note { margin:0; color:#aeb5aa; font-size:11px; }
+.auth-consent-gate p { color:#d9d1c2; font-size:13px; line-height:1.7; }
+.auth-message[data-kind="success"] { color:#b8e4bc; }
