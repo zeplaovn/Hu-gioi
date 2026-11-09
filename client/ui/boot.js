@@ -324,7 +324,7 @@
         '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, thiên phú, Đạo vận, Thiên mệnh, thành tựu, cài đặt và các bản lưu dự phòng. Tài khoản đăng nhập không bị xóa.</p>' +
+      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, Đạo vận, Thiên mệnh và thành tựu trên máy chủ. Tài khoản Supabase vẫn còn. Không có bản lưu offline để phục hồi.</p>' +
       '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Trở về Khởi Nguyên</button></div>',
       null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
     document.querySelector('[data-act="resetAfterDeath"]')?.focus();
@@ -347,7 +347,7 @@
     UI.tabState = {};
     UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
     UI.current = 'idle';
-    creation = freshCreation();
+    // Giữ nguyên tuổi/chủng tộc/linh căn trong ticket vừa cấp bởi máy chủ.
     rolling = '';
     $('continueGame').hidden = true;
     $('continueGame').title = '';
