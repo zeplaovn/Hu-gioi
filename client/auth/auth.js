@@ -8,10 +8,13 @@
   let bound = false, busy = false, mode = 'login';
 
   function notice(text, good = false) {
-    const el = $('authMessage');
-    el.textContent = text || '';
-    el.hidden = !text;
-    el.dataset.kind = good ? 'success' : 'error';
+    const consentVisible = !$('authConsentGate').hidden;
+    for (const id of ['authMessage', 'authConsentMessage']) {
+      const el = $(id), active = (id === 'authConsentMessage') === consentVisible;
+      el.textContent = active ? text || '' : '';
+      el.hidden = !active || !text;
+      el.dataset.kind = good ? 'success' : 'error';
+    }
   }
   function selectMode(next) {
     mode = next === 'signup' ? 'signup' : 'login';
