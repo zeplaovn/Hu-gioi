@@ -4,7 +4,7 @@
   'use strict';
   const URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
-  const VERSION = '2026-11-09';
+  const VERSION = '2026-11-09-v2';
   const STORAGE = 'huGioiSupabaseSessionV1';
   let current = null;
   try { current = JSON.parse(root.sessionStorage?.getItem(STORAGE) || 'null'); } catch { /* private mode */ }
