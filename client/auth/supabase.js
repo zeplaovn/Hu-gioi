@@ -63,7 +63,7 @@
     return current.access_token;
   }
   async function callback() {
-    if (!root.location || !/^#.*(?:^|&)access_token=/.test(root.location.hash)) return;
+    if (!root.location || !/(?:^#|&)access_token=/.test(root.location.hash)) return;
     const values = new URLSearchParams(root.location.hash.slice(1));
     const data = {
       access_token: values.get('access_token'),
