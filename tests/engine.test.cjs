@@ -215,7 +215,7 @@ test('state: normalize nâng cấp V4–V9 và loại bản lưu hỏng', () => 
   assert.ok(clean.talent.phucDuyen >= 0);
   assert.equal(clean.settings.musicVolume, 100);
   assert.equal(clean.settings.motionMode, 'auto');
-  assert.equal(clean.version, 8);
+  assert.equal(clean.version, 9);
 
   const backwards = H.normalize({ ...JSON.parse(JSON.stringify(saved)), lastUpdate: NOW + 60_000, lastSaved: NOW + 60_000 }, NOW);
   assert.equal(backwards.lastUpdate, NOW);
