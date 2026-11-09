@@ -102,7 +102,7 @@ test('API: luồng chơi đầy đủ preview → tạo → state → sync → l
   const { call, tokenA, tokenB } = await boot(t);
   const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
   assert.equal(pv.status, 201);
-  const made = await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Diệp Phàm', gender: 'nam', talent: { phucDuyen: 8 } } });
+  const made = await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Diệp Phàm', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' } });
   assert.equal(made.status, 201);
   const id = made.data.playerId;
   assert.equal((await call('GET', '/api/v1/bootstrap', { token: tokenA })).data.player.id, id);
@@ -111,7 +111,7 @@ test('API: luồng chơi đầy đủ preview → tạo → state → sync → l
   const synced = await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: { lastRevision: 0 } });
   assert.equal(synced.status, 200);
   const rev = synced.data.revision;
-  const env = (rid, extra = {}) => ({ protocolVersion: 1, requestId: rid, expectedRevision: rev, type: 'buy', payload: { code: 'HERB-001' }, ...extra });
+  const env = (rid, extra = {}) => ({ protocolVersion: 2, requestId: rid, expectedRevision: rev, type: 'buy', payload: { code: 'HERB-001' }, ...extra });
   const c1 = await call('POST', `/api/v1/players/${id}/commands`, { token: tokenA, body: env('api-1') });
   assert.equal(c1.status, 200);
   assert.equal(c1.data.revision, rev + 1);
@@ -128,13 +128,13 @@ test('API: luồng chơi đầy đủ preview → tạo → state → sync → l
   for (const url of [`/api/v1/players/${id}/state`]) assert.equal((await call('GET', url, { token: tokenB })).status, 404);
   assert.equal((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenB, body: {} })).status, 404);
   assert.equal((await call('POST', `/api/v1/players/${id}/commands`, { token: tokenB, body: env('b-1') })).status, 404);
-  assert.equal((await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Khác', gender: 'nam', talent: { phucDuyen: 8 } } })).data.error.code, 'TICKET_INVALID');
+  assert.equal((await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Khác', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' } })).data.error.code, 'TICKET_INVALID');
 });
 
 test('API: body hỏng, quá lớn, sai content-type, trường thừa', async t => {
   const { call, tokenA } = await boot(t);
   const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
-  const id = (await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Lục Tuyết', gender: 'nu', talent: { canCot: 8 } } })).data.playerId;
+  const id = (await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Lục Tuyết', gender: 'nu', talent: { canCot: 8 }, destiny: 'life' } })).data.playerId;
   const url = `/api/v1/players/${id}/commands`;
   assert.equal((await call('POST', url, { token: tokenA, body: '{hỏng' })).data.error.code, 'INVALID_REQUEST');
   assert.equal((await call('POST', url, { token: tokenA, body: JSON.stringify({ pad: 'x'.repeat(70000) }) })).status, 413);
@@ -147,7 +147,7 @@ test('API: giới hạn tốc độ trả 429 kèm Retry-After', async t => {
   let now = 0;
   const { call, tokenA } = await boot(t, { limiter: new RateLimiter({ clock: () => now }) });
   const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
-  const id = (await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Tô Mạc', gender: 'nam', talent: { vanKhi: 8 } } })).data.playerId;
+  const id = (await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Tô Mạc', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck' } })).data.playerId;
   const statuses = [];
   for (let i = 0; i < 10; i++) statuses.push((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status);
   assert.deepEqual(statuses.slice(0, 8), Array(8).fill(200));
