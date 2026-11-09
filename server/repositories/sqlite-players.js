@@ -60,8 +60,16 @@ function hydrate(row) {
 class SqlitePlayers extends PlayerRepository {
   constructor(file = ':memory:') {
     super();
-    if (file !== ':memory:') fs.mkdirSync(path.dirname(path.resolve(file)), { recursive: true, mode: 0o700 });
+    if (file !== ':memory:') {
+      const dest = path.resolve(file), dir = path.dirname(dest);
+      fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+      if (fs.statSync(dir).mode & 0o077) throw Error('Thư mục HU_DB_FILE phải có quyền 0700.');
+      if (fs.existsSync(dest) && fs.lstatSync(dest).isSymbolicLink())
+        throw Error('HU_DB_FILE không được là symbolic link.');
+      file = dest;
+    }
     this.db = new DatabaseSync(file);
+    if (file !== ':memory:') fs.chmodSync(file, 0o600);
     this.db.exec('PRAGMA journal_mode = WAL; PRAGMA synchronous = FULL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
     this.db.exec(SCHEMA);
     const p = sql => this.db.prepare(sql);
