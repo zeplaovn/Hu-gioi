@@ -61,17 +61,17 @@
     }
   });
 
-  UI.action('exploreStart', () => {
-    const result = UI.command('startExploration');
+  UI.action('exploreStart', async () => {
+    const result = await UI.command('startExploration');
     UI.toast('Đã khởi hành đến ' + H.ZONES[UI.s().zone].name + ' · hẹn trở về sau 10 phút.',
       { type: 'gold', title: 'Lịch luyện' });
     UI.go('combat');
     // Rerender ngay để vô hiệu hóa nút khởi hành và bộ chọn nơi, không chờ tick tiếp theo.
   });
-  UI.action('travel', (el, d) => {
+  UI.action('travel', async (el, d) => {
     if (UI.s().exploration?.active) throw Error('Chuyến lịch luyện chưa kết thúc; chưa thể đổi địa điểm.');
     const zone = Number(d.index);
-    UI.command('travel', { zone });
+    await UI.command('travel', { zone });
     UI.toast('Đã chọn ' + H.ZONES[zone].name + ' để lịch luyện.', { type: 'info', title: 'Bí cảnh' });
   });
 })(typeof window !== 'undefined' ? window : globalThis);

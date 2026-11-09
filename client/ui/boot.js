@@ -210,26 +210,28 @@
     syncName();
   }
 
-  function roll(kind) {
+  async function roll(kind) {
     if (rolling || entering) return;
+    if (kind === 'name') {
+      creation.name = H.randomName(creation.gender); creation.nameAuto = true;
+      renderCreation(); return;
+    }
     rolling = kind;
-    const btnId = { name: 'randomName', age: 'rollAge', race: 'rollRace', root: 'rollRoot' }[kind];
-    const btn = btnId ? $(btnId) : null;
+    const btnId = { age: 'rollAge', race: 'rollRace', root: 'rollRoot' }[kind];
+    const btn = $(btnId);
     btn?.classList.add('rolling');
-    let i = 0;
-    const step = () => {
-      const welcome = $('welcome');
-      if (!welcome || welcome.hidden || entering) { rolling = ''; btn?.classList.remove('rolling'); return; }
-      if (kind === 'name') { creation.name = H.randomName(creation.gender); creation.nameAuto = true; }
-      else if (kind === 'age') creation.age = randInt(14, 30);
-      else if (kind === 'race') creation.race = H.rollRace();
-      else if (kind === 'root') Object.assign(creation, H.rollRoots());
+    try {
+      // Một ticket máy chủ chứa đồng thời tuổi, chủng tộc và linh căn.
+      const preview = await UI.session.previewCreation();
+      Object.assign(creation, preview);
       renderCreation();
-      i++;
-      if (i < 9) setTimeout(step, 42 + i * 12);
-      else { rolling = ''; btn?.classList.remove('rolling'); renderCreation(); }
-    };
-    step();
+      UI.toast('Đã nhận thiên cơ mới từ máy chủ (tối đa 5 lần/24 giờ).', { type: 'info' });
+    } catch (error) {
+      UI.toast('Không thể gieo lại: ' + error.message, { type: 'danger' });
+    } finally {
+      rolling = '';
+      btn?.classList.remove('rolling');
+    }
   }
 
   /** Danh sách "việc nên làm tiếp" sau khi bế quan: chỉ đọc trạng thái, không ghi gì vào save. */
@@ -322,24 +324,30 @@
         '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, thiên phú, Đạo vận, Thiên mệnh, thành tựu, cài đặt và các bản lưu dự phòng. Tài khoản đăng nhập không bị xóa.</p>' +
+      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, Đạo vận, Thiên mệnh và thành tựu trên máy chủ. Tài khoản Supabase vẫn còn. Không có bản lưu offline để phục hồi.</p>' +
       '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Trở về Khởi Nguyên</button></div>',
       null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
     document.querySelector('[data-act="resetAfterDeath"]')?.focus();
   };
-  UI.resetAfterDeath = function () {
+  UI.resetAfterDeath = async function () {
     if (!deathOpen || store.locked) return;
-    /* Chặn tất cả vòng lặp auto-save ngay trước khi thay trạng thái. */
+    /* Xóa nhân vật chỉ khi máy chủ xác nhận đã tọa hóa. */
     store.ready = false;
-    store.clearAll();
-    store.fresh();
+    try {
+      const preview = await store.resetAfterDeath();
+      creation = { ...freshCreation(), ...preview };
+    } catch (error) {
+      store.ready = true;
+      UI.toast('Không thể xóa nhân vật trên máy chủ: ' + error.message, { type: 'danger' });
+      return;
+    }
     UI.closeModal(true);
     deathOpen = false;
     UI.windows?.closeAll();
     UI.tabState = {};
     UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
     UI.current = 'idle';
-    creation = freshCreation();
+    // Giữ nguyên tuổi/chủng tộc/linh căn trong ticket vừa cấp bởi máy chủ.
     rolling = '';
     $('continueGame').hidden = true;
     $('continueGame').title = '';
@@ -362,8 +370,8 @@
     const awayStart = Date.now(), awaySeconds = Math.max(0, (awayStart - s.lastUpdate) / 1000);
     const before = offlineSnapshot(awayStart);
     const wasExploring = !!s.exploration?.active;
-    const r = store.catchUp(awayStart, true);
-    store.write();
+    // Snapshot đã được đồng bộ và xác minh qua Supabase/JWT trước khi mở màn này.
+    const r = null;
     UI.applySettings();
     const avatar = $('avatar');
     if (avatar) avatar.src = A.heroPortrait(s.gender, s.realm);
@@ -377,6 +385,7 @@
     const target = wasExploring && !s.exploration?.active && (!requested || requested === 'combat')
       ? 'idle' : requested || (s.exploration?.active ? 'combat' : 'idle');
     UI.go(target, { silent: true });
+    if (UI.g().isDead()) UI.onDeath?.(r);
     if (wasExploring) {
       try { root.history?.replaceState(null, '', '#' + target); } catch { /* file:// */ }
     }
@@ -418,7 +427,7 @@
         UI.intro.focus();
         await introDone;
         if (store.locked) throw Error('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.');
-        UI.session.create(profile);
+        await UI.session.create(profile);
         start();
         await UI.intro.close();
         $('stage')?.focus({ preventScroll: true });
@@ -435,12 +444,12 @@
       }
     });
 
-    $('continueGame').addEventListener('click', () => UI.safe(() => {
+    $('continueGame').addEventListener('click', () => UI.safe(async () => {
       if (entering) return;
       if (store.locked) throw Error('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.');
+      await store.synchronize();
       const saved = store.load();
-      if (!saved) throw Error('Không tìm thấy hành trình đã ghi nhận.');
-      store.replace(saved);
+      if (!saved) throw Error('Không tìm thấy nhân vật trên máy chủ.');
       start();
     }));
 
@@ -497,7 +506,10 @@
     document.addEventListener('change', e => {
       if (!store.ready || store.locked || UI.tribulation.active) return;
       const t = e.target;
-      const apply = (key,value) => { UI.preference(key,value); UI.applySettings(); store.write(); };
+      const apply = async (key,value) => {
+        try { await UI.preference(key,value); UI.applySettings(); UI.refresh(); }
+        catch (error) { UI.toast('Lưu cài đặt thất bại: ' + error.message, { type: 'danger' }); }
+      };
       if (t.id === 'seasonSetting') apply('season',t.value);
       else if (t.id === 'seasonEffectsSetting') apply('seasonEffects',t.checked);
       else if (t.id === 'cultivationEffectsSetting') apply('cultivationEffects',t.checked);
@@ -566,11 +578,13 @@
     }
   }
 
-  function showForAccount(account) {
+  async function showForAccount(account) {
+    if (!account?.id) throw Error('Phải đăng nhập để tải nhân vật online.');
     creation = freshCreation();
-    store.setAccount(account?.id);
-    $('accountLabel').textContent = account?.email || 'Vân du không tài khoản';
-    $('accountExit').textContent = account ? 'Đăng xuất' : 'Tài khoản';
+    await store.setAccount(account.id, account);
+    if (UI.session.ticket?.preview) Object.assign(creation, UI.session.ticket.preview);
+    $('accountLabel').textContent = account.email || 'Tài khoản online';
+    $('accountExit').textContent = 'Đăng xuất';
     const saved = store.load();
     $('continueGame').hidden = !saved;
     $('welcomeRebirth').textContent = saved
@@ -586,7 +600,7 @@
     UI.tutorial?.close();
     UI.windows?.closeAll();
     if (!$('modalLayer').hidden) UI.closeModal(true);
-    store.fresh();
+    UI.session.disconnect();
     $('game').hidden = true;
     $('welcome').hidden = true;
     document.body.classList.remove('in-game');

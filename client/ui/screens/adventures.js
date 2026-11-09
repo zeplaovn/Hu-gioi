@@ -170,23 +170,23 @@
     document.querySelectorAll('[data-act="encounter"]').forEach(el => { el.disabled = UI.s().encounter.usedAt + 90000 > now; });
   }
   UI.adventure = { dungeons, encounters, sect, roots, update, runPanel };
-  UI.action('dungeonStart', (el, d) => { UI.command('startDungeon', { id: d.id }); UI.toast('Đã khởi hành. Kết quả sẽ tự ghi vào nhật ký.', { type: 'gold', title: 'Bí cảnh' }); });
-  UI.action('dungeonEnter', (el, d) => {
-    UI.command('enterDungeon', { id: d.id });
+  UI.action('dungeonStart', async (el, d) => { await UI.command('startDungeon', { id: d.id }); UI.toast('Đã khởi hành. Kết quả sẽ tự ghi vào nhật ký.', { type: 'gold', title: 'Bí cảnh' }); });
+  UI.action('dungeonEnter', async (el, d) => {
+    await UI.command('enterDungeon', { id: d.id });
     UI.toast('Vào bí cảnh. Thể lực cạn thì thủ thế để hồi sức; thấy cảnh báo đòn nặng nên thủ thế.', { type: 'gold', title: 'Bí cảnh' });
   });
   const RUN_KEYS = ['attack', 'power', 'guard', 'heal'];
-  UI.action('dungeonAct', (el, d) => {
-    const r = UI.command('dungeonAct', { action: d.move });
+  UI.action('dungeonAct', async (el, d) => {
+    const r = await UI.command('dungeonAct', { action: d.move });
     if (r.ended) {
       UI.toast(r.ended.text, { type: r.ended.success ? 'loot' : r.ended.why === 'defeat' ? 'danger' : 'info', title: r.ended.success ? 'Thông quan bí cảnh' : 'Kết thúc chuyến bí cảnh' });
       if (r.ended.success) UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
     } else if (r.floorCleared) UI.toast('Qua tầng ' + r.floorCleared + '. Thể lực hồi thêm ' + H.DUNGEON_RUN.floorGain + '.', { type: 'success', title: 'Bí cảnh' });
   });
-  UI.action('dungeonRetreat', () => {
+  UI.action('dungeonRetreat', async () => {
     const run = UI.s().dungeon.run;
-    UI.modal('Rút lui khỏi bí cảnh?', '<p>Giữ phần thưởng của ' + (run?.cleared || 0) + ' tầng đã vượt; các tầng còn lại bỏ dở.</p>', () => {
-      const r = UI.command('dungeonAct', { action: 'retreat' });
+    UI.modal('Rút lui khỏi bí cảnh?', '<p>Giữ phần thưởng của ' + (run?.cleared || 0) + ' tầng đã vượt; các tầng còn lại bỏ dở.</p>', async () => {
+      const r = await UI.command('dungeonAct', { action: 'retreat' });
       UI.toast(r.ended.text, { type: 'info', title: 'Rút lui' });
     }, 'Rút lui');
     return UI.KEEP;
@@ -198,15 +198,15 @@
     const b = document.querySelector('.run-panel [data-act="dungeonAct"][data-move="' + RUN_KEYS[Number(e.key) - 1] + '"]');
     if (b && !b.disabled) { e.preventDefault(); b.click(); }
   });
-  UI.action('dungeonAbort', () => { UI.modal('Rút khỏi bí cảnh?', '<p>Chuyến đi hiện tại sẽ không có phần thưởng.</p>', () => UI.command('abortDungeon'), 'Rút lui'); return UI.KEEP; });
-  UI.action('temperRoot', (el, d) => {
-    const i = Number(d.index), level = UI.command('temperRoot', { index: i });
+  UI.action('dungeonAbort', async () => { UI.modal('Rút khỏi bí cảnh?', '<p>Chuyến đi hiện tại sẽ không có phần thưởng.</p>', async () => await UI.command('abortDungeon'), 'Rút lui'); return UI.KEEP; });
+  UI.action('temperRoot', async (el, d) => {
+    const i = Number(d.index), level = await UI.command('temperRoot', { index: i });
     UI.toast('Linh căn ' + element(i) + ' đạt cấp ' + level + '.', { type: 'gold', title: 'Tôi luyện' });
     UI.vfx?.ring('hero', color(i)); UI.vfx?.effect('qi');
   });
-  UI.action('sectPanel', (el, d) => { if (['missions', 'shop', 'ranks'].includes(d.panel)) UI.view.sectPanel = d.panel; });
-  UI.action('sectRepeat', () => { UI.command('setSectRepeat', { enabled: !UI.s().sect.repeat }); });
-  UI.action('sectMissionAbort', () => { UI.modal('Hủy nhiệm vụ?', '<p>Nhiệm vụ hiện tại không có phần thưởng; tự lặp sẽ tắt.</p>', () => UI.command('abortSectMission'), 'Hủy nhiệm vụ'); return UI.KEEP; });
-  UI.action('sectLeave', () => { UI.modal('Rời tông môn?', '<p>Chức vị, cống hiến và chúc phúc sẽ đặt lại. Sau đó có thể chọn tông môn mới.</p>', () => { UI.command('leaveSect'); UI.view.sectPanel = 'missions'; }, 'Rời tông môn'); return UI.KEEP; });
-  UI.action('sectBuy', (el, d) => { const r = UI.command('buySect', { id: d.id, ...(d.element === undefined ? {} : { element: Number(d.element) }) }); UI.toast('Nhận ' + r.name + ' ×' + r.count + '.', { type: 'loot', title: 'Kho tông môn' }); });
+  UI.action('sectPanel', async (el, d) => { if (['missions', 'shop', 'ranks'].includes(d.panel)) UI.view.sectPanel = d.panel; });
+  UI.action('sectRepeat', async () => { await UI.command('setSectRepeat', { enabled: !UI.s().sect.repeat }); });
+  UI.action('sectMissionAbort', async () => { UI.modal('Hủy nhiệm vụ?', '<p>Nhiệm vụ hiện tại không có phần thưởng; tự lặp sẽ tắt.</p>', async () => await UI.command('abortSectMission'), 'Hủy nhiệm vụ'); return UI.KEEP; });
+  UI.action('sectLeave', async () => { UI.modal('Rời tông môn?', '<p>Chức vị, cống hiến và chúc phúc sẽ đặt lại. Sau đó có thể chọn tông môn mới.</p>', async () => { await UI.command('leaveSect'); UI.view.sectPanel = 'missions'; }, 'Rời tông môn'); return UI.KEEP; });
+  UI.action('sectBuy', async (el, d) => { const r = await UI.command('buySect', { id: d.id, ...(d.element === undefined ? {} : { element: Number(d.element) }) }); UI.toast('Nhận ' + r.name + ' ×' + r.count + '.', { type: 'loot', title: 'Kho tông môn' }); });
 })(typeof window !== 'undefined' ? window : globalThis);

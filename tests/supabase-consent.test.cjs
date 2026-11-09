@@ -65,7 +65,7 @@ test('after login consent is individually recorded and scoped to user', async ()
   await sb.accept(user);
   assert.equal(records.length, 2);
   assert.deepEqual(records.map(x => x.policy_kind).sort(), ['privacy', 'release_terms']);
-  assert.ok(records.every(x => x.user_id === ID && x.policy_version === '2026-11-09'));
+  assert.ok(records.every(x => x.user_id === ID && x.policy_version === '2026-11-09-v2'));
   assert.ok(requests.filter(x => x.input.includes('policy_acceptances')).every(x => x.init.headers.Authorization === 'Bearer access'));
   assert.equal((await sb.accepted()).size, 2);
   await sb.accept(user);
@@ -91,8 +91,8 @@ test('legal pages, CSP and checkbox binding are present in shipping files', () =
   assert.match(html, /id="authPrivacy" type="checkbox" required/);
   assert.match(html, /id="authRelease" type="checkbox" required/);
   assert.match(html, /id="authConsentGate"/);
-  assert.match(html, /id="authGuestRelease" type="checkbox"/);
-  assert.match(auth, /authGuestRelease/);
+  assert.doesNotMatch(html, /id="authGuestRelease"/);
+  assert.doesNotMatch(auth, /authGuestRelease/);
   assert.ok(html.indexOf('client/auth/supabase.js') < html.indexOf('client/auth/auth.js'));
   assert.match(auth, /await SB\.accept\(pending\)/);
   assert.match(headers, /connect-src 'self' https:\/\/rvrwfeblishqadkpzspb\.supabase\.co/);

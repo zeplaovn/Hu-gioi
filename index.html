@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#191816">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
-<meta name="description" content="Hư Giới — game idle tu tiên một người chơi, chạy hoàn toàn trong trình duyệt.">
+<meta name="description" content="Hư Giới — game idle tu tiên online, bảo vệ tài khoản và tiến trình trên máy chủ.">
 <title>Hư Giới · Tiên Lộ Vô Tận</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/loading.css">
@@ -85,12 +85,8 @@
         <button id="authConsentContinue" type="button" class="auth-guest">Xác nhận và tiếp tục</button>
         <button id="authConsentLogout" type="button" class="auth-guest">Đăng xuất / từ chối</button>
       </div>
-      <div class="auth-divider">HOẶC</div>
-      <div id="authGuestWrap" class="auth-guest-wrap">
-        <label class="auth-check" for="authGuestRelease"><input id="authGuestRelease" type="checkbox"><span>Tôi đồng ý với <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng Hư Giới</a> để chơi không tài khoản.</span></label>
-        <button id="authGuest" type="button" class="auth-guest">Vân du không tài khoản</button>
-      </div>
-      <p class="auth-caption">Đạo hữu có thể chơi offline mà không cần tài khoản. Tiến trình vẫn lưu trên thiết bị, không tự đồng bộ lên Supabase. <a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Quyền riêng tư</a> · <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Chính sách phát hành</a></p>
+      
+      <p class="auth-caption">Hư Giới hiện yêu cầu tài khoản đã xác thực để chơi online. Tiến trình nhân vật chỉ được lưu trên máy chủ game. <a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Quyền riêng tư</a> · <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Điều khoản phát hành</a></p>
     </div>
   </div>
 </section>
@@ -407,11 +403,11 @@
 <script src="client/assets/asset-index.js"></script>
 <script src="client/assets/item-index.js"></script>
 <script src="client/assets/assets.js"></script>
-<script src="client/session/local-session.js"></script>
+<script src="client/session/remote-session.js"></script>
 <script src="client/auth/supabase.js"></script>
 <script src="client/auth/auth.js"></script>
 <script src="client/session/chat-session.js"></script>
-<script src="client/persistence/local-store.js"></script>
+<script src="client/persistence/remote-store.js"></script>
 <script src="client/ui/core.js"></script>
 <script src="client/ui/vfx.js"></script>
 <script src="client/ui/shell.js"></script>

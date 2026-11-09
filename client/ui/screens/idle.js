@@ -109,15 +109,15 @@
   });
 
 
-  UI.action('absorb', (el, d) => {
-    const gain = UI.command('absorb', { index: Number(d.index) });
+  UI.action('absorb', async (el, d) => {
+    const gain = await UI.command('absorb', { index: Number(d.index) });
     UI.toast('Hấp thu linh thạch · +' + num(gain) + ' tu vi.', { type: 'loot', title: 'Tu vi' });
     UI.vfx?.effect('qi');
     UI.vfx?.ring('hero', '#70d4e8');
     UI.vfx?.float('+' + num(gain) + ' tu vi', 'hero', 'skill');
   });
-  UI.action('upgrade', (el, d) => {
-    const n = UI.command('upgrade', { index: Number(d.index), count: d.count === 'max' ? 'max' : Number(d.count) });
+  UI.action('upgrade', async (el, d) => {
+    const n = await UI.command('upgrade', { index: Number(d.index), count: d.count === 'max' ? 'max' : Number(d.count) });
     UI.toast('Đã nâng ' + n + ' cấp · tốc độ hấp thụ linh khí và chiến lực tăng.', { type: 'success', title: 'Nâng cấp' });
     UI.vfx?.effect('break');
     UI.vfx?.ring();

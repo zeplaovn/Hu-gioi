@@ -51,6 +51,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `prestige` | progression | — |
 | `reincarnate` | progression | — |
 | `setAuto` | progression | `enabled` |
+| `setPreference` | time | `key`, `value` (cài đặt giao diện được xác minh server) |
 | `buy` | inventory | `code` |
 | `sell` | inventory | `code` |
 | `equip` | inventory | `code` |

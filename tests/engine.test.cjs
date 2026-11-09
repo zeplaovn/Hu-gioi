@@ -59,7 +59,7 @@ test('hợp đồng: engine READY, đủ 51 lệnh và phân miền rõ ràng', 
   assert.deepEqual(H.MISSING, []);
   assert.equal(H.VERSION, 8);
   assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8]);
-  assert.equal(C.types.length, 51);
+  assert.equal(C.types.length, 52);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -75,7 +75,7 @@ test('hợp đồng: engine READY, đủ 51 lệnh và phân miền rõ ràng', 
     world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot', 'storyMark'],
     adventures: ['startDungeon', 'abortDungeon', 'enterDungeon', 'dungeonAct'],
     social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel'],
-    time: [],
+    time: ['setPreference'],
     creation: []
   };
   assert.deepEqual([...new Set(Object.values(H.OWNERS))].sort(), Object.entries(expected).filter(([, commands]) => commands.length).map(([domain]) => domain).sort());

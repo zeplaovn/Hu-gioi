@@ -1,33 +1,34 @@
-# Bảo mật và bảo vệ mã nguồn
+# Bảo mật và vận hành gameplay online
 
-## Giới hạn cần biết
+## Mô hình bảo mật
 
-Game chạy hoàn toàn trong trình duyệt (`data/`, `engine/`, `client/` là JavaScript tải về máy người chơi). **Không có cách nào giấu tuyệt đối mã đã gửi tới trình duyệt**: nén hay làm rối chỉ làm khó, không ngăn được. `client/platform/content-guard.js` (chặn chuột phải, F12, Ctrl+S...) cũng chỉ là rào cản giao diện, người dùng vẫn mở được DevTools hoặc tải file trực tiếp.
+Trình duyệt vẫn tải `data/`, `engine/` và giao diện: các luật đã công khai để hiển thị không thể bị giấu tuyệt đối. Tuy nhiên bản online chỉ sử dụng `RemoteSession` để **gửi ý định**, không tin trạng thái, đồng hồ hoặc kết quả RNG phía người chơi. `PlayerService` chạy ở Node kiểm tra luật và cập nhật SQLite trong transaction; mỗi lệnh có `requestId`, `expectedRevision`, giới hạn tốc độ và JWT Supabase. Trạng thái nhận về chỉ phục vụ hiển thị.
 
-Cách duy nhất để một phần luật chơi và dữ liệu không rời máy chủ là chuyển chúng sang server (xem [backend-plan.md](backend-plan.md)). Đồng thời đó cũng là cách chống sửa bản lưu: bản lưu `localStorage` hiện sửa được tự do.
+## Lớp bảo vệ
 
-## Những gì đã được siết
-
-| Hạng mục | Cách làm |
+| Hạng mục | Thực hiện |
 |---|---|
-| Máy chủ tĩnh `npm start` | Allowlist trong `server/http/static.js`: chỉ `index.html`, `css/`, `client/`, `engine/`, `data/`, `media/`. Không phân biệt hoa/thường, chặn `..`, `\`, byte rỗng, symlink thoát gốc, file ẩn, `.md`, `.map`, `.xlsx`, `.csv`, `.html` trong `media/`. |
-| Header bảo mật | CSP, `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, COOP/CORP gắn trên mọi phản hồi (kể cả 404). Cùng nội dung với `_headers` cho Cloudflare Pages/Netlify. |
-| Bảng thiết kế | `media/assets/enemy.xlsx`, `npc.xlsx`, `vat_pham.xlsx`, `Doi_Chieu_Ten_Anh.csv`, `tra_cuu_item.html`, `bang_tra_cuu.json` không client nào nạp nên không phục vụ và không vào `dist/`. |
-| Bản đưa lên host | `npm run build` tạo `dist/` chỉ chứa file chạy game. `npm run build:min` xóa chú thích và nén JS/CSS (cần `esbuild`). Xuất bản **thư mục `dist/`**, không xuất bản gốc repo. |
-| Kiểm thử | `tests/static-security.test.cjs` kiểm các đường dẫn bị chặn, thoát thư mục và header. |
+| Tài khoản | Supabase Auth email/password, JWT kiểm chữ ký trên backend, phân quyền theo `sub`; không sử dụng metadata do người dùng tự gửi. |
+| Quyền riêng tư | Trước gameplay, kiểm tra trên máy chủ hai bản đồng ý `privacy` và `release_terms` phiên bản `2026-11-09-v2` trong Supabase qua RLS; không kế thừa đồng ý bản cũ. |
+| Tương tác game | Các request `/api/v1` do Node xử lý; backend định giờ, RNG, tính thưởng, xét quyền sở hữu, revision conflict và idempotent receipts. |
+| Dữ liệu | SQLite nằm ngoài thư mục web với thư mục quyền 0700, tệp quyền 0600; không phục vụ hoặc đưa vào `dist`. Máy chủ chỉ chạy một writer; phải có backup và quy trình phục hồi. |
+| Tài nguyên tĩnh | `server/http/static.js` allowlist path, chặn traversal, symlink thoát gốc, file ẩn, file dữ liệu thiết kế nhạy cảm. |
+| Header | CSP, `nosniff`, Referrer Policy, COOP/CORP; xác minh headers ở Node/reverse proxy. |
+| Build | `npm run build` tạo `dist/` chỉ gồm frontend cần thiết; không đưa `server/`, test, tài liệu, bản lưu hay adapter offline cũ vào `dist/`. |
+| Kiểm thử | CI `Security regression tests` và `UI mobile verification`; mock Supabase được dùng **chỉ trong CI**, không được kích hoạt từ production. |
 
-## Triển khai
+## Triển khai an toàn
 
-**Cloudflare Worker (đã cấu hình sẵn):** `wrangler.jsonc` trỏ `assets.directory` vào `dist/` và tự chạy `npm run build:min` trước khi deploy. Chạy `npm install` một lần, rồi `npm run deploy`. Nối GitHub thì đặt build command `npm install` và deploy command `npx wrangler deploy`. Worker đọc `dist/_headers` nên CSP và header bảo mật vẫn áp dụng. Không đổi `directory` sang `./`.
+Chạy Node 24 trên host/container riêng, đặt `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` và volume `HU_DB_FILE` bền vững; chỉ cho người dùng truy cập thông qua HTTPS reverse proxy. Xem [hướng dẫn triển khai online](online-deployment.md).
 
+**Quan trọng:** `wrangler deploy` / Cloudflare assets-only **chỉ triển khai frontend tĩnh**; không tự chạy Node API/SQLite. Không công bố phiên bản online từ một host tĩnh nếu chưa có đường đến backend thực sự. Nếu tách API và frontend khác origin, cập nhật CORS allowlist và CSP `connect-src`, không dùng wildcard bừa bãi.
 
-- Cloudflare Pages / Netlify / Vercel: build command `npm run build:min`, output directory `dist`. Nếu để output là gốc repo thì `server/`, `tests/`, `docs/`, `tools/` và các bảng `.xlsx` sẽ bị tải được, vì `_headers` không chặn được file.
-- Tắt chỉ mục thư mục (directory listing) và không bật source map trên host.
-- nginx: chỉ `root` vào `dist/`.
+Không commit hoặc đưa vào trình duyệt các khóa `SUPABASE_JWT_SECRET`, service-role, thông tin CSDL, file `.env`. Publishable key Supabase có thể công khai nhưng không thay cho JWT và RLS.
 
-## Việc còn lại (cần quyết định thiết kế)
+## Phần chưa hoàn thành
 
-1. Chuyển luật nhạy cảm và bảng cân bằng sang server (`PlayerService`), client chỉ gửi lệnh và hiển thị state.
-2. Ký hoặc kiểm bản lưu ở server để chặn sửa `localStorage`.
-3. Kiểm lịch sử git xem từng có file bí mật hay gói nhị phân bị commit (`.gitignore` có nhắc `.deb`); nếu có secret thì phải xoay khóa, xóa khỏi lịch sử không đủ.
-4. Khi có tài khoản: token trong bộ nhớ, refresh token HttpOnly, rate limit, theo checklist ở `backend-plan.md`.
+- Chưa có server HTTPS đã triển khai, đo khả dụng/cảnh báo, sao lưu SQLite production và kiểm thử restore.
+- Chưa có tự phục vụ xóa tài khoản và tự xóa bản ghi gameplay SQLite khi người dùng xóa tài khoản Supabase; cần hoàn thiện tuân thủ dữ liệu cá nhân và chính sách phát hành.
+- Chưa có PvP/leaderboard/chat nhiều người chơi thật; các phần mô phỏng người chơi NPC không được quảng bá là MMO.
+- Dữ liệu save `localStorage` đời cũ không tự động được nhập vào gameplay online; cần thiết kế xác minh nguồn và xử lý gian lận trước khi mở tính năng import.
+- Cần kiểm toán lịch sử Git và xoay vòng mọi bí mật từng lộ, nếu có.

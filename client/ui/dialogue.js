@@ -31,9 +31,9 @@
       event.preventDefault();
       const action = b.dataset.dialogue;
       if (action === 'close') close();
-      else if (action === 'next') next();
+      else if (action === 'next') UI.safe(() => next());
       else if (action === 'topic') openTopic(b.dataset.id);
-      else if (action === 'answer') answer(b.dataset.option);
+      else if (action === 'answer') UI.safe(() => answer(b.dataset.option));
       else if (action === 'topics' && current?.npcId) showTopics(current.npcId);
     });
     return panel;
@@ -119,14 +119,14 @@
       ((chapter || index === entry.lines.length - 1) ? 'Tiếp tục' : 'Lời tiếp') + ' ›</button></div>');
   }
 
-  function next() {
+  async function next() {
     if (!current?.entry) return;
     const { entry, npcId } = current;
     if (current.type === 'npc' && current.index < entry.lines.length - 1) {
       current.index++; return renderLine();
     }
     const selected = UI.s().story.flags[entry.id];
-    if (!UI.s().story.read[entry.id]) UI.command('storyMark', { id: entry.id });
+    if (!UI.s().story.read[entry.id]) await UI.command('storyMark', { id: entry.id });
     if (entry.choices?.length && !selected) return renderChoices();
     if (selected) return renderReply(entry.choices.find(x => x.id === selected)?.reply || '');
     if (current.type === 'npc') showTopics(npcId); else close();
@@ -142,9 +142,9 @@
       '<button type="button" class="btn btn-outline" data-dialogue="' + (current.type === 'npc' ? 'topics' : 'close') + '">Để sau</button>');
   }
 
-  function answer(option) {
+  async function answer(option) {
     if (!current?.entry?.choices?.some(choice => choice.id === option)) return;
-    UI.command('storyMark', { id: current.entry.id, option });
+    await UI.command('storyMark', { id: current.entry.id, option });
     renderReply(current.entry.choices.find(x => x.id === option).reply);
   }
 
@@ -169,6 +169,6 @@
   }, true);
 
   UI.dialogue = { openNpc, openChapter, close };
-  UI.action('openNpcDialogue', (el, data) => { openNpc(data.id); return UI.KEEP; });
-  UI.action('openStory', (el, data) => { openChapter(data.id); return UI.KEEP; });
+  UI.action('openNpcDialogue', async (el, data) => { openNpc(data.id); return UI.KEEP; });
+  UI.action('openStory', async (el, data) => { openChapter(data.id); return UI.KEEP; });
 })(typeof window !== 'undefined' ? window : globalThis);

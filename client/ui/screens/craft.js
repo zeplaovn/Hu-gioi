@@ -167,25 +167,25 @@
     signature: () => { const s = UI.s(); return s.realm + '|' + s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
   });
 
-  UI.action('craft', (el, d) => {
-    UI.command('craft', { code: d.code });
+  UI.action('craft', async (el, d) => {
+    await UI.command('craft', { code: d.code });
     UI.toast('Đã xếp ' + H.item(d.code).name + ' vào lò luyện.', { type: 'success', title: 'Luyện đan' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('forge', (el, d) => {
-    const msg = UI.command('forge', { code: d.code });
+  UI.action('forge', async (el, d) => {
+    const msg = await UI.command('forge', { code: d.code });
     UI.toast(msg + '.', { type: 'success', title: 'Luyện khí' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('onlyReady', () => { UI.view.onlyReady = !UI.view.onlyReady; UI.view.page = 0; });
-  UI.action('gardenAct', (el, d) => {
-    const result = UI.command('garden', { slot: Number(d.slot), action: d.care });
+  UI.action('onlyReady', async () => { UI.view.onlyReady = !UI.view.onlyReady; UI.view.page = 0; });
+  UI.action('gardenAct', async (el, d) => {
+    const result = await UI.command('garden', { slot: Number(d.slot), action: d.care });
     UI.toast(result.message, { type: 'success', title: 'Linh điền' });
   });
-  UI.action('gardenTerrain', (el, d) => {
+  UI.action('gardenTerrain', async (el, d) => {
     const slot=Number(d.slot),choices=['đất thường','linh điền','hỏa địa','hàn đàm','linh điền có trận pháp'];
     const terrain=choices[(choices.indexOf(UI.s().gardenSoils[slot])+1)%choices.length];
-    const result=UI.command('garden',{slot,action:'terrain',terrain});
+    const result=await UI.command('garden',{slot,action:'terrain',terrain});
     UI.toast(result.message,{type:'info',title:'Linh điền'});
   });
 })(typeof window !== 'undefined' ? window : globalThis);

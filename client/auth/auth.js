@@ -1,5 +1,4 @@
-/* Hư Giới: Supabase Auth, xác nhận email và chấp thuận chính sách có kiểm chứng.
-   Chơi offline vẫn hoạt động khi Supabase không khả dụng. Không lưu mật khẩu. */
+/* Supabase Auth online-only: không cho vào game khi backend hoặc policy consent chưa xác minh. */
 (function (root) {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -39,8 +38,6 @@
     $('authForm').hidden = false;
     $('authConsentGate').hidden = true;
     $('authTabs').hidden = false;
-    $('authGuestWrap').hidden = false;
-    $('authGuestRelease').checked = false;
     selectMode('login');
   }
   function present() {
@@ -52,20 +49,28 @@
     $('authForm').reset();
     showForm();
   }
-  function enter(next) {
+  async function enter(next) {
+    if (!next?.id) throw Error('Chơi online cần tài khoản Supabase hợp lệ.');
     pending = null;
     account = next;
-    $('authGate').hidden = true;
-    $('authForm').reset();
-    notice('');
-    enterGame(account);
-    $('nameInput')?.focus({ preventScroll: true });
+    notice('Đang tải tiến trình từ máy chủ…', true);
+    try {
+      await enterGame(account);
+      $('authGate').hidden = true;
+      $('authForm').reset();
+      notice('');
+      $('nameInput')?.focus({ preventScroll: true });
+    } catch (error) {
+      account = null;
+      exitGame();
+      present();
+      throw error;
+    }
   }
   function requireConsent(next) {
     pending = next;
     $('authForm').hidden = true;
     $('authTabs').hidden = true;
-    $('authGuestWrap').hidden = true;
     $('authConsentGate').hidden = false;
     $('authConsentPrivacy').checked = false;
     $('authConsentRelease').checked = false;
@@ -77,7 +82,7 @@
   async function finish(next) {
     if (!next?.id) throw Error('Supabase chưa xác minh tài khoản.');
     const consent = await SB.accepted();
-    if (consent.has('privacy') && consent.has('release_terms')) enter(next);
+    if (consent.has('privacy') && consent.has('release_terms')) await enter(next);
     else requireConsent(next);
   }
   async function submit(event) {
@@ -108,7 +113,7 @@
         await finish(await SB.login(email, password));
       }
     } catch (error) {
-      notice(error instanceof TypeError ? 'Không kết nối được Supabase. Có thể chơi không tài khoản.' : error.message);
+      notice(error instanceof TypeError ? 'Không kết nối được Supabase; game online tạm thời chưa sẵn sàng.' : error.message);
     } finally {
       busy = false;
       $('authSubmit').disabled = false;
@@ -124,7 +129,7 @@
     $('authConsentContinue').disabled = true;
     try {
       await SB.accept(pending);
-      enter(pending);
+      await enter(pending);
     } catch (error) { notice(error.message); }
     finally { busy = false; $('authConsentContinue').disabled = false; }
   }
@@ -148,23 +153,17 @@
     bound = true;
     $('authForm').addEventListener('submit', submit);
     document.querySelectorAll('[data-auth-view]').forEach(b => b.addEventListener('click', () => selectMode(b.dataset.authView)));
-    $('authGuest').addEventListener('click', () => {
-      if (!$('authGuestRelease').checked) {
-        notice('Hãy đồng ý với Điều khoản sử dụng trước khi chơi offline.'); return;
-      }
-      enter(null);
-    });
     $('switchAccount').addEventListener('click', logout);
     $('accountExit').addEventListener('click', logout);
     $('authConsentContinue').addEventListener('click', acceptPending);
     $('authConsentLogout').addEventListener('click', logout);
     present();
-    if (root.location.protocol === 'file:' || typeof root.fetch !== 'function' || !SB) return;
+    if (root.location.protocol === 'file:' || typeof root.fetch !== 'function' || !SB) { notice('Hư Giới online cần mở từ website HTTPS và kết nối máy chủ game.'); return; }
     SB.user().then(next => {
       if (account || pending || $('authGate').hidden) return;
       if (next) return finish(next);
       if (root.HU_SUPABASE_EMAIL_CONFIRMED) notice('Email đã được xác nhận. Hãy đăng nhập để tiếp tục.', true);
-    }).catch(() => { /* Trang tĩnh vẫn hỗ trợ chơi không tài khoản */ });
+    }).catch(error => { notice(error.message || 'Không thể xác minh tài khoản.'); });
   }
   root.HU_AUTH = { boot, logout, get account() { return account; } };
 })(typeof window !== 'undefined' ? window : globalThis);

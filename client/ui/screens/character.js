@@ -113,25 +113,25 @@
     }
   });
 
-  UI.action('equip', (el, d) => {
-    UI.command('equip', { code: d.code });
+  UI.action('equip', async (el, d) => {
+    await UI.command('equip', { code: d.code });
     const equipped = UI.s().equipment.includes(d.code);
     UI.toast((equipped ? 'Đã trang bị ' : 'Đã tháo ') + H.item(d.code).name + '.', { type: 'success', title: 'Pháp bảo' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('learn', (el, d) => {
-    UI.command('learn', { code: d.code });
+  UI.action('learn', async (el, d) => {
+    await UI.command('learn', { code: d.code });
     UI.toast('Đã lĩnh ngộ ' + H.item(d.code).name + '.', { type: 'success', title: 'Công pháp' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('activate', (el, d) => {
-    UI.command('activate', { code: d.code });
+  UI.action('activate', async (el, d) => {
+    await UI.command('activate', { code: d.code });
     const on = UI.s().activeManuals.includes(d.code);
     UI.toast((on ? 'Đang vận hành ' : 'Đã dừng ') + H.item(d.code).name + '.', { type: on ? 'success' : 'info', title: 'Công pháp' });
     if (on) UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('consume', (el, d) => {
-    const x = H.item(d.code), msg = UI.command('use', { code: d.code });
+  UI.action('consume', async (el, d) => {
+    const x = H.item(d.code), msg = await UI.command('use', { code: d.code });
     const bad = /thất bại|không thể|không đủ|chưa đủ/i.test(msg);
     UI.toast(msg, { type: bad ? 'danger' : 'success', title: bad ? 'Không thể dùng' : 'Sử dụng vật phẩm' });
     if (['PILL', 'TAL'].includes(x?.kind)) {
@@ -141,10 +141,10 @@
       UI.vfx?.ring('hero', x.effect === 'HOI_PHUC' ? '#63d6a3' : '#e6c164');
     }
   });
-  UI.action('sell', (el, d) => {
+  UI.action('sell', async (el, d) => {
     const price = money(F.shop_sell_price(UI.g().price(d.code)));
-    UI.command('sell', { code: d.code });
+    await UI.command('sell', { code: d.code });
     UI.toast('Đã bán ' + H.item(d.code).name + ' · +' + price + '.', { type: 'loot', title: 'Bán vật phẩm' });
   });
-  UI.action('info', (el, d) => { UI.toast(H.item(d.code).description, { type: 'info', title: H.item(d.code).name }); return UI.KEEP; });
+  UI.action('info', async (el, d) => { UI.toast(H.item(d.code).description, { type: 'info', title: H.item(d.code).name }); return UI.KEEP; });
 })(typeof window !== 'undefined' ? window : globalThis);

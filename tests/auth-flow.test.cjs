@@ -62,10 +62,10 @@ test('chỉ rõ trạng thái UI và quy tắc xóa mọi bản lưu khi tọa h
   const auth = fs.readFileSync(path.join(__dirname, '../client/auth/auth.js'), 'utf8');
   assert.match(html, /id="authGate"/);
   assert.match(html, /id="authForm"/);
-  assert.match(html, /id="authGuest"/);
+  assert.doesNotMatch(html, /id="authGuest"/);
   assert.match(html, /id="switchAccount"/);
-  assert.match(boot, /UI\.resetAfterDeath\s*=\s*function/);
-  assert.match(boot, /store\.ready = false;\s*store\.clearAll\(\);\s*store\.fresh\(\)/);
+  assert.match(boot, /UI\.resetAfterDeath\s*=\s*async function/);
+  assert.match(boot, /await store\.resetAfterDeath\(\)/);
   assert.match(boot, /creation = freshCreation\(\)/);
   assert.doesNotMatch(boot, /UI\.command\('reincarnate'\)/);
   assert.match(store, /activeBackup/);
