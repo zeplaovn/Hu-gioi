@@ -118,7 +118,11 @@
       this.game = new H.Game(response.state);
       if (Array.isArray(response.achievements)) this.achievements.push(...response.achievements);
       for (const message of response.logs || []) if (typeof message === 'string') this.emit({ type: 'log', message });
-      if (response.died && !before?.created) this.emit({ type: 'death', report: response.report });
+      if (response.died && !this.deathNotified) {
+        this.deathNotified = true;
+        this.emit({ type: 'death', report: response.report });
+      }
+      if (!response.died) this.deathNotified = false;
       this.emit({ type: 'state', revision: this.revision, report: response.report });
     }
     async create(profile) {
