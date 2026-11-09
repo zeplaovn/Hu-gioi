@@ -138,7 +138,7 @@ test('bộ mẹo cũ trở lại ở cả loading khởi động và tạo nhân
   const hintsBlock = loaderSource.split('  const HINTS = [')[1]?.split('\n  ];')[0] || '';
   const hints = hintsBlock.match(/^    '[^\n]+',?$/gm) || [];
   assert.equal(hints.length, 8);
-  assert.match(loaderSource, /const stopInitialHints = rotateHints\(tip\)/);
+  assert.match(loaderSource, /const stopInitialHints = rotateHints\(tip, /);
   assert.match(loaderSource, /const stopEntryHints = rotateHints\(hint, resolveHints\)/);
   assert.match(loaderSource, /stopEntryHints\(\)/);
   assert.match(loaderSource, /3200/);
