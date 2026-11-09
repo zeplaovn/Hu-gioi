@@ -14,7 +14,7 @@ const Z = require('../data/catalog.js');
 const NOW = 1_700_000_000_000;
 const PROFILE = {
   name: 'Hư Không', gender: 'nam', age: 18, race: 'nhan',
-  roots: [72, 61, 55, 44, 33], rootType: 'Song',
+  roots: [72, 61, 45, 44, 33], rootType: 'Song',
   talent: { tuongMao: 2, phucDuyen: 2, canCot: 2, ngoTinh: 1, vanKhi: 1 }
 };
 const make = () => new H.Game(H.createCharacter(PROFILE, NOW, () => .5), () => .5);

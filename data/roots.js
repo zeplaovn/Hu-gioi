@@ -23,7 +23,7 @@
   /* group: nhóm hiển thị; order: thứ hạng trong nhóm (cao = mạnh). */
   const GROUPS = [
     { id: 'ngu_hanh', name: 'Ngũ hành cơ bản', lead: 'Số hệ đạt từ 50 điểm quyết định loại. Càng ít hệ, linh lực càng tinh thuần.' },
-    { id: 'di', name: 'Dị linh căn', lead: 'Biến thể cao cấp của một hệ ngũ hành. Khả năng hấp thụ linh khí sánh ngang Thiên linh căn nhưng có thế mạnh riêng và chiến lực cao hơn.' },
+    { id: 'di', name: 'Dị linh căn', lead: 'Biến thể cao cấp của một hệ ngũ hành. Hấp thụ linh khí nhanh hơn cả Thiên linh căn, lại có sở trường riêng của nguyên tố biến dị và chiến lực cao hơn.' },
     { id: 'chi_ton', name: 'Chí tôn', lead: 'Linh căn hiếm có bậc nhất, vượt ngoài ngũ hành thông thường.' }
   ];
   const TYPES = {

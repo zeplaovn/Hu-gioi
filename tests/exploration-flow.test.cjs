@@ -5,7 +5,7 @@ const H = require('../engine/game.js');
 const C = require('../engine/protocol/commands.js');
 const NOW = 1_700_000_000_000;
 const PROFILE = { name:'Lâm Vân',gender:'nu',age:18,race:'nhan',
-  roots:[72,61,55,44,33],rootType:'Song',
+  roots:[72, 61, 45, 44, 33],rootType:'Song',
   talent:{tuongMao:2,phucDuyen:2,canCot:2,ngoTinh:1,vanKhi:1} };
 const make = (roll=.5) => new H.Game(H.createCharacter(PROFILE, NOW, () => .5), () => roll);
 const run = (g,type,payload={},now=NOW) => C.execute(g,{type,payload},now);

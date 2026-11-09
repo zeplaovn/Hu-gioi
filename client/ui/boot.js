@@ -34,11 +34,12 @@
   const rootLabel = (type, sub) => H.rootLabel(type, sub);
   const pctText = v => (v > 0 ? '+' : '') + Math.round(v * 100) + '%';
 
-  let creation = {
+  const freshCreation = () => ({
     name: H.randomName('nam'), nameAuto: true, gender: 'nam',
     age: randInt(14, 30), race: H.rollRace(), ...H.rollRoots(),
     points: TALENT_MAX, talent: blankTalent()
-  };
+  });
+  let creation = freshCreation();
   let rolling = '', entering = false;
 
   function nameError() {
@@ -65,6 +66,12 @@
     return out.length ? out.join(' · ') : 'cân bằng, không thiên lệch';
   };
 
+  /* Thọ nguyên quy ra thời gian thực (tính từ F.aging_speed qua H.lifePace), nói thẳng sự khắc nghiệt của Luyện Khí. */
+  function lifePaceText(race, age) {
+    const p = H.lifePace(race, 0, age);
+    return 'Một năm thọ nguyên ≈ ' + duration(p.secondsPerYear) + ' tu luyện liên tục; thọ nguyên Luyện Khí tính từ lúc sinh chỉ ≈ ' + duration(p.lifeSeconds) + ', nhập đạo ở tuổi ' + age + ' thì còn ≈ ' + duration(p.leftSeconds) + '. Linh căn kém mà thiếu đan dược trợ lực thì dễ tọa hóa ngay ở Luyện Khí; tộc thọ ngắn càng khó thoát.';
+  }
+
   /* Chủng tộc: danh sách đủ sáu tộc để so sánh; tộc hiện tại được nhấn mạnh. */
   function raceInfoHtml() {
     const cur = creation.race;
@@ -73,6 +80,7 @@
       '<div class="race-fx">' + esc(raceBonusText(id)) + '</div><div class="dim small">' + esc(RACE_DESC[id] || '') + '</div></div>').join('');
     return '<div class="info-title">Chủng tộc ' + esc(H.raceName(cur)) + '</div>' +
       '<div class="small">Thọ nguyên nền ~<b class="gold">' + H.raceLife(cur, 0) + '</b> năm. Thiên phú: <b>' + esc(raceBonusText(cur)) + '</b>.</div>' +
+      '<div class="small danger">' + esc(lifePaceText(cur, creation.age)) + '</div>' +
       '<div class="race-list">' + rows + '</div>' +
       '<div class="dim small">Gieo xúc xắc để đổi chủng tộc. Tỉ lệ gặp phản ánh độ hiếm của từng tộc.</div>';
   }
@@ -192,7 +200,7 @@
       b.setAttribute('aria-pressed', String(on));
     });
     $('ageValue').textContent = creation.age + ' tuổi';
-    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span><span class="field-sub">' + esc(raceBonusText(creation.race)) + ' · thọ ~' + H.raceLife(creation.race, 0) + ' năm</span>';
+    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span><span class="field-sub">' + esc(raceBonusText(creation.race)) + ' · thọ ~' + H.raceLife(creation.race, 0) + ' năm · còn ≈ ' + duration(H.lifePace(creation.race, 0, creation.age).leftSeconds) + ' tu luyện</span>';
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
     const M = root.HU_MERIDIANS, pv = meridianPreview();
     const active = ELEMENTS.map(([name], i) => ({ name, color: M ? M.HE_COLOR[name] : '#fff', value: creation.roots[i] })).filter(x => x.value >= 50);
@@ -270,7 +278,7 @@
     if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
     if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
     const life = g.lifeInfo();
-    row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm.');
+    row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm (1 năm ≈ ' + duration(1 / life.pace) + ' tu luyện liên tục).');
     if (!s.completed && (life.left <= 40 || life.seconds <= 1800)) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm (khoảng ' + duration(life.seconds) + ' tu luyện)' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' đạo thân sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới để nới thọ nguyên.');
 
     if (r.encounters?.length) {
@@ -301,47 +309,53 @@
   }
 
   /* ======================================================================
-     TỌA HÓA · hết thọ nguyên
-     Engine dừng đồng hồ đúng lúc thọ nguyên cạn (advance trả về died). Hộp thoại này bắt buộc:
-     người chơi phải chuyển thế (dùng lại cơ chế trọng sinh) mới chơi tiếp.
+     TỌA HÓA · một kiếp đã kết thúc, xóa toàn bộ tiến trình kiếp cũ.
+     Không dùng lệnh trọng sinh (lệnh đó cố tình giữ meta/đạo vận).
      ====================================================================== */
   let deathOpen = false;
   UI.onDeath = function (r) {
-    if (deathOpen) return;
+    if (deathOpen || !store.ready) return;
     UI.tutorial?.close();
     const s = UI.s(), g = UI.g();
     deathOpen = true;
-    const reward = F.dao_van(s.totalRunExp), points = Math.max(1, Math.floor(reward / 5)) + Math.floor(s.realm / 2);
     const lead = r && r.seconds >= 20
-      ? 'Trong lúc bế quan, thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Thân xác tan thành linh khí giữa đất trời.'
-      : 'Thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Bạn ngồi hóa giữa đất trời, thân xác tan thành linh khí.';
+      ? 'Trong lúc bế quan, thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn.'
+      : 'Thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Đạo thân trở về cát bụi.';
     UI.modal('Tọa hóa',
       '<p>' + lead + '</p>' +
       '<div class="offline-list">' +
         '<div><span>Hưởng thọ</span><b>' + num(Math.floor(s.age)) + ' tuổi</b></div>' +
-        '<div><span>Cảnh giới đạt được</span><b>' + esc(g.realmLabel()) + '</b></div>' +
+        '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
-        '<div><span>Đạo vận nhận được</span><b>+' + num(reward) + '</b></div>' +
-        '<div><span>Điểm Thiên mệnh</span><b>+' + num(points) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Công pháp, thiên phú, nâng cấp bế quan, Thiên mệnh và cài đặt được giữ lại. Cảnh giới, túi đồ và linh thạch đặt lại.</p>' +
-      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="reincarnate">Chuyển thế</button></div>',
+      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, thiên phú, Đạo vận, Thiên mệnh, thành tựu, cài đặt và các bản lưu dự phòng. Tài khoản đăng nhập không bị xóa.</p>' +
+      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Trở về Khởi Nguyên</button></div>',
       null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
-    document.querySelector('[data-act="reincarnate"]')?.focus();
+    document.querySelector('[data-act="resetAfterDeath"]')?.focus();
   };
-  UI.reincarnate = function () {
-    if (!deathOpen) return;
-    const reward = F.dao_van(UI.s().totalRunExp);
-    UI.command('reincarnate');
+  UI.resetAfterDeath = function () {
+    if (!deathOpen || store.locked) return;
+    /* Chặn tất cả vòng lặp auto-save ngay trước khi thay trạng thái. */
+    store.ready = false;
+    store.clearAll();
+    store.fresh();
     UI.closeModal(true);
     deathOpen = false;
-    store.write();
     UI.windows?.closeAll();
-    UI.toast('Đã chuyển thế · nhận ' + num(reward) + ' Đạo vận. Một kiếp mới bắt đầu.', { type: 'gold', title: 'Tọa hóa' });
-    UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(140px,22vw,240px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
-    const avatar = $('avatar');
-    if (avatar) avatar.src = A.heroPortrait(UI.s().gender, UI.s().realm);
-    UI.go('idle');
+    UI.tabState = {};
+    UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
+    UI.current = 'idle';
+    creation = freshCreation();
+    rolling = '';
+    $('continueGame').hidden = true;
+    $('continueGame').title = '';
+    $('welcomeRebirth').textContent = 'Đây là lần trùng sinh thứ 1 của bạn';
+    $('game').hidden = true;
+    $('welcome').hidden = false;
+    document.body.classList.remove('in-game');
+    try { root.history?.replaceState(null, '', root.location.pathname + root.location.search); } catch { /* file:// */ }
+    renderCreation();
+    $('nameInput')?.focus({ preventScroll: true });
   };
 
   function start() {
@@ -558,19 +572,39 @@
     }
   }
 
+  function showForAccount(account) {
+    creation = freshCreation();
+    store.setAccount(account?.id);
+    $('accountLabel').textContent = account?.email || 'Vân du không tài khoản';
+    $('accountExit').textContent = account ? 'Đăng xuất' : 'Tài khoản';
+    const saved = store.load();
+    $('continueGame').hidden = !saved;
+    $('welcomeRebirth').textContent = saved
+      ? 'Đây là lần trùng sinh thứ ' + (saved.rebirths + 1) + ' của bạn'
+      : 'Đây là lần trùng sinh thứ 1 của bạn';
+    $('continueGame').title = saved ? 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm] : '';
+    $('welcome').hidden = false;
+    renderCreation();
+  }
+  function leaveAccount() {
+    if (store.ready && !store.locked) { store.catchUp(); store.write(); }
+    store.ready = false;
+    UI.tutorial?.close();
+    UI.windows?.closeAll();
+    if (!$('modalLayer').hidden) UI.closeModal(true);
+    store.fresh();
+    $('game').hidden = true;
+    $('welcome').hidden = true;
+    document.body.classList.remove('in-game');
+  }
   function boot() {
     buildStats();
     bindCreation();
     bindSettings();
     bindLifecycle();
-    const saved = store.load();
-    $('continueGame').hidden = !saved;
-    if (saved) {
-      $('continueGame').title = 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm];
-      $('welcomeRebirth').textContent = `Đây là lần trùng sinh thứ ${saved.rebirths + 1} của bạn`;
-    }
-    renderCreation();
     UI.booted = true;
+    root.HU_AUTH?.boot({ onEnter: showForAccount, onExit: leaveAccount });
+    if (!root.HU_AUTH) showForAccount(null);
   }
 
   UI.boot = boot;
@@ -580,6 +614,8 @@
     bindCreation();
     renderCreation();
     UI.mainPreview?.bind();
+    root.HU_AUTH?.boot({ onEnter: () => { $('welcome').hidden = false; }, onExit: () => { $('welcome').hidden = true; $('game').hidden = true; } });
+    if (!root.HU_AUTH) $('welcome').hidden = false;
   };
   UI.renderCreation = renderCreation;
   UI.creation = () => creation;

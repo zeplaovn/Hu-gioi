@@ -15,7 +15,7 @@ const NOW = 1_700_000_000_000;
 
 const PROFILE = Object.freeze({
   name: 'Hư Không', gender: 'nam', age: 18, race: 'nhan',
-  roots: [72, 61, 55, 44, 33], rootType: 'Song',
+  roots: [72, 61, 45, 44, 33], rootType: 'Song',
   talent: { tuongMao: 2, phucDuyen: 2, canCot: 2, ngoTinh: 1, vanKhi: 1 }
 });
 
@@ -108,7 +108,7 @@ test('hợp đồng: mọi phương thức truy vấn UI đang gọi đều tồ
   assert.ok(g.temperCost(0) > 0);
   assert.ok(g.recipe('PILL-001').herbs);
   assert.ok(g.forgeRecipe('EQ-001').herb);
-  assert.deepEqual(g.activeElements(), [0, 1, 2]);
+  assert.deepEqual(g.activeElements(), [0, 1]);
   assert.equal(typeof g.manualEffects().rate, 'number');
   assert.equal(g.affinity(-1), 0);
   assert.ok(g.rivalPower('hanh-chu') > 0);

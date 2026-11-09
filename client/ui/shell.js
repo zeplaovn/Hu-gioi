@@ -999,7 +999,7 @@
     $('lifeFill').style.width = clamp(s.age / life.max * 100, 0, 100) + '%';
     $('lifeValue').textContent = s.completed ? 'Trường sinh' : Math.floor(s.age) + ' / ' + num(life.max) + ' năm';
     $('lifeRow').classList.toggle('low-life', !s.completed && (life.left <= 40 || life.seconds <= 1800));
-    $('lifeRow').title = s.completed ? 'Đã chứng đạo, không còn giới hạn thọ nguyên.' : 'Còn ' + num(life.left) + ' năm thọ nguyên · khoảng ' + duration(life.seconds) + ' tu luyện liên tục';
+    $('lifeRow').title = s.completed ? 'Đã chứng đạo, không còn giới hạn thọ nguyên.' : 'Còn ' + num(life.left) + ' năm thọ nguyên · khoảng ' + duration(life.seconds) + ' tu luyện liên tục (1 năm ≈ ' + duration(1 / life.pace) + ')';
     $('lifeMeter').setAttribute('aria-valuemax', String(life.max));
     $('lifeMeter').setAttribute('aria-valuenow', String(Math.min(life.max, Math.floor(s.age))));
     $('lifeMeter').setAttribute('aria-valuetext', $('lifeValue').textContent);
@@ -1628,7 +1628,7 @@
   }
 
   function run(name, el) {
-    if (name === 'reincarnate') { if (UI.reincarnate) safe(() => UI.reincarnate()); return; }
+    if (name === 'resetAfterDeath') { if (UI.resetAfterDeath) safe(() => UI.resetAfterDeath()); return; }
     if (name === 'modalClose') { closeModal(); return; }
     if (name === 'modalConfirm') {
       if ($('modalLayer').hidden) return;

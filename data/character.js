@@ -50,11 +50,13 @@ const RACE_LIFE={nhan:.8,ma:.9,yeu:1.2,linh:1,tien_due:1.5,thu:.7};
 const RACE_BONUS={nhan:{hp:.05,atk:.05,rate:.05},ma:{atk:.2},yeu:{hp:.25},linh:{rate:.1},tien_due:{rate:.15},thu:{hp:.1,atk:.1,rate:-.1}};
 const raceLife=(race,realm=0)=>Math.round(F.lifespan(realm)*(RACE_LIFE[race]||1));
 const raceBonus=race=>RACE_BONUS[race]||{};
+/* Thời gian thực để tiêu hết thọ nguyên khi tu luyện liên tục (suy từ F.aging_speed, không hard-code). */
+const lifePace=(race,realm=0,age=0)=>{const pace=F.aging_speed(realm),life=raceLife(race,realm);return {secondsPerYear:pace>0?1/pace:Infinity,lifeSeconds:pace>0?life/pace:Infinity,leftSeconds:pace>0?Math.max(0,life-age)/pace:Infinity}};
 const startStone=(talent,meta)=>380+(talent?.tuongMao||0)*20+(meta?.upgrades?.stone||0)*20;
 function rollRace(rng=Math.random){let r=rng()*100,acc=0;for(const [id,,w] of RACES){acc+=w;if(r<acc)return id}return 'nhan'}
 const oneOf=(a,rng)=>a[Math.floor(rng()*a.length)];
 function randomName(gender='nam',rng=Math.random){return (oneOf(NAME_FAMILY,rng)+' '+oneOf(gender==='nu'?NAME_FEMALE:NAME_MALE,rng)).slice(0,NAME_MAX)}
 function cleanName(raw){const c=String(raw??'').normalize('NFC').replace(/\s+/g,' ').trim();return c.length>=2&&c.length<=NAME_MAX&&!/[\u0000-\u001f\u007f<>&"'`[\]]/.test(c)?c:null}
-const API={rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,raceBonus,startStone,rollRace,randomName,cleanName};
+const API={rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,lifePace,raceBonus,startStone,rollRace,randomName,cleanName};
 root.HU_CHARACTER=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);
