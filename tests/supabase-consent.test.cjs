@@ -74,13 +74,13 @@ test('after login consent is individually recorded and scoped to user', async ()
   assert.equal(storage.size, 0);
 });
 
-test('confirmation callback accepts hash tokens and strips them from the URL', async () => {
-  const { sb, location, storage } = createAdapter('#access_token=access&refresh_token=refresh&expires_in=3600&token_type=bearer');
+test('confirmation callback strips unsolicited tokens and requires a new login', async () => {
+  const { sb, location, storage } = createAdapter('#access_token=attacker&refresh_token=attacker&expires_in=3600&token_type=bearer');
   const user = await sb.user();
-  assert.equal(user.id, ID);
+  assert.equal(user, null);
   assert.equal(location.hash, '');
   assert.equal(location.changedTo, '/');
-  assert.equal(storage.size, 1);
+  assert.equal(storage.size, 0);
 });
 
 test('legal pages, CSP and checkbox binding are present in shipping files', () => {
