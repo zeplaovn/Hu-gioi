@@ -24,7 +24,7 @@ function createAdapter(initialHash = '') {
     history: { replaceState(_a, _b, path) { location.hash = ''; location.changedTo = path; } },
     fetch: async (input, init) => {
       requests.push({ input, init });
-      const url = new URL(input);
+      const url = new URL(input, location.origin);
       const route = url.pathname;
       let status = 200, result;
       if (route.endsWith('/auth/v1/signup')) result = { user: USER };
@@ -37,7 +37,7 @@ function createAdapter(initialHash = '') {
         if (init.method === 'POST') { records.push(JSON.parse(init.body)); result = null; status = 201; }
         else result = records.map(x => ({ policy_kind: x.policy_kind, policy_version: x.policy_version }));
       } else { status = 404; result = { message: route }; }
-      return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '' };
+      return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '', json: async () => result };
     }
   };
   vm.runInNewContext(src, { window, globalThis: window, URLSearchParams, Date, URL, Set, Error });
