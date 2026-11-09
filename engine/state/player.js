@@ -13,7 +13,7 @@
   const { RACES, LEGACY_RACES, TALENT_INFO, TALENT_MAX, META_UPGRADES, META_ACHIEVEMENTS, rootType } = C;
   const { item, pill } = D;
   const { ELEMENT_NAMES, DUNGEONS, SECTS, SECT_MISSIONS, ENCOUNTERS } = A;
-  const VERSION = 8, SUPPORTED_VERSIONS = Object.freeze([4, 5, 6, 7, 8]), MAX = 1e100;
+  const VERSION = 9, SUPPORTED_VERSIONS = Object.freeze([4, 5, 6, 7, 8, 9]), MAX = 1e100;
   const finite = (v, fallback = 0, max = MAX) => Number.isFinite(Number(v)) ? Math.max(0, Math.min(max, Number(v))) : fallback;
   const integer = (v, fallback = 0, max = 1e9) => Math.floor(finite(v, fallback, max));
   const uniq = xs => [...new Set(xs)];
@@ -66,7 +66,7 @@
 
   function createBase(now) {
     return {
-      version: VERSION, created: false, name: 'Hàn Thiên Sơn', gender: 'nam', race: 'nhan',
+      version: VERSION, death: null, destiny: 'none', created: false, name: 'Hàn Thiên Sơn', gender: 'nam', race: 'nhan',
       roots: [72, 41, 38, 55, 47], rootType: 'Song', rootSub: '', chaosTries: 0,
       talent: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0 },
       realm: 0, stage: 1, qi: 0, hp: 100, mp: 100, stone: 380, jade: 6, zone: 0,
@@ -214,6 +214,8 @@
 
     const x = create(now), old = raw.version < 6;
     x.created = true;
+    x.destiny = Object.hasOwn(META_UPGRADES, raw.destiny) ? raw.destiny : 'none';
+    if (object(raw.death) && ['tribulation', 'pvp', 'combat', 'lifespan'].includes(raw.death.cause)) x.death = { cause: raw.death.cause, at: finite(raw.death.at, now, now) };
     x.name = String(raw.name || x.name).slice(0, 24);
     x.gender = raw.gender === 'nu' ? 'nu' : 'nam';
     x.race = RACES.some(r => r[0] === raw.race) ? raw.race : LEGACY_RACES[raw.race] || 'nhan';
@@ -361,6 +363,12 @@
       if (storyById[id]?.choices?.some(choice => choice.id === option)) x.story.flags[id] = option;
 
     x.meta = normalizeMeta(raw.meta, now);
+    if (raw.version >= 9) {
+      x.meta.points = x.meta.totalPoints = 0;
+      x.meta.upgrades = { exp: 0, stone: 0, life: 0, luck: 0 };
+      if (x.destiny !== 'none') x.meta.upgrades[x.destiny] = 1;
+    }
+    x.pity = 0;
     x.auction.cycle = integer(raw.auction?.cycle, x.auction.cycle, x.auction.cycle);
     x.auction.offers = {};
     if (object(raw.auction?.offers)) for (const [k, v] of Object.entries(raw.auction.offers)) {
