@@ -59,7 +59,7 @@ function buildGameApi(env = process.env) {
   const accountAdmin = jwt && env.SUPABASE_SERVICE_ROLE_KEY
     ? createAccountAdmin({ url: env.SUPABASE_URL, secretKey: env.SUPABASE_SERVICE_ROLE_KEY }) : null;
   const gameApi = createGameApi({
-    service, accountAdmin, resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
+    service, accountAdmin, ...(loginGateway ? { clientIp: loginGateway.clientIp } : {}), resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
     log: err => console.error('[game-api]', err.cause?.stack || err.stack || err)
   });
   return { auth: legacy, gameApi, loginGateway, close() { clearInterval(purge); repository.close(); } };

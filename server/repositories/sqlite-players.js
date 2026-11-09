@@ -89,6 +89,10 @@ class SqlitePlayers extends PlayerRepository {
       putTicket: p('INSERT INTO creation_tickets (id, owner_id, preview, created_at, expires_at) VALUES (?, ?, ?, ?, ?)'),
       ticket: p('SELECT * FROM creation_tickets WHERE id = ?'),
       useTicket: p('UPDATE creation_tickets SET used_at = ? WHERE id = ? AND used_at IS NULL'),
+      deletePlayer: p('DELETE FROM players WHERE id = ? AND owner_id = ?'),
+      deleteOwnerPlayers: p('DELETE FROM players WHERE owner_id = ?'),
+      deleteOwnerTickets: p('DELETE FROM creation_tickets WHERE owner_id = ?'),
+      countReceipts: p('SELECT COUNT(*) AS n FROM player_receipts WHERE player_id = ?'),
       purgeReceipts: p('DELETE FROM player_receipts WHERE expires_at <= ?'),
       purgeTickets: p('DELETE FROM creation_tickets WHERE expires_at <= ? AND created_at <= ?')
     };
@@ -168,8 +172,8 @@ class SqlitePlayers extends PlayerRepository {
     return this.run(() => {
       const row = this.q.byId.get(playerId);
       if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
-      this.db.prepare('DELETE FROM players WHERE id = ? AND owner_id = ?').run(playerId, ownerId);
-      this.db.prepare('DELETE FROM creation_tickets WHERE owner_id = ?').run(ownerId);
+      this.q.deletePlayer.run(playerId, ownerId);
+      this.q.deleteOwnerTickets.run(ownerId);
       return { deleted: true };
     });
   }
@@ -191,9 +195,9 @@ class SqlitePlayers extends PlayerRepository {
     return this.run(() => {
       const row = this.q.byOwner.get(ownerId);
       let receipts = 0;
-      if (row) receipts = Number(this.db.prepare('SELECT COUNT(*) AS n FROM player_receipts WHERE player_id = ?').get(row.id).n);
-      const players = Number(this.db.prepare('DELETE FROM players WHERE owner_id = ?').run(ownerId).changes);
-      const tickets = Number(this.db.prepare('DELETE FROM creation_tickets WHERE owner_id = ?').run(ownerId).changes);
+      if (row) receipts = Number(this.q.countReceipts.get(row.id).n);
+      const players = Number(this.q.deleteOwnerPlayers.run(ownerId).changes);
+      const tickets = Number(this.q.deleteOwnerTickets.run(ownerId).changes);
       return { players, tickets, receipts };
     });
   }

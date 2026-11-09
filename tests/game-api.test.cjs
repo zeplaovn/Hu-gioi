@@ -305,3 +305,13 @@ test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N
   copy.close(); repo.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test('API: giới hạn theo IP chặn cả request không có token trước khi xác minh JWT', async t => {
+  const limiter = new RateLimiter();
+  const { call } = await boot(t, { limiter });
+  let last;
+  for (let i = 0; i < 130; i++) last = await call('GET', '/api/v1/bootstrap', { token: 'a.b.c' });
+  assert.equal(last.status, 429);
+  assert.equal(last.data.error.code, 'RATE_LIMITED');
+  assert.ok(Number(last.headers['retry-after']) >= 1);
+});

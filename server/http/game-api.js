@@ -22,7 +22,7 @@ const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands
 
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
 
-function createGameApi({ service, accountAdmin = null, resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
+function createGameApi({ service, accountAdmin = null, clientIp = req => req.socket?.remoteAddress || 'unknown', resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
   const allowed = new Set(allowedOrigins);
 
   function cors(req, res) {
@@ -75,6 +75,7 @@ function createGameApi({ service, accountAdmin = null, resolvePrincipal, allowed
       if (req.method === 'OPTIONS') { res.writeHead(204, { 'X-Request-Id': requestId }).end(); return true; }
       const route = matchRoute(req.method, pathname);
       if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
+      limit('ip:' + clientIp(req), LIMITS.ip); // trước khi tốn công xác minh JWT/Supabase
       const principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
       if (!principal) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
       const who = principal.accountId, body = await readBody(req);
