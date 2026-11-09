@@ -100,21 +100,24 @@ def verify_bubble(page, folder, name, outcome):
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
     assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
-    assert trigger.is_visible(), "Icon chat biến mất khi mở bảng chat"
-    assert trigger.get_attribute("aria-expanded") == "true"
-    assert page.locator("#chatBubble .chat-bubble-icon").is_visible(), "Ảnh icon chat bị ẩn"
-    assert trigger.evaluate("""el => {
-      const r = el.getBoundingClientRect();
-      const elAtCenter = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-      return el.contains(elAtCenter);
-    }"""), "Bảng chat hoặc lớp khác che icon chat"
     if name.startswith("after_"):
+        assert trigger.is_visible(), "Icon chat biến mất khi mở bảng chat"
+        assert trigger.get_attribute("aria-expanded") == "true"
+        assert page.locator("#chatBubble .chat-bubble-icon").is_visible(), "Ảnh icon chat bị ẩn"
+        assert trigger.evaluate("""el => {
+          const r = el.getBoundingClientRect();
+          const atCenter = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+          return el.contains(atCenter);
+        }"""), "Bảng chat hoặc lớp khác che icon chat"
         outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
-    # Bấm lại đúng icon chat: phải đóng được, không cần tìm nút X.
-    trigger.click()
-    assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng qua icon"
-    assert trigger.is_visible(), "Icon chat mất sau khi đóng"
-    outcome["chat_icon_persistent"] = True
+        # Bấm lại đúng icon chat để đóng; xác nhận luôn nhìn thấy nút.
+        trigger.click()
+        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng qua icon"
+        assert trigger.is_visible(), "Icon chat mất sau khi đóng"
+        outcome["chat_icon_persistent"] = True
+    else:
+        page.locator(".chat-bubble-close").click()
+        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng"
     outcome["chat_toggle"] = True
 
 def run_set(browser, folder, name, url, width, height, mobile):
