@@ -16,7 +16,7 @@
   let completed = 0, failures = 0, assetsReady = false, engine = 'pending', finished = false;
   const retained = [];
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-  // Khôi phục các mẹo chơi nguyên bản; chỉ đồng hồ đổi mẹo, không tác động tiến độ.
+  // Tiến độ đo xử lý thật. Mỗi mẹo được hiển thị trọn 3,2 giây trước khi hoàn tất.
   const HINTS = [
     'Ma thú về đêm mạnh và nguy hiểm hơn. Hãy chuẩn bị kỹ trước khi lịch luyện sau khi trời tối.',
     'Hãy dùng đan dược để nâng cảnh giới khi tu vi tiến chậm.',
@@ -29,12 +29,22 @@
   ];
   let hintIndex = Math.floor(Math.random() * HINTS.length);
   const nextHint = () => HINTS[hintIndex++ % HINTS.length];
-  const rotateHints = element => {
+  const rotateHints = (element, onComplete) => {
+    let shown = 1;
     element.textContent = nextHint();
-    const timer = setInterval(() => { element.textContent = nextHint(); }, 3200);
+    const timer = setInterval(() => {
+      if (shown === HINTS.length) {
+        clearInterval(timer);
+        onComplete?.();
+        return;
+      }
+      element.textContent = nextHint();
+      shown++;
+    }, 3200);
     return () => clearInterval(timer);
   };
-  const stopInitialHints = rotateHints(tip);
+  let hintsComplete = false;
+  const stopInitialHints = rotateHints(tip, () => { hintsComplete = true; check(); });
   // Hàng phía trên thanh là thông tin nạp thật; dòng dưới dành riêng cho mẹo.
   const phaseLabel = el.querySelector('.loading-row span');
 
@@ -84,12 +94,15 @@
     return { count, total, failed };
   }
   function paint() {
-    const progress = (list.length ? completed / list.length : 1) * 0.88 + (engine === 'ready' ? 0.12 : 0);
+    const progress = (list.length ? completed / list.length : 1) * 0.88
+      + (engine === 'ready' ? 0.11 : 0)
+      + (hintsComplete && assetsReady && engine === 'ready' ? 0.01 : 0);
     const label = !assetsReady
-      ? 'Đã xử lý ' + completed + '/' + list.length + ' ảnh' + (failures ? ' · ' + failures + ' ảnh lỗi' : '')
-      : engine === 'pending' ? 'Đang khởi tạo engine và giao diện…'
+      ? 'Đang tải tài nguyên · ' + completed + '/' + list.length + (failures ? ' · ' + failures + ' tài nguyên lỗi' : '')
+      : engine === 'pending' ? 'Đã tải tài nguyên · đang khởi tạo engine…'
         : engine === 'failed' ? 'Engine không thể khởi tạo.'
-          : failures ? 'Hoàn tất · ' + failures + ' ảnh lỗi, tiếp tục với hình dự phòng.' : 'Đã sẵn sàng.';
+          : !hintsComplete ? 'Đã tải tài nguyên · đang hiển thị các mẹo chơi…'
+            : failures ? 'Sẵn sàng · ' + failures + ' tài nguyên lỗi, dùng dự phòng.' : 'Đã sẵn sàng.';
     draw(fill, pct, track, progress, label);
     if (phaseLabel) phaseLabel.textContent = label;
   }
@@ -101,7 +114,7 @@
     if (phaseLabel) phaseLabel.textContent = failed ? 'Engine chưa sẵn sàng' : 'Hoàn tất chuẩn bị';
     if (!failed) {
       draw(fill, pct, track, 1, 'Tài nguyên và engine đã sẵn sàng');
-      tip.textContent = failures ? 'Đã sẵn sàng · ' + failures + ' ảnh dùng hình dự phòng.' : 'Hoàn tất chuẩn bị.';
+      tip.textContent = failures ? 'Đã sẵn sàng · ' + failures + ' tài nguyên dùng dự phòng.' : 'Hoàn tất chuẩn bị.';
     }
     el.setAttribute('aria-busy', 'false');
     el.classList.add('done');
@@ -120,7 +133,7 @@
   function check() {
     paint();
     if (engine === 'failed') finish(true);
-    else if (assetsReady && engine === 'ready') finish();
+    else if (assetsReady && engine === 'ready' && hintsComplete) finish();
   }
   function engineReady(result = {}) {
     if (engine !== 'pending' || finished) return;
@@ -148,8 +161,7 @@
     completed = count; failures = failed; assetsReady = true; check();
   }).catch(() => { assetsReady = true; engine = 'failed'; check(); });
 
-  // Màn loading tạo nhân vật sử dụng chung thuật toán đếm ảnh giải mã;
-  // chỉ báo 100% sau callback xác thực engine, không chờ tối thiểu 11 giây.
+  // Khi tạo nhân vật: tải tài nguyên, xác thực engine, chờ đủ 8 mẹo rồi mới đạt 100%.
   async function enter(urls, start) {
     const screen = el.cloneNode(true);
     const focusBefore = doc.activeElement;
@@ -165,7 +177,8 @@
       if (e.key === 'Tab') e.preventDefault();
       e.stopPropagation();
     });
-    screen.querySelector('.loading-row span').textContent = 'Đang chuẩn bị nhân vật';
+    const entryLabel = screen.querySelector('.loading-row span');
+    entryLabel.textContent = 'Đang tải tài nguyên';
     const bar = screen.querySelector('.loading-fill');
     const number = screen.querySelector('.loading-pct');
     const meter = screen.querySelector('.loading-track');
@@ -174,9 +187,11 @@
     const hint = doc.createElement('p');
     hint.className = 'loading-hint';
     status.after(hint);
-    const stopEntryHints = rotateHints(hint);
-    draw(bar, number, meter, 0, 'Bắt đầu tải ảnh nhân vật');
-    status.textContent = 'Đang tải hình nhân vật…';
+    let resolveHints;
+    const hintsReady = new Promise(resolve => { resolveHints = resolve; });
+    const stopEntryHints = rotateHints(hint, resolveHints);
+    draw(bar, number, meter, 0, 'Đang tải tài nguyên');
+    status.textContent = 'Đang tải tài nguyên…';
     doc.body.appendChild(screen);
     doc.body.classList.add('loading-game');
     panels.forEach(p => { p.inert = true; });
@@ -184,14 +199,18 @@
     try {
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const result = await preloadBatch(urls, ({ count, total, failed }) => {
-        draw(bar, number, meter, 0.9 * (total ? count / total : 1), 'Đã xử lý ' + count + '/' + total + ' ảnh');
-        status.textContent = 'Đã xử lý ' + count + '/' + total + ' ảnh' + (failed ? ' · ' + failed + ' ảnh lỗi' : '');
+        draw(bar, number, meter, 0.88 * (total ? count / total : 1), 'Đang tải tài nguyên · ' + count + '/' + total);
+        status.textContent = 'Đang tải tài nguyên · ' + count + '/' + total + (failed ? ' · ' + failed + ' tài nguyên lỗi' : '');
       });
-      draw(bar, number, meter, 0.9, 'Đang xác thực engine');
-      status.textContent = 'Đang xác thực engine…';
+      draw(bar, number, meter, 0.88, 'Tải tài nguyên hoàn tất · đang xác thực engine');
+      status.textContent = 'Tài nguyên đã tải xong · đang xác thực engine…';
       if (typeof start === 'function') await start(result);
-      draw(bar, number, meter, 1, 'Tài nguyên và engine đã sẵn sàng');
-      status.textContent = result.failed ? 'Sẵn sàng · ' + result.failed + ' ảnh dùng hình dự phòng.' : 'Đã sẵn sàng.';
+      draw(bar, number, meter, 0.99, 'Đã tải tài nguyên và khởi tạo engine · đang hiển thị mẹo chơi');
+      entryLabel.textContent = 'Đã tải tài nguyên · đang hiển thị mẹo chơi…';
+      status.textContent = 'Các mẹo chơi sẽ hiển thị đủ trước khi vào game.';
+      await hintsReady;
+      draw(bar, number, meter, 1, 'Tài nguyên, engine và các mẹo chơi đã hoàn tất');
+      status.textContent = result.failed ? 'Sẵn sàng · ' + result.failed + ' tài nguyên dùng dự phòng.' : 'Đã sẵn sàng.';
     } finally {
       stopEntryHints();
       screen.setAttribute('aria-busy', 'false');
