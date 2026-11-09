@@ -38,7 +38,7 @@ test('tạo nhân vật: age/race/linh căn lấy từ ticket, không nhận t�
   assert.equal(pv.rollsLeft, 4);
   assert.equal(code(() => svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp', age: 99, roots: [100, 100, 100, 100, 100] })), 'INVALID_REQUEST');
   assert.equal(code(() => svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 3 }, destiny: 'exp' })), 'INVALID_PROFILE');
-  const made = svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 8 } });
+  const made = svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp' });
   assert.equal(made.revision, 0);
   assert.equal(made.state.age, pv.preview.age);
   assert.equal(made.state.race, pv.preview.race);
@@ -172,15 +172,26 @@ test('snapshot gửi client không chứa seed bí cảnh; state bẩn bị ch�
   assert.throws(() => assertStateSafe({ a: undefined }, 65536), { code: 'STATE_CORRUPT' });
 });
 
-test('thọ nguyên cạn: cấm lệnh, chỉ được xóa nhân vật rồi tạo kiếp mới', () => {
+test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xóa để tạo nhân vật mới', () => {
   const { svc, clock, repo } = setup();
   const { playerId: id } = spawn(svc);
-  repo.transact(id, tx => ({ save: { state: { ...tx.record.state, age: 79.9999 }, revision: 1, rngCounter: 0, lastSeenAt: clock.t, schemaVersion: H.VERSION, contentVersion: 'test' } }));
+  const current = repo.get(id);
+  const maxLife = new H.Game(current.state).maxLife();
+  repo.transact(id, tx => ({ save: {
+    state: { ...tx.record.state, age: maxLife + 1 }, revision: 1,
+    rngCounter: 0, lastSeenAt: clock.t, schemaVersion: H.VERSION, contentVersion: 'test'
+  } }));
   clock.t += 3600 * 1000;
-  const dead = svc.sync('owner-a', id, {});
+  const dead = svc.sync('owner-a', id);
   assert.equal(dead.died, true);
+  assert.equal(dead.state.death.cause, 'lifespan');
+  assert.equal(dead.report.seconds || 0, 0, 'offline không già thêm');
   const err = (() => { try { svc.command('owner-a', id, envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'd1')); } catch (e) { return e; } })();
   assert.equal(err.code, 'PLAYER_DEAD');
+  assert.equal(code(() => svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
+  assert.equal(svc.resetAfterDeath('owner-a', id).deleted, true);
+  assert.equal(svc.bootstrap('owner-a').player, null);
+  assert.ok(svc.previewCreation('owner-a').ticketId);
 });
 
 test('dữ liệu bền qua khởi động lại (state, revision, receipt)', () => {
