@@ -364,11 +364,12 @@
       if (storyById[id]?.choices?.some(choice => choice.id === option)) x.story.flags[id] = option;
 
     x.meta = normalizeMeta(raw.meta, now);
-    if (raw.version >= 9) {
-      x.meta.points = x.meta.totalPoints = 0;
-      x.meta.upgrades = { exp: 0, stone: 0, life: 0, luck: 0 };
-      if (x.destiny !== 'none') x.meta.upgrades[x.destiny] = 1;
-    }
+    // V9 không có nâng cấp trả phí hoặc điểm mang qua kiếp. Khi nâng V4-V8,
+    // hủy các bonus vĩnh viễn không có nguồn gốc chọn Thiên mệnh ở Khởi Nguyên.
+    x.meta.points = x.meta.totalPoints = 0;
+    x.meta.upgrades = { exp: 0, stone: 0, life: 0, luck: 0 };
+    if (x.destiny !== 'none') x.meta.upgrades[x.destiny] = 1;
+    if (raw.version < 9) { x.meta.achievements = {}; x.meta.history = []; }
     x.pity = 0;
     x.auction.cycle = integer(raw.auction?.cycle, x.auction.cycle, x.auction.cycle);
     x.auction.offers = {};
