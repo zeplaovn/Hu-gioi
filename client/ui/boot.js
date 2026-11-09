@@ -97,6 +97,7 @@
       .filter(x => x.value >= 50);
     const descs = active.map(x => '<div class="root-elem-desc"><b style="color:' + x.color + '">' +
       x.name + ':</b> ' + esc(ELEM_DESC[x.name] || '') + '</div>').join('');
+    const pv = meridianPreview();
     const di = type === 'Dị' ? H.DI_LINH_CAN[sub] : null;
     const diBox = di
       ? '<div class="root-di"><b>' + esc(di.name) + ' · ' + esc(di.role) + '</b><div>' + esc(di.desc) + '</div>' +
@@ -114,6 +115,7 @@
     return '<div class="info-title">' + esc(rootLabel(type, sub)) +
       ' <span class="root-group root-group-' + esc(info.group) + '">' + esc(group ? group.name : '') + '</span></div>' +
       '<div class="root-rate-line">tốc độ hấp thụ linh khí ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') + (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</div>' +
+      '<div class="root-rate-line">Độ tinh khiết <b class="gold">' + (pv ? pv.purity : 0) + '%</b> (điểm trung bình các hệ chính)</div>' +
       '<div class="small">' + esc(info.desc) + '</div>' + diBox +
       (descs ? '<div class="root-elem-title">' + (type === 'Dị' ? 'Hệ ngũ hành gốc' : 'Ngũ hành') + '</div>' : '') +
       '<div class="root-elem-list">' + descs + '</div>' + tiers +
@@ -200,17 +202,9 @@
       b.setAttribute('aria-pressed', String(on));
     });
     $('ageValue').textContent = creation.age + ' tuổi';
-    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span><span class="field-sub">' + esc(raceBonusText(creation.race)) + ' · thọ ~' + H.raceLife(creation.race, 0) + ' năm · còn ≈ ' + duration(H.lifePace(creation.race, 0, creation.age).leftSeconds) + ' tu luyện</span>';
+    $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span>';
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
-    const M = root.HU_MERIDIANS, pv = meridianPreview();
-    const active = ELEMENTS.map(([name], i) => ({ name, color: M ? M.HE_COLOR[name] : '#fff', value: creation.roots[i] })).filter(x => x.value >= 50);
-    const chips = active.map(x => '<span class="chip" style="color:' + x.color + ';border-color:' + x.color + '">' + x.name + '</span>').join('');
-    const rate = F.LINH_CAN_RATE[creation.rootType];
-    const diChip = creation.rootType === 'Dị'
-      ? '<span class="chip chip-di" style="color:' + (M ? M.HE_COLOR[M.DI_HE[creation.rootSub]] : '#fff') + ';border-color:' + (M ? M.HE_COLOR[M.DI_HE[creation.rootSub]] : '#fff') + '">' + esc(H.DI_LINH_CAN[creation.rootSub]?.name || 'Dị') + '</span>' : '';
-    $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + ' <em>×' + rate + ' tốc độ hấp thụ linh khí</em></span>' +
-      '<span class="root-line">' + (diChip ? '<span class="root-line-label">Dị</span>' + diChip + '<span class="root-line-label">gốc</span>' : '') + (chips || '<span class="chip">…</span>') + '</span>' +
-      '<span class="purity" title="Độ tinh khiết: điểm trung bình các hệ chính"><span class="purity-bar"><i style="width:' + (pv ? pv.purity : 0) + '%"></i></span><b>Tinh khiết ' + (pv ? pv.purity : 0) + '%</b></span>';
+    $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + '</span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
     renderStats();
     syncName();

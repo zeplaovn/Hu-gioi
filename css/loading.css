@@ -13,14 +13,13 @@ body.loading-game{overflow:hidden}
 .loading-veil{position:absolute;inset:0;background:
   linear-gradient(to bottom,#f0ede9 0,#f0ede966 34%,#160f0c00 52%,#160f0cd9 82%,#160f0c 100%),
   radial-gradient(ellipse at 50% 30%,transparent 40%,#160f0c66 100%)}
-.loading-logo{position:relative;width:min(640px,88vw);max-height:46vh;object-fit:contain;margin-top:2vh;filter:drop-shadow(0 6px 18px #ffffffaa);animation:loadingFloat 5s ease-in-out infinite}
+.loading-logo{position:relative;width:min(640px,88vw);max-height:46vh;object-fit:contain;margin-top:2vh;filter:drop-shadow(0 6px 18px #ffffffaa)}
 .loading-foot{position:relative;width:min(560px,90vw);display:flex;flex-direction:column;gap:10px}
 .loading-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;letter-spacing:.04em;color:#ddd3ca}
 .loading-row b{font-size:15px;color:#e6c164;font-variant-numeric:tabular-nums}
 .loading-track{height:12px;background:#0e0a08cc;border:1px solid #796a5a;overflow:hidden}
 .loading-fill{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:linear-gradient(90deg,#8a6a22,#e6c164 55%,#fff0b0);transition:transform .25s ease-out;position:relative;overflow:hidden}
 .loading-tip{min-height:1.3em;text-align:center;color:#c0b09f}
-@keyframes loadingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-height:520px){.loading-logo{max-height:38vh}}
 @media(prefers-reduced-motion:reduce){
   #loading,#gameLoading,.loading-scene,.loading-fill{transition:none}
