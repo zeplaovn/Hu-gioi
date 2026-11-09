@@ -80,7 +80,7 @@
       craftQueue: [], garden: [], gardenSoils: ['đất thường', 'linh điền', 'hỏa địa', 'hàn đàm'],
       offlineKills: 0, yaoValue: 0, progress: { kill: 0, meditate: 0, travel: 1, breaks: 0, alchemy: 0 },
       claimed: [], locations: [0], npcAffinities: {}, npcQuests: {},
-      auction: { offers: {}, cycle: Math.floor(now / 3600000) },
+      auction: { offers: {}, cycle: Math.floor(now / 3600000), pausedMs: 0 },
       social: { friends: {}, pvp: { rating: 1000, wins: 0, losses: 0, streak: 0, best: 1000, lastAt: 0 }, lastDiscuss: 0 },
       meta: metaDefault(), story: storyDefault(), designCombat: designCombatDefault(),
       settings: {
@@ -372,6 +372,7 @@
     if (raw.version < 9) { x.meta.achievements = {}; x.meta.history = []; }
     x.pity = 0;
     x.auction.cycle = integer(raw.auction?.cycle, x.auction.cycle, x.auction.cycle);
+    x.auction.pausedMs = finite(raw.auction?.pausedMs, 0, Math.max(0, now));
     x.auction.offers = {};
     if (object(raw.auction?.offers)) for (const [k, v] of Object.entries(raw.auction.offers)) {
       if (old && ['0', '1', '2'].includes(k) && finite(v) > 0) x.auction.offers[['EQ-006', 'EQ-002', 'EQ-004'][Number(k)]] = finite(v);
