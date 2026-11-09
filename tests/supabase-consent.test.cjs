@@ -37,7 +37,7 @@ function createAdapter(initialHash = '') {
         if (init.method === 'POST') { records.push(JSON.parse(init.body)); result = null; status = 201; }
         else result = records.map(x => ({ policy_kind: x.policy_kind, policy_version: x.policy_version }));
       } else { status = 404; result = { message: route }; }
-      return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '' };
+      return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '', json: async () => result };
     }
   };
   vm.runInNewContext(src, { window, globalThis: window, URLSearchParams, Date, URL, Set, Error });
