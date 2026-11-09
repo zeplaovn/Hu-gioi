@@ -1,0 +1,312 @@
+/* HƯ GIỚI · LỚP TU TIÊN (tienhiep.css)
+ * Nạp SAU player-pack.css. Chỉ thay "da" của giao diện, không đụng bố cục hay logic.
+ * Ý tưởng chính: mọi thứ thở theo linh khí. Biến --linh (0..1) do client/ui/tien-khi.js
+ * đọc từ thanh tu vi; tu vi càng đầy, hào quang càng sáng và nhịp thở càng rõ.
+ * Chuyển động chỉ bật khi người chơi không chọn "giảm chuyển động". */
+
+:root{
+  --linh:0;
+  --brass:#b08d57; --brass-dim:#6f5a3c; --brass-soft:#b08d5755;
+  --ink:#0f0a08; --mist:#efe6d4;
+  --ease-ink:cubic-bezier(.22,.7,.2,1);
+  /* Vân giấy dó: nhiễu rất nhẹ, màu ngà, chỉ để mặt phẳng bớt "nhựa". */
+  --paper-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .9 0 0 0 0 .8 0 0 0 0 .6 .35 0 0 0 -.08'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Bốn góc khung đồng, vẽ bằng gradient nên không cuộn theo nội dung. */
+  --corners:
+    linear-gradient(var(--brass-soft),var(--brass-soft)) left 7px top 7px/14px 1px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) left 7px top 7px/1px 14px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) right 7px top 7px/14px 1px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) right 7px top 7px/1px 14px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) left 7px bottom 7px/14px 1px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) left 7px bottom 7px/1px 14px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) right 7px bottom 7px/14px 1px no-repeat,
+    linear-gradient(var(--brass-soft),var(--brass-soft)) right 7px bottom 7px/1px 14px no-repeat;
+}
+
+/* ===== NỀN: tối ấm như phòng tĩnh tu, có sương mờ ở góc ===== */
+body{
+  background:
+    var(--paper-grain),
+    radial-gradient(ellipse 60% 45% at 12% 0%,#3d2c2233,transparent 70%),
+    radial-gradient(ellipse 55% 40% at 100% 100%,#2f3a2d26,transparent 70%),
+    var(--bg);
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#4a382c;border:2px solid #150f0c;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--brass-dim)}
+*{scrollbar-color:#4a382c transparent}
+
+/* ===== KHUNG PANEL: bớt cứng, viền đồng nhạt dần ở mép, góc bo mềm ===== */
+#game .box,.card,.win:not(.page){border-radius:14px}
+#game #status,#game #logPanel,#game #menu{
+  border-color:#4a382c;
+  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#251a15f5,#17100df7);
+  box-shadow:0 8px 26px #0006,inset 0 1px 0 #ffffff0a;
+}
+#game #stage{
+  border-radius:16px;border-color:#4a382c;
+  box-shadow:0 10px 32px #0008,inset 0 0 70px #000a,inset 0 0 0 1px #b08d5726;
+}
+.card{
+  background:var(--paper-grain),linear-gradient(160deg,#281c16,#1d1410);
+  border-color:#4d3b2e;
+  box-shadow:0 4px 18px #0004,inset 0 1px 0 #ffffff08;
+}
+.card-head h3,.section-title{letter-spacing:.015em}
+.stat-line{border-bottom:0;background:linear-gradient(90deg,transparent,#6f5a3c66 18%,#6f5a3c66 82%,transparent) bottom/100% 1px no-repeat}
+.stat-line:last-child{background:none}
+.divider{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--brass-dim),transparent)}
+.status-talents{border-top:0;border-bottom:0;padding:8px 0;
+  background:linear-gradient(90deg,transparent,var(--brass-dim),transparent) top/100% 1px no-repeat,
+             linear-gradient(90deg,transparent,var(--brass-dim),transparent) bottom/100% 1px no-repeat}
+.status-foot{border-top:0;background:linear-gradient(90deg,transparent,var(--brass-dim),transparent) top/100% 1px no-repeat}
+
+/* ===== ĐẠO THÂN (cột trạng thái) ===== */
+.status-avatar{
+  border-radius:26px 26px 9px 9px;
+  border:1px solid var(--brass-dim);
+  background:radial-gradient(circle at 50% 35%,#3a2b22,#16100d);
+  box-shadow:0 0 calc(4px + var(--linh) * 16px) rgba(176,141,87,calc(.15 + var(--linh) * .5)),inset 0 0 12px #000a;
+  transition:box-shadow 1.2s ease;
+}
+#playerRealm{
+  letter-spacing:.06em;
+  background:linear-gradient(180deg,#fff3cf,#e2b86a 60%,#b98a45);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;filter:drop-shadow(0 1px 1px #000a);
+}
+.status-name{font-family:var(--serif);font-style:italic;letter-spacing:.03em;color:#cdbb9c}
+#status .status-title .eyebrow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== THANH: tu vi là dòng linh khí chảy, sinh lực/linh khí như chất lỏng ===== */
+#status .status-progress .bar,
+#status .vital-row .meter{
+  border-radius:999px;border-color:#5d4a37;background:#0c0806;
+  box-shadow:inset 0 1px 4px #000c,0 0 0 1px #00000040;
+}
+#status .status-progress .bar{
+  border-color:rgba(127,185,143,calc(.35 + var(--linh) * .5));
+  box-shadow:inset 0 1px 4px #000c,0 0 calc(var(--linh) * 14px) rgba(127,185,143,calc(var(--linh) * .45));
+  transition:box-shadow 1s ease,border-color 1s ease;
+}
+#status .status-progress .bar>i,
+#status .vital-row .meter>i{
+  border-radius:inherit;opacity:1;
+  transition:width .9s var(--ease-ink);
+}
+#status .status-progress .bar>i{
+  background:
+    linear-gradient(100deg,transparent 35%,#ffffff40 50%,transparent 65%) 0 0/220% 100% no-repeat,
+    linear-gradient(90deg,#2f6b55,#7fb98f 70%,#d9f3d0);
+  box-shadow:0 0 10px #7fb98f99;
+}
+#status .vital-row .meter>i.hp{background:linear-gradient(90deg,#a63d30,#e07a64);box-shadow:0 0 8px #d9705e55}
+#status .vital-row .meter>i.mp{background:linear-gradient(90deg,#2d6f86,#7cc0d4);box-shadow:0 0 8px #5aa3b855}
+#status .vital-row .meter>i.life{background:linear-gradient(90deg,#8a6a2a,#e0b866);box-shadow:0 0 8px #d1a14f55}
+#stage .enemy-health{border-radius:999px}
+#stage .enemy-health i{border-radius:inherit}
+
+/* ===== NÚT: sơn mài, không viền cứng; đột phá là con dấu chu sa ===== */
+.btn{border-radius:11px;letter-spacing:.015em}
+.btn-gold{
+  background:var(--paper-grain),linear-gradient(180deg,#c8452e,#8f2a18);
+  border-color:#d9704f;
+  text-shadow:0 1px 2px #5b1408;
+}
+.btn-outline{background:var(--paper-grain),linear-gradient(180deg,#261a15,#1d1410);border-color:#5a4636}
+.btn-outline:not(:disabled):hover{border-color:var(--brass)}
+.btn{position:relative;overflow:hidden}
+.btn:not(:disabled):active{transform:translateY(0) scale(.985)}
+/* vệt linh khí lan ra từ điểm chạm (do tien-khi.js thêm) */
+.tx-ripple{position:absolute;left:var(--rx,50%);top:var(--ry,50%);width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;
+  background:radial-gradient(circle,#fff7dc99,#e2b86a55 55%,transparent 70%);pointer-events:none;opacity:0}
+/* ánh sáng bám theo con trỏ trên nút/menu (chuột) */
+.btn:not(:disabled):hover,
+#menu button:hover,.page-nav button:hover,.tab:hover,.zone-button:hover{
+  background-image:radial-gradient(140px circle at var(--mx,50%) var(--my,50%),#f2d6931f,transparent 65%);
+}
+.btn-gold:not(:disabled):hover{background-image:radial-gradient(140px circle at var(--mx,50%) var(--my,50%),#ffe7b840,transparent 65%),linear-gradient(180deg,#d24d34,#9b2f1c)}
+
+#btn-break{
+  border-radius:12px;position:relative;
+  background:var(--paper-grain),linear-gradient(170deg,#2b1f19,#18110e);
+  border-color:#6f5a3c;
+}
+#btn-break.ready:not(.auto),.peak-cta{
+  border-color:#e8c872;
+  background:var(--paper-grain),linear-gradient(165deg,#7a5a16,#3d2b08);
+  box-shadow:0 0 0 1px #000a,0 0 28px #f2c95a66,inset 0 1px 0 #ffe9a655;
+}
+.peak-cta{border-radius:16px;letter-spacing:.08em}
+
+/* ===== THANH ĐIỀU HƯỚNG: ngọc bội, không còn ô vuông ===== */
+#menu button{border-radius:14px;transition:background .3s,color .3s,transform .2s}
+#menu button img{transition:transform .25s var(--ease-ink),filter .3s}
+#menu button:hover img{transform:translateY(-2px)}
+#game:not([data-layout="portrait"]) #menu button.on{
+  box-shadow:none;
+  background:radial-gradient(circle at 50% 42%,#d9aa5a2e,transparent 72%);
+  color:var(--gold);
+}
+#game:not([data-layout="portrait"]) #menu button.on::before{
+  content:"";position:absolute;left:3px;top:24%;bottom:24%;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,transparent,var(--gold),transparent);box-shadow:0 0 10px var(--gold)}
+#game[data-layout="portrait"] #menu{border-radius:18px}
+#game[data-layout="portrait"] #menu button.on::before{height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.tab.active{border-bottom-color:transparent;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent) bottom/78% 2px no-repeat}
+
+/* ===== NHẬT KÝ: như cuộn trúc giản, con dấu thay cho nhãn hộp ===== */
+.log{font-family:var(--serif);line-height:1.65;gap:3px}
+@media(min-width:601px){.log{font-size:15.5px;line-height:1.75}}
+.log-entry{padding:2px 0 2px 8px;border-left:1px solid #4a382c;background:linear-gradient(90deg,#b08d570a,transparent 60%);animation:none}
+.log-tag{border:0;border-radius:3px;background:var(--seal-deep);color:var(--paper);font-family:var(--font);transform:rotate(-2deg);box-shadow:0 1px 0 #00000066}
+.log-entry.success .log-tag,.log-entry.loot .log-tag{background:#2f6b55;color:#e8f6ea}
+.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#8a6a2a;color:#fff3cf}
+.log-entry.danger .log-tag{background:#8f2a18;color:#ffe3da}
+.log-entry.info .log-tag{background:#4a382c;color:#e6d4b4}
+.log-time{font-family:var(--font);opacity:.7}
+.log-entry:first-child{border-left-color:var(--brass);background:linear-gradient(90deg,#b08d5722,transparent 70%)}
+.log-entry:first-child .log-text{color:#f1e6cf}
+.log-panel.collapsed{border-radius:14px}
+
+/* ===== HỘP THOẠI & THÔNG BÁO: mở như cuộn trục, thông báo như linh phù ===== */
+.game-modal{border-radius:16px;border-color:#6f5a3c;
+  background:var(--paper-grain),radial-gradient(ellipse at 50% -25%,#53624336,transparent 60%),#271b15}
+.modal-shade{background:radial-gradient(ellipse at 50% 40%,#0c0806b0,#050302e6);backdrop-filter:blur(6px) saturate(.8)}
+.game-modal h2{letter-spacing:.03em}
+.toast-item{border-radius:6px 14px 6px 14px;border-top-width:1px;border-left-width:3px;
+  background:var(--paper-grain),linear-gradient(135deg,#2b1f19f5,#18110eec)}
+.toast-icon{border-radius:50%}
+.stage-tag,.stage-weather{border-radius:999px;border-color:#6f5a3c88;background:#1a120ecf}
+.more-menu{border-radius:16px}
+
+/* ===== SÂN KHẤU: sương trôi, nhịp thở quanh đạo thân, linh quang thoảng qua ===== */
+.tx-mist{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.tx-mist>b{position:absolute;left:-30%;width:160%;height:46%;opacity:.55;will-change:transform;
+  background:
+    radial-gradient(ellipse 22% 38% at 18% 60%,#efe6d41f,transparent 70%),
+    radial-gradient(ellipse 28% 34% at 52% 48%,#efe6d417,transparent 70%),
+    radial-gradient(ellipse 20% 40% at 84% 62%,#efe6d41c,transparent 70%)}
+.tx-mist>b:nth-child(1){bottom:-6%}
+.tx-mist>b:nth-child(2){bottom:14%;opacity:.35;transform:scaleX(-1)}
+.tx-wisp{position:absolute;left:-8%;top:var(--wy,30%);width:84px;height:2px;border-radius:2px;opacity:0;
+  background:linear-gradient(90deg,transparent,#fff3cf,#e2b86a 60%,transparent);
+  filter:drop-shadow(0 0 6px #e2b86a);transform:rotate(var(--wr,-8deg))}
+
+.tx-breath{position:absolute;left:-30%;top:-8%;width:160%;height:150%;z-index:0;pointer-events:none;border-radius:50%;
+  background:radial-gradient(circle at 50% 52%,rgba(226,184,106,calc(.12 + var(--linh) * .3)),rgba(127,185,143,calc(.04 + var(--linh) * .1)) 38%,transparent 66%);
+  opacity:.9;transition:opacity .8s}
+#game[data-stage="combat"] .tx-breath{opacity:.25}
+#game[data-ready] .tx-breath{background:radial-gradient(circle at 50% 52%,#f2c95a66,#e2b86a22 40%,transparent 68%)}
+.stage-scene.low-fx .tx-mist,.stage-scene.low-fx .tx-breath{display:none}
+
+/* ===== TRANG RIÊNG: hiện ra như mực loang, không bật cứng ===== */
+.win.page>header{border-bottom-color:transparent;
+  background:linear-gradient(180deg,#291c17f2,#1d1410d9) padding-box;
+  box-shadow:0 1px 0 #b08d5733}
+.page-back,.page-nav button{border-radius:999px}
+.win.page{background:var(--paper-grain),linear-gradient(160deg,#211713,#150f0c)}
+
+/* ===== ĐỌC ĐƯỢC: điều kiện mở khoá và câu tĩnh tu không được mờ như nền ===== */
+.zone-button:disabled{opacity:.85;border-style:dashed;color:#c9b99f;filter:none}
+.zone-button:disabled small{color:#d6b97d}
+#stage .idle-quote{background:#120c09b8;padding:5px 16px;border-radius:999px;font-size:13.5px;color:#f1e6cf}
+
+/* Nút chat nổi không được che nội dung: chừa đáy trang để cuộn nội dung ra khỏi nút */
+.win.page .win-body{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+
+/* ===== FORM: ô nhập thở nhẹ khi được chọn ===== */
+input,select,textarea{border-radius:10px;transition:border-color .25s,box-shadow .25s}
+input:focus-visible,select:focus-visible,textarea:focus-visible{box-shadow:0 0 0 3px #b08d5726}
+
+/* ===== CHUYỂN ĐỘNG: chỉ khi người chơi không tắt ===== */
+@keyframes txMist{from{transform:translateX(0)}to{transform:translateX(18%)}}
+@keyframes txMistR{from{transform:scaleX(-1) translateX(0)}to{transform:scaleX(-1) translateX(-14%)}}
+@keyframes txBreath{0%,100%{transform:scale(.93)}45%{transform:scale(1.07)}}
+@keyframes txFlow{to{background-position:-220% 0,0 0}}
+@keyframes txWisp{0%{opacity:0;transform:translate3d(0,0,0) rotate(var(--wr,-8deg))}12%{opacity:.9}100%{opacity:0;transform:translate3d(118vw,var(--wd,-14vh),0) rotate(var(--wr,-8deg))}}
+@keyframes txRipple{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(16)}}
+@keyframes txInk{from{opacity:0;filter:blur(5px);transform:translateY(8px)}to{opacity:1;filter:none;transform:none}}
+@keyframes txScroll{from{clip-path:inset(0 -40px 100% -40px);opacity:.4}to{clip-path:inset(-40px -40px -40px -40px);opacity:1}}
+@keyframes txAura{0%,100%{box-shadow:0 0 0 1px #000a,0 0 22px #f2c95a55,0 0 0 0 #f2c95a55,inset 0 1px 0 #ffe9a655}
+  60%{box-shadow:0 0 0 1px #000a,0 0 34px #ffd45c99,0 0 0 12px #f2c95a00,inset 0 1px 0 #ffe9a655}}
+
+@media (prefers-reduced-motion:no-preference){
+  .tx-mist>b:nth-child(1){animation:txMist 70s linear infinite alternate}
+  .tx-mist>b:nth-child(2){animation:txMistR 110s linear infinite alternate}
+  .tx-wisp.go{animation:txWisp var(--wt,5.5s) ease-in forwards}
+  .tx-breath{animation:txBreath calc(9s - var(--linh) * 3s) ease-in-out infinite}
+  #status .status-progress .bar>i{animation:txFlow 3.4s linear infinite}
+  #status .status-progress .bar.full>i{animation:txFlow 3.4s linear infinite,barPulse 1.2s ease-in-out infinite}
+  .tx-ripple{animation:txRipple .7s ease-out forwards}
+  .log-entry:first-child{animation:txInk .7s var(--ease-ink)}
+  .game-modal{animation:txScroll .5s var(--ease-ink)}
+  .win.page{animation:txInk .35s var(--ease-ink)}
+  .more-menu{animation:txInk .22s var(--ease-ink)}
+  #btn-break.ready:not(.auto),.peak-cta{animation:txAura 2.2s ease-in-out infinite}
+}
+@media (prefers-reduced-motion:reduce){
+  .tx-mist,.tx-wisp,.tx-ripple{display:none}
+  .tx-breath{animation:none;transform:none}
+}
+
+/* ===== SỬA UX MÀN HẸP: giữ nguyên hành vi game, không thay đổi luật ===== */
+
+/* A: Chat trên trang riêng gọn 40px, vẫn chạm và kéo được.
+   Chỉ làm mờ nút; không làm mờ bảng chat. Tọa độ đã kéo có inline style ưu tiên. */
+body:has(#game.page-open) .chat-bubble .chat-bubble-btn{
+  width:40px;height:40px;min-width:40px;min-height:40px;padding:5px;
+  border-radius:14px 14px 14px 5px;opacity:.5;
+}
+body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:27px;height:27px}
+body:has(#game.page-open) .chat-bubble .chat-bubble-btn:hover,
+body:has(#game.page-open) .chat-bubble .chat-bubble-btn:focus-visible,
+body:has(#game.page-open) .chat-bubble .chat-bubble-btn:active,
+body:has(#game.page-open) .chat-bubble:has(.chat-bubble-panel:not([hidden])) .chat-bubble-btn{opacity:1}
+/* A: Chừa hành lang bên trái cho nhật ký khi nút chat chưa bị người chơi kéo đi. */
+body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="portrait"]:not(.page-open) #logFeed{
+  padding-left:76px;
+}
+/* Tôn trọng lựa chọn ít hiệu ứng của game ngoài thiết lập hệ điều hành. */
+#stage.low-fx .tx-mist,#stage.low-fx .tx-breath,#stage.low-fx .tx-wisp{display:none}
+
+/* B1: Nút trong mọi action-group được xuống dòng thay vì cắt chữ. */
+.action-group > .btn{
+  white-space:normal;text-align:center;line-height:1.25;
+  overflow-wrap:anywhere;text-overflow:clip;min-height:40px;
+}
+@media(max-width:420px){
+  .action-group > .btn{flex:1 1 130px;padding:9px 8px;font-size:14px}
+}
+
+/* B2: Các nhãn của menu dưới đủ rộng và thanh cuộn có vệt gợi ý hai mép. */
+#game[data-layout="portrait"] #menu button:not(.menu-toggle){min-width:68px;padding-left:5px;padding-right:5px}
+#game[data-layout="portrait"] #menu button > span:not(.ico){white-space:nowrap;overflow:visible;text-overflow:clip}
+#game[data-layout="portrait"][data-menu="open"] #menu{scroll-behavior:auto}
+#game[data-layout="portrait"][data-menu="open"] #menu[data-more-right="true"]:not([data-more-left="true"]){
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 32px),transparent);
+  mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 32px),transparent);
+}
+#game[data-layout="portrait"][data-menu="open"] #menu[data-more-left="true"]:not([data-more-right="true"]){
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 32px,#000 100%);
+  mask-image:linear-gradient(to right,transparent,#000 32px,#000 100%);
+}
+#game[data-layout="portrait"][data-menu="open"] #menu[data-more-left="true"][data-more-right="true"]{
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 32px),transparent);
+  mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 32px),transparent);
+}
+
+/* C6: Trạng thái tự đột phá không còn dáng của nút bấm đã bị khóa. */
+#btn-break.auto:disabled{
+  opacity:1;filter:none;cursor:default;border:0;box-shadow:none;
+  background:transparent;color:#d8c6a3;text-shadow:0 1px 3px #0008;
+}
+
+/* C7: Hiện tên trang, cho tab con cuộn ngang một hàng trên điện thoại. */
+@media(max-width:760px){
+  .win.page>header>b{display:inline-flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
+  .win.page>header>b span{display:inline;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .win.page .tabbar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;max-width:100%;scrollbar-width:thin}
+  .win.page .tabbar .tab{flex-shrink:0}
+}

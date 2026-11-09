@@ -3,7 +3,7 @@
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
   const UI = root.HU_UI;
-  const { abs, $, esc, num, money, moneyHTML, coinLabel, pct, duration, row, btn, img, codeAttr, card, empty, tabs, live } = UI.kit;
+  const { abs, $, esc, num, money, moneyHTML, coinLabel, pct, duration, row, btn, img, codeAttr, bar, card, empty, tabs, live } = UI.kit;
   const { QUESTS } = UI.data;
   const { lists } = UI;
 
@@ -90,7 +90,7 @@
   const quests = () => {
     const s = UI.s(), g = UI.g(), fragments = H.ITEMS.filter(x => x.kind === 'QITEM');
     return `<p class="screen-lead">Mỗi nhiệm vụ nhận thưởng một lần trong mỗi vòng tu hành.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
-      card(name, `${row('Tiến độ', num(Math.min(max, s.progress[id])) + ' / ' + max)}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p>${btn(s.claimed.includes(id) ? 'Đã nhận' : 'Nhận thưởng', 'claimQuest', `data-id="${id}"`, s.claimed.includes(id) || s.progress[id] < max)}`)).join('')}
+      card(name, `${row('Tiến độ', num(Math.min(max, s.progress[id])) + ' / ' + max)}${bar(Math.min(max, s.progress[id]) / max * 100, 'quest-progress')}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p>${btn(s.claimed.includes(id) ? 'Đã nhận' : s.progress[id] < max ? 'Chưa đủ tiến độ' : 'Nhận thưởng', 'claimQuest', `data-id="${id}"`, s.claimed.includes(id) || s.progress[id] < max)}`)).join('')}
       ${card('Hợp nhất đạo ấn', `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để đổi 10 Đạo vận.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}${btn('Hợp ấn', 'fragments', '', !fragments.every(x => g.count(x.code) > 0) || s.claimed.includes('fragments'))}`)}</div>`;
   };
 
@@ -136,7 +136,7 @@
     return `<p class="screen-lead">Cửa hàng có thể bán vật phẩm cao hơn cảnh giới hiện tại một bậc. Giá mua bằng 120% giá trị vật phẩm. Số dư ${moneyHTML(s.stone)}.</p>${lists.controls({ quality: true })}${lists.pager(xs.length)}
       <div class="shop-list">${lists.slice(xs).map(x => {
         const key = ['PILL', 'EQ', 'BT', 'TAL'].includes(x.kind) ? H.keyFor(x.code, v.quality) : x.code;
-        return `<article class="shop-item">${img(key)}<div><h3>${esc(x.name)}</h3><p>${x.category} · ${x.realm} · ${F.SUBPHAM[H.item(key).sub]} phẩm</p><p>${esc(x.description)}</p></div>${btn(moneyHTML(F.shop_buy_price(g.price(key))), 'buy', codeAttr(key))}</article>`;
+        return `<article class="shop-item">${img(key)}<div><h3>${esc(x.name)}</h3><p>${x.category} · ${x.realm} · ${F.SUBPHAM[H.item(key).sub]} phẩm</p><p>${esc(x.description)}</p></div>${btn('Mua · ' + moneyHTML(F.shop_buy_price(g.price(key))), 'buy', codeAttr(key))}</article>`;
       }).join('')}</div>
       ${card('Yêu đan và linh thạch', `${row('Giá trị yêu đan', moneyHTML(s.yaoValue))}${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0)}<p>Hấp thu linh thạch để đổi lấy tu vi với hiệu suất 15%; loại thấp hơn cảnh giới bị giảm hiệu quả.</p><div class="action-group coin-row">${F.COINS.map(([n, val], i) => btn('Hấp thu 1 ' + coinLabel(n), 'absorb', `data-index="${i}"`, s.stone < val, 'btn-outline')).join(' ')}</div>`)}`;
   };
