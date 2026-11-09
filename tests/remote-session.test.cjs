@@ -17,8 +17,8 @@ function fixture({ initialPlayer = false } = {}) {
   class Game { constructor(s) { this.s = s; } }
   const context = {
     URL, AbortSignal,
-    HU_GAME: { Game, create: () => ({ created: false, settings: {} }), VERSION: 8 },
-    HU_COMMANDS: { VERSION: 1, validate: c => c },
+    HU_GAME: { Game, create: () => ({ created: false, settings: {} }), VERSION: 9 },
+    HU_COMMANDS: { VERSION: 2, validate: c => c },
     HU_SUPABASE: { accessToken: async () => 'token' },
     location: { protocol: 'https:' },
     crypto: { randomUUID: () => 'request-' + (++issued) },
@@ -26,20 +26,20 @@ function fixture({ initialPlayer = false } = {}) {
       const path = url.replace('/api/v1', '');
       calls.push({ path, body: init.body ? JSON.parse(init.body) : null });
       let out;
-      if (path === '/bootstrap') out = { protocolVersion: 1, schemaVersion: 8, contentVersion: 'content', player: playerId ? { id: playerId } : null };
+      if (path === '/bootstrap') out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', player: playerId ? { id: playerId } : null };
       else if (path === '/creation/preview') out = { ticketId: 'ticket-' + ++count, preview: { age: 18, race: 'nhan', roots: [77,20,20,20,20], rootType: 'Thiên', rootSub: '' } };
       else if (path === '/players') {
-        playerId = PLAYER; out = { playerId, protocolVersion: 1, schemaVersion: 8, contentVersion: 'content', revision: 0, state };
+        playerId = PLAYER; out = { playerId, protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision: 0, state };
       } else if (path.endsWith('/sync')) {
-        out = { protocolVersion: 1, schemaVersion: 8, contentVersion: 'content', revision, state, report: null };
+        out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state, report: null };
       } else if (path.endsWith('/commands')) {
         const body = JSON.parse(init.body);
-        assert.equal(body.protocolVersion, 1);
+        assert.equal(body.protocolVersion, 2);
         assert.equal(body.expectedRevision, revision);
         assert.equal(body.requestId, 'request-' + issued);
         revision++; applied++; state = { ...state, qi: state.qi + 3 };
-        out = { protocolVersion: 1, schemaVersion: 8, contentVersion: 'content', revision, state, result: 3 };
-      } else if (path.endsWith('/state')) out = { protocolVersion: 1, schemaVersion: 8, contentVersion: 'content', revision, state };
+        out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state, result: 3 };
+      } else if (path.endsWith('/state')) out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state };
       else throw Error('Unexpected API ' + path);
       return { ok: true, status: 200, json: async () => out };
     }
@@ -55,10 +55,10 @@ test('RemoteSession requires Supabase, server preview and creates player from ti
   assert.equal(await f.session.connect(ACCOUNT), null);
   assert.equal(f.session.ready, false);
   assert.equal(f.session.ticket.ticketId, 'ticket-1');
-  await f.session.create({ name: 'Vân Tiêu', gender: 'nam', talent: { canCot: 2 } });
+  await f.session.create({ name: 'Vân Tiêu', gender: 'nam', talent: { canCot: 2 }, destiny: 'exp' });
   assert.equal(f.session.ready, true);
   assert.equal(f.session.playerId, PLAYER);
-  assert.deepEqual(Object.keys(f.calls.find(x => x.path === '/players').body).sort(), ['gender','name','talent','ticketId']);
+  assert.deepEqual(Object.keys(f.calls.find(x => x.path === '/players').body).sort(), ['destiny','gender','name','talent','ticketId']);
   assert.equal(f.session.game.s.qi, 10);
 });
 
