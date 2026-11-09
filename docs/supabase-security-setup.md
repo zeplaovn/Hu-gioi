@@ -46,3 +46,7 @@ Cần hoàn tất hồ sơ xử lý dữ liệu cá nhân (bao gồm đánh giá
 ## Phiên bản đồng ý online
 
 Bản `2026-11-09` cũ được giữ trong bảng để làm lịch sử, nhưng **không mở khóa gameplay online**. Kể từ bản game online-only, `server/auth/consent.js` yêu cầu đủ hai bản ghi `2026-11-09-v2`. Migration `allow_online_only_policy_consent_v2` chỉ mở rộng CHECK cho hai phiên bản mà không xóa bản cũ. Nội dung chính sách `client/legal/privacy.html` và `client/legal/release.html` đã cập nhật công bố xử lý SQLite. `auth/supabase.js` yêu cầu người dùng đồng ý lại; không tự tạo bản ghi đồng ý từ thông tin cũ.
+
+## Giao thức tử vong V9 / chính sách v3
+
+Migration `allow_v3_permadeath_policy_consent` mở rộng constraint để giữ nguyên chấp thuận v1/v2 và ghi nhận `2026-11-09-v3`. Chính sách v3 công bố tọa hóa vĩnh viễn và tiến trình offline đóng băng. Frontend và API yêu cầu đủ hai bản v3; không suy diễn đồng ý mới từ bản cũ. Email hỗ trợ và yêu cầu dữ liệu: `zeplaovn@proton.me`.
