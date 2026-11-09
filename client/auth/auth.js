@@ -155,7 +155,9 @@
     present();
     if (root.location.protocol === 'file:' || typeof root.fetch !== 'function' || !SB) return;
     SB.user().then(next => {
-      if (!account && !pending && !$('authGate').hidden && next) return finish(next);
+      if (account || pending || $('authGate').hidden) return;
+      if (next) return finish(next);
+      if (root.HU_SUPABASE_EMAIL_CONFIRMED) notice('Email đã được xác nhận. Hãy đăng nhập để tiếp tục.', true);
     }).catch(() => { /* Trang tĩnh vẫn hỗ trợ chơi không tài khoản */ });
   }
   root.HU_AUTH = { boot, logout, get account() { return account; } };
