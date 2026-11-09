@@ -3,12 +3,11 @@
 (function (root) {
   'use strict';
   const domain = 'progression';
-  const commands = Object.freeze(['absorb', 'upgrade', 'upgradeOffline', 'buyMeta', 'breakthrough', 'prestige', 'reincarnate', 'setAuto']);
+  const commands = Object.freeze(['absorb', 'upgrade', 'breakthrough', 'setAuto']);
 
   function install(API) {
-    const H = API, F = H.F, { item, raceBonus, META_UPGRADES, META_ACHIEVEMENTS, metaDefault, normalizeMeta, create, startStone, CHAOS } = H;
+    const H = API, F = H.F, { item, raceBonus, META_ACHIEVEMENTS, metaDefault, CHAOS } = H;
     const at = (game, now) => Number.isFinite(now) ? now : game.s.lastUpdate;
-    const clone = value => JSON.parse(JSON.stringify(value));
 
     Object.assign(H.Game.prototype, {
       need() { return F.exp_need(this.s.realm, this.s.stage - 1); },
@@ -135,17 +134,17 @@
       breakthrough(payload, now) {
         now = at(this, now);
         const s = this.s;
-        if (s.completed) throw Error('Đạo Tổ đã chứng đạo. Có thể trọng sinh.');
+        if (s.completed) throw Error('Đạo Tổ đã chứng đạo; hành trình đã viên mãn.');
         if (s.qi + this.need() * 1e-12 < this.need()) throw Error('Tu vi chưa đầy.');
         if (!this.isPeakStage()) { this.autoStage(); return { success: true, chance: 1, events: [], auto: true }; }
         const chance = this.chance(), events = this.tribulation();
         const success = this.rng() < chance && events.every(x => x.success);
         s.breakBonus = 0; s.shield = 0; s.reduction = 0;
         if (!success) {
-          s.qi = F.on_breakthrough_fail(s.qi);
-          s.pity = Math.min(15, s.pity + 1);
-          this.log('Đột phá thất bại: hao tổn 15% tu vi, kiếp vận tích thêm một bậc.');
-          return { success, chance, events };
+          s.pity = 0;
+          s.death = { cause: 'tribulation', at: now };
+          this.log('Độ kiếp thất bại. Đạo thân tọa hóa; toàn bộ tiến trình kiếp này chấm dứt.');
+          return { success: false, died: true, chance, events };
         }
         s.qi = 0; s.pity = 0; s.pillUses = 0; s.progress.breaks++;
         if (s.stage < F.STAGES[s.realm]) s.stage++;
@@ -188,31 +187,6 @@
         this.s.tech[i] += n;
         return n;
       },
-      upgradeOffline(payload, now) {
-        const s = this.s, key = payload.type === 'cap' ? 'offlineCap' : 'offlineEff';
-        if (s[key] >= 8) throw Error('Đã nâng cấp tối đa.');
-        const cost = 2 + s[key];
-        if (s.daoVan < cost) throw Error('Không đủ Đạo vận.');
-        s.daoVan -= cost; s[key]++;
-        return s[key];
-      },
-      metaCost(key) {
-        const u = META_UPGRADES[key];
-        if (!u) throw Error('Nâng cấp Thiên mệnh không hợp lệ.');
-        const lvl = this.s.meta.upgrades[key] || 0;
-        return lvl >= u.max ? null : u.cost[lvl];
-      },
-      buyMeta(payload, now) {
-        const key = payload.key, s = this.s, u = META_UPGRADES[key];
-        if (!u) throw Error('Nâng cấp Thiên mệnh không hợp lệ.');
-        const lvl = s.meta.upgrades[key] || 0;
-        if (lvl >= u.max) throw Error('Đã đạt cấp tối đa.');
-        const cost = u.cost[lvl];
-        if (s.meta.points < cost) throw Error('Không đủ điểm Thiên mệnh.');
-        s.meta.points -= cost; s.meta.upgrades[key] = lvl + 1;
-        this.log('Thiên mệnh · ' + u.name + ' tăng lên bậc ' + (lvl + 1) + '.');
-        return { key, level: lvl + 1, cost };
-      },
       checkMeta(now = this.s.lastUpdate) {
         const s = this.s;
         if (!s.meta) s.meta = metaDefault();
@@ -220,50 +194,23 @@
         for (const a of META_ACHIEVEMENTS) {
           if (!s.meta.achievements[a.id] && a.check(s)) {
             s.meta.achievements[a.id] = now;
-            s.meta.points += a.points;
-            s.meta.totalPoints += a.points;
             out.push(a);
           }
         }
         return out;
       },
-      _prestige(force, cause, now) {
-        const s = this.s, reward = F.dao_van(s.totalRunExp);
-        if (!force && reward < 10) throw Error('Trọng sinh mở khi nhận ít nhất 10 Đạo vận.');
-        const kept = s.qi * s.rebirthKeep, next = create(now);
-        for (const k of ['name', 'gender', 'race', 'roots', 'rootType', 'rootSub', 'chaosTries', 'settings', 'learned', 'offlineCap', 'offlineEff', 'createdAt', 'talent', 'social', 'npcAffinities', 'npcQuests', 'story'])
-          next[k] = clone(s[k]);
-        for (const q of Object.values(next.npcQuests)) q.base = null; // bộ đếm hạ yêu thú đã đặt lại, việc đang nhận phải nhận lại
-        const meta = normalizeMeta(clone(s.meta || metaDefault()), now);
-        const earned = Math.max(1, Math.floor(reward / 5)) + Math.floor(s.realm / 2);
-        meta.points += earned; meta.totalPoints += earned;
-        meta.history.unshift({ name: s.name, realm: s.realm, stage: s.stage, rebirths: s.rebirths, daoVan: s.daoVan + reward, at: now, cause: cause || (s.completed ? 'Chứng đạo' : 'Trọng sinh') });
-        meta.history = meta.history.slice(0, 20);
-        next.meta = meta;
-        next.activeManuals = s.activeManuals.filter(k => item(k).tier <= 1);
-        next.created = true;
-        next.daoVan = s.daoVan + reward;
-        next.rebirths = s.rebirths + 1;
-        next.qi = Math.min(F.exp_need(0, 0), kept);
-        next.totalRunExp = 0;
-        next.stone = startStone(next.talent, meta);
-        next.extraLife = (meta.upgrades.life || 0) * 5;
-        next.logs = ['Trọng sinh, nhận ' + F.fmt(reward) + ' Đạo vận · +' + earned + ' Thiên mệnh.'];
-        this.s = next; this._lifeWarn = {};
-        return reward;
-      },
-      prestige(payload, now) { return this._prestige(false, '', at(this, now)); },
-      reincarnate(payload, now) {
-        if (!this.isDead()) throw Error('Thọ nguyên chưa cạn.');
-        return this._prestige(true, 'Tọa hóa', at(this, now));
-      },
       maxLife() { return H.raceLife(this.s.race, this.s.realm) + this.s.extraLife; },
-      isDead() { return !this.s.completed && this.s.age >= this.maxLife(); },
+      isDead() { return !!this.s.death || (!this.s.completed && this.s.age >= this.maxLife()); },
+      markDeath(cause, now = this.s.lastUpdate) {
+        if (!['tribulation', 'pvp', 'combat', 'lifespan'].includes(cause)) throw Error('Nguyên nhân tọa hóa không hợp lệ.');
+        if (!this.s.death) this.s.death = { cause, at: now };
+        this.s.hp = Math.max(0, this.s.hp);
+        return this.s.death;
+      },
       lifeInfo() {
         const s = this.s, max = this.maxLife(), pace = F.aging_speed(s.realm);
         const left = Math.max(0, max - s.age), sec = pace > 0 ? left / pace : Infinity;
-        /* seconds: thời gian thực còn lại đến khi tọa hóa nếu cứ tu luyện liên tục; safeSeconds chỉ khác Infinity trong trần offline. */
-        return { max, left, pace, seconds: s.completed ? Infinity : Math.floor(sec), safeSeconds: s.completed || sec > F.offline_cap(s.offlineCap) ? Infinity : Math.floor(sec) };
+        return { max, left, pace, seconds: s.completed ? Infinity : Math.floor(sec), safeSeconds: Infinity };
       },
       warnLife(max) {
         const left = Math.floor(max - this.s.age), w = this._lifeWarn || (this._lifeWarn = {});
@@ -271,7 +218,7 @@
           if (left > th) continue;
           if (!w[th]) {
             for (const u of [1, 3, 10]) if (u >= th) w[u] = 1;
-            this.log('⚠ Thọ nguyên chỉ còn ' + Math.max(0, left) + ' năm! Hãy đột phá đại cảnh giới để nới thọ nguyên, hoặc dùng Thọ Nguyên Đan nếu đã có. Nếu tọa hóa, trọng sinh vẫn giữ Thiên mệnh.');
+            this.log('⚠ Thọ nguyên chỉ còn ' + Math.max(0, left) + ' năm! Hãy đột phá đại cảnh giới để nới thọ nguyên, hoặc dùng Thọ Nguyên Đan nếu đã có. Nếu tọa hóa, toàn bộ hành trình kiếp này bị xóa.');
           }
           break;
         }
