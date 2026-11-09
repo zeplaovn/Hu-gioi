@@ -162,77 +162,77 @@
     }
   });
 
-  UI.action('buy', (el, d) => {
-    UI.command('buy', { code: d.code });
+  UI.action('buy', async (el, d) => {
+    await UI.command('buy', { code: d.code });
     UI.toast('Đã mua ' + H.item(d.code).name + '.', { type: 'loot', title: 'Cửa hàng' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('npcGift', (el, d) => {
-    const result=UI.command('npcGift',{id:d.id,code:d.code});
+  UI.action('npcGift', async (el, d) => {
+    const result=await UI.command('npcGift',{id:d.id,code:d.code});
     UI.toast('Thiện cảm '+(result.change>=0?'+':'')+result.change+' · '+result.affinity+'/100.',{type:'success',title:'Tặng lễ'});
   });
-  UI.action('npcOffer', (el, d) => {
-    const result=UI.command('npcOffer',{id:d.id});
+  UI.action('npcOffer', async (el, d) => {
+    const result=await UI.command('npcOffer',{id:d.id});
     UI.toast((result.role==='bán đồ'?'Đã mua ':'Đã lĩnh ngộ ')+H.item(result.code).name+'.',{type:'success',title:'Gặp gỡ'});
   });
-  UI.action('npcQuest', (el, d) => {
-    const r = UI.command('npcQuest', { id: d.id });
+  UI.action('npcQuest', async (el, d) => {
+    const r = await UI.command('npcQuest', { id: d.id });
     if (r.accepted) UI.toast('Đã nhận ủy thác: ' + r.name + '. Hạ yêu thú ở Lịch luyện để hoàn thành.', { type: 'info', title: 'Ủy thác kỳ nhân' });
     else {
       UI.toast(r.text, { type: 'loot', title: r.finished ? 'Hoàn tất chuỗi nhiệm vụ' : 'Nhiệm vụ NPC' });
       UI.vfx?.stage({ kind: 'chien_dau', variant: r.finished ? 'phi_thang' : 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
     }
   });
-  UI.action('bid', (el, d) => {
-    UI.command('bid', { code: d.code });
+  UI.action('bid', async (el, d) => {
+    await UI.command('bid', { code: d.code });
     UI.toast('Đã đặt giá ' + H.item(d.code).name + '.', { type: 'gold', title: 'Đấu giá' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('joinSect', (el, d) => {
-    UI.command('joinSect', { id: d.id || 'thanhvan' });
+  UI.action('joinSect', async (el, d) => {
+    await UI.command('joinSect', { id: d.id || 'thanhvan' });
     UI.toast('Đã gia nhập ' + UI.g().sectDefinition().name + ' · mở nguồn linh thạch định kỳ.', { type: 'success', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('sectMissionStart', (el, d) => {
-    const m = UI.command('startSectMission', { id: d.id });
+  UI.action('sectMissionStart', async (el, d) => {
+    const m = await UI.command('startSectMission', { id: d.id });
     const def = H.SECT_MISSIONS.find(x => x.id === m.id);
     UI.toast('Nhận nhiệm vụ · ' + def.name + ' · ' + duration(def.seconds) + '.', { type: 'info', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('sectMissionClaim', () => {
-    const r = UI.command('claimSectMission');
+  UI.action('sectMissionClaim', async () => {
+    const r = await UI.command('claimSectMission');
     UI.toast(r.text, { type: r.success ? 'loot' : 'danger', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('blessing', () => {
+  UI.action('blessing', async () => {
     const s = UI.s();
-    UI.command('setBlessing', { enabled: !s.sect.blessing });
+    await UI.command('setBlessing', { enabled: !s.sect.blessing });
     UI.toast(s.sect.blessing ? 'Chúc phúc đã bật · tốc độ hấp thụ linh khí +10%.' : 'Chúc phúc đã tắt.', { type: s.sect.blessing ? 'success' : 'info', title: 'Tông môn' });
     if (s.sect.blessing) UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('donate', () => {
+  UI.action('donate', async () => {
     const s = UI.s();
-    UI.command('donateSect');
+    await UI.command('donateSect');
     UI.toast('Cống hiến +100 · tổng ' + num(s.sect.contribution) + '.', { type: 'loot', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('sectExchange', () => {
-    const p = UI.command('buySect', { id: 'break' });
+  UI.action('sectExchange', async () => {
+    const p = await UI.command('buySect', { id: 'break' });
     UI.toast('Đổi ' + p.cost + ' cống hiến · nhận ' + p.name + '.', { type: 'loot', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('claimQuest', (el, d) => {
-    const q = UI.command('claimQuest', { id: d.id });
+  UI.action('claimQuest', async (el, d) => {
+    const q = await UI.command('claimQuest', { id: d.id });
     UI.toast('Đã nhận thưởng ' + q[1] + ' · ' + money(q[3]) + ' và ' + H.item(q[4]).name + ' ×' + q[5] + '.', { type: 'success', title: 'Nhiệm vụ' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
-  UI.action('fragments', () => {
-    UI.command('claimFragments');
+  UI.action('fragments', async () => {
+    await UI.command('claimFragments');
     UI.toast('Hợp nhất đạo ấn · +10 Đạo vận.', { type: 'gold', title: 'Đạo ấn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(120px,19vw,200px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
   });
-  UI.action('encounter', (el, d) => {
-    const { item: x, part } = UI.command('manualEncounter', { index: Number(d.index) });
+  UI.action('encounter', async (el, d) => {
+    const { item: x, part } = await UI.command('manualEncounter', { index: Number(d.index) });
     if (x) {
       UI.toast('Cơ duyên · nhận ' + x.name + '.', { type: 'gold', title: 'Kỳ ngộ' });
     }
