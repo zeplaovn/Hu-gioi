@@ -174,6 +174,30 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
+  /* Quyền truy cập/sao chép dữ liệu: chỉ dữ liệu của chính chủ, không bao giờ gồm rng_seed. */
+  exportOwnerData(ownerId) {
+    const row = this.q.byOwner.get(ownerId);
+    const tickets = Number(this.q.ticketCount.get(ownerId, 0).n);
+    if (!row && !tickets) return null;
+    return {
+      player: row ? { id: row.id, name: row.name, revision: row.revision, schemaVersion: row.schema_version,
+        state: JSON.parse(row.state), lastSeenAt: row.last_seen_at, createdAt: row.created_at, updatedAt: row.updated_at } : null,
+      tickets
+    };
+  }
+
+  /* Quyền xóa dữ liệu: xóa nhân vật (kèm receipt qua ON DELETE CASCADE) và mọi phiếu khởi nguyên của tài khoản. */
+  deleteOwnerData(ownerId) {
+    return this.run(() => {
+      const row = this.q.byOwner.get(ownerId);
+      let receipts = 0;
+      if (row) receipts = Number(this.db.prepare('SELECT COUNT(*) AS n FROM player_receipts WHERE player_id = ?').get(row.id).n);
+      const players = Number(this.db.prepare('DELETE FROM players WHERE owner_id = ?').run(ownerId).changes);
+      const tickets = Number(this.db.prepare('DELETE FROM creation_tickets WHERE owner_id = ?').run(ownerId).changes);
+      return { players, tickets, receipts };
+    });
+  }
+
   purgeExpired(now) {
     return this.run(() => ({
       receipts: Number(this.q.purgeReceipts.run(now).changes),

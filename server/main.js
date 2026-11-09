@@ -4,6 +4,7 @@
      SUPABASE_URL           URL project Supabase (suy ra issuer + JWKS để xác minh JWT)
      SUPABASE_JWT_SECRET    (tùy chọn) secret HS256 cho project chưa dùng khóa bất đối xứng
      SUPABASE_PUBLISHABLE_KEY  key public của project để xác minh chấp thuận RLS
+     SUPABASE_SERVICE_ROLE_KEY  (tùy chọn, chỉ ở máy chủ) bật POST /api/v1/me/delete-account xóa cả tài khoản Supabase
      HU_LEGACY_AUTH=1       bật AuthService cookie thử nghiệm thay cho Supabase (chỉ dev/test)
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
@@ -25,6 +26,7 @@ function buildGameApi(env = process.env) {
   const { createSupabaseLoginGateway } = require('./http/supabase-login.js');
   const { computeContentVersion } = require('./content-version.js');
   const { AuthService } = require('./services/auth-service.js');
+  const { createAccountAdmin } = require('./auth/account-admin.js');
 
   if (env.HU_LEGACY_AUTH === '1' && env.NODE_ENV === 'production')
     throw Error('Không bật HU_LEGACY_AUTH trong production.');
@@ -54,8 +56,10 @@ function buildGameApi(env = process.env) {
     url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY,
     trustedProxyIps: String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(x => x.trim()).filter(Boolean)
   }) : null;
+  const accountAdmin = jwt && env.SUPABASE_SERVICE_ROLE_KEY
+    ? createAccountAdmin({ url: env.SUPABASE_URL, secretKey: env.SUPABASE_SERVICE_ROLE_KEY }) : null;
   const gameApi = createGameApi({
-    service, resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
+    service, accountAdmin, resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
     log: err => console.error('[game-api]', err.cause?.stack || err.stack || err)
   });
   return { auth: legacy, gameApi, loginGateway, close() { clearInterval(purge); repository.close(); } };
@@ -64,6 +68,7 @@ function buildGameApi(env = process.env) {
 if (require.main === module) {
   const host = process.env.HOST || '127.0.0.1';
   const port = Number(process.env.PORT || 8000);
+  process.on('unhandledRejection', err => console.error('[unhandledRejection]', err?.stack || err));
   const { auth, gameApi, loginGateway, close } = buildGameApi();
   const server = http.createServer(createRouter(null, auth, gameApi, loginGateway));
   server.listen(port, host, () => console.log(`Hư Giới tại http://${host}:${port} · gameplay ${gameApi ? 'BẬT' : 'tắt (chưa cấu hình xác thực)'}`));

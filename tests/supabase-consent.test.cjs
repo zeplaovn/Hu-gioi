@@ -24,7 +24,7 @@ function createAdapter(initialHash = '') {
     history: { replaceState(_a, _b, path) { location.hash = ''; location.changedTo = path; } },
     fetch: async (input, init) => {
       requests.push({ input, init });
-      const url = new URL(input);
+      const url = new URL(input, location.origin);
       const route = url.pathname;
       let status = 200, result;
       if (route.endsWith('/auth/v1/signup')) result = { user: USER };
@@ -37,7 +37,7 @@ function createAdapter(initialHash = '') {
         if (init.method === 'POST') { records.push(JSON.parse(init.body)); result = null; status = 201; }
         else result = records.map(x => ({ policy_kind: x.policy_kind, policy_version: x.policy_version }));
       } else { status = 404; result = { message: route }; }
-      return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '' };
+      return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '', json: async () => result };
     }
   };
   vm.runInNewContext(src, { window, globalThis: window, URLSearchParams, Date, URL, Set, Error });
@@ -67,7 +67,7 @@ test('after login consent is individually recorded and scoped to user', async ()
   await sb.accept(user);
   assert.equal(records.length, 2);
   assert.deepEqual(records.map(x => x.policy_kind).sort(), ['privacy', 'release_terms']);
-  assert.ok(records.every(x => x.user_id === ID && x.policy_version === '2026-11-09-v4'));
+  assert.ok(records.every(x => x.user_id === ID && x.policy_version === '2026-11-10-v5'));
   assert.ok(requests.filter(x => x.input.includes('policy_acceptances')).every(x => x.init.headers.Authorization === 'Bearer access'));
   assert.equal((await sb.accepted()).size, 2);
   await sb.accept(user);

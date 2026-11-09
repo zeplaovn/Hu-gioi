@@ -5,6 +5,11 @@
      GET  /api/v1/players/{id}/state
      POST /api/v1/players/{id}/sync
      POST /api/v1/players/{id}/commands
+     GET  /api/v1/me/export        (quyền truy cập dữ liệu gameplay của chính tài khoản)
+     POST /api/v1/me/erase         (quyền xóa dữ liệu gameplay; body { confirm: 'delete-my-game-data' })
+     POST /api/v1/me/delete-account (xóa dữ liệu gameplay + tài khoản Supabase; body { confirm: 'delete-my-account' };
+                                    cần SUPABASE_SERVICE_ROLE_KEY ở máy chủ, nếu không trả NOT_IMPLEMENTED)
+   Ba API /me/* không đòi hỏi bản đồng ý chính sách còn hiệu lực: quyền dữ liệu cá nhân không được phụ thuộc đồng ý.
    Xác thực qua Bearer JWT hoặc cookie (xem server/auth/principal.js). Lỗi theo envelope { error: { code, message, requestId, retryable } }. */
 'use strict';
 const crypto = require('node:crypto');
@@ -15,7 +20,9 @@ const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|pause|reset-after-death)$`, 'i');
 
-function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
+const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
+
+function createGameApi({ service, accountAdmin = null, resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
   const allowed = new Set(allowedOrigins);
 
   function cors(req, res) {
@@ -68,7 +75,7 @@ function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter
       if (req.method === 'OPTIONS') { res.writeHead(204, { 'X-Request-Id': requestId }).end(); return true; }
       const route = matchRoute(req.method, pathname);
       if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
-      const principal = await resolvePrincipal(req);
+      const principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
       if (!principal) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
       const who = principal.accountId, body = await readBody(req);
       let out, status = 200;
@@ -80,9 +87,12 @@ function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter
         case 'sync': limit('sync:' + who, LIMITS.sync); out = service.sync(who, route.id, body); break;
         case 'pause': limit('sync:' + who, LIMITS.sync); out = service.pause(who, route.id); break;
         case 'commands': limit('cmd:' + who, LIMITS.command); out = service.command(who, route.id, body); break;
+        case 'exportData': limit('export:' + who, LIMITS.export); out = service.exportData(who); break;
+        case 'eraseData': limit('erase:' + who, LIMITS.erase); out = service.eraseData(who, body); break;
+        case 'deleteAccount': limit('erase:' + who, LIMITS.erase); out = await service.deleteAccount(who, body, accountAdmin); break;
         case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = service.resetAfterDeath(who, route.id); break;
       }
-      send(res, status, out, requestId);
+      send(res, status, out, requestId, route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
     } catch (err) {
       const { status, body } = toEnvelope(err, requestId);
       if (body.error.code === 'INTERNAL') log(err);
@@ -96,6 +106,9 @@ function createGameApi({ service, resolvePrincipal, allowedOrigins = [], limiter
     if (method === 'GET' && pathname === '/api/v1/bootstrap') return { name: 'bootstrap' };
     if (method === 'POST' && pathname === '/api/v1/creation/preview') return { name: 'preview' };
     if (method === 'POST' && pathname === '/api/v1/players') return { name: 'create' };
+    if (method === 'GET' && pathname === '/api/v1/me/export') return { name: 'exportData' };
+    if (method === 'POST' && pathname === '/api/v1/me/erase') return { name: 'eraseData' };
+    if (method === 'POST' && pathname === '/api/v1/me/delete-account') return { name: 'deleteAccount' };
     const m = PLAYER_ROUTE.exec(pathname);
     if (m) {
       const expected = m[2] === 'state' ? 'GET' : 'POST';

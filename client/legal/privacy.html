@@ -1,35 +1,47 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="referrer" content="no-referrer"><title>Quyền riêng tư · Hư Giới</title><link rel="stylesheet" href="../../css/legal.css"></head>
+<meta name="referrer" content="no-referrer"><title>Chính sách quyền riêng tư · Hư Giới</title><link rel="stylesheet" href="../../css/legal.css"></head>
 <body><main>
-<nav><a href="../../index.html">Trở về Hư Giới</a><a href="release.html">Điều khoản & chính sách phát hành</a></nav>
-<h1>Chính sách bảo vệ dữ liệu cá nhân</h1>
-<p><strong>Phiên bản online: 09/11/2026-v4.</strong> Áp dụng cho bản thử nghiệm trực tuyến Hư Giới, tài khoản Supabase và dữ liệu nhân vật trên máy chủ. Phiên bản này yêu cầu xác nhận lại ngay cả khi đã đồng ý bản 09/11/2026.</p>
-<p class="notice"><strong>Lưu ý trước khi phát hành chính thức:</strong> Kênh liên hệ dữ liệu cá nhân đã công bố bên dưới. Danh tính pháp lý và địa chỉ của đơn vị vận hành chưa được xác nhận; văn bản vẫn là bản dự thảo thử nghiệm, không thay thế hồ sơ tuân thủ pháp luật.</p>
-<h2>1. Chủ thể chịu trách nhiệm</h2>
-<p>Đơn vị phát hành được khai báo: <strong>RedEye Studio</strong> (tên pháp lý, địa chỉ và tư cách chịu trách nhiệm xử lý dữ liệu vẫn cần xác minh trước khi phát hành). Kênh liên hệ hỗ trợ và tiếp nhận yêu cầu truy cập, chỉnh sửa, rút đồng ý hoặc xóa dữ liệu: <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a>. Dịch vụ xác thực và lưu trữ được cung cấp bởi Supabase, với vùng dự án tại Singapore.</p>
-<h2>2. Dữ liệu được xử lý và mục đích</h2>
+<nav><a href="../../index.html">Trở về Hư Giới</a><a href="release.html">Điều khoản sử dụng</a></nav>
+<h1>Chính sách quyền riêng tư</h1>
+<p><strong>Phiên bản 10/11/2026-v5.</strong> Chính sách này giải thích Hư Giới thu thập, sử dụng và bảo vệ dữ liệu của bạn như thế nào, theo Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định 356/2025/NĐ-CP.</p>
+<h2>1. Ai chịu trách nhiệm</h2>
+<p>Hư Giới là dự án phi lợi nhuận của <strong>RedEye Studio</strong>, đóng vai trò bên kiểm soát và xử lý dữ liệu cá nhân của người chơi. Liên hệ về dữ liệu cá nhân: <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a>.</p>
+<h2>2. Dữ liệu chúng tôi xử lý và mục đích</h2>
 <ul>
-<li><strong>Tài khoản:</strong> email, định danh tài khoản, thông tin xác thực do Supabase Auth quản lý, thời điểm đăng nhập và thông tin kỹ thuật cần thiết để chống lạm dụng. Mục đích: đăng ký, xác minh email, đăng nhập và bảo vệ tài khoản.</li>
-<li><strong>Kiểm soát đăng ký và đăng nhập:</strong> email cần đúng định dạng và phải xác minh quyền truy cập hộp thư bằng quy trình xác nhận email của Supabase; định dạng hợp lệ không tự chứng minh hộp thư có tồn tại. Để chống thử mật khẩu hàng loạt, máy chủ Node giới hạn tối đa 10 yêu cầu đăng nhập từ cùng một địa chỉ IP trong 15 phút; quá hạn trả lỗi 429 và thời gian chờ. Các lượt thử được đếm không phân biệt thành công/thất bại. Đây là giới hạn tại gateway Node một máy chủ, không phải cam kết mọi đường truy cập trực tiếp vào Supabase đều chịu cùng giới hạn; cần áp dụng thêm quy tắc của nhà cung cấp và lớp bảo vệ biên khi triển khai công khai.</li>
-<li><strong>IP và dữ liệu bảo vệ đăng nhập:</strong> địa chỉ IP kết nối, số lượt thử và thời điểm hết cửa sổ giới hạn được giữ tạm trong bộ nhớ dịch vụ Node để chống lạm dụng, không đưa IP vào bảng chấp thuận chính sách và không dùng cho quảng cáo. Bộ đếm tự hết hiệu lực sau 15 phút; log mạng của nhà cung cấp có thể lưu theo quy trình riêng.</li>
-<li><strong>Ghi nhận chấp thuận:</strong> định danh tài khoản, loại và phiên bản chính sách, thời điểm cơ sở dữ liệu ghi nhận. Mục đích: chứng minh nội dung chấp thuận và thực thi quyền của người dùng. Không chủ động ghi IP hoặc user-agent vào bảng chấp thuận.</li>
-<li><strong>Dữ liệu gameplay online:</strong> Hư Giới yêu cầu đăng nhập để chơi. Backend Node lưu định danh tài khoản, đạo hiệu, thông tin nhân vật, tiến trình tu luyện, tài nguyên, thiết lập, dấu vết lệnh (request ID/receipt), thời gian và phiên bản cập nhật trong SQLite trên máy chủ vận hành. RNG và khóa bí mật do server giữ. Trình duyệt chỉ hiển thị snapshot trong bộ nhớ và không tự lưu bản nhân vật mới vào localStorage. Dữ liệu lưu cục bộ từ phiên bản cũ (nếu có) không tự nhập lên máy chủ.</li>
-<li><strong>Giới hạn xóa dữ liệu:</strong> SQLite là kho dữ liệu tách khỏi Supabase Auth. Xóa tài khoản Supabase hiện không tự động xóa nhân vật SQLite; chức năng rút đồng ý/xóa dữ liệu từ xa theo yêu cầu chưa hoàn thiện, nên dịch vụ chưa đủ điều kiện phát hành đại trà. Đơn vị vận hành phải xây dựng quy trình truy cập và xóa đúng hạn luật định.</li>
+<li><strong>Tài khoản:</strong> email, mã tài khoản và thông tin xác thực do Supabase Auth quản lý. Mục đích: đăng ký, xác minh email, đăng nhập, bảo vệ tài khoản. Chúng tôi không thấy hay lưu mật khẩu của bạn.</li>
+<li><strong>Dữ liệu trò chơi:</strong> đạo hiệu, giới tính, thông tin và tiến trình nhân vật, tài nguyên, cài đặt, mã yêu cầu (request ID) và mốc thời gian hoạt động gần nhất. Mục đích: vận hành trò chơi, lưu tiến trình, chống gian lận và trùng lặp thao tác. Lưu trên cơ sở dữ liệu của máy chủ game.</li>
+<li><strong>Bản ghi chấp thuận:</strong> mã tài khoản, loại và phiên bản chính sách bạn đã đồng ý, thời điểm ghi nhận. Mục đích: chứng minh sự đồng ý của bạn.</li>
+<li><strong>Dữ liệu kỹ thuật chống lạm dụng:</strong> địa chỉ IP và số lần thử đăng nhập được giữ tạm trong bộ nhớ máy chủ (tối đa 15 phút) để giới hạn thử mật khẩu hàng loạt; không lưu vào cơ sở dữ liệu game. Nhà cung cấp hạ tầng có thể ghi nhật ký mạng theo quy trình riêng của họ.</li>
+<li><strong>Trên trình duyệt:</strong> phiên đăng nhập được giữ trong sessionStorage và biến mất khi đóng tab/đăng xuất; một số tùy chọn hiển thị (âm thanh, giao diện) có thể lưu cục bộ. Nhân vật không được lưu ở trình duyệt.</li>
 </ul>
-<p>Hư Giới hiện không sử dụng dữ liệu tài khoản để quảng cáo hoặc bán dữ liệu cá nhân. Nếu sau này có hoạt động tiếp thị hay mục đích xử lý mới, phải thông báo và xin chấp thuận riêng khi pháp luật yêu cầu.</p>
-<p><strong>Tiến trình khi offline:</strong> khi đóng/ẩn tab hoặc máy chủ xác nhận mất kết nối, tuổi tác, tu vi, sản xuất, lịch luyện và các bộ đếm chờ dừng cho đến khi chơi online trở lại. Khi nhân vật tọa hóa do độ kiếp thất bại, thua luận kiếm, sinh lực về 0 hoặc hết thọ nguyên, người chơi có thể xóa bản nhân vật trên máy chủ để tạo nhân vật mới. Dữ liệu tài khoản và bản ghi chấp thuận được xử lý riêng; tọa hóa không đồng nghĩa với xóa tài khoản.</p>
-<h2>3. Căn cứ xử lý và quyền lựa chọn</h2>
-<p>Hai checkbox ở màn đăng ký đều được để trống mặc định. Người dùng cần xác nhận riêng trước khi tạo tài khoản. Không chấp thuận các chính sách hoặc không đăng nhập sẽ không thể sử dụng gameplay online. Không có chế độ chơi khách offline trong giao diện mới. Sau khi đăng nhập, hệ thống yêu cầu ghi nhận chấp thuận phiên bản hiện hành trước khi truy cập game dưới tài khoản.</p>
-<p>Người dùng có thể yêu cầu biết, truy cập, chỉnh sửa, cung cấp, hạn chế xử lý, phản đối, rút lại đồng ý hoặc xóa dữ liệu theo Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15. Việc rút đồng ý đối với xử lý cần thiết cho tài khoản có thể khiến dịch vụ tài khoản không tiếp tục được cung cấp. Đề nghị phải được xác minh danh tính và giải quyết theo thời hạn luật định.</p>
-<h2>4. Lưu trữ, bảo mật và chuyển dữ liệu</h2>
-<p>Thông tin xác thực và bản ghi chính sách nằm trên dự án Supabase vùng Singapore. Vì vậy có yếu tố xử lý/lưu trữ dữ liệu ngoài lãnh thổ Việt Nam; đơn vị vận hành cần đánh giá và thực hiện nghĩa vụ về chuyển dữ liệu cá nhân xuyên biên giới trước khi đưa dịch vụ vào hoạt động chính thức. Supabase Auth chịu trách nhiệm quản lý mật khẩu; ứng dụng không lưu mật khẩu trong localStorage.</p>
-<p>Phiên trình duyệt được lưu tạm trong sessionStorage. Gateway đăng nhập không lưu mật khẩu hoặc token dưới dạng nhật ký; mã truy cập và làm mới được trả qua HTTPS tới trình duyệt sau xác thực. JavaScript của cùng website có thể truy cập sessionStorage; thiết bị dùng chung cần đăng xuất khi kết thúc. Hệ thống dùng HTTPS và Row Level Security để hạn chế truy cập trái phép ở mức ứng dụng. Không thể cam kết an toàn tuyệt đối.</p>
-<h2>5. Thời gian lưu và xóa dữ liệu</h2>
-<p>Dữ liệu tài khoản được duy trì khi tài khoản còn hoạt động hoặc đến khi được xóa theo yêu cầu hợp lệ và các nghĩa vụ lưu trữ pháp luật. Bảng chấp thuận liên kết với tài khoản và sẽ bị xóa khi tài khoản đó bị xóa trong Supabase Auth. Log hạ tầng có thể có thời hạn lưu riêng do nhà cung cấp quyết định. Dữ liệu gameplay được giữ trên máy chủ SQLite theo thời hạn công bố và các nghĩa vụ pháp luật; cơ chế xóa tự phục vụ chưa được triển khai. Dữ liệu offline của bản game cũ, nếu có, vẫn nằm riêng trên thiết bị cũ và không được hệ thống tự đồng bộ.</p>
-<h2>6. Trẻ em và thay đổi chính sách</h2>
-<p>Trước khi vận hành trò chơi phục vụ người chưa thành niên, đơn vị phát hành cần hoàn tất quy trình phân loại độ tuổi, xác minh thông tin và cơ chế chấp thuận của người đại diện nếu pháp luật yêu cầu. Bản thử nghiệm chưa cung cấp công cụ xác minh độ tuổi. Khi sửa đổi văn bản, cần công bố phiên bản mới và yêu cầu chấp thuận lại nếu cần.</p>
-<h2>7. Cơ sở pháp lý tham khảo</h2>
-<p>Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định 356/2025/NĐ-CP (đều có hiệu lực 01/01/2026). <a href="https://www.bocongan.gov.vn/bai-viet/luat-bao-ve-du-lieu-ca-nhan-chinh-thuc-co-hieu-luc-thi-hanh-tu-ngay-01-01-2026-1767186124" target="_blank" rel="noopener noreferrer">Thông tin từ Bộ Công an</a>.</p>
-<footer>Bản dự thảo thử nghiệm — cần duyệt pháp lý và hoàn thiện thông tin đơn vị vận hành trước phát hành công khai.</footer>
+<p>Chúng tôi <strong>không</strong> bán dữ liệu, không chia sẻ cho mục đích quảng cáo, không chạy quảng cáo, không dùng công cụ theo dõi quảng cáo và <strong>không xử lý thông tin thanh toán</strong> (trò chơi không có thanh toán trực tuyến). Nếu sau này có mục đích mới, chúng tôi sẽ thông báo và xin đồng ý riêng khi pháp luật yêu cầu.</p>
+<h2>3. Căn cứ xử lý</h2>
+<p>Chúng tôi xử lý dữ liệu dựa trên sự đồng ý của bạn (hai ô đồng ý khi đăng ký, không tích sẵn) và nhu cầu cần thiết để cung cấp tài khoản và trò chơi bạn yêu cầu. Nếu không đồng ý, bạn không thể dùng tài khoản để chơi online. Chúng tôi chỉ xử lý dữ liệu cần thiết cho các mục đích trên.</p>
+<h2>4. Chia sẻ dữ liệu và chuyển ra nước ngoài</h2>
+<p>Chúng tôi chỉ dùng các nhà cung cấp hạ tầng cần thiết để vận hành: <strong>Supabase</strong> (xác thực và bản ghi chấp thuận, máy chủ vùng Singapore) và nhà cung cấp lưu trữ/máy chủ chạy trò chơi. Vì vậy dữ liệu có thể được lưu trữ hoặc xử lý ngoài lãnh thổ Việt Nam; chúng tôi chỉ chuyển ở mức cần thiết và theo yêu cầu của pháp luật. Chúng tôi chỉ cung cấp dữ liệu cho cơ quan nhà nước khi có yêu cầu hợp pháp. Đạo hiệu của bạn có thể hiển thị cho người chơi khác nếu có tính năng xã hội.</p>
+<h2>5. Thời gian lưu trữ</h2>
+<ul>
+<li>Dữ liệu tài khoản và nhân vật được giữ khi tài khoản còn hoạt động, hoặc cho đến khi bạn yêu cầu xóa. Nếu ngừng vận hành trò chơi, chúng tôi xóa hoặc ẩn danh dữ liệu cá nhân và thông báo trước.</li>
+<li>Khi bạn xóa nhân vật sau khi tọa hóa hoặc yêu cầu xóa dữ liệu, dữ liệu nhân vật bị xóa khỏi cơ sở dữ liệu game; mã yêu cầu cũ và phiếu khởi tạo hết hạn được dọn tự động (mã yêu cầu tối đa 7 ngày).</li>
+<li>Bản sao lưu cơ sở dữ liệu game được tạo định kỳ, lưu trong thư mục giới hạn quyền và chỉ giữ một số bản gần nhất (mặc định 7 bản); bản cũ bị xóa theo chu kỳ luân phiên, nên dữ liệu bạn đã xóa sẽ biến mất khỏi mọi bản sao lưu trong chu kỳ đó.</li>
+<li>Bản ghi chấp thuận bị xóa cùng tài khoản. Chúng tôi không thu thập số điện thoại, giấy tờ tùy thân, vị trí, danh bạ hay dữ liệu thanh toán.</li>
+</ul>
+<h2>6. Quyền của bạn</h2>
+<p>Bạn có quyền được biết, truy cập, chỉnh sửa, tải về bản sao, hạn chế hoặc phản đối xử lý, rút lại đồng ý và yêu cầu xóa dữ liệu, cũng như khiếu nại, tố cáo theo pháp luật. Cách thực hiện:</p>
+<ul>
+<li><strong>Xem và tải dữ liệu trò chơi:</strong> tài khoản đăng nhập có thể gọi <code>GET /api/v1/me/export</code> để nhận bản sao dữ liệu nhân vật (định dạng JSON, không chứa dữ liệu bí mật của máy chủ).</li>
+<li><strong>Xóa dữ liệu trò chơi:</strong> gọi <code>POST /api/v1/me/erase</code> với xác nhận <code>delete-my-game-data</code>; xóa vĩnh viễn nhân vật và dữ liệu liên quan, không thể hoàn tác, có thể thực hiện ngay cả khi nhân vật còn sống. Tài khoản đăng nhập vẫn được giữ.</li>
+<li><strong>Xóa tài khoản:</strong> gọi <code>POST /api/v1/me/delete-account</code> với xác nhận <code>delete-my-account</code> để xóa cả dữ liệu trò chơi, tài khoản đăng nhập và bản ghi chấp thuận. Nếu chức năng này tạm chưa bật, hoặc bạn muốn rút đồng ý, hạn chế/phản đối xử lý hay có yêu cầu khác, hãy gửi email tới <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a> từ địa chỉ email đăng ký. Chúng tôi xác minh danh tính và phản hồi trong thời hạn pháp luật quy định. Rút đồng ý có thể khiến bạn không thể tiếp tục chơi.</li>
+<li>Ba chức năng xem, xóa dữ liệu và xóa tài khoản luôn khả dụng, kể cả khi bạn chưa đồng ý hoặc đã rút đồng ý với phiên bản chính sách hiện hành.</li>
+</ul>
+<h2>7. Bảo mật</h2>
+<p>Chúng tôi dùng HTTPS, xác minh chữ ký phiên đăng nhập trên máy chủ, kiểm tra bản chấp thuận ở phía máy chủ, giới hạn tốc độ, phân quyền để mỗi người chỉ truy cập dữ liệu của mình, và lưu cơ sở dữ liệu trong thư mục giới hạn quyền. Không hệ thống nào an toàn tuyệt đối; nếu xảy ra sự cố ảnh hưởng đến dữ liệu cá nhân, chúng tôi sẽ xử lý, khắc phục và thông báo cho bạn cũng như cơ quan có thẩm quyền theo thời hạn và quy định pháp luật.</p>
+<h2>8. Trẻ em</h2>
+<p>Dịch vụ không hướng tới trẻ em dưới 16 tuổi. Theo pháp luật về bảo vệ dữ liệu cá nhân, việc xử lý dữ liệu của người dưới 16 tuổi cần có sự đồng ý của cha mẹ hoặc người giám hộ (và của chính trẻ nếu trẻ từ đủ 7 tuổi); vì vậy người dưới 16 tuổi chỉ nên dùng khi đã có sự đồng ý đó. Nếu bạn là phụ huynh và phát hiện con dưới 16 tuổi đăng ký không có sự đồng ý của bạn, hãy email để chúng tôi xóa dữ liệu.</p>
+<h2>9. Thay đổi chính sách</h2>
+<p>Khi có thay đổi đáng kể, chúng tôi công bố phiên bản mới và yêu cầu bạn đồng ý lại trước khi tiếp tục chơi.</p>
+<h2>10. Liên hệ</h2>
+<p>Mọi câu hỏi, yêu cầu về dữ liệu cá nhân: <a href="mailto:zeplaovn@proton.me">zeplaovn@proton.me</a>.</p>
+<footer>Hư Giới · RedEye Studio · Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 · Nghị định 356/2025/NĐ-CP · Nghị định 147/2024/NĐ-CP.</footer>
 </main></body></html>

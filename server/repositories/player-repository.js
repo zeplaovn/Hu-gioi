@@ -15,6 +15,8 @@
                                                 touch   { rngCounter, lastSeenAt } chỉ cập nhật metadata, giữ nguyên state
                                                 receipt { requestId, fingerprint, revision, response, expiresAt }
                                               fn ném lỗi → hoàn tác toàn bộ. Trả value của fn.
+     exportOwnerData(ownerId)                 → { player, tickets } | null  Dữ liệu gameplay của tài khoản (không gồm seed RNG).
+     deleteOwnerData(ownerId)                 → { players, tickets, receipts }  Xóa toàn bộ dữ liệu gameplay của tài khoản (quyền xóa dữ liệu).
      purgeExpired(now)                        Xóa receipt/ticket quá hạn.
      close() */
 'use strict';
@@ -25,6 +27,8 @@ class PlayerRepository {
   createWithTicket() { throw notImplemented('createWithTicket'); }
   transact() { throw notImplemented('transact'); }
   deletePlayer() { throw notImplemented('deletePlayer'); }
+  exportOwnerData() { throw notImplemented('exportOwnerData'); }
+  deleteOwnerData() { throw notImplemented('deleteOwnerData'); }
   purgeExpired() { throw notImplemented('purgeExpired'); }
   close() {}
 }

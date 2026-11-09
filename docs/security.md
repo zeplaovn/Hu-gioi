@@ -9,7 +9,7 @@ Trình duyệt vẫn tải `data/`, `engine/` và giao diện: các luật đã 
 | Hạng mục | Thực hiện |
 |---|---|
 | Tài khoản | Supabase Auth email/password, JWT kiểm chữ ký trên backend, phân quyền theo `sub`; không sử dụng metadata do người dùng tự gửi. |
-| Quyền riêng tư | Trước gameplay, kiểm tra trên máy chủ hai bản đồng ý `privacy` và `release_terms` phiên bản `2026-11-09-v2` trong Supabase qua RLS; không kế thừa đồng ý bản cũ. |
+| Quyền riêng tư | Trước gameplay, kiểm tra trên máy chủ hai bản đồng ý `privacy` và `release_terms` phiên bản `2026-11-10-v5` trong Supabase qua RLS; không kế thừa đồng ý bản cũ. |
 | Tương tác game | Các request `/api/v1` do Node xử lý; backend định giờ, RNG, tính thưởng, xét quyền sở hữu, revision conflict và idempotent receipts. |
 | Dữ liệu | SQLite nằm ngoài thư mục web với thư mục quyền 0700, tệp quyền 0600; không phục vụ hoặc đưa vào `dist`. Máy chủ chỉ chạy một writer; phải có backup và quy trình phục hồi. |
 | Tài nguyên tĩnh | `server/http/static.js` allowlist path, chặn traversal, symlink thoát gốc, file ẩn, file dữ liệu thiết kế nhạy cảm. |
@@ -27,8 +27,8 @@ Không commit hoặc đưa vào trình duyệt các khóa `SUPABASE_JWT_SECRET`,
 
 ## Phần chưa hoàn thành
 
-- Chưa có server HTTPS đã triển khai, đo khả dụng/cảnh báo, sao lưu SQLite production và kiểm thử restore.
-- Chưa có tự phục vụ xóa tài khoản và tự xóa bản ghi gameplay SQLite khi người dùng xóa tài khoản Supabase; cần hoàn thiện tuân thủ dữ liệu cá nhân và chính sách phát hành.
+- Chưa có server HTTPS đã triển khai, đo khả dụng/cảnh báo, lịch chạy `tools/backup-db.cjs` trên production và kiểm thử restore.
+- Đã có API xem/xóa dữ liệu và xóa tài khoản (`/api/v1/me/*`, không đòi hỏi đồng ý chính sách); xóa tài khoản cần `SUPABASE_SERVICE_ROLE_KEY` giữ ở máy chủ. Còn thiếu nút trên giao diện, và xóa người dùng trực tiếp trên dashboard Supabase không tự xóa SQLite.
 - Chưa có PvP/leaderboard/chat nhiều người chơi thật; các phần mô phỏng người chơi NPC không được quảng bá là MMO.
 - Dữ liệu save `localStorage` đời cũ không tự động được nhập vào gameplay online; cần thiết kế xác minh nguồn và xử lý gian lận trước khi mở tính năng import.
 - Cần kiểm toán lịch sử Git và xoay vòng mọi bí mật từng lộ, nếu có.

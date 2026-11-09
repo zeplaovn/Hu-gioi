@@ -187,3 +187,121 @@ test('health báo trạng thái gameplay', async t => {
   const { call } = await boot(t);
   assert.equal((await call('GET', '/api/health')).data.gameplay, true);
 });
+
+test('API: tài khoản tự xuất và tự xóa dữ liệu gameplay, không lộ seed, cô lập theo chủ', async t => {
+  const { call, tokenA, tokenB } = await boot(t);
+  assert.equal((await call('GET', '/api/v1/me/export')).status, 401);
+  assert.equal((await call('GET', '/api/v1/me/export', { token: tokenA })).data.player, null);
+
+  const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
+  const made = await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Lâm Phong', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' } });
+  assert.equal(made.status, 201);
+  const id = made.data.playerId;
+
+  const out = await call('GET', '/api/v1/me/export', { token: tokenA });
+  assert.equal(out.status, 200);
+  assert.match(out.headers['content-disposition'], /attachment/);
+  assert.equal(out.data.player.id, id);
+  assert.equal(out.data.player.name, 'Lâm Phong');
+  assert.doesNotMatch(JSON.stringify(out.data), /rng|seed_hex|rngSeed/i);
+  assert.equal((await call('GET', '/api/v1/me/export', { token: tokenB })).data.player, null);
+
+  // Phải xác nhận rõ ràng; B không thể xóa dữ liệu của A.
+  assert.equal((await call('POST', '/api/v1/me/erase', { token: tokenA, body: {} })).data.error.code, 'INVALID_REQUEST');
+  assert.equal((await call('POST', '/api/v1/me/erase', { token: tokenA, body: { confirm: 'yes' } })).data.error.code, 'INVALID_REQUEST');
+  assert.equal((await call('POST', '/api/v1/me/erase', { token: tokenB, body: { confirm: 'delete-my-game-data' } })).data.players, 0);
+  assert.equal((await call('GET', `/api/v1/players/${id}/state`, { token: tokenA })).status, 200);
+
+  // Nhân vật còn sống vẫn xóa được (quyền xóa dữ liệu khác với tọa hóa).
+  const erased = await call('POST', '/api/v1/me/erase', { token: tokenA, body: { confirm: 'delete-my-game-data' } });
+  assert.equal(erased.status, 200);
+  assert.equal(erased.data.erased, true);
+  assert.equal(erased.data.players, 1);
+  assert.equal((await call('GET', `/api/v1/players/${id}/state`, { token: tokenA })).status, 404);
+  assert.equal((await call('GET', '/api/v1/bootstrap', { token: tokenA })).data.player, null);
+  // Đạo hiệu được giải phóng và có thể tạo lại.
+  const pv2 = await call('POST', '/api/v1/creation/preview', { token: tokenA });
+  const again = await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv2.data.ticketId, name: 'Lâm Phong', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' } });
+  assert.equal(again.status, 201);
+});
+
+test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý chính sách còn hiệu lực', async t => {
+  const repo = new SqlitePlayers(':memory:');
+  const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
+  const deleted = [];
+  const accountAdmin = { deleteUser: async id => { deleted.push(id); return { deleted: true }; } };
+  const jwt = createJwtVerifier({ secret: SECRET });
+  let consentGiven = true;
+  const verifyConsent = async () => { if (!consentGiven) throw new (require('../server/errors.js').GameError)('CONSENT_REQUIRED', 'Cần đồng ý.'); };
+  const api = createGameApi({ service, accountAdmin, resolvePrincipal: createPrincipalResolver({ jwt, verifyConsent }) });
+  const server = http.createServer(createRouter(null, null, api));
+  await new Promise(r => server.listen(0, '127.0.0.1', r));
+  t.after(async () => { await new Promise(r => server.close(r)); repo.close(); });
+  const token = signHs(claims(ID_A));
+  const call = (method, url, body) => new Promise((resolve, reject) => {
+    const data = body === undefined ? null : JSON.stringify(body);
+    const req = http.request({ hostname: '127.0.0.1', port: server.address().port, method, path: url, headers: {
+      authorization: 'Bearer ' + token, ...(data ? { 'content-type': 'application/json', 'content-length': Buffer.byteLength(data) } : {}) } }, res => {
+      const chunks = []; res.on('data', c => chunks.push(c));
+      res.on('end', () => resolve({ status: res.statusCode, data: JSON.parse(Buffer.concat(chunks).toString() || 'null') }));
+    });
+    req.on('error', reject); req.end(data);
+  });
+  const pv = await call('POST', '/api/v1/creation/preview');
+  assert.equal(pv.status, 201);
+  assert.equal((await call('POST', '/api/v1/players', { ticketId: pv.data.ticketId, name: 'Vân Hạc', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' })).status, 201);
+
+  consentGiven = false; // người dùng đã rút đồng ý / chưa đồng ý bản mới
+  assert.equal((await call('GET', '/api/v1/bootstrap')).data.error.code, 'CONSENT_REQUIRED'); // gameplay vẫn bị chặn
+  assert.equal((await call('GET', '/api/v1/me/export')).data.player.name, 'Vân Hạc');
+  // Xóa tài khoản: phải xác nhận đúng; thành công thì xóa dữ liệu rồi gọi quản trị Supabase.
+  assert.equal((await call('POST', '/api/v1/me/delete-account', {})).data.error.code, 'INVALID_REQUEST');
+  assert.equal((await call('POST', '/api/v1/me/delete-account', { confirm: 'delete-my-game-data' })).data.error.code, 'INVALID_REQUEST');
+  assert.deepEqual(deleted, []);
+  const out = await call('POST', '/api/v1/me/delete-account', { confirm: 'delete-my-account' });
+  assert.equal(out.status, 200);
+  assert.equal(out.data.accountDeleted, true);
+  assert.equal(out.data.players, 1);
+  assert.deepEqual(deleted, [ID_A]);
+  assert.equal(repo.getByOwner(ID_A), null);
+});
+
+test('xóa tài khoản: chưa cấu hình khóa quản trị thì từ chối và KHÔNG xóa dữ liệu; Supabase lỗi thì báo thử lại', async () => {
+  const repo = new SqlitePlayers(':memory:');
+  const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
+  const t1 = service.previewCreation(ID_A).ticketId;
+  service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
+  await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, null), { code: 'NOT_IMPLEMENTED' });
+  assert.ok(repo.getByOwner(ID_A));
+  const { createAccountAdmin } = require('../server/auth/account-admin.js');
+  const calls = [];
+  const mk = status => createAccountAdmin({ url: 'https://abc.supabase.co', secretKey: 'sb_secret_' + 'x'.repeat(30),
+    fetchImpl: async (url, init) => { calls.push({ url, init }); return { ok: status < 300, status }; } });
+  await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, mk(500)), { code: 'MAINTENANCE' });
+  assert.equal(repo.getByOwner(ID_A), null); // dữ liệu game đã xóa; gọi lại là idempotent
+  assert.equal((await service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, mk(404))).accountDeleted, true);
+  assert.equal(calls[0].url, 'https://abc.supabase.co/auth/v1/admin/users/' + ID_A);
+  assert.equal(calls[0].init.method, 'DELETE');
+  assert.equal(calls[0].init.headers.Authorization, undefined); // khóa sb_secret_ chỉ đi qua apikey
+  repo.close();
+});
+
+test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N bản', () => {
+  const { backup } = require('../tools/backup-db.cjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-backup-'));
+  fs.chmodSync(dir, 0o700);
+  const file = path.join(dir, 'game.sqlite');
+  const repo = new SqlitePlayers(file);
+  const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
+  service.createPlayer(ID_A, { ticketId: service.previewCreation(ID_A).ticketId, name: 'Thanh Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
+  const results = [1, 2, 3].map(i => backup({ db: file, keep: 2, now: new Date(Date.UTC(2026, 10, 9, 0, 0, i)) }));
+  const kept = fs.readdirSync(path.join(dir, 'backups')).sort();
+  assert.equal(kept.length, 2);
+  assert.equal(results[2].removed.length, 1);
+  assert.equal(fs.statSync(results[2].dest).mode & 0o777, 0o600);
+  assert.equal(fs.statSync(path.join(dir, 'backups')).mode & 0o777, 0o700);
+  const copy = new SqlitePlayers(results[2].dest);
+  assert.equal(copy.getByOwner(ID_A).name, 'Thanh Vân');
+  copy.close(); repo.close();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
