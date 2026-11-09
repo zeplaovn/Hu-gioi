@@ -6,6 +6,9 @@ on:
       - 'css/**'
       - 'index.html'
       - 'tools/ui-proof.py'
+      - 'tools/online-ci-server.cjs'
+      - 'server/**'
+      - 'engine/**'
       - '.github/workflows/ui-verification.yml'
   workflow_dispatch:
 
@@ -42,7 +45,7 @@ jobs:
           git fetch origin main --depth=1
           git worktree add --detach /tmp/hu-gioi-base origin/main
           python -m http.server 8000 --bind 127.0.0.1 --directory /tmp/hu-gioi-base > /tmp/hu-ui-before.log 2>&1 &
-          python -m http.server 8001 --bind 127.0.0.1 --directory "$PWD" > /tmp/hu-ui-after.log 2>&1 &
+          PORT=8001 node tools/online-ci-server.cjs > /tmp/hu-ui-after.log 2>&1 &
           sleep 3
           python tools/ui-proof.py --before http://127.0.0.1:8000 --after http://127.0.0.1:8001 --output ui-proof
       - name: Lưu ảnh và báo cáo (kể cả khi có lỗi)
