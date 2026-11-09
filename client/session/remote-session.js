@@ -5,7 +5,7 @@
   'use strict';
   const H = root.HU_GAME, C = root.HU_COMMANDS;
   const API = '/api/v1';
-  const DEFAULT_SYNC_MS = 30000;
+  const DEFAULT_SYNC_MS = 5000;
 
   function endpoint() {
     const configured = String(root.HU_API_ORIGIN || '').replace(/\/+$/, '');
@@ -44,7 +44,7 @@
     subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
     emit(event) { this.listeners.forEach(fn => fn(event)); }
 
-    async request(path, method = 'GET', body) {
+    async request(path, method = 'GET', body, options = {}) {
       if (!this.auth?.accessToken) throw Error('Cần xác thực Supabase trước khi chơi online.');
       const accessToken = await this.auth.accessToken();
       if (!accessToken) throw Error('Phiên Supabase đã hết hạn. Hãy đăng nhập lại.');
@@ -54,6 +54,7 @@
           method, headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json', Accept: 'application/json' },
           body: body === undefined ? undefined : JSON.stringify(body),
           cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
+          keepalive: options.keepalive === true,
           signal: AbortSignal.timeout(20000)
         });
       } catch {
@@ -81,6 +82,8 @@
       this.accountId = null; this.playerId = null; this.ticket = null;
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.lastSyncAttempt = 0;
+      this.paused = false;
+      this.deathNotified = false;
       this.game = new H.Game(H.create(this.clock()));
     }
     async connect(account) {
@@ -113,7 +116,7 @@
       if (!Number.isSafeInteger(response.revision) || response.revision < 0) throw Error('Revision từ máy chủ không hợp lệ.');
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
-      this.nextSyncInMs = Math.max(15000, Number(response.nextSyncInMs) || DEFAULT_SYNC_MS);
+      this.nextSyncInMs = Math.max(3000, Number(response.nextSyncInMs) || DEFAULT_SYNC_MS);
       const before = this.game.s;
       this.game = new H.Game(response.state);
       if (Array.isArray(response.achievements)) this.achievements.push(...response.achievements);
@@ -129,7 +132,7 @@
       return this.run(async () => {
         if (!this.accountId || this.playerId || !this.ticket) throw Error('Chưa có phiếu khởi nguyên từ máy chủ.');
         const result = await this.request('/players', 'POST', {
-          ticketId: this.ticket.ticketId, name: profile.name, gender: profile.gender, talent: profile.talent
+          ticketId: this.ticket.ticketId, name: profile.name, gender: profile.gender, talent: profile.talent, destiny: profile.destiny
         });
         if (!result.playerId) throw Error('Phản hồi tạo đạo thân không hợp lệ.');
         this.playerId = result.playerId;
@@ -139,12 +142,13 @@
       });
     }
     async synchronize(force = false) {
-      if (!this.playerId || !this.accountId) return null;
+      if (!this.playerId || !this.accountId || (this.paused && !force)) return null;
       if (!force && this.clock() - this.lastSyncAttempt < this.nextSyncInMs) return null;
       this.lastSyncAttempt = this.clock();
       return this.run(async () => {
         const result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision });
         this.apply(result);
+        this.paused = false;
         return result.report || null;
       });
     }
@@ -152,7 +156,7 @@
     dispatch(type, payload = {}) {
       const command = C.validate({ type, payload });
       return this.run(async () => {
-        if (!this.ready) throw Error('Đạo thân online chưa sẵn sàng.');
+        if (!this.ready || this.paused || root.document?.hidden) throw Error('Đạo thân đang offline. Hãy trở lại tab game.');
         const requestId = root.crypto?.randomUUID?.();
         if (!requestId) throw Error('Trình duyệt thiếu mã yêu cầu an toàn.');
         const body = { protocolVersion: C.VERSION, requestId, expectedRevision: this.revision, ...command };
@@ -168,6 +172,16 @@
         }
         this.apply(result);
         return result.result;
+      });
+    }
+    pause() {
+      if (!this.ready || this.paused) return Promise.resolve();
+      this.paused = true;
+      // Gửi thông báo rời trận có xác thực; nếu request thất bại,
+      // lease 15s của máy chủ tự dừng tiến trình.
+      return this.run(async () => {
+        const response = await this.request('/players/' + this.playerId + '/pause', 'POST', {}, { keepalive: true });
+        this.apply(response);
       });
     }
     drainAchievements() { return this.achievements.splice(0); }
