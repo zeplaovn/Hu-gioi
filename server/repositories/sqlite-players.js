@@ -164,6 +164,16 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
+  deletePlayer(ownerId, playerId) {
+    return this.run(() => {
+      const row = this.q.byId.get(playerId);
+      if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
+      this.db.prepare('DELETE FROM players WHERE id = ? AND owner_id = ?').run(playerId, ownerId);
+      this.db.prepare('DELETE FROM creation_tickets WHERE owner_id = ?').run(ownerId);
+      return { deleted: true };
+    });
+  }
+
   purgeExpired(now) {
     return this.run(() => ({
       receipts: Number(this.q.purgeReceipts.run(now).changes),
