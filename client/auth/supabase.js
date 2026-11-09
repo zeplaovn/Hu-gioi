@@ -139,5 +139,5 @@
       persist(null);
     }
   }
-  root.HU_SUPABASE = { user, signup, login, accepted, accept, logout, VERSION };
+  root.HU_SUPABASE = { user, signup, login, accepted, accept, logout, accessToken: token, VERSION };
 })(typeof window !== 'undefined' ? window : globalThis);
