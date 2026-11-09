@@ -121,7 +121,8 @@ test('bộ mẹo cũ trở lại ở cả loading khởi động và tạo nhân
   assert.match(loaderSource, /Ma thú về đêm mạnh và nguy hiểm hơn/);
   assert.match(loaderSource, /Nghề phụ vẫn chạy khi bạn offline/);
   assert.match(loaderSource, /Trang bị phẩm chất cao giúp sống sót/);
-  const hints = loaderSource.match(/^    '[^\n]+',?$/gm) || [];
+  const hintsBlock = loaderSource.split('  const HINTS = [')[1]?.split('\n  ];')[0] || '';
+  const hints = hintsBlock.match(/^    '[^\n]+',?$/gm) || [];
   assert.equal(hints.length, 8);
   assert.match(loaderSource, /const stopInitialHints = rotateHints\(tip\)/);
   assert.match(loaderSource, /const stopEntryHints = rotateHints\(hint\)/);
