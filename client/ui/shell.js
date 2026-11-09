@@ -998,8 +998,8 @@
     const life = g.lifeInfo();
     $('lifeFill').style.width = clamp(s.age / life.max * 100, 0, 100) + '%';
     $('lifeValue').textContent = s.completed ? 'Trường sinh' : Math.floor(s.age) + ' / ' + num(life.max) + ' năm';
-    $('lifeRow').classList.toggle('low-life', !s.completed && life.left <= 40);
-    $('lifeRow').title = s.completed ? 'Đã chứng đạo, không còn giới hạn thọ nguyên.' : 'Còn ' + num(life.left) + ' năm thọ nguyên';
+    $('lifeRow').classList.toggle('low-life', !s.completed && (life.left <= 40 || life.seconds <= 1800));
+    $('lifeRow').title = s.completed ? 'Đã chứng đạo, không còn giới hạn thọ nguyên.' : 'Còn ' + num(life.left) + ' năm thọ nguyên · khoảng ' + duration(life.seconds) + ' tu luyện liên tục (1 năm ≈ ' + duration(1 / life.pace) + ')';
     $('lifeMeter').setAttribute('aria-valuemax', String(life.max));
     $('lifeMeter').setAttribute('aria-valuenow', String(Math.min(life.max, Math.floor(s.age))));
     $('lifeMeter').setAttribute('aria-valuetext', $('lifeValue').textContent);
@@ -1310,17 +1310,18 @@
       return name ? name(s.realm, s.stage) + ' → ' + name(s.realm, s.stage + 1) : UI.g().realmLabel();
     },
     renderPrep() {
-      const s = UI.s(), g = UI.g(), st = g.stats(), events = g.tribulation();
+      const s = UI.s(), g = UI.g(), st = g.stats(), events = g.tribulation(), odds = g.breakthroughOdds();
       const major = this.major(), can = this.canStart(), world = this.worldOf();
       this.world = world;
       $('tribRealmChip').textContent = g.realmLabel();
       $('tribEyebrow').textContent = s.completed ? 'THIÊN ĐẠO · ĐẠO QUẢ VIÊN MÃN' : major ? 'THIÊN ĐẠO · ĐẠI CẢNH GIỚI' : 'TIÊN LỘ · TIỂU CẢNH GIỚI';
       $('tribTitle').textContent = s.completed ? 'Đạo Tổ viên mãn' : major ? 'Thiên kiếp' : 'Đột phá tầng';
       $('tribSubtitle').textContent = this.nextLabel();
-      $('tribHeadTags').innerHTML = `<span>${pct(g.chance())} xác suất</span><span>${s.pity}/15 kiếp vận</span><span>${events.reduce((n, e) => n + e.bolts, 0) || 0} đạo lôi</span><span>${pct(s.shield)} hộ thuẫn</span>`;
+      $('tribHeadTags').innerHTML = `<span${odds.doomed ? ' class="danger-text"' : ''}>${odds.doomed ? '0% · chưa đủ hộ kiếp' : pct(odds.chance) + ' xác suất'}</span><span>${s.pity}/15 kiếp vận</span><span>${events.reduce((n, e) => n + e.bolts, 0) || 0} đạo lôi</span><span>${pct(s.shield)} hộ thuẫn</span>`;
       this.actor = { gender: s.gender, realm: s.realm };
       this.heroFrame();
-      $('tribOverlayChance').textContent = pct(g.chance());
+      $('tribOverlayChance').textContent = odds.doomed ? '0% (chưa đủ hộ kiếp)' : pct(odds.chance);
+      $('tribOverlayChance').classList.toggle('danger-text', odds.doomed);
       $('tribReduction').textContent = pct(s.reduction);
       $('tribShieldSummary').textContent = pct(s.shield) + ' sinh lực';
       $('tribPitySummary').textContent = s.pity + '/15';
@@ -1337,14 +1338,16 @@
       $('tribStatus').textContent = s.completed ? 'Đạo Tổ đã chứng đạo. Hãy trọng sinh để mở vòng mới.'
         : !major ? 'Tầng này không có lôi kiếp. Đột phá tại chỗ, ghi vào nhật ký.'
           : !can ? 'Tu vi chưa đầy. Hãy tiếp tục nhập định và chuẩn bị hộ kiếp.'
-            : events.length ? 'Lôi vân đã tụ · chuẩn bị nghênh đón thiên kiếp.' : 'Tĩnh tâm vận khí · chuẩn bị vượt đại cảnh giới.';
+            : odds.doomed ? 'Hộ kiếp chưa đủ cho: ' + odds.failing.join(', ') + '. Dẫn lôi lúc này chắc chắn thất bại và mất 15% tu vi. Hãy dùng đan/phù hộ kiếp phẩm cao hơn trước.'
+              : events.length ? 'Lôi vân đã tụ · chuẩn bị nghênh đón thiên kiếp.' : 'Tĩnh tâm vận khí · chuẩn bị vượt đại cảnh giới.';
       $('tribStageHint').textContent = s.completed ? 'Đạo quả viên mãn' : major ? 'Thiên đạo vô tình · đạo tâm bất diệt' : 'Tiểu cảnh giới · đột phá tại chỗ';
       $('tribResult').hidden = true;
       $('tribResult').className = 'trib-result';
       $('tribResult').innerHTML = '';
       $('tribStart').hidden = false;
       $('tribStart').disabled = !can;
-      $('tribStart').textContent = s.completed ? 'Đã chứng đạo' : !can ? 'Chưa đủ tu vi' : !major ? 'Đột phá tầng nhỏ' : events.length ? 'Dẫn động lôi kiếp' : 'Đột phá cảnh giới';
+      $('tribStart').textContent = s.completed ? 'Đã chứng đạo' : !can ? 'Chưa đủ tu vi' : !major ? 'Đột phá tầng nhỏ' : odds.doomed ? 'Dẫn lôi (chắc thất bại)' : events.length ? 'Dẫn động lôi kiếp' : 'Đột phá cảnh giới';
+      $('tribStart').classList.toggle('btn-danger', odds.doomed && can && major);
       $('tribClose').hidden = false;
       $('tribClose').disabled = false;
       $('tribClose').textContent = 'Về tu luyện';
@@ -1428,12 +1431,18 @@
       }
     },
     show() { UI.go('tribulation'); },
-    start() {
+    start(confirmed = false) {
       if (!this.pageOpen || this.active || this.phase === 'running') return;
       const s = UI.s(), g = UI.g();
       if (s.completed) { UI.toast('Đạo Tổ đã chứng đạo. Hãy trọng sinh.', { type: 'info' }); return; }
       if (!this.major()) { UI.actions.break?.({ dataset: {} }); return; }
       if (s.qi < g.need()) { UI.toast('Tu vi chưa đầy. Hãy tiếp tục nhập định.', { type: 'danger' }); this.renderPrep(); return; }
+      const odds = g.breakthroughOdds();
+      if (odds.doomed && !confirmed) {
+        modal('Hộ kiếp chưa đủ sức', `<p>${esc(odds.failing.join(', '))} vượt quá sức chịu của đạo thân. Xác suất nền ${pct(odds.base)} không còn ý nghĩa: lôi kiếp là phép thử cố định nên lần này <b>chắc chắn thất bại</b>, mất 15% tu vi và tích thêm một bậc kiếp vận.</p><p>Hãy dùng đan hoặc phù hộ kiếp phẩm cao hơn để tăng khiên và giảm sát thương, rồi quay lại.</p>`,
+          () => trib.start(true), 'Vẫn dẫn lôi', 'THIÊN KIẾP', { type: 'danger' });
+        return;
+      }
       store.catchUp();
       const world = this.worldOf(), oldStats = g.stats(), oldShield = s.shield;
       const oldRealm = s.realm, oldRoot = s.rootType, oldReduction = s.reduction;
@@ -1619,7 +1628,7 @@
   }
 
   function run(name, el) {
-    if (name === 'reincarnate') { if (UI.reincarnate) safe(() => UI.reincarnate()); return; }
+    if (name === 'resetAfterDeath') { if (UI.resetAfterDeath) safe(() => UI.resetAfterDeath()); return; }
     if (name === 'modalClose') { closeModal(); return; }
     if (name === 'modalConfirm') {
       if ($('modalLayer').hidden) return;

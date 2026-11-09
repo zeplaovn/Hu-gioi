@@ -70,7 +70,7 @@ test('trang tra cứu item không dùng tên sprite sheet cũ', () => {
 test('engine từ chối tạo nhân vật khi còn điểm thiên phú chưa dùng', () => {
   const profile = {
     name: 'Hư Không', gender: 'nam', age: 18, race: 'nhan',
-    roots: [72, 61, 55, 44, 33], rootType: 'Song',
+    roots: [72, 61, 45, 44, 33], rootType: 'Song',
     talent: { tuongMao: 2, phucDuyen: 2, canCot: 2, ngoTinh: 1, vanKhi: 0 }
   };
   assert.throws(() => H.createCharacter(profile, 1700000000000, () => .5), /phân bổ đủ 8 điểm/);

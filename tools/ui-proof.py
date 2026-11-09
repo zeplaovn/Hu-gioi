@@ -25,9 +25,16 @@ CASES = [
     ("craft-dien", "craft", "dien"),
 ]
 
-def enter_game(page, url):
+def enter_game(page, url, folder=None, name=None, outcome=None):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
+    # Màn Tiên Tịch: chụp Đăng nhập/Đăng ký và vào chế độ offline để kiểm luồng game cũ.
+    if page.locator("#authGate").count() and page.locator("#authGate").is_visible():
+        if folder is not None and outcome is not None:
+            outcome["screenshots"].append(snap(page, folder, name, "auth-login"))
+            page.locator('[data-auth-view="signup"]').click()
+            outcome["screenshots"].append(snap(page, folder, name, "auth-signup"))
+        page.locator("#authGuest").click()
     page.locator("#nameInput").fill("Vân Tiêu")
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
@@ -129,16 +136,19 @@ def run_set(browser, folder, name, url, width, height, mobile):
     )
     page = ctx.new_page()
     errors = []
+    expected_auth_404 = []
+    page.on("response", lambda res: expected_auth_404.append(res.url)
+            if res.status == 404 and res.url.endswith("/api/auth/session") else None)
     page.on("pageerror", lambda error: errors.append("pageerror: " + str(error)))
     page.on("console", lambda msg: errors.append("console.error: " + msg.text) if msg.type == "error" and "501" not in msg.text else None)
     outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors}
     try:
-        enter_game(page, url)
+        enter_game(page, url, folder, name, outcome)
         verify_bubble(page, folder, name, outcome)
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
             assert page.locator('#menu [data-window="settings"]').count() == 0, "Menu Cài đặt vẫn hiện"
-            assert page.locator('.status-settings').count() == 0, "Nút Cài đặt ở thanh trạng thái vẫn hiện"
+            assert page.locator('.status-settings').count() == 1, "Nút Cài đặt ở thanh trạng thái bị mất"
         for key, section, tab in CASES:
             if section:
                 open_page(page, section)
@@ -159,6 +169,31 @@ def run_set(browser, folder, name, url, width, height, mobile):
                 "(buttons) => buttons.filter(b => b.scrollWidth > b.clientWidth + 2).map(b => b.textContent.trim())"
             )
             outcome["overflow_buttons"] = issues
+            # Tọa hóa thực: reset ngay cả Thiên mệnh, cài đặt và bản lưu dự phòng.
+            if width == 1366:
+                page.evaluate("""() => {
+                    const ui = window.HU_UI;
+                    ui.s().meta.points = 999;
+                    ui.s().settings.music = false;
+                    ui.s().age = ui.g().maxLife() + 1;
+                    ui.s().lastUpdate = Date.now() - 3000;
+                }""")
+                death = page.locator('[data-act="resetAfterDeath"]')
+                death.wait_for(state="visible", timeout=5000)
+                outcome["screenshots"].append(snap(page, folder, name, "death"))
+                death.click()
+                assert page.locator("#welcome").is_visible(), "Tọa hóa không về tạo nhân vật"
+                assert page.locator("#game").is_hidden(), "Game vẫn hiện sau tọa hóa"
+                assert page.locator("#continueGame").is_hidden(), "Vẫn còn bản lưu sau tọa hóa"
+                reset = page.evaluate("""() => ({
+                    created: window.HU_UI.s().created,
+                    points: window.HU_UI.s().meta.points,
+                    music: window.HU_UI.s().settings.music,
+                    ready: window.HU_UI.store.ready
+                })""")
+                assert reset == {"created": False, "points": 0, "music": True, "ready": False}, reset
+                outcome["death_reset"] = True
+                outcome["screenshots"].append(snap(page, folder, name, "back-to-creation"))
     except Exception as exc:
         outcome["exception"] = str(exc)
         try:
@@ -166,6 +201,13 @@ def run_set(browser, folder, name, url, width, height, mobile):
         except Exception:
             pass
     finally:
+        # Python http.server không có auth API; bỏ đúng một 404 đã được xác nhận
+        # qua response của /api/auth/session, không bỏ qua lỗi file game khác.
+        if expected_auth_404:
+            for i, err in enumerate(errors):
+                if err.startswith("console.error: Failed to load resource:") and "404" in err:
+                    errors.pop(i)
+                    break
         ctx.close()
     return outcome
 

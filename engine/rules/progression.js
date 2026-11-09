@@ -125,6 +125,13 @@
           return { name, bolts, success, survived };
         });
       },
+      /* Xác suất thực: lôi kiếp là phép thử tất định (đủ hộ kiếp hay không), nên chỉ cần một đợt "chưa đủ sức"
+         thì đột phá chắc chắn thất bại dù chance() vẫn hiện xác suất nền. Giao diện dùng hàm này để không đánh lừa người chơi. */
+      breakthroughOdds() {
+        const events = this.isPeakStage() ? this.tribulation() : [];
+        const base = this.chance(), failing = events.filter(e => !e.success);
+        return { base, chance: failing.length ? 0 : base, doomed: failing.length > 0, failing: failing.map(e => e.name), events };
+      },
       breakthrough(payload, now) {
         now = at(this, now);
         const s = this.s;
@@ -255,7 +262,8 @@
       lifeInfo() {
         const s = this.s, max = this.maxLife(), pace = F.aging_speed(s.realm);
         const left = Math.max(0, max - s.age), sec = pace > 0 ? left / pace : Infinity;
-        return { max, left, pace, safeSeconds: s.completed || sec > F.offline_cap(s.offlineCap) ? Infinity : Math.floor(sec) };
+        /* seconds: thời gian thực còn lại đến khi tọa hóa nếu cứ tu luyện liên tục; safeSeconds chỉ khác Infinity trong trần offline. */
+        return { max, left, pace, seconds: s.completed ? Infinity : Math.floor(sec), safeSeconds: s.completed || sec > F.offline_cap(s.offlineCap) ? Infinity : Math.floor(sec) };
       },
       warnLife(max) {
         const left = Math.floor(max - this.s.age), w = this._lifeWarn || (this._lifeWarn = {});
@@ -263,7 +271,7 @@
           if (left > th) continue;
           if (!w[th]) {
             for (const u of [1, 3, 10]) if (u >= th) w[u] = 1;
-            this.log('⚠ Thọ nguyên chỉ còn ' + Math.max(0, left) + ' năm! Hãy đột phá, dùng Thọ Nguyên Đan hoặc mua Trường Thọ Quả.');
+            this.log('⚠ Thọ nguyên chỉ còn ' + Math.max(0, left) + ' năm! Hãy đột phá đại cảnh giới để nới thọ nguyên, hoặc dùng Thọ Nguyên Đan nếu đã có. Nếu tọa hóa, trọng sinh vẫn giữ Thiên mệnh.');
           }
           break;
         }

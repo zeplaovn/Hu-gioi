@@ -22,6 +22,12 @@
       if (profile.rootType === 'Âm Dương') throw Error('Âm Dương linh căn không còn được tạo mới.');
       const rootSub = profile.rootType === 'Dị' ? profile.rootSub : '';
       if (profile.rootType === 'Dị' && !Object.hasOwn(H.DI_LINH_CAN, rootSub)) throw Error('Dị linh căn không hợp lệ.');
+      /* Loại linh căn phải khớp điểm các hệ: ngũ hành suy từ số hệ đạt 50 điểm; Dị chỉ có đúng một hệ gốc (thuộc `from` của biến thể) đạt 50. */
+      const strong = profile.roots.reduce((a, n, i) => (n >= 50 ? a.concat(i) : a), []);
+      if (!strong.length) throw Error('Linh căn không khớp: chưa có hệ nào đạt 50 điểm.');
+      if (profile.rootType === 'Dị') {
+        if (strong.length !== 1 || !H.DI_LINH_CAN[rootSub].from.includes(strong[0])) throw Error('Dị linh căn không khớp hệ gốc của biến thể.');
+      } else if (H.rootType(profile.roots) !== profile.rootType) throw Error('Linh căn không khớp với số hệ đạt 50 điểm.');
       let total = 0;
       for (const key of keys) {
         const n = profile.talent?.[key] ?? 0;

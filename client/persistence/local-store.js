@@ -3,6 +3,7 @@
   'use strict';
   const H = root.HU_GAME;
   const KEY = 'huGioiWorkspaceV1', BACKUP = KEY + 'Backup';
+  let activeKey = KEY, activeBackup = BACKUP, guest = true;
   const LEGACY = ['tienVanCompleteV6', 'tienVanCompleteV6Backup'];
   const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
   function assertSafeJson(value, depth = 0, budget = { n: 0 }) {
@@ -21,7 +22,15 @@
   function createStore(session, notify) {
     let ready = false, locked = false, busy = () => false;
     const store = {
-      KEY, BACKUP, LEGACY,
+      get KEY() { return activeKey; }, get BACKUP() { return activeBackup; }, LEGACY,
+      setAccount(id) {
+        /* Không bao giờ đọc nhầm bản lưu của tài khoản khác. */
+        guest = !id;
+        activeKey = guest ? KEY : KEY + ':' + String(id).replace(/[^a-zA-Z0-9-]/g, '').slice(0,50);
+        activeBackup = activeKey + 'Backup';
+        ready = false;
+        session.replace(H.create(session.clock()));
+      },
       get game() { return session.game; },
       get ready() { return ready; },
       get locked() { return locked; },
@@ -34,22 +43,22 @@
         const s = session.game.s;
         if (!s.created || locked) return;
         try {
-          const old = localStorage.getItem(KEY);
+          const old = localStorage.getItem(activeKey);
           if (old) {
-            try { assertSafeJson(JSON.parse(old)); if (H.normalize(JSON.parse(old))) localStorage.setItem(BACKUP, old); } catch { /* bản cũ hỏng */ }
+            try { assertSafeJson(JSON.parse(old)); if (H.normalize(JSON.parse(old))) localStorage.setItem(activeBackup, old); } catch { /* bản cũ hỏng */ }
           }
           s.lastSaved = session.clock();
-          localStorage.setItem(KEY, JSON.stringify(s));
+          localStorage.setItem(activeKey, JSON.stringify(s));
         } catch { notify('Không thể tự lưu. Hãy xuất JSON trong Cài đặt.'); }
       },
       load() {
-        for (const key of [KEY, BACKUP, ...LEGACY]) {
+        for (const key of [activeKey, activeBackup, ...(guest ? LEGACY : [])]) {
           try {
             const raw = JSON.parse(localStorage.getItem(key) || 'null');
             assertSafeJson(raw);
             const state = H.normalize(raw,session.clock());
             if (state) {
-              if (key !== KEY) state.logs.unshift('Đã phục hồi bản lưu ' + (key === BACKUP ? 'dự phòng' : 'từ Tiên Vân 8.0') + '.');
+              if (key !== activeKey) state.logs.unshift('Đã phục hồi bản lưu ' + (key === activeBackup ? 'dự phòng' : 'từ Tiên Vân 8.0') + '.');
               return state;
             }
           } catch { /* thử khóa kế tiếp */ }
@@ -57,7 +66,7 @@
         return null;
       },
       clearAll() {
-        [KEY, BACKUP, KEY + 'BeforeImport', ...LEGACY].forEach(k => { try { localStorage.removeItem(k); } catch { /* bỏ qua */ } });
+        [activeKey, activeBackup, activeKey + 'BeforeImport', ...(guest ? LEGACY : [])].forEach(k => { try { localStorage.removeItem(k); } catch { /* bỏ qua */ } });
       },
       catchUp(now = session.clock(), offline = false) {
         if (!session.game.s.created || locked || busy()) return null;
@@ -95,7 +104,7 @@
         if (!value) throw Error('Chỉ nhận bản lưu nhân vật từ V4 đến V8 hợp lệ.');
         return value;
       },
-      keepBeforeImport() { try { localStorage.setItem(KEY + 'BeforeImport', JSON.stringify(session.game.s)); } catch { /* bỏ qua */ } }
+      keepBeforeImport() { try { localStorage.setItem(activeKey + 'BeforeImport', JSON.stringify(session.game.s)); } catch { /* bỏ qua */ } }
     };
     return store;
   }
