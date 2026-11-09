@@ -54,3 +54,51 @@
 #pointsValue.points-pending{color:#edc28b}
 #pointsValue.points-complete{color:#a9dfb2}
 #pointsValue:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:3px}
+
+/* ===== Ô chủng tộc / linh căn: chỉ hiện tên, chi tiết nằm trong bảng khi bấm ===== */
+#raceValue,#rootValue{min-height:38px;justify-content:center}
+#raceValue .field-main,#rootValue .field-main{font-size:15px;line-height:1.25}
+#raceValue::after,#rootValue::after{content:'ⓘ';margin-left:8px;font-size:13px;font-weight:600;color:#c8a867;opacity:.8}
+#raceValue,#rootValue{flex-direction:row}
+
+/* Cột phải: các khối không co lại. Khi thiếu chỗ thì cuộn, không đè chữ lên nhau
+   (trước đây .hint bị co và chồng lên dòng "Đổi tài khoản"). */
+.create-right>*{flex-shrink:0}
+.create-right .hint{min-height:2.9em}
+
+/* ===== Cột trái: cảnh động ===== */
+.create-scene .scene-photo{position:absolute;inset:-7%;z-index:0;background:url('../media/assets/world/bg/ha_gioi/day/xuan.webp') center/cover no-repeat;
+  animation:sceneDrift 46s ease-in-out infinite alternate;will-change:transform}
+.create-scene .scene-mist{position:absolute;z-index:1;left:-30%;width:160%;height:46%;pointer-events:none;opacity:.5;
+  background:radial-gradient(ellipse 38% 55% at 30% 50%,#f4ecdc55,transparent 70%),radial-gradient(ellipse 30% 45% at 70% 55%,#dfe9e044,transparent 70%);filter:blur(10px);will-change:transform}
+.create-scene .scene-mist-a{top:30%;animation:mistDrift 52s linear infinite}
+.create-scene .scene-mist-b{top:58%;opacity:.38;animation:mistDrift 74s linear infinite reverse}
+.create-scene .scene-orbit{animation:orbitSpin 120s linear infinite,orbitGlow 7s ease-in-out infinite}
+.create-scene .scene-orbit::before{animation:orbitSpin 80s linear infinite reverse}
+.scene-motes{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.scene-motes i{position:absolute;left:var(--x);bottom:-12px;width:var(--s);height:var(--s);border-radius:50%;
+  background:radial-gradient(circle,#fff6cf,#f0d28a 55%,transparent 72%);box-shadow:0 0 8px 2px #f0d28a88;opacity:0;
+  animation:moteRise var(--d) linear infinite;animation-delay:var(--l)}
+.create-left .scene-kicker,.create-left .scene-headline,.create-left .scene-copy .story,.create-left .journey-features>div{animation:riseIn .9s cubic-bezier(.2,.7,.2,1) both}
+.create-left .scene-kicker{animation-delay:.15s}
+.create-left .scene-headline{animation-delay:.3s}
+.create-left .scene-copy .story{animation-delay:.5s}
+.create-left .journey-features>div:nth-child(1){animation-delay:.7s}
+.create-left .journey-features>div:nth-child(2){animation-delay:.85s}
+.create-left .journey-features>div:nth-child(3){animation-delay:1s}
+.create-left .scene-headline em{background:linear-gradient(100deg,#d9bd84 0%,#fff1c6 45%,#d9bd84 90%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:goldSheen 7s ease-in-out infinite}
+@keyframes sceneDrift{from{transform:scale(1.02) translate3d(-1.5%,0,0)}to{transform:scale(1.1) translate3d(1.5%,-1.2%,0)}}
+@keyframes mistDrift{from{transform:translate3d(-8%,0,0)}to{transform:translate3d(8%,0,0)}}
+@keyframes orbitSpin{to{transform:rotate(360deg)}}
+@keyframes orbitGlow{0%,100%{box-shadow:0 0 0 12px #e5d7b80a,0 0 0 13px #e5d7b81a,0 0 26px #e5d7b81f}50%{box-shadow:0 0 0 12px #e5d7b814,0 0 0 13px #e5d7b833,0 0 52px #f0d28a40}}
+@keyframes moteRise{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:.9}70%{opacity:.7}100%{transform:translate3d(18px,-78vh,0);opacity:0}}
+@keyframes riseIn{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
+@keyframes goldSheen{0%,100%{background-position:0 0}50%{background-position:100% 0}}
+@media(max-width:900px){.scene-motes i:nth-child(n+9){display:none}}
+@media(prefers-reduced-motion:reduce){
+  .create-scene .scene-photo,.create-scene .scene-mist,.create-scene .scene-orbit,.create-scene .scene-orbit::before,.scene-motes i,
+  .create-left .scene-kicker,.create-left .scene-headline,.create-left .scene-copy .story,.create-left .journey-features>div,.create-left .scene-headline em{animation:none!important}
+  .scene-motes{display:none}
+}
+body.reduced-motion .scene-photo,body.reduced-motion .scene-mist,body.reduced-motion .scene-orbit,body.reduced-motion .scene-orbit::before,body.reduced-motion .scene-motes i{animation:none!important}
+body.reduced-motion .scene-motes{display:none}

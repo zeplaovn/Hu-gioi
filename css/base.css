@@ -221,3 +221,10 @@ body.modal-open{overflow:hidden}
 .bar.full>i,.meter-bar.full>i{animation:barPulse 1.2s ease-in-out infinite}
 @keyframes barPulse{50%{opacity:1;filter:brightness(1.25)}}
 @media(prefers-reduced-motion:reduce){.bar.full>i,.meter-bar.full>i{animation:none}}
+
+/* ===== Logo Hư Giới lơ lửng (dùng chung mọi nơi có logo) =====
+   Dùng thuộc tính translate/rotate riêng nên không đè transform đã đặt cho từng logo. */
+@keyframes huLogoFloat{0%,100%{translate:0 0;rotate:-.35deg}50%{translate:0 -9px;rotate:.35deg}}
+.loading-logo,.auth-logo,.brand-logo,.scene-logo{animation:huLogoFloat 6.5s ease-in-out infinite;will-change:translate,rotate}
+@media(prefers-reduced-motion:reduce){.loading-logo,.auth-logo,.brand-logo,.scene-logo{animation:none;will-change:auto}}
+body.reduced-motion .loading-logo,body.reduced-motion .auth-logo,body.reduced-motion .brand-logo,body.reduced-motion .scene-logo{animation:none;will-change:auto}
