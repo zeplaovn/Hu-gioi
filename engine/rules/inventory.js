@@ -144,7 +144,7 @@
       },
       settleAuction(now) {
         now = at(this, now);
-        const cycle = Math.floor(now / 3600000);
+        const cycle = Math.floor((now - (this.s.auction.pausedMs || 0)) / 3600000);
         if (cycle <= this.s.auction.cycle) return;
         for (const code of Object.keys(this.s.auction.offers)) {
           if (item(code)) {
@@ -152,7 +152,7 @@
             this.log('Đấu giá mô phỏng: nhận ' + item(code).name + '.');
           }
         }
-        this.s.auction = { cycle, offers: {} };
+        this.s.auction = { cycle, offers: {}, pausedMs: this.s.auction.pausedMs || 0 };
       }
     });
   }
