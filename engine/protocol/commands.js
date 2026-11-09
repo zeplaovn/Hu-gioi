@@ -29,6 +29,7 @@
     prestige: {},
     reincarnate: {},
     setAuto: { enabled: boolean },
+    setPreference: { key: oneOf(['season', 'seasonEffects', 'cultivationEffects', 'combatEffects', 'motionMode', 'music', 'musicVolume', 'musicTrack']), value: v => typeof v === 'string' || typeof v === 'boolean' || Number.isFinite(v) },
     // inventory
     buy: { code }, sell: { code }, equip: { code }, learn: { code }, activate: { code }, use: { code },
     sellYao: {},
