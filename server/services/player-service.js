@@ -185,7 +185,7 @@ class PlayerService {
     const now = this.clock();
     const out = this.repo.transact(playerId, tx => {
       const rec = this.#own(tx.record, ownerId), run = this.#run(rec, now);
-      if (!run.game.isDead()) run.game.advance(now, true);
+      if (!run.game.isDead()) run.game.advance(now, run.offline);
       else run.game.s.lastUpdate = now;
       run.game.s.presencePaused = true;
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
