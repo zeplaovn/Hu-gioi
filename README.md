@@ -94,6 +94,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 |---|---|
 | `SUPABASE_URL` | URL project Supabase; suy ra issuer và JWKS để xác minh JWT (ES256/RS256) |
 | `SUPABASE_JWT_SECRET` | Tùy chọn, cho project còn dùng HS256 |
+| `SUPABASE_PUBLISHABLE_KEY` | Bắt buộc khi dùng Supabase JWT, để máy chủ kiểm tra hai bản ghi chấp thuận chính sách theo RLS |
 | `HU_LEGACY_AUTH=1` | Dùng AuthService cookie thử nghiệm thay Supabase (chỉ dev/test) |
 | `HU_DB_FILE` | Đường dẫn SQLite, mặc định `.hu-gioi/game.sqlite` (không được nằm trong thư mục công khai) |
 | `HU_ALLOWED_ORIGINS` | Origin được gọi API khi game tĩnh ở domain khác (CORS), phân cách bằng dấu phẩy |
@@ -108,7 +109,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 | POST | `/api/v1/players/{id}/sync` | Catch-up bế quan theo đồng hồ máy chủ, trả snapshot |
 | POST | `/api/v1/players/{id}/commands` | Một lệnh `{ protocolVersion, requestId, expectedRevision, type, payload }` |
 
-Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
+Đảm bảo: API JWT chỉ hoạt động khi máy chủ xác minh được cả hai bản chấp thuận chính sách `privacy` và `release_terms` phiên bản `2026-11-09`. Không thể vượt qua bằng cách bỏ qua checkbox frontend; Supabase gián đoạn thì API từ chối tạm thời. `HU_LEGACY_AUTH=1` chỉ dùng phát triển, bị chặn khi `NODE_ENV=production`. Đặt thư mục SQLite quyền `0700` và tệp DB quyền `0600`; API không thể hoạt động trên Cloudflare static-only khi chưa triển khai Node riêng.\n\nĐảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
 **Chưa có:** `RemoteSession` ở client, batch lệnh, nhập save offline, bảng xếp hạng, chat/PvP/tông môn dùng chung, admin API, WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
 
