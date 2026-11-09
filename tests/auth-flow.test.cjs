@@ -73,3 +73,7 @@ test('chỉ rõ trạng thái UI và quy tắc xóa mọi bản lưu khi tọa h
   assert.match(auth, /credentials: 'same-origin'/);
   assert.doesNotMatch(auth, /localStorage\.(?:setItem|getItem)/);
 });
+
+test('không cho cấu hình kho tài khoản trong thư mục tĩnh có thể truy cập', () => {
+  assert.throws(() => new AuthService(path.join(__dirname, '..', 'data', 'accounts.json')), /công khai/);
+});

@@ -4,6 +4,8 @@
 > Phạm vi: game chính trong repository này  
 > Mục tiêu: đưa game idle tu tiên một người chơi hiện tại thành game online nhiều người chơi, server-authoritative, vẫn dùng chung bộ luật `engine/`.
 
+> **Cập nhật giai đoạn giao diện tài khoản:** đã có trang Login/Sign up và API Node lưu người dùng/cookie tối giản để phát triển một instance; **chưa** có DB auth_sessions theo đặc tả, refresh/rotation production, server-authoritative gameplay hoặc cloud save. Các đầu việc AuthProvider, DB và RemoteSession dưới đây vẫn phải thực hiện trước khi mở online.
+
 ---
 
 ## 0. Tóm tắt điều hành

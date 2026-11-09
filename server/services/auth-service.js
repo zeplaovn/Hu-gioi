@@ -20,7 +20,15 @@ const fail = (status, message) => Object.assign(Error(message), { status });
 
 class AuthService {
   constructor(file = FILE) {
-    this.file = file;
+    this.file = path.resolve(file);
+    /* Dù người vận hành cấu hình sai HU_AUTH_FILE, không ghi bí mật vào thư mục được public. */
+    const publicRoot = path.resolve(__dirname, '..', '..');
+    const exposed = ['client', 'css', 'data', 'engine', 'media'].some(dir => {
+      const root = path.join(publicRoot, dir);
+      return this.file === root || this.file.startsWith(root + path.sep);
+    });
+    if (exposed || this.file === path.join(publicRoot, 'index.html'))
+      throw Error('HU_AUTH_FILE không được đặt trong thư mục tài nguyên công khai.');
     this.attempts = new Map();
   }
   read() {
@@ -69,7 +77,7 @@ class AuthService {
     return value;
   }
   cookie(req, token, age = MAX_AGE) {
-    const secure = req.socket.encrypted ? '; Secure' : '';
+    const secure = (req.socket.encrypted || process.env.NODE_ENV === 'production') ? '; Secure' : '';
     return COOKIE + '=' + token + '; Path=/api/auth; HttpOnly; SameSite=Strict; Max-Age=' + age + secure;
   }
   token(req) {
