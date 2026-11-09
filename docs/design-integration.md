@@ -31,7 +31,7 @@ npm test
 - Đặc tả chưa định lượng thưởng/phạt công pháp khác hệ, ảnh hưởng độ tinh khiết/tuổi dược hoặc các hệ số đan dược/pháp bảo vào xác suất Hỗn Độn; chưa tự đặt các công thức đó. Hiện hiệu ứng độc bẩm sinh dùng giả định 5% ATK/giây trong 3 giây vì bảng chỉ cho xác suất 15% mà không có mức sát thương.
 - Chiến đấu bí cảnh vẫn là mô phỏng theo tầng, không phải trận chiến tương tác trực tiếp. Chỉ các thủ lĩnh có trong dữ liệu thiết kế được dùng chỉ số/giai đoạn và thưởng mới.
 - Thể lực được hiển thị dưới dạng chỉ số; dữ liệu công pháp hiện có không yêu cầu tiêu hao thể lực. Hệ quả cân bằng giữa 5 cảnh giới mới và các cảnh giới cao hơn cần được chơi thử và điều chỉnh.
-- Schema lưu vẫn là V7, bổ sung giá trị mặc định khi nạp bản cũ. Nên xuất bản lưu trước khi thử một bản cập nhật có thay đổi cân bằng.
+- Schema lưu hiện là V8 (`VERSION` = 8; nạp được bản lưu V4 đến V8), bổ sung giá trị mặc định khi nạp bản cũ. Nên xuất bản lưu trước khi thử một bản cập nhật có thay đổi cân bằng.
 
 ## Vạn Kiếp Tàng Thư và hội thoại NPC
 
