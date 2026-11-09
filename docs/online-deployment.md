@@ -6,7 +6,7 @@
 
 - **Trình duyệt:** giao diện classic-script, `RemoteSession`; mọi tác vụ gameplay POST lên `/api/v1`, không có guest offline, không lưu snapshot nhân vật vào localStorage. Chỉ giữ Supabase access/refresh token trong sessionStorage.
 - **Node.js 24:** `server/main.js` chạy `PlayerService`, đồng hồ và RNG chỉ ở máy chủ; `node:sqlite` với WAL và file 0600 trong thư mục 0700; **chỉ một tiến trình ghi SQLite**.
-- **Supabase:** email/password Auth và PostgreSQL `policy_acceptances` RLS. Server xác minh JWT và cả hai bản chấp thuận trước mỗi request online (positive cache 30 giây).
+- **Supabase:** email/password Auth và PostgreSQL `policy_acceptances` RLS. Server xác minh JWT và hai bản chấp thuận `2026-11-09-v3` trước mỗi request online (positive cache 30 giây); v1/v2 vẫn lưu làm lịch sử.
 - **HTTPS:** cùng domain với frontend được khuyến nghị; nếu tách origin, cấu hình CORS `HU_ALLOWED_ORIGINS`, CSP `connect-src` và `window.HU_API_ORIGIN` từ nguồn cấu hình đáng tin cậy trước khi tải script. Không bao giờ đưa service-role/secret JWT vào JavaScript.
 
 ## Thiết lập bằng Docker Compose
@@ -33,12 +33,19 @@ HU_DB_FILE=/data/game.sqlite
 
 Không bật `HU_LEGACY_AUTH` trên production. Nếu JWT Supabase còn ký HS256, server có thể yêu cầu `SUPABASE_JWT_SECRET` do host giữ bí mật; tuyệt đối không đưa secret này lên Git/frontend.
 
+## Kiểm tra riêng gameplay V9
+
+- Tạo nhân vật với một Thiên mệnh; xác nhận thiếu hoặc sửa Thiên mệnh trong request sẽ bị từ chối. Tài khoản cũ không tự mang điểm/ngọc từ cơ chế trọng sinh.
+- Xác minh online sync khoảng 5 giây, `/pause` khi tab ẩn, và gap heartbeat quá 15 giây; offline không tăng tuổi, tu vi, tài nguyên và không kết toán sản xuất.
+- Kiểm tra cả 4 nguyên nhân tử vong: `tribulation`, `pvp`, `combat`, `lifespan`. Nhân vật chết không được gửi lệnh, chỉ owner có thể thực hiện `reset-after-death` để tạo kiếp mới.
+- Khi cập nhật lên schema V9 cần kiểm thử migration V4–V8 trên bản sao database và backup trước khi đưa lên production. Quy tắc tạm thời và quyết định sản phẩm chưa xác nhận ở [gameplay-v9.md](gameplay-v9.md).
+
 ## Những giới hạn trước thương mại
 
 - Giao diện game hiện chuyển sang online thông qua `RemoteSession`, nhưng **chat thời gian thực, PvP giữa người chơi thật, tông môn chung và bảng xếp hạng thật chưa được triển khai**. Mục Giao du/luận kiếm hiện mô phỏng NPC. Không nên quảng cáo là MMO thật.
 - **Bản lưu offline cũ không tự nhập vào tài khoản online.** Thiết kế thủ tục di trú riêng có kiểm toán để tránh nhập state giả mạo hoặc nâng tài nguyên vô hạn.
 - **Chưa có chức năng tự xóa tài khoản và dữ liệu SQLite theo yêu cầu của người dùng**, cũng chưa có cơ chế đồng bộ việc xóa tài khoản Supabase sang SQLite; điều này cần hoàn thiện trước phát hành chính thức.
-- Chính sách pháp lý là bản dự thảo, thiếu định danh đơn vị vận hành, địa chỉ và liên hệ; cần tư vấn thủ tục phát hành game phù hợp và đánh giá dữ liệu xuyên biên giới.
+- Chính sách pháp lý là bản dự thảo; email tiếp nhận hỗ trợ và yêu cầu dữ liệu là `zeplaovn@proton.me`, nhưng vẫn thiếu danh tính pháp lý và địa chỉ đơn vị vận hành; cần tư vấn thủ tục phát hành game phù hợp và đánh giá dữ liệu xuyên biên giới.
 - Triển khai duy nhất một instance SQLite. Scaling đa instance cần Postgres hoặc thiết kế giao dịch phân tán; không gắn chung volume SQLite nhiều container để cùng ghi.
 
 ## Sau khi phát hành
