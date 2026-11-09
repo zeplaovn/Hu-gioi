@@ -10,7 +10,7 @@ const { createConsentVerifier } = require('../server/auth/consent.js');
 const { createPrincipalResolver } = require('../server/auth/principal.js');
 const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
 
-const URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
+const SUPABASE_URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
 const KEY = 'sb_publishable_mock_key';
 const UID = '12345678-1234-4234-8234-123456789abc';
 const TOKEN = 'valid.jwt.token';
@@ -18,7 +18,7 @@ const TOKEN = 'valid.jwt.token';
 test('chấp thuận: cần đủ hai chính sách, chọn theo userId và version', async () => {
   let rows = [{ policy_kind: 'privacy' }], requests = 0, now = 0;
   const check = createConsentVerifier({
-    url: URL, publishableKey: KEY, clock: () => now,
+    url: SUPABASE_URL, publishableKey: KEY, clock: () => now,
     fetchImpl: async (uri, options) => {
       requests++;
       const req = new URL(uri);
@@ -43,14 +43,14 @@ test('chấp thuận: cần đủ hai chính sách, chọn theo userId và versi
 });
 
 test('chấp thuận: lỗi Supabase không được tự động cho phép truy cập', async () => {
-  const verify = opts => createConsentVerifier({ url: URL, publishableKey: KEY, fetchImpl: async () => opts });
+  const verify = opts => createConsentVerifier({ url: SUPABASE_URL, publishableKey: KEY, fetchImpl: async () => opts });
   await assert.rejects(() => verify({ ok: false, status: 401 }).check(TOKEN, UID), { code: 'UNAUTHENTICATED' });
   await assert.rejects(() => verify({ ok: false, status: 500 }).check(TOKEN, UID), { code: 'MAINTENANCE' });
   await assert.rejects(() => createConsentVerifier({
-    url: URL, publishableKey: KEY, fetchImpl: () => Promise.reject(Error('offline'))
+    url: SUPABASE_URL, publishableKey: KEY, fetchImpl: () => Promise.reject(Error('offline'))
   }).check(TOKEN, UID), { code: 'MAINTENANCE' });
   assert.throws(() => createConsentVerifier({ url: 'http://example.com', publishableKey: KEY }), /HTTPS/);
-  assert.throws(() => createConsentVerifier({ url: URL, publishableKey: 'unsafe' }), /SUPABASE_PUBLISHABLE_KEY/);
+  assert.throws(() => createConsentVerifier({ url: SUPABASE_URL, publishableKey: 'unsafe' }), /SUPABASE_PUBLISHABLE_KEY/);
 });
 
 test('principal: JWT được xác minh rồi mới kiểm tra chính sách', async () => {
