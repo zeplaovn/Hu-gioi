@@ -235,89 +235,16 @@
     }
   }
 
-  /** Danh sách "việc nên làm tiếp" sau khi bế quan: chỉ đọc trạng thái, không ghi gì vào save. */
-  function nextSteps(s, g) {
-    const out = [], st = g.stats ? g.stats() : null;
-    if (st && s.hp < st.HP * .5) out.push('Sinh lực còn thấp: nghỉ ngơi hoặc dùng đan hồi phục trước khi đột phá hay vào bí cảnh.');
-    if (s.dungeon?.run) out.push('Bạn đang đánh dở một chuyến bí cảnh: vào Thế giới → Bí cảnh để tiếp tục hoặc rút lui giữ thưởng.');
-    else if (!s.dungeon?.active && !s.sect?.mission) out.push('Bí cảnh và nhiệm vụ tông môn đang trống: cả hai đều chạy cả khi bạn vắng mặt.');
-    if (s.sect?.mission && s.sect.mission.end <= Date.now()) out.push('Nhiệm vụ tông môn đã xong, vào Tông môn để nhận thưởng.');
-    return out.slice(0, 3);
-  }
-
-  function offlineSnapshot(now) {
-    const s = UI.s();
-    return { age: s.age, realm: s.realm, stage: s.stage, harvests: s.garden.filter(p => !p.wilt && p.end <= now).length };
-  }
-
-  /** Hộp thoại "Bế quan trở về": cùng bố cục với bản Hu-gioi (vắng mặt, thời gian tính, tuổi, kết quả, các mục kỳ ngộ/bí cảnh/tông môn). */
-  function showOfflineReport(r, before, awaySeconds) {
-    const s = UI.s(), g = UI.g();
-    const cap = F.offline_cap(s.offlineCap), eff = F.offline_efficiency(s.offlineEff);
-    const capped = awaySeconds > cap;
-    const months = Math.max(0, Math.round((s.age - before.age) * 12));
-    const L = [];
-    const row = (cls, html) => L.push('<div class="' + cls + '">' + html + '</div>');
-    const section = title => row('report-sec', '— ' + title + ' —');
-
-    const ups = s.realm === before.realm ? Math.max(0, s.stage - before.stage) : 0;
-    row('report-hero', '<div class="rh-time"><span>BẾ QUAN</span><b>' + duration(r.seconds) + '</b></div>' +
-      '<div class="rh-grid"><div><span>Tu vi</span><b data-countup="' + Math.max(0, r.exp) + '" data-fmt="num">+0</b></div>' +
-      '<div><span>Linh thạch</span><b data-countup="' + r.stone + '" data-fmt="money">+0</b></div>' +
-      '<div><span>Tầng mới</span><b class="' + (ups ? 'up' : '') + '">' + (ups ? '+' + ups : '—') + '</b></div></div>' +
-      (ups ? '<div class="rh-note">Tự động đột phá: ' + esc(g.realmLabel()) + '</div>' : ''));
-    row('report-center', 'Bạn đã vắng mặt <b>' + duration(awaySeconds) + '</b>. Thời gian bế quan được tính: <b>' + duration(r.seconds) + '</b>' + (capped ? ' (đã đạt mức tối đa)' : '') + '.');
-    row('report-center dim small', 'Hiệu suất ' + pct(eff) + ', tối đa ' + duration(cap) + ' mỗi lần. Linh điền được chăm khi vắng mặt; cây chín chờ bạn thu hoạch.');
-    row('cyan', 'Thời gian trong game: +' + months + ' tháng (tuổi ' + Math.floor(before.age) + ' → ' + Math.floor(s.age) + ')');
-    if (s.realm !== before.realm) row('gold', 'Cảnh giới: ' + F.REALMS[before.realm] + ' → ' + F.REALMS[s.realm]);
-    if (!s.completed && s.qi >= g.need()) row('gold', '◆ Đã viên mãn — bấm Đột phá để độ kiếp lên đại cảnh giới và tiếp tục hấp thụ linh khí!');
-    if (before.harvests) row('green', '🌿 Linh điền: ' + before.harvests + ' ô đã chín, vào Nghề phụ → Linh điền để thu hoạch.');
-    if (r.batches) row('green', 'Nghề phụ: hoàn tất ' + r.batches + ' mẻ.');
-    if (r.sectReady && !r.sect) row('gold', 'Nhiệm vụ tông môn đã hoàn tất, đang chờ bạn nhận thưởng.');
-    const life = g.lifeInfo();
-    row('small', s.completed ? 'Thọ nguyên: đã chứng đạo trường sinh.' : 'Thọ nguyên: còn ' + num(Math.floor(life.left)) + ' / ' + num(life.max) + ' năm (1 năm ≈ ' + duration(1 / life.pace) + ' tu luyện liên tục).');
-    if (!s.completed && (life.left <= 40 || life.seconds <= 1800)) row('danger small', '⚠ Thọ nguyên còn ' + Math.floor(life.left) + ' năm (khoảng ' + duration(life.seconds) + ' tu luyện)' + (Number.isFinite(life.safeSeconds) ? ': vắng mặt quá ' + duration(life.safeSeconds) + ' đạo thân sẽ tọa hóa' : '') + '. Hãy đột phá đại cảnh giới để nới thọ nguyên.');
-
-    if (r.encounters?.length) {
-      section('Kỳ ngộ (' + r.encounters.length + ')');
-      r.encounters.slice(0, 8).forEach(e => {
-        const d = H.ENCOUNTERS.find(x => x.id === e.id);
-        const rar = d && H.ENCOUNTER_RARITIES[d.rarity];
-        row('small', '<span style="color:' + (rar ? rar.color : 'inherit') + '">✦ [' + esc(rar ? rar.name : '') + '] ' + esc(d ? d.name : '') + '</span>: ' + esc(e.text));
-      });
-      if (r.encounters.length > 8) row('dim small', '… và ' + (r.encounters.length - 8) + ' kỳ ngộ khác.');
-    }
-    if (r.dungeon) {
-      section('Bí cảnh');
-      row('small', esc(r.dungeon.text));
-    }
-    if (r.sect) {
-      section('Nhiệm vụ tông môn');
-      row('small', esc(r.sect.text));
-    }
-    const tips = nextSteps(s, g);
-    if (tips.length) {
-      section('Việc nên làm tiếp');
-      tips.forEach(x => row('small', '→ ' + esc(x)));
-    }
-    UI.modal('Bế quan trở về', '<div class="report-lines">' + L.join('') + '</div>',
-      null, 'Nhận & tiếp tục tu luyện', 'THIÊN MỆNH', { type: 'gold', symbol: '☯', vfx: ['chien_dau', 'linh_khi'] });
-    UI.idle?.countUp(document.getElementById('modalBody'));
-  }
-
-  /* ======================================================================
-     TỌA HÓA · một kiếp đã kết thúc, xóa toàn bộ tiến trình kiếp cũ.
-     Không dùng lệnh trọng sinh (lệnh đó cố tình giữ meta/đạo vận).
-     ====================================================================== */
+  /* Không có catch-up/báo cáo bế quan: offline đóng băng toàn bộ tiến trình. */
   let deathOpen = false;
   UI.onDeath = function (r) {
     if (deathOpen || !store.ready) return;
+    if (UI.tribulation?.pageOpen) { UI.pendingDeathReport = r || {}; return; }
     UI.tutorial?.close();
     const s = UI.s(), g = UI.g();
     deathOpen = true;
-    const lead = r && r.seconds >= 20
-      ? 'Trong lúc bế quan, thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn.'
-      : 'Thọ nguyên của <b>' + esc(s.name) + '</b> đã cạn. Đạo thân trở về cát bụi.';
+    const why = { tribulation: 'Thiên kiếp giáng xuống, đạo thân đã tọa hóa.', pvp: 'Luận kiếm thất bại, đạo thân đã tọa hóa.', combat: 'Sinh lực cạn trong giao chiến, đạo thân đã tọa hóa.', lifespan: 'Thọ nguyên đã cạn, đạo thân đã tọa hóa.' };
+    const lead = why[s.death?.cause] || 'Đạo thân đã tọa hóa. Không còn cơ hội hồi sinh.';
     UI.modal('Tọa hóa',
       '<p>' + lead + '</p>' +
       '<div class="offline-list">' +
@@ -368,15 +295,12 @@
     $('game').hidden = false;
     document.body.classList.add('in-game');
     store.ready = true;
-    const awayStart = Date.now(), awaySeconds = Math.max(0, (awayStart - s.lastUpdate) / 1000);
-    const before = offlineSnapshot(awayStart);
-    const wasExploring = !!s.exploration?.active;
-    // Snapshot đã được đồng bộ và xác minh qua Supabase/JWT trước khi mở màn này.
+    // Snapshot đã được backend xác minh; không tính tiến trình khi quay lại.
     const r = null;
+    const wasExploring = !!s.exploration?.active;
     UI.applySettings();
     const avatar = $('avatar');
     if (avatar) avatar.src = A.heroPortrait(s.gender, s.realm);
-    if (r && r.seconds >= 20 && !r.died) showOfflineReport(r, before, awaySeconds);
     UI.windows?.closeAll();
     UI.buildShell?.();
     const hash = String(root.location && root.location.hash || '').replace(/^#\/?/, '').split('/');
@@ -545,26 +469,19 @@
     document.addEventListener('visibilitychange', () => {
       UI.updateSceneEffects();
       if (!store.ready || store.locked) return;
-      if (document.hidden) { store.catchUp(); store.write(); return; }
-      const now = Date.now(), awaySeconds = Math.max(0, (now - UI.s().lastUpdate) / 1000);
-      const before = offlineSnapshot(now);
-      const wasExploring = !!UI.s().exploration?.active;
-      const r = store.catchUp(now, true);
-      store.write();
-      if (wasExploring && !UI.s().exploration?.active) {
-        if (UI.current === 'combat' || UI.windows.has('combat')) UI.go('idle');
-        UI.toast('Lịch luyện viên mãn. Đạo thân đã trở về đài Tu luyện.', { type: 'gold', title: 'Lịch luyện hoàn tất' });
+      if (document.hidden) {
+        UI.session.pause().catch(error => console.warn('Không gửi được tín hiệu dừng:', error.message));
+        return;
       }
-      UI.refresh();
-      if (r && r.seconds >= 20 && !r.died) {
-        if ($('modalLayer').hidden && !UI.tutorial.active && !UI.intro.active && !UI.tribulation.active) showOfflineReport(r, before, awaySeconds);
-        else UI.toast('Bế quan · +' + num(r.exp) + ' tu vi · ' + money(r.stone) + '.', { type: 'loot', title: 'Bế quan trở về' });
-      }
+      UI.session.synchronize(true).then(() => UI.refresh()).catch(error => UI.toast('Không đồng bộ được tiến trình: ' + error.message, { type: 'danger' }));
     });
     root.addEventListener('pagehide', () => {
-      if (store.ready && !store.locked) { store.catchUp(Date.now(), document.hidden); store.write(); }
+      if (store.ready && !store.locked) UI.session.pause().catch(() => { /* lease server tự kết thúc */ });
     });
     root.addEventListener('pageshow', e => { if (e.persisted) root.location.reload(); });
+    UI.session.subscribe(event => {
+      if (event.type === 'death' && store.ready) UI.onDeath(event.report);
+    });
 
     if (root.navigator && root.navigator.locks) {
       store.locked = true;
@@ -590,14 +507,14 @@
     const saved = store.load();
     $('continueGame').hidden = !saved;
     $('welcomeRebirth').textContent = saved
-      ? 'Đây là lần trùng sinh thứ ' + (saved.rebirths + 1) + ' của bạn'
-      : 'Đây là lần trùng sinh thứ 1 của bạn';
+      ? 'Đạo thân chỉ có một mạng. Thất bại sẽ mất toàn bộ kiếp này.'
+      : 'Chọn Thiên mệnh và bắt đầu một kiếp mới.';
     $('continueGame').title = saved ? 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm] : '';
     $('welcome').hidden = false;
     renderCreation();
   }
   function leaveAccount() {
-    if (store.ready && !store.locked) { store.catchUp(); store.write(); }
+    if (store.ready && !store.locked) UI.session.pause().catch(() => {});
     store.ready = false;
     UI.tutorial?.close();
     UI.windows?.closeAll();
