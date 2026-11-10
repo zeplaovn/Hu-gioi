@@ -1,6 +1,6 @@
 /* HƯ GIỚI · NẠP TÀI NGUYÊN
- * Tiến độ tài nguyên đo theo xử lý thực; 100% chỉ khi engine sẵn sàng
- * và người chơi đã xem đủ 8 mẹo, mỗi mẹo 3,2 giây. Hỗ trợ file://. */
+ * Tiến độ tài nguyên đo theo xử lý thực; mẹo chạy song song, không trì hoãn vào game.
+ * Đạt 100% ngay khi ảnh và engine sẵn sàng. Hỗ trợ file://. */
 (function (root) {
   'use strict';
   const doc = root.document, el = doc?.getElementById('loading');
@@ -16,7 +16,7 @@
   let completed = 0, failures = 0, assetsReady = false, engine = 'pending', finished = false;
   const retained = [];
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-  // Tiến độ đo xử lý thật. Mỗi mẹo được hiển thị trọn 3,2 giây trước khi hoàn tất.
+  // Các mẹo xoay vòng trong lúc tải, tuyệt đối không là điều kiện hoàn tất.
   const HINTS = [
     'Ma thú về đêm mạnh và nguy hiểm hơn. Hãy chuẩn bị kỹ trước khi lịch luyện sau khi trời tối.',
     'Hãy dùng đan dược để nâng cảnh giới khi tu vi tiến chậm.',
@@ -29,22 +29,12 @@
   ];
   let hintIndex = Math.floor(Math.random() * HINTS.length);
   const nextHint = () => HINTS[hintIndex++ % HINTS.length];
-  const rotateHints = (element, onComplete) => {
-    let shown = 1;
+  const rotateHints = element => {
     element.textContent = nextHint();
-    const timer = setInterval(() => {
-      if (shown === HINTS.length) {
-        clearInterval(timer);
-        onComplete?.();
-        return;
-      }
-      element.textContent = nextHint();
-      shown++;
-    }, 3200);
+    const timer = setInterval(() => { element.textContent = nextHint(); }, 3200);
     return () => clearInterval(timer);
   };
-  let hintsComplete = false;
-  const stopInitialHints = rotateHints(tip, () => { hintsComplete = true; check(); });
+  const stopInitialHints = rotateHints(tip);
   // Hàng phía trên thanh là thông tin nạp thật; dòng dưới dành riêng cho mẹo.
   const phaseLabel = el.querySelector('.loading-row span');
 
@@ -95,14 +85,12 @@
   }
   function paint() {
     const progress = (list.length ? completed / list.length : 1) * 0.88
-      + (engine === 'ready' ? 0.11 : 0)
-      + (hintsComplete && assetsReady && engine === 'ready' ? 0.01 : 0);
+      + (engine === 'ready' ? 0.12 : 0);
     const label = !assetsReady
       ? 'Đang tải tài nguyên · ' + completed + '/' + list.length + (failures ? ' · ' + failures + ' tài nguyên lỗi' : '')
       : engine === 'pending' ? 'Đã tải tài nguyên · đang chuẩn bị trò chơi…'
         : engine === 'failed' ? 'Không thể chuẩn bị trò chơi.'
-          : !hintsComplete ? 'Đã tải tài nguyên · đang hiển thị các mẹo chơi…'
-            : failures ? 'Sẵn sàng · ' + failures + ' tài nguyên lỗi, dùng dự phòng.' : 'Đã sẵn sàng.';
+          : failures ? 'Sẵn sàng · ' + failures + ' tài nguyên lỗi, dùng dự phòng.' : 'Đã sẵn sàng.';
     draw(fill, pct, track, progress, label);
     if (phaseLabel) phaseLabel.textContent = label;
   }
@@ -133,7 +121,7 @@
   function check() {
     paint();
     if (engine === 'failed') finish(true);
-    else if (assetsReady && engine === 'ready' && hintsComplete) finish();
+    else if (assetsReady && engine === 'ready') finish();
   }
   function engineReady(result = {}) {
     if (engine !== 'pending' || finished) return;
@@ -161,7 +149,7 @@
     completed = count; failures = failed; assetsReady = true; check();
   }).catch(() => { assetsReady = true; engine = 'failed'; check(); });
 
-  // Khi tạo nhân vật: tải tài nguyên, chuẩn bị trò chơi, chờ đủ 8 mẹo rồi mới đạt 100%.
+  // Khi tạo nhân vật: tải tài nguyên và khởi tạo đồng thời với vòng mẹo, không đợi hết mẹo.
   async function enter(urls, start) {
     const screen = el.cloneNode(true);
     const focusBefore = doc.activeElement;
@@ -187,9 +175,7 @@
     const hint = doc.createElement('p');
     hint.className = 'loading-hint';
     status.after(hint);
-    let resolveHints;
-    const hintsReady = new Promise(resolve => { resolveHints = resolve; });
-    const stopEntryHints = rotateHints(hint, resolveHints);
+    const stopEntryHints = rotateHints(hint);
     draw(bar, number, meter, 0, 'Đang tải tài nguyên');
     status.textContent = 'Đang tải tài nguyên…';
     doc.body.appendChild(screen);
@@ -205,11 +191,9 @@
       draw(bar, number, meter, 0.88, 'Tài nguyên đã tải xong · đang chuẩn bị trò chơi');
       status.textContent = 'Tài nguyên đã tải xong · đang chuẩn bị trò chơi…';
       if (typeof start === 'function') await start(result);
-      draw(bar, number, meter, 0.99, 'Đã chuẩn bị trò chơi · đang hiển thị mẹo chơi');
-      entryLabel.textContent = 'Đã tải tài nguyên · đang hiển thị mẹo chơi…';
-      status.textContent = 'Các mẹo chơi sẽ hiển thị đủ trước khi vào game.';
-      await hintsReady;
-      draw(bar, number, meter, 1, 'Tài nguyên và các mẹo chơi đã sẵn sàng');
+      draw(bar, number, meter, 1, 'Nhân vật đã sẵn sàng');
+      entryLabel.textContent = 'Hoàn tất chuẩn bị';
+      status.textContent = 'Đang bước vào Hư Giới…';
       status.textContent = result.failed ? 'Sẵn sàng · ' + result.failed + ' tài nguyên dùng dự phòng.' : 'Đã sẵn sàng.';
     } finally {
       stopEntryHints();
