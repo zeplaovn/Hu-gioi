@@ -8,6 +8,7 @@
 - Hai checkbox độc lập, **không đánh dấu sẵn**, liên kết đến `client/legal/privacy.html` và `client/legal/release.html` (phiên bản `2026-11-09-v2`).
 - `public.policy_acceptances`: `user_id`, `policy_kind`, `policy_version`, `accepted_at` (server timestamp).
 - RLS: chỉ chủ tài khoản có thể đọc hoặc thêm dòng cho chính mình. Không cho `anon` đọc, không cho client `UPDATE/DELETE`, không cho client tự ghi `accepted_at`.
+- Thiên Mệnh Các là dữ liệu cấp tài khoản Supabase trong SQLite (Thiên Tinh, nâng cấp và kho bảo vật), phải được xuất theo quyền truy cập dữ liệu và xóa khi chủ tài khoản yêu cầu xóa dữ liệu; **không** xóa khi chỉ đặt lại đạo thân đã tọa hóa.
 - Phiên bản online dùng `RemoteSession`; trạng thái nhân vật và giao dịch gameplay do Node API `/api/v1` xác minh và ghi trong SQLite trên máy chủ. Trình duyệt không lưu bản nhân vật online mới vào localStorage. Cloudflare static-only không thể tự chạy backend.
 - API tài khoản Node thử nghiệm bị vô hiệu mặc định. Có thể chủ động truyền instance `AuthService` vào router trong bài kiểm thử.
 

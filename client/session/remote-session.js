@@ -62,13 +62,16 @@
         throw Object.assign(Error('Không kết nối được máy chủ game. Tiến trình không bị ghi cục bộ.'), { code: 'NETWORK_UNAVAILABLE' });
       }
       let data;
-      try { data = await response.json(); } catch { throw Error('Máy chủ phản hồi không hợp lệ.'); }
+      try { data = await response.json(); }
+      catch { throw Object.assign(Error('Máy chủ phản hồi không hợp lệ.'), { code: 'INVALID_RESPONSE' }); }
       if (!response.ok) {
         const info = data?.error || {};
         const error = Error(typeof info.message === 'string' ? info.message : 'Máy chủ game tạm thời không xử lý được yêu cầu.');
         error.code = info.code || 'HTTP_' + response.status;
         error.status = response.status;
         error.details = info.details;
+        const retryAfter = Number(response.headers?.get?.('retry-after'));
+        error.retryAfterMs = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 0;
         throw error;
       }
       return data;
@@ -208,9 +211,9 @@
               this.emit({ type: 'conflict' });
               throw Error('Thiên Mệnh Các đã thay đổi ở phiên khác. Hãy xem lại số dư và thử thao tác mới.');
             }
-            if (!['NETWORK_UNAVAILABLE', 'RATE_LIMITED'].includes(error.code) && !(error.status >= 500)) throw error;
+            if (!['NETWORK_UNAVAILABLE', 'INVALID_RESPONSE', 'RATE_LIMITED'].includes(error.code) && !(error.status >= 500)) throw error;
             if (attempt === 4) throw error;
-            await new Promise(resolve => root.setTimeout(resolve, Math.min(4000, 350 * 2 ** attempt) + Math.floor(Math.random() * 250)));
+            await new Promise(resolve => root.setTimeout(resolve, Math.max(error.retryAfterMs || 0, Math.min(4000, 350 * 2 ** attempt) + Math.floor(Math.random() * 250))));
           }
         }
         if (!response) throw Error('Thiên Mệnh Các chưa xác nhận giao dịch.');

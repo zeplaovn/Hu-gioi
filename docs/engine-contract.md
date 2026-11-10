@@ -29,6 +29,8 @@ Phần **engine phải cung cấp**:
 
 ## 3. Phiên gameplay online (`client/session/remote-session.js`)
 
+**Mở rộng Thiên Mệnh Các:** `RemoteSession.pavilionPurchase(kind, key)` xếp chung hàng đợi với `dispatch()` và `sync`. Kho tài khoản được đọc từ `bootstrap` hoặc các phản hồi `state`, `commands`, `sync`. Retry cùng requestId; optimistic `expectedVersion` chống mua trùng. Xem [Thiên Mệnh Các](thien-menh-cac.md).
+
 `RemoteSession` dùng Supabase JWT với `/api/v1`: `connect(account)`, `previewCreation()`, `create(profile)`, `dispatch(type,payload)`, `synchronize(force)`, `pause()`, `resetAfterDeath()`, `subscribe(fn)`, `drainAchievements()`. Các thao tác là Promise và được tuần tự hóa theo revision của máy chủ.
 
 `client/persistence/remote-store.js` cung cấp facade cho UI mà **không lưu trạng thái nhân vật vào localStorage**. Chỉ backend giữ RNG, đồng hồ, state và giao dịch SQLite. Tab ẩn gửi `pause`, heartbeat sau khoảng 5 giây, server grace mặc định 15 giây; khi offline không tăng tài nguyên hay tuổi.
@@ -119,7 +121,7 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 
 - Schema hiện hành V9; normalize V4, V5, V6, V7, V8, V9 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
 - `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu SQLite được ghi ở server theo giao dịch.
-- Thiên mệnh được chọn một lần tại tạo nhân vật. Không có `prestige`/`reincarnate` hay tích lũy thành tựu xuyên kiếp.
+- Thiên mệnh được chọn một lần tại tạo nhân vật. Không có lệnh `prestige`/`reincarnate` và không tích lũy **thành tựu nhân vật** xuyên kiếp. **Ngoại lệ mới:** Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân thuộc account SQLite, giữ lại sau `reset-after-death`, khi tạo nhân vật mới nhận đủ thưởng các đại cảnh giới.
 
 ## 8. Thứ tự đã triển khai
 
