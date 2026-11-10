@@ -33,6 +33,10 @@
 .auth-guest:hover { background:#1d3c38; }
 .auth-caption { color:#9c9e92; font-size:12px; line-height:1.65; margin-top:18px; }
 .auth-gate button:focus-visible { outline:2px solid #e6c88b; outline-offset:4px; }
+.auth-remember{display:flex;align-items:flex-start;gap:10px;margin:14px 0 15px;color:#e4d5bc;font-size:13px;line-height:1.45;cursor:pointer}
+.auth-remember input{flex:0 0 18px;width:18px;height:18px;margin:2px 0 0;accent-color:#d8b577}
+.auth-remember small{display:block;color:#9b9c91;font-size:11px;margin-top:3px;line-height:1.5}
+.auth-remember[hidden]{display:none!important}
 .account-switch { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin:3px 0 7px; color:#b8c4b6; font-size:12px; }
 .account-switch button,.account-exit { border:1px solid #a0845870; background:#1e2521; border-radius:7px; color:#e6cfa1; font:700 12px var(--font,sans-serif); padding:7px 12px; cursor:pointer; }
 .account-exit { margin-left:auto; }
