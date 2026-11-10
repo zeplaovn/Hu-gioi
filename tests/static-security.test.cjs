@@ -77,7 +77,7 @@ test('mọi phản hồi có header bảo mật; HEAD không trả thân', async
   assert.equal(head.body, '');
 });
 
-test('HTML/JS/CSS no-cache, media cache dài, không trùng Cache-Control', async () => {
+test('HTML/JS/CSS no-cache, media 24h must-revalidate, không trùng Cache-Control', async () => {
   for (const pathname of ['/', '/index.html', '/client/main.js', '/css/base.css', '/engine/game.js', '/data/balance.js']) {
     const res = await get(pathname, 'HEAD');
     assert.equal(res.status, 200, pathname);
@@ -85,9 +85,11 @@ test('HTML/JS/CSS no-cache, media cache dài, không trùng Cache-Control', asyn
   }
   const media = await get('/media/audio/hu_gioi.mp3', 'HEAD');
   assert.equal(media.status, 200);
-  assert.equal(media.headers['cache-control'], 'public, max-age=31536000, immutable');
+  assert.equal(media.headers['cache-control'], 'public, max-age=86400, must-revalidate');
   const { readFileSync } = require('node:fs');
   const { join } = require('node:path');
+  const headersFile = readFileSync(join(__dirname, '../_headers'), 'utf8');
+  assert.match(headersFile, /\/media\/\*\s*\n\s*Cache-Control: public, max-age=86400, must-revalidate/);
   const rules = [];
   let rule;
   for (const line of readFileSync(join(__dirname, '../_headers'), 'utf8').split(/\r?\n/)) {

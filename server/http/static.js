@@ -56,7 +56,7 @@ function serveStatic(req, res) {
       ...SECURITY_HEADERS,
       'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream',
       'Content-Length': stat.size,
-      'Cache-Control': /^\/media\//i.test(pathname) ? 'public, max-age=31536000, immutable' : 'no-cache'
+      'Cache-Control': /^\/media\//i.test(pathname) ? 'public, max-age=86400, must-revalidate' : 'no-cache'
     });
     if (req.method === 'HEAD') res.end(); else fs.createReadStream(file).pipe(res);
   });
