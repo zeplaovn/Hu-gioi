@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Cài devDependencies theo lockfile (PGlite contract tests)
+        run: npm ci
       - name: Kiểm tra hợp đồng nguồn
         run: npm run check
       - name: Chạy toàn bộ test
