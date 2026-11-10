@@ -31,7 +31,8 @@ test('menu Thêm không còn Chat, các chức năng giao du vẫn còn', () => 
   const html = read('index.html');
   const shell = read('client/ui/shell.js');
   assert.doesNotMatch(html, /data-more-go="chat"/);
-  for (const go of ['more:friends', 'more:dao', 'world:sect', 'more:pvp', 'more:ranking']) {
+  assert.doesNotMatch(html, /data-more-go="more:ranking"/);
+  for (const go of ['more:friends', 'more:dao', 'world:sect', 'more:pvp']) {
     assert.ok(html.includes('data-more-go="' + go + '"'), go);
   }
   assert.match(shell, /const on = wins\.has\('more'\);/);

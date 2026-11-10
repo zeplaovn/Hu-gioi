@@ -113,7 +113,10 @@
 
   UI.register({
     id: 'more', label: 'Giao du', icon: '♡', eyebrow: 'GIAO DU', tabs: TABS,
-    render: tab => `<header class="screen-title"><span class="eyebrow gold">GIAO DU</span><h2>Giao du</h2></header>${tabs(TABS, tab)}<div class="screen-body">${UI.g().featureOpen('social') ? body[tab]() : lockedMore()}</div>`,
+    render: tab => {
+      const active = UI.release.allowed('more:' + tab) ? tab : 'friends';
+      return `<header class="screen-title"><span class="eyebrow gold">GIAO DU</span><h2>Giao du</h2></header>${tabs(UI.release.tabs(TABS), active)}<div class="screen-body">${UI.release.notice(active)}${UI.g().featureOpen('social') ? body[active]() : lockedMore()}</div>`;
+    },
     signature: () => {
       const s = UI.s(), now = Date.now(), pvp = s.social.pvp;
       const f = Object.values(s.social.friends).map(v => v.affinity + ':' + (v.discussAt <= now ? 1 : 0)).join(',');

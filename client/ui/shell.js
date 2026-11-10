@@ -886,6 +886,7 @@
   }
 
   function openMoreMenu() {
+    UI.release.syncMoreMenu();
     const menu = $('moreMenu'), trigger = $('moreMenuBtn');
     if (!menu || !trigger) return;
     menu.hidden = false;
@@ -922,6 +923,7 @@
   }
 
   function go(target, { silent = false } = {}) {
+    if (!UI.release.allowed(target)) return;
     if (target === 'chat' && UI.chatBubble) { UI.chatBubble.open(); return; }
     if (!UI.s().created) return;
     if (['running', 'settling'].includes(trib.phase)) return;
@@ -1769,6 +1771,7 @@
         return;
       }
       const [id, tab] = String(root.location.hash || '#idle').replace(/^#\/?/, '').split('/');
+      if (!UI.release.allowed(id + (tab ? ':' + tab : ''))) { go('idle'); return; }
       if (!UI.screens[id]) return;
       if (id === 'tribulation') { trib.openPage(); return; }
       if (trib.pageOpen) trib.closePage();

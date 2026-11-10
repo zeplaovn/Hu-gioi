@@ -6,6 +6,41 @@
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
   if (!H || !F || !A) throw new Error('Thiếu lõi game. Kiểm tra thứ tự thẻ script.');
   const UI = root.HU_UI = root.HU_UI || {};
+  // Một cấu hình phát hành cho các điểm vào UI và nhãn nội dung giả lập.
+  // Đổi chat/ranking thành true sau khi có backend thật; không đổi luật engine.
+  const release = UI.release = {
+    chat: false,
+    ranking: false,
+    labels: Object.freeze({
+      friends: 'NPC · mô phỏng',
+      dao: 'NPC · mô phỏng',
+      pvp: 'NPC · mô phỏng',
+      auction: 'Phiên mô phỏng · không có người mua/bán khác',
+      sect: 'Tông môn cá nhân · chưa có thành viên khác'
+    }),
+    allowed(target) {
+      const [screen, tab] = String(target || '').replace(/^#/, '').replace('/', ':').split(':');
+      return !(screen === 'chat' && !this.chat || screen === 'more' && tab === 'ranking' && !this.ranking);
+    },
+    tabs(items) { return items.filter(item => this.allowed('more:' + item.id)); },
+    notice(key) {
+      const label = this.labels[key];
+      return label ? '<p class="info-note release-label" role="note">' + esc(label) + '</p>' : '';
+    },
+    syncMoreMenu() {
+      const menu = document.getElementById('moreMenu');
+      if (!menu) return;
+      const existing = menu.querySelector('[data-more-go="more:ranking"]');
+      if (!this.ranking) { existing?.remove(); return; }
+      if (existing) return;
+      const entry = document.createElement('button');
+      entry.type = 'button';
+      entry.setAttribute('role', 'menuitem');
+      entry.dataset.moreGo = 'more:ranking';
+      entry.innerHTML = '<span class="more-ico" aria-hidden="true">♛</span><span><b>Bảng xếp hạng</b><small>Danh vọng mô phỏng</small></span>';
+      menu.appendChild(entry);
+    }
+  };
 
   // Tên chỉ số dùng thống nhất trên mọi màn. Chỉ đổi cách gọi, không sửa công thức.
   UI.statNames = Object.freeze({
