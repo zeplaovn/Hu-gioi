@@ -70,7 +70,14 @@ function buildGameApi(env = process.env) {
 if (require.main === module) {
   const host = process.env.HOST || '127.0.0.1';
   const port = Number(process.env.PORT || 8000);
-  process.on('unhandledRejection', err => console.error('[unhandledRejection]', err?.stack || err));
+  process.on('unhandledRejection', err => {
+    console.error('[fatal] unhandledRejection:', err?.stack || err);
+    process.exit(1);
+  });
+  process.on('uncaughtException', err => {
+    console.error('[fatal] uncaughtException:', err?.stack || err);
+    process.exit(1);
+  });
   const { auth, gameApi, loginGateway, close } = buildGameApi();
   const server = http.createServer(createRouter(null, auth, gameApi, loginGateway));
   server.listen(port, host, () => console.log(`Hư Giới tại http://${host}:${port} · gameplay ${gameApi ? 'BẬT' : 'tắt (chưa cấu hình xác thực)'}`));

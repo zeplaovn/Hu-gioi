@@ -1,6 +1,8 @@
 /* Định tuyến: /api/* do dịch vụ xử lý, còn lại là file tĩnh. */
 'use strict';
 const { serveStatic } = require('./static.js');
+const { GameError, toEnvelope } = require('../errors.js');
+const crypto = require('node:crypto');
 
 const json = (res, status, body) => {
   const data = JSON.stringify(body);
@@ -32,8 +34,21 @@ function createRouter(routes = null, auth = null, gameApi = null, loginGateway =
       loginGateway.handle(req, res).catch(() => { if (!res.writableEnded) json(res, 503, { error: 'Dịch vụ xác thực đang gặp sự cố.' }); });
       return;
     }
+    if (!gameApi && pathname.startsWith('/api/v1/')) {
+      const requestId = crypto.randomUUID();
+      const out = toEnvelope(new GameError('MAINTENANCE', 'Gameplay chưa sẵn sàng vì máy chủ chưa được cấu hình.'), requestId);
+      res.setHeader('X-Request-Id', requestId);
+      return json(res, out.status, out.body);
+    }
     if (gameApi && pathname.startsWith('/api/v1/')) {
-      gameApi.handle(req, res, pathname).catch(() => { if (!res.writableEnded) json(res, 500, { error: 'Máy chủ đang gặp lỗi.' }); });
+      gameApi.handle(req, res, pathname).catch(() => {
+        if (!res.writableEnded) {
+          const requestId = crypto.randomUUID();
+          const out = toEnvelope(new GameError('INTERNAL', 'Máy chủ đang gặp lỗi.'), requestId);
+          res.setHeader('X-Request-Id', requestId);
+          json(res, out.status, out.body);
+        }
+      });
       return;
     }
     const handler = handlers[`${req.method} ${pathname}`];
