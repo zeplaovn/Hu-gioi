@@ -274,10 +274,14 @@ class PlayerService {
         state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
       });
       let report, result = null, achievements = [], failure = null;
+      // Chốt trạng thái sau advance, trước khi thực thi intent không đáng tin.
+      let advancedState = null, advancedCounter = rec.rngCounter;
       try {
         if (run.game.isDead()) throw new GameError('PLAYER_DEAD', 'Đạo thân đã tọa hóa; hãy trở về Khởi Nguyên.');
         report = run.game.advance(now, run.offline);
         run.game.s.presencePaused = false;
+        advancedState = JSON.stringify(run.game.s);
+        advancedCounter = run.rng.counter();
         if (run.game.isDead()) {
           // Thọ nguyên cạn ngay trên heartbeat/lệnh: ghi chết và trả snapshot
           // thay vì ném lỗi làm trình duyệt không nhận kết quả.
@@ -289,12 +293,20 @@ class PlayerService {
       } catch (err) { failure = classify(err); if (failure.code === 'INTERNAL') this.onError(err); }
 
       if (failure) {
-        // Không làm mất phần thời gian thực mà máy chủ đã xác nhận khi lệnh
-        // không hợp lệ. Luôn lưu heartbeat và trạng thái để tránh time-freeze
-        // bằng cách spam lệnh lỗi.
-        if (failure.code === 'PLAYER_DEAD') return { touch: { rngCounter: rec.rngCounter, lastSeenAt: now }, value: { error: failure } };
-        if (JSON.stringify(run.game.s) !== JSON.stringify(rec.state)) {
-          assertStateSafe(run.game.s, this.cfg.maxStateBytes);
+        // Chỉ lưu state sau advance; mọi sửa đổi hoặc RNG từ lệnh bị từ chối đều bị loại.
+        if (advancedState === null) return { value: { error: failure } };
+        const preserved = JSON.parse(advancedState);
+        if (advancedState !== JSON.stringify(rec.state)) {
+          assertStateSafe(preserved, this.cfg.maxStateBytes);
+          failure.details = { ...(failure.details || {}), currentRevision: rec.revision + 1 };
+          return { save: {
+            state: preserved, revision: rec.revision + 1, rngCounter: advancedCounter,
+            lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
+          }, value: { error: failure } };
+        }
+        return { touch: { rngCounter: advancedCounter, lastSeenAt: now }, value: { error: failure } };
+      }
+      assertStateSafe(run.game.s, this.cfg.maxStateBytes);
           failure.details = { ...(failure.details || {}), currentRevision: rec.revision + 1 };
           return { save: save(rec.revision + 1), value: { error: failure } };
         }
@@ -338,7 +350,7 @@ class PlayerService {
   }
   #run(rec, now) {
     const rng = seededRng(rec.rngSeed, rec.rngCounter), logs = [];
-    const state = this.#state(rec, now);
+    const state = structuredClone(this.#state(rec, now));
     return { rng, logs, game: new H.Game(state, rng, m => logs.push(m)), offline: !!state.presencePaused || now - rec.lastSeenAt > this.cfg.onlineGraceMs };
   }
   #envelope(body) {
