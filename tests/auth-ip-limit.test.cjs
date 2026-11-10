@@ -129,7 +129,8 @@ test('gateway chỉ cho phép CORS preflight + POST từ origin frontend đã đ
       host: '127.0.0.1', port: server.address().port, path: '/api/auth/supabase-login', method,
       headers: { origin, 'sec-fetch-site': 'cross-site', 'content-type': 'application/json', 'content-length': Buffer.byteLength(raw) }
     }, res => {
-      res.resume(); res.on('end', () => resolve({ status: res.statusCode, headers: res.headers }));
+      const chunks = []; res.on('data', chunk => chunks.push(chunk));
+      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString('utf8') }));
     });
     req.on('error', reject);
     req.end(method === 'POST' ? raw : undefined);
@@ -137,7 +138,8 @@ test('gateway chỉ cho phép CORS preflight + POST từ origin frontend đã đ
   const options = await send('OPTIONS', 'https://frontend.example');
   assert.equal(options.status, 204);
   assert.equal(options.headers['access-control-allow-origin'], 'https://frontend.example');
-  assert.equal((await send('POST', 'https://frontend.example')).status, 200);
+  const post = await send('POST', 'https://frontend.example');
+  assert.equal(post.status, 200, post.body);
   assert.equal((await send('OPTIONS', 'https://untrusted.example')).status, 403);
   assert.equal((await send('POST', 'https://untrusted.example')).status, 403);
 });
