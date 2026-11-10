@@ -74,3 +74,13 @@ test('index.html nạp data trước engine và engine trước client', () => {
   for (const name of ['progression', 'inventory', 'crafting', 'combat', 'world', 'adventures', 'social', 'time', 'creation'])
     assert.ok(sources.includes('engine/rules/' + name + '.js'), name);
 });
+
+const edgeHtml = require('node:fs').readFileSync(require('node:path').join(__dirname, '../index.html'), 'utf8');
+test('config.js tải trước RemoteSession và Auth; không dùng inline CSP', () => {
+  assert.ok(edgeHtml.indexOf('client/config.js') < edgeHtml.indexOf('client/session/remote-session.js'));
+  assert.ok(edgeHtml.indexOf('client/config.js') < edgeHtml.indexOf('client/auth/supabase.js'));
+  const config = require('node:fs').readFileSync(require('node:path').join(__dirname, '../client/config.js'), 'utf8');
+  assert.match(config, /HU_API_BASE/);
+  assert.match(config, /HU_AUTH_MODE/);
+  assert.doesNotMatch(config, /service_role|SUPABASE_JWT_SECRET|sb_secret_/i);
+});

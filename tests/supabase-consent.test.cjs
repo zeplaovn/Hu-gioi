@@ -40,6 +40,7 @@ function createAdapter(initialHash = '') {
       return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '', json: async () => result };
     }
   };
+  window.HU_AUTH_MODE = 'direct';
   vm.runInNewContext(src, { window, globalThis: window, URLSearchParams, Date, URL, Set, Error });
   return { sb: window.HU_SUPABASE, storage, requests, location, records };
 }
@@ -61,8 +62,11 @@ test('after login consent is individually recorded and scoped to user', async ()
   await assert.rejects(() => sb.accept(USER), /xác thực|hết hạn|đăng nhập/);
   const user = await sb.login('test@example.invalid', 'password-at-least-10');
   assert.equal(user.id, ID);
-  assert.ok(requests.some(x => x.input === '/api/auth/supabase-login'));
-  assert.ok(!requests.some(x => x.input.includes('grant_type=password')), 'login cannot bypass the app IP limiter');
+  assert.ok(requests.some(x => x.input.includes('/auth/v1/token?grant_type=password')));
+  assert.ok(!requests.some(x => x.input === '/api/auth/supabase-login'), 'chế độ Edge không gọi Node gateway');
+  const loginRequest = requests.find(x => x.input.includes('grant_type=password'));
+  assert.match(loginRequest.init.headers.apikey, /^sb_publishable_/);
+  assert.equal(JSON.parse(loginRequest.init.body).email, 'test@example.invalid');
   assert.equal((await sb.accepted()).size, 0);
   await sb.accept(user);
   assert.equal(records.length, 2);
