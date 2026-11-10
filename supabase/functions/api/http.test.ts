@@ -1,5 +1,5 @@
 /* Deno Edge HTTP regression: kiểm không cần DB/live credentials. */
-import { corsHeaders, parseBody, routeOf } from './http.ts';
+import { corsHeaders, parseBody, routeOf, bearerToken } from './http.ts';
 
 function expect(condition: unknown, message: string): asserts condition {
   if (!condition) throw Error(message);
