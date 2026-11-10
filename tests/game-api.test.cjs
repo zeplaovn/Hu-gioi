@@ -302,7 +302,7 @@ test('xóa tài khoản: chưa cấu hình khóa quản trị thì từ chối v
   repo.close();
 });
 
-test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N bản', () => {
+test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N bản', async () => {
   const { backup } = require('../tools/backup-db.cjs');
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-backup-'));
   fs.chmodSync(dir, 0o700);
@@ -317,7 +317,7 @@ test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N
   assert.equal(fs.statSync(results[2].dest).mode & 0o777, 0o600);
   assert.equal(fs.statSync(path.join(dir, 'backups')).mode & 0o777, 0o700);
   const copy = new SqlitePlayers(results[2].dest);
-  assert.equal(copy.getByOwner(ID_A).name, 'Thanh Vân');
+  assert.equal((await copy.getByOwner(ID_A)).name, 'Thanh Vân');
   copy.close(); repo.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
