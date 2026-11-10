@@ -36,6 +36,7 @@
   function showForm() {
     pending = null;
     $('authForm').hidden = false;
+    $('authGoogle').hidden = false;
     $('authConsentGate').hidden = true;
     $('authTabs').hidden = false;
     selectMode('login');
@@ -70,6 +71,7 @@
   function requireConsent(next) {
     pending = next;
     $('authForm').hidden = true;
+    $('authGoogle').hidden = true;
     $('authTabs').hidden = true;
     $('authConsentGate').hidden = false;
     $('authConsentPrivacy').checked = false;
@@ -121,6 +123,17 @@
       $('authForm').removeAttribute('aria-busy');
     }
   }
+  async function loginGoogle() {
+    if (busy) return;
+    busy = true;
+    $('authGoogle').disabled = true;
+    try { await SB.loginGoogle(); }
+    catch (error) {
+      busy = false;
+      $('authGoogle').disabled = false;
+      notice(error.message || 'Không thể bắt đầu đăng nhập Google.');
+    }
+  }
   async function acceptPending() {
     if (busy || !pending) return;
     if (!$('authConsentPrivacy').checked || !$('authConsentRelease').checked) {
@@ -154,6 +167,7 @@
     if (bound) return;
     bound = true;
     $('authForm').addEventListener('submit', submit);
+    $('authGoogle').addEventListener('click', loginGoogle);
     document.querySelectorAll('[data-auth-view]').forEach(b => b.addEventListener('click', () => selectMode(b.dataset.authView)));
     $('switchAccount').addEventListener('click', logout);
     $('accountExit').addEventListener('click', logout);

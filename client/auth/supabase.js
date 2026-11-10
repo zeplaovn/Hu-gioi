@@ -6,6 +6,8 @@
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
   const VERSION = '2026-11-10-v5';
   const STORAGE = 'huGioiSupabaseSessionV1';
+  const OAUTH_PENDING = 'huGioiGoogleOAuthPkceV1';
+  const OAUTH_MAX_AGE_MS = 10 * 60 * 1000;
   function validEmail(raw) {
     if (typeof raw !== 'string' || raw.length < 6 || raw.length > 254 || /\s/.test(raw)) return false;
     const parts = raw.split('@');
@@ -73,6 +75,75 @@
     if (current.expires_at * 1000 < Date.now() + 60000) return refresh();
     return current.access_token;
   }
+  function redirectUrl() {
+    const loc = root.location;
+    if (!loc || (loc.protocol !== 'https:' && !(loc.protocol === 'http:' && loc.hostname === 'localhost')))
+      throw Error('Đăng nhập Google yêu cầu HTTPS hoặc localhost.');
+    return loc.origin + loc.pathname;
+  }
+
+  function randomVerifier() {
+    if (!root.crypto?.getRandomValues || !root.crypto?.subtle || typeof root.TextEncoder !== 'function')
+      throw Error('Trình duyệt không hỗ trợ xác thực Google an toàn.');
+    const bytes = new Uint8Array(32);
+    root.crypto.getRandomValues(bytes);
+    return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function base64url(bytes) {
+    let binary = '';
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return root.btoa(binary).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');
+  }
+
+  async function loginGoogle() {
+    if (root.HU_AUTH_MODE !== 'direct') throw Error('Đăng nhập Google chỉ hỗ trợ chế độ Supabase Auth trực tiếp.');
+    const redirect = redirectUrl();
+    const verifier = randomVerifier();
+    const hash = new Uint8Array(await root.crypto.subtle.digest('SHA-256', new root.TextEncoder().encode(verifier)));
+    // PKCE verifier exists only in this tab. Never put it in a URL or log.
+    try {
+      root.sessionStorage.setItem(OAUTH_PENDING, JSON.stringify({ verifier, redirect, created: Date.now() }));
+    } catch {
+      throw Error('Trình duyệt phải cho phép lưu trữ phiên để đăng nhập Google.');
+    }
+    const url = new URL(URL + '/auth/v1/authorize');
+    url.searchParams.set('provider', 'google');
+    url.searchParams.set('redirect_to', redirect);
+    url.searchParams.set('code_challenge', base64url(hash));
+    url.searchParams.set('code_challenge_method', 's256');
+    root.location.assign(url.toString());
+  }
+
+  async function oauthCallback() {
+    const loc = root.location;
+    if (!loc) return;
+    const params = new URLSearchParams(loc.search);
+    const code = params.get('code');
+    const failure = params.get('error') || params.get('error_description');
+    if (!code && !failure) return;
+    let stored = null;
+    try { stored = JSON.parse(root.sessionStorage.getItem(OAUTH_PENDING) || 'null'); } catch { /* missing or invalid */ }
+    try { root.sessionStorage?.removeItem(OAUTH_PENDING); } catch { /* private mode */ }
+    // Remove OAuth credentials/errors from address bar before exchanging the code.
+    for (const key of ['code', 'error', 'error_code', 'error_description']) params.delete(key);
+    const rest = params.toString();
+    root.history?.replaceState(null, '', loc.pathname + (rest ? '?' + rest : '') + loc.hash);
+    if (!stored || typeof stored.verifier !== 'string' ||
+        !/^[a-f0-9]{64}$/.test(stored.verifier) ||
+        stored.redirect !== redirectUrl() ||
+        !Number.isFinite(stored.created) || Date.now() - stored.created < 0 ||
+        Date.now() - stored.created > OAUTH_MAX_AGE_MS)
+      throw Error('Phiên đăng nhập Google không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.');
+    if (failure) throw Error('Google không hoàn tất đăng nhập. Vui lòng thử lại.');
+    if (!code) throw Error('Google không trả mã xác thực.');
+    const data = await request('/auth/v1/token?grant_type=pkce', {
+      method: 'POST', body: { auth_code: code, code_verifier: stored.verifier }
+    });
+    if (!data?.access_token || !data?.refresh_token) throw Error('Supabase không trả phiên Google hợp lệ.');
+    persist(data);
+  }
+
   async function callback() {
     if (!root.location || !/(?:^#|&)access_token=/.test(root.location.hash)) return;
     // Sign-up confirmation links may carry a session in the URL fragment.
@@ -83,6 +154,7 @@
   }
 
   async function user() {
+    await oauthCallback();
     await callback();
     let access = await token();
     if (!access) return null;
@@ -185,5 +257,5 @@
       persist(null);
     }
   }
-  root.HU_SUPABASE = { user, signup, login, accepted, accept, logout, accessToken: token, validEmail, publishableKey: KEY, VERSION };
+  root.HU_SUPABASE = { user, signup, login, loginGoogle, accepted, accept, logout, accessToken: token, validEmail, publishableKey: KEY, VERSION };
 })(typeof window !== 'undefined' ? window : globalThis);
