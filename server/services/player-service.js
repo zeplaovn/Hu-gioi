@@ -7,15 +7,15 @@ const crypto = require('node:crypto');
 const H = require('../../engine/game.js');
 const C = require('../../engine/protocol/commands.js');
 const { GameError } = require('../errors.js');
-const { HEARTBEAT } = require('../heartbeat-policy.js');
+const { SYNC_INTERVAL_MS, ONLINE_GRACE_MS } = require('../presence-config.js');
 
 const DAY = 24 * 3600 * 1000;
 const DEFAULTS = Object.freeze({
-  onlineGraceMs: HEARTBEAT.onlineGraceMs, // đủ tối thiểu ba chu kỳ có jitter ±30%
+  onlineGraceMs: ONLINE_GRACE_MS,      // sau 15s không heartbeat từ JWT: không tính tiếp tiến trình (grace cho mạng trễ)
   receiptTtlMs: 7 * DAY,
   ticketTtlMs: 10 * 60000,
   previewsPerDay: 5,
-  nextSyncInMs: HEARTBEAT.nextSyncInMs,
+  nextSyncInMs: SYNC_INTERVAL_MS,
   maxStateBytes: 65536
 });
 const ERASE_CONFIRMATION = 'delete-my-game-data';
@@ -86,6 +86,8 @@ class PlayerService {
     this.clock = clock;
     this.contentVersion = contentVersion;
     this.cfg = { ...DEFAULTS, ...config };
+    if (this.cfg.onlineGraceMs < this.cfg.nextSyncInMs * 2)
+      throw Error('onlineGraceMs phải >= 2 × nextSyncInMs.');
     this.onError = onError;
   }
 
@@ -132,7 +134,7 @@ class PlayerService {
     return {
       protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion, serverTime: this.clock(),
       player: rec ? { id: rec.id, name: rec.name, revision: rec.revision } : null,
-      previewsPerDay: this.cfg.previewsPerDay, pavilion: this.repo.getPavilion(ownerId)
+      previewsPerDay: this.cfg.previewsPerDay, nextSyncInMs: this.cfg.nextSyncInMs, pavilion: this.repo.getPavilion(ownerId)
     };
   }
 

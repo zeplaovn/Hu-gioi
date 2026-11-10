@@ -30,8 +30,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Cài dependency theo lockfile
-        run: npm ci
       - name: Kiểm tra hợp đồng nguồn
         run: npm run check
       - name: Chạy toàn bộ test
@@ -43,14 +41,14 @@ jobs:
         run: |
           python -m pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Chụp trước/sau trên Node API của từng commit
+      - name: Chụp trước/sau và kiểm tra file://
         shell: bash
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           git fetch origin main --depth=1
           git worktree add --detach /tmp/hu-gioi-base origin/main
-          (cd /tmp/hu-gioi-base && PORT=8000 node tools/online-ci-server.cjs) > /tmp/hu-ui-before.log 2>&1 &
+          python -m http.server 8000 --bind 127.0.0.1 --directory /tmp/hu-gioi-base > /tmp/hu-ui-before.log 2>&1 &
           PORT=8001 node tools/online-ci-server.cjs > /tmp/hu-ui-after.log 2>&1 &
           sleep 3
           python tools/ui-proof.py --before http://127.0.0.1:8000 --after http://127.0.0.1:8001 --output ui-proof

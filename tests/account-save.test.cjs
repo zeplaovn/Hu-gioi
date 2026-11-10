@@ -6,8 +6,8 @@ const { readFileSync } = require('node:fs');
 const { runInNewContext } = require('node:vm');
 const { join } = require('node:path');
 
-test('[legacy] xóa bản lưu và dự phòng chỉ của nhân vật hiện tại', () => {
-  const source = readFileSync(join(__dirname, '../legacy/local-store.js'), 'utf8');
+test('xóa bản lưu và dự phòng chỉ của nhân vật hiện tại', () => {
+  const source = readFileSync(join(__dirname, '../client/persistence/local-store.js'), 'utf8');
   const saved = new Map();
   const storage = { getItem: k => saved.get(k) ?? null, setItem: (k, v) => saved.set(k, v), removeItem: k => saved.delete(k) };
   let now = 1000;

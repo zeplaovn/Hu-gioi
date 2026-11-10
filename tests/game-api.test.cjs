@@ -13,6 +13,7 @@ const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const { createGameApi } = require('../server/http/game-api.js');
 const { RateLimiter } = require('../server/http/rate-limit.js');
+const { createClientIp } = require('../server/http/client-ip.js');
 const { AuthService } = require('../server/services/auth-service.js');
 const { createRouter } = require('../server/http/router.js');
 
@@ -60,10 +61,10 @@ test('JWT ES256 qua JWKS: xoay khóa, kid lạ và alg bị ép đều bị từ
   await assert.rejects(v.verify(signHs(p(), { secret: 'k1' })), { code: 'UNAUTHENTICATED' }); // không cho đổi sang HS256 khi chưa cấu hình secret
 });
 
-async function boot(t, { allowedOrigins = [], limiter, legacy = null } = {}) {
+async function boot(t, { allowedOrigins = [], limiter, legacy = null, clientIp } = {}) {
   const repo = new SqlitePlayers(':memory:');
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  const api = createGameApi({ service, resolvePrincipal: createPrincipalResolver({ jwt: createJwtVerifier({ secret: SECRET }), legacy }), allowedOrigins, limiter });
+  const api = createGameApi({ service, resolvePrincipal: createPrincipalResolver({ jwt: createJwtVerifier({ secret: SECRET }), legacy }), allowedOrigins, limiter, clientIp });
   const server = http.createServer(createRouter(null, legacy, api));
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   t.after(async () => { await new Promise(r => server.close(r)); repo.close(); });
@@ -157,6 +158,18 @@ test('API: giới hạn tốc độ trả 429 kèm Retry-After', async t => {
   assert.ok(Number(limited.headers['retry-after']) >= 1);
   now += 60000;
   assert.equal((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status, 200);
+});
+
+test('pause được giới hạn riêng, không tiêu token của sync', async t => {
+  const { call, tokenA } = await boot(t, { limiter: new RateLimiter({ clock: () => 0 }) });
+  const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
+  const created = await call('POST', '/api/v1/players', { token: tokenA, body: {
+    ticketId: pv.data.ticketId, name: 'Huyền Tâm', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck'
+  } });
+  const url = '/api/v1/players/' + created.data.playerId;
+  for (let i = 0; i < 8; i++) assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 200);
+  assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 429);
+  assert.equal((await call('POST', url + '/pause', { token: tokenA, body: {} })).status, 200);
 });
 
 test('API: CORS chỉ cho origin trong danh sách; preflight không cần đăng nhập', async t => {
@@ -314,6 +327,19 @@ test('API: giới hạn theo IP chặn cả request không có token trước kh
   assert.equal(last.status, 429);
   assert.equal(last.data.error.code, 'RATE_LIMITED');
   assert.ok(Number(last.headers['retry-after']) >= 1);
+});
+
+test('hai IP qua cùng proxy tin cậy không dùng chung bucket 120/phút gameplay', async t => {
+  const { call } = await boot(t, {
+    limiter: new RateLimiter({ clock: () => 0 }),
+    clientIp: createClientIp(['127.0.0.1'])
+  });
+  const first = { 'x-forwarded-for': '203.0.113.10' };
+  const second = { 'x-forwarded-for': '203.0.113.11' };
+  for (let i = 0; i < 120; i++)
+    assert.equal((await call('GET', '/api/v1/bootstrap', { headers: first })).status, 401);
+  assert.equal((await call('GET', '/api/v1/bootstrap', { headers: first })).status, 429);
+  assert.equal((await call('GET', '/api/v1/bootstrap', { headers: second })).status, 401);
 });
 
 test('API Thiên Mệnh Các: chỉ JWT và intent hợp lệ; thiếu Thiên Tinh trả 422, không nhận giá client', async t => {

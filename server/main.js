@@ -9,7 +9,7 @@
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
      HU_AUTH_TRUSTED_PROXY_IPS  danh sách IP proxy được phép khai báo X-Forwarded-For
-     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 20000)
+     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 15000)
    Không đặt cấu hình xác thực → API gameplay tắt, chỉ phục vụ file tĩnh. */
 'use strict';
 const http = require('node:http');
@@ -43,21 +43,20 @@ function buildGameApi(env = process.env) {
   const exposed = ['client', 'css', 'data', 'engine', 'media'].some(dir => path.resolve(file).startsWith(path.join(publicRoot, dir) + path.sep));
   if (exposed) throw Error('HU_DB_FILE không được đặt trong thư mục tài nguyên công khai.');
 
-  const { onlineGrace } = require('./heartbeat-policy.js');
-  const grace = onlineGrace(env.HU_ONLINE_GRACE_MS); // validate trước khi mở DB
   const repository = new SqlitePlayers(file);
+  const grace = Number(env.HU_ONLINE_GRACE_MS);
   const service = new PlayerService({
     repository, contentVersion: computeContentVersion(),
-    config: { onlineGraceMs: grace }
+    config: Number.isFinite(grace) && grace >= 0 && env.HU_ONLINE_GRACE_MS ? { onlineGraceMs: grace } : {}
   });
   const purge = setInterval(() => { try { repository.purgeExpired(Date.now()); } catch (e) { console.error('[purge]', e.message); } }, 3600000);
   purge.unref();
   repository.purgeExpired(Date.now());
   const allowedOrigins = String(env.HU_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
-  const trustedProxyIps = String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(s => s.trim()).filter(Boolean);
-  const clientIp = createClientIp({ trustedProxyIps, env: env.NODE_ENV, warn: text => console.warn(text) });
+  const trustedProxyIps = String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(x => x.trim()).filter(Boolean);
+  const clientIp = createClientIp(trustedProxyIps);
   const loginGateway = jwt ? createSupabaseLoginGateway({
-    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY, allowedOrigins, clientIp
+    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY, clientIp
   }) : null;
   const accountAdmin = jwt && env.SUPABASE_SERVICE_ROLE_KEY
     ? createAccountAdmin({ url: env.SUPABASE_URL, secretKey: env.SUPABASE_SERVICE_ROLE_KEY }) : null;
@@ -71,14 +70,7 @@ function buildGameApi(env = process.env) {
 if (require.main === module) {
   const host = process.env.HOST || '127.0.0.1';
   const port = Number(process.env.PORT || 8000);
-  process.on('unhandledRejection', err => {
-    console.error('[fatal] unhandledRejection:', err?.stack || err);
-    process.exit(1);
-  });
-  process.on('uncaughtException', err => {
-    console.error('[fatal] uncaughtException:', err?.stack || err);
-    process.exit(1);
-  });
+  process.on('unhandledRejection', err => console.error('[unhandledRejection]', err?.stack || err));
   const { auth, gameApi, loginGateway, close } = buildGameApi();
   const server = http.createServer(createRouter(null, auth, gameApi, loginGateway));
   server.listen(port, host, () => console.log(`Hư Giới tại http://${host}:${port} · gameplay ${gameApi ? 'BẬT' : 'tắt (chưa cấu hình xác thực)'}`));

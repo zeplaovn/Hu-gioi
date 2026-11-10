@@ -13,8 +13,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Install lockfile dependencies
-        run: npm ci
       - name: Check source contracts
         run: npm run check
       - name: Run entire test suite

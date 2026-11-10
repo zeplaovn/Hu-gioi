@@ -1,37 +1,26 @@
 /* Token bucket trong bộ nhớ. Đủ cho một instance; nhiều instance cần Redis (docs/backend-plan.md §6.9). */
 'use strict';
-const { HEARTBEAT } = require('../heartbeat-policy.js');
+const { SYNC_INTERVAL_MS } = require('../presence-config.js');
 class RateLimiter {
   constructor({ clock = Date.now, maxKeys = 20000 } = {}) { this.clock = clock; this.maxKeys = maxKeys; this.buckets = new Map(); }
   /* capacity: số lượt tối đa dồn lại; perMinute: tốc độ hồi. Trả { ok, retryAfterMs }. */
   take(key, { capacity, perMinute }) {
     const now = this.clock();
-    const existing = this.buckets.get(key);
-    const b = existing || { tokens: capacity, at: now, capacity, perMinute };
-    b.tokens = Math.min(capacity, b.tokens + Math.max(0, now - b.at) * perMinute / 60000);
-    b.at = now; b.capacity = capacity; b.perMinute = perMinute;
+    if (this.buckets.size > this.maxKeys) this.buckets.clear();
+    const b = this.buckets.get(key) || { tokens: capacity, at: now };
+    b.tokens = Math.min(capacity, b.tokens + (now - b.at) * perMinute / 60000);
+    b.at = now;
     let out = { ok: true, retryAfterMs: 0 };
     if (b.tokens >= 1) b.tokens -= 1;
     else out = { ok: false, retryAfterMs: Math.ceil((1 - b.tokens) * 60000 / perMinute) };
-    // Map insertion order là LRU: truy cập mới nhất ở cuối.
-    if (existing) this.buckets.delete(key);
-    else {
-      // Ưu tiên giải phóng bucket đã hồi đầy thay vì bucket còn bị giới hạn.
-      for (const [name, old] of this.buckets) {
-        if (old.tokens + Math.max(0, now - old.at) * old.perMinute / 60000 >= old.capacity)
-          this.buckets.delete(name);
-      }
-      while (this.buckets.size >= this.maxKeys && this.buckets.size > 0)
-        this.buckets.delete(this.buckets.keys().next().value);
-    }
     this.buckets.set(key, b);
     return out;
   }
 }
 const LIMITS = Object.freeze({
   command: { capacity: 30, perMinute: 600 },   // 10 lệnh/giây, dồn tối đa 30
-  sync: HEARTBEAT.sync,                     // 12 lượt/phút thường, dư địa jitter -30%
-  pause: HEARTBEAT.pause,                   // độc lập với heartbeat sync
+  sync: { capacity: 8, perMinute: 60000 / SYNC_INTERVAL_MS }, // tối thiểu một token mỗi heartbeat
+  pause: { capacity: 8, perMinute: 4 },       // tab ẩn không được tiêu token sync
   preview: { capacity: 5, perMinute: 6 },
   read: { capacity: 30, perMinute: 60 },
   create: { capacity: 3, perMinute: 3 },

@@ -1,4 +1,4 @@
-/* Tạo dist/ chỉ gồm file game cần chạy trên trình duyệt, để đưa lên host (Cloudflare Pages, Netlify, Vercel, nginx...).
+/* Tạo dist/ chỉ gồm file game cần chạy trên trình duyệt để kiểm tra bản build:min. Production phục vụ trực tiếp bằng Node sau reverse proxy HTTPS.
    Không đưa lên host: server/, tests/, docs/, tools/, demo/, .git, .github, README, package.json, bảng thiết kế .xlsx/.csv.
    Chạy:  node tools/build-dist.cjs            (sao chép nguyên văn)
           node tools/build-dist.cjs --minify   (xóa chú thích và nén; cần esbuild: npm i -g esbuild hoặc NODE_PATH trỏ tới nó)
@@ -7,12 +7,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { ALLOWED, DENIED_PART, DENIED_PATH } = require('../server/http/static.js');
-const { settings, injectConnectSrc, renderBrowserConfig } = require('../server/http/public-config.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
 const minify = process.argv.includes('--minify');
-/* Adapter offline đã chuyển tới legacy/, bên ngoài các gốc export. */
+/* Không đưa adapter offline/backup cũ vào frontend online. Giữ mã nguồn legacy
+   trong repository chỉ để kiểm thử, kiểm toán và di trú thủ công về sau. */
+const OMIT_ONLINE = new Set(['client/session/local-session.js', 'client/persistence/local-store.js']);
 
 let esbuild = null;
 if (minify) {
@@ -37,7 +38,7 @@ for (const start of roots) {
   const files = fs.statSync(start).isDirectory() ? [...walk(start)] : [start];
   for (const file of files) {
     const url = '/' + path.relative(ROOT, file).split(path.sep).join('/');
-    if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url)) { skipped++; continue; }
+    if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url) || OMIT_ONLINE.has(path.relative(ROOT, file).split(path.sep).join('/'))) { skipped++; continue; }
     const target = path.join(OUT, path.relative(ROOT, file));
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (esbuild && /\.(?:js|css)$/.test(file)) {
@@ -53,9 +54,6 @@ for (const start of roots) {
     copied++;
   }
 }
-/* _headers cần nằm ở thư mục xuất bản để Cloudflare Pages/Netlify áp CSP và các header bảo mật. */
-const config = settings(process.env);
-fs.writeFileSync(path.join(OUT, 'client/config.js'), renderBrowserConfig(config));
-fs.writeFileSync(path.join(OUT, 'index.html'), injectConnectSrc(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), config));
-fs.writeFileSync(path.join(OUT, '_headers'), injectConnectSrc(fs.readFileSync(path.join(ROOT, '_headers'), 'utf8'), config));
+/* Giữ _headers trong bản build để kiểm tra chính sách cache/bảo mật, không dùng dist/ làm hosting riêng. */
+fs.copyFileSync(path.join(ROOT, '_headers'), path.join(OUT, '_headers'));
 console.log(`dist/: ${copied} tệp (${minified} đã nén), bỏ qua ${skipped} tệp không dành cho trình duyệt.`);

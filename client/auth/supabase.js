@@ -1,11 +1,9 @@
 /* Supabase Auth/PostgREST adapter. Only the public publishable key is shipped to browsers.
-   Sessions live in sessionStorage, never localStorage; gameplay is server-authoritative online-only. */
+   Sessions live in sessionStorage, never localStorage. */
 (function (root) {
   'use strict';
-  const cfg = root.HU_PUBLIC_CONFIG;
-  if (!cfg) throw Error('Thiếu cấu hình công khai client/config.js.');
-  const URL = cfg.supabaseUrl;
-  const KEY = cfg.supabasePublishableKey;
+  const URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
+  const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
   const VERSION = '2026-11-10-v5';
   const STORAGE = 'huGioiSupabaseSessionV1';
   function validEmail(raw) {
@@ -116,7 +114,7 @@
   }
   async function login(email, password) {
     if (!validEmail(email)) throw Error('Email không hợp lệ. Vui lòng nhập địa chỉ email đúng định dạng.');
-    const response = await root.fetch(cfg.apiUrl('/api/auth/supabase-login'), {
+    const response = await root.fetch('/api/auth/supabase-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),

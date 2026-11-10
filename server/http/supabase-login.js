@@ -1,9 +1,7 @@
 /* Password-login gateway: 10 attempts per IP per 15 minutes (single Node instance).
    For production across multiple instances, use a shared limiter and Supabase Auth rate limits. */
 'use strict';
-const crypto = require('node:crypto');
-const { normalizeIp, createClientIp } = require('./client-ip.js');
-const { normalizeOrigin } = require('../../client/config.js');
+const { createClientIp, normalizeIp } = require('./client-ip.js');
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 10;
 const MAX_BODY = 4096;
@@ -32,8 +30,7 @@ const respond = (res, status, data, retryAfterMs = 0) => {
 };
 function createSupabaseLoginGateway({
   url, publishableKey, fetchImpl = globalThis.fetch, clock = Date.now,
-  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, maxKeys = MAX_KEYS,
-  trustedProxyIps = [], allowedOrigins = [], clientIp: sharedClientIp = null
+  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, trustedProxyIps = [], clientIp = createClientIp(trustedProxyIps)
 } = {}) {
   const origin = new URL(url);
   if (origin.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(origin.hostname) ||
@@ -42,62 +39,26 @@ function createSupabaseLoginGateway({
   if (typeof publishableKey !== 'string' || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey))
     throw Error('Thiếu khóa Supabase publishable cho gateway.');
   if (typeof fetchImpl !== 'function') throw Error('Thiếu dịch vụ HTTP cho gateway.');
-  const clientIp = sharedClientIp || createClientIp({ trustedProxyIps });
-  const allowed = new Set(allowedOrigins.map(value => normalizeOrigin(value)).filter(Boolean));
   const attempts = new Map();
-  /* Hash email để không giữ PII ở memory keys. Map theo LRU; không clear() hàng loạt. */
-  function active(key, now) {
-    const entry = attempts.get(key);
-    if (!entry) return null;
-    attempts.delete(key);
-    if (entry.until <= now) return null;
-    attempts.set(key, entry);
-    return entry;
-  }
-  function registerFailure(key, now) {
-    const old = active(key, now);
-    const entry = old || { count: 0, until: now + windowMs };
-    entry.count++;
-    if (!old) {
-      // Hạn mức memory là số key, không phải lỗi 503 cho người đến sau.
-      for (const [k, value] of attempts) if (value.until <= now) attempts.delete(k);
-      while (attempts.size >= maxKeys && attempts.size > 0) attempts.delete(attempts.keys().next().value);
-    }
-    attempts.set(key, entry);
-  }
   async function handle(req, res) {
-    const originHeader = req.headers.origin;
-    let sameOrigin = false, allowedCross = false;
-    if (originHeader) {
-      try {
-        const caller = new URL(originHeader);
-        sameOrigin = ['http:', 'https:'].includes(caller.protocol) && caller.host === req.headers.host && caller.origin === originHeader;
-        allowedCross = allowed.has(originHeader);
-      } catch { /* origin không hợp lệ */ }
-      if (!sameOrigin && !allowedCross) return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
-    }
-    if (req.headers['sec-fetch-site'] === 'cross-site' && !allowedCross)
-      return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
-    if (allowedCross) {
-      res.setHeader('Vary', 'Origin');
-      res.setHeader('Access-Control-Allow-Origin', originHeader);
-      res.setHeader('Access-Control-Allow-Headers', 'content-type');
-      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      res.setHeader('Access-Control-Max-Age', '600');
-    }
-    if (req.method === 'OPTIONS') {
-      if (!allowedCross) return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
-      res.writeHead(204, { 'Cache-Control': 'no-store' });
-      return res.end();
-    }
     if (req.method !== 'POST') return respond(res, 405, { error: 'Phương thức không hợp lệ.' });
+    const originHeader = req.headers.origin;
+    if (originHeader && !(() => {
+      try { const caller = new URL(originHeader); return ['http:', 'https:'].includes(caller.protocol) && caller.host === req.headers.host && caller.origin === originHeader; }
+      catch { return false; }
+    })()) return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
+    if (req.headers['sec-fetch-site'] === 'cross-site') return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
     if (!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type'] || '')))
       return respond(res, 415, { error: 'Yêu cầu đăng nhập phải là JSON.' });
     if (Number(req.headers['content-length'] || 0) > MAX_BODY) return respond(res, 413, { error: 'Yêu cầu quá lớn.' });
-    const ipKey = 'ip:' + clientIp(req), now = clock();
-    const ipEntry = active(ipKey, now);
-    if (ipEntry?.count >= maxAttempts)
-      return respond(res, 429, { error: 'IP có quá nhiều lần đăng nhập thất bại.' }, ipEntry.until - now);
+    const ip = clientIp(req), now = clock();
+    for (const [key, value] of attempts) if (value.until <= now) attempts.delete(key);
+    if (!attempts.has(ip) && attempts.size >= MAX_KEYS) return respond(res, 503, { error: 'Dịch vụ đăng nhập đang bận.' });
+    const entry = attempts.get(ip) || { count: 0, until: now + windowMs };
+    if (entry.count >= maxAttempts)
+      return respond(res, 429, { error: 'IP đã thử đăng nhập quá nhiều lần. Vui lòng thử lại sau.' }, entry.until - now);
+    entry.count++;
+    attempts.set(ip, entry); // count all attempts, including successful requests and bad bodies
     let payload, bytes = 0;
     try {
       const chunks = [];
@@ -107,27 +68,20 @@ function createSupabaseLoginGateway({
         chunks.push(chunk);
       }
       payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-    } catch { registerFailure(ipKey, now); return respond(res, 400, { error: 'Dữ liệu đăng nhập không hợp lệ.' }); }
+    } catch { return respond(res, 400, { error: 'Dữ liệu đăng nhập không hợp lệ.' }); }
     if (!payload || typeof payload !== 'object' || Array.isArray(payload) ||
         Object.keys(payload).some(key => !['email', 'password'].includes(key)) ||
         !isValidEmail(payload.email) || typeof payload.password !== 'string' ||
-        payload.password.length < 1 || payload.password.length > 128) {
-      registerFailure(ipKey, now);
+        payload.password.length < 1 || payload.password.length > 128)
       return respond(res, 400, { error: 'Email hoặc mật khẩu không hợp lệ.' });
-    }
-    const emailKey = 'email:' + crypto.createHash('sha256').update(payload.email.toLowerCase()).digest('hex');
-    const emailEntry = active(emailKey, now);
-    if (emailEntry?.count >= maxAttempts)
-      return respond(res, 429, { error: 'Tài khoản có quá nhiều lần đăng nhập thất bại.' }, emailEntry.until - now);
-    const failLogin = () => { registerFailure(ipKey, now); registerFailure(emailKey, now); };
     try {
       const upstream = await fetchImpl(origin.origin + '/auth/v1/token?grant_type=password', {
         method: 'POST', headers: { apikey: publishableKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: payload.email.toLowerCase(), password: payload.password }),
         cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000)
       });
-      if (upstream.status === 429) { failLogin(); return respond(res, 429, { error: 'Dịch vụ xác thực đang giới hạn tốc độ.' }, 60000); }
-      if ([400, 401, 403].includes(upstream.status)) { failLogin(); return respond(res, 401, { error: 'Thông tin đăng nhập không đúng hoặc email chưa xác minh.' }); }
+      if (upstream.status === 429) return respond(res, 429, { error: 'Dịch vụ xác thực đang giới hạn tốc độ.' }, 60000);
+      if ([400, 401, 403].includes(upstream.status)) return respond(res, 401, { error: 'Thông tin đăng nhập không đúng hoặc email chưa xác minh.' });
       if (!upstream.ok) return respond(res, 503, { error: 'Dịch vụ xác thực tạm thời không khả dụng.' });
       const data = await upstream.json();
       if (!data?.access_token || !data?.refresh_token) return respond(res, 503, { error: 'Phản hồi xác thực chưa hợp lệ.' });

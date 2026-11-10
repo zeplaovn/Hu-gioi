@@ -5,7 +5,8 @@
   'use strict';
   const H = root.HU_GAME, C = root.HU_COMMANDS;
   const API = '/api/v1';
-  // Nhịp heartbeat chỉ do server gửi qua nextSyncInMs, không hardcode lại ở client.
+
+  function endpoint() { return ''; }
 
   class RemoteSession {
     constructor({ fetchImpl = (...args) => root.fetch(...args), auth = root.HU_SUPABASE, clock = Date.now } = {}) {
@@ -24,7 +25,6 @@
       this.pending = Promise.resolve();
       this.lastSyncAttempt = 0;
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
-      this.syncRetryUntil = 0;
       this.syncInFlight = null;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
@@ -37,7 +37,7 @@
       if (!accessToken) throw Error('Phiên Supabase đã hết hạn. Hãy đăng nhập lại.');
       let response;
       try {
-        response = await this.fetch(root.HU_PUBLIC_CONFIG.apiUrl(API + path), {
+        response = await this.fetch(endpoint() + API + path, {
           method, headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json', Accept: 'application/json' },
           body: body === undefined ? undefined : JSON.stringify(body),
           cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
@@ -74,7 +74,6 @@
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
       this.lastSyncAttempt = 0;
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
-      this.syncRetryUntil = 0;
       this.paused = false;
       this.deathNotified = false;
       this.game = new H.Game(H.create(this.clock()));
@@ -87,6 +86,8 @@
       if (info.protocolVersion !== C.VERSION || info.schemaVersion !== H.VERSION)
         throw Error('Phiên bản game và backend không tương thích. Hãy tải lại trang.');
       this.serverContentVersion = info.contentVersion;
+      if (Number.isFinite(Number(info.nextSyncInMs)) && Number(info.nextSyncInMs) >= 3000)
+        this.nextSyncInMs = Number(info.nextSyncInMs);
       if (info.pavilion) this.pavilion = info.pavilion;
       if (info.player?.id) {
         this.playerId = info.player.id;
@@ -111,9 +112,8 @@
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
       if (response.pavilion) this.pavilion = response.pavilion;
-      const interval = Number(response.nextSyncInMs);
-      if (!Number.isFinite(interval) || interval < 1000) throw Error('Máy chủ chưa cấp nhịp đồng bộ hợp lệ.');
-      this.nextSyncInMs = interval;
+      if (Number.isFinite(Number(response.nextSyncInMs)) && Number(response.nextSyncInMs) >= 3000)
+        this.nextSyncInMs = Number(response.nextSyncInMs);
       const before = this.game.s;
       this.game = new H.Game(response.state);
       if (Array.isArray(response.achievements)) this.achievements.push(...response.achievements);
@@ -140,25 +140,21 @@
     }
     async synchronize(force = false) {
       if (!this.playerId || !this.accountId || (this.paused && !force)) return null;
-      const now = this.clock();
-      // Không bỏ qua Retry-After dù caller gọi force=true hay tab vừa hiện lại.
-      if (now < this.syncRetryUntil) return null;
-      if (!force && now - this.lastSyncAttempt < this.nextSyncInMs) return null;
-      this.lastSyncAttempt = now;
+      if (!force && this.clock() - this.lastSyncAttempt < this.nextSyncInMs) return null;
+      this.lastSyncAttempt = this.clock();
       return this.run(async () => {
-        try {
-          const result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision });
-          this.apply(result);
-          this.syncRetryUntil = 0;
-          this.paused = false;
-          return result.report || null;
-        } catch (error) {
-          if (error.code === 'RATE_LIMITED' || error.status === 429) {
-            this.syncRetryUntil = Math.max(this.syncRetryUntil,
-              this.clock() + Math.max(this.nextSyncInMs, error.retryAfterMs || 0));
+        let result;
+        try { result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision }); }
+        catch (error) {
+          if (error.status === 429 && Number.isFinite(error.retryAfterMs) && error.retryAfterMs > 0) {
+            this.lastSyncAttempt = this.clock();
+            this.nextSyncInMs = Math.max(this.nextSyncInMs, error.retryAfterMs);
           }
           throw error;
         }
+        this.apply(result);
+        this.paused = false;
+        return result.report || null;
       });
     }
     advance() { return this.synchronize(); }

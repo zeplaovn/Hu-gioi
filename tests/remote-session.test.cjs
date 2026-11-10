@@ -4,10 +4,8 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
-const { HEARTBEAT } = require('../server/heartbeat-policy.js');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../client/session/remote-session.js'), 'utf8');
-const configSource = readFileSync(join(__dirname, '../client/config.js'), 'utf8');
 const PLAYER = '12345678-1234-4234-8234-555555555555';
 const ACCOUNT = { id: '88888888-2222-4333-8444-555555555555', email: 'user@example.test' };
 
@@ -43,12 +41,10 @@ function fixture({ initialPlayer = false } = {}) {
         out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state, result: 3 };
       } else if (path.endsWith('/state')) out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state };
       else throw Error('Unexpected API ' + path);
-      out.nextSyncInMs = HEARTBEAT.nextSyncInMs;
       return { ok: true, status: 200, json: async () => out };
     }
   };
   context.window = context;
-  vm.runInNewContext(configSource, context, { filename: 'config.js' });
   vm.runInNewContext(source, context, { filename: 'remote-session.js' });
   return { session: new context.HU_REMOTE_SESSION.RemoteSession(), calls, get applied() { return applied; } };
 }
@@ -80,4 +76,27 @@ test('RemoteSession serializes commands with current revision and reads only ser
   assert.equal(f.calls.filter(x => x.path.endsWith('/commands')).length, 2);
   f.session.disconnect();
   assert.equal(f.session.ready, false);
+});
+
+test('RemoteSession hoãn heartbeat theo retryAfterMs khi server trả 429', async () => {
+  const f = fixture({ initialPlayer: true });
+  let now = 0, attempts = 0;
+  f.session.clock = () => now;
+  await f.session.connect(ACCOUNT);
+  f.session.nextSyncInMs = 5000;
+  f.session.request = async () => {
+    attempts++;
+    if (attempts === 1) throw Object.assign(Error('rate limited'), { status: 429, retryAfterMs: 20000 });
+    return { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision: 0,
+      state: { created: true, name: 'Vân Tiêu', settings: {} }, nextSyncInMs: 5000 };
+  };
+  now = 5000;
+  await assert.rejects(f.session.synchronize(), { status: 429 });
+  now = 10000;
+  assert.equal(await f.session.synchronize(), null);
+  assert.equal(attempts, 1);
+  now = 25000;
+  await f.session.synchronize();
+  assert.equal(attempts, 2);
+  assert.equal(f.session.nextSyncInMs, 5000);
 });

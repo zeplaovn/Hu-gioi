@@ -55,10 +55,10 @@ test('đăng ký, đăng nhập, cookie và đăng xuất hoạt động với k
   assert.equal(fs.statSync(file).mode & 0o777, 0o600);
 });
 
-test('[legacy] chỉ rõ trạng thái UI và quy tắc xóa mọi bản lưu khi tọa hóa', () => {
+test('chỉ rõ trạng thái UI và quy tắc xóa mọi bản lưu khi tọa hóa', () => {
   const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
   const boot = fs.readFileSync(path.join(__dirname, '../client/ui/boot.js'), 'utf8');
-  const store = fs.readFileSync(path.join(__dirname, '../legacy/local-store.js'), 'utf8');
+  const store = fs.readFileSync(path.join(__dirname, '../client/persistence/local-store.js'), 'utf8');
   const auth = fs.readFileSync(path.join(__dirname, '../client/auth/auth.js'), 'utf8');
   assert.match(html, /id="authGate"/);
   assert.match(html, /id="authForm"/);

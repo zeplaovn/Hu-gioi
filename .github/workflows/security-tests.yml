@@ -20,17 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Install exact dependencies
-        run: npm ci
-      - name: Verify game source constraints
-        run: npm run check
-      - name: Run security and integration tests
-        run: npm test
+      - name: Install dependencies and run mandatory verification
+        run: |
+          npm ci
+          npm run check && npm test && npm run build:min
       - name: Check built static files contain legal pages but no server source
         shell: bash
         run: |
-          npm run build
-          npm run build:min
+          node tools/build-dist.cjs
           test -f dist/client/legal/privacy.html
           test -f dist/client/legal/release.html
           test -f dist/client/auth/supabase.js

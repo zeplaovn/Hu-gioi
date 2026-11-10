@@ -42,9 +42,9 @@ test('tất cả các ô ảnh dùng tọa độ hợp lệ và đúng bảng at
   assert.equal(A.itemTile('KHONG_TON_TAI'), null);
 });
 
-test('[legacy] Cài đặt không hiển thị Bản lưu; cơ chế tự lưu lịch sử được giữ nguyên', () => {
+test('Cài đặt không hiển thị Bản lưu; cơ chế tự lưu được giữ nguyên', () => {
   const s = read('client/ui/screens/settings.js');
-  const store = read('legacy/local-store.js');
+  const store = read('client/persistence/local-store.js');
   assert.doesNotMatch(s, /id: 'save'|function save\(\)|action\('export'|action\('import'/);
   assert.match(s, /const body = \{ season, audio, guide, legal \}/);
   assert.doesNotMatch(s, /WebGL|localStorage|HỆ THỐNG|file JSON/);

@@ -77,17 +77,47 @@ test('mọi phản hồi có header bảo mật; HEAD không trả thân', async
   assert.equal(head.body, '');
 });
 
+test('HTML/JS/CSS no-cache, media cache dài, không trùng Cache-Control', async () => {
+  for (const pathname of ['/', '/index.html', '/client/main.js', '/css/base.css', '/engine/game.js', '/data/balance.js']) {
+    const res = await get(pathname, 'HEAD');
+    assert.equal(res.status, 200, pathname);
+    assert.equal(res.headers['cache-control'], 'no-cache', pathname);
+  }
+  const media = await get('/media/audio/hu_gioi.mp3', 'HEAD');
+  assert.equal(media.status, 200);
+  assert.equal(media.headers['cache-control'], 'public, max-age=31536000, immutable');
+  const { readFileSync } = require('node:fs');
+  const { join } = require('node:path');
+  const rules = [];
+  let rule;
+  for (const line of readFileSync(join(__dirname, '../_headers'), 'utf8').split(/\r?\n/)) {
+    if (line.startsWith('/')) {
+      rule = { route: line.trim(), cache: 0 };
+      rules.push(rule);
+    } else if (rule && /^\s+Cache-Control:/i.test(line)) rule.cache++;
+  }
+  for (const pathname of ['/index.html', '/client/main.js', '/css/base.css', '/engine/game.js', '/data/balance.js', '/media/audio/hu_gioi.mp3']) {
+    const count = rules.filter(item => item.route === pathname ||
+      (item.route.endsWith('/*') && pathname.startsWith(item.route.slice(0, -1))))
+      .reduce((total, item) => total + item.cache, 0);
+    assert.equal(count, 1, pathname + ' has one Cache-Control');
+  }
+});
+
 test('phương thức ghi bị từ chối', async () => {
   for (const method of ['POST', 'PUT', 'DELETE', 'PATCH']) assert.equal((await get('/index.html', method)).status, 405, method);
 });
 
-test('wrangler.jsonc chỉ phục vụ dist/ và dist có _headers sau khi build', () => {
+test('chỉ triển khai Node, không còn wrangler; build:min vẫn loại mã máy chủ', () => {
   const { readFileSync, existsSync } = require('node:fs');
   const { join } = require('node:path');
   const { execFileSync } = require('node:child_process');
   const root = join(__dirname, '..');
-  const conf = readFileSync(join(root, 'wrangler.jsonc'), 'utf8').replace(/^\s*\/\/.*$/gm, '');
-  assert.equal(JSON.parse(conf).assets.directory, './dist');
+  assert.equal(existsSync(join(root, 'wrangler.jsonc')), false);
+  const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+  assert.equal('wrangler' in pkg.devDependencies, false);
+  assert.equal('deploy' in pkg.scripts, false);
+  assert.equal('preview' in pkg.scripts, false);
   execFileSync(process.execPath, [join(root, 'tools/build-dist.cjs')], { stdio: 'pipe' });
   assert.ok(existsSync(join(root, 'dist/_headers')));
   assert.ok(existsSync(join(root, 'dist/index.html')));

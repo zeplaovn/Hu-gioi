@@ -27,7 +27,7 @@ function codeOnly(source) {
 }
 
 test('cú pháp: mọi file JavaScript trong dự án đều biên dịch được', () => {
-  const files = ['data', 'engine', 'client', 'server', 'legacy', 'tests'].flatMap(dir => walk(join(ROOT, dir)));
+  const files = ['data', 'engine', 'client', 'server', 'tests'].flatMap(dir => walk(join(ROOT, dir)));
   assert.ok(files.length >= 50);
   for (const file of files) {
     assert.doesNotThrow(() => new vm.Script(readFileSync(file, 'utf8'), { filename: relative(ROOT, file) }), relative(ROOT, file));

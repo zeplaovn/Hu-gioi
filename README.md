@@ -2,7 +2,7 @@
 
 Game idle tu tiên online bằng tiếng Việt: mỗi nhân vật chỉ có một mạng. Người chơi chọn một Thiên mệnh khi tạo nhân vật, tu luyện và vượt thiên kiếp. Tọa hóa kết thúc nhân vật hiện tại, nhưng **Thiên Tinh và nâng cấp Thiên Mệnh Các thuộc tài khoản** được giữ để bước vào kiếp mới.
 
-> **Trạng thái mã nguồn:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Để chơi thực sự trên internet cần triển khai Node backend HTTPS**; Cloudflare static-only không cung cấp API. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
+> **Trạng thái mã nguồn:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Triển khai duy nhất một Node server phục vụ cả giao diện và `/api` sau reverse proxy HTTPS, cùng origin**. Không hỗ trợ frontend tách origin hoặc static-only. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
 
 Repository: [zeplaovn/Hugioi](https://github.com/zeplaovn/Hugioi).
 
@@ -18,7 +18,7 @@ npm test         # test backend /api/v1, RemoteSession, engine và giao diện
 
 `npm start` phục vụ giao diện và `/api/v1/*` khi cấu hình Supabase. Auth dùng Supabase JWT và hai bản ghi đồng ý chính sách. Backend từ chối hoạt động online khi thiếu xác thực hoặc quyền consent. Không bật `HU_LEGACY_AUTH` trong production.
 
-**Đăng nhập an toàn (chính sách v4):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Static-only không phục vụ gateway; cần Node API HTTPS cùng origin hoặc tách origin bằng HU_API_ORIGIN/HU_ALLOWED_ORIGINS và bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
+**Đăng nhập an toàn (chính sách v4):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Mọi truy cập frontend và gateway đều tới cùng một Node origin qua reverse proxy HTTPS; bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
 
 ## Tính năng thiết kế
 
@@ -76,10 +76,10 @@ client/
   ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                    Khởi động
 server/                    Máy chủ HTTP
-  main.js http/              File tĩnh + /api/health + /api/auth/* (thử nghiệm) + /api/v1/*
-  auth/ http/ services/ repositories/   JWT, API /api/v1, PlayerService, kho SQLite; chat/ vẫn là khung
+  main.js http/              File tĩnh, /api/health, gateway Supabase và /api/v1/*
+  auth/ services/ repositories/ JWT, PlayerService, kho SQLite và Thiên Mệnh Các
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
-tools/                     Build static, backup SQLite và kiểm giao diện
+tools/                     Build dist, sao lưu SQLite và kiểm UI (không có script import JSON)
 docs/                      Tài liệu
 ```
 
@@ -87,8 +87,8 @@ docs/                      Tài liệu
 
 - Viết luật và tính thưởng trong `engine/`; giao diện chỉ gửi lệnh bằng `UI.command(type, payload)` và hiển thị state. Cài đặt hiển thị dùng `UI.preference()`.
 - `engine/` và `data/` không phụ thuộc DOM, `localStorage`, mạng hay timer; thời gian và RNG do phiên cung cấp.
-- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh](docs/engine-contract.md#4-lệnh-51) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
-- Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node lẫn `file://` nạp đúng; `npm test` kiểm tra thứ tự.
+- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh V2/48](docs/engine-contract.md) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
+- Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node và trình duyệt nạp đúng; `file://` chỉ phục vụ kiểm thử module, không chơi online được; `npm test` kiểm tra thứ tự.
 - Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và `client/assets/preload-manifest.js`.
 - Thay dữ liệu thiết kế: xem [docs/design-integration.md](docs/design-integration.md).
 
@@ -105,8 +105,8 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 | `SUPABASE_PUBLISHABLE_KEY` | Bắt buộc khi dùng Supabase JWT, để máy chủ kiểm tra hai bản ghi chấp thuận chính sách theo RLS |
 | `HU_LEGACY_AUTH=1` | Dùng AuthService cookie thử nghiệm thay Supabase (chỉ dev/test) |
 | `HU_DB_FILE` | Đường dẫn SQLite, mặc định `.hu-gioi/game.sqlite` (không được nằm trong thư mục công khai) |
-| `HU_ALLOWED_ORIGINS` | Origin được gọi API khi game tĩnh ở domain khác (CORS), phân cách bằng dấu phẩy |
-| `HU_ONLINE_GRACE_MS` | Sau ngưỡng vắng heartbeat thì đóng băng thời gian game, mặc định 20000 ms; tab ẩn gửi tín hiệu pause ngay |
+| `HU_AUTH_TRUSTED_PROXY_IPS` | IP nguồn proxy tin cậy nhìn từ Node, phân cách bằng dấu phẩy; bắt buộc khi chạy Compose |
+| `HU_ONLINE_GRACE_MS` | Sau ngưỡng vắng heartbeat thì đóng băng thời gian game, mặc định 15000 ms; tab ẩn gửi tín hiệu pause ngay |
 
 | Method | Path | Mục đích |
 |---|---|---|
@@ -124,11 +124,11 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 
 Ba API `/me/*` không đòi hỏi bản chấp thuận chính sách còn hiệu lực. Sao lưu: `node tools/backup-db.cjs --keep 7`.
 
-Đảm bảo: API JWT chỉ hoạt động khi máy chủ xác minh được cả hai bản chấp thuận chính sách `privacy` và `release_terms` phiên bản `2026-11-10-v5`. Không thể vượt qua bằng cách bỏ qua checkbox frontend; Supabase gián đoạn thì API từ chối tạm thời. `HU_LEGACY_AUTH=1` chỉ dùng phát triển, bị chặn khi `NODE_ENV=production`. Đặt thư mục SQLite quyền `0700` và tệp DB quyền `0600`; API không thể hoạt động trên Cloudflare static-only khi chưa triển khai Node riêng.
+Đảm bảo: API JWT chỉ hoạt động khi máy chủ xác minh được cả hai bản chấp thuận chính sách `privacy` và `release_terms` phiên bản `2026-11-10-v5`. Không thể vượt qua bằng cách bỏ qua checkbox frontend; Supabase gián đoạn thì API từ chối tạm thời. `HU_LEGACY_AUTH=1` chỉ dùng phát triển, bị chặn khi `NODE_ENV=production`. Đặt thư mục SQLite quyền `0700` và tệp DB quyền `0600`; Triển khai Docker Compose cùng reverse proxy HTTPS, không dùng Cloudflare static-only hay FE tách origin.
 
 Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
-**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu frontend tách domain API, đặt `HU_API_ORIGIN` khi build và `HU_ALLOWED_ORIGINS` trên Node; build tự sinh `dist/client/config.js` và CSP, không cần nới CSP thủ công.
+**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Mô hình triển khai duy nhất: một Node server phục vụ cả frontend và API trên cùng origin sau reverse proxy HTTPS; xem `compose.yaml` và [hướng dẫn triển khai](docs/online-deployment.md).
 
 Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaovn@proton.me](mailto:zeplaovn@proton.me)**. Chính sách quyền riêng tư và điều khoản trực tuyến phiên bản `2026-11-10-v5` (phi lợi nhuận, không thanh toán trực tuyến) yêu cầu chấp thuận lại; **phải mở rộng CHECK `policy_version` trên Supabase trước khi triển khai** (xem `supabase/sql/policy_acceptances.sql`).
 
@@ -138,7 +138,8 @@ Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaov
 - [Gameplay V9: một mạng, online-only](docs/gameplay-v9.md): quy tắc sinh tử, tạm dừng offline và các lựa chọn thiết kế cần xác nhận.
 - [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (48 lệnh, API `HU_GAME`, state, bản lưu).
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
-- [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
+- [Tích hợp dữ liệu thiết kế](docs/design-integration.md): dữ liệu đang dùng, phần thiếu và quy trình review snapshot (công cụ import cũ không còn).
+- [Sổ quyết định gameplay](docs/gameplay-decisions.md): các luật chờ chủ dự án duyệt trước khi triển khai.
 - [data/README.md](data/README.md): dữ liệu thiết kế và công thức cân bằng.
 
 ## Thiên Thư · Vạn Kiếp Tàng Thư

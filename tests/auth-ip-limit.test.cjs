@@ -86,12 +86,11 @@ test('after 10 attempts per IP in 15 minutes return 429 and Retry-After; spoofed
 });
 
 test('only explicitly trusted reverse proxies can provide client IP; NAT users share quota', async t => {
-  const f = await fixture(t, { trustedProxyIps: ['127.0.0.1'], upstreamStatus: 401 });
+  const f = await fixture(t, { trustedProxyIps: ['127.0.0.1'] });
   for (let i = 0; i < 10; i++)
-    assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 401);
+    assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 200);
   assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 429);
-  // Email giới hạn toàn tài khoản: dùng email khác cho IP khác để đo độc lập IP bucket.
-  assert.equal((await f.call({ body: { email: 'someone-else@example.com', password: 'wrong-password' }, headers: { 'x-forwarded-for': '203.0.113.9' } })).status, 401);
+  assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.9' } })).status, 200);
 });
 
 test('reject cross-site browser submissions, overlarge bodies and invalid content type', async t => {
@@ -110,37 +109,4 @@ test('invalid credentials remain generic and provider throttling propagates as 4
   assert.equal(r.status, 429);
   assert.ok(Number(r.headers['retry-after']) >= 1);
   assert.equal(r.data.error.includes('token'), false);
-});
-
-test('gateway chỉ cho phép CORS preflight + POST từ origin frontend đã định nghĩa', async t => {
-  const http = require('node:http');
-  const gateway = createSupabaseLoginGateway({
-    url: 'https://demo-project.supabase.co', publishableKey: KEY,
-    allowedOrigins: ['https://frontend.example'],
-    fetchImpl: async () => ({
-      status: 200, ok: true, json: async () => ({ access_token: 'a', refresh_token: 'r' })
-    })
-  });
-  const server = http.createServer(createRouter(null, null, null, gateway));
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  t.after(() => new Promise(resolve => server.close(resolve)));
-  const send = (method, origin) => new Promise((resolve, reject) => {
-    const raw = JSON.stringify({ email: 'dao@example.com', password: 'long-password' });
-    const req = http.request({
-      host: '127.0.0.1', port: server.address().port, path: '/api/auth/supabase-login', method,
-      headers: { origin, 'sec-fetch-site': 'cross-site', 'content-type': 'application/json', ...(method === 'POST' ? { 'content-length': Buffer.byteLength(raw) } : {}) }
-    }, res => {
-      const chunks = []; res.on('data', chunk => chunks.push(chunk));
-      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString('utf8') }));
-    });
-    req.on('error', reject);
-    req.end(method === 'POST' ? raw : undefined);
-  });
-  const options = await send('OPTIONS', 'https://frontend.example');
-  assert.equal(options.status, 204);
-  assert.equal(options.headers['access-control-allow-origin'], 'https://frontend.example');
-  const post = await send('POST', 'https://frontend.example');
-  assert.equal(post.status, 200, post.body);
-  assert.equal((await send('OPTIONS', 'https://untrusted.example')).status, 403);
-  assert.equal((await send('POST', 'https://untrusted.example')).status, 403);
 });

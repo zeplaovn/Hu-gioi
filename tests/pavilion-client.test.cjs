@@ -4,16 +4,14 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
-const { HEARTBEAT } = require('../server/heartbeat-policy.js');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../client/session/remote-session.js'), 'utf8');
-const configSource = readFileSync(join(__dirname, '../client/config.js'), 'utf8');
 
 function fixture({ lostReply = false, conflict = false } = {}) {
   const calls = [], seen = new Set();
   let balance = 10, version = 0, loss = lostReply, id = 0, spent = 0;
   const pavilion = () => ({ version, balance, totalEarned: 10, rebirths: 0, upgrades: { ngoTinh: spent }, relics: {} });
-  const ok = out => ({ ok: true, status: 200, json: async () => ({...out, nextSyncInMs: HEARTBEAT.nextSyncInMs}) });
+  const ok = out => ({ ok: true, status: 200, json: async () => out });
   const root = {
     URL, AbortSignal, location: { protocol: 'https:' },
     crypto: { randomUUID: () => '00000000-0000-4000-8000-' + String(++id).padStart(12, '0') },
@@ -49,7 +47,6 @@ function fixture({ lostReply = false, conflict = false } = {}) {
     }
   };
   root.window = root;
-  vm.runInNewContext(configSource, root, { filename: 'config.js' });
   vm.runInNewContext(source, root, { filename: 'remote-session.js' });
   const session = new root.HU_REMOTE_SESSION.RemoteSession();
   return { session, calls, get spent() { return spent; }, get balance() { return balance; }, get version() { return version; } };
