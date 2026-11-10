@@ -117,6 +117,15 @@ jobs:
 
 Dashboard > Authentication > Providers > Email: bật email/password, kiểm tra **Confirm email**. Site URL = `https://hugioi.blackbearvn.workers.dev`; Redirect URLs chỉ origin/callback bạn sở hữu, không wildcard bên ngoài. Thiết lập Supabase Auth rate limits, hạn mức email và nhà cung cấp gửi mail phù hợp. Bật **Leaked Password Protection** nếu gói hỗ trợ; Turnstile optional giai đoạn sau. Direct login công khai bị ràng buộc bởi chính Supabase Auth rate limits; không tuyên bố gateway Node vẫn bảo vệ Edge.
 
+### Đăng nhập Google OAuth (chỉ sau khi cấu hình Dashboard)
+
+- Tạo Google OAuth Client **Web application** trong Google Cloud Console. Authorized redirect URI tại Google phải là `https://rvrwfeblishqadkpzspb.supabase.co/auth/v1/callback` (đây là callback của Supabase, **không** phải URL Cloudflare). Cấu hình OAuth consent screen, test users và chính sách xuất bản phù hợp.
+- Supabase Dashboard > Authentication > Providers > Google: bật provider, nhập **Client ID** và **Client Secret** tại Dashboard (không commit vào Git hoặc đưa vào client).
+- Supabase Dashboard > Authentication > URL Configuration: Site URL `https://hugioi.blackbearvn.workers.dev`, thêm chính URL này vào Redirect URLs; với staging dùng allowlist chính xác, không wildcard tùy tiện. Frontend khởi tạo Authorization Code + PKCE S256, chuyển hướng qua Supabase Auth và đổi `code` lấy phiên bằng `/auth/v1/token?grant_type=pkce`.
+- Chế độ Google chỉ áp dụng `HU_AUTH_MODE='direct'` và HTTPS (hoặc localhost). PKCE verifier chỉ lưu ở `sessionStorage`, mã OAuth được dọn khỏi URL trước khi đổi token. Không nhận JWT trực tiếp từ URL fragment. Browser cần cho phép sessionStorage và Web Crypto.
+- Xác minh bằng tài khoản Google thử nghiệm: redirect Google → Supabase callback → Cloudflare → xác minh `/auth/v1/user` → **consent v5** → bootstrap/reload/logout. Thử từ chối quyền Google, refresh tab trong lúc redirect, và mở URL callback ngoài phiên gốc; không được tự động nhận token.
+- Tài khoản email/password cũ được giữ nguyên; việc gộp tài khoản với Google phụ thuộc hành vi liên kết danh tính của Supabase. Không tự gộp người chơi chỉ theo địa chỉ email.
+
 ## 5. Xác minh sau deploy
 
 - Từ terminal: `curl -i https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap` **không JWT** phải 401; preflight `OPTIONS` với `Origin: https://hugioi.blackbearvn.workers.dev` phải 204 và trả `Vary: Origin`, allow origin/header.
