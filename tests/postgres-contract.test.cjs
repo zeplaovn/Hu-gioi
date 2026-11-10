@@ -260,3 +260,37 @@ test('B1: cleanup error rolls back savepoint, but command and live receipt still
     ['stale-test']);
   assert.equal(after.rows[0].n, 0, 'cleanup retried because the failed sweep did not advance cleanedAt');
 });
+
+test('Final audit: rejected revision attempts consume durable Postgres command quota', async t => {
+  const { svc, repo } = await makePg(t);
+  svc.cfg.repositoryRates = true;
+  const { playerId } = await spawn(svc, A, 'Cấm Lặp Revision');
+  for (let i = 0; i < 30; i++) {
+    await assert.rejects(svc.command(A, playerId, {
+      protocolVersion: 2, type: 'buy', payload: { code: 'HERB-001' },
+      requestId: 'stale-revision-' + i, expectedRevision: 999
+    }), { code: 'REVISION_CONFLICT' });
+  }
+  await assert.rejects(svc.command(A, playerId, {
+    protocolVersion: 2, type: 'buy', payload: { code: 'HERB-001' },
+    requestId: 'stale-blocked', expectedRevision: 999
+  }), { code: 'RATE_LIMITED' });
+  const after = await repo.get(playerId);
+  assert.equal(after.revision, 0, 'bad requests must not mutate gameplay');
+  assert.ok(after.rateTokens.command.tokens < 1, 'quota was persisted on each rejection');
+});
+
+test('Final audit: Postgres Pavilion replay returns original cost without double spend', async t => {
+  const { svc, repo } = await makePg(t);
+  const { playerId } = await spawn(svc, A, 'Thiên Tinh Ghi Sổ');
+  await repo.transact(playerId, async () => ({ pavilionAward: 20, value: null }));
+  const intent = {
+    requestId: 'pavilion-replay-cost', expectedVersion: 1, kind: 'upgrade', key: 'ngoTinh'
+  };
+  const first = await svc.pavilionPurchase(A, intent);
+  assert.equal(first.result.cost, 2);
+  const again = await svc.pavilionPurchase(A, { ...intent, expectedVersion: 0 });
+  assert.equal(again.replayed, true);
+  assert.equal(again.result.cost, first.result.cost);
+  assert.deepEqual(again.pavilion, first.pavilion);
+});

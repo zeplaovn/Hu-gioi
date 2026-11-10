@@ -5,6 +5,7 @@
 'use strict';
 const { GameError, mapPostgresError } = require('../errors.js');
 const { PlayerRepository } = require('./player-repository.js');
+const { encodePavilionReceipt, decodePavilionReceipt } = require('./pavilion-receipt.js');
 
 const DAY = 86400000;
 const emptyPavilion = () => ({ version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} });
@@ -195,7 +196,7 @@ class PostgresPlayers extends PlayerRepository {
     });
   }
   async transact(playerId, fn, options = {}) {
-    return this.transaction(async c => {
+    const outcome = await this.transaction(async c => {
       const rec = hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1 FOR UPDATE', [playerId]));
       if (options.rate && rec && options.rate.ownerId !== rec.ownerId)
         throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
@@ -209,7 +210,20 @@ class PostgresPlayers extends PlayerRepository {
           return r ? { requestId, fingerprint: r.fingerprint, revision: toInt(r.revision), response: json(r.response) } : null;
         }
       };
-      const out = await fn(tx) || {};
+      let out;
+      try {
+        out = await fn(tx) || {};
+      } catch (err) {
+        // Recognized game rejections leave the SQL transaction valid. Commit
+        // their already-debited quota without writing state or a receipt.
+        // Unknown/SQL errors still roll back the entire transaction.
+        if (!rateTokens || !(err instanceof GameError) ||
+          !['REVISION_CONFLICT', 'REQUEST_ID_REUSED', 'PLAYER_DEAD'].includes(err.code)) throw err;
+        await exec(c, 'UPDATE game.players SET rate_tokens = $1::jsonb, tokens_at = $2 WHERE id = $3', [
+          JSON.stringify(rateTokens), big(options.rate.now), playerId
+        ]);
+        return { rejected: err };
+      }
       if (out.save) {
         const s = out.save, state = JSON.stringify(s.state);
         if (bytes(state) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
@@ -246,8 +260,10 @@ class PostgresPlayers extends PlayerRepository {
         ]);
       }
       if (rec) await this.sweep(c, rec.ownerId, options.rate?.now ?? this.clock(), playerId);
-      return out.value;
+      return { value: out.value };
     });
+    if (outcome.rejected) throw outcome.rejected;
+    return outcome.value;
   }
   async purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
     return this.transaction(async c => {
@@ -255,11 +271,11 @@ class PostgresPlayers extends PlayerRepository {
       const player = await one(c, 'SELECT * FROM game.players WHERE owner_id = $1 FOR UPDATE', [ownerId]);
       await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
       const row = await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]);
-      const account = pavilion(row), fingerprint = kind + ':' + key;
+      const account = pavilion(row);
       const prior = await one(c, 'SELECT fingerprint FROM game.pavilion_receipts WHERE owner_id = $1 AND request_id = $2', [ownerId, requestId]);
       if (prior) {
-        if (prior.fingerprint !== fingerprint) throw new GameError('REQUEST_ID_REUSED', 'Mã yêu cầu đã dùng cho giao dịch khác.');
-        return { replayed: true, pavilion: account, record: hydrate(player) };
+        const cost = decodePavilionReceipt(prior.fingerprint, kind, key);
+        return { replayed: true, cost, pavilion: account, record: hydrate(player) };
       }
       if (account.version !== expectedVersion)
         throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
@@ -295,7 +311,7 @@ class PostgresPlayers extends PlayerRepository {
       }
       await exec(c, `INSERT INTO game.pavilion_receipts
         (owner_id, request_id, fingerprint, created_at) VALUES ($1,$2,$3,$4)`,
-      [ownerId, requestId, fingerprint, big(now)]);
+      [ownerId, requestId, encodePavilionReceipt(kind, key, cost), big(now)]);
       await this.sweep(c, ownerId, now, updatedPlayer?.id);
       return { replayed: false, cost, pavilion: { ...account, balance: account.balance - cost,
         version: account.version + 1, upgrades, relics }, record: hydrate(updatedPlayer) };
