@@ -3,7 +3,7 @@
    Mọi request ghi khóa một hàng game.players FOR UPDATE. Cổng Node dùng SQLite adapter.
    Không bao giờ gửi SQL/state/seed vào log. */
 'use strict';
-const { GameError } = require('../errors.js');
+const { GameError, mapPostgresError } = require('../errors.js');
 const { PlayerRepository } = require('./player-repository.js');
 
 const DAY = 86400000;
@@ -72,9 +72,16 @@ class PostgresPlayers extends PlayerRepository {
   }
 
   async connection(work) {
-    const client = await this.pool.connect();
-    try { return await work(client); }
-    finally { client.release(); }
+    let client;
+    try {
+      client = await this.pool.connect();
+      return await work(client);
+    } catch (err) {
+      // Bao gồm cả lỗi connect và query/transaction; rollback chạy trước khi map.
+      throw mapPostgresError(err);
+    } finally {
+      if (client) client.release();
+    }
   }
   async transaction(work) {
     return this.connection(async client => {

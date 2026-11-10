@@ -8,6 +8,7 @@ export const PlayerService = service.PlayerService;
 export const PostgresPlayers = pg.PostgresPlayers;
 export const GameError = errors.GameError;
 export const toEnvelope = errors.toEnvelope;
+export const shouldLogApiError = errors.shouldLogApiError;
 export const createJwtVerifier = jwt.createJwtVerifier;
 export const createAccountAdmin = admin.createAccountAdmin;
 export const CONTENT_VERSION = __HU_CONTENT_VERSION__;

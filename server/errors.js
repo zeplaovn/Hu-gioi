@@ -32,4 +32,29 @@ function toEnvelope(err, requestId) {
   };
 }
 
-module.exports = { GameError, toEnvelope, STATUS };
+/* SQLSTATE 55P03 (lock_not_available) và 57014 (statement canceled)
+ * là tranh chấp/timeout có thể thử lại. 08xxx là lỗi kết nối PostgreSQL.
+ * Không đưa SQL, thông điệp driver hoặc giá trị bí mật ra response. */
+const TRANSIENT_PG = new Set(['55P03', '57014', '53300', '57P01', '57P02', '57P03']);
+function pgSqlState(err) {
+  let current = err;
+  for (let depth = 0; current && depth < 3; depth++, current = current.cause) {
+    if (typeof current.code === 'string' && /^[A-Z0-9]{5}$/.test(current.code))
+      return current.code;
+  }
+  return '';
+}
+function mapPostgresError(err) {
+  if (err instanceof GameError) return err;
+  const sqlstate = pgSqlState(err);
+  if (!TRANSIENT_PG.has(sqlstate) && !/^08[A-Z0-9]{3}$/.test(sqlstate)) return err;
+  const wrapped = new GameError('MAINTENANCE', 'Cơ sở dữ liệu tạm thời bận. Hãy thử lại.', { retryAfterMs: 1000 });
+  wrapped.cause = err; // chỉ nội bộ, không tuần tự hóa vào envelope
+  wrapped.expectedPgContention = sqlstate === '55P03' || sqlstate === '57014';
+  return wrapped;
+}
+function shouldLogApiError(err, status) {
+  return status >= 500 && err?.expectedPgContention !== true;
+}
+
+module.exports = { GameError, toEnvelope, STATUS, mapPostgresError, shouldLogApiError };

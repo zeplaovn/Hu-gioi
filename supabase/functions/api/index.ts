@@ -6,7 +6,7 @@ import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
 import { UUID, corsHeaders, routeOf, parseBody } from './http.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
-  createJwtVerifier, createAccountAdmin, CONTENT_VERSION
+  createJwtVerifier, createAccountAdmin, shouldLogApiError, CONTENT_VERSION
 } from './game.bundle.mjs';
 
 const BASE = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
@@ -149,7 +149,7 @@ export async function handleApi(req: Request): Promise<Response> {
       route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
   } catch (err) {
     const { status, body } = toEnvelope(err, requestId);
-    if (status >= 500) logOperational({
+    if (shouldLogApiError(err, status)) logOperational({
       event: 'api_error', requestId, code: body.error.code, status,
       durationMs: Math.round(performance.now() - since)
     }); // không token, state, SQL hoặc password; đã giới hạn log/isolate
