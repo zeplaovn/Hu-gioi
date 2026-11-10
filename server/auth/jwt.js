@@ -8,23 +8,44 @@ const b64 = s => Buffer.from(s, 'base64url');
 const unauth = msg => new GameError('UNAUTHENTICATED', msg || 'Phiên đăng nhập không hợp lệ.');
 
 function createJwtVerifier({ secret = '', jwksUrl = '', issuer = '', audience = 'authenticated', fetchImpl = globalThis.fetch,
-  clock = Date.now, jwksTtlMs = 10 * 60000, jwksMinRefetchMs = 60000, skewSec = 5 } = {}) {
+  clock = Date.now, jwksTtlMs = 10 * 60000, jwksMinRefetchMs = 60000, jwksTimeoutMs = 5000,
+  negativeKidTtlMs = 15000, skewSec = 5 } = {}) {
   if (!secret && !jwksUrl) throw Error('Cần SUPABASE_JWT_SECRET hoặc URL JWKS để xác minh JWT.');
   let keys = new Map(), fetchedAt = 0, inflight = null;
+  let failures = 0, nextRetryAt = 0;
+  const negativeKids = new Map();
 
-  async function loadKeys(force) {
+  async function loadKeys(force = false) {
     const now = clock();
     if (!force && keys.size && now - fetchedAt < jwksTtlMs) return;
-    if (now - fetchedAt < jwksMinRefetchMs && keys.size) return;
+    if (keys.size && now - fetchedAt < jwksMinRefetchMs) return;
+    if (now < nextRetryAt) {
+      if (keys.size) return; // khóa đã xác minh vẫn dùng được khi JWKS tạm gián đoạn
+      throw Error('JWKS đang chờ thử lại.');
+    }
     inflight ||= (async () => {
-      const res = await fetchImpl(jwksUrl, { headers: { accept: 'application/json' } });
-      if (!res.ok) throw Error('JWKS ' + res.status);
-      const body = await res.json(), next = new Map();
-      for (const jwk of body.keys || []) {
-        if (!jwk.kid || !['EC', 'RSA'].includes(jwk.kty) || (jwk.use && jwk.use !== 'sig')) continue;
-        next.set(jwk.kid, { alg: jwk.alg || (jwk.kty === 'EC' ? 'ES256' : 'RS256'), key: crypto.createPublicKey({ key: jwk, format: 'jwk' }) });
+      try {
+        const res = await fetchImpl(jwksUrl, {
+          headers: { accept: 'application/json' }, signal: AbortSignal.timeout(jwksTimeoutMs)
+        });
+        if (!res.ok) throw Error('JWKS ' + res.status);
+        const body = await res.json(), next = new Map();
+        for (const jwk of body.keys || []) {
+          if (!jwk.kid || !['EC', 'RSA'].includes(jwk.kty) || (jwk.use && jwk.use !== 'sig')) continue;
+          next.set(jwk.kid, { alg: jwk.alg || (jwk.kty === 'EC' ? 'ES256' : 'RS256'), key: crypto.createPublicKey({ key: jwk, format: 'jwk' }) });
+        }
+        if (!next.size) throw Error('JWKS không có khóa hợp lệ.');
+        keys = next;
+        fetchedAt = clock();
+        failures = 0;
+        nextRetryAt = 0;
+        negativeKids.clear();
+      } catch (error) {
+        failures++;
+        nextRetryAt = clock() + Math.min(300000, Math.max(1000, jwksMinRefetchMs) * 2 ** Math.min(failures - 1, 5));
+        if (!keys.size) throw error;
+        // Giữ nguyên khóa công khai cũ, không xoá cache trong lúc nhà cấp khóa lỗi.
       }
-      keys = next; fetchedAt = clock();
     })().finally(() => { inflight = null; });
     await inflight;
   }
@@ -45,7 +66,11 @@ function createJwtVerifier({ secret = '', jwksUrl = '', issuer = '', audience = 
     } else if ((header.alg === 'ES256' || header.alg === 'RS256') && jwksUrl && typeof header.kid === 'string') {
       try {
         await loadKeys(false);
-        if (!keys.has(header.kid)) await loadKeys(true); // khóa mới xoay vòng
+        if (!keys.has(header.kid) && (negativeKids.get(header.kid) || 0) <= clock()) {
+          await loadKeys(true); // có thể là khóa xoay vòng; không fetch lặp vô hạn cho kid lạ
+          if (!keys.has(header.kid)) negativeKids.set(header.kid, clock() + negativeKidTtlMs);
+          if (negativeKids.size > 2048) negativeKids.delete(negativeKids.keys().next().value);
+        }
       } catch { throw new GameError('MAINTENANCE', 'Không tải được khóa xác thực.'); }
       const k = keys.get(header.kid);
       if (k && k.alg === header.alg) {
@@ -62,7 +87,7 @@ function createJwtVerifier({ secret = '', jwksUrl = '', issuer = '', audience = 
     if (issuer && payload.iss !== issuer) throw unauth();
     const aud = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
     if (audience && !aud.includes(audience)) throw unauth();
-    if (typeof payload.sub !== 'string' || !/^[0-9a-f-]{36}$/i.test(payload.sub)) throw unauth();
+    if (typeof payload.sub !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payload.sub)) throw unauth();
     return payload;
   }
   return { verify };

@@ -55,6 +55,7 @@ test('JWT ES256 qua JWKS: xoay khóa, kid lạ và alg bị ép đều bị từ
   assert.equal(fetches, 1);
   await assert.rejects(v.verify(signEs(k2, 'k2', p())), { code: 'UNAUTHENTICATED' }); // k2 chưa công bố
   served = [jwk(k1, 'k1'), jwk(k2, 'k2')];
+  now += 15001; // negative kid cache tránh khuếch đại fetch; chờ TTL rồi nhận khóa xoay
   assert.equal((await v.verify(signEs(k2, 'k2', p()))).sub, ID_A); // tự tải lại khi gặp kid mới
   await assert.rejects(v.verify(signEs(k1, 'k2', p())), { code: 'UNAUTHENTICATED' }); // ký bằng khóa này nhưng khai kid khác
   await assert.rejects(v.verify(signEs(k1, 'k1', p({ iss: 'https://evil.test' }))), { code: 'UNAUTHENTICATED' });
