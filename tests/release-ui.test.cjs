@@ -78,7 +78,8 @@ function releaseHarness() {
     HU_GAME: {
       F: { fmt: String, format_linh_thach: String, COINS: [], REALMS: Array.from({ length: 14 }, (_, n) => 'Cảnh giới ' + n) },
       QUESTS: [], PVP_CD: 25000, DISCUSS_CD: 120000,
-      FRIENDS: [], DAO: [], RIVALS: [], giftCost: () => 1
+      FRIENDS: [], DAO: [], RIVALS: [], giftCost: () => 1,
+      FEATURES: { social: { realm: 3, label: 'Giao du: kết bạn, luận kiếm, bảng xếp hạng' } }
     },
     HU_ASSETS: { BG: {}, heroPortrait: () => '' },
     HU_REMOTE_SESSION: { RemoteSession: class { subscribe() {} } },
