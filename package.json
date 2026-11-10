@@ -16,7 +16,9 @@
     "edge:budget": "node tools/simulate-edge-calls.cjs"
   },
   "devDependencies": {
-    "esbuild": "0.28.2",
     "@electric-sql/pglite": "0.5.4"
+  },
+  "dependencies": {
+    "esbuild": "0.28.2"
   }
 }

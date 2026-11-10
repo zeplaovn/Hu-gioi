@@ -24,12 +24,15 @@ jobs:
         run: |
           npm ci
           npm run check && npm test && npm run build:min
-      - name: Verify Cloudflare-style production install includes minifier
+      - name: Verify Cloudflare-style production install WITHOUT devDependencies
         env:
           NODE_ENV: production
         run: |
-          npm ci --include=dev
+          npm ci --omit=dev
+          node -e "require('esbuild')"
+          test ! -e node_modules/@electric-sql/pglite/package.json
           npm run build:min
+          npm ci --include=dev
       - name: Bundle Edge gameplay and enforce 20MB ceiling
         run: |
           npm run build:edge
