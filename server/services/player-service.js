@@ -285,7 +285,7 @@ class PlayerService {
       const previousRealm = rec.state.realm;
       const run = this.#run(rec, now), save = revision => ({
         state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
-      }, this.#dbRate('command', ownerId, now));
+      });
       let report, result = null, achievements = [], failure = null;
       // Chốt trạng thái sau advance, trước khi thực thi intent không đáng tin.
       let advancedState = null, advancedCounter = rec.rngCounter;
@@ -333,7 +333,7 @@ class PlayerService {
         receipt: { requestId, fingerprint, revision, response, expiresAt: now + this.cfg.receiptTtlMs },
         value: { rec, state: run.game.s, revision, fresh: response }
       };
-    });
+    }, this.#dbRate('command', ownerId, now));
     if (out.error) throw out.error;
     if (out.replayed) {
       const r = out.replayed;
