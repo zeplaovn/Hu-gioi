@@ -3,7 +3,7 @@
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
   const UI = root.HU_UI;
-  const { $, esc, num, money, moneyHTML, pct, duration, row, btn, img, codeAttr, bar, card, empty, tabs } = UI.kit;
+  const { abs, $, esc, num, money, moneyHTML, pct, duration, row, btn, img, codeAttr, bar, card, empty, tabs } = UI.kit;
   const { ELEMENTS } = UI.data;
   const { lists } = UI;
   const S = UI.statNames;
@@ -64,8 +64,68 @@
       <div class="screen-grid">${ups}</div>`;
   }
 
+  /* Sơ đồ trực quan, chỉ tra cứu kinh mạch dự kiến, chưa tạo trạng thái mới trên máy chủ. */
+  const MERIDIAN_POSITIONS = Object.freeze({
+    chinh: [[38,39],[29,49],[46,60],[41,67],[58,39],[70,49],[66,77],[56,68],[51,44],[51,54],[35,76],[60,60]],
+    ky: [[50,34],[50,22],[50,61],[50,70],[34,86],[66,86],[42,50],[59,50]]
+  });
+
+  function meridianPanel() {
+    const M = root.HU_MERIDIANS;
+    if (!M) return '';
+    const state = UI.s(), ui = UI.view, media = root.HU_CUSTOM_MEDIA;
+    const group = ui.meridianGroup === 'ky' ? 'ky' : 'chinh';
+    const tone = ui.meridianTone === 'vang' ? 'vang' : 'xanh';
+    const list = group === 'ky' ? M.KY_KINH : M.CHINH_KINH;
+    const picked = Number.isInteger(ui.meridianIndex) && ui.meridianIndex >= 0 && ui.meridianIndex < list.length
+      ? ui.meridianIndex : 0;
+    const current = list[picked];
+    const points = list.map((item, i) => {
+      const [x, y] = MERIDIAN_POSITIONS[group][i];
+      return '<button type="button" class="meridian-point" data-act="meridianPick" data-index="' + i +
+        '" data-label="' + esc(item.short) + '" aria-label="Xem ' + esc(item.name) +
+        '" aria-pressed="' + (i === picked) + '" title="' + esc(item.name) +
+        '" style="--point-x:' + x + '%;--point-y:' + y + '%;--point-color:' +
+        (M.HE_COLOR[item.he] || '#ddc18b') + '"></button>';
+    }).join('');
+    const preview = M.preview(state.roots, state.rootType, state.rootSub);
+    const relation = M.relation(current.he, preview.heList);
+    const connection = current.he === 'Trung hòa' ? 'Trung hòa'
+      : relation === 'same' ? 'Cùng hệ linh căn' : relation === 'sinh' ? 'Hệ tương sinh' : 'Chưa có liên hệ cùng hệ';
+    const figure = media?.installed
+      ? '<img src="' + abs(media.meridian(state.gender, tone)) + '" alt="Minh họa tu sĩ ngồi thiền để tra cứu vị trí kinh mạch" loading="lazy" decoding="async">'
+      : '<div class="meridian-map-fallback" aria-hidden="true">☯</div>';
+    const option = (action, key, val, label, pressed) =>
+      '<button type="button" data-act="' + action + '" data-' + key + '="' + val +
+      '" aria-pressed="' + pressed + '">' + label + '</button>';
+    return '<section class="meridian-panel" aria-label="Sơ đồ kinh mạch tham khảo">' +
+      '<div class="meridian-board"><span class="eyebrow gold">KINH MẠCH ĐỒ</span>' +
+      '<h3>Huyệt vị trên đạo thể</h3>' +
+      '<p class="info-note">Chọn các điểm sáng để xem thông tin. Vị trí chỉ mang tính minh họa, chưa phải cơ chế thông mạch đang hoạt động.</p>' +
+      '<div class="meridian-toolbar" role="group" aria-label="Loại kinh mạch">' +
+      option('meridianGroup', 'group', 'chinh', '12 Chính Kinh', group === 'chinh') +
+      option('meridianGroup', 'group', 'ky', '8 Kỳ Kinh', group === 'ky') + '</div>' +
+      '<div class="meridian-toolbar" role="group" aria-label="Màu đạo thể">' +
+      option('meridianTone', 'tone', 'xanh', 'Thanh quang', tone === 'xanh') +
+      option('meridianTone', 'tone', 'vang', 'Kim quang', tone === 'vang') + '</div>' +
+      '<div class="meridian-map">' + figure + points + '</div>' +
+      '<div class="meridian-map-legend"><span>● Chạm điểm sáng để tra cứu</span><span>' +
+      (group === 'chinh' ? '12 Chính Kinh' : '8 Kỳ Kinh') + '</span></div></div>' +
+      '<div class="meridian-info"><span class="meridian-kind">' + esc(current.kind) + '</span>' +
+      '<h4>' + esc(current.name) + '</h4>' +
+      row('Ngũ hành', esc(current.he)) +
+      row('Độ hiếm dự kiến', esc(M.RARITY[current.rarity]?.name || current.rarity)) +
+      row('Mở theo thiết kế', esc(current.opens)) +
+      (current.points ? row('Số huyệt theo thiết kế', String(current.points)) : '') +
+      row('Liên hệ với linh căn', esc(connection)) +
+      '<p class="meridian-effect"><b>Hiệu ứng thiết kế:</b> ' + esc(current.stat) + '</p>' +
+      '<p class="meridian-effect"><b>Khi viên mãn:</b> ' + esc(current.perfect) + '</p>' +
+      '<p class="meridian-hint">Các hiệu ứng trên là thông tin tham khảo từ bản thiết kế kinh mạch; chưa cộng vào chỉ số nhân vật. Tu luyện linh căn hiện tại vẫn thực hiện ở phần bên dưới.</p>' +
+      '</div></section>';
+  }
+
   function roots() {
-    return UI.adventure.roots();
+    return meridianPanel() + UI.adventure.roots();
   }
 
   function itemDescription(key) {
@@ -112,6 +172,10 @@
       return [s.realm, s.stage, s.daoVan, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, s.rebirths, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
     }
   });
+
+  UI.action('meridianPick', (el, d) => { const n = Number(d.index); if (Number.isInteger(n)) UI.view.meridianIndex = n; });
+  UI.action('meridianGroup', (el, d) => { UI.view.meridianGroup = d.group === 'ky' ? 'ky' : 'chinh'; UI.view.meridianIndex = 0; });
+  UI.action('meridianTone', (el, d) => { UI.view.meridianTone = d.tone === 'vang' ? 'vang' : 'xanh'; });
 
   UI.action('equip', async (el, d) => {
     await UI.command('equip', { code: d.code });
