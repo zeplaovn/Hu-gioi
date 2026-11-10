@@ -24,7 +24,7 @@ for (const mode of ['memory', 'disk']) {
     t.after(() => repo.close());
     return repo;
   }
-  test('F1 ' + mode + ': lệnh breakthrough thất bại sau 20 phút không hồi sinh thời gian offline', t => {
+  test('F1 ' + mode + ': lệnh breakthrough thất bại sau 20 phút không hồi sinh thời gian offline', async t => {
     const repo = useRepo(t);
     const { svc, time, id, command } = await fixture(repo);
     const original = await svc.state('owner-a', id);
@@ -37,7 +37,7 @@ for (const mode of ['memory', 'disk']) {
     assert.equal(fresh.state.lastUpdate, time.value);
     assert.equal((await repo.get(id)).lastSeenAt, fresh.state.lastUpdate);
   });
-  test('F1 ' + mode + ': lệnh đã trừ tiền rồi lỗi thì khôi phục state sau advance', t => {
+  test('F1 ' + mode + ': lệnh đã trừ tiền rồi lỗi thì khôi phục state sau advance', async t => {
     const repo = useRepo(t);
     const { svc, time, id, command } = await fixture(repo);
     time.value += 20 * 60_000;
@@ -51,6 +51,6 @@ for (const mode of ['memory', 'disk']) {
     } finally { H.Game.prototype.buy = old; }
     assert.deepEqual((await repo.get(id)).state, expected);
     assert.equal((await repo.get(id)).lastSeenAt, (await repo.get(id)).state.lastUpdate);
-    assert.equal(await svc.sync('owner-a', id).report.seconds, 0);
+    assert.equal((await svc.sync('owner-a', id)).report.seconds, 0);
   });
 }
