@@ -1,6 +1,6 @@
 # Sách nghề và sổ công thức — bản thiết kế chờ duyệt
 
-> **TÌNH TRẠNG: ĐÃ DUYỆT 12 QUYỂN, CHƯA TRIỂN KHAI GAMEPLAY.** Chủ dự án chốt **sách công thức riêng cho từng nghề** và cấu trúc **4 nghề × 3 giới = 12 quyển**. Tên gọi, phân bố chính xác mã công thức, điều kiện học, giá/nguồn nhận, bồi hoàn bản lưu cũ và migration vẫn là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/inventory.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/items.js` trên `main` ngày 10/11/2026.
+> **TÌNH TRẠNG: ĐÃ DUYỆT 12 QUYỂN, CHƯA TRIỂN KHAI GAMEPLAY.** Các quyết định chưa chốt được tổng hợp trong **[Sổ quyết định](gameplay-decisions.md)**. Chủ dự án chốt **sách công thức riêng cho từng nghề** và cấu trúc **4 nghề × 3 giới = 12 quyển**. Tên gọi, phân bố chính xác mã công thức, điều kiện học, giá/nguồn nhận, bồi hoàn bản lưu cũ và migration vẫn là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/inventory.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/items.js` trên `main` ngày 10/11/2026.
 
 ## 1. Bốn loại sách nghề
 
@@ -42,10 +42,10 @@ Mỗi tập **không thay thế điều kiện cảnh giới** hiện hành: bi�
 - `data/items.js` trên `main`: **60 PILL**, **82 EQ**, **36 TAL**, **69 SEED**; ngoài ra **80 BT** gồm công pháp/bí tịch, không đồng nghĩa 80 sách công thức.
 - Snapshot `data/design-raw.js`: **50 hàng nguyên liệu đan phương**, **30 hàng rèn pháp bảo**, **1 hàng vẽ phù**, **30 hàng hạt giống**. Đan phương có nhiều hàng vật liệu trên mỗi mã đan; phải gom theo mã, **không** coi 50 hàng là 50 công thức.
 - 39 hạt giống không có bảng chi tiết trong snapshot; tạm giữ fallback để không hỏng game cho đến khi dữ liệu đầy đủ được phê duyệt.
-- Chưa có quyết định về **giá**, **nơi nhận**, **học một lần hay nhiều lượt**, **mỗi nghề có một cuốn hay nhiều tập**, **kiến thức có giữ qua kiếp hay không**. Các điểm này được đánh dấu chờ duyệt, không có hành vi triển khai.
+- **ĐÃ CHỐT:** mỗi nghề có **3 tập**, tổng **12 quyển**. **CHƯA CHỐT:** giá, nơi nhận, danh sách công thức từng tập, học một lần hay nhiều lượt, tương thích bản lưu cũ và kiến thức có giữ qua kiếp hay không. Xem P0-14→18 tại [gameplay-decisions.md](gameplay-decisions.md).
 
 ## 5. Liên hệ luật phàm nhân (đã chốt một phần)
 
 Khi Z đạt 100, **đã chốt:** nhân vật phế tu vi, trở thành phàm nhân, không tu luyện và không dùng vật phẩm; không tử vong ngay, chỉ chết khi cạn thọ nguyên. Vì sách nghề là vật phẩm học/tiêu hao nên **đang ở trạng thái phàm nhân không được học sách**. **ĐÃ DUYỆT:** giữ nguyên **số năm thọ nguyên còn lại** ngay trước khi bị phế, không tính lại theo trần thọ nguyên của phàm nhân để tránh chết ngay. Chỉ chết khi thời gian sống còn lại cạn. **CHƯA CHỐT:** tốc độ hao số năm còn lại khi đã bị phế và khả năng chat, đọc sách đã học, đi lại; không được dùng sách để học trong trạng thái phàm nhân. Theo V9, đồng hồ game chỉ tiến khi **online**.
 
-**Dừng tại đây để chủ dự án duyệt loại tập sách và thông số còn thiếu trước khi đưa dữ liệu sách và luật học công thức vào `engine/`.**
+**Cấu trúc 12 quyển đã được duyệt.** Chỉ bắt đầu luật học sách sau khi duyệt P0-14→18 về mapping recipe, nguồn/giá, cấp đầu và migration. Không tự thay đổi `BT-900`/`BT-901` hoặc khóa những công thức nhân vật cũ đã có.
