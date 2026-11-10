@@ -54,15 +54,7 @@ async function flush() {
   await new Promise(resolve => setImmediate(resolve));
   await new Promise(resolve => setImmediate(resolve));
 }
-function showAllTips(h, ticks = 8) {
-  for (let i = 0; i < ticks; i++) {
-    const tick = [...h.intervals.values()][0];
-    assert.ok(tick, 'Vòng mẹo chưa hiển thị đầy đủ');
-    tick();
-  }
-}
-
-test('không báo 100% khi engine hoặc hình ảnh còn đang xử lý', async () => {
+test('không đạt 100% trước khi ảnh và lõi game đều sẵn sàng', async () => {
   const h = harness();
   assert.equal(h.root.HU_LOADER.status.assetsDone, 0);
   assert.equal(h.pct.textContent, '0%');
@@ -70,33 +62,30 @@ test('không báo 100% khi engine hoặc hình ảnh còn đang xử lý', async
   assert.notEqual(h.pct.textContent, '100%');
   assert.equal(h.loading.classList.contains('done'), false);
   const pending = h.images.filter(img => typeof img.onload === 'function');
-  assert.equal(pending.length, 4); // ảnh nền hiển thị + 3 ảnh thật trong danh sách
+  assert.equal(pending.length, 4);
   pending.forEach(image => image.onload());
   await flush();
   assert.equal(h.root.HU_LOADER.status.assetsDone, 3);
   assert.equal(h.root.HU_LOADER.status.assetsReady, true);
-  assert.equal(h.pct.textContent, '99%', 'Tài nguyên và engine xong vẫn chờ mẹo');
-  assert.equal(h.loading.classList.contains('done'), false);
-  showAllTips(h);
-  assert.equal(h.pct.textContent, '100%');
+  assert.equal(h.pct.textContent, '100%', 'Không phải đợi vòng mẹo mới được vào game');
   assert.equal(h.loading.classList.contains('done'), true);
+  assert.equal(h.intervals.size, 0, 'Vòng mẹo dừng khi đã tải xong');
   assert.deepEqual(h.events, ['hu:loaded']);
 });
 
-test('đã nạp xong ảnh vẫn phải đợi engine xác nhận', async () => {
+test('ảnh đã tải xong vẫn chờ lõi game, không chờ mẹo', async () => {
   const h = harness();
   h.images.filter(img => typeof img.onload === 'function').forEach(image => image.onload());
   await flush();
   assert.equal(h.root.HU_LOADER.status.assetsReady, true);
   assert.notEqual(h.pct.textContent, '100%');
   assert.equal(h.loading.classList.contains('done'), false);
-  showAllTips(h);
-  assert.notEqual(h.pct.textContent, '100%', 'Mẹo đã xong nhưng engine chưa sẵn sàng');
   h.root.HU_LOADER.engineReady({ ready: true });
   assert.equal(h.pct.textContent, '100%');
+  assert.deepEqual(h.events, ['hu:loaded']);
 });
 
-test('ảnh hỏng không làm kẹt; engine lỗi không được báo hoàn tất giả', async () => {
+test('ảnh lỗi vẫn có dự phòng, lõi game lỗi không báo hoàn tất giả', async () => {
   const h = harness();
   h.images.filter(img => typeof img.onload === 'function').forEach(img => {
     if (img.url === 'hero-frame.webp') img.onerror();
@@ -110,67 +99,52 @@ test('ảnh hỏng không làm kẹt; engine lỗi không được báo hoàn t�
   assert.notEqual(h.pct.textContent, '100%');
   assert.equal(h.note.hidden, false);
   assert.deepEqual(h.events, []);
+  assert.equal(h.intervals.size, 0);
 });
 
-test('khôi phục 8 mẹo luân phiên, không làm giả phần trăm tải ảnh', async () => {
+test('mẹo xoay ngay trong khi tải, không tác động tiến độ hay điều kiện hoàn tất', async () => {
   const h = harness();
-  const first = h.tip.textContent;
-  assert.ok(first.length > 25, 'Mẹo phải hiện ngay khi bắt đầu loading');
+  const seen = [h.tip.textContent];
+  assert.ok(seen[0].length > 25);
   assert.match(h.phaseLabel.textContent, /Đang tải tài nguyên · 0\/3/);
-  assert.equal(h.intervals.size, 1, 'Có một timer riêng chỉ để đổi mẹo');
+  assert.equal(h.intervals.size, 1);
+  for (let i = 0; i < 7; i++) {
+    const rotate = [...h.intervals.values()][0];
+    assert.ok(rotate);
+    rotate();
+    seen.push(h.tip.textContent);
+    assert.equal(h.pct.textContent, '0%', 'Đổi mẹo không cộng phần trăm tải');
+  }
+  assert.equal(new Set(seen).size, 8, 'Đã phát đủ tám mẹo theo vòng');
   const rotate = [...h.intervals.values()][0];
   rotate();
-  assert.notEqual(h.tip.textContent, first, 'Mẹo mới phải khác mẹo vừa hiện');
-  assert.equal(h.pct.textContent, '0%', 'Đổi mẹo không ảnh hưởng phần trăm thật');
+  assert.equal(h.tip.textContent, seen[0], 'Mẹo quay vòng khi tải chậm');
   h.root.HU_LOADER.engineReady({ ready: true });
   h.images.filter(img => typeof img.onload === 'function').forEach(img => img.onload());
   await flush();
-  assert.equal(h.pct.textContent, '99%', 'Tiến độ thật dừng ở 99% khi chưa hiện hết mẹo');
-  showAllTips(h, 7);
-  assert.equal(h.intervals.size, 0, 'Dừng đổi mẹo khi hoàn tất 8 mẹo');
   assert.equal(h.pct.textContent, '100%');
+  assert.equal(h.intervals.size, 0, 'Không còn bộ hẹn giờ sau khi vào game');
 });
 
-test('bộ mẹo cũ trở lại ở cả loading khởi động và tạo nhân vật', () => {
+test('giữ tám mẹo đúng nội dung, kể cả mẹo nghề phụ tạm dừng khi rời game', () => {
   assert.match(loaderSource, /Ma thú về đêm mạnh và nguy hiểm hơn/);
   assert.match(loaderSource, /Nghề phụ tạm dừng khi rời game/);
   assert.match(loaderSource, /Trang bị phẩm chất cao giúp sống sót/);
-  const hintsBlock = loaderSource.split('  const HINTS = [')[1]?.split('\n  ];')[0] || '';
-  const hints = hintsBlock.match(/^    '[^\n]+',?$/gm) || [];
-  assert.equal(hints.length, 8);
-  assert.match(loaderSource, /const stopInitialHints = rotateHints\(tip, /);
-  assert.match(loaderSource, /const stopEntryHints = rotateHints\(hint, resolveHints\)/);
+  const block = loaderSource.split('  const HINTS = [')[1]?.split('\n  ];')[0] || '';
+  assert.equal((block.match(/^    '[^\n]+',?$/gm) || []).length, 8);
+  assert.match(loaderSource, /const stopInitialHints = rotateHints\(tip\)/);
+  assert.match(loaderSource, /const stopEntryHints = rotateHints\(hint\)/);
   assert.match(loaderSource, /stopEntryHints\(\)/);
   assert.match(loaderSource, /3200/);
 });
 
-test('đợi mẹo cuối hiển thị đủ thời gian, không đạt 100% giữa chừng', async () => {
-  const h = harness();
-  const seen = [h.tip.textContent];
-  h.root.HU_LOADER.engineReady({ ready: true });
-  h.images.filter(img => typeof img.onload === 'function').forEach(img => img.onload());
-  await flush();
-  assert.equal(h.pct.textContent, '99%');
-  for (let i = 0; i < 7; i++) {
-    showAllTips(h, 1);
-    seen.push(h.tip.textContent);
-    assert.equal(h.pct.textContent, '99%');
-    assert.equal(h.loading.classList.contains('done'), false);
-  }
-  assert.equal(new Set(seen).size, 8, 'Cả tám mẹo gốc phải hiện chính xác một lần trong vòng');
-  showAllTips(h, 1); // đủ 3,2 giây hiển thị mẹo cuối
-  assert.equal(h.pct.textContent, '100%');
-  assert.equal(h.loading.classList.contains('done'), true);
-});
-
-test('loading tạo nhân vật chỉ đến 100% sau khi hoàn tất lượt mẹo', () => {
-  const source = loaderSource;
-  const start = source.indexOf('async function enter(urls, start)');
-  const afterBoot = source.indexOf("if (typeof start === 'function') await start(result);", start);
-  const afterTips = source.indexOf('await hintsReady;', afterBoot);
-  const percent100 = source.indexOf('draw(bar, number, meter, 1,', afterTips);
-  assert.ok(start >= 0 && afterBoot > start && afterTips > afterBoot && percent100 > afterTips);
-  assert.match(source, /draw\(bar, number, meter, 0\.99, /);
-  assert.match(source, /Đang tải tài nguyên/);
-  assert.doesNotMatch(source, /Đã xử lý .*? ảnh/);
+test('loading lúc tạo nhân vật không đợi mẹo trước khi vào game', () => {
+  const begin = loaderSource.indexOf('async function enter(urls, start)');
+  const section = loaderSource.slice(begin);
+  assert.ok(begin >= 0);
+  assert.match(section, /const stopEntryHints = rotateHints\(hint\)/);
+  assert.match(section, /if \(typeof start === 'function'\) await start\(result\)/);
+  assert.match(section, /draw\(bar, number, meter, 1,/);
+  assert.doesNotMatch(section, /await hintsReady|resolveHints|chờ đủ 8 mẹo/i);
+  assert.doesNotMatch(loaderSource, /hintsComplete/);
 });
