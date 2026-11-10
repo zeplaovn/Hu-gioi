@@ -1,4 +1,4 @@
-name: Probe Edge authorization header handling (safe synthetic JWT)
+name: Probe Edge authorization formatting with synthetic credentials
 on:
   push:
     branches: [ops/edge-bundle-deploy-20261110]
@@ -10,17 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Test missing and invalid synthetic bearer values, no user tokens
+      - name: Compare simple and structured JWT, with and without publishable key
         shell: bash
         run: |
           set -euo pipefail
           base="https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap"
-          echo "=== without Authorization ==="
-          curl --max-time 25 -fsS -o /tmp/noauth -w "HTTP %{http_code}\n" "$base" || true
-          head -c 400 /tmp/noauth || true
-          echo
-          echo "=== with syntactically valid but intentionally fake JWT ==="
-          curl --max-time 25 -sS -o /tmp/fake -w "HTTP %{http_code}\n" "$base" \
-            -H 'Authorization: Bearer abc.def.ghi' -H 'Origin: https://hugioi.blackbearvn.workers.dev'
-          head -c 400 /tmp/fake || true
-          echo
+          fake="$(node -e 'const b = x => Buffer.from(JSON.stringify(x)).toString("base64url");console.log([b({alg:"ES256",typ:"JWT",kid:"diagnostic-fake"}),b({sub:"11111111-2222-4333-8444-555555555555",iss:"https://rvrwfeblishqadkpzspb.supabase.co/auth/v1",aud:"authenticated",role:"authenticated",exp:2000000000}),Buffer.alloc(64).toString("base64url")].join("."))')"
+          for variant in simple structured; do
+            for keymode in noapikey withapikey; do
+              if test "$variant" = simple; then value='abc.def.ghi'; else value="$fake"; fi
+              echo "=== $variant / $keymode ==="
+              args=(-H "Authorization: Bearer $value" -H "Origin: https://hugioi.blackbearvn.workers.dev")
+              if test "$keymode" = withapikey; then
+                args+=(-H "apikey: sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P")
+              fi
+              curl --max-time 30 -sS -o /tmp/answer -w "HTTP %{http_code}\n" "$base" "${args[@]}"
+              cat /tmp/answer
+              echo
+            done
+          done
