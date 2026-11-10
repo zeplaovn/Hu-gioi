@@ -1,6 +1,9 @@
-# Triển khai Hư Giới online (Node 24 + Supabase Auth)
+# Triển khai Node/SQLite để dev và đối chiếu hợp đồng
 
-> **Mã nguồn và kiểm thử không đồng nghĩa đã triển khai công khai.** Chỉ hỗ trợ **một Node server (giao diện + `/api`) sau reverse proxy HTTPS trên cùng origin**, triển khai bằng Docker Compose. Không hỗ trợ frontend static-only hoặc FE tách origin.
+> **Lưu ý (10/11/2026):** Đây là hướng dẫn **Node/SQLite fallback dành cho dev/test**, không còn là kiến trúc production mục tiêu. Cloudflare Worker tĩnh + Supabase Edge/Postgres dùng [docs/edge-deployment.md](edge-deployment.md). Không triển khai Node gateway trên Worker tĩnh. Ở mode Node, dùng file `client/config.js` đặt `HU_API_BASE='/api/v1'` và `HU_AUTH_MODE='gateway'` trước khi build; tuyệt đối không đổi luật gameplay. Mọi IP proxy trusted phải cấu hình `HU_AUTH_TRUSTED_PROXY_IPS` đúng địa chỉ kết nối thực; khi đứng sau Cloudflare, proxy tin cậy phải **ghi đè** X-Forwarded-For từ CF-Connecting-IP, không tin header do client gửi.
+
+
+> **Mã nguồn và kiểm thử không đồng nghĩa đã triển khai công khai.** Mục này chỉ mô tả chế độ Node riêng; kiến trúc Edge production hỗ trợ frontend tĩnh Cloudflare tách origin theo tài liệu mới.
 
 ## Mô hình
 

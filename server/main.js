@@ -9,7 +9,7 @@
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
      HU_AUTH_TRUSTED_PROXY_IPS  danh sách IP proxy được phép khai báo X-Forwarded-For
-     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 15000)
+     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 60000)
    Không đặt cấu hình xác thực → API gameplay tắt, chỉ phục vụ file tĩnh. */
 'use strict';
 const http = require('node:http');

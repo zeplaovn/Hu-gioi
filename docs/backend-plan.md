@@ -1,5 +1,8 @@
 # Kế hoạch thiết kế backend — Hư Giới
 
+> **Cập nhật nhánh Supabase Edge 10/11/2026:** Tài liệu dưới đây phần lớn là kế hoạch/lịch sử của backend Node+SQLite; tài liệu áp dụng cho kiến trúc mới ở [edge-deployment.md](edge-deployment.md), migration `supabase/migrations/20261110070000_game_schema.sql` và hợp đồng async `server/repositories/player-repository.js`. API duy nhất là `supabase/functions/api`, DB `game` không exposed; Thiên Mệnh Các xuyên kiếp dùng thêm `pavilion_accounts` và `pavilion_receipts`. Node SQLite vẫn cho dev/test, không thay luật engine/data. **Chưa chạy migration hoặc deploy.**
+
+
 > **Bổ sung 10/11/2026:** Đã thêm hệ thống account Thiên Mệnh Các ngoài state V9; tạo kiếp mới sau reset được giữ Thiên Tinh và nâng cấp, nhận thưởng 5×bậc đại cảnh giới mỗi kiếp. Xem [thien-menh-cac.md](thien-menh-cac.md). Các phần kế hoạch sau đây là lịch sử.
 
 > **Cập nhật 09/11/2026 — tài liệu kiến trúc lịch sử, không còn là luật gameplay hiện hành.** Phần mô tả bế quan nhận thưởng khi offline, cho phép `reincarnate`/`prestige`, 49/51/52 lệnh, schema V8 và ngưỡng grace 300 giây là thiết kế cũ. Luật được triển khai trên nhánh V9 là: **48 lệnh/protocol 2, tử vong vĩnh viễn, tạm dừng hoàn toàn khi offline, Thiên mệnh chọn lúc tạo**. Xem [gameplay-v9.md](gameplay-v9.md), [engine-contract.md](engine-contract.md), [online-deployment.md](online-deployment.md). Các mục còn lại chỉ mang tính tham khảo cho phát triển backend tương lai.
