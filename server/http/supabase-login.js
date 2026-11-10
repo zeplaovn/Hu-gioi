@@ -1,4 +1,4 @@
-/* Password-login gateway: 10 attempts per IP per 15 minutes (single Node instance).
+/* Password-login gateway: 10 failed attempts per IP per 15 minutes (single Node instance).
    For production across multiple instances, use a shared limiter and Supabase Auth rate limits. */
 'use strict';
 const { createClientIp, normalizeIp } = require('./client-ip.js');
@@ -54,39 +54,44 @@ function createSupabaseLoginGateway({
     const ip = clientIp(req), now = clock();
     for (const [key, value] of attempts) if (value.until <= now) attempts.delete(key);
     if (!attempts.has(ip) && attempts.size >= MAX_KEYS) return respond(res, 503, { error: 'Dịch vụ đăng nhập đang bận.' });
-    const entry = attempts.get(ip) || { count: 0, until: now + windowMs };
-    if (entry.count >= maxAttempts)
+    const entry = attempts.get(ip) || { count: 0, pending: 0, until: now + windowMs };
+    if (entry.count + entry.pending >= maxAttempts)
       return respond(res, 429, { error: 'IP đã thử đăng nhập quá nhiều lần. Vui lòng thử lại sau.' }, entry.until - now);
-    entry.count++;
-    attempts.set(ip, entry); // count all attempts, including successful requests and bad bodies
+    entry.pending++;
+    attempts.set(ip, entry); // giữ slot cho yêu cầu đang chạy để chặn dò mật khẩu song song
+    const finish = (failed = false) => { entry.pending--; if (failed) entry.count++; };
     let payload, bytes = 0;
     try {
       const chunks = [];
       for await (const chunk of req) {
         bytes += chunk.length;
-        if (bytes > MAX_BODY) return respond(res, 413, { error: 'Yêu cầu quá lớn.' });
+        if (bytes > MAX_BODY) { finish(true); return respond(res, 413, { error: 'Yêu cầu quá lớn.' }); }
         chunks.push(chunk);
       }
       payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-    } catch { return respond(res, 400, { error: 'Dữ liệu đăng nhập không hợp lệ.' }); }
+    } catch { finish(true); return respond(res, 400, { error: 'Dữ liệu đăng nhập không hợp lệ.' }); }
     if (!payload || typeof payload !== 'object' || Array.isArray(payload) ||
         Object.keys(payload).some(key => !['email', 'password'].includes(key)) ||
         !isValidEmail(payload.email) || typeof payload.password !== 'string' ||
         payload.password.length < 1 || payload.password.length > 128)
-      return respond(res, 400, { error: 'Email hoặc mật khẩu không hợp lệ.' });
+      { finish(true); return respond(res, 400, { error: 'Email hoặc mật khẩu không hợp lệ.' }); }
     try {
       const upstream = await fetchImpl(origin.origin + '/auth/v1/token?grant_type=password', {
         method: 'POST', headers: { apikey: publishableKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: payload.email.toLowerCase(), password: payload.password }),
         cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000)
       });
-      if (upstream.status === 429) return respond(res, 429, { error: 'Dịch vụ xác thực đang giới hạn tốc độ.' }, 60000);
-      if ([400, 401, 403].includes(upstream.status)) return respond(res, 401, { error: 'Thông tin đăng nhập không đúng hoặc email chưa xác minh.' });
-      if (!upstream.ok) return respond(res, 503, { error: 'Dịch vụ xác thực tạm thời không khả dụng.' });
+      if (upstream.status === 429) { finish(); return respond(res, 429, { error: 'Dịch vụ xác thực đang giới hạn tốc độ.' }, 60000); }
+      if ([400, 401, 403].includes(upstream.status)) {
+        finish(true);
+        return respond(res, 401, { error: 'Thông tin đăng nhập không đúng hoặc email chưa xác minh.' });
+      }
+      if (!upstream.ok) { finish(); return respond(res, 503, { error: 'Dịch vụ xác thực tạm thời không khả dụng.' }); }
       const data = await upstream.json();
-      if (!data?.access_token || !data?.refresh_token) return respond(res, 503, { error: 'Phản hồi xác thực chưa hợp lệ.' });
+      if (!data?.access_token || !data?.refresh_token) { finish(); return respond(res, 503, { error: 'Phản hồi xác thực chưa hợp lệ.' }); }
+      finish(); // đăng nhập thành công không tiêu quota thất bại
       return respond(res, 200, data);
-    } catch { return respond(res, 503, { error: 'Không kết nối được dịch vụ xác thực.' }); }
+    } catch { finish(); return respond(res, 503, { error: 'Không kết nối được dịch vụ xác thực.' }); }
   }
   return { handle, clientIp };
 }

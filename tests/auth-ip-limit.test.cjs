@@ -45,7 +45,7 @@ async function fixture(t, { trustedProxyIps = [], upstreamStatus = 200 } = {}) {
     req.on('error', reject);
     req.end(method === 'POST' ? data : undefined);
   });
-  return { call, get upstreamCalls() { return upstreamCalls; }, get lastBody() { return lastBody; }, advance: ms => { now += ms; } };
+  return { call, get upstreamCalls() { return upstreamCalls; }, get lastBody() { return lastBody; }, advance: ms => { now += ms; }, setUpstreamStatus: value => { upstreamStatus = value; } };
 }
 
 test('email syntax is validated server-side, including labels and lengths', () => {
@@ -85,12 +85,18 @@ test('after 10 attempts per IP in 15 minutes return 429 and Retry-After; spoofed
   assert.equal(f.upstreamCalls, 11);
 });
 
-test('only explicitly trusted reverse proxies can provide client IP; NAT users share quota', async t => {
+test('proxy tin cậy cô lập IP: login thành công không tiêu quota NAT, thất bại vẫn bị chặn', async t => {
   const f = await fixture(t, { trustedProxyIps: ['127.0.0.1'] });
+  const a = { 'x-forwarded-for': '203.0.113.8' }, b = { 'x-forwarded-for': '203.0.113.9' };
+  for (let i = 0; i < 25; i++)
+    assert.equal((await f.call({ headers: a })).status, 200);
+  f.setUpstreamStatus(401);
   for (let i = 0; i < 10; i++)
-    assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 200);
-  assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 429);
-  assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.9' } })).status, 200);
+    assert.equal((await f.call({ headers: a })).status, 401);
+  assert.equal((await f.call({ headers: a })).status, 429);
+  f.setUpstreamStatus(200);
+  assert.equal((await f.call({ headers: b })).status, 200);
+  assert.equal((await f.call({ headers: a })).status, 429);
 });
 
 test('reject cross-site browser submissions, overlarge bodies and invalid content type', async t => {
