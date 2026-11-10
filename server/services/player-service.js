@@ -103,7 +103,7 @@ class PlayerService {
     return {
       format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
       player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
-      pendingCreationTickets: data?.tickets || 0
+      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || this.repo.getPavilion(ownerId)
     };
   }
 
@@ -266,6 +266,7 @@ class PlayerService {
       }
       if (rec.revision !== expectedRevision) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.', { currentRevision: rec.revision });
 
+      const previousRealm = rec.state.realm;
       const run = this.#run(rec, now), save = revision => ({
         state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
       });
@@ -297,7 +298,7 @@ class PlayerService {
         return { touch: { rngCounter: run.rng.counter(), lastSeenAt: now }, value: { error: failure } };
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
-      const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > rec.state.realm
+      const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
         ? H.PAVILION.realmReward(run.game.s.realm) : 0;
       if (earned) {
         result = { ...result, thienTinh: earned };
