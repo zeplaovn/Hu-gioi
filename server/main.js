@@ -9,7 +9,7 @@
      HU_DB_FILE             đường dẫn SQLite (mặc định .hu-gioi/game.sqlite)
      HU_ALLOWED_ORIGINS     danh sách origin được gọi API, ngăn cách bằng dấu phẩy (khi game tĩnh ở origin khác)
      HU_AUTH_TRUSTED_PROXY_IPS  danh sách IP proxy được phép khai báo X-Forwarded-For
-     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 15000)
+     HU_ONLINE_GRACE_MS     quá ngưỡng này kể từ lần thấy gần nhất thì đóng băng tiến trình (mặc định 20000)
    Không đặt cấu hình xác thực → API gameplay tắt, chỉ phục vụ file tĩnh. */
 'use strict';
 const http = require('node:http');
@@ -43,11 +43,12 @@ function buildGameApi(env = process.env) {
   const exposed = ['client', 'css', 'data', 'engine', 'media'].some(dir => path.resolve(file).startsWith(path.join(publicRoot, dir) + path.sep));
   if (exposed) throw Error('HU_DB_FILE không được đặt trong thư mục tài nguyên công khai.');
 
+  const { onlineGrace } = require('./heartbeat-policy.js');
+  const grace = onlineGrace(env.HU_ONLINE_GRACE_MS); // validate trước khi mở DB
   const repository = new SqlitePlayers(file);
-  const grace = Number(env.HU_ONLINE_GRACE_MS);
   const service = new PlayerService({
     repository, contentVersion: computeContentVersion(),
-    config: Number.isFinite(grace) && grace >= 0 && env.HU_ONLINE_GRACE_MS ? { onlineGraceMs: grace } : {}
+    config: { onlineGraceMs: grace }
   });
   const purge = setInterval(() => { try { repository.purgeExpired(Date.now()); } catch (e) { console.error('[purge]', e.message); } }, 3600000);
   purge.unref();

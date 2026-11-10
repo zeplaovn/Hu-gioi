@@ -8,4 +8,11 @@ const HEARTBEAT = Object.freeze({
   sync: Object.freeze({ capacity: 8, perMinute: 24 }),
   pause: Object.freeze({ capacity: 3, perMinute: 6 })
 });
-module.exports = { HEARTBEAT };
+function onlineGrace(raw) {
+  if (raw === undefined || raw === null || raw === '') return HEARTBEAT.onlineGraceMs;
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < HEARTBEAT.nextSyncInMs * 3)
+    throw Error('HU_ONLINE_GRACE_MS phải >= 3 lần chu kỳ sync (15000 ms).');
+  return value;
+}
+module.exports = { HEARTBEAT, onlineGrace };

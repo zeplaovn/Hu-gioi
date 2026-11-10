@@ -6,7 +6,15 @@ const { RateLimiter, LIMITS } = require('../server/http/rate-limit.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
 
+const { onlineGrace, HEARTBEAT } = require('../server/heartbeat-policy.js');
 const T0 = 1_800_000_000_000;
+test('HU_ONLINE_GRACE_MS không được rút xuống dưới ba nhịp sync', () => {
+  assert.equal(onlineGrace(), HEARTBEAT.onlineGraceMs);
+  assert.equal(onlineGrace('20000'), 20000);
+  for (const invalid of ['0','-1','14999','nan','1000.5'])
+    assert.throws(() => onlineGrace(invalid), /HU_ONLINE_GRACE_MS/);
+  assert.equal(onlineGrace('15000'), 15000);
+});
 function simulate(intervals) {
   const clock = { now: T0 };
   const limiter = new RateLimiter({ clock: () => clock.now });
