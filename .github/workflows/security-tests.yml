@@ -33,7 +33,10 @@ jobs:
         with:
           deno-version: v2.x
       - name: Check Edge Function TypeScript
-        run: deno check supabase/functions/api/index.ts
+        working-directory: supabase/functions/api
+        run: |
+          deno install
+          deno check --node-modules-dir=auto index.ts
       - name: Check built static files contain legal pages but no server source
         shell: bash
         run: |
