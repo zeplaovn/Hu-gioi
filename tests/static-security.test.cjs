@@ -110,18 +110,20 @@ test('phương thức ghi bị từ chối', async () => {
   for (const method of ['POST', 'PUT', 'DELETE', 'PATCH']) assert.equal((await get('/index.html', method)).status, 405, method);
 });
 
-test('chỉ triển khai Node, không còn wrangler; build:min vẫn loại mã máy chủ', () => {
+test('Cloudflare static assets dùng wrangler chỉ dist; build:min không đưa mã máy chủ/secrets', () => {
   const { readFileSync, existsSync } = require('node:fs');
   const { join } = require('node:path');
   const { execFileSync } = require('node:child_process');
   const root = join(__dirname, '..');
-  assert.equal(existsSync(join(root, 'wrangler.jsonc')), false);
+  assert.equal(existsSync(join(root, 'wrangler.jsonc')), true);
   const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-  assert.equal('wrangler' in pkg.devDependencies, false);
-  assert.equal('deploy' in pkg.scripts, false);
+  assert.equal('wrangler' in pkg.devDependencies, false, 'không thêm dependency cho client; CLI deploy riêng');
+  assert.equal('deploy' in pkg.scripts, false, 'deploy phải chạy thủ công sau khi chủ dự án phê duyệt');
   assert.equal('preview' in pkg.scripts, false);
   execFileSync(process.execPath, [join(root, 'tools/build-dist.cjs')], { stdio: 'pipe' });
   assert.ok(existsSync(join(root, 'dist/_headers')));
   assert.ok(existsSync(join(root, 'dist/index.html')));
+  assert.ok(existsSync(join(root, 'dist/client/config.js')));
+  assert.doesNotMatch(readFileSync(join(root, 'dist/client/config.js'), 'utf8'), /sb_secret_|service_role|JWT_SECRET/);
   for (const leak of ['server', 'tests', 'docs', 'tools', 'package.json', 'wrangler.jsonc']) assert.equal(existsSync(join(root, 'dist', leak)), false, leak);
 });
