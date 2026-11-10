@@ -48,6 +48,7 @@ jobs:
           deno install
           deno check --node-modules-dir=auto index.ts
           deno test --node-modules-dir=auto --allow-read http.test.ts
+          deno test --node-modules-dir=auto auth-user.test.ts
           deno test --node-modules-dir=auto api-rate-limit.test.ts
           deno test --node-modules-dir=auto --allow-read jwt-deno.test.ts
           deno test --node-modules-dir=auto contention-counter.test.ts
