@@ -1,4 +1,4 @@
-/* Lỗi có mã ổn định cho API gameplay (docs/backend-plan.md §6.7). Không bao giờ đưa state, SQL hay stack ra ngoài. */
+/* Lỗi có mã ổn định cho API gameplay (backend-plan cũ @1bd987b §6.7). Không bao giờ đưa state, SQL hay stack ra ngoài. */
 'use strict';
 
 const STATUS = Object.freeze({

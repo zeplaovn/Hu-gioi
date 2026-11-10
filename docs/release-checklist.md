@@ -9,7 +9,7 @@
 - [ ] **5. Supabase Auth:** Xác minh và cấu hình giới hạn tốc độ đăng nhập/đăng ký/email, CAPTCHA, xác nhận email, Site URL và redirect allowlist trong Dashboard.
 - [ ] **6. Hạn mức/cảnh báo:** Cấu hình cảnh báo số lượt gọi Edge Functions và dung lượng PostgreSQL. Edge API công khai nên request rác vẫn có thể được tính vào hạn mức.
 - [ ] **7. Branch protection:** Bắt buộc `security`, `browser-proof` và `Workers Builds: hugioi` xanh trước merge; không bỏ qua check đỏ để phát hành.
-- [ ] **8. Smoke sau deploy:** Kiểm staging/production bằng tài khoản thử riêng: OPTIONS/JWT/consent, bootstrap, preview, tạo nhân vật, vài lệnh, idle, reload, API 503/retry, metrics, rollback. Không thao tác trên tài khoản người chơi thật.
+- [ ] **8. Smoke sau deploy:** Kiểm staging/production bằng tài khoản thử riêng: OPTIONS/JWT/consent, đăng nhập email và Google (PKCE; regex `base64url` đã sửa ở commit `2996e9b`, cần xác nhận trên trình duyệt thật), bootstrap, preview, tạo nhân vật, vài lệnh, idle, reload, API 503/retry, metrics, rollback. Không thao tác trên tài khoản người chơi thật.
 - [ ] **9. Duyệt gameplay:** Chủ dự án duyệt 30 P0 và 14 P1 trong [sổ quyết định](gameplay-decisions.md), cùng [bản nháp cao giới](content-draft-realms-5-13.md) và [sách nghề](profession-manuals-proposal.md); ngoài phạm vi phát hành thử nghiệm.
 
 **Không tự tích ô nào khi chưa có bằng chứng.** Xem [runbook Edge](edge-deployment.md).

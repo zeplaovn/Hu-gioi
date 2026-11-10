@@ -215,7 +215,7 @@
 **Trạng thái: MỞ P1.**
 
 **P1-07 · Chat: phạm vi, lọc nội dung và lưu trữ**  
-[ ] **A — ĐỀ XUẤT:** world + tông môn + system trước, private sau; JWT, lọc spam/ngôn từ/URL, mute/report/admin queue; lưu nội dung có hạn **30 ngày** theo kế hoạch `docs/backend-plan.md` (con số chưa duyệt), hỗ trợ xóa/ẩn theo quy định dữ liệu; chọn SSE/polling nếu không cần WS realtime.  
+[ ] **A — ĐỀ XUẤT:** world + tông môn + system trước, private sau; JWT, lọc spam/ngôn từ/URL, mute/report/admin queue; lưu nội dung có hạn **30 ngày** theo kế hoạch kế hoạch backend cũ (git 1bd987b:docs/archive/backend-plan.md) (con số chưa duyệt), hỗ trợ xóa/ẩn theo quy định dữ liệu; chọn SSE/polling nếu không cần WS realtime.  
 [ ] B: chỉ world chat lúc mở beta, các kênh khác feature flag.  Khác: __________  
 **Trạng thái: MỞ P1.**
 
@@ -240,7 +240,7 @@
 **Trạng thái: MỞ P1 (quyết định kiến trúc trước social).**
 
 **P1-12 · Giới hạn trận PvP/ngày và kiểm win-trading**  
-[ ] **A — ĐỀ XUẤT:** snapshot combat server + seed audit + Elo `K=32` như `docs/backend-plan.md`; giới hạn trận có thưởng/ngày, chống cặp lặp/đa tài khoản; chỉ **flag/review**, không auto-ban. **Số trận và mức thưởng chưa duyệt.**  
+[ ] **A — ĐỀ XUẤT:** snapshot combat server + seed audit + Elo `K=32` như kế hoạch backend cũ (git 1bd987b:docs/archive/backend-plan.md); giới hạn trận có thưởng/ngày, chống cặp lặp/đa tài khoản; chỉ **flag/review**, không auto-ban. **Số trận và mức thưởng chưa duyệt.**  
 [ ] B: PvP không thưởng vật phẩm/linh thạch, chỉ danh vọng; giảm rủi ro farm.  Khác: __________  
 **Trạng thái: MỞ P1.**
 
@@ -274,7 +274,7 @@ Các mục này là **tiêu chí kỹ thuật**, không phải giấy phép tự
 - **E05:** Test mỗi lệnh mới đúng **một miền**; cập nhật `commands.js`, `game.js`, `index.html` (nếu thêm module), `engine-contract.md` và UI tiếng Việt; không thêm dependency.
 - **E06:** Bot mô phỏng 30 ngày ở các seed/chiến lược và chế độ CI ngắn ≤1–2 phút; xuất báo cáo faucet/sink, time-to-realm, chết/kiếp, Thiên Tinh, exploit nổi bật. **Chỉ tiêu đỗ/doanh thu phải được chủ dự án chốt ở P0-24.**
 - **E07:** Xóa dữ liệu tài khoản phải xóa đủ player/account pavilion/receipts/mail/quan hệ phù hợp; reset đạo thân chỉ xóa progression kiếp hiện tại; export phản ánh dữ liệu thực.
-- **E08:** Sửa tài liệu cũ `docs/architecture.md`, `docs/design-integration.md`, `docs/backend-plan.md` khi luật mới được duyệt; không để lời dẫn offline/prestige V8 trở lại UI online.
+- **E08:** Sửa tài liệu cũ `docs/architecture.md`, `docs/design-integration.md` khi luật mới được duyệt; không để lời dẫn offline/prestige V8 trở lại UI online.
 
 ## 5. Thứ tự duyệt thuận tiện
 

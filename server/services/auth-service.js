@@ -1,6 +1,6 @@
 /* Tài khoản thử nghiệm cho máy chủ Node đơn lẻ. Không phải kho lưu gameplay online.
    Mật khẩu scrypt + salt ngẫu nhiên; phiên opaque lưu hash, cookie HttpOnly/SameSite=Strict.
-   Dùng PostgreSQL/AuthProvider theo docs/backend-plan.md trước khi chạy nhiều instance. */
+   Dùng PostgreSQL/AuthProvider theo backend-plan cũ @1bd987b trước khi chạy nhiều instance. */
 'use strict';
 const crypto = require('node:crypto');
 const fs = require('node:fs');

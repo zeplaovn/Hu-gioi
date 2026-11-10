@@ -1,4 +1,4 @@
-/* PlayerService — gameplay server-authoritative (docs/backend-plan.md §3.3, §7).
+/* PlayerService — gameplay server-authoritative (backend-plan cũ @1bd987b §3.3, §7).
    Client chỉ gửi ý định (type + payload); đồng hồ, RNG, thời gian bế quan và phần thưởng do máy chủ quyết định.
    Mỗi lệnh là một giao dịch: khóa người chơi → kiểm receipt (idempotent) → kiểm revision → advance(now) → execute → ghi.
    Engine chạy cùng luật với client (engine/), không sao chép công thức sang backend. */

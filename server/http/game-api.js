@@ -1,4 +1,4 @@
-/* API gameplay /api/v1 (docs/backend-plan.md §6). Một người chơi cho mỗi tài khoản.
+/* API gameplay /api/v1 (backend-plan cũ @1bd987b §6). Một người chơi cho mỗi tài khoản.
      GET  /api/v1/bootstrap
      POST /api/v1/creation/preview
      POST /api/v1/players

@@ -1,4 +1,4 @@
-/* Token bucket trong bộ nhớ. Đủ cho một instance; nhiều instance cần Redis (docs/backend-plan.md §6.9). */
+/* Token bucket trong bộ nhớ. Đủ cho một instance; nhiều instance cần Redis (backend-plan cũ @1bd987b §6.9). */
 'use strict';
 const { SYNC_INTERVAL_MS } = require('../presence-config.js');
 class RateLimiter {

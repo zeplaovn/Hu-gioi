@@ -27,10 +27,10 @@
 
 ## Lịch sử (không là nguồn sự thật)
 
-- [Kiểm toán thiết kế](design-audit.md).
-- [Kế hoạch backend Node](archive/backend-plan.md).
-- [Hướng dẫn Node/SQLite](archive/online-deployment.md).
-- [Thiết lập Supabase cũ](archive/supabase-security-setup.md).
+- [Kiểm toán thiết kế](design-audit.md) — bằng chứng cho luật độ khó có chủ ý, còn được test hồi quy dùng.
+- [Hướng dẫn Node/SQLite](archive/online-deployment.md) — chỉ cho dev/legacy, còn được test vệ sinh repo dùng.
+
+Đã gỡ khỏi cây (còn trong git, commit `1bd987b`): `docs/archive/backend-plan.md` (kế hoạch backend Node, nguồn của các con số 30 ngày/Elo K=32 trong sổ quyết định) và `docs/archive/supabase-security-setup.md` (thiết lập Supabase cũ, đã được thay bằng [Runbook Edge](edge-deployment.md) và [Bảo mật](security.md)). Xem bằng `git show 1bd987b:docs/archive/<tên-file>`.
 
 ## Việc chờ chủ dự án
 

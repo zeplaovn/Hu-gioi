@@ -7,7 +7,7 @@
 >
 > Ngày kiểm kê gốc: **10/11/2026**, commit `0668d337399069e534dc4c9e980497c04195effd`. **CẬP NHẬT:** PR [#31 — Thiên Mệnh Các](https://github.com/zeplaovn/Hugioi/pull/31) và PR [#32 — Kiểm kê](https://github.com/zeplaovn/Hugioi/pull/32) **đã merge vào `main`**; rà soát trên commit `132158529d221a1241aef9d8ab52beb671053926`. Trạng thái quyết định cập nhật ở [gameplay-decisions.md](gameplay-decisions.md).
 >
-> Tài liệu đã đối chiếu: `README.md`, `docs/architecture.md`, `docs/engine-contract.md`, `docs/design-integration.md`, `docs/backend-plan.md` (§8–§9), `docs/design-audit.md`, `docs/gameplay-v9.md`, `data/README.md`; các file `engine/rules/*.js`, `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js`, `data/*.js`, `server/services/player-service.js`, `server/http/router.js`, màn UI và test.
+> Tài liệu đã đối chiếu: `README.md`, `docs/architecture.md`, `docs/engine-contract.md`, `docs/design-integration.md`, kế hoạch backend cũ (git 1bd987b:docs/archive/backend-plan.md) (§8–§9), `docs/design-audit.md`, `docs/gameplay-v9.md`, `data/README.md`; các file `engine/rules/*.js`, `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js`, `data/*.js`, `server/services/player-service.js`, `server/http/router.js`, màn UI và test.
 >
 > **Quy ước:** “Đã có” = đã thấy luật/dữ liệu chạy trong mã; **không** đồng nghĩa đã cân bằng hoặc đạt chuẩn phát hành. “Chỉ UI” = màn mô tả tương tác mạnh hơn khả năng backend hiện có. Độ ưu tiên P0/P1/P2 là đề xuất kiểm kê, **chưa phê duyệt phạm vi**.
 

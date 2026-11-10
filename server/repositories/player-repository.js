@@ -1,5 +1,5 @@
 /* PlayerRepository — hợp đồng kho lưu trữ người chơi. Cài đặt bền: sqlite-players.js (node:sqlite, không cần gói ngoài).
-   PostgreSQL (docs/backend-plan.md) là bản thay thế cho nhiều instance; phải giữ đúng hợp đồng dưới đây.
+   PostgreSQL (backend-plan cũ @1bd987b) là bản thay thế cho nhiều instance; phải giữ đúng hợp đồng dưới đây.
 
    record = { id, ownerId, name, state, revision, schemaVersion, contentVersion, rngSeed, rngCounter, lastSeenAt, createdAt }
 
