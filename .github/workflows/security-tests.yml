@@ -24,6 +24,16 @@ jobs:
         run: |
           npm ci
           npm run check && npm test && npm run build:min
+      - name: Bundle Edge gameplay and enforce 20MB ceiling
+        run: |
+          npm run build:edge
+          npm run edge:budget
+      - name: Install Deno for Edge typecheck
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check Edge Function TypeScript
+        run: deno check supabase/functions/api/index.ts
       - name: Check built static files contain legal pages but no server source
         shell: bash
         run: |

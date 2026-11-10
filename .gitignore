@@ -60,3 +60,6 @@ Thumbs.db
 # Không lưu dữ liệu tài khoản Supabase hoặc Node cục bộ
 .hu-gioi/
 accounts.json
+
+# Tạo bằng npm run build:edge, không commit artifact đóng gói
+supabase/functions/api/game.bundle.mjs

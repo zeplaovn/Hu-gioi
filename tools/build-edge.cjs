@@ -34,8 +34,8 @@ async function main() {
     logLevel: 'warning'
   });
   const size = fs.statSync(OUT).size;
-  const engineCount = Object.keys(result.metafile.inputs).filter(p => p.includes('/engine/')).length;
-  const dataCount = Object.keys(result.metafile.inputs).filter(p => p.includes('/data/')).length;
+  const engineCount = Object.keys(result.metafile.inputs).filter(p => /(^|[/\\])engine[/\\]/.test(p)).length;
+  const dataCount = Object.keys(result.metafile.inputs).filter(p => /(^|[/\\])data[/\\]/.test(p)).length;
   if (!engineCount || !dataCount) throw Error('Bundle thiếu engine hoặc data.');
   if (size > LIMIT) throw Error('Bundle Edge vượt 20 MiB.');
   console.log(JSON.stringify({

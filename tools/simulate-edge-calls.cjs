@@ -7,7 +7,7 @@
 const args = process.argv.slice(2).map(Number);
 const users = Number.isInteger(args[0]) && args[0] > 0 ? args[0] : 50;
 const activeHours = Number.isFinite(args[1]) && args[1] >= 0 ? args[1] : 1;
-const idleHours = Number.isFinite(args[2]) && args[2] >= 0 ? args[2] : 1;
+const idleHours = Number.isFinite(args[2]) && args[2] >= 0 ? args[2] : 0.5;
 const SYNC_MS = 20000, MONTH_DAYS = 30, QUOTA = 500000;
 function session(hours, { commandEveryMs = 0 } = {}) {
   const durationMs = Math.floor(hours * 3600000);
@@ -31,8 +31,8 @@ const monthly = users * MONTH_DAYS * (active.calls + idle.calls);
 const report = {
   model: '30 days, 20s heartbeat, 60s grace, command every 30s active',
   users, activeHoursPerDay: activeHours, idleHoursPerDay: idleHours,
-  activeCallsPerPlayerHour: activeHours ? Math.ceil(active.calls / activeHours) : 0,
-  idleCallsPerPlayerHour: idleHours ? Math.ceil(idle.calls / idleHours) : 0,
+  activeCallsPerPlayerHour: activeHours ? Math.ceil((active.commands + active.syncs) / activeHours) : 0,
+  idleCallsPerPlayerHour: idleHours ? Math.ceil(idle.syncs / idleHours) : 0,
   active, idle, monthlyCalls: monthly, freeQuota: QUOTA,
   monthlyUtilizationPct: +(monthly / QUOTA * 100).toFixed(1),
   fitsFree: monthly <= QUOTA,
