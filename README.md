@@ -2,23 +2,25 @@
 
 Game idle tu tiên online bằng tiếng Việt: mỗi nhân vật chỉ có một mạng. Người chơi chọn một Thiên mệnh khi tạo nhân vật, tu luyện và vượt thiên kiếp. Tọa hóa kết thúc nhân vật hiện tại, nhưng **Thiên Tinh và nâng cấp Thiên Mệnh Các thuộc tài khoản** được giữ để bước vào kiếp mới.
 
-> **Trạng thái mã nguồn:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Triển khai duy nhất một Node server phục vụ cả giao diện và `/api` sau reverse proxy HTTPS, cùng origin**. Không hỗ trợ frontend tách origin hoặc static-only. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
+> **Trạng thái nhánh Edge (CHƯA triển khai):** Mục tiêu production là **Cloudflare Worker tài nguyên tĩnh + Supabase Auth + một Supabase Edge Function `api` (Deno) + Postgres riêng schema `game`**. API được đặt trong `client/config.js` và đăng nhập trực tiếp Supabase Auth bằng publishable key; không cần Node login gateway ở chế độ Edge. `server/main.js` + SQLite vẫn được giữ để dev/test và như đường triển khai Node cũ. Tất cả luật game V9, protocol v2, 48 lệnh, Thiên Mệnh Các xuyên kiếp giữ nguyên. Không có phiên guest/offline. Xem [quy trình Edge](docs/edge-deployment.md) và [Node/dev](docs/online-deployment.md). Chưa chạy migration/secret/deploy project thật.
 
 Repository: [zeplaovn/Hugioi](https://github.com/zeplaovn/Hugioi).
 
 ## Chạy dự án
 
-Yêu cầu **Node.js 24+**. Không cần `npm install` để chạy Node backend. Cần cấu hình `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` và volume SQLite riêng; xem `.env.example` và `docs/online-deployment.md`.
+Yêu cầu **Node.js 24+** và `npm ci` để chạy test/bundle Edge; Node/SQLite chạy riêng cho dev. Cấu hình `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, volume SQLite theo `.env.example` nếu chạy Node; deploy Edge xem `docs/edge-deployment.md`.
 
 ```sh
 npm start        # máy chủ tại http://127.0.0.1:8000 (HOST, PORT tùy chọn)
 npm run check    # cú pháp JavaScript, ranh giới engine, thứ tự script
-npm test         # test backend /api/v1, RemoteSession, engine và giao diện
+npm test         # test backend Node/Postgres PGlite, RemoteSession, engine và giao diện
+npm run build:edge  # đóng gói Edge API + engine; đo bytes
+npm run edge:budget # ước tính calls/tháng so với 500.000 trên Free
 ```
 
 `npm start` phục vụ giao diện và `/api/v1/*` khi cấu hình Supabase. Auth dùng Supabase JWT và hai bản ghi đồng ý chính sách. Backend từ chối hoạt động online khi thiếu xác thực hoặc quyền consent. Không bật `HU_LEGACY_AUTH` trong production.
 
-**Đăng nhập an toàn (chính sách v4):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Mọi truy cập frontend và gateway đều tới cùng một Node origin qua reverse proxy HTTPS; bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
+**Đăng nhập Node/dev (cổng legacy):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Mọi truy cập frontend và gateway đều tới cùng một Node origin qua reverse proxy HTTPS; bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S), Supabase Auth/Edge API đã cấu hình và triển khai. Trong chế độ Node, chuyển `HU_API_BASE` về `/api/v1` và `HU_AUTH_MODE` về `gateway` trong file cấu hình tĩnh đã được kiểm soát. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
 
 ## Tính năng thiết kế
 

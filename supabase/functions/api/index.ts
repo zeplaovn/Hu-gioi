@@ -3,6 +3,7 @@
  * JWT xác minh tại đây (verify_jwt=false để OPTIONS không bị gateway chặn).
  * Không tin bất kỳ thời gian, state, RNG, giá/thưởng hoặc cờ offline từ client. */
 import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
+import { UUID, corsHeaders, routeOf, parseBody } from './http.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
   createJwtVerifier, createAccountAdmin, CONTENT_VERSION
@@ -14,13 +15,11 @@ const ORIGINS = new Set((Deno.env.get('HU_ALLOWED_ORIGINS') || '')
   .split(',').map(x => x.trim()).filter(Boolean));
 const POLICY_VERSION = '2026-11-10-v5';
 const REQUIRED = new Set(['privacy', 'release_terms']);
-const JSON_LIMIT = 64 * 1024;
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const REQUEST_ID = /^[A-Za-z0-9_-]{8,64}$/;
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
 const startTime = performance.now();
 
-function fromEnv(name, defaultValue, min, max) {
+function fromEnv(name: string, defaultValue: number, min: number, max: number): number {
   const raw = Deno.env.get(name);
   if (raw == null || !raw.length) return defaultValue;
   const n = Number(raw);
@@ -70,12 +69,20 @@ const adminKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const accountAdmin = adminKey ? createAccountAdmin({ url: BASE, secretKey: adminKey }) : null;
 
 const consents = new Map();
-async function requireConsent(userId) {
+// Supabase Edge giới hạn khoảng 100 log / 10 giây. Khi upstream lỗi hàng loạt,
+// chỉ phát tối đa 80 dòng JSON / 10 giây / isolate, không log token/state/SQL.
+let logWindowAt = Date.now(), logWindowCount = 0;
+function logOperational(entry: Record<string, string | number>): void {
+  const now = Date.now();
+  if (now - logWindowAt >= 10000) { logWindowAt = now; logWindowCount = 0; }
+  if (logWindowCount++ < 80) console.error(JSON.stringify(entry));
+}
+async function requireConsent(userId: string): Promise<void> {
   const now = Date.now(), until = consents.get(userId) || 0;
   if (until > now) return;
   let rows;
   try {
-    rows = await repo.connection(async db =>
+    rows = await repo.connection(async (db: { queryObject: (q: { text: string; args: unknown[] }) => Promise<{ rows: { policy_kind: string }[] }> }) =>
       (await db.queryObject({
         text: 'SELECT policy_kind FROM public.policy_acceptances WHERE user_id = $1 AND policy_version = $2',
         args: [userId, POLICY_VERSION]
@@ -92,7 +99,7 @@ async function requireConsent(userId) {
   if (consents.size >= 2048) consents.delete(consents.keys().next().value);
   consents.set(userId, now + 30000);
 }
-async function authenticate(req, route) {
+async function authenticate(req: Request, route: string): Promise<string> {
   const header = req.headers.get('authorization') || '';
   const match = /^Bearer ([A-Za-z0-9._-]+)$/.exec(header);
   if (!match) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
@@ -101,81 +108,20 @@ async function authenticate(req, route) {
   if (!DATA_RIGHTS.has(route)) await requireConsent(claims.sub);
   return claims.sub;
 }
-function corsHeaders(req) {
-  const headers = new Headers({
-    'Vary': 'Origin',
-    'Cache-Control': 'no-store',
-    'X-Content-Type-Options': 'nosniff',
-    'Referrer-Policy': 'no-referrer'
-  });
-  const origin = req.headers.get('origin');
-  if (origin && ORIGINS.has(origin)) {
-    headers.set('Access-Control-Allow-Origin', origin);
-    headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    headers.set('Access-Control-Allow-Headers', 'authorization, apikey, content-type, x-client-info, x-request-id');
-    headers.set('Access-Control-Max-Age', '600');
-    headers.set('Access-Control-Expose-Headers', 'x-request-id, retry-after');
-  }
-  return headers;
-}
-function jsonReply(req, status, data, requestId, extra = {}) {
-  const headers = corsHeaders(req);
+function jsonReply(req: Request, status: number, data: unknown, requestId: string, extra: Record<string, string | number> = {}): Response {
+  const headers = corsHeaders(req, ORIGINS);
   headers.set('X-Request-Id', requestId);
   headers.set('Content-Type', 'application/json; charset=utf-8');
   for (const [k, v] of Object.entries(extra)) headers.set(k, String(v));
   return new Response(JSON.stringify(data), { status, headers });
 }
-function routeOf(method, path) {
-  const pathname = path.replace(/^\/functions\/v1\/api(?=\/|$)/, '')
-    .replace(/^\/api\/v1(?=\/|$)/, '');
-  if (method === 'GET' && pathname === '/bootstrap') return { name: 'bootstrap' };
-  if (method === 'POST' && pathname === '/creation/preview') return { name: 'preview' };
-  if (method === 'POST' && pathname === '/players') return { name: 'create' };
-  if (method === 'POST' && pathname === '/pavilion/purchase') return { name: 'pavilionPurchase' };
-  if (method === 'GET' && pathname === '/me/export') return { name: 'exportData' };
-  if (method === 'POST' && pathname === '/me/erase') return { name: 'eraseData' };
-  if (method === 'POST' && pathname === '/me/delete-account') return { name: 'deleteAccount' };
-  const match = /^\/players\/([0-9a-f-]{36})\/(state|sync|commands|pause|reset-after-death)$/i.exec(pathname);
-  if (!match || !UUID.test(match[1])) return null;
-  const op = match[2];
-  if (method !== (op === 'state' ? 'GET' : 'POST')) return null;
-  return { name: op === 'reset-after-death' ? 'resetAfterDeath' : op, id: match[1].toLowerCase() };
-}
-async function parseBody(req) {
-  if (req.method !== 'POST') return {};
-  const raw = req.headers.get('content-type') || '';
-  if (!/^application\/json(?:\s*;|$)/i.test(raw))
-    throw new GameError('UNSUPPORTED_MEDIA_TYPE', 'Dữ liệu phải là JSON.');
-  if (Number(req.headers.get('content-length') || 0) > JSON_LIMIT)
-    throw new GameError('PAYLOAD_TOO_LARGE', 'Dữ liệu quá lớn.');
-  const reader = req.body?.getReader();
-  if (!reader) return {};
-  let length = 0;
-  const parts = [];
-  for (;;) {
-    const part = await reader.read();
-    if (part.done) break;
-    length += part.value.byteLength;
-    if (length > JSON_LIMIT) {
-      await reader.cancel().catch(() => {});
-      throw new GameError('PAYLOAD_TOO_LARGE', 'Dữ liệu quá lớn.');
-    }
-    parts.push(part.value);
-  }
-  if (!length) return {};
-  const bytes = new Uint8Array(length);
-  let offset = 0;
-  for (const part of parts) { bytes.set(part, offset); offset += part.length; }
-  try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
-  catch { throw new GameError('INVALID_REQUEST', 'JSON không hợp lệ.'); }
-}
 
-export async function handleApi(req) {
-  const requestId = REQUEST_ID.test(req.headers.get('x-request-id') || '')
-    ? req.headers.get('x-request-id') : crypto.randomUUID();
+export async function handleApi(req: Request): Promise<Response> {
+  const candidateId = req.headers.get('x-request-id') || '';
+  const requestId: string = REQUEST_ID.test(candidateId) ? candidateId : crypto.randomUUID();
   const since = performance.now();
   if (req.method === 'OPTIONS') {
-    const headers = corsHeaders(req);
+    const headers = corsHeaders(req, ORIGINS);
     headers.set('X-Request-Id', requestId);
     return new Response(null, { status: 204, headers });
   }
@@ -203,11 +149,12 @@ export async function handleApi(req) {
       route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
   } catch (err) {
     const { status, body } = toEnvelope(err, requestId);
-    if (status >= 500) console.error(JSON.stringify({
+    if (status >= 500) logOperational({
       event: 'api_error', requestId, code: body.error.code, status,
       durationMs: Math.round(performance.now() - since)
-    })); // không token, state, SQL hoặc password, tối đa 1 log cho lỗi server
-    const retryAfterMs = Number(err?.details?.retryAfterMs || 0);
+    }); // không token, state, SQL hoặc password; đã giới hạn log/isolate
+    const failure = err as { details?: { retryAfterMs?: number } } | null;
+    const retryAfterMs = Number(failure?.details?.retryAfterMs || 0);
     return jsonReply(req, status, body, requestId, retryAfterMs > 0 ? {
       'Retry-After': Math.max(1, Math.ceil(retryAfterMs / 1000))
     } : {});

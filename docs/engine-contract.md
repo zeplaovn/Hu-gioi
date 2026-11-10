@@ -8,7 +8,7 @@ Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những
 
 ## 1. Ranh giới
 
-- `engine/` không dùng DOM, `localStorage`, mạng, timer hay `Date.now()`/`Math.random()` trực tiếp. Thời gian (`now`) và RNG trong gameplay online do `PlayerService` ở Node cung cấp. Trình duyệt chỉ dùng `RemoteSession` để hiển thị snapshot và gửi intent.
+- `engine/` không dùng DOM, `localStorage`, mạng, timer hay `Date.now()`/`Math.random()` trực tiếp. Thời gian (`now`) và RNG trong gameplay online do `PlayerService` ở Node (dev) hoặc Supabase Edge cung cấp. Trình duyệt chỉ dùng `RemoteSession` để hiển thị snapshot và gửi intent.
 - `engine/` chạy trong Node (CommonJS `require`) và trình duyệt (classic script, `file://`). Mỗi file dùng mẫu `(function (root) { … })(window | globalThis)` và gán vào `root.HU_*` cùng `module.exports`.
 - `engine/` đọc dữ liệu từ `data/`, không bao giờ ngược lại.
 - Payload lệnh không chứa `now`, RNG, giá, phần thưởng hay state (xem `engine/protocol/commands.js`).
@@ -33,7 +33,7 @@ Phần **engine phải cung cấp**:
 
 `RemoteSession` dùng Supabase JWT với `/api/v1`: `connect(account)`, `previewCreation()`, `create(profile)`, `dispatch(type,payload)`, `synchronize(force)`, `pause()`, `resetAfterDeath()`, `subscribe(fn)`, `drainAchievements()`. Các thao tác là Promise và được tuần tự hóa theo revision của máy chủ.
 
-`client/persistence/remote-store.js` cung cấp facade cho UI mà **không lưu trạng thái nhân vật vào localStorage**. Chỉ backend giữ RNG, đồng hồ, state và giao dịch SQLite. Tab ẩn gửi `pause`, heartbeat sau khoảng 5 giây, server grace mặc định 15 giây; khi offline không tăng tài nguyên hay tuổi.
+`client/persistence/remote-store.js` cung cấp facade cho UI mà **không lưu trạng thái nhân vật vào localStorage**. Chỉ backend giữ RNG, đồng hồ, state và giao dịch SQLite/Postgres. Tab ẩn gửi `pause`, heartbeat sau khoảng 20 giây, server grace mặc định 60 giây; khi offline không tăng tài nguyên hay tuổi.
 
 `LocalSession` và `LocalStore` chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
 
