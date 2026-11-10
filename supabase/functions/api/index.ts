@@ -11,7 +11,7 @@ import {
 
 const BASE = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
 const DATABASE = Deno.env.get('HU_DB_POOLER_URL') || '';
-const ORIGINS = new Set((Deno.env.get('HU_ALLOWED_ORIGINS') || '')
+const ORIGINS = new Set((Deno.env.get('HU_ALLOWED_ORIGINS') || 'https://hugioi.blackbearvn.workers.dev')
   .split(',').map(x => x.trim()).filter(Boolean));
 const POLICY_VERSION = '2026-11-10-v5';
 const REQUIRED = new Set(['privacy', 'release_terms']);
