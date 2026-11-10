@@ -77,3 +77,10 @@ test('Docker Compose yêu cầu SUPABASE_URL từ môi trường, mẫu nằm tr
   assert.ok(compose.includes('SUPABASE_URL: ${SUPABASE_URL:?Missing Supabase URL}'));
   assert.match(example, /^SUPABASE_URL=https:\/\/[^\s]+/m);
 });
+
+test('UI CI kiểm tra cả before/after bằng Node online-ci-server', () => {
+  const workflow = fs.readFileSync(path.join(ROOT, '.github/workflows/ui-verification.yml'), 'utf8');
+  assert.doesNotMatch(workflow, /python -m http\.server/);
+  assert.match(workflow, /PORT=8000 node tools\/online-ci-server\.cjs/);
+  assert.match(workflow, /PORT=8001 node tools\/online-ci-server\.cjs/);
+});
