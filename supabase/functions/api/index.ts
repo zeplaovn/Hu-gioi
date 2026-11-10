@@ -20,7 +20,7 @@ const REQUEST_ID = /^[A-Za-z0-9_-]{8,64}$/;
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
 const startTime = performance.now();
 
-function fromEnv(name, defaultValue, min, max) {
+function fromEnv(name: string, defaultValue: number, min: number, max: number): number {
   const raw = Deno.env.get(name);
   if (raw == null || !raw.length) return defaultValue;
   const n = Number(raw);
@@ -70,12 +70,12 @@ const adminKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const accountAdmin = adminKey ? createAccountAdmin({ url: BASE, secretKey: adminKey }) : null;
 
 const consents = new Map();
-async function requireConsent(userId) {
+async function requireConsent(userId: string): Promise<void> {
   const now = Date.now(), until = consents.get(userId) || 0;
   if (until > now) return;
   let rows;
   try {
-    rows = await repo.connection(async db =>
+    rows = await repo.connection(async (db: { queryObject: (q: { text: string; args: unknown[] }) => Promise<{ rows: { policy_kind: string }[] }> }) =>
       (await db.queryObject({
         text: 'SELECT policy_kind FROM public.policy_acceptances WHERE user_id = $1 AND policy_version = $2',
         args: [userId, POLICY_VERSION]
@@ -92,7 +92,7 @@ async function requireConsent(userId) {
   if (consents.size >= 2048) consents.delete(consents.keys().next().value);
   consents.set(userId, now + 30000);
 }
-async function authenticate(req, route) {
+async function authenticate(req: Request, route: string): Promise<string> {
   const header = req.headers.get('authorization') || '';
   const match = /^Bearer ([A-Za-z0-9._-]+)$/.exec(header);
   if (!match) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
@@ -101,7 +101,7 @@ async function authenticate(req, route) {
   if (!DATA_RIGHTS.has(route)) await requireConsent(claims.sub);
   return claims.sub;
 }
-function corsHeaders(req) {
+function corsHeaders(req: Request): Headers {
   const headers = new Headers({
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
@@ -118,14 +118,14 @@ function corsHeaders(req) {
   }
   return headers;
 }
-function jsonReply(req, status, data, requestId, extra = {}) {
+function jsonReply(req: Request, status: number, data: unknown, requestId: string, extra: Record<string, string | number> = {}): Response {
   const headers = corsHeaders(req);
   headers.set('X-Request-Id', requestId);
   headers.set('Content-Type', 'application/json; charset=utf-8');
   for (const [k, v] of Object.entries(extra)) headers.set(k, String(v));
   return new Response(JSON.stringify(data), { status, headers });
 }
-function routeOf(method, path) {
+function routeOf(method: string, path: string): { name: string; id?: string } | null {
   const pathname = path.replace(/^\/functions\/v1\/api(?=\/|$)/, '')
     .replace(/^\/api\/v1(?=\/|$)/, '');
   if (method === 'GET' && pathname === '/bootstrap') return { name: 'bootstrap' };
@@ -141,7 +141,7 @@ function routeOf(method, path) {
   if (method !== (op === 'state' ? 'GET' : 'POST')) return null;
   return { name: op === 'reset-after-death' ? 'resetAfterDeath' : op, id: match[1].toLowerCase() };
 }
-async function parseBody(req) {
+async function parseBody(req: Request): Promise<unknown> {
   if (req.method !== 'POST') return {};
   const raw = req.headers.get('content-type') || '';
   if (!/^application\/json(?:\s*;|$)/i.test(raw))
@@ -170,7 +170,7 @@ async function parseBody(req) {
   catch { throw new GameError('INVALID_REQUEST', 'JSON không hợp lệ.'); }
 }
 
-export async function handleApi(req) {
+export async function handleApi(req: Request): Promise<Response> {
   const requestId = REQUEST_ID.test(req.headers.get('x-request-id') || '')
     ? req.headers.get('x-request-id') : crypto.randomUUID();
   const since = performance.now();
@@ -207,7 +207,8 @@ export async function handleApi(req) {
       event: 'api_error', requestId, code: body.error.code, status,
       durationMs: Math.round(performance.now() - since)
     })); // không token, state, SQL hoặc password, tối đa 1 log cho lỗi server
-    const retryAfterMs = Number(err?.details?.retryAfterMs || 0);
+    const failure = err as { details?: { retryAfterMs?: number } } | null;
+    const retryAfterMs = Number(failure?.details?.retryAfterMs || 0);
     return jsonReply(req, status, body, requestId, retryAfterMs > 0 ? {
       'Retry-After': Math.max(1, Math.ceil(retryAfterMs / 1000))
     } : {});
