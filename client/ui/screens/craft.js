@@ -17,15 +17,42 @@
 
   function banner(tab) {
     const s = UI.s();
-    const art = tab === 'dien' ? root.HU_ASSETS.BG.garden : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop;
+    const media = root.HU_CUSTOM_MEDIA;
+    const art = tab === 'dien' ? root.HU_ASSETS.BG.garden : media?.installed ? media.backgrounds[tab] : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop;
     return `<header class="workshop-banner" style="--art:url('${abs(art)}')">
-      <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>${tab === 'dien' ? 'Gieo trồng · tưới nước · bón thổ · bắt sâu · thu hoạch.' : 'Mẻ luyện chế vẫn hoàn thành và chờ bạn nhận khi trở lại.'}</p></div>
+      <div><span class="eyebrow gold">NGHỀ PHỤ · ${F.realm_map(s.zone).toUpperCase()}</span><h2>Đan phòng & Linh điền</h2><p>${tab === 'dien' ? 'Gieo trồng · tưới nước · bón thổ · bắt sâu · thu hoạch.' : 'Mẻ luyện chế tạm dừng khi bạn rời game và tiếp tục khi trở lại.'}</p></div>
       <div class="banner-stats">
         <div><small>Đan thuật</small><b>${alchemySkill().toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</b></div>
         <div><small>Mẻ đang luyện</small><b>${s.craftQueue.length}/3</b></div>
         <div><small>Ô đang trồng</small><b>${s.garden.length}/4</b></div>
         <div><small>Tinh hoa lò</small><b>${s.craftBoost.toLocaleString('vi-VN', { maximumFractionDigits: 1 })}/2</b></div>
       </div></header>`;
+  }
+
+  /* Sân khấu dùng hình động từ gói ảnh; không tác động luật luyện chế của máy chủ. */
+  function workshopScene(tab) {
+    const media = root.HU_CUSTOM_MEDIA;
+    if (!media?.installed || tab === 'dien' || (tab === 'khi' && !UI.g().featureOpen('forge'))) return '';
+    const s = UI.s(), focus = UI.view.workshopFocus === 'furnace' ? 'furnace' : 'hero';
+    const furnaceOnly = tab === 'dan' && focus === 'furnace';
+    const caption = tab === 'dan' ? 'Quan sát lò đan và những mẻ đang luyện.'
+      : 'Luyện khí và chế phù dùng nguyên liệu từ hành trang.';
+    const title = tab === 'dan' ? 'Đan Các' : 'Lò rèn';
+    const picture = furnaceOnly ? media.furnace : media.workshop(s.gender, tab, !UI.isReduced());
+    const photo = '<img class="craft-scene-figure' + (furnaceOnly ? ' craft-scene-furnace' : '') +
+      '" src="' + abs(picture) + '" alt="' + (furnaceOnly ? 'Lò luyện đan' : (s.gender === 'nu' ? 'Nữ' : 'Nam') +
+      (tab === 'dan' ? ' tu sĩ đang luyện đan' : ' tu sĩ đang rèn pháp bảo')) + '" decoding="async">';
+    const switcher = tab === 'dan'
+      ? '<button type="button" class="btn btn-outline" data-act="workshopFocus" data-focus="' +
+        (furnaceOnly ? 'hero' : 'furnace') + '">' + (furnaceOnly ? 'Xem người luyện đan' : 'Xem riêng lò đan') + '</button>'
+      : '';
+    return '<section class="craft-scene" aria-label="Cảnh ' + title + '" style="--scene-bg:url(\'' +
+      abs(media.backgrounds[tab]) + '\')"><div class="craft-scene-head"><span class="eyebrow">NGHỀ PHỤ · CẢNH CHẾ TÁC</span>' +
+      '<h3>' + title + '</h3><p>' + caption + '</p><span class="craft-scene-count">' +
+      (tab === 'dan' ? 'Mẻ đang luyện: ' + s.craftQueue.length + '/3' : 'Luyện khí · Chế phù') + '</span></div>' +
+      photo + '<div class="craft-scene-foot">' + switcher +
+      '<p>' + (UI.isReduced() ? 'Đang dùng hình tĩnh theo cài đặt giảm chuyển động.' : 'Hoạt cảnh minh họa, không thay đổi thời gian chế tác.') +
+      '</p></div></section>';
   }
 
   function furnaces() {
@@ -127,7 +154,7 @@
     const body = tab === 'khi' && !UI.g().featureOpen('forge') ? lockedFeature('forge') : tab === 'khi' ? forge() : tab === 'dien' ? garden() : furnaces() + recipes();
     const visibleTabs = TABS.map(t => t.id === 'khi' && !UI.g().featureOpen('forge')
       ? { ...t, label: '🔒 ' + t.label, badge: 'Mở ở ' + F.REALMS[H.FEATURES.forge.realm] } : t);
-    return banner(tab) + tabs(visibleTabs, tab) + `<div class="screen-body">${body}</div>`;
+    return banner(tab) + tabs(visibleTabs, tab) + `<div class="screen-body">${workshopScene(tab)}${body}</div>`;
   }
 
   function update() {
@@ -163,9 +190,11 @@
     id: 'craft', label: 'Nghề phụ', icon: 'ICON-MENU-005', eyebrow: 'NGHỀ PHỤ',
     tabs: TABS, render, update,
     /* Trang Nghề phụ toàn màn hình dùng nền riêng của từng nghề. */
-    pageBg: tab => abs(tab === 'dien' ? root.HU_ASSETS.BG.garden : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop),
+    pageBg: tab => abs(tab === 'dien' ? root.HU_ASSETS.BG.garden : root.HU_CUSTOM_MEDIA?.installed ? root.HU_CUSTOM_MEDIA.backgrounds[tab] : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop),
     signature: () => { const s = UI.s(); return s.realm + '|' + s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
   });
+
+  UI.action('workshopFocus', (el, d) => { UI.view.workshopFocus = d.focus === 'furnace' ? 'furnace' : 'hero'; });
 
   UI.action('craft', async (el, d) => {
     await UI.command('craft', { code: d.code });
