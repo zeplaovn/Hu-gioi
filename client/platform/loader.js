@@ -161,7 +161,7 @@
     completed = count; failures = failed; assetsReady = true; check();
   }).catch(() => { assetsReady = true; engine = 'failed'; check(); });
 
-  // Khi tạo nhân vật: tải tài nguyên, xác thực engine, chờ đủ 8 mẹo rồi mới đạt 100%.
+  // Khi tạo nhân vật: tải tài nguyên, chuẩn bị trò chơi, chờ đủ 8 mẹo rồi mới đạt 100%.
   async function enter(urls, start) {
     const screen = el.cloneNode(true);
     const focusBefore = doc.activeElement;
