@@ -37,6 +37,7 @@
     pending = null;
     $('authForm').hidden = false;
     $('authGoogle').hidden = false;
+    $('authRememberWrap').hidden = false;
     $('authConsentGate').hidden = true;
     $('authTabs').hidden = false;
     selectMode('login');
@@ -49,6 +50,7 @@
     document.body.classList.remove('in-game');
     $('authForm').reset();
     showForm();
+    $('authRemember').checked = SB?.isRemembered?.() === true;
   }
   async function enter(next) {
     if (!next?.id) throw Error('Vui lòng đăng nhập để tiếp tục hành trình.');
@@ -73,6 +75,7 @@
     pending = next;
     $('authForm').hidden = true;
     $('authGoogle').hidden = true;
+    $('authRememberWrap').hidden = true;
     $('authTabs').hidden = true;
     $('authConsentGate').hidden = false;
     $('authConsentPrivacy').checked = false;
@@ -105,6 +108,7 @@
     $('authForm').setAttribute('aria-busy', 'true');
     notice('');
     try {
+      SB.rememberOnThisDevice?.($('authRemember').checked);
       if (mode === 'signup') {
         const data = await SB.signup(email, password);
         if (data?.access_token) {
@@ -128,7 +132,10 @@
     if (busy) return;
     busy = true;
     $('authGoogle').disabled = true;
-    try { await SB.loginGoogle(); }
+    try {
+      SB.rememberOnThisDevice?.($('authRemember').checked);
+      await SB.loginGoogle();
+    }
     catch (error) {
       busy = false;
       $('authGoogle').disabled = false;
