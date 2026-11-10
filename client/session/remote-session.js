@@ -5,7 +5,7 @@
   'use strict';
   const H = root.HU_GAME, C = root.HU_COMMANDS;
   const API = '/api/v1';
-  const DEFAULT_SYNC_MS = 5000;
+  // Nhịp heartbeat chỉ do server gửi qua nextSyncInMs, không hardcode lại ở client.
 
   class RemoteSession {
     constructor({ fetchImpl = (...args) => root.fetch(...args), auth = root.HU_SUPABASE, clock = Date.now } = {}) {
@@ -23,7 +23,8 @@
       this.achievements = [];
       this.pending = Promise.resolve();
       this.lastSyncAttempt = 0;
-      this.nextSyncInMs = DEFAULT_SYNC_MS;
+      this.nextSyncInMs = Number.POSITIVE_INFINITY;
+      this.syncRetryUntil = 0;
       this.syncInFlight = null;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
@@ -72,6 +73,8 @@
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
       this.lastSyncAttempt = 0;
+      this.nextSyncInMs = Number.POSITIVE_INFINITY;
+      this.syncRetryUntil = 0;
       this.paused = false;
       this.deathNotified = false;
       this.game = new H.Game(H.create(this.clock()));
@@ -108,7 +111,9 @@
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
       if (response.pavilion) this.pavilion = response.pavilion;
-      this.nextSyncInMs = Math.max(3000, Number(response.nextSyncInMs) || DEFAULT_SYNC_MS);
+      const interval = Number(response.nextSyncInMs);
+      if (!Number.isFinite(interval) || interval < 1000) throw Error('Máy chủ chưa cấp nhịp đồng bộ hợp lệ.');
+      this.nextSyncInMs = interval;
       const before = this.game.s;
       this.game = new H.Game(response.state);
       if (Array.isArray(response.achievements)) this.achievements.push(...response.achievements);
@@ -135,13 +140,25 @@
     }
     async synchronize(force = false) {
       if (!this.playerId || !this.accountId || (this.paused && !force)) return null;
-      if (!force && this.clock() - this.lastSyncAttempt < this.nextSyncInMs) return null;
-      this.lastSyncAttempt = this.clock();
+      const now = this.clock();
+      // Không bỏ qua Retry-After dù caller gọi force=true hay tab vừa hiện lại.
+      if (now < this.syncRetryUntil) return null;
+      if (!force && now - this.lastSyncAttempt < this.nextSyncInMs) return null;
+      this.lastSyncAttempt = now;
       return this.run(async () => {
-        const result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision });
-        this.apply(result);
-        this.paused = false;
-        return result.report || null;
+        try {
+          const result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision });
+          this.apply(result);
+          this.syncRetryUntil = 0;
+          this.paused = false;
+          return result.report || null;
+        } catch (error) {
+          if (error.code === 'RATE_LIMITED' || error.status === 429) {
+            this.syncRetryUntil = Math.max(this.syncRetryUntil,
+              this.clock() + Math.max(this.nextSyncInMs, error.retryAfterMs || 0));
+          }
+          throw error;
+        }
       });
     }
     advance() { return this.synchronize(); }

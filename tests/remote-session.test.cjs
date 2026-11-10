@@ -4,6 +4,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
+const { HEARTBEAT } = require('../server/heartbeat-policy.js');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../client/session/remote-session.js'), 'utf8');
 const configSource = readFileSync(join(__dirname, '../client/config.js'), 'utf8');
@@ -42,6 +43,7 @@ function fixture({ initialPlayer = false } = {}) {
         out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state, result: 3 };
       } else if (path.endsWith('/state')) out = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision, state };
       else throw Error('Unexpected API ' + path);
+      out.nextSyncInMs = HEARTBEAT.nextSyncInMs;
       return { ok: true, status: 200, json: async () => out };
     }
   };

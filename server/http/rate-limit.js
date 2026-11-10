@@ -1,5 +1,6 @@
 /* Token bucket trong bộ nhớ. Đủ cho một instance; nhiều instance cần Redis (docs/backend-plan.md §6.9). */
 'use strict';
+const { HEARTBEAT } = require('../heartbeat-policy.js');
 class RateLimiter {
   constructor({ clock = Date.now, maxKeys = 20000 } = {}) { this.clock = clock; this.maxKeys = maxKeys; this.buckets = new Map(); }
   /* capacity: số lượt tối đa dồn lại; perMinute: tốc độ hồi. Trả { ok, retryAfterMs }. */
@@ -18,7 +19,8 @@ class RateLimiter {
 }
 const LIMITS = Object.freeze({
   command: { capacity: 30, perMinute: 600 },   // 10 lệnh/giây, dồn tối đa 30
-  sync: { capacity: 8, perMinute: 4 },         // 4 lần/phút, dồn tối đa 8
+  sync: HEARTBEAT.sync,                     // 12 lượt/phút thường, dư địa jitter -30%
+  pause: HEARTBEAT.pause,                   // độc lập với heartbeat sync
   preview: { capacity: 5, perMinute: 6 },
   read: { capacity: 30, perMinute: 60 },
   create: { capacity: 3, perMinute: 3 },

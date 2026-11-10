@@ -7,14 +7,15 @@ const crypto = require('node:crypto');
 const H = require('../../engine/game.js');
 const C = require('../../engine/protocol/commands.js');
 const { GameError } = require('../errors.js');
+const { HEARTBEAT } = require('../heartbeat-policy.js');
 
 const DAY = 24 * 3600 * 1000;
 const DEFAULTS = Object.freeze({
-  onlineGraceMs: 15000,      // sau 15s không heartbeat từ JWT: không tính tiếp tiến trình (grace cho mạng trễ)
+  onlineGraceMs: HEARTBEAT.onlineGraceMs, // đủ tối thiểu ba chu kỳ có jitter ±30%
   receiptTtlMs: 7 * DAY,
   ticketTtlMs: 10 * 60000,
   previewsPerDay: 5,
-  nextSyncInMs: 5000,
+  nextSyncInMs: HEARTBEAT.nextSyncInMs,
   maxStateBytes: 65536
 });
 const ERASE_CONFIRMATION = 'delete-my-game-data';
