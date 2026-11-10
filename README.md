@@ -22,7 +22,7 @@ npm test         # test backend /api/v1, RemoteSession, engine và giao diện
 
 ## Tính năng thiết kế
 
-Các tính năng sau thuộc bản trước và là phạm vi mà engine mới phải đáp ứng; UI và dữ liệu cho chúng vẫn còn trong repository.
+Các tính năng dưới đây mô tả trạng thái hiện tại. Bản phát hành thử nghiệm chỉ công khai những mục có gameplay phù hợp và phân biệt rõ nội dung NPC/mô phỏng với tương tác người chơi thật.
 
 | Nhóm | Nội dung |
 |---|---|
@@ -32,12 +32,13 @@ Các tính năng sau thuộc bản trước và là phạm vi mà engine mới p
 | Lịch luyện | Công kích, kỹ năng, chiến đấu tự động, yêu thú, chiến lợi phẩm, Sinh lực và Linh khí. |
 | Nhân vật | Hành trang, trang bị pháp bảo, công pháp chủ động, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; Dị khắc hệ gốc. |
 | Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Công đoạn chế tạo, chăm cây và mọi thời hạn được tạm dừng khi offline; không có thưởng bế quan. |
-| Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ, tông môn và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. |
+| Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. **Tông môn là mô hình cá nhân**, chưa có thành viên thật; **đấu giá là phiên mô phỏng**, không có người mua/bán khác. |
+| Giao du thử nghiệm | **Tri kỷ, Đạo hữu và Luận kiếm chỉ tương tác với NPC mô phỏng**, không phải người chơi khác. **Chat online và bảng xếp hạng giả đang ẩn**; không có API chat. |
 | Tọa hóa vĩnh viễn | Thất bại thiên kiếp, thua PvP NPC, HP bằng 0 hoặc thọ nguyên cạn kết thúc nhân vật. Chỉ xóa đạo thân đã chết trên máy chủ rồi tạo mới; **không hồi sinh đạo thân cũ**. Thiên Tinh và nâng cấp Thiên Mệnh Các giữ theo tài khoản. |
 | Giao diện idle | Thanh tài nguyên (linh thạch, tu vi/giây, Thiên mệnh đã chọn) có số chạy, thanh tu vi + dải chấm tầng, dock nâng cấp nhanh (Tốc tu ×1/×10/Tối đa, Hấp thu, Dùng đan) ngay trên sân khấu, nút lớn Đột phá đại cảnh giới, cầu linh khí bay vào thanh tu vi, chấm thông báo trên tab. Mã: `css/idle.css`, `client/ui/idle-hud.js`. |
 | Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile. Mỗi menu (Nhân vật, Nghề phụ, Thế giới, Cài đặt…) mở thành một trang riêng phủ vùng màn chơi, có nút ‹ Tu luyện để quay lại; menu thu gọn/mở bằng icon ☰ (nhớ lựa chọn). Lịch luyện vẫn hiện bảng dưới sân khấu để xem trận đánh. |
 
-Menu **Thêm** gồm: **Chat online · Tri kỷ · Đạo hữu · Tông môn · PvP · Bảng xếp hạng**. Giao du, PvP, bảng xếp hạng và đấu giá hiện phục vụ chế độ mô phỏng một người chơi.
+Menu **Thêm** hiện gồm: **Tri kỷ (NPC) · Đạo hữu (NPC) · Tông môn (cá nhân) · Luận kiếm (NPC)**. **Chat và Bảng xếp hạng đang ẩn** cho đến khi có backend nhiều người thật; đấu giá vẫn mở nhưng luôn gắn nhãn **phiên mô phỏng, không có người mua/bán khác**. Các màn Tri kỷ, Đạo hữu và Luận kiếm luôn gắn nhãn **NPC · mô phỏng**.
 
 Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<giới>/<day|night>/<xuan|ha|thu|dong>.webp`. Mỗi mùa tự động dài 15 phút tiến trình tu luyện, chia đều ngày/đêm. Tiên Giới dùng duy nhất `tien_gioi/bg.webp`. Có thể chọn mùa cố định tại **Cài đặt → Tứ thời**.
 
@@ -128,7 +129,7 @@ Ba API `/me/*` không đòi hỏi bản chấp thuận chính sách còn hiệu 
 
 Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
-**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Mô hình triển khai duy nhất: một Node server phục vụ cả frontend và API trên cùng origin sau reverse proxy HTTPS; xem `compose.yaml` và [hướng dẫn triển khai](docs/online-deployment.md).
+**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (Luận kiếm hiện đối đầu NPC; chat ẩn, `/api/chat/*` trả 404; bảng xếp hạng giả cũng ẩn), admin API và WebSocket. Mô hình triển khai duy nhất: một Node server phục vụ cả frontend và API trên cùng origin sau reverse proxy HTTPS; xem `compose.yaml` và [hướng dẫn triển khai](docs/online-deployment.md).
 
 Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaovn@proton.me](mailto:zeplaovn@proton.me)**. Chính sách quyền riêng tư và điều khoản trực tuyến phiên bản `2026-11-10-v5` (phi lợi nhuận, không thanh toán trực tuyến) yêu cầu chấp thuận lại; **phải mở rộng CHECK `policy_version` trên Supabase trước khi triển khai** (xem `supabase/sql/policy_acceptances.sql`).
 

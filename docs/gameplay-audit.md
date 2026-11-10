@@ -10,6 +10,12 @@
 >
 > **Quy ước:** “Đã có” = đã thấy luật/dữ liệu chạy trong mã; **không** đồng nghĩa đã cân bằng hoặc đạt chuẩn phát hành. “Chỉ UI” = màn mô tả tương tác mạnh hơn khả năng backend hiện có. Độ ưu tiên P0/P1/P2 là đề xuất kiểm kê, **chưa phê duyệt phạm vi**.
 
+## Trạng thái phát hành thử nghiệm (ẩn mô phỏng chưa có người thật)
+
+- **Ẩn:** Chat/truyền âm (không dựng nút nổi hay bong bóng, không có lối vào; `/api/chat/*` trả 404); **Bảng xếp hạng** (danh sách RANKS tĩnh, không xuất hiện trong menu Thêm).
+- **Hiện với nhãn bắt buộc:** **Tri kỷ**, **Đạo hữu**, **Luận kiếm** — `NPC · mô phỏng` (đối thủ RIVALS là NPC); **Đấu giá** — `Phiên mô phỏng · không có người mua/bán khác`; **Tông môn** — `Tông môn cá nhân · chưa có thành viên khác`.
+- Chỉ thay đổi **giao diện**, không thay đổi engine V9, protocol v2, 48 lệnh, dữ liệu thiết kế hoặc thứ tự nạp script. Một cấu hình `UI.release` ở `client/ui/core.js` quản lý trạng thái và nhãn; các cờ chat/ranking chỉ bật khi đã có backend thật. Các mục P0/P1 bên dưới vẫn **chờ chủ dự án duyệt**.
+
 ## 0. Chốt nguồn sự thật trước khi làm
 
 1. **Mã thực tế là V9 / protocol v2 / 48 lệnh / 9 miền**, không phải V8 / 51 lệnh. Đối chiếu `engine/state/player.js:16`, `engine/protocol/commands.js:11`, `docs/engine-contract.md:38`, `tests/engine.test.cjs`. `normalize()` chấp nhận V4–V9. Một số chú thích và `docs/architecture.md`, `docs/design-integration.md` vẫn ghi V8/51/LocalSession: **tài liệu lỗi thời**, không nên quay lại phiên bản cũ.
