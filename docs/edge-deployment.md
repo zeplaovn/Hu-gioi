@@ -1,6 +1,6 @@
 # Triển khai Hư Giới: Cloudflare Static + Supabase Edge API (FREE)
 
-> **Chưa deploy/migrate.** Đây là quy trình để chủ dự án duyệt rồi tự vận hành. Không áp dụng migration hoặc secrets lên project thật trong quá trình code review. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
+> **Trạng thái production 10/11/2026:** Schema `game` đã được áp dụng qua Supabase Migration `20261110075419_game_schema` và Edge Function `api` v1 đã được tải lên. Chưa xác nhận xử lý gameplay thành công cho tới khi cấu hình `HU_DB_POOLER_URL` và `HU_ALLOWED_ORIGINS`. Không chạy lại migration này hoặc migration consent v5. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
 
 ## Kiến trúc và ranh giới tin cậy
 
@@ -13,7 +13,7 @@
 
 ## 1. Kiểm tra trước migration (CHƯA chạy)
 
-Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Đường dẫn duy nhất để migrate: `supabase/migrations/20261110070000_game_schema.sql`. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
+Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Đường dẫn duy nhất để migrate: `supabase/migrations/20261110075419_game_schema.sql`. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
 
 ```sh
 npm ci
@@ -64,7 +64,7 @@ supabase secrets set --env-file ./private-edge-secrets.env --project-ref rvrwfeb
 # private-edge-secrets.env KHÔNG commit; chmod 0600; xóa sau khi thiết lập.
 ```
 
-`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS=20000`, `HU_ONLINE_GRACE_MS=60000` (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
+`HU_ALLOWED_ORIGINS` nếu chưa đặt sẽ mặc định duy nhất origin Cloudflare chính thức `https://hugioi.blackbearvn.workers.dev`; cấu hình secret tường minh vẫn được khuyến nghị và bắt buộc để thêm staging. Không dùng wildcard.\n\n`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS=20000`, `HU_ONLINE_GRACE_MS=60000` (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
 
 ## 3. Deploy Edge API và Cloudflare Static — sau phê duyệt riêng
 

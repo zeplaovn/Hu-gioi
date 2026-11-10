@@ -23,7 +23,9 @@ export function corsHeaders(req: Request, allowedOrigins: ReadonlySet<string>): 
 
 export function routeOf(method: string, path: string): { name: string; id?: string } | null {
   const pathname = path.replace(/^\/functions\/v1\/api(?=\/|$)/, '')
-    .replace(/^\/api\/v1(?=\/|$)/, '');
+    .replace(/^\/api\/v1(?=\/|$)/, '')
+    // Supabase Gateway có thể chuyển pathname vào function dưới dạng /api/...
+    .replace(/^\/api(?=\/|$)/, '');
   if (method === 'GET' && pathname === '/bootstrap') return { name: 'bootstrap' };
   if (method === 'POST' && pathname === '/creation/preview') return { name: 'preview' };
   if (method === 'POST' && pathname === '/players') return { name: 'create' };

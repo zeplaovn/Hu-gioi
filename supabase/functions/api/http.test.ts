@@ -14,6 +14,10 @@ async function errorCode(promise: Promise<unknown>, code: string): Promise<void>
 Deno.test('route giữ nguyên prefix function, quyền dữ liệu và UUID', () => {
   const prefix = '/functions/v1/api';
   expect(routeOf('GET', prefix + '/bootstrap')?.name === 'bootstrap', 'bootstrap route');
+  expect(routeOf('GET', '/api/bootstrap')?.name === 'bootstrap', 'Supabase stripped functions/v1 prefix');
+  expect(routeOf('GET', '/bootstrap')?.name === 'bootstrap', 'local bare pathname');
+  expect(routeOf('GET', '/api/v1/bootstrap')?.name === 'bootstrap', 'Node gateway path');
+  expect(routeOf('GET', '/api/typo') === null, 'unknown route still rejected');
   expect(routeOf('POST', prefix + '/pavilion/purchase')?.name === 'pavilionPurchase', 'pavilion route');
   expect(routeOf('GET', prefix + '/me/export')?.name === 'exportData', 'export route');
   expect(routeOf('POST', prefix + '/me/delete-account')?.name === 'deleteAccount', 'delete-account route');
