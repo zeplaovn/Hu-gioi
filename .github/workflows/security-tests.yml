@@ -28,6 +28,7 @@ jobs:
         run: |
           npm run build:edge
           npm run edge:budget
+          node tools/bench-service.cjs
       - name: Install Deno for Edge typecheck
         uses: denoland/setup-deno@v2
         with:
@@ -37,6 +38,7 @@ jobs:
         run: |
           deno install
           deno check --node-modules-dir=auto index.ts
+          deno run --node-modules-dir=auto --allow-read=game.bundle.mjs bench-import.ts
       - name: Check built static files contain legal pages but no server source
         shell: bash
         run: |
