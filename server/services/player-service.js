@@ -242,7 +242,12 @@ class PlayerService {
   pause(ownerId, playerId) {
     const now = this.clock();
     const out = this.repo.transact(playerId, tx => {
-      const rec = this.#own(tx.record, ownerId), run = this.#run(rec, now);
+      const rec = this.#own(tx.record, ownerId);
+      // Pause lặp lại không thay đổi gameplay: tránh ghi DB và tăng revision.
+      // Khi trở lại sync, presencePaused vẫn buộc advance đóng băng toàn bộ thời gian ẩn.
+      if (rec.state.presencePaused && rec.schemaVersion === H.VERSION)
+        return { value: { rec, revision: rec.revision, state: rec.state } };
+      const run = this.#run(rec, now);
       if (!run.game.isDead()) run.game.advance(now, run.offline);
       else run.game.s.lastUpdate = now;
       run.game.s.presencePaused = true;
