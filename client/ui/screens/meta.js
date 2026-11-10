@@ -55,9 +55,16 @@
           { eyebrow: 'KỲ TRÂN XUYÊN KIẾP' });
       }).join('') + '</div>';
   }
-  UI.action('pavilionBuy', async (_, data) => {
-    const result = await UI.session.pavilionPurchase(data.kind, data.key);
-    if (result) UI.toast('Thiên Mệnh Các đã ghi nhận giao dịch. Thiên Tinh và bảo vật được lưu trên máy chủ.', { type: 'success' });
+  UI.action('pavilionBuy', async (el, data) => {
+    if (el?.disabled) return UI.KEEP;
+    const label = el?.textContent;
+    if (el) { el.disabled = true; el.textContent = 'Đang gửi tới Thiên Mệnh Các…'; }
+    try {
+      const result = await UI.session.pavilionPurchase(data.kind, data.key);
+      if (result) UI.toast('Thiên Mệnh Các đã ghi nhận giao dịch. Thiên Tinh và bảo vật được lưu trên máy chủ.', { type: 'success' });
+    } finally {
+      if (el) { el.disabled = false; el.textContent = label; }
+    }
   });
 
   function achievements() {

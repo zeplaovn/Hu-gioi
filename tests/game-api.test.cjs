@@ -315,3 +315,20 @@ test('API: giới hạn theo IP chặn cả request không có token trước kh
   assert.equal(last.data.error.code, 'RATE_LIMITED');
   assert.ok(Number(last.headers['retry-after']) >= 1);
 });
+
+test('API Thiên Mệnh Các: chỉ JWT và intent hợp lệ; thiếu Thiên Tinh trả 422, không nhận giá client', async t => {
+  const { call, tokenA, tokenB } = await boot(t);
+  const bootA = await call('GET', '/api/v1/bootstrap', { token: tokenA });
+  assert.equal(bootA.data.pavilion.balance, 0);
+  assert.equal(bootA.data.pavilion.version, 0);
+  const intent = { requestId: 'pavilion-00001', expectedVersion: 0, kind: 'upgrade', key: 'ngoTinh' };
+  assert.equal((await call('POST', '/api/v1/pavilion/purchase', { body: intent })).status, 401);
+  const fake = await call('POST', '/api/v1/pavilion/purchase', { token: tokenA, body: { ...intent, price: 0 } });
+  assert.equal(fake.status, 400);
+  assert.equal(fake.data.error.code, 'INVALID_REQUEST');
+  const missing = await call('POST', '/api/v1/pavilion/purchase', { token: tokenA, body: intent });
+  assert.equal(missing.status, 422);
+  assert.equal(missing.data.error.code, 'INSUFFICIENT_TINH');
+  const other = await call('GET', '/api/v1/bootstrap', { token: tokenB });
+  assert.equal(other.data.pavilion.balance, 0);
+});
