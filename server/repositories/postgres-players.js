@@ -103,18 +103,26 @@ class PostgresPlayers extends PlayerRepository {
     await exec(c, 'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [ownerId]);
   }
   async sweep(c, ownerId, now, playerId = null) {
-    // Chỉ cleanup cơ hội (không cần pg_cron) và theo tài khoản đang thao tác.
+    // Best-effort, giao dịch con an toàn: lỗi DELETE không được làm hỏng
+    // transaction gameplay. Không chạy vòng lặp vượt statement_timeout.
     const last = this.cleanedAt.get(ownerId) || 0;
     if (now - last < 10 * 60000) return;
-    // Một DELETE theo tài khoản và ngưỡng hạn trong một statement.
-    // Không dùng LIMIT 16 (không theo kịp 5 lệnh/phút) và không có vòng lặp
-    // nào vượt statement_timeout của transaction.
-    if (playerId) await exec(c,
-      'DELETE FROM game.player_receipts WHERE player_id = $1 AND expires_at <= $2',
-      [playerId, big(now)]);
-    await exec(c,
-      'DELETE FROM game.creation_tickets WHERE owner_id = $1 AND expires_at <= $2',
-      [ownerId, big(now - 7 * DAY)]);
+    await exec(c, 'SAVEPOINT hu_cleanup');
+    try {
+      if (playerId) await exec(c,
+        'DELETE FROM game.player_receipts WHERE player_id = $1 AND expires_at <= $2',
+        [playerId, big(now)]);
+      await exec(c,
+        'DELETE FROM game.creation_tickets WHERE owner_id = $1 AND expires_at <= $2',
+        [ownerId, big(now - 7 * DAY)]);
+    } catch {
+      // PostgreSQL hủy transaction khi statement lỗi: bắt buộc ROLLBACK TO
+      // trước khi chạy tiếp. Lỗi rollback/release phải nổi để không COMMIT lỗi.
+      await exec(c, 'ROLLBACK TO SAVEPOINT hu_cleanup');
+      return; // không đánh dấu đã dọn, request sau sẽ thử lại
+    } finally {
+      await exec(c, 'RELEASE SAVEPOINT hu_cleanup');
+    }
     this.cleanedAt.set(ownerId, now);
     if (this.cleanedAt.size > 1024) this.cleanedAt.delete(this.cleanedAt.keys().next().value);
   }

@@ -49,6 +49,7 @@ jobs:
           deno check --node-modules-dir=auto index.ts
           deno test --node-modules-dir=auto --allow-read http.test.ts
           deno test --node-modules-dir=auto --allow-read jwt-deno.test.ts
+          deno test --node-modules-dir=auto contention-counter.test.ts
           deno run --node-modules-dir=auto --allow-read bench-import.ts
       - name: Smoke Deno.serve HTTP without real DB
         run: node tools/edge-http-smoke.cjs

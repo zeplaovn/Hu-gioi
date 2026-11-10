@@ -223,3 +223,38 @@ test('B1: cleanup index migration can be applied twice without changing schema',
     'game_creation_tickets_owner_expires', 'game_player_receipts_player_expires'
   ]);
 });
+
+test('B1: cleanup error rolls back savepoint, but command and live receipt still COMMIT', async t => {
+  const { db, repo, svc, clock } = await makePg(t);
+  const { playerId } = await spawn(svc, A, 'Dọn Dẹp An Toàn');
+  await db.query(`INSERT INTO game.player_receipts
+    (player_id, request_id, fingerprint, revision, response, created_at, expires_at)
+    VALUES ($1, 'stale-test', 'old', 0, '{}'::jsonb, $2, $3)`,
+    [playerId, String(CLOCK - 120000), String(CLOCK - 60000)]);
+  repo.cleanedAt.delete(A);
+  const originalConnect = repo.pool.connect.bind(repo.pool);
+  let injected = 0;
+  repo.pool.connect = async () => {
+    const c = await originalConnect();
+    return { ...c, queryObject: async query => {
+      if (!injected && query.text.startsWith('DELETE FROM game.player_receipts')) {
+        injected++;
+        // Real PostgreSQL error from PGlite aborts the subtransaction until rollback-to-savepoint.
+        return c.queryObject({ text: 'SELECT * FROM game.no_such_cleanup_table', args: [] });
+      }
+      return c.queryObject(query);
+    }};
+  };
+  const accepted = await command(svc, A, playerId, 'receipt-after-cleanup-error');
+  assert.equal(injected, 1, 'cleanup DELETE must have been attempted');
+  assert.equal(accepted.revision, 1, 'gameplay command must commit despite cleanup error');
+  const before = await db.query(
+    'SELECT request_id FROM game.player_receipts WHERE player_id=$1 ORDER BY request_id', [playerId]);
+  assert.deepEqual(before.rows.map(r => r.request_id), ['receipt-after-cleanup-error', 'stale-test']);
+  const replay = await svc.command(A, playerId,
+    { ...await envelope(svc, A, 'buy', { code: 'HERB-001' }, 'receipt-after-cleanup-error'), expectedRevision: 0 });
+  assert.equal(replay.replayed, true, 'unexpired receipt must replay correctly');
+  const after = await db.query('SELECT count(*)::int AS n FROM game.player_receipts WHERE request_id=$1',
+    ['stale-test']);
+  assert.equal(after.rows[0].n, 0, 'cleanup retried because the failed sweep did not advance cleanedAt');
+});

@@ -47,3 +47,19 @@ test('B2: unexpected PostgreSQL code stays INTERNAL and remains loggable', async
   assert.equal(typeof shouldLogApiError, 'function');
   assert.equal(shouldLogApiError(thrown, status), true);
 });
+
+// SQLSTATE 40P01 (deadlock) và 40001 (serialization failure) cũng retryable.
+for (const code of ['40P01', '40001']) {
+  test('B2: PostgreSQL ' + code + ' is retried and excluded from per-request api_error logging', async () => {
+    const f = fixture(code);
+    let thrown;
+    try { await f.svc.bootstrap(OWNER); } catch (err) { thrown = err; }
+    const { status, body } = toEnvelope(thrown, 'pg-conflict');
+    assert.equal(status, 503);
+    assert.equal(body.error.code, 'MAINTENANCE');
+    assert.equal(body.error.retryable, true);
+    assert.equal(body.error.details.retryAfterMs, 1000);
+    assert.equal(f.onErrorCalls, 0);
+    assert.equal(shouldLogApiError(thrown, status), false);
+  });
+}
