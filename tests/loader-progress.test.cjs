@@ -133,7 +133,7 @@ test('khôi phục 8 mẹo luân phiên, không làm giả phần trăm tải �
 
 test('bộ mẹo cũ trở lại ở cả loading khởi động và tạo nhân vật', () => {
   assert.match(loaderSource, /Ma thú về đêm mạnh và nguy hiểm hơn/);
-  assert.match(loaderSource, /Nghề phụ vẫn chạy khi bạn offline/);
+  assert.match(loaderSource, /Nghề phụ tạm dừng khi rời game/);
   assert.match(loaderSource, /Trang bị phẩm chất cao giúp sống sót/);
   const hintsBlock = loaderSource.split('  const HINTS = [')[1]?.split('\n  ];')[0] || '';
   const hints = hintsBlock.match(/^    '[^\n]+',?$/gm) || [];
