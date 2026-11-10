@@ -11,6 +11,18 @@
 - Đồng hồ, RNG, phần thưởng, thọ nguyên và sự hiện diện chỉ quyết định tại backend; client không gửi state/offline/time/price/reward; snapshot không có seed, export không có rng_seed.
 - Thiên Mệnh Các mới trên `main` (tích lũy qua kiếp) **được giữ**, có bảng account và receipt riêng. Mỗi hàng player được khóa `FOR UPDATE`; rate token nằm trong hàng `players` cùng giao dịch. Giới hạn theo IP chỉ còn ở Node gateway.
 
+## Trước khi mở cho người chơi
+
+> **Checklist thao tác TAY trên Supabase/Cloudflare production — chưa được CI kiểm chứng.** CI/PGlite chỉ kiểm tra mã và database giả lập; không chứng minh Dashboard, secrets, hạn mức hay luồng người chơi thật đã sẵn sàng. Chủ dự án phải tích từng ô, lưu bằng chứng cấu hình **không chứa token, mật khẩu hoặc connection string**.
+
+- [ ] **Policy consent v5 trước Edge deploy:** Trước khi triển khai function sử dụng `2026-11-10-v5`, kiểm tra constraint của `public.policy_acceptances` bằng `pg_get_constraintdef`. Nếu chưa cho phép v5, thực hiện `ALTER TABLE` mở phiên bản `2026-11-10-v5` **trước khi** deploy; câu lệnh tham khảo có chú thích trong `supabase/sql/policy_acceptances.sql`. Trên project đã áp dụng v5, **chỉ xác minh, không DROP/ADD lại constraint**. Lưu ảnh/trích kết quả xác minh đã che thông tin tài khoản.
+- [ ] **Secrets / runtime:** Kiểm tra `SUPABASE_URL` do Supabase Edge runtime cấp; đặt `HU_DB_POOLER_URL` đúng URI **transaction pooler cổng 6543**, và đặt tường minh `HU_ALLOWED_ORIGINS` là các origin frontend được duyệt (không có `*`). Thiếu/sai `SUPABASE_URL` hoặc `HU_DB_POOLER_URL` khiến function **fail-fast khi khởi động**. Hiện mã có fallback `HU_ALLOWED_ORIGINS` về origin Cloudflare chính thức nếu chưa đặt, **nhưng checklist production bắt buộc đặt tường minh**. Chỉ ghi trạng thái có/không, không chụp giá trị secret.
+- [ ] **Supabase Auth:** Tại Dashboard kiểm tra giới hạn tốc độ đăng nhập/đăng ký và gửi email, **CAPTCHA nếu khả dụng**, xác nhận email đang bật, Site URL và redirect allowlist hợp lệ. Chụp bằng chứng vào checklist vận hành (che địa chỉ cá nhân, token và các bí mật).
+- [ ] **Hạn mức Free và cảnh báo:** Cấu hình cảnh báo/thủ tục theo dõi số lượt gọi **Edge Functions** và **dung lượng PostgreSQL**, kèm ngưỡng cảnh báo phù hợp với hạn mức gói miễn phí. Edge API có **URL công khai** nên request rác, request bị từ chối và nhiều tab vẫn có thể tính vào hạn mức; không xem test quota nội bộ là cam kết chi phí.
+- [ ] **Smoke thật sau deploy:** Chạy lại mục **“5. Xác minh sau deploy”** trên Supabase/Cloudflare production: kiểm tra OPTIONS 204, không có JWT → 401, đăng nhập thật → consent v5 → bootstrap → preview → tạo nhân vật thử → lệnh → reload và đối chiếu dữ liệu PostgreSQL; kiểm tra metrics và rollback. Dùng tài khoản test riêng, **không thực hiện xóa tài khoản thật**.
+
+**Trạng thái khi checklist chưa được chủ dự án xác nhận:** *chưa được CI kiểm chứng; chưa mở cho người chơi*.
+
 ## 1. Kiểm tra trước migration (CHƯA chạy)
 
 Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Đường dẫn duy nhất để migrate: `supabase/migrations/20261110075419_game_schema.sql`. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
@@ -76,9 +88,11 @@ npm run build:min
 # Cloudflare CLI: npx --yes wrangler@4.158.0 deploy
 ```
 
+**B3 — Workflow deploy chính thức:** `.github/workflows/edge-bundle-build.yml` chạy **thủ công** qua GitHub Actions → `workflow_dispatch` từ `main`. Runner chạy `npm ci`, kiểm tra, sinh `supabase/functions/api/game.bundle.mjs` bằng `npm run build:edge`, chạy Deno check/test, rồi mới gọi Supabase CLI deploy. Bundle được `.gitignore` loại trừ và **không có trong Git**; `_bundle_entry.mjs` vẫn là source. Nếu chưa có GitHub Actions secret `SUPABASE_ACCESS_TOKEN`, workflow dừng ở bước kiểm tra secret với thông báo rõ ràng, **không deploy**; không dán token vào chat/repo. Nhánh cũ `ops/edge-bundle-deploy-20261110` chỉ còn là tồn dư của cách commit bundle tạm, **không dùng để deploy nữa và không xóa khi chưa hỏi chủ dự án**.
+
 Kiểm tra `supabase functions deploy --help` trên phiên bản CLI cài trước khi chạy; với v3 có thể dùng `--remote=rvrwfeblishqadkpzspb`. Function `api` **một** function, `verify_jwt=false` tại `supabase/config.toml`. Artifact `game.bundle.mjs` do CI/build tạo, không commit. Test chạy `deno check` trước deploy. Trên Cloudflare, `wrangler.jsonc` chỉ chỉ tới `dist/`, không đưa `server/`, `supabase/` hoặc secret lên frontend.
 
-GitHub Actions deploy mẫu (chỉ kích hoạt thủ công, KHÔNG thêm workflow tự deploy trong PR):
+Mẫu lệnh tham khảo cho quy trình deploy thủ công; workflow được duy trì chính thức trong `.github/workflows/edge-bundle-build.yml` (không tự chạy khi push):
 
 ```yaml
 name: Edge manual deploy

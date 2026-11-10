@@ -167,3 +167,96 @@ test('Postgres contract: account erase and cascade, pavilion persists across rei
   await db.query('DELETE FROM auth.users WHERE id=$1', [B]);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM game.players WHERE owner_id=$1', [B])).rows[0].n, 0);
 });
+
+test('B1: expired receipts remain bounded after 240 minutes at five commands/minute', async t => {
+  const { db, repo, svc, clock } = await makePg(t);
+  const { playerId } = await spawn(svc, A, 'Dọn Biên Nhận');
+  const minutes = 240, minuteMs = 60000;
+  const hourlyExpired = [];
+  for (let minute = 0; minute < minutes; minute++) {
+    clock.now = CLOCK + minute * minuteMs;
+    await db.query(`INSERT INTO game.player_receipts
+      (player_id, request_id, fingerprint, revision, response, created_at, expires_at)
+      SELECT $1::uuid, ($2::text || g::text), 'command-test', 0, '{}'::jsonb,
+        $3::bigint, $4::bigint FROM generate_series(1, 5) AS g`,
+    [playerId, 'burst-' + minute + '-', String(clock.now), String(clock.now + 2 * minuteMs)]);
+    await repo.transaction(c => repo.sweep(c, A, clock.now, playerId));
+    if ((minute + 1) % 60 === 0) {
+      const expired = await db.query(
+        'SELECT count(*)::int AS n FROM game.player_receipts WHERE player_id=$1 AND expires_at <= $2',
+        [playerId, String(clock.now)]);
+      hourlyExpired.push(expired.rows[0].n);
+    }
+  }
+  console.log('B1 expired receipts after hours 1-4:', JSON.stringify(hourlyExpired));
+  assert.ok(hourlyExpired.every(n => n <= 55),
+    'Expired receipts must remain within one 10-minute cleanup interval: ' + hourlyExpired.join(', '));
+  const replayed = await repo.transact(playerId, async tx => ({
+    value: await tx.receipt('burst-239-1', clock.now)
+  }));
+  assert.equal(replayed.requestId, 'burst-239-1', 'Unexpired receipt remains replayable');
+});
+
+test('B1: one cleanup removes all stale creation tickets rather than only 16', async t => {
+  const { db, repo } = await makePg(t);
+  const old = CLOCK - 8 * 86400000;
+  await db.query(`INSERT INTO game.creation_tickets (id, owner_id, preview, created_at, expires_at)
+    SELECT ('00000000-0000-4000-8000-' || lpad(g::text, 12, '0'))::uuid,
+      $1::uuid, '{}'::jsonb, $2::bigint, $3::bigint
+    FROM generate_series(1, 80) g`, [A, String(old), String(old + 60000)]);
+  await repo.transaction(c => repo.sweep(c, A, CLOCK));
+  const { rows } = await db.query('SELECT count(*)::int AS n FROM game.creation_tickets WHERE owner_id=$1', [A]);
+  console.log('B1 stale creation tickets left:', rows[0].n);
+  assert.equal(rows[0].n, 0);
+});
+
+test('B1: cleanup index migration can be applied twice without changing schema', async t => {
+  const { db } = await makePg(t);
+  const cleanupSql = fs.readFileSync(path.join(__dirname,
+    '../supabase/migrations/20261110095400_game_cleanup_indexes.sql'), 'utf8');
+  await db.exec(cleanupSql);
+  await db.exec(cleanupSql);
+  const result = await db.query(`SELECT indexname FROM pg_indexes WHERE schemaname='game'
+    AND indexname IN ('game_player_receipts_player_expires',
+                      'game_creation_tickets_owner_expires') ORDER BY indexname`);
+  assert.deepEqual(result.rows.map(x => x.indexname), [
+    'game_creation_tickets_owner_expires', 'game_player_receipts_player_expires'
+  ]);
+});
+
+test('B1: cleanup error rolls back savepoint, but command and live receipt still COMMIT', async t => {
+  const { db, repo, svc, clock } = await makePg(t);
+  const { playerId } = await spawn(svc, A, 'Dọn Dẹp An Toàn');
+  // Đồng bộ thời gian giả lập ở repository; mặc định repo dùng Date.now thật.
+  repo.clock = () => clock.now;
+  await db.query(`INSERT INTO game.player_receipts
+    (player_id, request_id, fingerprint, revision, response, created_at, expires_at)
+    VALUES ($1, 'stale-test', 'old', 0, '{}'::jsonb, $2, $3)`,
+    [playerId, String(CLOCK - 120000), String(CLOCK - 60000)]);
+  repo.cleanedAt.delete(A);
+  const originalConnect = repo.pool.connect.bind(repo.pool);
+  let injected = 0;
+  repo.pool.connect = async () => {
+    const c = await originalConnect();
+    return { ...c, queryObject: async query => {
+      if (!injected && query.text.startsWith('DELETE FROM game.player_receipts')) {
+        injected++;
+        // Real PostgreSQL error from PGlite aborts the subtransaction until rollback-to-savepoint.
+        return c.queryObject({ text: 'SELECT * FROM game.no_such_cleanup_table', args: [] });
+      }
+      return c.queryObject(query);
+    }};
+  };
+  const accepted = await command(svc, A, playerId, 'receipt-after-cleanup-error');
+  assert.equal(injected, 1, 'cleanup DELETE must have been attempted');
+  assert.equal(accepted.revision, 1, 'gameplay command must commit despite cleanup error');
+  const before = await db.query(
+    'SELECT request_id FROM game.player_receipts WHERE player_id=$1 ORDER BY request_id', [playerId]);
+  assert.deepEqual(before.rows.map(r => r.request_id), ['receipt-after-cleanup-error', 'stale-test']);
+  const replay = await svc.command(A, playerId,
+    { ...await envelope(svc, A, 'buy', { code: 'HERB-001' }, 'receipt-after-cleanup-error'), expectedRevision: 0 });
+  assert.equal(replay.replayed, true, 'unexpired receipt must replay correctly');
+  const after = await db.query('SELECT count(*)::int AS n FROM game.player_receipts WHERE request_id=$1',
+    ['stale-test']);
+  assert.equal(after.rows[0].n, 0, 'cleanup retried because the failed sweep did not advance cleanedAt');
+});

@@ -2,10 +2,14 @@
  * Fake credentials chỉ được dùng ở CI; không có kết nối đến pooler vì không JWT.
  */
 'use strict';
-const { spawn } = require('node:child_process');
+const { spawn, execFileSync } = require('node:child_process');
 const assert = require('node:assert/strict');
 const path = require('node:path');
 async function main() {
+  // Smoke độc lập từ checkout sạch: tạo bundle trước khi nạp Edge API.
+  execFileSync(process.execPath, [path.resolve(__dirname, 'build-edge.cjs')], {
+    cwd: path.resolve(__dirname, '..'), stdio: 'inherit'
+  });
   const cwd = path.resolve(__dirname, '../supabase/functions/api');
   const env = { ...process.env,
     SUPABASE_URL: 'https://rvrwfeblishqadkpzspb.supabase.co',
