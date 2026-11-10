@@ -94,18 +94,18 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
       const who = principal.accountId, body = await readBody(req);
       let out, status = 200;
       switch (route.name) {
-        case 'bootstrap': limit('read:' + who, LIMITS.read); out = service.bootstrap(who); break;
-        case 'pavilionPurchase': limit('cmd:' + who, LIMITS.command); out = service.pavilionPurchase(who, body); break;
-        case 'preview': limit('preview:' + who, LIMITS.preview); out = service.previewCreation(who); status = 201; break;
-        case 'create': limit('create:' + who, LIMITS.create); out = service.createPlayer(who, body); status = 201; break;
-        case 'state': limit('read:' + who, LIMITS.read); out = service.state(who, route.id); break;
-        case 'sync': limit('sync:' + who, LIMITS.sync); out = service.sync(who, route.id, body); break;
-        case 'pause': limit('pause:' + who, LIMITS.pause); out = service.pause(who, route.id); break;
-        case 'commands': limit('cmd:' + who, LIMITS.command); out = service.command(who, route.id, body); break;
-        case 'exportData': limit('export:' + who, LIMITS.export); out = service.exportData(who); break;
-        case 'eraseData': limit('erase:' + who, LIMITS.erase); out = service.eraseData(who, body); break;
+        case 'bootstrap': limit('read:' + who, LIMITS.read); out = await service.bootstrap(who); break;
+        case 'pavilionPurchase': limit('cmd:' + who, LIMITS.command); out = await service.pavilionPurchase(who, body); break;
+        case 'preview': limit('preview:' + who, LIMITS.preview); out = await service.previewCreation(who); status = 201; break;
+        case 'create': limit('create:' + who, LIMITS.create); out = await service.createPlayer(who, body); status = 201; break;
+        case 'state': limit('read:' + who, LIMITS.read); out = await service.state(who, route.id); break;
+        case 'sync': limit('sync:' + who, LIMITS.sync); out = await service.sync(who, route.id, body); break;
+        case 'pause': limit('pause:' + who, LIMITS.pause); out = await service.pause(who, route.id); break;
+        case 'commands': limit('cmd:' + who, LIMITS.command); out = await service.command(who, route.id, body); break;
+        case 'exportData': limit('export:' + who, LIMITS.export); out = await service.exportData(who); break;
+        case 'eraseData': limit('erase:' + who, LIMITS.erase); out = await service.eraseData(who, body); break;
         case 'deleteAccount': limit('erase:' + who, LIMITS.erase); out = await service.deleteAccount(who, body, accountAdmin); break;
-        case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = service.resetAfterDeath(who, route.id); break;
+        case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
       }
       send(res, status, out, requestId, route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
     } catch (err) {
