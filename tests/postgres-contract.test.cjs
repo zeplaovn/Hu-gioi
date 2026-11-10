@@ -224,7 +224,7 @@ test('B1: cleanup index migration can be applied twice without changing schema',
   ]);
 });
 
-test('B1: cleanup error rolls back savepoint, but command and live receipt still COMMIT', async t => {
+test('B1: cleanup error rolls back savepoint and enforces a 60s retry cooldown', async t => {
   const { db, repo, svc, clock } = await makePg(t);
   const { playerId } = await spawn(svc, A, 'Dọn Dẹp An Toàn');
   // Đồng bộ thời gian giả lập ở repository; mặc định repo dùng Date.now thật.
@@ -236,9 +236,11 @@ test('B1: cleanup error rolls back savepoint, but command and live receipt still
   repo.cleanedAt.delete(A);
   const originalConnect = repo.pool.connect.bind(repo.pool);
   let injected = 0;
+  let cleanupDeletes = 0;
   repo.pool.connect = async () => {
     const c = await originalConnect();
     return { ...c, queryObject: async query => {
+      if (query.text.startsWith('DELETE FROM game.player_receipts')) cleanupDeletes++;
       if (!injected && query.text.startsWith('DELETE FROM game.player_receipts')) {
         injected++;
         // Real PostgreSQL error from PGlite aborts the subtransaction until rollback-to-savepoint.
@@ -256,7 +258,14 @@ test('B1: cleanup error rolls back savepoint, but command and live receipt still
   const replay = await svc.command(A, playerId,
     { ...await envelope(svc, A, 'buy', { code: 'HERB-001' }, 'receipt-after-cleanup-error'), expectedRevision: 0 });
   assert.equal(replay.replayed, true, 'unexpired receipt must replay correctly');
+  assert.equal(cleanupDeletes, 1, 'the immediate replay must not retry the failed cleanup');
+  clock.now += 59999;
+  await repo.transaction(c => repo.sweep(c, A, clock.now, playerId));
+  assert.equal(cleanupDeletes, 1, 'no cleanup retry before 60 seconds');
+  clock.now += 1;
+  await repo.transaction(c => repo.sweep(c, A, clock.now, playerId));
+  assert.equal(cleanupDeletes, 2, 'one cleanup retry at the 60-second boundary');
   const after = await db.query('SELECT count(*)::int AS n FROM game.player_receipts WHERE request_id=$1',
     ['stale-test']);
-  assert.equal(after.rows[0].n, 0, 'cleanup retried because the failed sweep did not advance cleanedAt');
+  assert.equal(after.rows[0].n, 0, 'expired receipts are removed after cooldown');
 });
