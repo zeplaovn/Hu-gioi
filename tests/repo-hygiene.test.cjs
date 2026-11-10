@@ -70,3 +70,10 @@ test('tài liệu triển khai không còn hướng dẫn Wrangler hoặc tách 
     assert.match(text, /cùng origin/);
   }
 });
+
+test('Docker Compose yêu cầu SUPABASE_URL từ môi trường, mẫu nằm trong .env.example', () => {
+  const compose = fs.readFileSync(path.join(ROOT, 'compose.yaml'), 'utf8');
+  const example = fs.readFileSync(path.join(ROOT, '.env.example'), 'utf8');
+  assert.ok(compose.includes('SUPABASE_URL: ${SUPABASE_URL:?Missing Supabase URL}'));
+  assert.match(example, /^SUPABASE_URL=https:\/\/[^\s]+/m);
+});
