@@ -7,6 +7,7 @@ import { UUID, corsHeaders, routeOf, parseBody, bearerToken } from './http.ts';
 import { createContentionCounter } from './contention-counter.ts';
 import { createEdgeRateLimiter } from './api-rate-limit.ts';
 import { getVerifiedUserId } from './auth-user.ts';
+import { createVerifiedUserCache } from './auth-cache.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
   createAccountAdmin, shouldLogApiError, CONTENT_VERSION
@@ -33,6 +34,11 @@ function fromEnv(name: string, defaultValue: number, min: number, max: number): 
 const syncInterval = fromEnv('HU_SYNC_INTERVAL_MS', 20000, 5000, 60000);
 const grace = fromEnv('HU_ONLINE_GRACE_MS', 60000, 3 * syncInterval, 180000);
 const apiLimiter = createEdgeRateLimiter({ syncIntervalMs: syncInterval });
+// Cache xác minh JWT: MẶC ĐỊNH TẮT (0) để giữ thiết kế "hỏi Supabase Auth mỗi request".
+// Bật bằng HU_AUTH_CACHE_MS (tối đa 30 giây): token bị thu hồi vẫn dùng được tới ngần ấy trên isolate đã cache.
+const authCache = createVerifiedUserCache({ ttlMs: fromEnv('HU_AUTH_CACHE_MS', 0, 0, 30000) });
+// Chấp thuận chỉ được thêm, không có luồng rút lại; 5 phút tránh hỏi DB gần mỗi 2 request.
+const consentCacheMs = fromEnv('HU_CONSENT_CACHE_MS', 300000, 0, 900000);
 
 if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(BASE))
   throw Error('SUPABASE_URL phải là origin Supabase HTTPS.');
@@ -98,7 +104,7 @@ async function requireConsent(userId: string): Promise<void> {
   if (![...REQUIRED].every(k => kinds.has(k)))
     throw new GameError('CONSENT_REQUIRED', 'Bạn cần chấp thuận chính sách quyền riêng tư và điều khoản phát hành trước khi chơi online.');
   if (consents.size >= 2048) consents.delete(consents.keys().next().value);
-  consents.set(userId, now + 30000);
+  if (consentCacheMs > 0) consents.set(userId, now + consentCacheMs);
 }
 async function authenticate(req: Request, route: string): Promise<string> {
   const header = req.headers.get('authorization') || '';
@@ -118,7 +124,8 @@ async function authenticate(req: Request, route: string): Promise<string> {
   // sessions; never trust a merely decoded JWT or user ID from the browser.
   let userId: string | null;
   try {
-    userId = await getVerifiedUserId(token, BASE, Deno.env.get('SUPABASE_ANON_KEY') || '');
+    userId = await authCache.lookup(token, t =>
+      getVerifiedUserId(t, BASE, Deno.env.get('SUPABASE_ANON_KEY') || ''));
   } catch {
     throw new GameError('MAINTENANCE', 'Dịch vụ xác thực tạm thời không khả dụng.');
   }
