@@ -70,6 +70,7 @@ class PostgresPlayers extends PlayerRepository {
     this.lockTimeoutMs = lockTimeoutMs;
     this.clock = clock;
     this.cleanedAt = new Map();
+    this.cleanupRetryAfter = new Map();
   }
 
   async connection(work) {
@@ -107,7 +108,7 @@ class PostgresPlayers extends PlayerRepository {
     // Best-effort, giao dịch con an toàn: lỗi DELETE không được làm hỏng
     // transaction gameplay. Không chạy vòng lặp vượt statement_timeout.
     const last = this.cleanedAt.get(ownerId) || 0;
-    if (now - last < 10 * 60000) return;
+    if (now - last < 10 * 60000 || now < (this.cleanupRetryAfter.get(ownerId) || 0)) return;
     await exec(c, 'SAVEPOINT hu_cleanup');
     try {
       if (playerId) await exec(c,
@@ -120,10 +121,15 @@ class PostgresPlayers extends PlayerRepository {
       // PostgreSQL hủy transaction khi statement lỗi: bắt buộc ROLLBACK TO
       // trước khi chạy tiếp. Lỗi rollback/release phải nổi để không COMMIT lỗi.
       await exec(c, 'ROLLBACK TO SAVEPOINT hu_cleanup');
-      return; // không đánh dấu đã dọn, request sau sẽ thử lại
+      // Không để mỗi request gameplay trả giá cho DELETE chậm/lỗi.
+      this.cleanupRetryAfter.set(ownerId, now + 60000);
+      if (this.cleanupRetryAfter.size > 1024)
+        this.cleanupRetryAfter.delete(this.cleanupRetryAfter.keys().next().value);
+      return; // chỉ thử lại sau cooldown 60 giây
     } finally {
       await exec(c, 'RELEASE SAVEPOINT hu_cleanup');
     }
+    this.cleanupRetryAfter.delete(ownerId);
     this.cleanedAt.set(ownerId, now);
     if (this.cleanedAt.size > 1024) this.cleanedAt.delete(this.cleanedAt.keys().next().value);
   }

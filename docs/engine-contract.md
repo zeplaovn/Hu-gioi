@@ -1,5 +1,6 @@
 # Hợp đồng engine
 
+> Trạng thái: Hiện hành.
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
 > Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 48 lệnh và state V9. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
@@ -35,7 +36,7 @@ Phần **engine phải cung cấp**:
 
 `client/persistence/remote-store.js` cung cấp facade cho UI mà **không lưu trạng thái nhân vật vào localStorage**. Chỉ backend giữ RNG, đồng hồ, state và giao dịch SQLite/Postgres. Tab ẩn gửi `pause`, heartbeat sau khoảng 20 giây, server grace mặc định 60 giây; khi offline không tăng tài nguyên hay tuổi.
 
-`LocalSession` và `LocalStore` chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
+`LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
 
 ## 4. Lệnh (48, protocol V2)
 
@@ -120,7 +121,7 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 ## 7. Bản lưu
 
 - Schema hiện hành V9; normalize V4, V5, V6, V7, V8, V9 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
-- `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu SQLite được ghi ở server theo giao dịch.
+- `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu PostgreSQL được ghi ở Edge theo giao dịch; SQLite chỉ dùng Node dev/test.
 - Thiên mệnh được chọn một lần tại tạo nhân vật. Không có lệnh `prestige`/`reincarnate` và không tích lũy **thành tựu nhân vật** xuyên kiếp. **Ngoại lệ mới:** Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân thuộc account SQLite, giữ lại sau `reset-after-death`, khi tạo nhân vật mới nhận đủ thưởng các đại cảnh giới.
 
 ## 8. Thứ tự đã triển khai

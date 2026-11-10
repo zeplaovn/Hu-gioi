@@ -1,0 +1,30 @@
+name: Release dependency and secret audit
+on:
+  pull_request:
+    paths:
+      - 'tools/release-security-audit.cjs'
+      - '.github/workflows/release-security-audit.yml'
+      - '_headers'
+      - 'client/config.js'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-security-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 40
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Production dependency audit (not merely npm install output)
+        run: npm audit --omit=dev
+      - name: Verify CSP and scan tracked source plus recent Git patch history
+        run: node tools/release-security-audit.cjs

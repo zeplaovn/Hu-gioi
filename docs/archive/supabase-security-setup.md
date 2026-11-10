@@ -1,3 +1,9 @@
+# LỊCH SỬ — không còn là nguồn sự thật
+
+> Trạng thái: Lịch sử. Nội dung bên dưới giữ nguyên để đối chiếu; liên kết tương đối trong văn bản cũ có thể không còn hợp lệ khi chuyển thư mục. Runbook hiện hành: [Edge](../edge-deployment.md).
+
+---
+
 # Hư Giới – Supabase Auth và quản lý chấp thuận online (09/11/2026-v2)
 
 ## Phần đã cấu hình
