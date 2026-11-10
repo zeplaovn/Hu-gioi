@@ -6,14 +6,29 @@ class RateLimiter {
   /* capacity: số lượt tối đa dồn lại; perMinute: tốc độ hồi. Trả { ok, retryAfterMs }. */
   take(key, { capacity, perMinute }) {
     const now = this.clock();
-    if (this.buckets.size > this.maxKeys) this.buckets.clear();
-    const b = this.buckets.get(key) || { tokens: capacity, at: now };
-    b.tokens = Math.min(capacity, b.tokens + (now - b.at) * perMinute / 60000);
+    let b = this.buckets.get(key);
+    if (!b && this.buckets.size >= this.maxKeys) {
+      // Chỉ loại bucket đã hồi đầy, theo thứ tự cũ nhất. Không xóa quota đang bị giới hạn.
+      for (const [oldKey, old] of this.buckets) {
+        const elapsed = Math.max(0, now - old.at);
+        if (old.tokens + elapsed * old.perMinute / 60000 >= old.capacity) {
+          this.buckets.delete(oldKey);
+          if (this.buckets.size < this.maxKeys) break;
+        }
+      }
+      // Khi mọi bucket vẫn còn hiệu lực, từ chối key mới thay vì cấp lại quota người khác.
+      if (this.buckets.size >= this.maxKeys) return { ok: false, retryAfterMs: 1000 };
+    }
+    if (!b) b = { tokens: capacity, at: now, capacity, perMinute };
+    b.tokens = Math.min(capacity, b.tokens + Math.max(0, now - b.at) * perMinute / 60000);
     b.at = now;
+    b.capacity = capacity;
+    b.perMinute = perMinute;
     let out = { ok: true, retryAfterMs: 0 };
     if (b.tokens >= 1) b.tokens -= 1;
     else out = { ok: false, retryAfterMs: Math.ceil((1 - b.tokens) * 60000 / perMinute) };
-    this.buckets.set(key, b);
+    this.buckets.delete(key);
+    this.buckets.set(key, b); // key dùng gần đây nhất ở cuối Map
     return out;
   }
 }
