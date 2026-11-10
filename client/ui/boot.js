@@ -346,7 +346,7 @@
           for (let i = 0; i < A.heroFrames(profile.gender, 0, action); i++) images.push(A.heroSrc(profile.gender, 0, action, i));
         }
         await root.HU_LOADER.enter(images, () => {
-          if (!H.READY) throw new Error('Engine chưa sẵn sàng.');
+          if (!H.READY) throw new Error('Trò chơi chưa sẵn sàng. Vui lòng tải lại trang.');
         });
         const introDone = UI.intro.play();
         UI.intro.focus();
