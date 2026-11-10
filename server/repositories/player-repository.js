@@ -9,6 +9,8 @@
      createWithTicket({ ownerId, ticketId, now, build })
                                               Trong MỘT giao dịch: kiểm ticket (đúng chủ, chưa dùng, chưa hết hạn), chưa có nhân vật,
                                               build(preview) → record mới, tên chưa bị dùng, ghi record và đánh dấu ticket đã dùng.
+     getPavilion(ownerId)                     → { balance, totalEarned, upgrades, relics, rebirths, version }
+     purchasePavilion(ownerId, intent)        → giao dịch account + receipt + cập nhật snapshot (nếu có)
      transact(playerId, fn)                   Giao dịch độc quyền theo người chơi. fn(tx) chạy ĐỒNG BỘ, tx = { record, receipt(requestId, now) }.
                                               fn trả { value, save?, touch?, receipt? }:
                                                 save    { state, revision, rngCounter, lastSeenAt, schemaVersion, contentVersion } thay state
@@ -26,6 +28,8 @@ class PlayerRepository {
   issueTicket() { throw notImplemented('issueTicket'); }
   createWithTicket() { throw notImplemented('createWithTicket'); }
   transact() { throw notImplemented('transact'); }
+  getPavilion() { throw notImplemented('getPavilion'); }
+  purchasePavilion() { throw notImplemented('purchasePavilion'); }
   deletePlayer() { throw notImplemented('deletePlayer'); }
   exportOwnerData() { throw notImplemented('exportOwnerData'); }
   deleteOwnerData() { throw notImplemented('deleteOwnerData'); }

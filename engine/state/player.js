@@ -69,6 +69,7 @@
       version: VERSION, death: null, destiny: 'none', presencePaused: false, created: false, name: 'Hàn Thiên Sơn', gender: 'nam', race: 'nhan',
       roots: [72, 41, 38, 55, 47], rootType: 'Song', rootSub: '', chaosTries: 0,
       talent: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0 },
+      pavilion: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0, coDuyen: 0 },
       realm: 0, stage: 1, qi: 0, hp: 100, mp: 100, stone: 380, jade: 6, zone: 0,
       auto: false, enemyHp: 0, enemyNum: 0, combatClock: 0, manualAt: 0, enemyKind: 'thường',
       exploration: { active: null, last: null },
@@ -363,6 +364,7 @@
     if (object(raw.story?.flags)) for (const [id, option] of Object.entries(raw.story.flags))
       if (storyById[id]?.choices?.some(choice => choice.id === option)) x.story.flags[id] = option;
 
+    x.pavilion = Object.fromEntries(Object.keys(C.PAVILION.stats).map(k => [k, integer(raw.pavilion?.[k], 0, 20)]));
     x.meta = normalizeMeta(raw.meta, now);
     // V9 không có nâng cấp trả phí hoặc điểm mang qua kiếp. Khi nâng V4-V8,
     // hủy các bonus vĩnh viễn không có nguồn gốc chọn Thiên mệnh ở Khởi Nguyên.

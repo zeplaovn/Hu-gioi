@@ -252,7 +252,7 @@
         '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch, Đạo vận, Thiên mệnh và thành tựu trên máy chủ. Tài khoản Supabase vẫn còn. Không có bản lưu offline để phục hồi.</p>' +
+      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch và thành tựu kiếp này. Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân còn trong kho vẫn được giữ theo tài khoản. Chuyển kiếp miễn phí.</p>' +
       '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Trở về Khởi Nguyên</button></div>',
       null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
     document.querySelector('[data-act="resetAfterDeath"]')?.focus();
@@ -279,7 +279,7 @@
     rolling = '';
     $('continueGame').hidden = true;
     $('continueGame').title = '';
-    $('welcomeRebirth').textContent = 'Đây là lần trùng sinh thứ 1 của bạn';
+    $('welcomeRebirth').textContent = 'Bước vào kiếp thứ ' + ((UI.session.pavilion?.rebirths || 0) + 1) + ' · Thiên Tinh được giữ vĩnh viễn.';
     $('game').hidden = true;
     $('welcome').hidden = false;
     document.body.classList.remove('in-game');
@@ -508,7 +508,7 @@
     $('continueGame').hidden = !saved;
     $('welcomeRebirth').textContent = saved
       ? 'Đạo thân chỉ có một mạng. Thất bại sẽ mất toàn bộ kiếp này.'
-      : 'Chọn Thiên mệnh và bắt đầu một kiếp mới.';
+      : 'Kiếp thứ ' + ((UI.session.pavilion?.rebirths || 0) + 1) + ' · chọn Thiên mệnh, giữ trọn Thiên Tinh từ tiền kiếp.';
     $('continueGame').title = saved ? 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm] : '';
     $('welcome').hidden = false;
     renderCreation();

@@ -1,6 +1,6 @@
 # Hư Giới · Tiên Lộ Vô Tận
 
-Game idle tu tiên online bằng tiếng Việt: mỗi nhân vật chỉ có một mạng. Người chơi chọn một Thiên mệnh khi tạo nhân vật, tu luyện và vượt thiên kiếp; tọa hóa xóa trọn tiến trình nhân vật, không có trọng sinh.
+Game idle tu tiên online bằng tiếng Việt: mỗi nhân vật chỉ có một mạng. Người chơi chọn một Thiên mệnh khi tạo nhân vật, tu luyện và vượt thiên kiếp. Tọa hóa kết thúc nhân vật hiện tại, nhưng **Thiên Tinh và nâng cấp Thiên Mệnh Các thuộc tài khoản** được giữ để bước vào kiếp mới.
 
 > **Trạng thái mã nguồn:** frontend sử dụng `RemoteSession` và **bắt buộc đăng nhập Supabase**; gameplay, thời gian, RNG, tài nguyên và cài đặt được ghi bằng lệnh `/api/v1` lên Node + SQLite. Chế độ khách/offline không còn được phục vụ. **Để chơi thực sự trên internet cần triển khai Node backend HTTPS**; Cloudflare static-only không cung cấp API. Tài liệu triển khai tại [docs/online-deployment.md](docs/online-deployment.md). Xem mục [Backend](#backend) và [kế hoạch](docs/backend-plan.md).
 
@@ -33,7 +33,7 @@ Các tính năng sau thuộc bản trước và là phạm vi mà engine mới p
 | Nhân vật | Hành trang, trang bị pháp bảo, công pháp chủ động, linh căn ngũ hành và Dị linh căn Băng/Lôi/Phong/Độc. Ngũ hành có cơ hội hóa Hỗn Độn khi vượt lôi kiếp; Dị khắc hệ gốc. |
 | Nghề phụ | Luyện đan, rèn pháp bảo, chế phù và linh điền. Công đoạn chế tạo, chăm cây và mọi thời hạn được tạm dừng khi offline; không có thưởng bế quan. |
 | Thế giới | Nhiệm vụ, bí cảnh, kỳ ngộ, tông môn và NPC Hạ Giới có quan hệ, vai trò, sở thích và thiện cảm. |
-| Tọa hóa vĩnh viễn | Thất bại thiên kiếp, thua PvP NPC, HP bằng 0 khi chiến đấu/bí cảnh hoặc thọ nguyên cạn đều dẫn tới tử vong. Người chơi chỉ có thể xóa nhân vật đã chết trên máy chủ và tạo kiếp mới; **không có trọng sinh hoặc giữ lại Thiên mệnh**, tài khoản Supabase vẫn còn. |
+| Tọa hóa vĩnh viễn | Thất bại thiên kiếp, thua PvP NPC, HP bằng 0 hoặc thọ nguyên cạn kết thúc nhân vật. Chỉ xóa đạo thân đã chết trên máy chủ rồi tạo mới; **không hồi sinh đạo thân cũ**. Thiên Tinh và nâng cấp Thiên Mệnh Các giữ theo tài khoản. |
 | Giao diện idle | Thanh tài nguyên (linh thạch, tu vi/giây, Thiên mệnh đã chọn) có số chạy, thanh tu vi + dải chấm tầng, dock nâng cấp nhanh (Tốc tu ×1/×10/Tối đa, Hấp thu, Dùng đan) ngay trên sân khấu, nút lớn Đột phá đại cảnh giới, cầu linh khí bay vào thanh tu vi, chấm thông báo trên tab. Mã: `css/idle.css`, `client/ui/idle-hud.js`. |
 | Trải nghiệm | Nhật ký tu tiên chữ lớn, nhạc nền, chuyển cảnh bốn mùa/ngày–đêm, tùy chọn giảm chuyển động, giao diện desktop/mobile. Mỗi menu (Nhân vật, Nghề phụ, Thế giới, Cài đặt…) mở thành một trang riêng phủ vùng màn chơi, có nút ‹ Tu luyện để quay lại; menu thu gọn/mở bằng icon ☰ (nhớ lựa chọn). Lịch luyện vẫn hiện bảng dưới sân khấu để xem trận đánh. |
 
@@ -46,8 +46,16 @@ Hạ Giới và Linh Giới dùng ảnh `.webp` trong `media/assets/world/bg/<gi
 - Giao diện **không ghi bản nhân vật vào `localStorage`**. Snapshot chỉ được hiển thị trong bộ nhớ; Node backend lưu dữ liệu trong SQLite trên volume của máy chủ.
 - Chuyển thiết bị: đăng nhập lại tài khoản Supabase trên cùng tên miền backend để mở nhân vật.
 - **Không tự động nhập các bản lưu offline cũ**. Không lấy JSON phía client làm trạng thái tin cậy; cần một quy trình nhập có xác thực/kiểm toán riêng nếu sẽ hỗ trợ di trú.
-- **Tọa hóa:** chỉ khi server xác nhận nhân vật đã chết mới cho xóa nhân vật SQLite để tạo lại. Tài khoản Supabase vẫn tồn tại.
+- **Tọa hóa:** chỉ khi server xác nhận nhân vật đã chết mới cho xóa nhân vật SQLite để tạo lại. Tài khoản Supabase và kho Thiên Mệnh Các vẫn tồn tại, không thu phí tạo kiếp mới. Khi xóa *toàn bộ dữ liệu tài khoản* theo quyền riêng tư thì kho này cũng bị xóa.
 - Cần thực hiện backup/restore database và quy trình xóa dữ liệu theo yêu cầu trước phát hành thương mại.
+
+## Thiên Mệnh Các · Thiên Tinh xuyên kiếp
+
+- Mỗi lần vượt **đại** cảnh giới thành công, nhận Thiên Tinh bằng **5 × bậc cảnh giới mới**: lên Trúc Cơ +5, Kim Đan +10, Nguyên Anh +15… Mỗi kiếp đều nhận đầy đủ, không khấu trừ vì đã đạt ở kiếp cũ.
+- Thiên Tinh không mất khi tọa hóa; tạo kiếp mới **miễn phí**. Sáu thuộc tính Tướng Mạo, Phúc Duyên, Căn Cốt, Ngộ Tính, Vận Khí và Cơ Duyên nâng tối đa 20 cấp. Mỗi cấp tăng 2,5% tương đối cho hiệu ứng tương ứng (tối đa +50%).
+- Giá mỗi cấp: 1–5 tốn 2, 6–10 tốn 4, 11–15 tốn 8, 16–20 tốn 12 Thiên Tinh; nâng đủ một thuộc tính tốn tổng 130.
+- Kỳ Trân: Túi Linh Thạch (20 Thiên Tinh, +200 linh thạch khi tạo kiếp mới), Ngộ Đạo Ngọc (45, +15% tu vi tầng đầu), Trường Sinh Ngọc (35, +1 năm thọ nguyên). Giữ tối đa 5 mỗi loại; tự sử dụng một món mỗi loại khi tạo nhân vật mới.
+- Mọi khoản thưởng, tiêu Thiên Tinh, tồn kho và giao dịch idempotent đều ghi **trực tiếp trong SQLite** theo tài khoản Supabase; client chỉ gửi mã hành động và yêu cầu mua, không gửi giá hoặc trạng thái. Xem [hợp đồng và cân bằng Thiên Mệnh Các](docs/thien-menh-cac.md).
 
 ## Cấu trúc mã nguồn
 
@@ -109,6 +117,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 | POST | `/api/v1/players/{id}/sync` | Đồng bộ online; nếu đã offline thì chỉ điều chỉnh mốc giờ và tạm dừng mọi tiến trình |
 | POST | `/api/v1/players/{id}/pause` | Tạm dừng có xác thực khi tab ẩn/đóng; server cũng tự đóng băng khi hết heartbeat |
 | POST | `/api/v1/players/{id}/commands` | Một lệnh `{ protocolVersion, requestId, expectedRevision, type, payload }` |
+| POST | `/api/v1/pavilion/purchase` | Mua nâng cấp hoặc Kỳ Trân từ số dư tài khoản `{requestId, expectedVersion, kind, key}` |
 | GET | `/api/v1/me/export` | Tải bản sao dữ liệu gameplay của chính tài khoản (JSON) |
 | POST | `/api/v1/me/erase` | Xóa dữ liệu gameplay, body `{ confirm: "delete-my-game-data" }` |
 | POST | `/api/v1/me/delete-account` | Xóa dữ liệu gameplay + tài khoản Supabase, body `{ confirm: "delete-my-account" }`; cần `SUPABASE_SERVICE_ROLE_KEY` ở máy chủ |
@@ -119,7 +128,7 @@ Ba API `/me/*` không đòi hỏi bản chấp thuận chính sách còn hiệu 
 
 Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
-**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
+**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
 
 Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaovn@proton.me](mailto:zeplaovn@proton.me)**. Chính sách quyền riêng tư và điều khoản trực tuyến phiên bản `2026-11-10-v5` (phi lợi nhuận, không thanh toán trực tuyến) yêu cầu chấp thuận lại; **phải mở rộng CHECK `policy_version` trên Supabase trước khi triển khai** (xem `supabase/sql/policy_acceptances.sql`).
 

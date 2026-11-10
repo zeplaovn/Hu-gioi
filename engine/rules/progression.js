@@ -68,8 +68,9 @@
         const race = raceBonus(s.race).rate || 0;
         const talent = (s.talent?.ngoTinh || 0) * .015;
         const meta = 1 + (s.meta?.upgrades?.exp || 0) * .03;
+        const pavilion = 1 + H.PAVILION.bonus(s.pavilion?.ngoTinh);
         return F.cultivation_rate(s.realm, add, [up, Math.min(.25, buff), race, talent], s.rootType, F.prestige_mult(s.daoVan)) *
-          meta * (1 + this.rootEffects().rate + (this.sectDefinition()?.rate || 0));
+          meta * pavilion * (1 + this.rootEffects().rate + (this.sectDefinition()?.rate || 0));
       },
       stats(now = this.s.lastUpdate) {
         const s = this.s, st = F.stats(s.realm, s.stage - 1, s.rootType), e = this.manualEffects();
@@ -90,12 +91,12 @@
         const active = s.designCombat.buffs.filter(b => b.end > now);
         st.DEF += active.filter(b => b.type === 'def').reduce((sum, b) => sum + b.value, 0);
         dodge += active.filter(b => b.type === 'dodge').reduce((sum, b) => sum + b.value, 0);
-        st.HP *= (1 + (rb.hp || 0)) * (1 + (tal.canCot || 0) * .02) * (1 + e.guard) * (1 + rt.hp);
+        st.HP *= (1 + (rb.hp || 0)) * (1 + (tal.canCot || 0) * .02) * (1 + H.PAVILION.bonus(s.pavilion?.canCot)) * (1 + e.guard) * (1 + rt.hp);
         st.DEF *= (1 + e.guard + .02 * (s.tech[2] - 1)) * (1 + rt.guard);
-        st.ATK *= (1 + (rb.atk || 0)) * (1 + (tal.canCot || 0) * .02) *
+        st.ATK *= (1 + (rb.atk || 0)) * (1 + (tal.canCot || 0) * .02) * (1 + H.PAVILION.bonus(s.pavilion?.canCot)) *
           (1 + e.attack + .02 * (s.tech[0] - 1) + s.buffs.filter(b => b.type === 'attack' && b.end > now).reduce((n, b) => n + b.points, 0)) *
           (1 + rt.attack + (sect?.attack || 0));
-        st.CRIT = Math.min(.75, F.crit_rate(.01 * (s.tech[0] - 1) + (tal.vanKhi || 0) * .005 + luck) + rt.crit + (sect?.crit || 0) + crit);
+        st.CRIT = Math.min(.75, (F.crit_rate(.01 * (s.tech[0] - 1) + (tal.vanKhi || 0) * .005 + luck) + rt.crit + (sect?.crit || 0) + crit) * (1 + H.PAVILION.bonus(s.pavilion?.vanKhi)));
         st.DODGE = Math.min(.6, F.dodge_rate(.005 * (s.tech[3] - 1)) + rt.dodge + dodge);
         st.STA = (100 + sta) * (1 + rt.sta);
         st.CRIT_DMG = 1.5 + rt.critDmg;
@@ -112,8 +113,8 @@
       },
       chance() {
         const s = this.s;
-        return Math.min(.98, F.p_breakthrough(s.realm, s.stage - 1, s.breakBonus + (s.sect.blessing ? .1 : 0), s.pity) +
-          (s.talent?.vanKhi || 0) * .003 + (s.meta?.upgrades?.luck || 0) * .003);
+        return Math.min(.98, (F.p_breakthrough(s.realm, s.stage - 1, s.breakBonus + (s.sect.blessing ? .1 : 0), s.pity) +
+          (s.talent?.vanKhi || 0) * .003 + (s.meta?.upgrades?.luck || 0) * .003) * (1 + H.PAVILION.bonus(s.pavilion?.vanKhi)));
       },
       tribulation() {
         const s = this.s, st = this.stats();

@@ -93,7 +93,8 @@ class PlayerService {
     const rec = this.#own(this.repo.get(playerId), ownerId);
     if (!new H.Game(this.#state(rec, this.clock())).isDead())
       throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
-    return this.repo.deletePlayer(ownerId, playerId);
+    const deleted = this.repo.deletePlayer(ownerId, playerId);
+    return { ...deleted, pavilion: this.repo.getPavilion(ownerId) };
   }
 
   /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
@@ -102,7 +103,7 @@ class PlayerService {
     return {
       format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
       player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
-      pendingCreationTickets: data?.tickets || 0
+      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || this.repo.getPavilion(ownerId)
     };
   }
 
@@ -130,7 +131,7 @@ class PlayerService {
     return {
       protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion, serverTime: this.clock(),
       player: rec ? { id: rec.id, name: rec.name, revision: rec.revision } : null,
-      previewsPerDay: this.cfg.previewsPerDay
+      previewsPerDay: this.cfg.previewsPerDay, pavilion: this.repo.getPavilion(ownerId)
     };
   }
 
@@ -162,16 +163,40 @@ class PlayerService {
     const now = this.clock();
     const rec = this.repo.createWithTicket({
       ownerId, ticketId: body.ticketId, now,
-      build: preview => {
+      build: (preview, pavilion) => {
         const seed = crypto.randomBytes(32).toString('hex'), rng = seededRng(seed, 0);
         let state;
-        try { state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny }, now, rng); }
+        try {
+          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny }, now, rng);
+          H.applyPavilionOnCreate(state, pavilion.upgrades, pavilion.consumed);
+        }
         catch (err) { throw invalid('INVALID_PROFILE', err.message); }
         assertStateSafe(state, this.cfg.maxStateBytes);
         return { name: state.name, state, schemaVersion: H.VERSION, contentVersion: this.contentVersion, rngSeed: seed, rngCounter: rng.counter() };
       }
     });
     return { ...this.#response({ rec, revision: rec.revision, now, state: rec.state, logs: rec.state.logs.slice(0, 2) }), playerId: rec.id };
+  }
+
+  /* Mua tại Thiên Mệnh Các không dùng protocol command, vì đồng tiền thuộc tài khoản.
+     Vẫn có idempotency, optimistic version và hàng đợi của RemoteSession. */
+  pavilionPurchase(ownerId, body) {
+    onlyKeys(body, ['requestId', 'expectedVersion', 'kind', 'key']);
+    if (typeof body.requestId !== 'string' || !REQUEST_ID.test(body.requestId) ||
+      !Number.isSafeInteger(body.expectedVersion) || body.expectedVersion < 0 ||
+      typeof body.key !== 'string' || typeof body.kind !== 'string')
+      throw invalid('INVALID_REQUEST', 'Yêu cầu Thiên Mệnh Các không hợp lệ.');
+    const now = this.clock();
+    const out = this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
+    if (out.record) {
+      return this.#response({
+        rec: out.record, revision: out.record.revision, now, state: out.record.state,
+        result: { kind: body.kind, key: body.key, cost: out.cost ?? 0 },
+        died: new H.Game(out.record.state).isDead(), replayed: out.replayed
+      });
+    }
+    return { protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion,
+      serverTime: now, pavilion: out.pavilion, result: { kind: body.kind, key: body.key, cost: out.cost ?? 0 }, replayed: out.replayed };
   }
 
   /* ---------- Đồng bộ: heartbeat JWT, tuyệt đối không tính thời gian offline ---------- */
@@ -241,6 +266,7 @@ class PlayerService {
       }
       if (rec.revision !== expectedRevision) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.', { currentRevision: rec.revision });
 
+      const previousRealm = rec.state.realm;
       const run = this.#run(rec, now), save = revision => ({
         state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
       });
@@ -272,10 +298,16 @@ class PlayerService {
         return { touch: { rngCounter: run.rng.counter(), lastSeenAt: now }, value: { error: failure } };
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
+      const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
+        ? H.PAVILION.realmReward(run.game.s.realm) : 0;
+      if (earned) {
+        result = { ...result, thienTinh: earned };
+        run.logs.push('Thiên Mệnh Các · đột phá đại cảnh giới, nhận +' + earned + ' Thiên Tinh.');
+      }
       const revision = rec.revision + 1;
       const response = { serverTime: now, revision, result: clean(result), report: clean(report), logs: run.logs, achievements: clean(achievements), died: run.game.isDead() };
       return {
-        save: save(revision),
+        save: save(revision), pavilionAward: earned,
         receipt: { requestId, fingerprint, revision, response, expiresAt: now + this.cfg.receiptTtlMs },
         value: { rec, state: run.game.s, revision, fresh: response }
       };
@@ -319,7 +351,7 @@ class PlayerService {
   #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false }) {
     return {
       protocolVersion: C.VERSION, revision, serverTime: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion,
-      state: snapshot(state), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
+      state: snapshot(state), pavilion: this.repo.getPavilion(rec.ownerId), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
     };
   }
 }

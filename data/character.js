@@ -24,6 +24,25 @@ const META_UPGRADES={
  life:{name:'Trường Sinh',icon:'❋',desc:'+5 năm thọ nguyên trong kiếp hiện tại.',cost:[2,3,4,6,8],max:5},
  luck:{name:'Thiên Vận',icon:'✦',desc:'+0,5% bạo kích và +0,3% xác suất đột phá trong kiếp này.',cost:[3,5,8],max:3}
 };
+/* Thiên Mệnh Các: luật kinh tế cố định, dùng chung cho engine và máy chủ.
+   Mỗi tầng 2,5%, tối đa 20 tầng = 50%; thưởng được nhận lại ở mỗi kiếp. */
+const PAVILION_STATS=Object.freeze({
+ tuongMao:{name:'Tướng Mạo',desc:'Tăng thiện cảm khi tặng lễ',max:20},
+ phucDuyen:{name:'Phúc Duyên',desc:'Tăng lợi tức chiến lợi phẩm',max:20},
+ canCot:{name:'Căn Cốt',desc:'Tăng sinh lực và công kích',max:20},
+ ngoTinh:{name:'Ngộ Tính',desc:'Tăng tốc độ tu luyện',max:20},
+ vanKhi:{name:'Vận Khí',desc:'Tăng tương đối tỷ lệ bạo kích và đột phá',max:20},
+ coDuyen:{name:'Cơ Duyên',desc:'Tăng cơ hội gặp kỳ ngộ',max:20}
+});
+const PAVILION_RELICS=Object.freeze({
+ tuiLinhThach:{name:'Túi Linh Thạch',desc:'Kiếp sau nhận thêm 200 linh thạch',cost:20,maxStored:5},
+ nguDaoNgoc:{name:'Ngộ Đạo Ngọc',desc:'Kiếp sau nhận 15% tu vi tầng đầu',cost:45,maxStored:5},
+ truongSinhNgoc:{name:'Trường Sinh Ngọc',desc:'Kiếp sau tăng 1 năm thọ nguyên',cost:35,maxStored:5}
+});
+const pavilionBonus=level=>Math.min(20,Math.max(0,Math.floor(Number(level)||0)))*.025;
+const pavilionUpgradeCost=level=>level>=20?null:level<5?2:level<10?4:level<15?8:12;
+const pavilionRealmReward=realm=>Number.isInteger(realm)&&realm>0&&realm<=13?realm*5:0;
+const PAVILION=Object.freeze({stats:PAVILION_STATS,relics:PAVILION_RELICS,bonus:pavilionBonus,upgradeCost:pavilionUpgradeCost,realmReward:pavilionRealmReward});
 const META_ACHIEVEMENTS=[
  {id:'first_break',name:'Phá vỡ tầng đầu',desc:'Đột phá thành công lần đầu.',points:1,check:s=>s.stage>1||s.realm>0},
  {id:'kim_dan',name:'Kết Đan',desc:'Bước vào cảnh giới Kết Đan.',points:2,check:s=>s.realm>=2},
@@ -57,6 +76,6 @@ function rollRace(rng=Math.random){let r=rng()*100,acc=0;for(const [id,,w] of RA
 const oneOf=(a,rng)=>a[Math.floor(rng()*a.length)];
 function randomName(gender='nam',rng=Math.random){return (oneOf(NAME_FAMILY,rng)+' '+oneOf(gender==='nu'?NAME_FEMALE:NAME_MALE,rng)).slice(0,NAME_MAX)}
 function cleanName(raw){const c=String(raw??'').normalize('NFC').replace(/\s+/g,' ').trim();return c.length>=2&&c.length<=NAME_MAX&&!/[\u0000-\u001f\u007f<>&"'`[\]]/.test(c)?c:null}
-const API={rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,lifePace,raceBonus,startStone,rollRace,randomName,cleanName};
+const API={PAVILION,rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,lifePace,raceBonus,startStone,rollRace,randomName,cleanName};
 root.HU_CHARACTER=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);
