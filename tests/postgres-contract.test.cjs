@@ -59,6 +59,37 @@ const envelope = async (svc, owner, type, payload, requestId) => ({
 const command = async (svc, owner, id, requestId, type = 'buy', payload = { code: 'HERB-001' }) =>
   svc.command(owner, id, await envelope(svc, owner, type, payload, requestId));
 
+test('bootstrap reads both owner records with one DB checkout and one query', async t => {
+  const { repo, svc } = await makePg(t);
+  const originalConnect = repo.pool.connect.bind(repo.pool);
+  let checkouts = 0, statements = [];
+  repo.pool.connect = async () => {
+    checkouts++;
+    const c = await originalConnect();
+    return { ...c, queryObject: async q => {
+      statements.push(q.text);
+      return c.queryObject(q);
+    } };
+  };
+  const empty = await svc.bootstrap(A);
+  assert.equal(empty.player, null);
+  assert.equal(empty.pavilion.balance, 0);
+  assert.equal(checkouts, 1);
+  assert.equal(statements.length, 1, 'bootstrap without player performs one SELECT');
+
+  const { playerId } = await spawn(svc, A, 'Thiên Sách');
+  await repo.transact(playerId, () => ({ pavilionAward: 8 }));
+  checkouts = 0;
+  statements = [];
+  const snapshot = await svc.bootstrap(A);
+  assert.equal(snapshot.player.id, playerId);
+  assert.equal(snapshot.pavilion.balance, 8);
+  assert.equal(snapshot.snapshot.pavilion.balance, 8);
+  assert.equal(checkouts, 1, 'one pool checkout');
+  assert.equal(statements.length, 1, 'one SQL statement');
+  assert.match(statements[0], /row_to_json/);
+});
+
 test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/authenticated', async t => {
   const { db } = await makePg(t);
   const result = await db.query(`SELECT n.nspname, c.relname, c.relrowsecurity
