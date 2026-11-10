@@ -9,6 +9,8 @@
     "not_found_handling": "404-page"
   },
   "build": {
-    "command": "npm run build:min"
+    // Workers Builds có thể bỏ devDependencies (NODE_ENV=production).
+    // Minify cần esbuild, nên cài từ lockfile với --include=dev ngay trước build.
+    "command": "npm ci --include=dev && npm run build:min"
   }
 }
