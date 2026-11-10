@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
 
 CASES = [
@@ -24,6 +25,38 @@ CASES = [
     ("craft-khi", "craft", "khi"),
     ("craft-dien", "craft", "dien"),
 ]
+
+def mock_ci_config(page, url):
+    """Only in Playwright: use this page's CI server for game API calls.
+
+    Cloudflare/Supabase production config is not changed, fetched, or invoked.
+    Registration happens before page.goto for both before and after contexts.
+    """
+    parsed = urlsplit(url)
+    assert parsed.scheme == 'http' and parsed.hostname == '127.0.0.1' and parsed.port in (8000, 8001), (
+        f"Refusing non-local test target: {url}"
+    )
+    api = f"{parsed.scheme}://{parsed.netloc}/api/v1"
+    config = (
+        "(function (root) { 'use strict';"
+        f"root.HU_API_BASE = {json.dumps(api)};"
+        "root.HU_AUTH_MODE = 'direct';"
+        "})(typeof window !== 'undefined' ? window : globalThis);"
+    )
+    page.route('**/client/config.js', lambda route: route.fulfill(
+        status=200,
+        headers={'Content-Type': 'application/javascript; charset=utf-8',
+                 'Cache-Control': 'no-store'},
+        body=config
+    ))
+
+
+def is_game_api(url):
+    path = urlsplit(url).path
+    return any(path == prefix or path.startswith(prefix + '/') for prefix in (
+        '/functions/v1/api', '/api/v1'
+    ))
+
 
 def mock_supabase(page, name):
     # Browser-only CI fixture. External Supabase Auth is never called with real accounts.
@@ -51,6 +84,11 @@ def mock_supabase(page, name):
         else:
             return route.fulfill(status=404, headers=headers, body='{"message":"Unexpected test request"}')
         route.fulfill(status=200, headers=headers, body=json.dumps(body))
+    # Intercept all project Auth/consent traffic; never access real Supabase.
+    page.route('**/*.supabase.co/**', lambda route: route.fulfill(
+        status=404, content_type='application/json',
+        body='{"message":"Unexpected Supabase host in browser-proof"}'
+    ))
     page.route('https://rvrwfeblishqadkpzspb.supabase.co/**', respond)
 
 
@@ -73,7 +111,16 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             page.locator("#authPassword").fill("ci-test-password-1234")
             page.locator("#authSubmit").click()
             page.locator("#welcome").wait_for(state="visible", timeout=20000)
-    page.locator("#nameInput").fill("Vân " + name.removeprefix("after_") if name and name.startswith("after_") else "Vân Tiêu")
+    # Every viewport creates a different character in the shared in-memory CI server.
+    # Avoid NAME_TAKEN (409) without changing gameplay name uniqueness.
+    viewport = name.split("_", 1)[-1] if name else ""
+    test_names = {
+        "1366x768": "Vân Tiêu",
+        "390x844": "Vân Lam",
+        "360x640": "Vân Hàn",
+        "844x390": "Vân Phong",
+    }
+    page.locator("#nameInput").fill(test_names.get(viewport, "Vân Tiêu"))
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
     page.locator("#startNew").click()
@@ -149,6 +196,15 @@ def verify_log_float(page, folder, name, outcome):
 
 def verify_bubble(page, folder, name, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
+    # Limited release intentionally has no real chat service. The proof must
+    # ensure chat stays inaccessible, not wait 15s for a deliberately hidden UI.
+    if page.evaluate("() => window.HU_UI?.release?.chat === false"):
+        assert trigger.is_hidden(), "Chat bubble is visible in the limited release"
+        assert page.locator("#chatBubblePanel").is_hidden(), "Chat panel is visible"
+        menu_entry = page.locator('#menu [data-window="chat"]')
+        assert not menu_entry.count() or menu_entry.first.is_hidden(), "Chat menu is visible"
+        outcome["chat_hidden_for_release"] = True
+        return
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
     assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
@@ -173,9 +229,20 @@ def run_set(browser, folder, name, url, width, height, mobile):
         device_scale_factor=1, reduced_motion="reduce",
     )
     page = ctx.new_page()
-    if name.startswith('after_'):
-        mock_supabase(page, name)
+    mock_ci_config(page, url)
+    mock_supabase(page, name)  # identical auth/consent fixture for before and after
     errors = []
+    game_api_responses = []
+    game_api_failures = []
+    def inspect_game_api_response(res):
+        if not is_game_api(res.url):
+            return
+        game_api_responses.append(f"{res.status} {res.url}")
+        if res.status == 404 or res.status >= 500:
+            game_api_failures.append(
+                f"Unexpected game API HTTP {res.status}: {res.request.method} {res.url}"
+            )
+    page.on("response", inspect_game_api_response)
     expected_auth_404 = []
     http_404_urls = []
     page.on("response", lambda res: http_404_urls.append(res.url) if res.status == 404 else None)
@@ -183,9 +250,14 @@ def run_set(browser, folder, name, url, width, height, mobile):
             if res.status == 404 and res.url.endswith("/api/auth/session") else None)
     page.on("pageerror", lambda error: errors.append("pageerror: " + str(error)))
     page.on("console", lambda msg: errors.append("console.error: " + msg.text) if msg.type == "error" and "501" not in msg.text else None)
-    outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors, "http_404_urls": http_404_urls}
+    outcome = {"url": url, "viewport": f"{width}x{height}", "screenshots": [], "errors": errors, "http_404_urls": http_404_urls,
+               "game_api_responses": game_api_responses, "game_api_failures": game_api_failures,
+               "gameplay_reached": False}
     try:
         enter_game(page, url, folder, name, outcome)
+        assert page.locator('#game').is_visible(), f"{name}: game main screen #game is not visible"
+        assert page.locator('#menu button').first.is_visible(), f"{name}: game main menu not visible"
+        outcome["gameplay_reached"] = True
         verify_bubble(page, folder, name, outcome)
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
@@ -243,6 +315,9 @@ def run_set(browser, folder, name, url, width, height, mobile):
         except Exception:
             pass
     finally:
+        if game_api_failures:
+            outcome['exception'] = (outcome.get('exception', '') +
+                '\n' + '; '.join(game_api_failures)).strip()
         # Python http.server không có auth API; bỏ đúng một 404 đã được xác nhận
         # qua response của /api/auth/session, không bỏ qua lỗi file game khác.
         if expected_auth_404:
@@ -270,6 +345,7 @@ def main():
         # Smoke test file:// không dùng mạng, chỉ kiểm tra nạp script/DOM.
         file_ctx = browser.new_context()
         file_page = file_ctx.new_page()
+        mock_supabase(file_page, 'file_smoke')  # forbid real Supabase even in file:// smoke
         file_errors = []
         file_page.on("pageerror", lambda e: file_errors.append(str(e)))
         try:
@@ -283,7 +359,10 @@ def main():
         file_ctx.close()
         browser.close()
     (folder / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    failures = [r for r in report if r.get("exception") or r.get("file_error") or r.get("errors") or (r.get("chat_toggle") is False)]
+    failures = [r for r in report if r.get("exception") or r.get("file_error") or
+                r.get("errors") or r.get("game_api_failures") or
+                (r.get("url") and not r.get("gameplay_reached")) or
+                (r.get("chat_toggle") is False)]
     print(json.dumps({"screenshots": sum(len(r.get("screenshots", [])) for r in report), "failures": failures}, ensure_ascii=False, indent=2))
     if failures:
         raise SystemExit(1)

@@ -1,5 +1,6 @@
 # Sách nghề và sổ công thức — bản thiết kế chờ duyệt
 
+> Trạng thái: Đề xuất.
 > **TÌNH TRẠNG: ĐÃ DUYỆT 12 QUYỂN, CHƯA TRIỂN KHAI GAMEPLAY.** Các quyết định chưa chốt được tổng hợp trong **[Sổ quyết định](gameplay-decisions.md)**. Chủ dự án chốt **sách công thức riêng cho từng nghề** và cấu trúc **4 nghề × 3 giới = 12 quyển**. Tên gọi, phân bố chính xác mã công thức, điều kiện học, giá/nguồn nhận, bồi hoàn bản lưu cũ và migration vẫn là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/inventory.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/items.js` trên `main` ngày 10/11/2026.
 
 ## 1. Bốn loại sách nghề

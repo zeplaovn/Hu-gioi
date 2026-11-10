@@ -3,7 +3,7 @@
    Mọi request ghi khóa một hàng game.players FOR UPDATE. Cổng Node dùng SQLite adapter.
    Không bao giờ gửi SQL/state/seed vào log. */
 'use strict';
-const { GameError } = require('../errors.js');
+const { GameError, mapPostgresError } = require('../errors.js');
 const { PlayerRepository } = require('./player-repository.js');
 
 const DAY = 86400000;
@@ -69,12 +69,20 @@ class PostgresPlayers extends PlayerRepository {
     this.lockTimeoutMs = lockTimeoutMs;
     this.clock = clock;
     this.cleanedAt = new Map();
+    this.cleanupRetryAfter = new Map();
   }
 
   async connection(work) {
-    const client = await this.pool.connect();
-    try { return await work(client); }
-    finally { client.release(); }
+    let client;
+    try {
+      client = await this.pool.connect();
+      return await work(client);
+    } catch (err) {
+      // Bao gồm cả lỗi connect và query/transaction; rollback chạy trước khi map.
+      throw mapPostgresError(err);
+    } finally {
+      if (client) client.release();
+    }
   }
   async transaction(work) {
     return this.connection(async client => {
@@ -96,15 +104,31 @@ class PostgresPlayers extends PlayerRepository {
     await exec(c, 'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [ownerId]);
   }
   async sweep(c, ownerId, now, playerId = null) {
-    // Chỉ cleanup cơ hội (không cần pg_cron) và theo tài khoản đang thao tác.
+    // Best-effort, giao dịch con an toàn: lỗi DELETE không được làm hỏng
+    // transaction gameplay. Không chạy vòng lặp vượt statement_timeout.
     const last = this.cleanedAt.get(ownerId) || 0;
-    if (now - last < 10 * 60000) return;
-    if (playerId) await exec(c, `DELETE FROM game.player_receipts WHERE ctid IN (
-      SELECT ctid FROM game.player_receipts WHERE player_id = $1 AND expires_at <= $2 LIMIT 16
-    )`, [playerId, big(now)]);
-    await exec(c, `DELETE FROM game.creation_tickets WHERE ctid IN (
-      SELECT ctid FROM game.creation_tickets WHERE owner_id = $1 AND expires_at <= $2 LIMIT 16
-    )`, [ownerId, big(now - 7 * DAY)]);
+    if (now - last < 10 * 60000 || now < (this.cleanupRetryAfter.get(ownerId) || 0)) return;
+    await exec(c, 'SAVEPOINT hu_cleanup');
+    try {
+      if (playerId) await exec(c,
+        'DELETE FROM game.player_receipts WHERE player_id = $1 AND expires_at <= $2',
+        [playerId, big(now)]);
+      await exec(c,
+        'DELETE FROM game.creation_tickets WHERE owner_id = $1 AND expires_at <= $2',
+        [ownerId, big(now - 7 * DAY)]);
+    } catch {
+      // PostgreSQL hủy transaction khi statement lỗi: bắt buộc ROLLBACK TO
+      // trước khi chạy tiếp. Lỗi rollback/release phải nổi để không COMMIT lỗi.
+      await exec(c, 'ROLLBACK TO SAVEPOINT hu_cleanup');
+      // Không để mỗi request gameplay trả giá cho DELETE chậm/lỗi.
+      this.cleanupRetryAfter.set(ownerId, now + 60000);
+      if (this.cleanupRetryAfter.size > 1024)
+        this.cleanupRetryAfter.delete(this.cleanupRetryAfter.keys().next().value);
+      return; // chỉ thử lại sau cooldown 60 giây
+    } finally {
+      await exec(c, 'RELEASE SAVEPOINT hu_cleanup');
+    }
+    this.cleanupRetryAfter.delete(ownerId);
     this.cleanedAt.set(ownerId, now);
     if (this.cleanedAt.size > 1024) this.cleanedAt.delete(this.cleanedAt.keys().next().value);
   }

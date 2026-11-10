@@ -4,9 +4,10 @@
  * Không tin bất kỳ thời gian, state, RNG, giá/thưởng hoặc cờ offline từ client. */
 import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
 import { UUID, corsHeaders, routeOf, parseBody, bearerToken } from './http.ts';
+import { createContentionCounter } from './contention-counter.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
-  createJwtVerifier, createAccountAdmin, CONTENT_VERSION
+  createJwtVerifier, createAccountAdmin, shouldLogApiError, CONTENT_VERSION
 } from './game.bundle.mjs';
 
 const BASE = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
@@ -77,6 +78,8 @@ function logOperational(entry: Record<string, string | number>): void {
   if (now - logWindowAt >= 10000) { logWindowAt = now; logWindowCount = 0; }
   if (logWindowCount++ < 80) console.error(JSON.stringify(entry));
 }
+const countContention = createContentionCounter(count =>
+  logOperational({ event: 'pg_contention_minute', count }));
 async function requireConsent(userId: string): Promise<void> {
   const now = Date.now(), until = consents.get(userId) || 0;
   if (until > now) return;
@@ -158,8 +161,9 @@ export async function handleApi(req: Request): Promise<Response> {
     return jsonReply(req, status, result, requestId,
       route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
   } catch (err) {
+    countContention(err);
     const { status, body } = toEnvelope(err, requestId);
-    if (status >= 500) logOperational({
+    if (shouldLogApiError(err, status)) logOperational({
       event: 'api_error', requestId, code: body.error.code, status,
       durationMs: Math.round(performance.now() - since)
     }); // không token, state, SQL hoặc password; đã giới hạn log/isolate

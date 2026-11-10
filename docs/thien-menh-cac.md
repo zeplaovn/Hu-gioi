@@ -1,5 +1,6 @@
 # Thiên Mệnh Các — Thiên Tinh xuyên kiếp (protocol v2, state V9)
 
+> Trạng thái: Hiện hành.
 ## Luật đã triển khai
 
 Đây là **phần thưởng theo tài khoản**, không phải hồi sinh nhân vật. Đạo thân vẫn chỉ có một mạng; khi tọa hóa, chỉ cho phép chủ tài khoản gọi `POST /api/v1/players/{id}/reset-after-death`, rồi gieo ticket và tạo đạo thân mới. Reset không thu phí. Dữ liệu Thiên Mệnh Các nằm ở `pavilion_accounts`, tách biệt bảng `players`; xóa đạo thân không xóa kho, còn xóa dữ liệu tài khoản thì xóa luôn kho và receipt.

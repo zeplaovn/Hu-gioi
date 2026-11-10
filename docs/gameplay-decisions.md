@@ -1,5 +1,6 @@
 # Sổ quyết định gameplay trước phát hành — Hư Giới · Tiên Lộ Vô Tận
 
+> Trạng thái: Đề xuất.
 > **Cần chủ dự án duyệt; chưa phải lệnh triển khai.** File này là **đầu mối duy nhất để ghi lựa chọn** về các luật/nội dung còn thiếu. Bản kiểm kê đầy đủ ở [gameplay-audit.md](gameplay-audit.md); thiết kế sách nghề ở [profession-manuals-proposal.md](profession-manuals-proposal.md).
 >
 > **Đối chiếu repository ngày 10/11/2026**, `main` commit `132158529d221a1241aef9d8ab52beb671053926`. **PR #31 Thiên Mệnh Các và PR #32 kiểm kê đều đã MERGE** — một số ghi chú trước đó nói “chưa merge” đã lỗi thời; mục này cập nhật theo code mới, không giả định source V8/51 lệnh.

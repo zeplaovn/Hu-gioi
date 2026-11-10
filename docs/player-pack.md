@@ -1,5 +1,6 @@
 # Bộ nhân vật bán hiện thực — Hư Giới
 
+> Trạng thái: Hiện hành.
 Nguồn ảnh: `player.zip` do chủ repo cung cấp. Các khung gốc không bị thay đổi nội dung, chỉ chuẩn hóa ảnh 512×512 và nén WebP có alpha. Male death có khung gốc 526×564, được co đúng tỉ lệ và canh chân ở đáy khung.
 
 ## Thiết kế FE
