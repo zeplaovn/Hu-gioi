@@ -86,8 +86,8 @@ class PlayerService {
     this.clock = clock;
     this.contentVersion = contentVersion;
     this.cfg = { ...DEFAULTS, ...config };
-    if (this.cfg.onlineGraceMs < this.cfg.nextSyncInMs * 2)
-      throw Error('onlineGraceMs phải >= 2 × nextSyncInMs.');
+    if (this.cfg.onlineGraceMs < this.cfg.nextSyncInMs * 3)
+      throw Error('onlineGraceMs phải >= 3 × nextSyncInMs.');
     this.onError = onError;
   }
 

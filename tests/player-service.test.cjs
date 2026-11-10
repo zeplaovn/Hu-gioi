@@ -113,7 +113,7 @@ test('lệnh sai: envelope, payload thừa, loại lệnh lạ, luật từ ch�
 });
 
 test('sync: offline không cộng gì; heartbeat online vẫn tính đúng thời gian máy chủ', () => {
-  const { svc, clock } = setup({ onlineGraceMs: 15000 });
+  const { svc, clock } = setup({ onlineGraceMs: 15000, nextSyncInMs: 5000 });
   const { playerId: id } = spawn(svc);
   clock.t += 5000;
   const online = svc.sync('owner-a', id);
