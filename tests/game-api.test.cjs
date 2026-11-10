@@ -61,11 +61,11 @@ test('JWT ES256 qua JWKS: xoay khóa, kid lạ và alg bị ép đều bị từ
   await assert.rejects(v.verify(signHs(p(), { secret: 'k1' })), { code: 'UNAUTHENTICATED' }); // không cho đổi sang HS256 khi chưa cấu hình secret
 });
 
-async function boot(t, { allowedOrigins = [], limiter, legacy = null, clientIp } = {}) {
+async function boot(t, { allowedOrigins = [], limiter, legacy = null, clientIp, loginGateway = null } = {}) {
   const repo = new SqlitePlayers(':memory:');
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
   const api = createGameApi({ service, resolvePrincipal: createPrincipalResolver({ jwt: createJwtVerifier({ secret: SECRET }), legacy }), allowedOrigins, limiter, clientIp });
-  const server = http.createServer(createRouter(null, legacy, api));
+  const server = http.createServer(createRouter(null, legacy, api, loginGateway));
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   t.after(async () => { await new Promise(r => server.close(r)); repo.close(); });
   const port = server.address().port;
@@ -196,9 +196,11 @@ test('API: cookie thử nghiệm đi được tới /api/v1 và mọi yêu cầu
   assert.equal((await call('POST', '/api/v1/creation/preview', { headers: { cookie } })).status, 201);
 });
 
-test('health báo trạng thái gameplay', async t => {
-  const { call } = await boot(t);
-  assert.equal((await call('GET', '/api/health')).data.gameplay, true);
+test('health báo trạng thái gameplay và gateway Supabase đang cấu hình', async t => {
+  const { call } = await boot(t, { loginGateway: { handle() {} } });
+  const health = (await call('GET', '/api/health')).data;
+  assert.equal(health.gameplay, true);
+  assert.equal(health.auth, true);
 });
 
 test('API: tài khoản tự xuất và tự xóa dữ liệu gameplay, không lộ seed, cô lập theo chủ', async t => {

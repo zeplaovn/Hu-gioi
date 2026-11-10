@@ -18,7 +18,7 @@ function createRouter(routes = null, auth = null, gameApi = null, loginGateway =
   // Tài khoản trình duyệt sử dụng Supabase. Chỉ bật legacy auth khi test
   // hoặc chủ động truyền dịch vụ vào router; không phơi API demo trên production.
   const handlers = routes || {
-    'GET /api/health': () => ({ ok: true, service: 'hu-gioi', gameplay: !!gameApi, auth: !!auth, supabaseClient: true }),
+    'GET /api/health': () => ({ ok: true, service: 'hu-gioi', gameplay: !!gameApi, auth: !!auth || !!loginGateway, supabaseClient: true }),
     ...(auth ? {
       'GET /api/auth/session': req => ({ account: auth.session(req) }),
       'POST /api/auth/signup': async (req, res) => ({ account: await auth.signup(req, res) }),

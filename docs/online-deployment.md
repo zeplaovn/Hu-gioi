@@ -39,6 +39,18 @@ HU_AUTH_TRUSTED_PROXY_IPS=<IP-proxy-nhin-tu-container>
 
 Không bật `HU_LEGACY_AUTH` trên production. Nếu JWT Supabase còn ký HS256, server có thể yêu cầu `SUPABASE_JWT_SECRET` do host giữ bí mật; tuyệt đối không đưa secret này lên Git/frontend.
 
+## Kiểm tra sau deploy
+
+**Chỉ chạy trên máy chủ triển khai thật** sau khi cấu hình `.env` (bao gồm `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `HU_AUTH_TRUSTED_PROXY_IPS`) và reverse proxy HTTPS. **Các bước sau chưa được chạy trong CI**; CI chỉ kiểm tra mã nguồn, test tự động và bản build.
+
+1. Dựng và khởi động đúng một Node container: `docker compose build && docker compose up -d`. Xác định container bằng `docker compose ps -q hugioi`; chạy `docker inspect --format '{{.State.Health.Status}}' <container>` và xác nhận kết quả `healthy`.
+2. Kiểm tra HTTPS health endpoint: `curl -s https://<domain>/api/health`. JSON phải có `"gameplay":true` và `"auth":true`; HTTP 200 một mình **không đủ** để xác nhận đăng nhập/gameplay đã bật.
+3. Kiểm tra headers sau proxy: `curl -sI https://<domain>/` phải có `Content-Security-Policy` và `Cache-Control: no-cache`. `curl -sI https://<domain>/media/audio/hu_gioi.mp3` phải có `Cache-Control: public, max-age=86400, must-revalidate`, không xuất hiện hai header Cache-Control.
+4. Mở **hai tài khoản từ hai IP client khác nhau qua cùng proxy tin cậy**. Kiểm tra quota game API và đăng nhập độc lập theo IP; xác nhận proxy **ghi đè** `X-Forwarded-For` và `HU_AUTH_TRUSTED_PROXY_IPS` khớp IP nguồn proxy nhìn từ container.
+5. Giữ tab game hiện trong **3 phút idle**: không có toast lỗi đồng bộ/HTTP 429, heartbeat duy trì nhịp khoảng 5 giây, **tu vi tăng đều** theo trạng thái từ server (tab ẩn không tăng).
+
+Nếu bất kỳ bước nào sai, chưa coi triển khai production đạt yêu cầu; kiểm tra cấu hình Supabase, proxy, volume SQLite và log container trước khi phát hành.
+
 ## Kiểm tra riêng gameplay V9
 
 - Tạo nhân vật với một Thiên mệnh; xác nhận thiếu hoặc sửa Thiên mệnh trong request sẽ bị từ chối. Tài khoản cũ không tự mang điểm/ngọc từ cơ chế trọng sinh.
