@@ -2,9 +2,12 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 const H = require('../engine/game.js');
 const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
-const { PlayerService, seededRng } = require('../server/services/player-service.js');
+const { PlayerService, seededRng, ERASE_CONFIRMATION } = require('../server/services/player-service.js');
 
 const T0 = 1_800_000_000_000;
 function setup() {
@@ -149,4 +152,38 @@ test('tạo kiếp mới miễn phí: giữ số dư, cấp vĩnh viễn, kho b�
     assert.equal(second.pavilion.totalEarned, account.totalEarned + 5);
     assert.equal(second.pavilion.balance, account.balance + 5);
   } finally { repo.close(); }
+});
+
+test('kho tài khoản bền vững khi đóng/mở SQLite và bị xóa đúng quyền dữ liệu', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-pavilion-'));
+  const dbFile = path.join(dir, 'game.sqlite');
+  try {
+    const firstRepo = new SqlitePlayers(dbFile);
+    const service1 = new PlayerService({ repository: firstRepo, clock: () => T0, contentVersion: 'test' });
+    const id = spawn(service1, 'account-persist', 'Thạch Đạo Nhân').playerId;
+    addPoints(firstRepo, id, 80);
+    buy(service1, 'account-persist', 'persist-0001', 'upgrade', 'ngoTinh');
+    buy(service1, 'account-persist', 'persist-0002', 'relic', 'tuiLinhThach');
+    const expected = service1.bootstrap('account-persist').pavilion;
+    firstRepo.close();
+
+    const secondRepo = new SqlitePlayers(dbFile);
+    const service2 = new PlayerService({ repository: secondRepo, clock: () => T0, contentVersion: 'test' });
+    assert.deepEqual(service2.bootstrap('account-persist').pavilion, expected, 'qua process vẫn giữ số dư và kho');
+    const replay = service2.pavilionPurchase('account-persist', {
+      requestId: 'persist-0001', expectedVersion: 0, kind: 'upgrade', key: 'ngoTinh'
+    });
+    assert.equal(replay.replayed, true, 'receipt mua tồn tại sau khởi động lại');
+    assert.equal(replay.pavilion.balance, expected.balance);
+    const exported = service2.exportData('account-persist');
+    assert.equal(exported.pavilion.balance, expected.balance);
+    assert.equal(exported.pavilion.upgrades.ngoTinh, 1);
+    const erased = service2.eraseData('account-persist', { confirm: ERASE_CONFIRMATION });
+    assert.equal(erased.erased, true);
+    assert.equal(service2.bootstrap('account-persist').pavilion.balance, 0);
+    assert.equal(service2.bootstrap('account-persist').player, null);
+    secondRepo.close();
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
