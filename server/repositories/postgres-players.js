@@ -80,8 +80,8 @@ class PostgresPlayers extends PlayerRepository {
     return this.connection(async client => {
       await exec(client, 'BEGIN');
       try {
-        await exec(client, 'SET LOCAL statement_timeout = $1', [this.statementTimeoutMs]);
-        await exec(client, 'SET LOCAL lock_timeout = $1', [this.lockTimeoutMs]);
+        await exec(client, "SELECT set_config('statement_timeout', $1, true)", [String(this.statementTimeoutMs) + 'ms']);
+        await exec(client, "SELECT set_config('lock_timeout', $1, true)", [String(this.lockTimeoutMs) + 'ms']);
         const result = await work(client);
         await exec(client, 'COMMIT');
         return result;
