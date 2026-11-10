@@ -14,6 +14,7 @@
 | Tài sản xuyên kiếp | [Thiên Mệnh Các](thien-menh-cac.md) |
 | Dữ liệu design hiện tích hợp | [Tích hợp thiết kế](design-integration.md) |
 | Đồ họa nhân vật | [Bộ nhân vật](player-pack.md) |
+| Đồ họa nghề phụ và kinh mạch (tùy chọn) | [Gói asset Đan Các · Lò Rèn · Kinh Mạch Đồ](asset-pack-crafting-meridians.md) |
 | Việc chủ dự án cần làm | [Checklist](release-checklist.md) |
 | Mục lục | [Bản đồ tài liệu](index.md) |
 
