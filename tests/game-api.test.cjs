@@ -279,22 +279,22 @@ test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý c
   assert.equal(out.data.accountDeleted, true);
   assert.equal(out.data.players, 1);
   assert.deepEqual(deleted, [ID_A]);
-  assert.equal(repo.getByOwner(ID_A), null);
+  assert.equal(await repo.getByOwner(ID_A), null);
 });
 
 test('xóa tài khoản: chưa cấu hình khóa quản trị thì từ chối và KHÔNG xóa dữ liệu; Supabase lỗi thì báo thử lại', async () => {
   const repo = new SqlitePlayers(':memory:');
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  const t1 = service.previewCreation(ID_A).ticketId;
-  service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
+  const t1 = (await service.previewCreation(ID_A)).ticketId;
+  await service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
   await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, null), { code: 'NOT_IMPLEMENTED' });
-  assert.ok(repo.getByOwner(ID_A));
+  assert.ok(await repo.getByOwner(ID_A));
   const { createAccountAdmin } = require('../server/auth/account-admin.js');
   const calls = [];
   const mk = status => createAccountAdmin({ url: 'https://abc.supabase.co', secretKey: 'sb_secret_' + 'x'.repeat(30),
     fetchImpl: async (url, init) => { calls.push({ url, init }); return { ok: status < 300, status }; } });
   await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, mk(500)), { code: 'MAINTENANCE' });
-  assert.equal(repo.getByOwner(ID_A), null); // dữ liệu game đã xóa; gọi lại là idempotent
+  assert.equal(await repo.getByOwner(ID_A), null); // dữ liệu game đã xóa; gọi lại là idempotent
   assert.equal((await service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, mk(404))).accountDeleted, true);
   assert.equal(calls[0].url, 'https://abc.supabase.co/auth/v1/admin/users/' + ID_A);
   assert.equal(calls[0].init.method, 'DELETE');
@@ -309,7 +309,7 @@ test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N
   const file = path.join(dir, 'game.sqlite');
   const repo = new SqlitePlayers(file);
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  service.createPlayer(ID_A, { ticketId: service.previewCreation(ID_A).ticketId, name: 'Thanh Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
+  await service.createPlayer(ID_A, { ticketId: (await service.previewCreation(ID_A)).ticketId, name: 'Thanh Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
   const results = [1, 2, 3].map(i => backup({ db: file, keep: 2, now: new Date(Date.UTC(2026, 10, 9, 0, 0, i)) }));
   const kept = fs.readdirSync(path.join(dir, 'backups')).sort();
   assert.equal(kept.length, 2);
