@@ -1,5 +1,6 @@
 # Prompt giao việc: viết cốt truyện cho Hư Giới
 
+> Trạng thái: Đề xuất.
 > Dán toàn bộ nội dung bên dưới (từ "VAI TRÒ") cho AI khác. AI cần có quyền đọc repo `zeplaovn/Hu-gioi` (nhánh `main`).
 
 ---
