@@ -61,10 +61,10 @@ Deno.test('HTTP: JSON lỗi, sai content-type, >64KB, không tin client payload'
 Deno.test('Bearer parser accepts HTTP auth scheme casing and OWS, never api keys or duplicate headers', () => {
   expect(bearerToken('Bearer aaa.bbb-ccc.ddd') === 'aaa.bbb-ccc.ddd', 'normal JWT');
   expect(bearerToken('bearer  aaa.bbb.ccc') === 'aaa.bbb.ccc', 'HTTP case-insensitive scheme');
-  expect(bearerToken(' Bearer\\taaa.bbb.ccc\\t') === 'aaa.bbb.ccc', 'HTTP optional whitespace');
+  expect(bearerToken(' Bearer\taaa.bbb.ccc\t') === 'aaa.bbb.ccc', 'HTTP optional whitespace');
   expect(bearerToken('Bearer aaa.bbb=.ccc=') === 'aaa.bbb=.ccc=', 'valid base64url padding');
-  for (const raw of [null, '', 'Bearer', 'Basic abc', 'Bearer sb_publishable_key', 'Bearer aaa.bbb.ccc, Bearer other', 'Bearer abc\\ndef']) {
+  for (const raw of [null, '', 'Bearer', 'Basic abc', 'Bearer sb_publishable_key', 'Bearer aaa.bbb.ccc, Bearer other', 'Bearer abc\ndef']) {
     const parsed = bearerToken(raw);
-    expect(parsed === null || raw === 'Bearer sb_publishable_key', 'reject absent/malformed bearer');
+    expect(parsed === null, 'reject absent/malformed bearer');
   }
 });

@@ -25,7 +25,7 @@ export function corsHeaders(req: Request, allowedOrigins: ReadonlySet<string>): 
  * Scheme Bearer không phân biệt chữ hoa/thường theo chuẩn HTTP, cho phép OWS. */
 export function bearerToken(value: string | null): string | null {
   if (!value) return null;
-  const m = /^[ \\t]*Bearer[ \\t]+([A-Za-z0-9._=-]+)[ \\t]*$/i.exec(value);
+  const m = /^[ \t]*Bearer[ \t]+([A-Za-z0-9_-]+={0,2}(?:\.[A-Za-z0-9_-]+={0,2}){2})[ \t]*$/i.exec(value);
   return m ? m[1] : null;
 }
 

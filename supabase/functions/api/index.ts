@@ -107,7 +107,7 @@ async function authenticate(req: Request, route: string): Promise<string> {
     logOperational({
       event: 'auth_header_rejected',
       headerPresent: header ? 1 : 0,
-      bearerScheme: /^\\s*Bearer\\b/i.test(header) ? 1 : 0,
+      bearerScheme: /^\s*Bearer\b/i.test(header) ? 1 : 0,
       lengthClass: !header ? 'empty' : header.length < 32 ? 'short' : header.length <= 4096 ? 'normal' : 'long',
       apikeyPresent: req.headers.has('apikey') ? 1 : 0
     });
