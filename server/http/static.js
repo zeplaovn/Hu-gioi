@@ -68,7 +68,7 @@ function serveStatic(req, res) {
       ...headers,
       'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream',
       'Content-Length': stat.size,
-      'Cache-Control': /^\/media\/audio\//i.test(pathname) ? 'public, max-age=31536000, immutable' : 'no-store'
+      'Cache-Control': /^\/media\//i.test(pathname) ? 'public, max-age=604800' : 'no-store'
     });
     if (req.method === 'HEAD') res.end(); else fs.createReadStream(file).pipe(res);
   });
