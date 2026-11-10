@@ -1,4 +1,4 @@
-/* Tạo dist/ chỉ gồm file game cần chạy trên trình duyệt, để đưa lên host (Cloudflare Pages, Netlify, Vercel, nginx...).
+/* Tạo dist/ chỉ gồm file game cần chạy trên trình duyệt để kiểm tra bản build:min. Production phục vụ trực tiếp bằng Node sau reverse proxy HTTPS.
    Không đưa lên host: server/, tests/, docs/, tools/, demo/, .git, .github, README, package.json, bảng thiết kế .xlsx/.csv.
    Chạy:  node tools/build-dist.cjs            (sao chép nguyên văn)
           node tools/build-dist.cjs --minify   (xóa chú thích và nén; cần esbuild: npm i -g esbuild hoặc NODE_PATH trỏ tới nó)
@@ -54,6 +54,6 @@ for (const start of roots) {
     copied++;
   }
 }
-/* _headers cần nằm ở thư mục xuất bản để Cloudflare Pages/Netlify áp CSP và các header bảo mật. */
+/* Giữ _headers trong bản build để kiểm tra chính sách cache/bảo mật, không dùng dist/ làm hosting riêng. */
 fs.copyFileSync(path.join(ROOT, '_headers'), path.join(OUT, '_headers'));
 console.log(`dist/: ${copied} tệp (${minified} đã nén), bỏ qua ${skipped} tệp không dành cho trình duyệt.`);

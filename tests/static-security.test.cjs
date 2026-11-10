@@ -81,13 +81,16 @@ test('phương thức ghi bị từ chối', async () => {
   for (const method of ['POST', 'PUT', 'DELETE', 'PATCH']) assert.equal((await get('/index.html', method)).status, 405, method);
 });
 
-test('wrangler.jsonc chỉ phục vụ dist/ và dist có _headers sau khi build', () => {
+test('chỉ triển khai Node, không còn wrangler; build:min vẫn loại mã máy chủ', () => {
   const { readFileSync, existsSync } = require('node:fs');
   const { join } = require('node:path');
   const { execFileSync } = require('node:child_process');
   const root = join(__dirname, '..');
-  const conf = readFileSync(join(root, 'wrangler.jsonc'), 'utf8').replace(/^\s*\/\/.*$/gm, '');
-  assert.equal(JSON.parse(conf).assets.directory, './dist');
+  assert.equal(existsSync(join(root, 'wrangler.jsonc')), false);
+  const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+  assert.equal('wrangler' in pkg.devDependencies, false);
+  assert.equal('deploy' in pkg.scripts, false);
+  assert.equal('preview' in pkg.scripts, false);
   execFileSync(process.execPath, [join(root, 'tools/build-dist.cjs')], { stdio: 'pipe' });
   assert.ok(existsSync(join(root, 'dist/_headers')));
   assert.ok(existsSync(join(root, 'dist/index.html')));

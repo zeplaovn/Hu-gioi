@@ -6,20 +6,7 @@
   const H = root.HU_GAME, C = root.HU_COMMANDS;
   const API = '/api/v1';
 
-  function endpoint() {
-    const configured = String(root.HU_API_ORIGIN || '').replace(/\/+$/, '');
-    if (!configured) {
-      if (!/^https?:$/.test(root.location?.protocol || '')) throw Error('Chơi online cần HTTP/HTTPS.');
-      return '';
-    }
-    const parsed = new URL(configured);
-    if (parsed.protocol !== 'https:' &&
-      !(parsed.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(parsed.hostname)))
-      throw Error('Máy chủ API cần HTTPS.');
-    if (parsed.username || parsed.password || parsed.search || parsed.hash || parsed.pathname !== '/')
-      throw Error('HU_API_ORIGIN chỉ được là origin của máy chủ.');
-    return parsed.origin;
-  }
+  function endpoint() { return ''; }
 
   class RemoteSession {
     constructor({ fetchImpl = (...args) => root.fetch(...args), auth = root.HU_SUPABASE, clock = Date.now } = {}) {
