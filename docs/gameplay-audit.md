@@ -2,6 +2,8 @@
 
 > **Trạng thái: CHỜ DUYỆT THIẾT KẾ. Không sửa engine, dữ liệu hay API trong bước này.**
 >
+> **Bổ sung quyết định chủ dự án 10/11/2026:** Khi tạp chất kinh mạch đạt **Z = 100**, nhân vật **bị phế tu vi, trở thành phàm nhân**, **không được tu luyện, không được sử dụng vật phẩm**, và **chỉ tử vong khi thọ nguyên cạn**; **không** tử vong ngay ở mốc Z=100. Chủ dự án còn yêu cầu **sách công thức riêng cho từng nghề**. Xem [đặc tả sách nghề dự thảo](profession-manuals-proposal.md). Chi phí, danh sách công thức từng sách và xử lý thọ nguyên khi bị phế vẫn chờ duyệt; chưa có code.
+>
 > Ngày kiểm kê: **10/11/2026**. Nguồn kiểm kê là `main` ở commit `0668d337399069e534dc4c9e980497c04195effd`; PR [#31 — Thiên Mệnh Các](https://github.com/zeplaovn/Hugioi/pull/31) **chưa merge**, nên được ghi riêng, không tính là tính năng của `main`.
 >
 > Tài liệu đã đối chiếu: `README.md`, `docs/architecture.md`, `docs/engine-contract.md`, `docs/design-integration.md`, `docs/backend-plan.md` (§8–§9), `docs/design-audit.md`, `docs/gameplay-v9.md`, `data/README.md`; các file `engine/rules/*.js`, `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js`, `data/*.js`, `server/services/player-service.js`, `server/http/router.js`, màn UI và test.
@@ -24,13 +26,13 @@
 | **Cảnh giới** | 14 bậc 0–13, `STAGES`, `ZONES` và khóa tính năng | Mục tiêu/nghề/nhiệm vụ cụ thể ở mỗi bậc 5–13 | `Kết Đan` là tên trong code; yêu cầu người thiết kế gọi “Kim Đan” | P0 |
 | **Đột phá / độ kiếp** | Tiểu cảnh giới tự lên; đại cảnh giới bấm tay, `tribulation` và `breakthroughOdds`; có tử vong | Kiểm định độ khó/sink hộ kiếp cuối game, mã lỗi định danh | Độ kiếp thiếu hộ kiếp chết chắc là **luật chủ ý** (`docs/design-audit.md`), không phải lỗi; `main` chưa thưởng Thiên Tinh | P0 |
 | **Linh căn** | Ngũ hành, Dị, quan hệ khắc, xác suất hóa Hỗn Độn sau lôi kiếp; UI mô tả | Kết nối độ tinh khiết và quan hệ mạch vào luật | Quy tắc từ `data/meridians.js` mới dùng **xem trước**; không được nhân chồng tốc tu hai bộ dữ liệu | P0 |
-| **Kinh mạch** | Dữ liệu 12 chính kinh, 8 kỳ kinh, Hỗn Độn Thiên Mạch; preview quan hệ và tạp chất; test dữ liệu | State độ thông/tạp chất, lệnh khai thông/tẩy tủy, tài nguyên, UI và migration | **Chưa là luật engine**. `Z>=100` mô tả tẩu hỏa nhập ma; áp ngay cho người chơi cũ có thể phá cân bằng/giết đột ngột | **P0 — chờ duyệt** |
+| **Kinh mạch** | Dữ liệu 12 chính kinh, 8 kỳ kinh, Hỗn Độn Thiên Mạch; preview quan hệ và tạp chất; test dữ liệu | State độ thông/tạp chất, lệnh khai thông/tẩy tủy, tài nguyên, UI và migration | **ĐÃ CHỐT:** Z đạt 100 → phế tu vi, thành phàm nhân; không tu luyện/dùng vật phẩm; **không chết ngay**, tử vong khi hết thọ nguyên. Chi tiết tuổi thọ, trạng thái không hồi phục và hành động còn được phép chưa duyệt | **P0 — luật tử vong đã chốt, còn thông số** |
 | **Công pháp** | `learn/activate/castManual`, tối đa 3 ô, mastery, hệ số chênh cảnh giới và hiệu ứng bị động/chủ động | Tương hợp/khắc **ngũ hành** định lượng, kiểm theo bậc 5–13 | `CP_MISMATCH` đang áp dụng **chênh cảnh giới**, không chứng minh đã có phạt khác hệ; dữ liệu không định lượng | **P0 — chờ duyệt** |
 | **Pháp bảo** | Trang bị 4 ô; 30 pháp bảo gói thiết kế có chỉ số/hiệu ứng; `activateArtifact` | Kiểm tính đủ các hiệu ứng, hệ số phẩm/ngũ hành/độ hiếm, vật phẩm Tiên Giới | `item_flat_bonus` là fallback ngoài bộ thiết kế; hiệu ứng chỉ có dữ liệu mới được áp | P0/P1 |
-| **Đan dược** | 60 đan toàn game, 25 trong snapshot; `craft/use`, chất lượng, giới hạn đan tu vi mỗi cảnh giới | Độ tinh khiết/tuổi dược tác động **dược lực**; thử nghiệm các sink và item thọ nguyên | `F.herb_price(...years)` ảnh hưởng **giá** một số linh thảo, không chứng minh đã tính vào hiệu lực đan | **P0 — chờ duyệt** |
-| **Luyện khí** | `forge`, vật liệu, bí tịch `BT-900`, 30 công thức rèn mới | Định lượng hệ số phù hợp pháp bảo, bổ sung công thức/đích đến cao cảnh | Công thức ngoài thiết kế dùng nhánh dự phòng; không đồng nhất điều kiện | P0/P1 |
-| **Chế phù** | `forge` nhận `TAL`, `BT-901`, `TAL-PL-001`; phù thường có trong catalog | Chuẩn hóa nguyên liệu/mực, phẩm chất/xác suất theo tất cả cấp | Snapshot thiết kế chỉ có **1 phù + 1 công thức vẽ phù**; phần còn lại dùng cơ chế cũ | P0/P1 |
-| **Linh điền** | 4 ô; nước, đất, sâu bệnh, phẩm chất; 30 loại hạt có thời gian/đất/độ khó/sản lượng riêng | Định nghĩa toàn bộ hạt còn lại, migration an toàn cho cây đang lớn | 69 hạt gốc nhưng snapshot chỉ định nghĩa 30; `crafting.plant/gardenInfo` vẫn có nhánh fallback | **P0** |
+| **Đan dược** | 60 đan toàn game, 25 trong snapshot; `craft/use`, chất lượng, giới hạn đan tu vi mỗi cảnh giới | Độ tinh khiết/tuổi dược tác động **dược lực**; **Đan Phổ** để học đan phương; thử nghiệm sink và item thọ nguyên | `F.herb_price(...years)` ảnh hưởng **giá**, hiện `craft` không kiểm đã học đan phương | **P0 — chờ duyệt** |
+| **Luyện khí** | `forge`, vật liệu, bí tịch `BT-900`, 30 công thức rèn mới | Định lượng hệ số phù hợp pháp bảo, bổ sung công thức/đích đến cao cảnh; **sách Khí Phổ mở công thức đã học** | Công thức ngoài thiết kế dùng nhánh dự phòng; `BT-900` là bí tịch tiền điều kiện, chưa là kho nhiều công thức | **P0 (sách nghề)** |
+| **Chế phù** | `forge` nhận `TAL`, `BT-901`, `TAL-PL-001`; phù thường có trong catalog | Chuẩn hóa nguyên liệu/mực, phẩm chất/xác suất; **sách Phù Lục Phổ** | Snapshot chỉ có **1 phù + 1 công thức vẽ phù**; `BT-901` là tiền điều kiện hiện hành | **P0 (sách nghề)** |
+| **Linh điền** | 4 ô; nước, đất, sâu bệnh, phẩm chất; 30 loại hạt có thời gian/đất/độ khó/sản lượng riêng | Định nghĩa toàn bộ hạt còn lại, migration an toàn cho cây đang lớn; **sách Linh Thảo Kinh mở kỹ thuật trồng** | 69 hạt gốc nhưng snapshot chỉ định nghĩa 30; hiện sở hữu hạt là trồng được, chưa có học sách | **P0** |
 | **Lịch luyện** | `startExploration`, kết toán chuyến 10 phút, sự kiện quái/NPC/kỳ ngộ | Đa dạng encounter theo giới và chiến lực, kiểm trần nguồn thu | NPC ngẫu nhiên dùng danh sách 10 NPC thiết kế Hạ Giới; tính toán nền từ zone còn chung | P0/P1 |
 | **Bí cảnh** | 9 bí cảnh, `startDungeon` kết toán và `enterDungeon/dungeonAct` theo lượt; RNG server | Bí cảnh thật ở **Chân Tiên–Đạo Tổ**, boss/cơ chế/loot riêng, thử tải lượt | Bí cảnh cao nhất mở tại `realm=8`; thủ lĩnh không có trong snapshot phải dùng chỉ số/cơ chế tổng quát | **P0** |
 | **Kỳ ngộ** | 23 sự kiện, bốn cấp hiếm; `advanceEncounters`, phần thưởng có seed | Biến thể cốt truyện/quà theo Linh/Tiên Giới | Phần thưởng hiện dựa realm; **danh sách sự kiện không gắn vùng/giới** | P1 |
@@ -60,6 +62,7 @@
 6. `data/formulas.js`: hàm `F.herb_price` có ảnh hưởng **tuổi dược lên giá** khi `years` tồn tại; **hiệu lực đan/công pháp khác hệ** chưa được nối với tuổi dược và tinh khiết. Các hệ số `CP_MISMATCH`/`DAN_MISMATCH` hiện dùng cho **chênh cảnh giới**; không tự diễn giải đó là ngũ hành.
 7. Tàn dư cơ chế cũ: `TRONG_SINH` trong `data/balance.js` và nhánh `inventory.use`, `rebirthKeep`/`daoVan` trong state, công thức `prestige` trong `data/formulas.js` nhưng V9 **không có hành động trọng sinh**. Cần quyết định dọn/hạn chế, không kích hoạt lại ngầm.
 8. `data/character.js` và `data/formulas.js` còn giá trị RNG mặc định toàn cục (`Math.random`). Đây là **vi phạm ràng buộc mới** nếu hiểu “data/ không được dùng Math.random” theo cả tham chiếu/default; test nguồn hiện chưa bắt được.
+9. Công thức nghề đang dùng trực tiếp các bảng `DESIGN.recipes`, `DESIGN.forge`, `DESIGN.talisman` và hạt giống; chưa có sổ công thức đã học trong state. **ĐÃ CHỐT MỤC TIÊU:** sách riêng cho Luyện đan, Luyện khí, Chế phù và Linh điền. **CHỜ DUYỆT CẤU TRÚC:** mỗi nghề một cuốn hay chia quyển theo giới/cảnh giới; tham khảo [sách nghề](profession-manuals-proposal.md).
 
 ## C. Lệnh/UI có nhưng luật rỗng hoặc không đúng lời dẫn
 
@@ -78,19 +81,20 @@
 |---|---|---|
 | **D1 — cơ sở triển khai** | `main` chưa có Thiên Mệnh Các; PR #31 đang mở, chưa merge | Bước 1 làm sau khi PR #31 được duyệt/merge, hay chỉ dựa vào main và hoãn Thiên Mệnh Các? Không cherry-pick ngầm. |
 | **D2 — schema** | Main đã là V9, yêu cầu lại “tăng lên V9” | Chấp nhận **V10** + `normalize` V4–V9 và kế hoạch migrate state V9 đang sống? |
-| **D3 — kinh mạch/tạp chất** | `zPenalty(50)=10%`, `(80)=30%`, `(100)=100%` và mô tả “tẩu hỏa nhập ma”; chưa có hành động tẩy; cho người cũ tác động ngay nguy hiểm | Đồng ý khởi tạo **độ thông = 0, tạp chất = 0** cho state đang tồn tại, chỉ tích tạp chất từ giờ online sau migrate? Ngưỡng Z=100 là **tử vong** hay chỉ khóa tốc tu tới khi tẩy? Chi phí khai thông/tẩy phải duyệt. |
+| **D3 — đã chốt hậu quả Z=100, còn thông số** | Z=100 trước đó được diễn giải là tử vong hoặc khóa tu | **ĐÃ CHỐT:** phế tu vi → thành phàm nhân, cấm tu luyện và dùng vật phẩm, không chết ngay; chết khi hết thọ nguyên. **CHƯA CHỐT:** tiếp tục tính tuổi thọ của cảnh giới cũ hay về thọ nguyên phàm nhân, còn được chat/đi lại không, có thể hồi phục hay không; migration khởi tạo Z=0, chi phí khai thông/tẩy. |
 | **D4 — tương hợp công pháp/dược liệu** | Dữ liệu không có hệ số cùng/sinh/khắc và cách tính độ tinh khiết/tuổi dược vào phần thưởng | Duyệt hoặc chỉnh **ĐỀ XUẤT** công thức thử nghiệm ở mục E trước khi áp dụng; **không** thay đổi `CP_MISMATCH` hiện tại mà không test parity. |
 | **D5 — lore/Thiên Thư** | `storyMark` chỉ ghi lựa chọn; cần thưởng nhỏ nhưng không có mức nào được duyệt | Duyệt **ĐỀ XUẤT** 3 nhánh giới hạn ở mục E; cờ phải lấy từ `data/story.js`, một lần/kiếp, không gửi thưởng từ client. |
 | **D6 — hậu kỳ / tử vong** | V9 chết vĩnh viễn; yêu cầu “trọng sinh/hậu Đạo Tổ” có thể hiểu khác luật | Giữ **xóa đạo thân chết và tạo mới** (PR #31 giữ Thiên Tinh) hay yêu cầu một lệnh `reincarnate` khác? Sau `completed`, được tiếp tục thu nhập, được chủ động chuyển kiếp, hay chỉ nhìn thành tựu? |
 | **D7 — mục tiêu phát hành** | Multiplayer thật P1 nhưng tiêu chí nghiệm thu nói mọi mục phải có UI+luật+data+test; chat/ranking hiện chỉ UI hoặc giả lập | Cho phép **ẩn/khóa bằng feature flag** đối với các mục P1 chưa làm trước phát hành hay bắt buộc hoàn thành toàn bộ multiplayer? |
 | **D8 — cân bằng khó chủ ý** | `docs/design-audit.md` coi Luyện Khí tử vong sớm và lôi kiếp thiếu hộ kiếp là có chủ ý | Giữ nguyên “khó Phàm Nhân” khi đưa cơ chế kinh mạch/Thiên Mệnh Các vào, hay cho phép nới chỉ sau bot 30 ngày? |
 | **D9 — thuật ngữ** | Engine dùng `Kết Đan`, nội dung bạn dùng `Kim Đan` | Giữ mã/nội dung theo `Kết Đan`, hoặc thống nhất nhãn giao diện thành `Kim Đan` (không đổi index)? |
+| **D10 — sách nghề, ĐÃ CHỐT MỤC TIÊU** | Hiện `craft` cho luyện đan trực tiếp, `plant` chỉ cần có hạt; `forge` kiểm chung `BT-900`/`BT-901` | **ĐÃ CHỐT:** mỗi nghề có sách công thức cần học. **CHỜ DUYỆT:** nhóm công thức mỗi sách, chia theo cảnh giới, nguồn nhận sách, dữ liệu migration và xử lý bí tịch cũ. Xem [bản phác sách nghề](profession-manuals-proposal.md). |
 
 ## E. Công thức và nội dung **ĐỀ XUẤT — CHƯA ĐƯỢC PHÊ DUYỆT**
 
 Những con số dưới đây là **giả thuyết cân bằng để thử bằng bot**, **không phải luật đã cài**, và **không được tự đưa vào `data/formulas.js` trước khi duyệt**.
 
-1. **ĐỀ XUẤT — kinh mạch trước migration:** người chơi V4–V9 nhận `thong=0`, `Z=0`; không truy thu tạp chất cho thời gian quá khứ. Sau đó dùng **công thức tạp chất đã có trong `data/meridians.js`** theo thời gian *online*. Ví dụ Tam linh căn (3 hệ), tinh khiết 70%: `Z/phút = (3−1) × 0,5 × (1−0,70) = 0,30`; từ Z=0 tới Z=50 là ~167 phút online **nếu chưa có cách tẩy**. Mốc 100/tử vong hay khóa tốc phải duyệt.
+1. **ĐỀ XUẤT — kinh mạch trước migration:** người chơi V4–V9 nhận `thong=0`, `Z=0`; không truy thu tạp chất cho thời gian quá khứ. Sau đó dùng **công thức tạp chất đã có trong `data/meridians.js`** theo thời gian *online*. Ví dụ Tam linh căn (3 hệ), tinh khiết 70%: `Z/phút = (3−1) × 0,5 × (1−0,70) = 0,30`; từ Z=0 tới Z=50 là ~167 phút online **nếu chưa có cách tẩy**. **ĐÃ CHỐT hậu quả Z=100:** phế tu vi, thành phàm nhân, cấm tu luyện và dùng vật phẩm, không chết ngay; tuổi thọ và cách chặn các hành động khác cần duyệt.
 2. **ĐỀ XUẤT — tương hợp công pháp ngũ hành:** giữ nguyên phạt **chênh cảnh giới** hiện tại; nhân thêm `M_he` chỉ cho công pháp có nguyên tố xác định: cùng hệ = 1,00; hệ sinh = 0,95; trung hòa = 1,00; khác hệ = 0,90; hệ khắc = 0,85. Ví dụ công pháp cộng 12% công kích, gặp khắc hệ thì còn +10,2% (12% × 0,85), không thay đổi hiệu lực phép không có hệ. Cần kiểm tra nguồn gốc nguyên tố và ngăn cộng dồn nhiều tầng phạt.
 3. **ĐỀ XUẤT — dược liệu:** khi có metadata tinh khiết **được engine xác minh** từ linh thảo/linh điền, hệ số dược lực `M_purity = 0,90 + 0,10 × purity/100` (trần [0,90; 1,00]); tuổi dược lấy hệ số từ bảng tuổi thiết kế nếu có, thử `M_age ∈ [0,95; 1,05]`. Ví dụ thuốc cơ bản +100 tu vi, tinh khiết 80% và dược ưa niên đại (+5%) → `100 × 0,98 × 1,05 = 102,9` trước cap đan. **Không** lấy metadata năm tuổi, phẩm chất hay giá do client gửi. Đây mới là ví dụ minh họa, chưa xác định cách lưu mỗi mẻ.
 4. **ĐỀ XUẤT — chế tạo hạt ngoài snapshot:** mỗi mã hạt phải có bảng `thời gian, loại đất, độ khó, min/max sản lượng` khai báo *đích danh* trong `data/`; ban đầu chỉ đề xuất tạo bảng đối chiếu theo tier dựa trên fallback cũ (thời gian `max(60, craft_time(tier)×2)` giây), sau đó designer sửa tay. Không đổi cây đã gieo; áp định nghĩa mới cho **lượt gieo sau khi phát hành**.
@@ -98,6 +102,8 @@ Những con số dưới đây là **giả thuyết cân bằng để thử bằ
 6. **ĐỀ XUẤT — nội dung cao giới:** ưu tiên 1 “đường tiến” đủ quái/bảng rơi → mục tiêu nghề → 1 bí cảnh/1 NPC có nhiệm vụ cho **mỗi bậc từ 5 đến 13**. Toàn bộ tên, vật phẩm/boss sinh thêm phải mang nhãn `DỰ THẢO THIẾT KẾ` trong data và được duyệt trước khi phát hành. Không xem 492 vật phẩm là bằng chứng đủ vòng chơi.
 7. **ĐỀ XUẤT — endgame:** hoàn thành Đạo Tổ mở sảnh chọn thử thách **kiếp mới** và chỉ thay đổi phần thưởng **cấp tài khoản** đã có trong PR #31; không tự tạo phép hồi sinh đạo thân. Nếu chọn cơ chế “chứng đạo rồi chuyển kiếp chủ động”, cần API reset riêng có xác nhận, idempotency và quyền sở hữu.
 8. **ĐỀ XUẤT — chống lạm phát:** trước hết đo bot theo chiến lược, **không hard-code trần tài nguyên** khi chưa có p95/p99 và độ khó mục tiêu. Khi có kết quả, flag review các khoản vượt trần lý thuyết từ engine, tuyệt đối không tự ban. Ví dụ thước đo: exp/giờ, stone/giờ, vật phẩm/giờ và thời gian/đại cảnh giới.
+
+9. **ĐỀ XUẤT — hệ thống sách nghề:** tách `Đan Phổ` (60 mã đan), `Khí Phổ` (82 mã pháp bảo), `Phù Phổ` (36 mã phù) và `Linh Thảo Kinh` (69 mã hạt), nhóm thành tập Hạ/Linh/Tiên Giới; mỗi tập ghi danh sách mã công thức có thể học đã kiểm liên kết. Dùng lại `learn` để lĩnh ngộ sách nhưng **không tính 3 ô công pháp chiến đấu**, state V10 lưu mã công thức đã học; `craft/forge/plant` kiểm kiến thức tại server. Không quy định giá sách/tỷ lệ rơi trước khi duyệt. Bảo lưu quyền tạo công thức đã mở cho nhân vật cũ. Chi tiết tại [sách nghề](profession-manuals-proposal.md).
 
 ## F. Ưu tiên P0/P1/P2 và ước lượng
 
@@ -110,6 +116,7 @@ Những con số dưới đây là **giả thuyết cân bằng để thử bằ
 | **P0** | Công pháp/dược liệu/pháp bảo định lượng theo công thức đã duyệt | 3–5 ngày |
 | **P0** | Mã lỗi rule ổn định + chi tiết `GAME_RULE_VIOLATION.details.code`, UI map tiếng Việt | 2–3 ngày |
 | **P0** | 69 hạt: định nghĩa đủ + migration cây đang trồng + test | 2–4 ngày |
+| **P0** | 4 hệ sách nghề: dữ liệu mã công thức, học sách + UI, chặn server và migration quyền chế tạo cũ | 3–6 ngày + duyệt |
 | **P0** | Thiên Thư: nhánh có hệ quả nhỏ, chống nhận lại, UI | 2–3 ngày |
 | **P0** | Nội dung Linh/Tiên Giới: quái/loot, NPC, bí cảnh, nhiệm vụ nghề, liên kết design | 8–15 ngày + duyệt sáng tác |
 | **P0** | Kiểm bất biến state 64 KB + property/regression và sai lệch di trú | 2–4 ngày |
@@ -126,7 +133,8 @@ Những con số dưới đây là **giả thuyết cân bằng để thử bằ
 
 - [x] Đã kiểm tra hợp đồng V9/protocol 2, 48 lệnh và 9 miền, phân biệt rõ `main` với PR #31.
 - [x] Đã có ma trận đầy đủ các hệ thống gameplay, danh sách dữ liệu chưa dùng, UI mô phỏng/route thiếu và kế hoạch P0/P1/P2.
-- [ ] Chủ dự án duyệt **D1–D9**, đặc biệt luật Z=100/tử vong, V10, vai trò Thiên Mệnh Các và scope multiplayer.
+- [x] Chủ dự án đã **chốt hậu quả Z=100** và **mục tiêu sách riêng cho từng nghề**; chưa chốt thông số và phân tập.
+- [ ] Chủ dự án duyệt các phần còn lại **D1–D10**, đặc biệt thọ nguyên phàm nhân, V10, PR #31, cấu trúc sách nghề và scope multiplayer.
 - [ ] Chủ dự án duyệt hoặc hiệu chỉnh **các công thức ĐỀ XUẤT** ở mục E trước khi mã hóa.
 - [ ] Sau khi duyệt mới chia commit theo từng hạng mục, thêm test, chạy `npm run check && npm test` sau mỗi thay đổi và cập nhật audit khi từng P0 hoàn thành.
 - [ ] Khi bắt đầu gameplay code: chứng minh `State <= 65536 B`, di trú state V4–V9 và không gửi state, thời gian, giá, phần thưởng, RNG từ client.
