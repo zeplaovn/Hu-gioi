@@ -76,10 +76,10 @@ client/
   ui/                        Màn hình, vỏ giao diện, hiệu ứng, tân thủ
   main.js                    Khởi động
 server/                    Máy chủ HTTP
-  main.js http/              File tĩnh + /api/health + /api/auth/* (thử nghiệm) + /api/v1/*
-  auth/ http/ services/ repositories/   JWT, API /api/v1, PlayerService, kho SQLite; chat/ vẫn là khung
+  main.js http/              File tĩnh, /api/health, gateway Supabase và /api/v1/*
+  auth/ services/ repositories/ JWT, PlayerService, kho SQLite và Thiên Mệnh Các
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
-tools/                     Kiểm tra, preload, import dữ liệu; pending-engine/ chờ engine mới
+tools/                     Build dist, sao lưu SQLite và kiểm UI (không có script import JSON)
 docs/                      Tài liệu
 ```
 
@@ -87,8 +87,8 @@ docs/                      Tài liệu
 
 - Viết luật và tính thưởng trong `engine/`; giao diện chỉ gửi lệnh bằng `UI.command(type, payload)` và hiển thị state. Cài đặt hiển thị dùng `UI.preference()`.
 - `engine/` và `data/` không phụ thuộc DOM, `localStorage`, mạng hay timer; thời gian và RNG do phiên cung cấp.
-- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh](docs/engine-contract.md#4-lệnh-51) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
-- Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node lẫn `file://` nạp đúng; `npm test` kiểm tra thứ tự.
+- Thêm lệnh: khai báo schema trong `engine/protocol/commands.js`, gán cho đúng một miền trong `engine/rules/`, cập nhật [bảng lệnh V2/48](docs/engine-contract.md) và test. `engine/game.js` từ chối nạp nếu lệnh thuộc hai miền hoặc không thuộc miền nào.
+- Thêm module: cập nhật điểm ghép trong `engine/game.js` **và** thứ tự thẻ `<script>` trong `index.html` để Node và trình duyệt nạp đúng; `file://` chỉ phục vụ kiểm thử module, không chơi online được; `npm test` kiểm tra thứ tự.
 - Khi thay ảnh, cập nhật ánh xạ trong `client/assets/` và `client/assets/preload-manifest.js`.
 - Thay dữ liệu thiết kế: xem [docs/design-integration.md](docs/design-integration.md).
 
@@ -138,7 +138,8 @@ Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaov
 - [Gameplay V9: một mạng, online-only](docs/gameplay-v9.md): quy tắc sinh tử, tạm dừng offline và các lựa chọn thiết kế cần xác nhận.
 - [Hợp đồng engine](docs/engine-contract.md): đặc tả UI cần từ engine (48 lệnh, API `HU_GAME`, state, bản lưu).
 - [Kế hoạch backend online](docs/backend-plan.md): thiết kế server-authoritative nhiều người chơi.
-- [Tích hợp dữ liệu thiết kế](docs/design-integration.md): phạm vi dữ liệu và cách nhập snapshot mới.
+- [Tích hợp dữ liệu thiết kế](docs/design-integration.md): dữ liệu đang dùng, phần thiếu và quy trình review snapshot (công cụ import cũ không còn).
+- [Sổ quyết định gameplay](docs/gameplay-decisions.md): các luật chờ chủ dự án duyệt trước khi triển khai.
 - [data/README.md](data/README.md): dữ liệu thiết kế và công thức cân bằng.
 
 ## Thiên Thư · Vạn Kiếp Tàng Thư

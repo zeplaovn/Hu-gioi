@@ -1,6 +1,6 @@
 /* HƯ GIỚI · MÀN GIAO DU
  * Tri kỷ, đạo hữu, luận kiếm PvP và bảng xếp hạng. Toàn bộ tương tác lưu trong
- * state.social; không cần máy chủ và vẫn chạy tốt qua file://. */
+ * state.social của từng đạo thân trên máy chủ; chưa phải social/PvP người thật. */
 (function (root) {
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;

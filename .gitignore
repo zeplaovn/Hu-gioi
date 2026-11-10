@@ -1,4 +1,3 @@
-*.deb
 # Dependencies
 node_modules/
 
@@ -9,7 +8,7 @@ node_modules/
 *.pem
 *.key
 
-# File cài đặt và gói nhị phân lớn (vụ .deb vừa rồi)
+# Gói cài đặt và bản xuất nhị phân
 *.deb
 *.rpm
 *.AppImage
@@ -24,6 +23,13 @@ node_modules/
 # Dữ liệu local của DB
 *.sqlite
 *.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.db-wal
+*.db-shm
 pgdata/
 postgres-data/
 *.dump
