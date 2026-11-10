@@ -22,4 +22,4 @@ const server = http.createServer(createRouter(null, null, api));
 const port = Number(process.env.PORT || 8001);
 server.listen(port, '127.0.0.1', () => console.log('CI-only online game server at http://127.0.0.1:' + port));
 for (const signal of ['SIGTERM', 'SIGINT'])
-  process.on(signal, () => server.close(() => { repo.close(); process.exit(0); }));
+  process.on(signal, () => server.close(async () => { await repo.close(); process.exit(0); }));

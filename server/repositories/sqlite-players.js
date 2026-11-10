@@ -84,6 +84,7 @@ class SqlitePlayers extends PlayerRepository {
       file = dest;
     }
     this.db = new DatabaseSync(file);
+    this.queue = Promise.resolve();
     if (file !== ':memory:') fs.chmodSync(file, 0o600);
     this.db.exec('PRAGMA journal_mode = WAL; PRAGMA synchronous = FULL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
     this.db.exec(SCHEMA);
@@ -122,9 +123,9 @@ class SqlitePlayers extends PlayerRepository {
     };
   }
 
-  getByOwner(ownerId) { const row = this.q.byOwner.get(ownerId); return row ? hydrate(row) : null; }
-  get(playerId) { const row = this.q.byId.get(playerId); return row ? hydrate(row) : null; }
-  getPavilion(ownerId) {
+  async getByOwner(ownerId) { const row = this.q.byOwner.get(ownerId); return row ? hydrate(row) : null; }
+  async get(playerId) { const row = this.q.byId.get(playerId); return row ? hydrate(row) : null; }
+  async getPavilion(ownerId) {
     const row = this.q.pavilionGet.get(ownerId);
     return row ? {
       version: row.version, balance: row.balance, totalEarned: row.total_earned, rebirths: row.rebirths,
@@ -134,16 +135,16 @@ class SqlitePlayers extends PlayerRepository {
 
   /* Mua hàng bằng intent, không nhận giá/tiền/state từ client. Receipt gắn theo account,
      không bị xóa khi nhân vật tọa hóa; cùng requestId chỉ được trả thưởng một lần. */
-  purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
-    return this.run(() => {
+  async purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
+    return this.run(async () => {
       this.q.pavilionEnsure.run(ownerId);
       const fingerprint = kind + ':' + key;
       const prior = this.q.pavilionReceipt.get(ownerId, requestId);
       if (prior) {
         if (prior.fingerprint !== fingerprint) throw new GameError('REQUEST_ID_REUSED', 'Mã yêu cầu đã dùng cho giao dịch khác.');
-        return { replayed: true, pavilion: this.getPavilion(ownerId), record: this.getByOwner(ownerId) };
+        return { replayed: true, pavilion: await this.getPavilion(ownerId), record: await this.getByOwner(ownerId) };
       }
-      const account = this.getPavilion(ownerId);
+      const account = await this.getPavilion(ownerId);
       if (account.version !== expectedVersion) throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
       let cost, upgrades = { ...account.upgrades }, relics = { ...account.relics };
       if (kind === 'upgrade' && Object.hasOwn(catalog.stats, key)) {
@@ -170,24 +171,32 @@ class SqlitePlayers extends PlayerRepository {
         this.q.pavilionSyncPlayer.run(json, Buffer.byteLength(json), now, ownerId);
       }
       this.q.pavilionPutReceipt.run(ownerId, requestId, fingerprint);
-      return { replayed: false, cost, pavilion: this.getPavilion(ownerId), record: this.getByOwner(ownerId) };
+      return { replayed: false, cost, pavilion: await this.getPavilion(ownerId), record: await this.getByOwner(ownerId) };
     });
   }
 
   /* Mọi thay đổi chạy trong BEGIN IMMEDIATE ... COMMIT; lỗi bất kỳ → ROLLBACK. */
-  run(work) {
-    this.db.exec('BEGIN IMMEDIATE');
+  async run(work) {
+    // Một kết nối SQLite đồng bộ: giữ mutex qua mọi await trong callback.
+    // Không được mở BEGIN thứ hai khi transaction còn đang chờ async fn.
+    const previous = this.queue;
+    let release;
+    this.queue = new Promise(resolve => { release = resolve; });
+    await previous;
     try {
-      const out = work();
-      this.db.exec('COMMIT');
-      return out;
-    } catch (err) {
-      try { this.db.exec('ROLLBACK'); } catch { /* giao dịch đã đóng */ }
-      throw err;
-    }
+      this.db.exec('BEGIN IMMEDIATE');
+      try {
+        const result = await work();
+        this.db.exec('COMMIT');
+        return result;
+      } catch (err) {
+        try { this.db.exec('ROLLBACK'); } catch { /* giao dịch đã đóng */ }
+        throw err;
+      }
+    } finally { release(); }
   }
 
-  issueTicket(ownerId, preview, { now, ttlMs, dailyLimit }) {
+  async issueTicket(ownerId, preview, { now, ttlMs, dailyLimit }) {
     return this.run(() => {
       const { n, oldest } = this.q.ticketCount.get(ownerId, now - DAY);
       if (n >= dailyLimit) return { limited: true, retryAfterMs: Math.max(1000, oldest + DAY - now) };
@@ -197,16 +206,16 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
-  createWithTicket({ ownerId, ticketId, now, build }) {
-    return this.run(() => {
+  async createWithTicket({ ownerId, ticketId, now, build }) {
+    return this.run(async () => {
       const t = this.q.ticket.get(ticketId);
       if (!t || t.owner_id !== ownerId || t.used_at) throw new GameError('TICKET_INVALID', 'Phiếu khởi nguyên không hợp lệ hoặc đã dùng.');
       if (t.expires_at <= now) throw new GameError('TICKET_EXPIRED', 'Phiếu khởi nguyên đã hết hạn. Hãy gieo lại.');
       if (this.q.byOwner.get(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
       this.q.pavilionEnsure.run(ownerId);
-      const account = this.getPavilion(ownerId);
+      const account = await this.getPavilion(ownerId);
       const consumed = Object.fromEntries(Object.keys(account.relics).filter(k => account.relics[k] > 0).map(k => [k, 1]));
-      const rec = build(JSON.parse(t.preview), { ...account, consumed });
+      const rec = await build(JSON.parse(t.preview), { ...account, consumed });
       const key = nameKey(rec.name);
       if (this.q.byNameKey.get(key)) throw new GameError('NAME_TAKEN', 'Đạo hiệu này đã có người dùng.');
       const id = crypto.randomUUID(), state = JSON.stringify(rec.state);
@@ -219,21 +228,21 @@ class SqlitePlayers extends PlayerRepository {
         this.q.pavilionSave.run(account.balance, account.totalEarned, account.rebirths,
           JSON.stringify(account.upgrades), JSON.stringify(relics), account.version + 1, ownerId, account.version);
       }
-      return this.get(id);
+      return await this.get(id);
     });
   }
 
-  transact(playerId, fn) {
-    return this.run(() => {
+  async transact(playerId, fn) {
+    return this.run(async () => {
       const row = this.q.byId.get(playerId);
       const tx = {
         record: row ? hydrate(row) : null,
-        receipt: (requestId, now) => {
+        receipt: async (requestId, now) => {
           const r = this.q.receipt.get(playerId, requestId, now);
           return r ? { requestId, fingerprint: r.fingerprint, revision: r.revision, response: JSON.parse(r.response) } : null;
         }
       };
-      const out = fn(tx) || {};
+      const out = await fn(tx) || {};
       if (out.save) {
         const s = out.save, json = JSON.stringify(s.state), bytes = Buffer.byteLength(json);
         const res = this.q.save.run(json, bytes, s.revision, s.rngCounter, s.lastSeenAt, s.schemaVersion, s.contentVersion,
@@ -254,7 +263,7 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
-  deletePlayer(ownerId, playerId) {
+  async deletePlayer(ownerId, playerId) {
     return this.run(() => {
       const row = this.q.byId.get(playerId);
       if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
@@ -267,10 +276,10 @@ class SqlitePlayers extends PlayerRepository {
   }
 
   /* Quyền truy cập/sao chép dữ liệu: chỉ dữ liệu của chính chủ, không bao giờ gồm rng_seed. */
-  exportOwnerData(ownerId) {
+  async exportOwnerData(ownerId) {
     const row = this.q.byOwner.get(ownerId);
     const tickets = Number(this.q.ticketCount.get(ownerId, 0).n);
-    const pavilion = this.getPavilion(ownerId);
+    const pavilion = await this.getPavilion(ownerId);
     if (!row && !tickets && pavilion.totalEarned === 0 && pavilion.rebirths === 0) return null;
     return {
       player: row ? { id: row.id, name: row.name, revision: row.revision, schemaVersion: row.schema_version,
@@ -280,7 +289,7 @@ class SqlitePlayers extends PlayerRepository {
   }
 
   /* Quyền xóa dữ liệu: xóa nhân vật (kèm receipt qua ON DELETE CASCADE) và mọi phiếu khởi nguyên của tài khoản. */
-  deleteOwnerData(ownerId) {
+  async deleteOwnerData(ownerId) {
     return this.run(() => {
       const row = this.q.byOwner.get(ownerId);
       let receipts = 0;
@@ -292,7 +301,7 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
-  purgeExpired(now) {
+  async purgeExpired(now) {
     return this.run(() => ({
       receipts: Number(this.q.purgeReceipts.run(now).changes),
       tickets: Number(this.q.purgeTickets.run(now, now - 7 * DAY).changes)

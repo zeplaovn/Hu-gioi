@@ -49,7 +49,7 @@ function buildGameApi(env = process.env) {
     repository, contentVersion: computeContentVersion(),
     config: Number.isFinite(grace) && grace >= 0 && env.HU_ONLINE_GRACE_MS ? { onlineGraceMs: grace } : {}
   });
-  const purge = setInterval(() => { try { repository.purgeExpired(Date.now()); } catch (e) { console.error('[purge]', e.message); } }, 3600000);
+  const purge = setInterval(() => { void repository.purgeExpired(Date.now()).catch(e => console.error('[purge]', e.message)); }, 3600000);
   purge.unref();
   repository.purgeExpired(Date.now());
   const allowedOrigins = String(env.HU_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);

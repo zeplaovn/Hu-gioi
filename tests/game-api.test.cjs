@@ -55,6 +55,7 @@ test('JWT ES256 qua JWKS: xoay khóa, kid lạ và alg bị ép đều bị từ
   assert.equal(fetches, 1);
   await assert.rejects(v.verify(signEs(k2, 'k2', p())), { code: 'UNAUTHENTICATED' }); // k2 chưa công bố
   served = [jwk(k1, 'k1'), jwk(k2, 'k2')];
+  now += 15001; // negative kid cache tránh khuếch đại fetch; chờ TTL rồi nhận khóa xoay
   assert.equal((await v.verify(signEs(k2, 'k2', p()))).sub, ID_A); // tự tải lại khi gặp kid mới
   await assert.rejects(v.verify(signEs(k1, 'k2', p())), { code: 'UNAUTHENTICATED' }); // ký bằng khóa này nhưng khai kid khác
   await assert.rejects(v.verify(signEs(k1, 'k1', p({ iss: 'https://evil.test' }))), { code: 'UNAUTHENTICATED' });
@@ -150,8 +151,8 @@ test('API: giới hạn tốc độ trả 429 kèm Retry-After', async t => {
   const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
   const id = (await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Tô Mạc', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck' } })).data.playerId;
   const statuses = [];
-  for (let i = 0; i < 10; i++) statuses.push((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status);
-  assert.deepEqual(statuses.slice(0, 8), Array(8).fill(200));
+  for (let i = 0; i < 12; i++) statuses.push((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status);
+  assert.deepEqual(statuses, Array(12).fill(200));
   const limited = await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} });
   assert.equal(limited.status, 429);
   assert.equal(limited.data.error.code, 'RATE_LIMITED');
@@ -167,7 +168,7 @@ test('pause được giới hạn riêng, không tiêu token của sync', async 
     ticketId: pv.data.ticketId, name: 'Huyền Tâm', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck'
   } });
   const url = '/api/v1/players/' + created.data.playerId;
-  for (let i = 0; i < 8; i++) assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 200);
+  for (let i = 0; i < 12; i++) assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 200);
   assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 429);
   assert.equal((await call('POST', url + '/pause', { token: tokenA, body: {} })).status, 200);
 });
@@ -278,22 +279,22 @@ test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý c
   assert.equal(out.data.accountDeleted, true);
   assert.equal(out.data.players, 1);
   assert.deepEqual(deleted, [ID_A]);
-  assert.equal(repo.getByOwner(ID_A), null);
+  assert.equal(await repo.getByOwner(ID_A), null);
 });
 
 test('xóa tài khoản: chưa cấu hình khóa quản trị thì từ chối và KHÔNG xóa dữ liệu; Supabase lỗi thì báo thử lại', async () => {
   const repo = new SqlitePlayers(':memory:');
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  const t1 = service.previewCreation(ID_A).ticketId;
-  service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
+  const t1 = (await service.previewCreation(ID_A)).ticketId;
+  await service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
   await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, null), { code: 'NOT_IMPLEMENTED' });
-  assert.ok(repo.getByOwner(ID_A));
+  assert.ok(await repo.getByOwner(ID_A));
   const { createAccountAdmin } = require('../server/auth/account-admin.js');
   const calls = [];
   const mk = status => createAccountAdmin({ url: 'https://abc.supabase.co', secretKey: 'sb_secret_' + 'x'.repeat(30),
     fetchImpl: async (url, init) => { calls.push({ url, init }); return { ok: status < 300, status }; } });
   await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, mk(500)), { code: 'MAINTENANCE' });
-  assert.equal(repo.getByOwner(ID_A), null); // dữ liệu game đã xóa; gọi lại là idempotent
+  assert.equal(await repo.getByOwner(ID_A), null); // dữ liệu game đã xóa; gọi lại là idempotent
   assert.equal((await service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, mk(404))).accountDeleted, true);
   assert.equal(calls[0].url, 'https://abc.supabase.co/auth/v1/admin/users/' + ID_A);
   assert.equal(calls[0].init.method, 'DELETE');
@@ -301,14 +302,14 @@ test('xóa tài khoản: chưa cấu hình khóa quản trị thì từ chối v
   repo.close();
 });
 
-test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N bản', () => {
+test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N bản', async () => {
   const { backup } = require('../tools/backup-db.cjs');
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-backup-'));
   fs.chmodSync(dir, 0o700);
   const file = path.join(dir, 'game.sqlite');
   const repo = new SqlitePlayers(file);
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  service.createPlayer(ID_A, { ticketId: service.previewCreation(ID_A).ticketId, name: 'Thanh Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
+  await service.createPlayer(ID_A, { ticketId: (await service.previewCreation(ID_A)).ticketId, name: 'Thanh Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
   const results = [1, 2, 3].map(i => backup({ db: file, keep: 2, now: new Date(Date.UTC(2026, 10, 9, 0, 0, i)) }));
   const kept = fs.readdirSync(path.join(dir, 'backups')).sort();
   assert.equal(kept.length, 2);
@@ -316,7 +317,7 @@ test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N
   assert.equal(fs.statSync(results[2].dest).mode & 0o777, 0o600);
   assert.equal(fs.statSync(path.join(dir, 'backups')).mode & 0o777, 0o700);
   const copy = new SqlitePlayers(results[2].dest);
-  assert.equal(copy.getByOwner(ID_A).name, 'Thanh Vân');
+  assert.equal((await copy.getByOwner(ID_A)).name, 'Thanh Vân');
   copy.close(); repo.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });

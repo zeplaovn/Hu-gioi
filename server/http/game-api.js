@@ -15,6 +15,7 @@
 const crypto = require('node:crypto');
 const { GameError, toEnvelope } = require('../errors.js');
 const { RateLimiter, LIMITS } = require('./rate-limit.js');
+const { quotaIpKey } = require('./client-ip.js');
 
 const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
@@ -75,24 +76,36 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
       if (req.method === 'OPTIONS') { res.writeHead(204, { 'X-Request-Id': requestId }).end(); return true; }
       const route = matchRoute(req.method, pathname);
       if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
-      limit('ip:' + clientIp(req), LIMITS.ip); // trước khi tốn công xác minh JWT/Supabase
-      const principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
-      if (!principal) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
+      // IP quota dành cho request chưa xác thực / JWT sai; người chơi đã xác thực
+      // chịu quota riêng theo account, không chặn hàng trăm người sau cùng NAT.
+      const hasCredential = !!(req.headers.authorization || req.headers.cookie);
+      if (!hasCredential) limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
+      let principal;
+      try {
+        principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
+      } catch (error) {
+        if (hasCredential && error.code === 'UNAUTHENTICATED') limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
+        throw error;
+      }
+      if (!principal) {
+        if (hasCredential) limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
+        throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
+      }
       const who = principal.accountId, body = await readBody(req);
       let out, status = 200;
       switch (route.name) {
-        case 'bootstrap': limit('read:' + who, LIMITS.read); out = service.bootstrap(who); break;
-        case 'pavilionPurchase': limit('cmd:' + who, LIMITS.command); out = service.pavilionPurchase(who, body); break;
-        case 'preview': limit('preview:' + who, LIMITS.preview); out = service.previewCreation(who); status = 201; break;
-        case 'create': limit('create:' + who, LIMITS.create); out = service.createPlayer(who, body); status = 201; break;
-        case 'state': limit('read:' + who, LIMITS.read); out = service.state(who, route.id); break;
-        case 'sync': limit('sync:' + who, LIMITS.sync); out = service.sync(who, route.id, body); break;
-        case 'pause': limit('pause:' + who, LIMITS.pause); out = service.pause(who, route.id); break;
-        case 'commands': limit('cmd:' + who, LIMITS.command); out = service.command(who, route.id, body); break;
-        case 'exportData': limit('export:' + who, LIMITS.export); out = service.exportData(who); break;
-        case 'eraseData': limit('erase:' + who, LIMITS.erase); out = service.eraseData(who, body); break;
+        case 'bootstrap': limit('read:' + who, LIMITS.read); out = await service.bootstrap(who); break;
+        case 'pavilionPurchase': limit('cmd:' + who, LIMITS.command); out = await service.pavilionPurchase(who, body); break;
+        case 'preview': limit('preview:' + who, LIMITS.preview); out = await service.previewCreation(who); status = 201; break;
+        case 'create': limit('create:' + who, LIMITS.create); out = await service.createPlayer(who, body); status = 201; break;
+        case 'state': limit('read:' + who, LIMITS.read); out = await service.state(who, route.id); break;
+        case 'sync': limit('sync:' + who, LIMITS.sync); out = await service.sync(who, route.id, body); break;
+        case 'pause': limit('pause:' + who, LIMITS.pause); out = await service.pause(who, route.id); break;
+        case 'commands': limit('cmd:' + who, LIMITS.command); out = await service.command(who, route.id, body); break;
+        case 'exportData': limit('export:' + who, LIMITS.export); out = await service.exportData(who); break;
+        case 'eraseData': limit('erase:' + who, LIMITS.erase); out = await service.eraseData(who, body); break;
         case 'deleteAccount': limit('erase:' + who, LIMITS.erase); out = await service.deleteAccount(who, body, accountAdmin); break;
-        case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = service.resetAfterDeath(who, route.id); break;
+        case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
       }
       send(res, status, out, requestId, route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
     } catch (err) {

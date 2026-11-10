@@ -1,7 +1,8 @@
 /* Password-login gateway: 10 failed attempts per IP per 15 minutes (single Node instance).
    For production across multiple instances, use a shared limiter and Supabase Auth rate limits. */
 'use strict';
-const { createClientIp, normalizeIp } = require('./client-ip.js');
+const crypto = require('node:crypto');
+const { createClientIp, normalizeIp, quotaIpKey } = require('./client-ip.js');
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 10;
 const MAX_BODY = 4096;
@@ -30,7 +31,7 @@ const respond = (res, status, data, retryAfterMs = 0) => {
 };
 function createSupabaseLoginGateway({
   url, publishableKey, fetchImpl = globalThis.fetch, clock = Date.now,
-  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, trustedProxyIps = [], clientIp = createClientIp(trustedProxyIps)
+  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, maxKeys = MAX_KEYS, trustedProxyIps = [], clientIp = createClientIp(trustedProxyIps)
 } = {}) {
   const origin = new URL(url);
   if (origin.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(origin.hostname) ||
@@ -40,6 +41,18 @@ function createSupabaseLoginGateway({
     throw Error('Thiếu khóa Supabase publishable cho gateway.');
   if (typeof fetchImpl !== 'function') throw Error('Thiếu dịch vụ HTTP cho gateway.');
   const attempts = new Map();
+  // Khi hết quota key, không khóa toàn gateway: người mới chuyển sang bucket
+  // hash hữu hạn (fail-closed theo shard). Không xóa quota IP đã bị giới hạn.
+  const overflow = new Map();
+  const OVERFLOW_SLOTS = 1024;
+  let lastPrune = -Infinity;
+  function prune(now) {
+    if (now - lastPrune < 1000 && attempts.size < maxKeys) return;
+    for (const store of [attempts, overflow])
+      for (const [key, value] of store)
+        if (value.until <= now && value.pending === 0) store.delete(key);
+    lastPrune = now;
+  }
   async function handle(req, res) {
     if (req.method !== 'POST') return respond(res, 405, { error: 'Phương thức không hợp lệ.' });
     const originHeader = req.headers.origin;
@@ -51,14 +64,16 @@ function createSupabaseLoginGateway({
     if (!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type'] || '')))
       return respond(res, 415, { error: 'Yêu cầu đăng nhập phải là JSON.' });
     if (Number(req.headers['content-length'] || 0) > MAX_BODY) return respond(res, 413, { error: 'Yêu cầu quá lớn.' });
-    const ip = clientIp(req), now = clock();
-    for (const [key, value] of attempts) if (value.until <= now) attempts.delete(key);
-    if (!attempts.has(ip) && attempts.size >= MAX_KEYS) return respond(res, 503, { error: 'Dịch vụ đăng nhập đang bận.' });
-    const entry = attempts.get(ip) || { count: 0, pending: 0, until: now + windowMs };
+    const ip = quotaIpKey(clientIp(req)), now = clock();
+    prune(now);
+    const saturated = !attempts.has(ip) && attempts.size >= maxKeys;
+    const store = saturated ? overflow : attempts;
+    const key = saturated ? crypto.createHash('sha256').update(ip).digest().readUInt16BE(0) % OVERFLOW_SLOTS : ip;
+    const entry = store.get(key) || { count: 0, pending: 0, until: now + windowMs };
     if (entry.count + entry.pending >= maxAttempts)
       return respond(res, 429, { error: 'IP đã thử đăng nhập quá nhiều lần. Vui lòng thử lại sau.' }, entry.until - now);
     entry.pending++;
-    attempts.set(ip, entry); // giữ slot cho yêu cầu đang chạy để chặn dò mật khẩu song song
+    store.set(key, entry); // giữ slot ngay khi request bắt đầu, kể cả ở overflow
     const finish = (failed = false) => { entry.pending--; if (failed) entry.count++; };
     let payload, bytes = 0;
     try {

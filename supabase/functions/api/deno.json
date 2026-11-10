@@ -1,0 +1,17 @@
+{
+  "imports": {
+    "@types/node": "npm:@types/node@24.10.0"
+  },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "types": [
+      "npm:@types/node"
+    ]
+  }
+}

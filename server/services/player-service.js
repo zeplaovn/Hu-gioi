@@ -86,35 +86,35 @@ class PlayerService {
     this.clock = clock;
     this.contentVersion = contentVersion;
     this.cfg = { ...DEFAULTS, ...config };
-    if (this.cfg.onlineGraceMs < this.cfg.nextSyncInMs * 2)
-      throw Error('onlineGraceMs phải >= 2 × nextSyncInMs.');
+    if (this.cfg.onlineGraceMs < this.cfg.nextSyncInMs * 3)
+      throw Error('onlineGraceMs phải >= 3 × nextSyncInMs.');
     this.onError = onError;
   }
 
   /* Tọa hóa thực: xóa được bất kỳ tử vong nào đã được engine xác nhận. */
-  resetAfterDeath(ownerId, playerId) {
-    const rec = this.#own(this.repo.get(playerId), ownerId);
+  async resetAfterDeath(ownerId, playerId) {
+    const rec = this.#own(await this.repo.get(playerId), ownerId);
     if (!new H.Game(this.#state(rec, this.clock())).isDead())
       throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
-    const deleted = this.repo.deletePlayer(ownerId, playerId);
-    return { ...deleted, pavilion: this.repo.getPavilion(ownerId) };
+    const deleted = await this.repo.deletePlayer(ownerId, playerId);
+    return { ...deleted, pavilion: await this.repo.getPavilion(ownerId) };
   }
 
   /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
-  exportData(ownerId) {
-    const data = this.repo.exportOwnerData(ownerId);
+  async exportData(ownerId) {
+    const data = await this.repo.exportOwnerData(ownerId);
     return {
       format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
       player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
-      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || this.repo.getPavilion(ownerId)
+      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || await this.repo.getPavilion(ownerId)
     };
   }
 
   /* Quyền xóa dữ liệu: khác resetAfterDeath, không yêu cầu nhân vật đã tọa hóa. Cần xác nhận rõ ràng. */
-  eraseData(ownerId, body) {
+  async eraseData(ownerId, body) {
     onlyKeys(body, ['confirm']);
     if (body.confirm !== ERASE_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa dữ liệu.');
-    return { erased: true, ...this.repo.deleteOwnerData(ownerId) };
+    return { erased: true, ...await this.repo.deleteOwnerData(ownerId) };
   }
 
   /* Xóa tài khoản: xóa dữ liệu gameplay trước (cục bộ, đáng tin), rồi xóa người dùng Supabase (kéo theo bản ghi chấp thuận).
@@ -123,48 +123,56 @@ class PlayerService {
     onlyKeys(body, ['confirm']);
     if (body.confirm !== DELETE_ACCOUNT_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa tài khoản.');
     if (!accountAdmin) throw new GameError('NOT_IMPLEMENTED', 'Máy chủ chưa bật xóa tài khoản tự động. Hãy gửi email yêu cầu.');
-    const erased = this.repo.deleteOwnerData(ownerId);
+    const erased = await this.repo.deleteOwnerData(ownerId);
     await accountAdmin.deleteUser(ownerId);
     return { accountDeleted: true, ...erased };
   }
 
   /* ---------- Truy vấn ---------- */
-  bootstrap(ownerId) {
-    const rec = this.repo.getByOwner(ownerId);
+  async bootstrap(ownerId) {
+    const rec = await this.repo.getByOwner(ownerId);
+    const now = this.clock(), pavilion = await this.repo.getPavilion(ownerId);
+    // Trả snapshot đọc-thuần trong bootstrap để tránh thêm GET /state khi tải lại.
+    // Không advance offline: chỉ sync/command đã khóa hàng mới thay đổi state.
+    const snapshotData = rec ? await this.#response({
+      rec, revision: rec.revision, now, state: this.#state(rec, now),
+      died: new H.Game(rec.state).isDead(), pavilionView: pavilion
+    }) : null;
     return {
-      protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion, serverTime: this.clock(),
+      protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion, serverTime: now,
       player: rec ? { id: rec.id, name: rec.name, revision: rec.revision } : null,
-      previewsPerDay: this.cfg.previewsPerDay, nextSyncInMs: this.cfg.nextSyncInMs, pavilion: this.repo.getPavilion(ownerId)
+      previewsPerDay: this.cfg.previewsPerDay, nextSyncInMs: this.cfg.nextSyncInMs,
+      pavilion, snapshot: snapshotData
     };
   }
 
   /* Đọc không catch-up, không ghi: dùng để hiển thị lại sau khi tải trang. */
-  state(ownerId, playerId) {
-    const now = this.clock(), rec = this.#own(this.repo.get(playerId), ownerId);
+  async state(ownerId, playerId) {
+    const now = this.clock(), rec = this.#own(await this.repo.get(playerId), ownerId);
     const state = this.#state(rec, now);
     return this.#response({ rec, revision: rec.revision, now, state, died: new H.Game(state).isDead() });
   }
 
   /* ---------- Tạo nhân vật ---------- */
-  previewCreation(ownerId) {
+  async previewCreation(ownerId) {
     const now = this.clock();
-    if (this.repo.getByOwner(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
+    if (await this.repo.getByOwner(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
     const race = H.rollRace(secureRng), age = 14 + Math.floor(secureRng() * 17);
     const preview = { age, race, ...H.rollRoots(secureRng) };
-    const t = this.repo.issueTicket(ownerId, preview, { now, ttlMs: this.cfg.ticketTtlMs, dailyLimit: this.cfg.previewsPerDay });
+    const t = await this.repo.issueTicket(ownerId, preview, { now, ttlMs: this.cfg.ticketTtlMs, dailyLimit: this.cfg.previewsPerDay });
     if (t.limited) throw new GameError('RATE_LIMITED', 'Hôm nay đã gieo quá nhiều lần.', { retryAfterMs: t.retryAfterMs });
     return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview };
   }
 
   /* Tuổi/chủng tộc/linh căn từ ticket; tên, giới tính, thiên phú và 1 Thiên mệnh do client chọn. */
-  createPlayer(ownerId, body) {
+  async createPlayer(ownerId, body) {
     onlyKeys(body, ['ticketId', 'name', 'gender', 'talent', 'destiny']);
     if (typeof body.destiny !== 'string' || !Object.hasOwn(H.META_UPGRADES, body.destiny))
       throw invalid('INVALID_PROFILE', 'Hãy chọn một Thiên mệnh khởi nguyên hợp lệ.');
     if (typeof body.ticketId !== 'string' || body.ticketId.length > 64) throw invalid('INVALID_REQUEST', 'Thiếu phiếu khởi nguyên.');
     if (body.talent !== undefined && !isPlain(body.talent)) throw invalid('INVALID_PROFILE', 'Thiên phú không hợp lệ.');
     const now = this.clock();
-    const rec = this.repo.createWithTicket({
+    const rec = await this.repo.createWithTicket({
       ownerId, ticketId: body.ticketId, now,
       build: (preview, pavilion) => {
         const seed = crypto.randomBytes(32).toString('hex'), rng = seededRng(seed, 0);
@@ -178,19 +186,19 @@ class PlayerService {
         return { name: state.name, state, schemaVersion: H.VERSION, contentVersion: this.contentVersion, rngSeed: seed, rngCounter: rng.counter() };
       }
     });
-    return { ...this.#response({ rec, revision: rec.revision, now, state: rec.state, logs: rec.state.logs.slice(0, 2) }), playerId: rec.id };
+    return { ...await this.#response({ rec, revision: rec.revision, now, state: rec.state, logs: rec.state.logs.slice(0, 2) }), playerId: rec.id };
   }
 
   /* Mua tại Thiên Mệnh Các không dùng protocol command, vì đồng tiền thuộc tài khoản.
      Vẫn có idempotency, optimistic version và hàng đợi của RemoteSession. */
-  pavilionPurchase(ownerId, body) {
+  async pavilionPurchase(ownerId, body) {
     onlyKeys(body, ['requestId', 'expectedVersion', 'kind', 'key']);
     if (typeof body.requestId !== 'string' || !REQUEST_ID.test(body.requestId) ||
       !Number.isSafeInteger(body.expectedVersion) || body.expectedVersion < 0 ||
       typeof body.key !== 'string' || typeof body.kind !== 'string')
       throw invalid('INVALID_REQUEST', 'Yêu cầu Thiên Mệnh Các không hợp lệ.');
     const now = this.clock();
-    const out = this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
+    const out = await this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
     if (out.record) {
       return this.#response({
         rec: out.record, revision: out.record.revision, now, state: out.record.state,
@@ -203,11 +211,11 @@ class PlayerService {
   }
 
   /* ---------- Đồng bộ: heartbeat JWT, tuyệt đối không tính thời gian offline ---------- */
-  sync(ownerId, playerId, body = {}) {
+  async sync(ownerId, playerId, body = {}) {
     onlyKeys(body, ['lastRevision']);
     if (body.lastRevision !== undefined && !(Number.isSafeInteger(body.lastRevision) && body.lastRevision >= 0)) throw invalid('INVALID_REQUEST', 'lastRevision không hợp lệ.');
     const now = this.clock();
-    const out = this.repo.transact(playerId, tx => {
+    const out = await this.repo.transact(playerId, async tx => {
       const rec = this.#own(tx.record, ownerId);
       const before = JSON.stringify(rec.state);
       const run = this.#run(rec, now);
@@ -233,16 +241,21 @@ class PlayerService {
         save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
         value: { rec, state: run.game.s, revision, report, achievements: clean(achievements), logs: run.logs, died: run.game.isDead() }
       };
-    });
+    }, this.#dbRate('sync', ownerId, now));
     if (out.error) throw out.error;
     return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, report: out.report, logs: out.logs, achievements: out.achievements, died: out.died });
   }
 
   /* Xác nhận ngừng chơi: tab ẩn/đóng. Đóng băng timers, kể cả khi quay lại ngay. */
-  pause(ownerId, playerId) {
+  async pause(ownerId, playerId) {
     const now = this.clock();
-    const out = this.repo.transact(playerId, tx => {
-      const rec = this.#own(tx.record, ownerId), run = this.#run(rec, now);
+    const out = await this.repo.transact(playerId, async tx => {
+      const rec = this.#own(tx.record, ownerId);
+      // Pause lặp lại không thay đổi gameplay: tránh ghi DB và tăng revision.
+      // Khi trở lại sync, presencePaused vẫn buộc advance đóng băng toàn bộ thời gian ẩn.
+      if (rec.state.presencePaused && rec.schemaVersion === H.VERSION)
+        return { value: { rec, revision: rec.revision, state: rec.state } };
+      const run = this.#run(rec, now);
       if (!run.game.isDead()) run.game.advance(now, run.offline);
       else run.game.s.lastUpdate = now;
       run.game.s.presencePaused = true;
@@ -252,17 +265,17 @@ class PlayerService {
         save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
         value: { rec, revision, state: run.game.s }
       };
-    });
+    }, this.#dbRate('pause', ownerId, now));
     return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, died: new H.Game(out.state).isDead() });
   }
 
   /* ---------- Lệnh gameplay ---------- */
-  command(ownerId, playerId, body) {
+  async command(ownerId, playerId, body) {
     const { requestId, expectedRevision, command } = this.#envelope(body);
     const fingerprint = fingerprintOf(command), now = this.clock();
-    const out = this.repo.transact(playerId, tx => {
+    const out = await this.repo.transact(playerId, async tx => {
       const rec = this.#own(tx.record, ownerId);
-      const prior = tx.receipt(requestId, now);
+      const prior = await tx.receipt(requestId, now);
       if (prior) {
         if (prior.fingerprint !== fingerprint) throw new GameError('REQUEST_ID_REUSED', 'requestId này đã dùng cho lệnh khác.');
         return { value: { rec, state: rec.state, revision: rec.revision, replayed: prior.response, died: new H.Game(rec.state).isDead() } };
@@ -274,10 +287,14 @@ class PlayerService {
         state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
       });
       let report, result = null, achievements = [], failure = null;
+      // Chốt trạng thái sau advance, trước khi thực thi intent không đáng tin.
+      let advancedState = null, advancedCounter = rec.rngCounter;
       try {
         if (run.game.isDead()) throw new GameError('PLAYER_DEAD', 'Đạo thân đã tọa hóa; hãy trở về Khởi Nguyên.');
         report = run.game.advance(now, run.offline);
         run.game.s.presencePaused = false;
+        advancedState = JSON.stringify(run.game.s);
+        advancedCounter = run.rng.counter();
         if (run.game.isDead()) {
           // Thọ nguyên cạn ngay trên heartbeat/lệnh: ghi chết và trả snapshot
           // thay vì ném lỗi làm trình duyệt không nhận kết quả.
@@ -289,16 +306,18 @@ class PlayerService {
       } catch (err) { failure = classify(err); if (failure.code === 'INTERNAL') this.onError(err); }
 
       if (failure) {
-        // Không làm mất phần thời gian thực mà máy chủ đã xác nhận khi lệnh
-        // không hợp lệ. Luôn lưu heartbeat và trạng thái để tránh time-freeze
-        // bằng cách spam lệnh lỗi.
-        if (failure.code === 'PLAYER_DEAD') return { touch: { rngCounter: rec.rngCounter, lastSeenAt: now }, value: { error: failure } };
-        if (JSON.stringify(run.game.s) !== JSON.stringify(rec.state)) {
-          assertStateSafe(run.game.s, this.cfg.maxStateBytes);
+        // Chỉ lưu state sau advance; mọi sửa đổi hoặc RNG từ lệnh bị từ chối đều bị loại.
+        if (advancedState === null) return { value: { error: failure } };
+        const preserved = JSON.parse(advancedState);
+        if (advancedState !== JSON.stringify(rec.state)) {
+          assertStateSafe(preserved, this.cfg.maxStateBytes);
           failure.details = { ...(failure.details || {}), currentRevision: rec.revision + 1 };
-          return { save: save(rec.revision + 1), value: { error: failure } };
+          return { save: {
+            state: preserved, revision: rec.revision + 1, rngCounter: advancedCounter,
+            lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
+          }, value: { error: failure } };
         }
-        return { touch: { rngCounter: run.rng.counter(), lastSeenAt: now }, value: { error: failure } };
+        return { touch: { rngCounter: advancedCounter, lastSeenAt: now }, value: { error: failure } };
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
@@ -314,7 +333,7 @@ class PlayerService {
         receipt: { requestId, fingerprint, revision, response, expiresAt: now + this.cfg.receiptTtlMs },
         value: { rec, state: run.game.s, revision, fresh: response }
       };
-    });
+    }, this.#dbRate('command', ownerId, now));
     if (out.error) throw out.error;
     if (out.replayed) {
       const r = out.replayed;
@@ -338,7 +357,7 @@ class PlayerService {
   }
   #run(rec, now) {
     const rng = seededRng(rec.rngSeed, rec.rngCounter), logs = [];
-    const state = this.#state(rec, now);
+    const state = structuredClone(this.#state(rec, now));
     return { rng, logs, game: new H.Game(state, rng, m => logs.push(m)), offline: !!state.presencePaused || now - rec.lastSeenAt > this.cfg.onlineGraceMs };
   }
   #envelope(body) {
@@ -351,10 +370,19 @@ class PlayerService {
     catch { throw invalid('INVALID_COMMAND', 'Lệnh game không hợp lệ.'); }
     return { requestId: body.requestId, expectedRevision: body.expectedRevision, command };
   }
-  #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false }) {
+  #dbRate(key, ownerId, now) {
+    if (!this.cfg.repositoryRates) return {};
+    const rules = {
+      sync: { capacity: 12, perMinute: 6 },
+      pause: { capacity: 8, perMinute: 4 },
+      command: { capacity: 30, perMinute: 600 }
+    };
+    return { rate: { ...rules[key], key, ownerId, now } };
+  }
+  async #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false, pavilionView = null }) {
     return {
       protocolVersion: C.VERSION, revision, serverTime: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion,
-      state: snapshot(state), pavilion: this.repo.getPavilion(rec.ownerId), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
+      state: snapshot(state), pavilion: pavilionView || await this.repo.getPavilion(rec.ownerId), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
     };
   }
 }
