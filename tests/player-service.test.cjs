@@ -75,7 +75,7 @@ test('lệnh: tăng revision, idempotent theo requestId, phát hiện revision l
   const stone = first.state.stone, bag = first.state.bag['HERB-001'];
   assert.equal(first.revision, 1);
   assert.equal(first.replayed, false);
-  assert.await ok(bag > made.state.bag['HERB-001']);
+  assert.ok(bag > made.state.bag['HERB-001']);
 
   const replay = await svc.command('owner-a', id, { ...await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'req-1'), expectedRevision: 0 });
   assert.equal(replay.replayed, true);
@@ -105,8 +105,8 @@ test('lệnh sai: envelope, payload thừa, loại lệnh lạ, luật từ ch�
   const rule = await (async () => { try { await svc.command('owner-a', id, await ok('buy', { code: 'EQ-005' }, 'r5')); for (let i = 0; i < 40; i++) await svc.command('owner-a', id, await ok('buy', { code: 'EQ-005' }, 'rb' + i)); } catch (e) { return e; } })();
   assert.equal(rule?.code, 'GAME_RULE_VIOLATION', 'hết linh thạch thì luật từ chối');
   const after = await svc.state('owner-a', id);
-  assert.await ok(after.revision >= before.revision);
-  assert.await ok(after.state.stone >= 0);
+  assert.ok(after.revision >= before.revision);
+  assert.ok(after.state.stone >= 0);
   const rev = (await svc.bootstrap('owner-a')).player.revision;
   assert.equal(await code(async () => await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'EQ-005' }, 'after-fail'))), 'GAME_RULE_VIOLATION');
   assert.equal((await svc.bootstrap('owner-a')).player.revision, rev, 'lệnh thất bại không tăng revision');
@@ -117,7 +117,7 @@ test('sync: offline không cộng gì; heartbeat online vẫn tính đúng thờ
   const { playerId: id } = await spawn(svc);
   clock.t += 5000;
   const online = await svc.sync('owner-a', id);
-  assert.await ok(online.report.exp > 0);
+  assert.ok(online.report.exp > 0);
   assert.equal(online.report.seconds, 5);
   const before = online.state;
   clock.t += 600000;
@@ -130,7 +130,7 @@ test('sync: offline không cộng gì; heartbeat online vẫn tính đúng thờ
   assert.equal(offline.state.lastUpdate, clock.t);
   clock.t += 5000;
   const back = await svc.sync('owner-a', id);
-  assert.await ok(back.report.exp > 0, 'online resume only counts current session');
+  assert.ok(back.report.exp > 0, 'online resume only counts current session');
   const paused = await svc.pause('owner-a', id);
   assert.equal(paused.state.presencePaused, true);
   clock.t += 1000;
@@ -147,7 +147,7 @@ test('đồng hồ lùi không cộng tiến trình và không làm revision âm
   clock.t -= 20000;
   const b = await svc.sync('owner-a', id, {});
   assert.equal(b.report.exp, 0);
-  assert.await ok(b.revision >= a.revision);
+  assert.ok(b.revision >= a.revision);
 });
 
 test('cô lập chủ sở hữu: người khác không đọc, đồng bộ hay ra lệnh được', async () => {
@@ -191,7 +191,7 @@ test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xó
   assert.equal(await code(async () => await svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
   assert.equal(await svc.resetAfterDeath('owner-a', id).deleted, true);
   assert.equal((await svc.bootstrap('owner-a')).player, null);
-  assert.await ok((await svc.previewCreation('owner-a')).ticketId);
+  assert.ok((await svc.previewCreation('owner-a')).ticketId);
 });
 
 test('dữ liệu bền qua khởi động lại (state, revision, receipt)', async () => {
@@ -221,7 +221,7 @@ test('RNG theo người chơi tiến bộ và được lưu: cùng lệnh ngẫu
   clock.t += 2000;
   await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'c1'));
   await svc.sync('owner-a', id, {});
-  assert.await ok((await repo.get(id)).rngCounter >= c0);
+  assert.ok((await repo.get(id)).rngCounter >= c0);
   const seed = (await repo.get(id)).rngSeed;
   assert.match(seed, /^[0-9a-f]{64}$/);
   assert.equal(JSON.stringify(await svc.state('owner-a', id)).includes(seed), false, 'seed không lộ ra client');
