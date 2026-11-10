@@ -22,6 +22,10 @@ jobs:
           node-version: '24'
       - name: Install exact dependencies
         run: npm ci
+      - name: Temp inspect unused variables (no repo dependency)
+        run: |
+          npx --yes eslint@9 --no-config-lookup --rule "no-unused-vars: error" client engine || true
+          echo HU_LINT_FINISHED
       - name: Verify game source constraints
         run: npm run check
       - name: Run security and integration tests
