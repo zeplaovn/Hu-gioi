@@ -2,6 +2,7 @@
    For production across multiple instances, use a shared limiter and Supabase Auth rate limits. */
 'use strict';
 const net = require('node:net');
+const { normalizeOrigin } = require('../../client/config.js');
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 10;
 const MAX_BODY = 4096;
@@ -36,7 +37,7 @@ const respond = (res, status, data, retryAfterMs = 0) => {
 };
 function createSupabaseLoginGateway({
   url, publishableKey, fetchImpl = globalThis.fetch, clock = Date.now,
-  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, trustedProxyIps = []
+  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, trustedProxyIps = [], allowedOrigins = []
 } = {}) {
   const origin = new URL(url);
   if (origin.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(origin.hostname) ||
@@ -46,6 +47,7 @@ function createSupabaseLoginGateway({
     throw Error('Thiếu khóa Supabase publishable cho gateway.');
   if (typeof fetchImpl !== 'function') throw Error('Thiếu dịch vụ HTTP cho gateway.');
   const trusted = new Set(trustedProxyIps.map(normalizeIp).filter(Boolean));
+  const allowed = new Set(allowedOrigins.map(value => normalizeOrigin(value)).filter(Boolean));
   const attempts = new Map();
   const clientIp = req => {
     const remote = normalizeIp(req.socket?.remoteAddress) || 'unknown';
@@ -54,13 +56,31 @@ function createSupabaseLoginGateway({
     return normalizeIp(forwarded) || remote;
   };
   async function handle(req, res) {
-    if (req.method !== 'POST') return respond(res, 405, { error: 'Phương thức không hợp lệ.' });
     const originHeader = req.headers.origin;
-    if (originHeader && !(() => {
-      try { const caller = new URL(originHeader); return ['http:', 'https:'].includes(caller.protocol) && caller.host === req.headers.host && caller.origin === originHeader; }
-      catch { return false; }
-    })()) return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
-    if (req.headers['sec-fetch-site'] === 'cross-site') return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
+    let sameOrigin = false, allowedCross = false;
+    if (originHeader) {
+      try {
+        const caller = new URL(originHeader);
+        sameOrigin = ['http:', 'https:'].includes(caller.protocol) && caller.host === req.headers.host && caller.origin === originHeader;
+        allowedCross = allowed.has(originHeader);
+      } catch { /* origin không hợp lệ */ }
+      if (!sameOrigin && !allowedCross) return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
+    }
+    if (req.headers['sec-fetch-site'] === 'cross-site' && !allowedCross)
+      return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
+    if (allowedCross) {
+      res.setHeader('Vary', 'Origin');
+      res.setHeader('Access-Control-Allow-Origin', originHeader);
+      res.setHeader('Access-Control-Allow-Headers', 'content-type');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Max-Age', '600');
+    }
+    if (req.method === 'OPTIONS') {
+      if (!allowedCross) return respond(res, 403, { error: 'Nguồn đăng nhập không hợp lệ.' });
+      res.writeHead(204, { 'Cache-Control': 'no-store' });
+      return res.end();
+    }
+    if (req.method !== 'POST') return respond(res, 405, { error: 'Phương thức không hợp lệ.' });
     if (!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type'] || '')))
       return respond(res, 415, { error: 'Yêu cầu đăng nhập phải là JSON.' });
     if (Number(req.headers['content-length'] || 0) > MAX_BODY) return respond(res, 413, { error: 'Yêu cầu quá lớn.' });

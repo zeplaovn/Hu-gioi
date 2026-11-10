@@ -5,6 +5,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
 const src = fs.readFileSync(path.join(__dirname, '../client/auth/supabase.js'), 'utf8');
+const configSrc = fs.readFileSync(path.join(__dirname, '../client/config.js'), 'utf8');
 const root = path.resolve(__dirname, '..');
 const ID = '11111111-2222-4333-8444-555555555555';
 const USER = { id: ID, email: 'test@example.invalid' };
@@ -40,7 +41,9 @@ function createAdapter(initialHash = '') {
       return { ok: status < 300, status, text: async () => result ? JSON.stringify(result) : '', json: async () => result };
     }
   };
-  vm.runInNewContext(src, { window, globalThis: window, URLSearchParams, Date, URL, Set, Error });
+  const context = { window, globalThis: window, URLSearchParams, Date, URL, Set, Error };
+  vm.runInNewContext(configSrc, context);
+  vm.runInNewContext(src, context);
   return { sb: window.HU_SUPABASE, storage, requests, location, records };
 }
 
@@ -97,7 +100,8 @@ test('legal pages, CSP and checkbox binding are present in shipping files', () =
   assert.doesNotMatch(auth, /authGuestRelease/);
   assert.ok(html.indexOf('client/auth/supabase.js') < html.indexOf('client/auth/auth.js'));
   assert.match(auth, /await SB\.accept\(pending\)/);
-  assert.match(headers, /connect-src 'self' https:\/\/rvrwfeblishqadkpzspb\.supabase\.co/);
+  assert.match(headers, /connect-src __HU_CONNECT_SRC__/);
+  assert.match(require('../server/http/public-config.js').injectConnectSrc(headers), /connect-src 'self' https:\/\/rvrwfeblishqadkpzspb\.supabase\.co/);
   assert.match(ignored, /\.hu-gioi\//);
   assert.match(fs.readFileSync(path.join(root, 'client/legal/privacy.html'), 'utf8'), /91\/2025\/QH15/);
   assert.match(fs.readFileSync(path.join(root, 'client/legal/release.html'), 'utf8'), /147\/2024\/NĐ-CP/);

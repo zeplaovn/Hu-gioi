@@ -6,6 +6,7 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../client/session/remote-session.js'), 'utf8');
+const configSource = readFileSync(join(__dirname, '../client/config.js'), 'utf8');
 const PLAYER = '12345678-1234-4234-8234-555555555555';
 const ACCOUNT = { id: '88888888-2222-4333-8444-555555555555', email: 'user@example.test' };
 
@@ -45,6 +46,7 @@ function fixture({ initialPlayer = false } = {}) {
     }
   };
   context.window = context;
+  vm.runInNewContext(configSource, context, { filename: 'config.js' });
   vm.runInNewContext(source, context, { filename: 'remote-session.js' });
   return { session: new context.HU_REMOTE_SESSION.RemoteSession(), calls, get applied() { return applied; } };
 }

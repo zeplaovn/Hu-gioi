@@ -110,3 +110,34 @@ test('invalid credentials remain generic and provider throttling propagates as 4
   assert.ok(Number(r.headers['retry-after']) >= 1);
   assert.equal(r.data.error.includes('token'), false);
 });
+
+test('gateway chỉ cho phép CORS preflight + POST từ origin frontend đã định nghĩa', async t => {
+  const http = require('node:http');
+  const gateway = createSupabaseLoginGateway({
+    url: 'https://demo-project.supabase.co', publishableKey: KEY,
+    allowedOrigins: ['https://frontend.example'],
+    fetchImpl: async () => ({
+      status: 200, ok: true, json: async () => ({ access_token: 'a', refresh_token: 'r' })
+    })
+  });
+  const server = http.createServer(createRouter(null, null, null, gateway));
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const send = (method, origin) => new Promise((resolve, reject) => {
+    const raw = JSON.stringify({ email: 'dao@example.com', password: 'long-password' });
+    const req = http.request({
+      host: '127.0.0.1', port: server.address().port, path: '/api/auth/supabase-login', method,
+      headers: { origin, 'sec-fetch-site': 'cross-site', 'content-type': 'application/json', 'content-length': Buffer.byteLength(raw) }
+    }, res => {
+      res.resume(); res.on('end', () => resolve({ status: res.statusCode, headers: res.headers }));
+    });
+    req.on('error', reject);
+    req.end(method === 'POST' ? raw : undefined);
+  });
+  const options = await send('OPTIONS', 'https://frontend.example');
+  assert.equal(options.status, 204);
+  assert.equal(options.headers['access-control-allow-origin'], 'https://frontend.example');
+  assert.equal((await send('POST', 'https://frontend.example')).status, 200);
+  assert.equal((await send('OPTIONS', 'https://untrusted.example')).status, 403);
+  assert.equal((await send('POST', 'https://untrusted.example')).status, 403);
+});

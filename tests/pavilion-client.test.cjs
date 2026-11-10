@@ -6,6 +6,7 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../client/session/remote-session.js'), 'utf8');
+const configSource = readFileSync(join(__dirname, '../client/config.js'), 'utf8');
 
 function fixture({ lostReply = false, conflict = false } = {}) {
   const calls = [], seen = new Set();
@@ -47,6 +48,7 @@ function fixture({ lostReply = false, conflict = false } = {}) {
     }
   };
   root.window = root;
+  vm.runInNewContext(configSource, root, { filename: 'config.js' });
   vm.runInNewContext(source, root, { filename: 'remote-session.js' });
   const session = new root.HU_REMOTE_SESSION.RemoteSession();
   return { session, calls, get spent() { return spent; }, get balance() { return balance; }, get version() { return version; } };
