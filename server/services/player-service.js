@@ -131,10 +131,18 @@ class PlayerService {
   /* ---------- Truy vấn ---------- */
   async bootstrap(ownerId) {
     const rec = await this.repo.getByOwner(ownerId);
+    const now = this.clock(), pavilion = await this.repo.getPavilion(ownerId);
+    // Trả snapshot đọc-thuần trong bootstrap để tránh thêm GET /state khi tải lại.
+    // Không advance offline: chỉ sync/command đã khóa hàng mới thay đổi state.
+    const snapshotData = rec ? await this.#response({
+      rec, revision: rec.revision, now, state: this.#state(rec, now),
+      died: new H.Game(rec.state).isDead(), pavilionView: pavilion
+    }) : null;
     return {
-      protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion, serverTime: this.clock(),
+      protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion, serverTime: now,
       player: rec ? { id: rec.id, name: rec.name, revision: rec.revision } : null,
-      previewsPerDay: this.cfg.previewsPerDay, nextSyncInMs: this.cfg.nextSyncInMs, pavilion: await this.repo.getPavilion(ownerId)
+      previewsPerDay: this.cfg.previewsPerDay, nextSyncInMs: this.cfg.nextSyncInMs,
+      pavilion, snapshot: snapshotData
     };
   }
 
@@ -233,7 +241,7 @@ class PlayerService {
         save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
         value: { rec, state: run.game.s, revision, report, achievements: clean(achievements), logs: run.logs, died: run.game.isDead() }
       };
-    });
+    }, this.#dbRate('sync', ownerId, now));
     if (out.error) throw out.error;
     return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, report: out.report, logs: out.logs, achievements: out.achievements, died: out.died });
   }
@@ -257,7 +265,7 @@ class PlayerService {
         save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
         value: { rec, revision, state: run.game.s }
       };
-    });
+    }, this.#dbRate('pause', ownerId, now));
     return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, died: new H.Game(out.state).isDead() });
   }
 
@@ -277,7 +285,7 @@ class PlayerService {
       const previousRealm = rec.state.realm;
       const run = this.#run(rec, now), save = revision => ({
         state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
-      });
+      }, this.#dbRate('command', ownerId, now));
       let report, result = null, achievements = [], failure = null;
       // Chốt trạng thái sau advance, trước khi thực thi intent không đáng tin.
       let advancedState = null, advancedCounter = rec.rngCounter;
@@ -362,10 +370,19 @@ class PlayerService {
     catch { throw invalid('INVALID_COMMAND', 'Lệnh game không hợp lệ.'); }
     return { requestId: body.requestId, expectedRevision: body.expectedRevision, command };
   }
-  async #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false }) {
+  #dbRate(key, ownerId, now) {
+    if (!this.cfg.repositoryRates) return {};
+    const rules = {
+      sync: { capacity: 12, perMinute: 6 },
+      pause: { capacity: 8, perMinute: 4 },
+      command: { capacity: 30, perMinute: 600 }
+    };
+    return { rate: { ...rules[key], key, ownerId, now } };
+  }
+  async #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false, pavilionView = null }) {
     return {
       protocolVersion: C.VERSION, revision, serverTime: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion,
-      state: snapshot(state), pavilion: await this.repo.getPavilion(rec.ownerId), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
+      state: snapshot(state), pavilion: pavilionView || await this.repo.getPavilion(rec.ownerId), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
     };
   }
 }
