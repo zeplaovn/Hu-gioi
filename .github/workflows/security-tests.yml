@@ -22,6 +22,15 @@ jobs:
           node-version: '24'
       - name: Install exact declared developer tools (lockfile follows in step 3)
         run: npm install --no-package-lock --ignore-scripts
+      - name: Generate exact lockfile for review (temporary CI export)
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit
+          node - <<'NODE'
+          const s = JSON.stringify(require('node:fs').readFileSync('package-lock.json','utf8'));
+          for (let i = 0, n = 0; i < s.length; i += 4000, n++)
+            console.log('HU_LOCK_CHUNK:' + n + ':' + s.slice(i,i+4000));
+          console.log('HU_LOCK_FINISHED');
+          NODE
       - name: Verify game source constraints
         run: npm run check
       - name: Run security and integration tests
