@@ -21,6 +21,14 @@ export function corsHeaders(req: Request, allowedOrigins: ReadonlySet<string>): 
   return headers;
 }
 
+/* Chỉ nhận JWT trong Authorization; không bao giờ chấp nhận apikey thay JWT.
+ * Scheme Bearer không phân biệt chữ hoa/thường theo chuẩn HTTP, cho phép OWS. */
+export function bearerToken(value: string | null): string | null {
+  if (!value) return null;
+  const m = /^[ \t]*Bearer[ \t]+([A-Za-z0-9_-]+={0,2}(?:\.[A-Za-z0-9_-]+={0,2}){2})[ \t]*$/i.exec(value);
+  return m ? m[1] : null;
+}
+
 export function routeOf(method: string, path: string): { name: string; id?: string } | null {
   const pathname = path.replace(/^\/functions\/v1\/api(?=\/|$)/, '')
     .replace(/^\/api\/v1(?=\/|$)/, '')

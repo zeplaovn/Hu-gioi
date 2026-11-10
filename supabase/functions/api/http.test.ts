@@ -1,5 +1,5 @@
 /* Deno Edge HTTP regression: kiểm không cần DB/live credentials. */
-import { corsHeaders, parseBody, routeOf } from './http.ts';
+import { corsHeaders, parseBody, routeOf, bearerToken } from './http.ts';
 
 function expect(condition: unknown, message: string): asserts condition {
   if (!condition) throw Error(message);
@@ -56,4 +56,15 @@ Deno.test('HTTP: JSON lỗi, sai content-type, >64KB, không tin client payload'
     method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ offline: true, now: 0 })
   }));
   expect((body as {offline?:boolean}).offline === true, 'parsing only; PlayerService enforces allowlist');
+});
+
+Deno.test('Bearer parser accepts HTTP auth scheme casing and OWS, never api keys or duplicate headers', () => {
+  expect(bearerToken('Bearer aaa.bbb-ccc.ddd') === 'aaa.bbb-ccc.ddd', 'normal JWT');
+  expect(bearerToken('bearer  aaa.bbb.ccc') === 'aaa.bbb.ccc', 'HTTP case-insensitive scheme');
+  expect(bearerToken(' Bearer\taaa.bbb.ccc\t') === 'aaa.bbb.ccc', 'HTTP optional whitespace');
+  expect(bearerToken('Bearer aaa.bbb=.ccc=') === 'aaa.bbb=.ccc=', 'valid base64url padding');
+  for (const raw of [null, '', 'Bearer', 'Basic abc', 'Bearer sb_publishable_key', 'Bearer aaa.bbb.ccc, Bearer other', 'Bearer abc\ndef']) {
+    const parsed = bearerToken(raw);
+    expect(parsed === null, 'reject absent/malformed bearer');
+  }
 });
