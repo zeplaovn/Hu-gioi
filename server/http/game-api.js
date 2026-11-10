@@ -75,9 +75,21 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
       if (req.method === 'OPTIONS') { res.writeHead(204, { 'X-Request-Id': requestId }).end(); return true; }
       const route = matchRoute(req.method, pathname);
       if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
-      limit('ip:' + clientIp(req), LIMITS.ip); // trước khi tốn công xác minh JWT/Supabase
-      const principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
-      if (!principal) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
+      // IP quota dành cho request chưa xác thực / JWT sai; người chơi đã xác thực
+      // chịu quota riêng theo account, không chặn hàng trăm người sau cùng NAT.
+      const hasCredential = !!(req.headers.authorization || req.headers.cookie);
+      if (!hasCredential) limit('ip:' + clientIp(req), LIMITS.ip);
+      let principal;
+      try {
+        principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
+      } catch (error) {
+        if (hasCredential && error.code === 'UNAUTHENTICATED') limit('ip:' + clientIp(req), LIMITS.ip);
+        throw error;
+      }
+      if (!principal) {
+        if (hasCredential) limit('ip:' + clientIp(req), LIMITS.ip);
+        throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
+      }
       const who = principal.accountId, body = await readBody(req);
       let out, status = 200;
       switch (route.name) {
