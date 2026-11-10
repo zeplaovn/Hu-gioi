@@ -60,7 +60,8 @@
       $('authGate').hidden = true;
       $('authForm').reset();
       notice('');
-      $('nameInput')?.focus({ preventScroll: true });
+      if (!$('welcome').hidden) $('nameInput')?.focus({ preventScroll: true });
+      else if (!$('game').hidden) $('stage')?.focus?.({ preventScroll: true });
     } catch (error) {
       account = null;
       exitGame();
