@@ -49,7 +49,7 @@
 
   function friends() {
     const met = Object.values(UI.s().social.friends).filter(f => f.metAt).length;
-    return `<p class="screen-lead">Tri kỷ là những người đồng hành trên tiên lộ. Kết giao, tặng lễ để nâng tình nghĩa; mỗi vị có một câu chuyện riêng.</p>
+    return `<p class="screen-lead">Tri kỷ là các NPC đồng hành trong chế độ mô phỏng. Kết giao, tặng lễ để nâng tình nghĩa; mỗi vị có một câu chuyện riêng.</p>
       ${card('Tình nghĩa đã kết', `${row('Số tri kỷ', met + ' / ' + FRIENDS.length)}${row('Tặng lễ', 'Tăng 8–20 tình nghĩa')}${row('Giới hạn', '100 tình nghĩa mỗi người')}<p class="info-note">Tặng lễ tiêu linh thạch. Tình nghĩa không giảm theo thời gian hay trọng sinh.</p>`, { eyebrow: 'GIAO TÌNH' })}
       <div class="social-list">${FRIENDS.map(friendCard).join('')}</div>`;
   }
@@ -65,14 +65,14 @@
   }
 
   function dao() {
-    return `<p class="screen-lead">Đạo hữu bốn phương cùng luận đạo. Mỗi lần luận đạo nhận một ít tu vi, tăng nhẹ tình nghĩa và có thời gian hồi riêng.</p>
+    return `<p class="screen-lead">Luận đạo cùng các NPC mô phỏng. Mỗi lần luận đạo nhận một ít tu vi, tăng nhẹ tình nghĩa và có thời gian hồi riêng.</p>
       ${card('Luận đạo', `${row('Tu vi mỗi lần', '≈ ' + num(discussGain()))}${row('Thời gian hồi', Math.round(DISCUSS_CD / 1000) + ' giây')}${row('Tình nghĩa', '+1 mỗi lần')}<p class="info-note">Tu vi nhận được không vượt quá thanh tu vi hiện tại. Khi tu vi đã đầy, hãy đột phá trước.</p>`, { eyebrow: 'ĐỒNG ĐẠO' })}
       <div class="social-list">${DAO.map(daoCard).join('')}</div>`;
   }
 
   function pvp() {
     const s = UI.s(), pvp = s.social.pvp, g = UI.g(), my = g.stats().CP, ready = Date.now() >= pvp.lastAt + PVP_CD;
-    return `<p class="screen-lead">Luận kiếm với các cao thủ cùng cảnh giới. Thắng tăng danh vọng, nhận linh thạch và tu vi; thua mất một ít danh vọng.</p>
+    return `<p class="screen-lead">Luận kiếm với đối thủ NPC, không phải người chơi thật. Thắng tăng danh vọng, nhận linh thạch và tu vi; thua mất một ít danh vọng.</p>
       <div class="screen-grid">
         ${card('Đài luận kiếm', `<div class="pvp-rating"><b>${num(pvp.rating)}</b><span>${pvpTier(pvp.rating)}</span></div>
           ${row('Thắng / Thua', num(pvp.wins) + ' / ' + num(pvp.losses))}${row('Chuỗi thắng', num(pvp.streak))}${row('Danh vọng cao nhất', num(pvp.best))}${row('Chiến lực của bạn', num(my))}
@@ -96,7 +96,7 @@
     const entries = [...RANKS.map(r => ({ ...r, you: false })), { name: s.name, realm: s.realm, rating: pvp.rating, title: 'Đạo hữu hữu duyên', you: true }]
       .sort((a, b) => b.rating - a.rating);
     const mine = entries.findIndex(e => e.you) + 1;
-    return `<p class="screen-lead">Bảng xếp hạng danh vọng ba giới. Hạng của bạn được cập nhật sau mỗi trận luận kiếm; thứ hạng chỉ là hư danh, đạo tâm mới là thật.</p>
+    return `<p class="screen-lead">Bảng tham khảo danh vọng NPC mô phỏng, không phải bảng xếp hạng người chơi thật. Thứ hạng tham khảo thay đổi sau mỗi trận luận kiếm.</p>
       ${card('Thứ hạng của bạn', `<div class="rank-me"><b>#${mine}</b><span>${esc(s.name)}</span><em>${num(pvp.rating)} danh vọng</em></div>${row('Cảnh giới', UI.g().realmLabel())}${row('Thắng / Thua', num(pvp.wins) + ' / ' + num(pvp.losses))}`, { eyebrow: 'HIỆN TẠI' })}
       <div class="rank-list">${entries.map((e, i) => `<div class="rank-row ${e.you ? 'you' : ''} ${i < 3 ? 'top' : ''}">
         <span class="rank-no">${i < 3 ? ['Ⅰ', 'Ⅱ', 'Ⅲ'][i] : '#' + (i + 1)}</span>
