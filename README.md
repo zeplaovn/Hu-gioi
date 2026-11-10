@@ -79,7 +79,7 @@ server/                    Máy chủ HTTP
   main.js http/              File tĩnh + /api/health + /api/auth/* (thử nghiệm) + /api/v1/*
   auth/ http/ services/ repositories/   JWT, API /api/v1, PlayerService, kho SQLite; chat/ vẫn là khung
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
-tools/                     Build static, backup SQLite và kiểm UI; không có pending-engine/
+tools/                     Build static, backup SQLite và kiểm giao diện
 docs/                      Tài liệu
 ```
 
