@@ -33,7 +33,7 @@
       giftFriend(payload, now) {
         this.requireFeature('social');
         now = at(this, now);
-        const def = find(FRIENDS, payload.id), f = this.s.social.friends[payload.id], cost = giftCost(def), amount = Math.floor((8 + def.realm) * (1 + H.PAVILION.bonus(s.pavilion?.tuongMao)));
+        const def = find(FRIENDS, payload.id), f = this.s.social.friends[payload.id], cost = giftCost(def), amount = Math.floor((8 + def.realm) * (1 + H.PAVILION.bonus(this.s.pavilion?.tuongMao)));
         if (!f?.metAt) throw Error('Hãy kết giao trước khi tặng lễ.');
         if (f.affinity >= 100) throw Error('Tình nghĩa đã viên mãn, không cần tặng thêm.');
         this.spend(cost);
