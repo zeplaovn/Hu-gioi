@@ -202,12 +202,12 @@ class PlayerService {
     if (out.record) {
       return this.#response({
         rec: out.record, revision: out.record.revision, now, state: out.record.state,
-        result: { kind: body.kind, key: body.key, cost: out.cost ?? 0 },
+        result: { kind: body.kind, key: body.key, cost: out.cost ?? null },
         died: new H.Game(out.record.state).isDead(), replayed: out.replayed
       });
     }
     return { protocolVersion: C.VERSION, schemaVersion: H.VERSION, contentVersion: this.contentVersion,
-      serverTime: now, pavilion: out.pavilion, result: { kind: body.kind, key: body.key, cost: out.cost ?? 0 }, replayed: out.replayed };
+      serverTime: now, pavilion: out.pavilion, result: { kind: body.kind, key: body.key, cost: out.cost ?? null }, replayed: out.replayed };
   }
 
   /* ---------- Đồng bộ: heartbeat JWT, tuyệt đối không tính thời gian offline ---------- */
@@ -233,7 +233,9 @@ class PlayerService {
       } catch (err) {
         const e = classify(err);
         if (e.code === 'INTERNAL') this.onError(err);
-        return { touch: { rngCounter: rec.rngCounter, lastSeenAt: now }, value: { error: e } };
+        // Never advance lastSeenAt without committing state.lastUpdate:
+        // on engine failure, discard partial changes and keep the old checkpoint.
+        return { value: { error: e } };
       }
       const changed = JSON.stringify(run.game.s) !== before, revision = rec.revision + (changed ? 1 : 0);
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);

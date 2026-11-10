@@ -5,6 +5,7 @@
 import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
 import { UUID, corsHeaders, routeOf, parseBody, bearerToken } from './http.ts';
 import { createContentionCounter } from './contention-counter.ts';
+import { createEdgeRateLimiter } from './api-rate-limit.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
   createJwtVerifier, createAccountAdmin, shouldLogApiError, CONTENT_VERSION
@@ -30,6 +31,7 @@ function fromEnv(name: string, defaultValue: number, min: number, max: number): 
 }
 const syncInterval = fromEnv('HU_SYNC_INTERVAL_MS', 20000, 5000, 60000);
 const grace = fromEnv('HU_ONLINE_GRACE_MS', 60000, 3 * syncInterval, 180000);
+const apiLimiter = createEdgeRateLimiter({ syncIntervalMs: syncInterval });
 
 if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(BASE))
   throw Error('SUPABASE_URL phải là origin Supabase HTTPS.');
@@ -142,6 +144,12 @@ export async function handleApi(req: Request): Promise<Response> {
     const route = routeOf(req.method, new URL(req.url).pathname);
     if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
     const ownerId = await authenticate(req, route.name);
+    // Defense in depth against repeated reads/failed intents. Not global across
+    // Edge isolates: Supabase Auth limits and an upstream WAF are still required.
+    const quota = apiLimiter.take(ownerId, route.name);
+    if (!quota.ok) throw new GameError('RATE_LIMITED', 'Thao tác quá nhanh. Hãy thử lại sau.', {
+      retryAfterMs: quota.retryAfterMs
+    });
     const body = await parseBody(req);
     let result, status = 200;
     switch (route.name) {

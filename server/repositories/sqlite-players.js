@@ -7,6 +7,7 @@ const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 const { PlayerRepository } = require('./player-repository.js');
 const { GameError } = require('../errors.js');
+const { encodePavilionReceipt, decodePavilionReceipt } = require('./pavilion-receipt.js');
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS players (
@@ -138,11 +139,10 @@ class SqlitePlayers extends PlayerRepository {
   async purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
     return this.run(async () => {
       this.q.pavilionEnsure.run(ownerId);
-      const fingerprint = kind + ':' + key;
       const prior = this.q.pavilionReceipt.get(ownerId, requestId);
       if (prior) {
-        if (prior.fingerprint !== fingerprint) throw new GameError('REQUEST_ID_REUSED', 'Mã yêu cầu đã dùng cho giao dịch khác.');
-        return { replayed: true, pavilion: await this.getPavilion(ownerId), record: await this.getByOwner(ownerId) };
+        const cost = decodePavilionReceipt(prior.fingerprint, kind, key);
+        return { replayed: true, cost, pavilion: await this.getPavilion(ownerId), record: await this.getByOwner(ownerId) };
       }
       const account = await this.getPavilion(ownerId);
       if (account.version !== expectedVersion) throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
@@ -170,7 +170,7 @@ class SqlitePlayers extends PlayerRepository {
         if (Buffer.byteLength(json) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
         this.q.pavilionSyncPlayer.run(json, Buffer.byteLength(json), now, ownerId);
       }
-      this.q.pavilionPutReceipt.run(ownerId, requestId, fingerprint);
+      this.q.pavilionPutReceipt.run(ownerId, requestId, encodePavilionReceipt(kind, key, cost));
       return { replayed: false, cost, pavilion: await this.getPavilion(ownerId), record: await this.getByOwner(ownerId) };
     });
   }
