@@ -224,7 +224,7 @@
       },
       encounterChance() {
         const t = this.s.talent;
-        return Math.min(.5, .3 + t.phucDuyen * .012 + (t.vanKhi + this.s.meta.upgrades.luck) * .004 + (this.s.race === 'tien_due' ? .03 : 0));
+        return Math.min(.5, (.3 + t.phucDuyen * .012 + (t.vanKhi + this.s.meta.upgrades.luck) * .004 + (this.s.race === 'tien_due' ? .03 : 0)) * (1 + (this.s.pavilion?.coDuyen || 0) * .025));
       },
       resolveEncounter(ev, now) {
         const s = this.s, mult = ENCOUNTER_RARITIES[ev.rarity].mult, reward = [];

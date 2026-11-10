@@ -55,6 +55,18 @@
       g.log(`Bạn mở mắt ra: ${name}, ${s.age} tuổi, chủng tộc ${H.raceName(s.race)}, mang ${label} giữa Hư Giới.`);
       return s;
     };
+    /* Chỉ máy chủ gọi khi tạo nhân vật bằng ticket đã xác minh.
+       Thiên tinh và kho bảo vật luôn lưu ngoài state, theo tài khoản. */
+    H.applyPavilionOnCreate = function (state, upgrades, relics) {
+      state.pavilion = Object.fromEntries(Object.keys(H.PAVILION.stats).map(k => [k, Math.min(20, Math.max(0, Math.floor(upgrades?.[k] || 0)))]));
+      state.stone += (relics?.tuiLinhThach || 0) * 200;
+      state.extraLife += relics?.truongSinhNgoc || 0;
+      const game = new H.Game(state);
+      state.qi += (relics?.nguDaoNgoc || 0) * game.need() * .15;
+      state.hp = game.stats().HP;
+      state.mp = game.maxMp();
+      return state;
+    };
   }
 
   const mod = Object.freeze({ domain, commands, install });
