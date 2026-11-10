@@ -57,7 +57,7 @@
         <p><b>1.</b> Ở <b>Tu luyện</b>, nhân vật tự nhập định và tích tu vi theo thời gian thật. Cải thiện khả năng hấp thụ linh khí và dùng đan để tăng nhanh.</p>
         <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Quyết có sẵn. Công pháp tự vận hành nếu còn ô trống; quản lý trong mục <b>Công pháp</b>.</p>
         <p><b>3.</b> Mở <b>Lịch luyện</b>, chọn nơi muốn đến rồi bấm <b>Khởi hành</b>. Trong mười phút, đạo thân luân phiên đi bộ và ngồi thiền nghỉ ngơi; nhật ký ghi lại cơ duyên, thử thách gặp phải. Không thể về đài Tu luyện hay đổi địa điểm trước khi đồng hồ về 00:00. Tu luyện và nghề phụ tạm dừng, sau đó tự tiếp tục.</p>
-        <p><b>4.</b> <b>Nghề phụ</b> vẫn hoạt động khi bạn vắng mặt: luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Đan dược và vật phẩm chế tác sẽ chờ bạn nhận khi trở lại.</p>
+        <p><b>4.</b> <b>Nghề phụ</b> gồm luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Thời gian chế tác chỉ tiến triển khi tab game đang mở và kết nối; khi rời game, công việc sẽ tạm dừng.</p>
         <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký tu tiên; đại cảnh giới mở Độ kiếp đài.</p>
         <p><b>6.</b> <b>Thế giới → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Kỳ ngộ</b> là một cơ duyên có thể bắt gặp khi Lịch luyện; kết quả hiển lộ sau khi chuyến đi kết thúc.</p>
         <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Thiên mệnh</b> để xem thành tựu, bồi dưỡng đạo cơ lâu dài và mục Trọng sinh.</p>
@@ -75,21 +75,21 @@
       ${card('Nhật ký & tiến trình xuyên kiếp', `
         <p>• Nhật ký tu tiên dưới sân khấu nhận cả ghi chép tu hành và thông báo. Dòng ghi chép mới hiện dần; cuộn lên để đọc cũ, bấm <b>↓ Tin mới</b> để về cuối.</p>
         <p>• Nút thu gọn nhật ký được ghi nhớ trên thiết bị. Chế độ giảm chuyển động hiển thị ngay, không dùng hiệu ứng hiện chữ.</p>
-        <p>• <b>Thiên mệnh</b> giữ nâng cấp, thành tựu và bia kiếp trước qua trọng sinh; chỉ mất khi khởi nguyên lại hành trình.</p>
-        <p>• <b>Nhiệm vụ tông môn</b> chạy theo thời gian thực, kể cả khi đóng game; nhận cống hiến khi hoàn tất.</p>`, { eyebrow: 'XUYÊN KIẾP' })}
+        <p>• <b>Thiên Mệnh Các</b> giữ Thiên Tinh, nâng cấp vĩnh viễn và Kỳ Trân chưa dùng theo tài khoản khi bắt đầu kiếp mới. Vật phẩm và thành tựu của nhân vật cũ không được kế thừa.</p>
+        <p>• <b>Nhiệm vụ tông môn</b> chỉ tiếp tục tính thời gian khi bạn đang trong game và kết nối. Khi hoàn tất, hãy quay lại nhận cống hiến.</p>`, { eyebrow: 'XUYÊN KIẾP' })}
       ${card('Mẹo tu hành', `
         <p>• Bán yêu đan ở Lịch luyện hoặc Thế giới → Cửa hàng để lấy linh thạch.</p>
         <p>• Đan cấp thấp vẫn dùng được nhưng hiệu quả giảm theo chênh lệch cảnh giới.</p>
         <p>• Kiếp vận tích lũy tăng một bậc sau mỗi lần đột phá thất bại, tối đa 15 bậc.</p>
         <p>• Tông môn mang lại linh thạch định kỳ và chúc phúc +10% tốc độ hấp thụ linh khí.</p>
-        <p>• Chủ động Trọng sinh vẫn giữ những gì luật Trọng sinh cho phép. Khi <b>tọa hóa vì hết thọ nguyên</b>, toàn bộ dữ liệu game được xóa và quay về tạo nhân vật; tài khoản vẫn còn.</p>`, { eyebrow: 'GHI NHỚ' })}
+        <p>• Khi nhân vật <b>tọa hóa</b>, bạn có thể trở về Khởi Nguyên để tạo nhân vật mới. Tiến trình kiếp cũ sẽ bị xóa; tài khoản và quyền lợi thuộc Thiên Mệnh Các vẫn được giữ.</p>`, { eyebrow: 'GHI NHỚ' })}
     </div>`;
   }
 
   function legal() {
     return '<div class="screen-grid">' +
-      card('Dữ liệu cá nhân', '<p>Tài khoản được xác thực qua Supabase; nhân vật được lưu trên máy chủ game, không lưu trên thiết bị. Xem dữ liệu được xử lý ra sao và cách tải về hoặc xóa dữ liệu của bạn.</p><p><a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Đọc Chính sách quyền riêng tư (10/11/2026)</a></p>', { eyebrow: 'QUYỀN RIÊNG TƯ' }) +
-      card('Điều khoản sử dụng', '<p>Hư Giới là dự án phi lợi nhuận, miễn phí, không có thanh toán trực tuyến. Vật phẩm trong game không có giá trị quy đổi ra tiền.</p><p><a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Đọc Điều khoản sử dụng (10/11/2026)</a></p>', { eyebrow: 'PHÁP LÝ' }) +
+      card('Dữ liệu cá nhân', '<p>Tài khoản và tiến trình được lưu để bạn tiếp tục hành trình trên các thiết bị. Tìm hiểu thông tin được sử dụng, thời gian lưu giữ và cách yêu cầu nhận bản sao hoặc xóa dữ liệu của mình.</p><p><a href="client/legal/privacy.html" target="_blank" rel="noopener noreferrer">Đọc Chính sách quyền riêng tư</a></p>', { eyebrow: 'QUYỀN RIÊNG TƯ' }) +
+      card('Điều khoản sử dụng', '<p>Hư Giới là dự án phi lợi nhuận, miễn phí, không có thanh toán trực tuyến. Vật phẩm trong game không có giá trị quy đổi ra tiền.</p><p><a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Đọc Điều khoản sử dụng</a></p>', { eyebrow: 'PHÁP LÝ' }) +
       '</div>';
   }
 
