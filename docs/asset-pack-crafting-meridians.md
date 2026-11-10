@@ -1,5 +1,7 @@
 # Gói giao diện nghề phụ và Kinh Mạch Đồ (11/11/2026)
 
+> Trạng thái: Hiện hành. Gói ảnh tùy chọn; chỉ bật khi đã cài đủ tệp.
+
 ## Tính năng
 
 - **Luyện đan:** bối cảnh Đan Các, hoạt cảnh 8 khung theo giới tính nhân vật, nút **Xem riêng lò đan**.
