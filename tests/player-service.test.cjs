@@ -294,8 +294,8 @@ for (const adapter of ['sqlite', 'postgres']) {
       ticketId: ticketB.ticketId, name: 'tử yên', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
     }), { code: 'NAME_TAKEN' });
     await assert.rejects(service.previewCreation(OWNER_A), { code: 'PLAYER_EXISTS' });
-    await assert.rejects(service.createPlayer(OWNER_B, {
-      ticketId: a.ticketId || 'unknown', name: 'Hồ Tiên', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+    await assert.rejects(service.createPlayer(OWNER_A, {
+      ticketId: ticketB.ticketId, name: 'Hồ Tiên', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
     }), { code: 'TICKET_INVALID' });
   });
 
