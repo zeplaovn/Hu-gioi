@@ -1,5 +1,6 @@
 # Kiểm kê gameplay trước phát hành online — Bước 0
 
+> Trạng thái: Đề xuất.
 > **Trạng thái: CHỜ DUYỆT THIẾT KẾ. Không sửa engine, dữ liệu hay API trong bước này.** Xem **[Sổ quyết định gameplay](gameplay-decisions.md)** để duyệt từng mục và theo dõi đề xuất.
 >
 > **Bổ sung quyết định chủ dự án 10/11/2026:** Khi tạp chất kinh mạch đạt **Z = 100**, nhân vật **bị phế tu vi, trở thành phàm nhân**, **không được tu luyện, không được sử dụng vật phẩm**, và **chỉ tử vong khi thọ nguyên cạn**; **không** tử vong ngay ở mốc Z=100. Chủ dự án còn yêu cầu **sách công thức riêng cho từng nghề**. Xem [đặc tả sách nghề dự thảo](profession-manuals-proposal.md). **ĐÃ DUYỆT TIẾP:** giữ nguyên phần thọ nguyên còn lại tại thời điểm phế tu vi (không hạ tuổi thọ về ngưỡng phàm nhân, không chết ngay); bốn nghề có ba tập sách mỗi nghề theo Hạ/Linh/Tiên Giới = 12 quyển. Chi phí, nguồn sách, công thức chi tiết và cơ chế đếm tuổi phàm nhân vẫn chờ duyệt; chưa có code.
