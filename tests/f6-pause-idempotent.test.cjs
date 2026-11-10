@@ -18,5 +18,5 @@ test('F6: pause đã dừng không làm revision, lastSeenAt, state đổi hoặ
   const after = await repo.get(id);
   assert.equal(two.revision, one.revision);
   assert.deepEqual(after, before);
-  assert.equal(await svc.sync('owner-a', id).report.seconds, 0);
+  assert.equal((await svc.sync('owner-a', id)).report.seconds, 0);
 });

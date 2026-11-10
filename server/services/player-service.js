@@ -178,7 +178,7 @@ class PlayerService {
         return { name: state.name, state, schemaVersion: H.VERSION, contentVersion: this.contentVersion, rngSeed: seed, rngCounter: rng.counter() };
       }
     });
-    return { ...this.#response({ rec, revision: rec.revision, now, state: rec.state, logs: rec.state.logs.slice(0, 2) }), playerId: rec.id };
+    return { ...await this.#response({ rec, revision: rec.revision, now, state: rec.state, logs: rec.state.logs.slice(0, 2) }), playerId: rec.id };
   }
 
   /* Mua tại Thiên Mệnh Các không dùng protocol command, vì đồng tiền thuộc tài khoản.

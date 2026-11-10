@@ -189,7 +189,7 @@ test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xó
   const err = await (async () => { try { await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'd1')); } catch (e) { return e; } })();
   assert.equal(err.code, 'PLAYER_DEAD');
   assert.equal(await code(async () => await svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
-  assert.equal(await svc.resetAfterDeath('owner-a', id).deleted, true);
+  assert.equal((await svc.resetAfterDeath('owner-a', id)).deleted, true);
   assert.equal((await svc.bootstrap('owner-a')).player, null);
   assert.ok((await svc.previewCreation('owner-a')).ticketId);
 });
