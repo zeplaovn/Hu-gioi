@@ -6,10 +6,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { webcrypto } = require('node:crypto');
+const { transformSync } = require('esbuild');
 
 const source = fs.readFileSync(path.join(__dirname, '../client/auth/supabase.js'), 'utf8');
 
-function harness() {
+function harness(sourceCode = source) {
   const store = new Map();
   const calls = [];
   const location = {
@@ -44,7 +45,7 @@ function harness() {
       throw Error('Unexpected request ' + url);
     }
   };
-  vm.runInNewContext(source, { window: root, Uint8Array, Date, URL, URLSearchParams, String, JSON });
+  vm.runInNewContext(sourceCode, { window: root, Uint8Array, Date, URL, URLSearchParams, String, JSON });
   return { root, location, store, calls, auth: root.HU_SUPABASE };
 }
 function response(status, body) {
@@ -105,4 +106,15 @@ test('Google OAuth fails closed when sessionStorage is unavailable', async () =>
   root.sessionStorage.setItem = () => { throw Error('denied'); };
   await assert.rejects(auth.loginGoogle(), /lưu trữ phiên/);
   assert.equal(location.assigned, '');
+});
+
+test('minified frontend preserves Google OAuth URL constructor', async () => {
+  const minified = transformSync(source, {
+    loader: 'js', minify: true, legalComments: 'none', target: 'es2020'
+  }).code;
+  const { auth, location } = harness(minified);
+  await auth.loginGoogle();
+  const authorize = new URL(location.assigned);
+  assert.equal(authorize.pathname, '/auth/v1/authorize');
+  assert.equal(authorize.searchParams.get('provider'), 'google');
 });
