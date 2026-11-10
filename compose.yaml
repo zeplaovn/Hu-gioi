@@ -12,6 +12,7 @@ services:
       SUPABASE_URL: https://rvrwfeblishqadkpzspb.supabase.co
       SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:?Missing publishable key}
       HU_DB_FILE: /data/game.sqlite
+      HU_AUTH_TRUSTED_PROXY_IPS: ${HU_AUTH_TRUSTED_PROXY_IPS:?Set the actual reverse proxy source IP}
     volumes:
       - hugioi_player_data:/data
     ports:

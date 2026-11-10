@@ -15,7 +15,7 @@
 **Bảo vệ đăng nhập:** từ chính sách v4, trình duyệt gửi mật khẩu tới `POST /api/auth/supabase-login` **cùng origin Node**, backend kiểm tra email và tối đa **10 lượt thử/15 phút/IP**, sau đó chuyển yêu cầu tới Supabase Auth qua HTTPS. Đăng ký vẫn gọi Supabase và yêu cầu xác nhận email. Không thể dùng riêng Cloudflare Pages/static để đăng nhập bằng mật khẩu với gateway này; phải triển khai API Node cùng origin hoặc cấu hình reverse proxy/worker an toàn. Đặt `HU_AUTH_TRUSTED_PROXY_IPS` chỉ cho IP reverse proxy thực sự tin cậy và yêu cầu proxy **ghi đè** `X-Forwarded-For`, không nối thêm giá trị do khách tự gửi. Mặc định bỏ qua header `X-Forwarded-For`. Hạn mức trong RAM chỉ có hiệu lực trên một instance, reset khi restart: production nhiều instance cần shared Redis/edge limiter. Do Supabase Auth endpoint vẫn công khai, các yêu cầu trực tiếp tới Supabase có thể bỏ qua gateway Node; phải cấu hình thêm Auth Rate Limits và chống bot ở Supabase/edge. Không đưa mật khẩu, token hoặc IP vào nhật ký ứng dụng.
 
 2. Cấu hình Supabase project `rvrwfeblishqadkpzspb`: Authentication → Providers → Email, xác nhận email, Site URL và Redirect URL theo tên miền HTTPS công khai.
-3. Đặt key công khai ở môi trường host: `SUPABASE_PUBLISHABLE_KEY=sb_publishable_...`; file `.env` phải có quyền riêng tư, không commit. `compose.yaml` bind cổng Node tới `127.0.0.1:8000` trên máy host.
+3. Đặt key công khai ở môi trường host: `SUPABASE_PUBLISHABLE_KEY=sb_publishable_...`; file `.env` phải có quyền riêng tư, không commit. Bắt buộc đặt `HU_AUTH_TRUSTED_PROXY_IPS` thành đúng địa chỉ IP nguồn của reverse proxy **mà container Node nhìn thấy** (với proxy trên host Docker có thể là IP gateway bridge, không nhất thiết là `127.0.0.1`). Kiểm tra địa chỉ thực tế qua cấu hình mạng Docker/proxy; không dùng dải wildcard. `compose.yaml` từ chối khởi chạy nếu thiếu biến này và bind cổng Node tới `127.0.0.1:8000` trên host.
 4. Chạy `docker compose up -d --build`. Phải kiểm tra volume `hugioi_player_data` có quyền thư mục `0700` và DB `0600`; nếu cấu hình volume sai, ứng dụng **chủ động từ chối mở DB**. Tại Linux host, sửa quyền thư mục/owner phù hợp user Node trong container (không đặt chmod 777).
 5. Dùng reverse proxy để chuyển toàn bộ `/api/v1/*` và file web trên cùng HTTPS domain đến Node 8000. Không mở port 8000 trực tiếp ra internet.
 6. Kiểm tra `GET https://<your-domain>/api/health` trả `gameplay: true`. Thử đăng ký và xác minh email, đăng nhập, chấp thuận 2 chính sách, tải `/api/v1/bootstrap`, gieo ticket, tạo nhân vật, gửi lệnh, tải lại và xác minh revision/tài nguyên từ server.
@@ -31,6 +31,7 @@ PORT=8000
 SUPABASE_URL=https://rvrwfeblishqadkpzspb.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_<active-public-key>
 HU_DB_FILE=/data/game.sqlite
+HU_AUTH_TRUSTED_PROXY_IPS=<IP-proxy-nhin-tu-container>
 # Tùy chọn, CHỈ ở máy chủ: bật POST /api/v1/me/delete-account (xóa cả tài khoản Supabase). Không commit, không đưa lên frontend.
 # SUPABASE_SERVICE_ROLE_KEY=<sb_secret_... hoặc service_role>
 # HU_ALLOWED_ORIGINS=https://frontend.example.com (nếu tách frontend và API)

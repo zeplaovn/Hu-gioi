@@ -1,18 +1,12 @@
 /* Password-login gateway: 10 attempts per IP per 15 minutes (single Node instance).
    For production across multiple instances, use a shared limiter and Supabase Auth rate limits. */
 'use strict';
-const net = require('node:net');
+const { createClientIp, normalizeIp } = require('./client-ip.js');
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 10;
 const MAX_BODY = 4096;
 const MAX_KEYS = 10000;
 
-function normalizeIp(value) {
-  if (typeof value !== 'string') return '';
-  const ip = value.trim();
-  const normalized = ip.startsWith('::ffff:') && net.isIP(ip.slice(7)) === 4 ? ip.slice(7) : ip;
-  return net.isIP(normalized) ? normalized.toLowerCase() : '';
-}
 function isValidEmail(value) {
   if (typeof value !== 'string' || value.length > 254 || value.length < 6 || /\s/.test(value)) return false;
   const parts = value.split('@');
@@ -36,7 +30,7 @@ const respond = (res, status, data, retryAfterMs = 0) => {
 };
 function createSupabaseLoginGateway({
   url, publishableKey, fetchImpl = globalThis.fetch, clock = Date.now,
-  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, trustedProxyIps = []
+  maxAttempts = MAX_ATTEMPTS, windowMs = WINDOW_MS, trustedProxyIps = [], clientIp = createClientIp(trustedProxyIps)
 } = {}) {
   const origin = new URL(url);
   if (origin.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(origin.hostname) ||
@@ -45,14 +39,7 @@ function createSupabaseLoginGateway({
   if (typeof publishableKey !== 'string' || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey))
     throw Error('Thiếu khóa Supabase publishable cho gateway.');
   if (typeof fetchImpl !== 'function') throw Error('Thiếu dịch vụ HTTP cho gateway.');
-  const trusted = new Set(trustedProxyIps.map(normalizeIp).filter(Boolean));
   const attempts = new Map();
-  const clientIp = req => {
-    const remote = normalizeIp(req.socket?.remoteAddress) || 'unknown';
-    if (!trusted.has(remote)) return remote; // X-Forwarded-For is ignored unless the socket is trusted
-    const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0];
-    return normalizeIp(forwarded) || remote;
-  };
   async function handle(req, res) {
     if (req.method !== 'POST') return respond(res, 405, { error: 'Phương thức không hợp lệ.' });
     const originHeader = req.headers.origin;
