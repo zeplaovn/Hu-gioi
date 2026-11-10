@@ -22,7 +22,7 @@ jobs:
           node-version: '24'
       - name: Install dependencies and run mandatory verification
         run: |
-          npm install --no-package-lock
+          npm ci
           npm run check && npm test && npm run build:min
       - name: Check built static files contain legal pages but no server source
         shell: bash
