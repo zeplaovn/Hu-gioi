@@ -2,7 +2,7 @@
    Sessions live in sessionStorage, never localStorage. */
 (function (root) {
   'use strict';
-  const URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
+  const SUPABASE_URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
   const VERSION = '2026-11-10-v5';
   const STORAGE = 'huGioiSupabaseSessionV1';
@@ -33,7 +33,7 @@
   }
 
   async function request(path, { method = 'GET', body, token, prefer } = {}) {
-    const response = await root.fetch(URL + path, {
+    const response = await root.fetch(SUPABASE_URL + path, {
       method,
       headers: {
         apikey: KEY,
@@ -107,7 +107,7 @@
     } catch {
       throw Error('Trình duyệt phải cho phép lưu trữ phiên để đăng nhập Google.');
     }
-    const url = new URL(URL + '/auth/v1/authorize');
+    const url = new root.URL(SUPABASE_URL + '/auth/v1/authorize');
     url.searchParams.set('provider', 'google');
     url.searchParams.set('redirect_to', redirect);
     url.searchParams.set('code_challenge', base64url(hash));
