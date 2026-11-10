@@ -242,6 +242,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
         assert page.locator('#game').is_visible(), f"{name}: game main screen #game is not visible"
         assert page.locator('#menu button').first.is_visible(), f"{name}: game main menu not visible"
         outcome["gameplay_reached"] = True
+        outcome["screenshots"].append(snap(page, folder, name, "game-main"))
         chat_enabled = bool(page.evaluate("Boolean(window.HU_UI?.release?.chat)"))
         if chat_enabled:
             verify_bubble(page, folder, name, outcome)
