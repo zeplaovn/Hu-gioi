@@ -93,7 +93,7 @@
   function base64url(bytes) {
     let binary = '';
     for (const byte of bytes) binary += String.fromCharCode(byte);
-    return root.btoa(binary).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');
+    return root.btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
   async function loginGoogle() {
