@@ -23,6 +23,9 @@
       return !(screen === 'chat' && !this.chat || screen === 'more' && tab === 'ranking' && !this.ranking);
     },
     tabs(items) { return items.filter(item => this.allowed('more:' + item.id)); },
+    socialFeatureLabel(original) {
+      return this.ranking ? original : 'Giao du NPC: tri kỷ, đạo hữu, luận kiếm';
+    },
     notice(key) {
       const label = this.labels[key];
       return label ? '<p class="info-note release-label" role="note">' + esc(label) + '</p>' : '';

@@ -63,8 +63,9 @@ function releaseHarness() {
     social: { friends: {}, pvp: { rating: 1100, wins: 0, losses: 0, streak: 0, best: 1100, lastAt: 0 } },
     auction: { cycle: 0, offers: {} }
   };
+  let socialOpen = true;
   const game = {
-    featureOpen: () => true,
+    featureOpen: () => socialOpen,
     stats: () => ({ CP: 100 }),
     realmLabel: () => 'Luyện Hư',
     discussGain: () => 10,
@@ -98,7 +99,7 @@ function releaseHarness() {
   for (const path of ['client/ui/screens/more.js', 'client/ui/screens/world.js', 'client/ui/screens/chat.js']) {
     runInNewContext(read(path), context);
   }
-  return { UI, items, bodyChildren, bubble: () => bubble, tick: () => chatTick() };
+  return { UI, items, bodyChildren, bubble: () => bubble, tick: () => chatTick(), setSocialOpen: value => { socialOpen = value; } };
 }
 
 test('cờ tắt: menu Thêm không Chat/ranking; giao du và thế giới có nhãn mô phỏng', () => {
@@ -125,6 +126,14 @@ test('cờ tắt: menu Thêm không Chat/ranking; giao du và thế giới có n
   const html = read('index.html');
   assert.doesNotMatch(html, /data-more-go="chat"/);
   assert.doesNotMatch(html, /data-more-go="more:ranking"/);
+});
+
+test('thông báo khóa Giao du không còn quảng bá bảng xếp hạng đang ẩn', () => {
+  const { UI, setSocialOpen } = releaseHarness();
+  setSocialOpen(false);
+  const locked = UI.screens.more.render('friends');
+  assert.match(locked, /Giao du NPC/);
+  assert.doesNotMatch(locked, /Bảng xếp hạng|bảng xếp hạng/);
 });
 
 test('bật lại cờ: menu ranking và nút chat nổi xuất hiện; tắt lại sẽ ẩn', () => {
