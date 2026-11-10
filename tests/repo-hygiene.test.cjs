@@ -56,3 +56,17 @@ test('Docker HEALTHCHECK và meta CSP cùng origin, không còn chú thích offl
   assert.doesNotMatch(cspMeta, /file:/);
   assert.doesNotMatch(adapter, /gameplay remains offline-only/);
 });
+
+test('tài liệu triển khai không còn hướng dẫn Wrangler hoặc tách frontend khỏi Node', () => {
+  const documents = fs.readdirSync(path.join(ROOT, 'docs')).filter(name => name.endsWith('.md'));
+  for (const file of ['README.md', ...documents.map(name => path.join('docs', name))]) {
+    const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+    assert.doesNotMatch(text, /wrangler\s+deploy|wrangler\.jsonc/i, file + ' không được hướng dẫn Wrangler');
+  }
+  for (const file of ['docs/security.md', 'docs/supabase-security-setup.md']) {
+    const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+    assert.match(text, /Docker(?: Compose)?/);
+    assert.match(text, /reverse proxy HTTPS/);
+    assert.match(text, /cùng origin/);
+  }
+});

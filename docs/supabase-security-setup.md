@@ -4,7 +4,7 @@
 
 - Project: `rvrwfeblishqadkpzspb` (Supabase `Hugioi`), vùng Singapore (`ap-southeast-1`).
 - Trình duyệt dùng `client/auth/supabase.js` với **publishable key**, không dùng `service_role` hay secret key.
-- API xác thực: email/password và xác thực email qua Supabase Auth; trang tĩnh chạy được trên Cloudflare.
+- API xác thực: email/password và xác thực email qua Supabase Auth; giao diện và `/api` do cùng một Node server phục vụ sau reverse proxy HTTPS.
 - Hai checkbox độc lập, **không đánh dấu sẵn**, liên kết đến `client/legal/privacy.html` và `client/legal/release.html` (phiên bản `2026-11-09-v2`).
 - `public.policy_acceptances`: `user_id`, `policy_kind`, `policy_version`, `accepted_at` (server timestamp).
 - RLS: chỉ chủ tài khoản có thể đọc hoặc thêm dòng cho chính mình. Không cho `anon` đọc, không cho client `UPDATE/DELETE`, không cho client tự ghi `accepted_at`.
@@ -36,7 +36,7 @@ Cần hoàn tất hồ sơ xử lý dữ liệu cá nhân (bao gồm đánh giá
 - **API Node yêu cầu chấp thuận tại máy chủ.** Với `SUPABASE_URL` và `SUPABASE_PUBLISHABLE_KEY` (publishable, không phải service_role), JWT được xác minh và API yêu cầu đủ hai bản ghi `privacy`/`release_terms` phiên bản `2026-11-09` bằng RLS; từ chối truy cập khi Supabase không phản hồi. Kho SQLite bắt buộc nằm trong thư mục quyền `0700`, tệp DB `0600`.
 - **Trước phát hành online:** cần quy trình tự phục vụ rút chấp thuận/xóa tài khoản và xóa dữ liệu gameplay trong SQLite, xác minh phân loại game và giấy phép cần thiết. Xóa tài khoản Supabase hiện **không** tự động xóa bản lưu SQLite.
 - **Chính sách phiên bản:** khi thay đổi nội dung trọng yếu, phải sửa `VERSION` trong adapter, cả hai trang pháp lý và schema/constraint được thiết kế; cân nhắc di trú policy version để không khóa đăng nhập.
-- **Không đưa mã nguồn gốc lên web root.** Dùng `dist/` do script build, cấu hình `_headers` và `wrangler.jsonc`.
+- **Không đưa mã nguồn gốc lên web root.** Chỉ triển khai bằng Docker Compose với một Node server phục vụ file tĩnh qua allowlist trong `server/http/static.js` và `/api`, sau reverse proxy HTTPS cùng origin. Bản `dist/` chỉ dùng kiểm tra bản build; không host frontend riêng.
 
 ## Xác minh
 
@@ -58,4 +58,4 @@ Migration `allow_v3_permadeath_policy_consent` mở rộng constraint để gi�
 - Đăng ký: chỉ chấp nhận địa chỉ email có cú pháp hợp lệ ở giao diện; Supabase Auth yêu cầu người sở hữu xác nhận email. Đây không phải kiểm tra SMTP/MX hoặc xác minh email có tồn tại trước khi gửi thư.
 - Đăng nhập: `/api/auth/supabase-login` qua Node same-origin, 10 lượt thử mỗi IP trong 15 phút, 429 + Retry-After khi vượt mức. Bộ đếm tạm RAM, không lưu mật khẩu hay token. Proxy `X-Forwarded-For` chỉ được tin nếu socket đến từ `HU_AUTH_TRUSTED_PROXY_IPS` đã cấu hình và reverse proxy **ghi đè** header do khách gửi. Không đưa IP vào `policy_acceptances`.
 - Supabase vẫn công khai các endpoint xác thực. Bảo vệ gateway Node không tự giới hạn request trực tiếp từ kẻ khác đến Supabase; vào Authentication → Rate Limits và Security and Protection để cấu hình giới hạn upstream, CAPTCHA và chống lạm dụng. Đừng tuyên bố kiểm soát toàn bộ IP nếu chưa có limit tại provider hoặc edge.
-- Khách hàng dùng chung NAT sẽ dùng chung quota. Khi nhiều instance Node, phải dùng bộ giới hạn dùng chung hoặc WAF/edge. Khi chỉ triển khai static Cloudflare, endpoint cùng origin không tồn tại và login sẽ không hoạt động; cần backend Node được public an toàn.
+- Khách hàng dùng chung NAT sẽ dùng chung quota. Triển khai duy nhất một Node instance sau reverse proxy HTTPS cùng origin; không tách giao diện/API. Nếu thiết kế đa instance trong tương lai, phải có bộ giới hạn dùng chung hoặc WAF/edge.

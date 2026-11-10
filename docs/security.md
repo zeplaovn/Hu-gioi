@@ -21,7 +21,7 @@ Trình duyệt vẫn tải `data/`, `engine/` và giao diện: các luật đã 
 
 Chạy Node 24 trên host/container riêng, đặt `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` và volume `HU_DB_FILE` bền vững; chỉ cho người dùng truy cập thông qua HTTPS reverse proxy. Xem [hướng dẫn triển khai online](online-deployment.md).
 
-**Quan trọng:** `wrangler deploy` / Cloudflare assets-only **chỉ triển khai frontend tĩnh**; không tự chạy Node API/SQLite. Không công bố phiên bản online từ một host tĩnh nếu chưa có đường đến backend thực sự. Nếu tách API và frontend khác origin, cập nhật CORS allowlist và CSP `connect-src`, không dùng wildcard bừa bãi.
+**Triển khai duy nhất:** Docker Compose chạy **một Node server** phục vụ giao diện và toàn bộ `/api`, nằm sau reverse proxy HTTPS **cùng origin**. Không triển khai frontend riêng, không cho phép FE/API tách origin. Reverse proxy chuyển toàn bộ đường dẫn tới Node, không để lộ cổng Node trực tiếp ra internet.
 
 Không commit hoặc đưa vào trình duyệt các khóa `SUPABASE_JWT_SECRET`, service-role, thông tin CSDL, file `.env`. Publishable key Supabase có thể công khai nhưng không thay cho JWT và RLS.
 
