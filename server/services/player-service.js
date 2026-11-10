@@ -312,12 +312,6 @@ class PlayerService {
         return { touch: { rngCounter: advancedCounter, lastSeenAt: now }, value: { error: failure } };
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
-          failure.details = { ...(failure.details || {}), currentRevision: rec.revision + 1 };
-          return { save: save(rec.revision + 1), value: { error: failure } };
-        }
-        return { touch: { rngCounter: run.rng.counter(), lastSeenAt: now }, value: { error: failure } };
-      }
-      assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
         ? H.PAVILION.realmReward(run.game.s.realm) : 0;
       if (earned) {
