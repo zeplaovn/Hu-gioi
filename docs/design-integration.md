@@ -1,51 +1,48 @@
 # Tích hợp dữ liệu thiết kế
 
-> Trạng thái: **dữ liệu** (snapshot, ánh xạ, công cụ import) vẫn nguyên vẹn trong `data/`. Các mục "Phạm vi đã nối" và "Giới hạn cần hoàn thiện" bên dưới mô tả **hành vi của engine cũ** và là đặc tả hành vi mà `engine/` đã giữ (xem [engine-contract.md](engine-contract.md)). Game hiện chơi được offline qua `LocalSession`.
+> **Trạng thái nguồn:** Snapshot `data/design-raw.js` và lớp ánh xạ `data/design.js` đã nằm trong repository. Game **online-only**, state V9, protocol v2/48 lệnh. Tài liệu này mô tả nội dung được engine dùng, **không** phải hướng dẫn chạy game offline.
+>
+> **Lưu ý công cụ:** Một số phiên bản tài liệu cũ nhắc `tools/import-game-design.mjs`, nhưng **file đó hiện không còn trong repository**. Không chạy lệnh import/ghi đè theo hướng dẫn cũ; muốn thêm snapshot phải tạo lại công cụ có test liên kết và được review như một thay đổi dữ liệu.
 
-Game dùng snapshot `data/design-raw.js` từ `../idea/data-game-chuan/du_lieu.json`, cùng lớp ánh xạ `data/design.js`. Các mã hiện có như `HERB-001`, `EQ-001`, `BT-001` vẫn dùng trong bản lưu; mã thiết kế được đối chiếu qua cột mã game cũ. Nội dung mới không có mã cũ có mã riêng, ví dụ `BT-900` và `TAL-PL-001`.
+## 1. Dữ liệu và mã tương thích
 
-Snapshot được đóng gói thành classic script để browser chạy được cả qua `file://`; Node và browser dùng cùng dữ liệu. Chỉnh Excel hoặc JSON bên ngoài **không tự cập nhật game**. Nếu cần tạo snapshot mới từ JSON, chạy tại gốc workspace:
+`data/design-raw.js` là bản snapshot của `du_lieu.json` ở nguồn thiết kế bên ngoài; **file nguồn đó không có trong repository**. `data/design.js` ánh xạ mã thiết kế sang mã vật phẩm cũ (ví dụ `HERB-001`, `EQ-001`, `BT-001`) để state V4–V9 vẫn giải mã được. Các mã mới có thể có định danh riêng, ví dụ `BT-900`, `TAL-PL-001`.
 
-```sh
-node tools/import-game-design.mjs /duong-dan/du_lieu.json --check
-node tools/import-game-design.mjs /duong-dan/du_lieu.json --force
-npm run check
-npm test
-```
+`data/catalog.js` hợp nhất vật phẩm và vùng của game. `data/balance.js`/`data/formulas.js` giữ luật số học. `data/roots.js`, `data/meridians.js`, `data/character.js`, `data/social.js`, `data/adventures.js`, `data/story.js` chứa bảng nội dung chuyên biệt. Các bảng này dùng trong Node/browser thông qua CommonJS/classic scripts, **không phải nguồn save của client**.
 
-`--check` chỉ kiểm tra dữ liệu và liên kết, không ghi file; `--force` ghi đè snapshot hiện tại, nên sao lưu nếu đã sửa thủ công. Excel và JSON không tự đồng bộ với nhau. Không chạy công cụ xuất Excel lên bản đã chỉnh nếu chưa sao lưu.
+Khi thêm hoặc sửa vật phẩm, đảm bảo mã không đụng mã cũ, bản đồ `byDesign`/`byLegacy` duy nhất, nguyên liệu/recipe tham chiếu mã tồn tại, và luật không đột ngột thay thế sản phẩm đang chế tạo/cây đã gieo của nhân vật đang sống.
 
-## Phạm vi đã nối
+## 2. Các nhóm đã nối với luật
 
-- 30 hạt và linh thảo, 25 đan, 30 pháp bảo, 12 công pháp, 12 bí tịch và một phù trong 5 cảnh giới đầu được ánh xạ. Ngoài phạm vi đó, dữ liệu vật phẩm cũ được giữ lại.
-- Linh điền dùng thời gian, độ khó, sản lượng và điều kiện đất của hạt có định nghĩa. Đổi loại đất tại ô trống; cây đã gieo trước khi cập nhật vẫn giữ thời điểm kết thúc. Các phẩm chất linh thảo đều có thể dùng làm nguyên liệu, ưu tiên phẩm thấp trước.
-- Rèn pháp bảo trong bộ mới cần bí tịch `BT-900` và linh thảo; phù mới cần `BT-901`. Công thức ngoài bộ mới giữ luật rèn/chế phù cũ. Các bí tịch nghề chỉ cần lĩnh ngộ, không chiếm ô vận hành công pháp.
-- Bí tịch luyện khí/luyện đan được ánh xạ dùng mức thưởng trong dữ liệu, có tính độ thuần thục, phẩm chất, chênh lệch cảnh giới và trần của game hiện tại.
-- Pháp bảo mới cộng các chỉ số được định nghĩa; giáp ảo/hồi máu kích hoạt tại màn Lịch luyện, còn đóng băng, choáng, độc và chảy máu kích hoạt khi đánh trúng. Các công pháp có dữ liệu chủ động có thể dùng tại màn Lịch luyện khi đã lĩnh ngộ và vận hành. Công pháp cũ vẫn giữ phần hiệu ứng thụ động để tương thích tiến trình.
-- Năm quái thường Hạ Giới dùng chỉ số và bảng rơi mới; boss Cáo Truyền Thuyết được dùng ở Hóa Thần Đài. Sáu boss bí cảnh tương ứng dùng bảng thưởng và các ngưỡng giai đoạn. Các đối thủ và bí cảnh còn lại tiếp tục dùng luật cũ; linh thạch và yêu đan vẫn được cấp theo công thức hiện tại.
-- Màn **Thế giới → NPC** có 10 NPC Hạ Giới. Tặng món thích +5, món ghét −5; NPC bán hoặc dạy vật phẩm theo dữ liệu. Vai trò giao nhiệm vụ/luyện đan hiện dẫn đến màn nhiệm vụ/luyện đan chung, chưa có nhiệm vụ hoặc dịch vụ riêng theo từng NPC.
-- Dị linh căn khắc hệ gốc và không bị hệ gốc khắc. Ngũ hành có thể biến dị Hỗn Độn sau lôi kiếp; xác suất nền 1%, tiếp tục dùng cộng thêm Vận Khí/bảo hiểm của game. Trúc Cơ → Kết Đan có ba tia lôi kiếp. Hỗn Độn giữ hệ ban đầu. Âm Dương không còn được tạo mới nhưng bản lưu Âm Dương vẫn được nạp.
+- **Nghề phụ:** Snapshot có 30 hạt chi tiết, 25 loại đan, 30 pháp bảo, các bí tịch và một phù thiết kế; catalog gốc rộng hơn. `crafting.js` vẫn có fallback cho hạt/công thức ngoài snapshot. Cây đang trồng giữ thời điểm hoàn thành khi chuyển dữ liệu.
+- **Luyện khí/chế phù:** Công thức snapshot yêu cầu `BT-900` (rèn) và `BT-901` (phù) sau khi lĩnh ngộ; đây là **bí tịch tiền điều kiện**, chưa phải 12 quyển sách nghề chứa danh sách công thức. Kế hoạch sách nghề tại [profession-manuals-proposal.md](profession-manuals-proposal.md).
+- **Công pháp/pháp bảo:** Phần thưởng theo dữ liệu thiết kế đã nối vào engine khi có mô tả; kỹ năng thiếu định lượng vẫn có fallback/hạn chế. Tương hợp ngũ hành, độ tinh khiết và tuổi dược trong dược lực **chưa có công thức được duyệt**.
+- **Chiến đấu và bí cảnh:** Quái Hạ Giới/boss có trong snapshot dùng dữ liệu mới; nội dung còn lại có quy tắc tổng quát. Bí cảnh có cả kết toán theo tầng và theo lượt (`startDungeon`, `enterDungeon`, `dungeonAct`). NPC thiết kế hiện vẫn tập trung ở Hạ Giới.
+- **Linh căn và kinh mạch:** Ngũ hành, Dị và thức tỉnh Hỗn Độn đã có luật. 12 chính kinh/8 kỳ kinh và tạp chất trong `data/meridians.js` **hiện mới là dữ liệu xem trước**, chưa có state/lệnh kinh mạch; phàm nhân Z=100 đã được **chốt thiết kế** nhưng **chưa triển khai**.
+- **Thiên Thư/NPC:** `data/story.js` có 14 chương, 10 NPC gốc, ghi chép kỳ ngộ. `world.storyMark` hiện ghi đọc/cờ lời hẹn, chưa có tác động chỉ số. Cờ nhân vật **không được kế thừa qua kiếp**, khác Thiên Mệnh Các thuộc tài khoản.
+- **Thiên Mệnh Các:** Đã triển khai trên `main`; đây là tích lũy Thiên Tinh theo account, không phải trọng sinh đạo thân cũ. Xem [thien-menh-cac.md](thien-menh-cac.md).
 
-## Giới hạn cần hoàn thiện
+## 3. Những phần còn chờ quyết định
 
-- Đặc tả chưa định lượng thưởng/phạt công pháp khác hệ, ảnh hưởng độ tinh khiết/tuổi dược hoặc các hệ số đan dược/pháp bảo vào xác suất Hỗn Độn; chưa tự đặt các công thức đó. Hiện hiệu ứng độc bẩm sinh dùng giả định 5% ATK/giây trong 3 giây vì bảng chỉ cho xác suất 15% mà không có mức sát thương.
-- Chiến đấu bí cảnh vẫn là mô phỏng theo tầng, không phải trận chiến tương tác trực tiếp. Chỉ các thủ lĩnh có trong dữ liệu thiết kế được dùng chỉ số/giai đoạn và thưởng mới.
-- Thể lực được hiển thị dưới dạng chỉ số; dữ liệu công pháp hiện có không yêu cầu tiêu hao thể lực. Hệ quả cân bằng giữa 5 cảnh giới mới và các cảnh giới cao hơn cần được chơi thử và điều chỉnh.
-- Schema lưu hiện là V8 (`VERSION` = 8; nạp được bản lưu V4 đến V8), bổ sung giá trị mặc định khi nạp bản cũ. Nên xuất bản lưu trước khi thử một bản cập nhật có thay đổi cân bằng.
+`docs/gameplay-decisions.md` là **sổ duyệt tập trung** và nêu phương án cùng đánh dấu chưa chốt. Những điểm liên quan trực tiếp import dữ liệu:
 
-## Vạn Kiếp Tàng Thư và hội thoại NPC
+1. **P0-10→12:** định lượng công pháp khác hệ, tinh khiết/tuổi dược, hệ số đan và pháp bảo, cùng giới hạn cộng dồn.
+2. **P0-13→18:** chuẩn hóa **69 hạt**, ánh xạ công thức vào **12 sách nghề (4 nghề × 3 giới, đã duyệt số quyển)**, nguồn rơi/giá sách, quyền kiến thức và migration.
+3. **P0-19→22:** hệ quả Thiên Thư, quái/bảng rơi, NPC, bí cảnh và nhiệm vụ Linh/Tiên Giới.
+4. **P0-24→25:** kiểm cân bằng và nguồn thu/tài nguyên bằng mô phỏng 30 ngày trước khi chốt thông số mới.
 
-Dữ liệu cốt truyện nằm riêng ở `data/story.js` theo mẫu IIFE/CommonJS, không chứa luật chơi. Ba hồi gồm 14 chương theo cảnh giới `realm`, 30 cảnh thoại cho 10 NPC theo thiện cảm, 9 cặp lời dẫn bí cảnh/thủ lĩnh, 23 ghi chép kỳ ngộ và ba đoạn vượt kiếp. Tên cổ của địa danh chỉ được dùng trong văn bản tự sự; mã vùng, tên hiện có trong `ZONES`/`DUNGEONS` và cân bằng không thay đổi.
+**Không tự biến các bảng minh họa “ĐỀ XUẤT” thành `data/` sản xuất.** Nếu cần sinh mã/content mới phải gắn nhãn dự thảo, đối chiếu mã vật phẩm/realm, giữ rollback và test migration.
 
-Engine ghép `HU_STORY_DATA` thành `HU_GAME.STORY`. `storyMark` thuộc đúng miền `world`, chỉ ghi `s.story.read` và `s.story.flags` sau khi kiểm tra ID, điều kiện mở và thiện cảm. Bản lưu V7 được nâng lên V8; lựa chọn và trang đã đọc được giữ qua trọng sinh, không sửa phần thưởng NPC. Giao diện `Thiên Mệnh → Thiên Thư` dùng cùng `UI.kit`; `Thế giới → NPC → Trò chuyện` dùng lớp đối thoại độc lập `client/ui/dialogue.js` và ảnh nhân vật sẵn có.
+## 4. Quy trình cập nhật nội dung hiện tại
 
-## Mở khóa tính năng theo cảnh giới
+1. Xác định nguồn thay đổi và chốt các công thức/cột thuộc danh sách P0 tương ứng, lưu bản gốc trong PR để review.
+2. Chỉnh đúng file `data/` (không nhận số liệu từ client), duy trì ánh xạ legacy và các mã item/tier hiện có. Nếu cần tự động import từ JSON/Excel, **xây dựng công cụ import và test trước**, vì chưa có script `tools/import-game-design.mjs` trong repo.
+3. Bổ sung test liên kết tại `tests/engine.test.cjs`, `tests/meridians.test.cjs`, `tests/story.test.cjs` hoặc một test dữ liệu mới. Không đổi schema state nếu chưa có migration V4–V9.
+4. Chạy `npm run check && npm test`, đánh giá thay đổi thời gian tu, tỷ lệ thành công, loot và kinh tế. Nếu đổi state/tính cân bằng, thêm kiểm thử phiên server và bản lưu cũ.
+5. Cập nhật [sổ quyết định](gameplay-decisions.md), [kiểm kê](gameplay-audit.md), `data/README.md` và tài liệu gameplay khi thay đổi đã được duyệt.
 
-Bảng `FEATURES` trong `data/catalog.js` là nguồn duy nhất; engine chặn qua `requireFeature(id)` và giao diện đọc `featureOpen(id)`.
+## 5. Mở khóa theo cảnh giới
 
-| Tính năng | Mở ở | Lệnh bị chặn | Giao diện |
-|---|---|---|---|
-| `forge` · rèn pháp bảo, vẽ phù | Kết Đan | `forge` | tab "Luyện khí & chế phù" |
-| `social` · kết bạn, luận kiếm, xếp hạng | Nguyên Anh | `meetFriend`, `giftFriend`, `discuss`, `duel` | màn "Giao du" |
+Các mốc nguồn ở `data/catalog.js` (`FEATURES`); luật chặn bằng `requireFeature` và UI đọc `featureOpen`. Rèn/chế phù mở tại **Kết Đan** trong source, giao du mô phỏng mở tại **Nguyên Anh**. Bí cảnh có ngưỡng riêng của từng nơi. Việc đổi nhãn Kết Đan/Kim Đan được nêu tại **P0-29**, chưa tự đổi dữ liệu.
 
-Luyện đan, linh điền, tông môn và kinh mạch đã mở từ Luyện Khí. Bí cảnh giữ điều kiện riêng của từng nơi (điểm còn mở trong gói thiết kế). Thêm khóa mới: thêm một dòng vào `FEATURES`, gọi `requireFeature` ở lệnh và bọc phần giao diện bằng `featureOpen`.
+Xem thêm [engine-contract.md](engine-contract.md), [architecture.md](architecture.md), [data/README.md](../data/README.md).

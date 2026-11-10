@@ -1,102 +1,95 @@
-# Kiến trúc
+# Kiến trúc Hư Giới — online-only
 
-Repository chia thành bốn lớp với một chiều phụ thuộc duy nhất. Mỗi lớp chỉ được dùng lớp bên phải của nó.
+> Nguồn sự thật là mã chạy trong `engine/`, `server/` và [hợp đồng engine](engine-contract.md).
+> Kể từ gameplay V9, **không có phiên chơi offline**. Code `LocalSession`/`LocalStore` được giữ trong repository cho kiểm thử và đối chiếu bản lưu, **không được nạp ở `index.html` hoặc đưa vào `dist/`**.
+
+## 1. Ranh giới phụ thuộc
 
 ```text
-client/  ──►  engine/  ──►  data/
-server/  ──►  engine/  ──►  data/
+client/ ───► engine/ ───► data/
+    │           ▲
+    └─── HTTPS /api/v1 ───► server/ ───► engine/ ───► data/
 ```
 
-| Lớp | Vai trò | Được dùng | Không được dùng |
-|---|---|---|---|
-| `data/` | Dữ liệu thiết kế và mô hình cân bằng thuần (bảng, hằng số, công thức). Không có state. | — | `engine/`, `client/`, `server/`, DOM, mạng |
-| `engine/` | Luật chơi và hợp đồng lệnh. Một nguồn luật duy nhất cho client và server. | `data/` | DOM, `localStorage`, mạng, timer, `Date.now()`, `Math.random()` trực tiếp |
-| `client/` | Giao diện, tài nguyên, lưu cục bộ, phiên chơi. | `engine/`, `data/` | `server/` |
-| `server/` | Máy chủ HTTP: file tĩnh và API. | `engine/`, `data/` | `client/` |
+| Lớp | Trách nhiệm | Không được |
+|---|---|---|
+| `data/` | Nội dung, catalog, chỉ số, công thức thuần; dùng chung trong Node/browser. | Gọi DOM, mạng, timer; luật mới phải nhận RNG thay vì sinh từ môi trường. |
+| `engine/` | Một nguồn luật gameplay, state, kiểm schema và thực thi lệnh. | DOM, localStorage, fetch, timer, `Date.now()`, `Math.random()` trực tiếp. |
+| `client/` | UI, tải ảnh, xác thực Supabase, `RemoteSession`, hiển thị snapshot. | Tự cấp tu vi/đồ/linh thạch hoặc tự ghi state tin cậy. |
+| `server/` | JWT/chấp thuận chính sách, `PlayerService`, giờ/RNG, SQLite, idempotency, HTTP tĩnh/API. | Tin payload client về state, thời gian, giá, kết quả RNG. |
 
-`npm run check` (tests/sources.test.cjs) và `npm test` kiểm tra các điều này ở mức cú pháp, ranh giới engine, thứ tự script và việc không đưa `server/` vào trình duyệt.
+Giữ Node.js **>=24**, dùng `node:sqlite`, không yêu cầu thêm dependency chạy gameplay. `npm run check` và `npm test` kiểm cú pháp, giao kèo lệnh, luật và API; một số luồng UI có workflow riêng.
 
-## 1. Thư mục
+## 2. Bố cục chính
 
 ```text
-index.html                 Điểm vào trình duyệt và thứ tự nạp scripts
-data/                      Dữ liệu thiết kế + công thức cân bằng
-  balance.js  formulas.js  Bảng cân bằng và mô hình số học (F)
-  items.js design-raw.js design.js catalog.js    Vật phẩm, snapshot thiết kế, lớp ánh xạ, tra cứu
-  roots.js character.js    Linh căn, chủng tộc, thiên phú, thiên mệnh, thành tựu
-  social.js adventures.js story.js  Giao du/NPC; bí cảnh, kỳ ngộ, tông môn, tôi luyện
+index.html                  Thứ tự classic scripts, UI entry
+data/                       Bảng cân bằng, thiết kế, linh căn, kinh mạch, Thiên Thư
 engine/
-  game.js                  Ghép data + state + rules; báo READY/MISSING
-  state/player.js          Schema V8, create, normalize V4–V8
-  rules/                   Chín miền luật (mỗi lệnh thuộc đúng một miền)
-    progression inventory crafting combat world adventures social time creation
-  protocol/commands.js     51 lệnh: schema payload, validate, execute
+  game.js                   Ghép state/data/9 miền; READY và MISSING
+  state/player.js           State V9; normalize V4–V9
+  protocol/commands.js      Protocol V2; 48 lệnh có schema
+  rules/                    progression inventory crafting combat world
+                            adventures social time creation
 client/
-  assets/ platform/        Ảnh, âm thanh, loading, bảo vệ nội dung
-  persistence/             localStorage, dự phòng, xuất/nhập JSON
-  session/                 LocalSession (phiên offline) và ChatSession (HTTP/SSE)
-  ui/                      Màn hình, vỏ giao diện, hiệu ứng, tân thủ
-  main.js                  Khởi động; hiển thị thông báo khi engine chưa READY
+  auth/                     Supabase, chính sách
+  session/remote-session.js  Phiên online (JWT, retry, revision, heartbeat)
+  session/chat-session.js    Giao diện vận chuyển chat, chưa có chat backend dùng chung
+  persistence/remote-store.js Giao diện state không lưu save local
+  ui/                       Màn hình, các action gửi command
+  assets/ platform/         Âm thanh, ảnh, preload
 server/
-  main.js                  Điểm vào (npm start)
-  http/                    router.js, static.js
-  services/                player-service.js   (khung, chưa cài đặt)
-  repositories/            player-repository.js (khung, chưa cài đặt)
-  chat/                    chat-service.js      (khung, chưa cài đặt)
-css/  media/  _headers     Giao diện, tài nguyên, HTTP headers
-tools/                     Công cụ phụ trợ còn lại; test chuyển sang tests/
-docs/                      Tài liệu
+  main.js                   Khởi động HTTP; cấu hình JWT và database
+  http/                     Router, API V1, static allowlist, rate limits
+  auth/                     Xác thực quyền/chấp thuận, quản trị tài khoản
+  services/player-service.js Luật phiên online và giao dịch gameplay
+  repositories/sqlite-players.js SQLite, receipt, bảng theo tài khoản
+css/  media/                UI và tài nguyên được phục vụ có allowlist
+tools/build-dist.cjs        Xuất `dist/` tĩnh, không chứa server/ hay adapter offline
+tests/                      Node test và hồi quy gameplay/API/UI
+docs/                       Đặc tả và quyết định thiết kế
 ```
 
-## 2. Luồng lệnh
+`client/session/local-session.js` và `client/persistence/local-store.js` là code lịch sử **không thuộc đường chạy phát hành**. Không xóa vội vì test/migration có thể còn cần.
+
+## 3. Luồng lệnh và thời gian
 
 ```text
-UI → UI.command(type, payload) → LocalStore.dispatch → LocalSession.dispatch
-   → protocol.validate → game.advance(now) → protocol.execute → game[type](payload, now)
-   → game.checkMeta() → thành tựu / log / cập nhật UI
+UI.command(type, payload)
+  → RemoteStore / RemoteSession (JWT, requestId, expectedRevision)
+  → POST /api/v1/players/{id}/commands
+  → PlayerService → repository.transact
+    → kiểm receipt và revision → game.advance(now, offline)
+    → protocol.validate/execute → đúng một miền engine/rules/
+    → lưu state + receipt + thưởng trong một SQLite transaction
+  → {revision, state, result, report, logs, pavilion}
+  → RemoteSession phát sự kiện → UI hiển thị
 ```
 
-Phiên (client hoặc server) là bên sở hữu đồng hồ và RNG và truyền `now` vào engine. Payload không bao giờ chứa `now`, RNG, giá, phần thưởng hay state.
+Chỉ máy chủ có quyền xác định `now`, RNG, kết quả gameplay, giá và phần thưởng. Client không gửi bản lưu JSON để thay thế state. Một `requestId` phát lại chỉ nhận kết quả của giao dịch đã ghi, không nhân đôi thưởng.
 
-Bản online (chưa có) giữ nguyên engine: `API → xác thực → PlayerService → repository.transact(playerId) → cùng protocol + rules → revision + kết quả + snapshot`. Chi tiết ở [backend-plan.md](backend-plan.md).
+`RemoteSession` đồng bộ khi tab hiện. Khi ẩn tab/ngắt heartbeat quá grace, tiến trình **đóng băng**: không tăng tu vi, tuổi, linh thạch, không chạy RNG/chiến đấu. Kết nối lại không có thưởng offline. Đọc [gameplay-v9.md](gameplay-v9.md).
 
-## 3. Nạp module
+**Thiên Mệnh Các** là dữ liệu riêng theo tài khoản trong SQLite; thưởng đại cảnh giới và mua hàng qua giao dịch server. Chỉ xóa đạo thân đã chết khi reset; kho Thiên Tinh/nâng cấp không bị xóa, trừ khi chủ tài khoản yêu cầu xóa toàn bộ dữ liệu. Xem [thien-menh-cac.md](thien-menh-cac.md).
 
-Mọi file trong `data/` và `engine/` dùng mẫu hai môi trường:
+## 4. Nạp module
 
-```js
-(function (root) {
-  const node = typeof module !== 'undefined' && module.exports;
-  const X = node ? require('./x.js') : root.HU_X;   // Node: require; trình duyệt: biến toàn cục
-  // …
-  root.HU_Y = API; if (node) module.exports = API;
-})(typeof window !== 'undefined' ? window : globalThis);
-```
+`data/` và `engine/` dùng wrapper hỗ trợ CommonJS trong Node và classic scripts trong trình duyệt. Trong `index.html`, thứ tự là `data/` → `engine/state/` → `engine/rules/` → `engine/protocol/` → `engine/game.js` → `client/`.
 
-Trình duyệt dùng classic script để chạy được cả `file://` không cần bundler, nên **thứ tự thẻ `<script>` trong `index.html` là một phần của mã**: `data/` → `engine/state` → `engine/rules` → `engine/protocol` → `engine/game.js` → `client/…`. `tests/sources.test.cjs` kiểm tra thứ tự này.
+Có thể nạp **tệp JavaScript** qua đường dẫn trực tiếp để kiểm giao diện/luật, nhưng **không thể chơi và lưu tiến trình bằng `file://`**: gameplay thực tế cần Node API, Supabase và kết nối online. `tools/build-dist.cjs` loại bỏ adapter offline và các tệp máy chủ khỏi gói web.
 
-## 4. Thêm hoặc đổi một lệnh
+## 5. Thêm lệnh hoặc module
 
-1. Khai báo schema trong `engine/protocol/commands.js` (`SCHEMAS`).
-2. Thêm tên lệnh vào `commands` của đúng một module trong `engine/rules/` và cài phương thức `API.Game.prototype[tên] = function (payload, now) {…}` trong `install`.
-3. Gọi từ UI bằng `UI.command('tên', payload)`; hiển thị kết quả từ state, không tự cấp thưởng ở UI.
-4. Cập nhật bảng lệnh trong [engine-contract.md](engine-contract.md) và thêm test.
-5. `npm run check && npm test`.
+1. Định nghĩa và kiểm payload ở `engine/protocol/commands.js`; không cho client gửi `now`, RNG, giá hoặc state.
+2. Gán **đúng một miền** trong `engine/rules/*.js`; triển khai method engine nhận `(payload, now)`. `engine/game.js` bắt thiếu hoặc trùng owner.
+3. Nếu thêm file luật, cập nhật `engine/game.js` và thứ tự `<script>` trong `index.html`.
+4. Đưa nút tương ứng vào UI qua `UI.command`, kiểm giới hạn trên server. Cập nhật [bảng 48 lệnh hiện có](engine-contract.md) và tài liệu liên quan.
+5. Thêm unit/regression, migration nếu state đổi (V9 hiện hành; bản tiếp theo phải tăng schema), kiểm state JSON-safe ≤64 KB và chạy `npm run check && npm test`.
 
-`engine/game.js` từ chối nạp nếu một lệnh thuộc hai miền, thuộc không miền nào, hoặc có trong module nhưng không có trong protocol.
+## 6. API, triển khai và tình trạng
 
-## 5. Máy chủ
+`npm start` khởi động server HTTP `127.0.0.1:8000` mặc định: file tĩnh, `GET /api/health`, Supabase login gateway và gameplay `/api/v1` **chỉ khi đã cấu hình xác thực**. Không cấu hình xác thực thì API gameplay tắt, không có chế độ guest thay thế. Bảo mật đường dẫn tĩnh nằm ở `server/http/static.js`.
 
-`npm start` chạy `server/main.js`: phục vụ file tĩnh (chặn `server/`, `tools/`, file ẩn, `package.json`, `_headers` và mọi đường dẫn thoát thư mục) và `GET /api/health`. Route mới thêm vào bảng `ROUTES` trong `server/http/router.js`. Dịch vụ người chơi, kho lưu trữ và chat mới là khung giao diện, mô tả trong từng file và trong [backend-plan.md](backend-plan.md).
+Chat nhiều người, leaderboard thật, PvP người thật, tông môn chung và market escrow **chưa phải tính năng đã hoàn tất**; UI NPC/bảng minh họa không được hiểu là dữ liệu giữa nhiều tài khoản. Xem [sổ quyết định trước phát hành](gameplay-decisions.md) và [triển khai online](online-deployment.md).
 
-## 6. Trạng thái
-
-| Hạng mục | Trạng thái |
-|---|---|
-| `data/` | Giữ nguyên dữ liệu và công thức cũ |
-| `client/ui`, `css/`, `media/` | Giữ nguyên |
-| `engine/` | Đã cài đặt đủ state V8, 9 miền luật và 51 lệnh; `HU_GAME.READY === true` (xem [engine-contract.md](engine-contract.md)) |
-| `server/` | Chạy file tĩnh và `/api/health`; còn lại là khung |
-| Game chơi được | Có, offline qua `LocalSession`; `HU_GAME.MISSING` rỗng |
-
-Cài đặt cũ vẫn xem được tại commit `5f6b9bc`, ví dụ `git show 5f6b9bc:shared/rules/combat.js`.
+Kế hoạch backend ban đầu lưu tại [backend-plan.md](backend-plan.md) chỉ để tham khảo lịch sử; những phần mô tả LocalSession, offline progress hoặc lệnh prestige/reincarnate không còn là luật V9.
