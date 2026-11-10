@@ -29,7 +29,7 @@ for (const mode of ['memory', 'disk']) {
     const { svc, time, id, command } = await fixture(repo);
     const original = await svc.state('owner-a', id);
     time.value += 20 * 60_000;
-    assert.throws(() => await svc.await command('owner-a', id, await command('breakthrough', {}, 'f1-breakthrough')), { code: 'GAME_RULE_VIOLATION' });
+    await assert.rejects(async () => svc.command('owner-a', id, await command('breakthrough', {}, 'f1-breakthrough')), { code: 'GAME_RULE_VIOLATION' });
     const fresh = await svc.sync('owner-a', id);
     assert.equal(fresh.report.seconds, 0);
     assert.equal(fresh.state.qi, original.state.qi);
@@ -47,7 +47,7 @@ for (const mode of ['memory', 'disk']) {
     const old = H.Game.prototype.buy;
     H.Game.prototype.buy = function () { this.s.stone -= 10; this.s.qi += 4000; throw Error('Mua thất bại.'); };
     try {
-      assert.throws(() => await svc.await command('owner-a', id, await command('buy', { code: 'HERB-001' }, 'f1-spend')), { code: 'GAME_RULE_VIOLATION' });
+      await assert.rejects(async () => svc.command('owner-a', id, await command('buy', { code: 'HERB-001' }, 'f1-spend')), { code: 'GAME_RULE_VIOLATION' });
     } finally { H.Game.prototype.buy = old; }
     assert.deepEqual((await repo.get(id)).state, expected);
     assert.equal((await repo.get(id)).lastSeenAt, (await repo.get(id)).state.lastUpdate);

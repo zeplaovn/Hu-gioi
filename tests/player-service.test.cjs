@@ -36,8 +36,8 @@ test('tạo nhân vật: age/race/linh căn lấy từ ticket, không nhận t�
   const { svc } = setup();
   const pv = await svc.previewCreation('owner-a');
   assert.equal(pv.rollsLeft, 4);
-  assert.equal(await code(async async () => await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp', age: 99, roots: [100, 100, 100, 100, 100] })), 'INVALID_REQUEST');
-  assert.equal(await code(async async () => await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 3 }, destiny: 'exp' })), 'INVALID_PROFILE');
+  assert.equal(await code(async () => await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp', age: 99, roots: [100, 100, 100, 100, 100] })), 'INVALID_REQUEST');
+  assert.equal(await code(async () => await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 3 }, destiny: 'exp' })), 'INVALID_PROFILE');
   const made = await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Hàn Lập', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp' });
   assert.equal(made.revision, 0);
   assert.equal(made.state.age, pv.preview.age);
@@ -50,21 +50,21 @@ test('ticket dùng một lần, đúng chủ, hết hạn; mỗi tài khoản m�
   const { svc, clock } = setup();
   const a = await svc.previewCreation('owner-a'), b = await svc.previewCreation('owner-b');
   const profile = { gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck' };
-  assert.equal(await code(async async () => await svc.createPlayer('owner-b', { ticketId: a.ticketId, name: 'Kẻ Trộm', ...profile })), 'TICKET_INVALID');
+  assert.equal(await code(async () => await svc.createPlayer('owner-b', { ticketId: a.ticketId, name: 'Kẻ Trộm', ...profile })), 'TICKET_INVALID');
   await svc.createPlayer('owner-a', { ticketId: a.ticketId, name: 'Lý Phong', ...profile });
-  assert.equal(await code(async async () => await svc.createPlayer('owner-a', { ticketId: a.ticketId, name: 'Lý Phong', ...profile })), 'TICKET_INVALID');
-  assert.equal(await code(async async () => await svc.previewCreation('owner-a')), 'PLAYER_EXISTS');
-  assert.equal(await code(async async () => await svc.createPlayer('owner-b', { ticketId: b.ticketId, name: 'lý phong', ...profile })), 'NAME_TAKEN');
+  assert.equal(await code(async () => await svc.createPlayer('owner-a', { ticketId: a.ticketId, name: 'Lý Phong', ...profile })), 'TICKET_INVALID');
+  assert.equal(await code(async () => await svc.previewCreation('owner-a')), 'PLAYER_EXISTS');
+  assert.equal(await code(async () => await svc.createPlayer('owner-b', { ticketId: b.ticketId, name: 'lý phong', ...profile })), 'NAME_TAKEN');
   clock.t += 11 * 60000;
-  assert.equal(await code(async async () => await svc.createPlayer('owner-b', { ticketId: b.ticketId, name: 'Tô Mạc', ...profile })), 'TICKET_EXPIRED');
+  assert.equal(await code(async () => await svc.createPlayer('owner-b', { ticketId: b.ticketId, name: 'Tô Mạc', ...profile })), 'TICKET_EXPIRED');
 });
 
 test('giới hạn số lần gieo mỗi ngày', async () => {
   const { svc, clock } = setup({ previewsPerDay: 2 });
   await svc.previewCreation('x'); await svc.previewCreation('x');
-  assert.equal(await code(async async () => await svc.previewCreation('x')), 'RATE_LIMITED');
+  assert.equal(await code(async () => await svc.previewCreation('x')), 'RATE_LIMITED');
   clock.t += 24 * 3600 * 1000 + 1;
-  await assert.doesNotReject(async async () => await svc.previewCreation('x'));
+  await assert.doesNotReject(async () => await svc.previewCreation('x'));
 });
 
 test('lệnh: tăng revision, idempotent theo requestId, phát hiện revision lệch và requestId dùng lại', async () => {
@@ -83,8 +83,8 @@ test('lệnh: tăng revision, idempotent theo requestId, phát hiện revision l
   assert.equal(replay.state.bag['HERB-001'], bag);
   assert.equal(replay.revision, 1);
 
-  assert.equal(await code(async async () => await svc.command('owner-a', id, { ...await envelope(svc, 'owner-a', 'sell', { code: 'HERB-001' }, 'req-1') })), 'REQUEST_ID_REUSED');
-  const stale = await (async async () => { try { await svc.command('owner-a', id, { ...await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'req-2'), expectedRevision: 0 }); } catch (e) { return e; } })();
+  assert.equal(await code(async () => await svc.command('owner-a', id, { ...await envelope(svc, 'owner-a', 'sell', { code: 'HERB-001' }, 'req-1') })), 'REQUEST_ID_REUSED');
+  const stale = await (async () => { try { await svc.command('owner-a', id, { ...await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'req-2'), expectedRevision: 0 }); } catch (e) { return e; } })();
   assert.equal(stale.code, 'REVISION_CONFLICT');
   assert.equal(stale.details.currentRevision, 1);
   assert.equal((await svc.bootstrap('owner-a')).player.revision, 1, 'xung đột không ghi gì');
@@ -95,20 +95,20 @@ test('lệnh sai: envelope, payload thừa, loại lệnh lạ, luật từ ch�
   const { playerId: id } = await spawn(svc);
   clock.t += 1000;
   const ok = async (type, payload, rid) => await envelope(svc, 'owner-a', type, payload, rid);
-  assert.equal(await code(async async () => await svc.command('owner-a', id, await ok('buy', { code: 'HERB-001' }, 'bad id!'))), 'INVALID_REQUEST');
-  assert.equal(await code(async async () => await svc.command('owner-a', id, await ok('hackState', {}, 'r1'))), 'INVALID_COMMAND');
-  assert.equal(await code(async async () => await svc.command('owner-a', id, await ok('buy', { code: 'HERB-001', price: 0 }, 'r2'))), 'INVALID_COMMAND');
-  assert.equal(await code(async async () => await svc.command('owner-a', id, { ...await ok('buy', { code: 'HERB-001' }, 'r3'), now: 1 })), 'INVALID_REQUEST');
-  assert.equal(await code(async async () => await svc.command('owner-a', id, { ...await ok('buy', { code: 'HERB-001' }, 'r4'), protocolVersion: 1 })), 'INVALID_REQUEST');
+  assert.equal(await code(async () => await svc.command('owner-a', id, await ok('buy', { code: 'HERB-001' }, 'bad id!'))), 'INVALID_REQUEST');
+  assert.equal(await code(async () => await svc.command('owner-a', id, await ok('hackState', {}, 'r1'))), 'INVALID_COMMAND');
+  assert.equal(await code(async () => await svc.command('owner-a', id, await ok('buy', { code: 'HERB-001', price: 0 }, 'r2'))), 'INVALID_COMMAND');
+  assert.equal(await code(async () => await svc.command('owner-a', id, { ...await ok('buy', { code: 'HERB-001' }, 'r3'), now: 1 })), 'INVALID_REQUEST');
+  assert.equal(await code(async () => await svc.command('owner-a', id, { ...await ok('buy', { code: 'HERB-001' }, 'r4'), protocolVersion: 1 })), 'INVALID_REQUEST');
 
   const before = await svc.state('owner-a', id);
-  const rule = await (async async () => { try { await svc.command('owner-a', id, await ok('buy', { code: 'EQ-005' }, 'r5')); for (let i = 0; i < 40; i++) await svc.command('owner-a', id, await ok('buy', { code: 'EQ-005' }, 'rb' + i)); } catch (e) { return e; } })();
+  const rule = await (async () => { try { await svc.command('owner-a', id, await ok('buy', { code: 'EQ-005' }, 'r5')); for (let i = 0; i < 40; i++) await svc.command('owner-a', id, await ok('buy', { code: 'EQ-005' }, 'rb' + i)); } catch (e) { return e; } })();
   assert.equal(rule?.code, 'GAME_RULE_VIOLATION', 'hết linh thạch thì luật từ chối');
   const after = await svc.state('owner-a', id);
   assert.await ok(after.revision >= before.revision);
   assert.await ok(after.state.stone >= 0);
   const rev = (await svc.bootstrap('owner-a')).player.revision;
-  assert.equal(await code(async async () => await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'EQ-005' }, 'after-fail'))), 'GAME_RULE_VIOLATION');
+  assert.equal(await code(async () => await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'EQ-005' }, 'after-fail'))), 'GAME_RULE_VIOLATION');
   assert.equal((await svc.bootstrap('owner-a')).player.revision, rev, 'lệnh thất bại không tăng revision');
 });
 
@@ -154,10 +154,10 @@ test('cô lập chủ sở hữu: người khác không đọc, đồng bộ hay
   const { svc } = setup();
   const { playerId: id } = await spawn(svc, 'owner-a');
   await spawn(svc, 'owner-b', 'Mạc Vân');
-  assert.equal(await code(async async () => await svc.state('owner-b', id)), 'PLAYER_NOT_FOUND');
-  assert.equal(await code(async async () => await svc.sync('owner-b', id, {})), 'PLAYER_NOT_FOUND');
-  assert.equal(await code(async async () => await svc.command('owner-b', id, { protocolVersion: 2, requestId: 'x1', expectedRevision: 0, type: 'buy', payload: { code: 'HERB-001' } })), 'PLAYER_NOT_FOUND');
-  assert.equal(await code(async async () => await svc.state('owner-a', '00000000-0000-4000-8000-000000000000')), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => await svc.state('owner-b', id)), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => await svc.sync('owner-b', id, {})), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => await svc.command('owner-b', id, { protocolVersion: 2, requestId: 'x1', expectedRevision: 0, type: 'buy', payload: { code: 'HERB-001' } })), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => await svc.state('owner-a', '00000000-0000-4000-8000-000000000000')), 'PLAYER_NOT_FOUND');
 });
 
 test('snapshot gửi client không chứa seed bí cảnh; state bẩn bị chặn', async () => {
@@ -186,9 +186,9 @@ test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xó
   assert.equal(dead.died, true);
   assert.equal(dead.state.death.cause, 'lifespan');
   assert.equal(dead.report.seconds || 0, 0, 'offline không già thêm');
-  const err = await (async async () => { try { await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'd1')); } catch (e) { return e; } })();
+  const err = await (async () => { try { await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'd1')); } catch (e) { return e; } })();
   assert.equal(err.code, 'PLAYER_DEAD');
-  assert.equal(await code(async async () => await svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => await svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
   assert.equal(await svc.resetAfterDeath('owner-a', id).deleted, true);
   assert.equal((await svc.bootstrap('owner-a')).player, null);
   assert.await ok((await svc.previewCreation('owner-a')).ticketId);

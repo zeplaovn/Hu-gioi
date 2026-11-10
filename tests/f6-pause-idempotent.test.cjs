@@ -10,7 +10,7 @@ test('F6: pause đã dừng không làm revision, lastSeenAt, state đổi hoặ
   let now = 1_800_000_000_000;
   const svc = new PlayerService({ repository: repo, clock: () => now, contentVersion: 'test' });
   const pv = await svc.previewCreation('owner-a');
-  const id = await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Thanh Ngọc', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' }).playerId;
+  const id = (await svc.createPlayer('owner-a', { ticketId: pv.ticketId, name: 'Thanh Ngọc', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' })).playerId;
   const one = await svc.pause('owner-a', id);
   const before = await repo.get(id);
   now += 20 * 60_000;
