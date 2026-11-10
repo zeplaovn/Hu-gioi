@@ -1,0 +1,333 @@
+/* PostgresPlayers — kho dữ liệu riêng schema game, server-authoritative.
+   Deno Postgres PoolClient.queryObject({ text, args }), không ORM, không HTTP.
+   Mọi request ghi khóa một hàng game.players FOR UPDATE. Cổng Node dùng SQLite adapter.
+   Không bao giờ gửi SQL/state/seed vào log. */
+'use strict';
+const { GameError } = require('../errors.js');
+const { PlayerRepository } = require('./player-repository.js');
+
+const DAY = 86400000;
+const emptyPavilion = () => ({ version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} });
+const nameKey = n => String(n).normalize('NFC').toLocaleLowerCase('vi');
+const json = x => typeof x === 'string' ? JSON.parse(x) : x;
+const num = x => typeof x === 'bigint' ? Number(x) : Number(x);
+const big = x => String(x);
+const toInt = x => {
+  const n = num(x);
+  if (!Number.isSafeInteger(n)) throw new GameError('STATE_CORRUPT', 'Dữ liệu tài khoản không hợp lệ.');
+  return n;
+};
+const unique = err => err?.code === '23505' || err?.cause?.code === '23505';
+const bytes = s => new TextEncoder().encode(s).byteLength;
+
+function hydrate(r) {
+  if (!r) return null;
+  return {
+    id: r.id, ownerId: r.owner_id, name: r.name, state: json(r.state),
+    revision: toInt(r.revision), schemaVersion: num(r.schema_version),
+    contentVersion: r.content_version, rngSeed: r.rng_seed,
+    rngCounter: toInt(r.rng_counter), lastSeenAt: toInt(r.last_seen_at),
+    createdAt: toInt(r.created_at), updatedAt: toInt(r.updated_at),
+    rateTokens: json(r.rate_tokens) || {}, tokensAt: toInt(r.tokens_at)
+  };
+}
+const pavilion = r => r ? ({
+  version: toInt(r.version), balance: toInt(r.balance), totalEarned: toInt(r.total_earned),
+  rebirths: toInt(r.rebirths), upgrades: json(r.upgrades) || {}, relics: json(r.relics) || {}
+}) : emptyPavilion();
+
+async function rows(client, sql, args = []) {
+  return (await client.queryObject({ text: sql, args })).rows;
+}
+async function one(client, sql, args = []) {
+  return (await rows(client, sql, args))[0] || null;
+}
+async function exec(client, sql, args = []) {
+  return client.queryObject({ text: sql, args });
+}
+function applyRate(row, rate, now) {
+  if (!rate) return null;
+  const { key, capacity, perMinute } = rate;
+  if (typeof key !== 'string' || !(capacity > 0) || !(perMinute > 0))
+    throw new Error('Cấu hình rate limit không hợp lệ.');
+  const prior = row.rateTokens[key] || { tokens: capacity, at: now };
+  const elapsed = Math.max(0, now - (Number.isFinite(Number(prior.at)) ? Number(prior.at) : now));
+  const current = Math.min(capacity, Math.max(0, Number(prior.tokens) || 0) + elapsed * perMinute / 60000);
+  if (current < 1) {
+    const retryAfterMs = Math.ceil((1 - current) * 60000 / perMinute);
+    throw new GameError('RATE_LIMITED', 'Thao tác quá nhanh. Hãy thử lại sau.', { retryAfterMs });
+  }
+  return { ...row.rateTokens, [key]: { tokens: current - 1, at: now } };
+}
+
+class PostgresPlayers extends PlayerRepository {
+  constructor({ pool, statementTimeoutMs = 1500, lockTimeoutMs = 900, clock = Date.now } = {}) {
+    super();
+    if (!pool || typeof pool.connect !== 'function') throw Error('PostgresPlayers cần pool.connect().');
+    this.pool = pool;
+    this.statementTimeoutMs = statementTimeoutMs;
+    this.lockTimeoutMs = lockTimeoutMs;
+    this.clock = clock;
+    this.cleanedAt = new Map();
+  }
+
+  async connection(work) {
+    const client = await this.pool.connect();
+    try { return await work(client); }
+    finally { client.release(); }
+  }
+  async transaction(work) {
+    return this.connection(async client => {
+      await exec(client, 'BEGIN');
+      try {
+        await exec(client, 'SET LOCAL statement_timeout = $1', [this.statementTimeoutMs]);
+        await exec(client, 'SET LOCAL lock_timeout = $1', [this.lockTimeoutMs]);
+        const result = await work(client);
+        await exec(client, 'COMMIT');
+        return result;
+      } catch (err) {
+        try { await exec(client, 'ROLLBACK'); } catch { /* không che lỗi đầu tiên */ }
+        throw err;
+      }
+    });
+  }
+  async ownerLock(c, ownerId) {
+    // Ngăn hai request tạo ticket/nhân vật cho cùng tài khoản cùng lúc.
+    await exec(c, 'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [ownerId]);
+  }
+  async sweep(c, ownerId, now, playerId = null) {
+    // Chỉ cleanup cơ hội (không cần pg_cron) và theo tài khoản đang thao tác.
+    const last = this.cleanedAt.get(ownerId) || 0;
+    if (now - last < 10 * 60000) return;
+    if (playerId) await exec(c, `DELETE FROM game.player_receipts WHERE ctid IN (
+      SELECT ctid FROM game.player_receipts WHERE player_id = $1 AND expires_at <= $2 LIMIT 16
+    )`, [playerId, big(now)]);
+    await exec(c, `DELETE FROM game.creation_tickets WHERE ctid IN (
+      SELECT ctid FROM game.creation_tickets WHERE owner_id = $1 AND expires_at <= $2 LIMIT 16
+    )`, [ownerId, big(now - 7 * DAY)]);
+    this.cleanedAt.set(ownerId, now);
+    if (this.cleanedAt.size > 1024) this.cleanedAt.delete(this.cleanedAt.keys().next().value);
+  }
+
+  async getByOwner(ownerId) {
+    return this.connection(async c => hydrate(await one(c, 'SELECT * FROM game.players WHERE owner_id = $1', [ownerId])));
+  }
+  async get(playerId) {
+    return this.connection(async c => hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1', [playerId])));
+  }
+  async getPavilion(ownerId) {
+    return this.connection(async c => pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId])));
+  }
+  async issueTicket(ownerId, preview, { now, ttlMs, dailyLimit }) {
+    return this.transaction(async c => {
+      await this.ownerLock(c, ownerId);
+      const existing = await one(c,
+        'SELECT count(*)::bigint AS n, min(created_at) AS oldest FROM game.creation_tickets WHERE owner_id = $1 AND created_at > $2',
+        [ownerId, big(now - DAY)]);
+      const n = toInt(existing.n);
+      if (n >= dailyLimit) return { limited: true, retryAfterMs: Math.max(1000, toInt(existing.oldest) + DAY - now) };
+      const id = crypto.randomUUID();
+      await exec(c, `INSERT INTO game.creation_tickets (id, owner_id, preview, created_at, expires_at)
+        VALUES ($1, $2, $3::jsonb, $4, $5)`, [id, ownerId, JSON.stringify(preview), big(now), big(now + ttlMs)]);
+      await this.sweep(c, ownerId, now);
+      return { id, preview, expiresAt: now + ttlMs, rollsLeft: dailyLimit - n - 1 };
+    });
+  }
+  async createWithTicket({ ownerId, ticketId, now, build }) {
+    return this.transaction(async c => {
+      await this.ownerLock(c, ownerId);
+      const ticket = await one(c, 'SELECT * FROM game.creation_tickets WHERE id = $1 FOR UPDATE', [ticketId]);
+      if (!ticket || ticket.owner_id !== ownerId || ticket.used_at !== null)
+        throw new GameError('TICKET_INVALID', 'Phiếu khởi nguyên không hợp lệ hoặc đã dùng.');
+      if (toInt(ticket.expires_at) <= now)
+        throw new GameError('TICKET_EXPIRED', 'Phiếu khởi nguyên đã hết hạn. Hãy gieo lại.');
+      if (await one(c, 'SELECT id FROM game.players WHERE owner_id = $1', [ownerId]))
+        throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
+      await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
+      const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]));
+      const consumed = Object.fromEntries(Object.keys(account.relics).filter(k => account.relics[k] > 0).map(k => [k, 1]));
+      const rec = await build(json(ticket.preview), { ...account, consumed });
+      const serialized = JSON.stringify(rec.state);
+      if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
+      const id = crypto.randomUUID();
+      try {
+        await exec(c, `INSERT INTO game.players
+          (id, owner_id, name, name_key, revision, schema_version, content_version, state,
+           rng_seed, rng_counter, last_seen_at, created_at, updated_at)
+          VALUES ($1,$2,$3,$4,0,$5,$6,$7::jsonb,$8,$9,$10,$10,$10)`, [
+          id, ownerId, rec.name, nameKey(rec.name), rec.schemaVersion, rec.contentVersion,
+          serialized, rec.rngSeed, big(rec.rngCounter), big(now)
+        ]);
+      } catch (err) {
+        if (unique(err)) {
+          if (String(err.constraint || '').includes('owner_id')) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
+          throw new GameError('NAME_TAKEN', 'Đạo hiệu này đã có người dùng.');
+        }
+        throw err;
+      }
+      await exec(c, 'UPDATE game.creation_tickets SET used_at = $1 WHERE id = $2', [big(now), ticketId]);
+      if (Object.keys(consumed).length) {
+        const relics = { ...account.relics };
+        for (const key of Object.keys(consumed)) relics[key]--;
+        await exec(c, `UPDATE game.pavilion_accounts
+          SET relics = $1::jsonb, version = version + 1 WHERE owner_id = $2`, [JSON.stringify(relics), ownerId]);
+      }
+      await this.sweep(c, ownerId, now, id);
+      return hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1', [id]));
+    });
+  }
+  async transact(playerId, fn, options = {}) {
+    return this.transaction(async c => {
+      const rec = hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1 FOR UPDATE', [playerId]));
+      if (options.rate && rec && options.rate.ownerId !== rec.ownerId)
+        throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
+      const rateTokens = rec ? applyRate(rec, options.rate, options.rate?.now ?? this.clock()) : null;
+      const tx = {
+        record: rec,
+        receipt: async (requestId, now) => {
+          const r = await one(c,
+            `SELECT fingerprint, revision, response FROM game.player_receipts
+             WHERE player_id = $1 AND request_id = $2 AND expires_at > $3`, [playerId, requestId, big(now)]);
+          return r ? { requestId, fingerprint: r.fingerprint, revision: toInt(r.revision), response: json(r.response) } : null;
+        }
+      };
+      const out = await fn(tx) || {};
+      if (out.save) {
+        const s = out.save, state = JSON.stringify(s.state);
+        if (bytes(state) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
+        const changed = await rows(c, `UPDATE game.players SET
+          state = $1::jsonb, revision = $2, rng_counter = $3, last_seen_at = $4,
+          schema_version = $5, content_version = $6, updated_at = $7,
+          rate_tokens = $8::jsonb, tokens_at = $7
+          WHERE id = $9 AND revision = $10 RETURNING id`, [
+          state, big(s.revision), big(s.rngCounter), big(s.lastSeenAt), s.schemaVersion,
+          s.contentVersion, big(s.lastSeenAt), JSON.stringify(rateTokens || rec.rateTokens),
+          playerId, big(rec.revision)
+        ]);
+        if (changed.length !== 1) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.');
+      } else if (out.touch || rateTokens) {
+        await exec(c, `UPDATE game.players SET rng_counter = $1, last_seen_at = $2,
+          rate_tokens = $3::jsonb, tokens_at = $4 WHERE id = $5`, [
+          big(out.touch?.rngCounter ?? rec.rngCounter), big(out.touch?.lastSeenAt ?? rec.lastSeenAt),
+          JSON.stringify(rateTokens || rec.rateTokens), big(options.rate?.now ?? this.clock()), playerId
+        ]);
+      }
+      if (out.pavilionAward) {
+        await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [rec.ownerId]);
+        await exec(c, `UPDATE game.pavilion_accounts SET
+          balance = balance + $1, total_earned = total_earned + $1, version = version + 1
+          WHERE owner_id = $2`, [big(out.pavilionAward), rec.ownerId]);
+      }
+      if (out.receipt) {
+        const r = out.receipt;
+        await exec(c, `INSERT INTO game.player_receipts
+          (player_id, request_id, fingerprint, revision, response, created_at, expires_at)
+          VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7)`, [
+          playerId, r.requestId, r.fingerprint, big(r.revision),
+          JSON.stringify(r.response), big(out.save?.lastSeenAt ?? this.clock()), big(r.expiresAt)
+        ]);
+      }
+      if (rec) await this.sweep(c, rec.ownerId, options.rate?.now ?? this.clock(), playerId);
+      return out.value;
+    });
+  }
+  async purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
+    return this.transaction(async c => {
+      await this.ownerLock(c, ownerId);
+      const player = await one(c, 'SELECT * FROM game.players WHERE owner_id = $1 FOR UPDATE', [ownerId]);
+      await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
+      const row = await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]);
+      const account = pavilion(row), fingerprint = kind + ':' + key;
+      const prior = await one(c, 'SELECT fingerprint FROM game.pavilion_receipts WHERE owner_id = $1 AND request_id = $2', [ownerId, requestId]);
+      if (prior) {
+        if (prior.fingerprint !== fingerprint) throw new GameError('REQUEST_ID_REUSED', 'Mã yêu cầu đã dùng cho giao dịch khác.');
+        return { replayed: true, pavilion: account, record: hydrate(player) };
+      }
+      if (account.version !== expectedVersion)
+        throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
+      const upgrades = { ...account.upgrades }, relics = { ...account.relics };
+      let cost;
+      if (kind === 'upgrade' && Object.hasOwn(catalog.stats, key)) {
+        const current = upgrades[key] || 0;
+        cost = catalog.upgradeCost(current);
+        if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
+        upgrades[key] = current + 1;
+      } else if (kind === 'relic' && Object.hasOwn(catalog.relics, key)) {
+        const def = catalog.relics[key];
+        if ((relics[key] || 0) >= def.maxStored)
+          throw new GameError('GAME_RULE_VIOLATION', 'Kho Kỳ Trân đã đạt giới hạn.');
+        cost = def.cost;
+        relics[key] = (relics[key] || 0) + 1;
+      } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
+      if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
+      await exec(c, `UPDATE game.pavilion_accounts SET
+        balance = $1, upgrades = $2::jsonb, relics = $3::jsonb, version = version + 1
+        WHERE owner_id = $4 AND version = $5`, [
+        big(account.balance - cost), JSON.stringify(upgrades), JSON.stringify(relics), ownerId, big(account.version)
+      ]);
+      let updatedPlayer = player;
+      if (player && kind === 'upgrade') {
+        const state = json(player.state);
+        state.pavilion = { ...upgrades };
+        const serialized = JSON.stringify(state);
+        if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
+        updatedPlayer = await one(c, `UPDATE game.players SET
+          state = $1::jsonb, revision = revision + 1, updated_at = $2
+          WHERE owner_id = $3 RETURNING *`, [serialized, big(now), ownerId]);
+      }
+      await exec(c, `INSERT INTO game.pavilion_receipts
+        (owner_id, request_id, fingerprint, created_at) VALUES ($1,$2,$3,$4)`,
+      [ownerId, requestId, fingerprint, big(now)]);
+      await this.sweep(c, ownerId, now, updatedPlayer?.id);
+      return { replayed: false, cost, pavilion: { ...account, balance: account.balance - cost,
+        version: account.version + 1, upgrades, relics }, record: hydrate(updatedPlayer) };
+    });
+  }
+  async deletePlayer(ownerId, playerId) {
+    return this.transaction(async c => {
+      await this.ownerLock(c, ownerId);
+      const player = await one(c, 'SELECT id FROM game.players WHERE id = $1 AND owner_id = $2 FOR UPDATE', [playerId, ownerId]);
+      if (!player) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
+      await exec(c, 'DELETE FROM game.players WHERE id = $1 AND owner_id = $2', [playerId, ownerId]);
+      await exec(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
+      await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
+      await exec(c, 'UPDATE game.pavilion_accounts SET rebirths = rebirths + 1, version = version + 1 WHERE owner_id = $1', [ownerId]);
+      return { deleted: true };
+    });
+  }
+  async exportOwnerData(ownerId) {
+    return this.connection(async c => {
+      const player = await one(c, 'SELECT * FROM game.players WHERE owner_id = $1', [ownerId]);
+      const ticketRow = await one(c, 'SELECT count(*)::bigint AS n FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
+      const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId]));
+      const tickets = toInt(ticketRow.n);
+      if (!player && !tickets && account.totalEarned === 0 && account.rebirths === 0) return null;
+      return { player: player ? {
+        id: player.id, name: player.name, revision: toInt(player.revision), schemaVersion: player.schema_version,
+        state: json(player.state), lastSeenAt: toInt(player.last_seen_at),
+        createdAt: toInt(player.created_at), updatedAt: toInt(player.updated_at)
+      } : null, tickets, pavilion: account };
+    });
+  }
+  async deleteOwnerData(ownerId) {
+    return this.transaction(async c => {
+      await this.ownerLock(c, ownerId);
+      const player = await one(c, 'SELECT id FROM game.players WHERE owner_id = $1 FOR UPDATE', [ownerId]);
+      const receipts = player ? toInt((await one(c,
+        'SELECT count(*)::bigint AS n FROM game.player_receipts WHERE player_id = $1', [player.id])).n) : 0;
+      const deletedPlayer = await rows(c, 'DELETE FROM game.players WHERE owner_id = $1 RETURNING id', [ownerId]);
+      const deletedTickets = await rows(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1 RETURNING id', [ownerId]);
+      const deletedPavilion = await rows(c, 'DELETE FROM game.pavilion_accounts WHERE owner_id = $1 RETURNING owner_id', [ownerId]);
+      return { players: deletedPlayer.length, tickets: deletedTickets.length, receipts, pavilionAccounts: deletedPavilion.length };
+    });
+  }
+  async purgeExpired(now) {
+    // Chỉ phục vụ local/test; Edge dọn theo người chơi trong cùng giao dịch.
+    return { receipts: 0, tickets: 0 };
+  }
+  async close() {
+    // Pool dùng chung trong isolate; caller có thể tắt khi test kết thúc.
+    if (typeof this.pool.end === 'function') await this.pool.end();
+  }
+}
+module.exports = { PostgresPlayers, nameKey, applyRate };
