@@ -258,6 +258,8 @@ def run_set(browser, folder, name, url, width, height, mobile):
         assert page.locator('#game').is_visible(), f"{name}: game main screen #game is not visible"
         assert page.locator('#menu button').first.is_visible(), f"{name}: game main menu not visible"
         outcome["gameplay_reached"] = True
+        # Capture the loaded game before opening modal pages or chat fixtures.
+        outcome["screenshots"].append(snap(page, folder, name, "game-main"))
         verify_bubble(page, folder, name, outcome)
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
