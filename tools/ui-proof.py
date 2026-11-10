@@ -111,7 +111,9 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             page.locator("#authPassword").fill("ci-test-password-1234")
             page.locator("#authSubmit").click()
             page.locator("#welcome").wait_for(state="visible", timeout=20000)
-    page.locator("#nameInput").fill("Vân " + name.removeprefix("after_") if name and name.startswith("after_") else "Vân Tiêu")
+    # One unique character per viewport on each in-memory CI server.
+    # Both before/after use the same name for like-for-like visual comparison.
+    page.locator("#nameInput").fill("Vân " + name.split("_", 1)[-1])
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
     page.locator("#startNew").click()
@@ -240,7 +242,14 @@ def run_set(browser, folder, name, url, width, height, mobile):
         assert page.locator('#game').is_visible(), f"{name}: game main screen #game is not visible"
         assert page.locator('#menu button').first.is_visible(), f"{name}: game main menu not visible"
         outcome["gameplay_reached"] = True
-        verify_bubble(page, folder, name, outcome)
+        chat_enabled = bool(page.evaluate("Boolean(window.HU_UI?.release?.chat)"))
+        if chat_enabled:
+            verify_bubble(page, folder, name, outcome)
+        else:
+            assert page.locator('#chatBubble').count() == 0, (
+                f"{name}: chat bubble must not render when UI.release.chat is false"
+            )
+            outcome["chat_disabled_as_configured"] = True
         if name.startswith('after_'):
             verify_log_float(page, folder, name, outcome)
             assert page.locator('#menu [data-window="settings"]').count() == 0, "Menu Cài đặt vẫn hiện"
