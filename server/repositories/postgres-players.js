@@ -89,8 +89,10 @@ class PostgresPlayers extends PlayerRepository {
     return this.connection(async client => {
       await exec(client, 'BEGIN');
       try {
-        await exec(client, "SELECT set_config('statement_timeout', $1, true)", [String(this.statementTimeoutMs) + 'ms']);
-        await exec(client, "SELECT set_config('lock_timeout', $1, true)", [String(this.lockTimeoutMs) + 'ms']);
+        // Set both LOCAL transaction limits in one database round-trip.
+        await exec(client, "SELECT set_config('statement_timeout', $1, true), set_config('lock_timeout', $2, true)", [
+          String(this.statementTimeoutMs) + 'ms', String(this.lockTimeoutMs) + 'ms'
+        ]);
         const result = await work(client);
         await exec(client, 'COMMIT');
         return result;
@@ -134,6 +136,17 @@ class PostgresPlayers extends PlayerRepository {
     if (this.cleanedAt.size > 1024) this.cleanedAt.delete(this.cleanedAt.keys().next().value);
   }
 
+  async getOwnerOverview(ownerId) {
+    // A single statement returns both independent account records, including
+    // the no-player case. Avoid two pool checkouts and two SQL round-trips for
+    // every bootstrap without changing game rules or exposing database data.
+    return this.connection(async c => {
+      const row = await one(c, `SELECT
+        (SELECT row_to_json(p) FROM game.players p WHERE p.owner_id = $1) AS player,
+        (SELECT row_to_json(a) FROM game.pavilion_accounts a WHERE a.owner_id = $1) AS pavilion`, [ownerId]);
+      return { player: hydrate(json(row?.player)), pavilion: pavilion(json(row?.pavilion)) };
+    });
+  }
   async getByOwner(ownerId) {
     return this.connection(async c => hydrate(await one(c, 'SELECT * FROM game.players WHERE owner_id = $1', [ownerId])));
   }
