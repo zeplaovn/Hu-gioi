@@ -3,7 +3,7 @@
  * JWT xác minh tại đây (verify_jwt=false để OPTIONS không bị gateway chặn).
  * Không tin bất kỳ thời gian, state, RNG, giá/thưởng hoặc cờ offline từ client. */
 import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
-import { UUID, corsHeaders, routeOf, parseBody } from './http.ts';
+import { UUID, corsHeaders, routeOf, parseBody, bearerToken } from './http.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
   createJwtVerifier, createAccountAdmin, CONTENT_VERSION
@@ -101,9 +101,19 @@ async function requireConsent(userId: string): Promise<void> {
 }
 async function authenticate(req: Request, route: string): Promise<string> {
   const header = req.headers.get('authorization') || '';
-  const match = /^Bearer ([A-Za-z0-9._-]+)$/.exec(header);
-  if (!match) throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
-  const claims = await verifier.verify(match[1]);
+  const token = bearerToken(header);
+  if (!token) {
+    // Chỉ log thuộc tính dạng boolean/nhóm kích thước, không ghi JWT hay bất kỳ header value nào.
+    logOperational({
+      event: 'auth_header_rejected',
+      headerPresent: header ? 1 : 0,
+      bearerScheme: /^\\s*Bearer\\b/i.test(header) ? 1 : 0,
+      lengthClass: !header ? 'empty' : header.length < 32 ? 'short' : header.length <= 4096 ? 'normal' : 'long',
+      apikeyPresent: req.headers.has('apikey') ? 1 : 0
+    });
+    throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
+  }
+  const claims = await verifier.verify(token);
   if (!UUID.test(claims.sub)) throw new GameError('UNAUTHENTICATED', 'Phiên đăng nhập không hợp lệ.');
   if (!DATA_RIGHTS.has(route)) await requireConsent(claims.sub);
   return claims.sub;
