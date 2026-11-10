@@ -76,6 +76,8 @@ npm run build:min
 # Cloudflare CLI: npx --yes wrangler@4.158.0 deploy
 ```
 
+**B3 — Workflow deploy chính thức:** `.github/workflows/edge-bundle-build.yml` chạy **thủ công** qua GitHub Actions → `workflow_dispatch` từ `main`. Runner chạy `npm ci`, kiểm tra, sinh `supabase/functions/api/game.bundle.mjs` bằng `npm run build:edge`, chạy Deno check/test, rồi mới gọi Supabase CLI deploy. Bundle được `.gitignore` loại trừ và **không có trong Git**; `_bundle_entry.mjs` vẫn là source. Nếu chưa có GitHub Actions secret `SUPABASE_ACCESS_TOKEN`, workflow dừng ở bước kiểm tra secret với thông báo rõ ràng, **không deploy**; không dán token vào chat/repo. Nhánh cũ `ops/edge-bundle-deploy-20261110` chỉ còn là tồn dư của cách commit bundle tạm, **không dùng để deploy nữa và không xóa khi chưa hỏi chủ dự án**.
+
 Kiểm tra `supabase functions deploy --help` trên phiên bản CLI cài trước khi chạy; với v3 có thể dùng `--remote=rvrwfeblishqadkpzspb`. Function `api` **một** function, `verify_jwt=false` tại `supabase/config.toml`. Artifact `game.bundle.mjs` do CI/build tạo, không commit. Test chạy `deno check` trước deploy. Trên Cloudflare, `wrangler.jsonc` chỉ chỉ tới `dist/`, không đưa `server/`, `supabase/` hoặc secret lên frontend.
 
 GitHub Actions deploy mẫu (chỉ kích hoạt thủ công, KHÔNG thêm workflow tự deploy trong PR):

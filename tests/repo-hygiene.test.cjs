@@ -89,3 +89,18 @@ test('UI CI kiểm tra cả before/after bằng Node online-ci-server', () => {
   assert.match(workflow, /PORT=8000 node tools\/online-ci-server\.cjs/);
   assert.match(workflow, /PORT=8001 node tools\/online-ci-server\.cjs/);
 });
+
+test('B3: generated game.bundle.mjs is not tracked by git, while bundle entry remains source', () => {
+  const { execFileSync } = require('node:child_process');
+  const artifact = 'supabase/functions/api/game.bundle.mjs';
+  const tracked = execFileSync('git', ['ls-files', '--', artifact], { cwd: ROOT, encoding: 'utf8' }).trim();
+  assert.equal(tracked, '', 'Generated Edge bundle must not be committed');
+  assert.match(fs.readFileSync(path.join(ROOT, '.gitignore'), 'utf8'), /supabase\\/functions\\/api\\/game\\.bundle\\.mjs/);
+  assert.ok(fs.existsSync(path.join(ROOT, 'supabase/functions/api/_bundle_entry.mjs')));
+  const workflow = fs.readFileSync(path.join(ROOT, '.github/workflows/edge-bundle-build.yml'), 'utf8');
+  assert.match(workflow, /workflow_dispatch/);
+  assert.match(workflow, /npm run build:edge/);
+  assert.match(workflow, /SUPABASE_ACCESS_TOKEN/);
+  assert.match(workflow, /supabase functions deploy api/);
+  assert.doesNotMatch(workflow, /git add -f|git commit |git push |branches:\\s*ops\\//);
+});
