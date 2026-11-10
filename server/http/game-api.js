@@ -15,6 +15,7 @@
 const crypto = require('node:crypto');
 const { GameError, toEnvelope } = require('../errors.js');
 const { RateLimiter, LIMITS } = require('./rate-limit.js');
+const { quotaIpKey } = require('./client-ip.js');
 
 const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
@@ -78,16 +79,16 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
       // IP quota dành cho request chưa xác thực / JWT sai; người chơi đã xác thực
       // chịu quota riêng theo account, không chặn hàng trăm người sau cùng NAT.
       const hasCredential = !!(req.headers.authorization || req.headers.cookie);
-      if (!hasCredential) limit('ip:' + clientIp(req), LIMITS.ip);
+      if (!hasCredential) limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
       let principal;
       try {
         principal = await resolvePrincipal(req, { consent: !DATA_RIGHTS.has(route.name) });
       } catch (error) {
-        if (hasCredential && error.code === 'UNAUTHENTICATED') limit('ip:' + clientIp(req), LIMITS.ip);
+        if (hasCredential && error.code === 'UNAUTHENTICATED') limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
         throw error;
       }
       if (!principal) {
-        if (hasCredential) limit('ip:' + clientIp(req), LIMITS.ip);
+        if (hasCredential) limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
         throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
       }
       const who = principal.accountId, body = await readBody(req);
