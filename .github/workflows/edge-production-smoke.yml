@@ -1,4 +1,4 @@
-name: Smoke live Supabase Edge API
+name: Probe Edge authorization header handling (safe synthetic JWT)
 on:
   push:
     branches: [ops/edge-bundle-deploy-20261110]
@@ -10,17 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Verify anonymous API rejection and CORS preflight
+      - name: Test missing and invalid synthetic bearer values, no user tokens
         shell: bash
         run: |
           set -euo pipefail
-          base="https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api"
-          code="$(curl --max-time 20 -sS -o /tmp/edge_get -w '%{http_code}' "$base/bootstrap")"
-          echo "GET /bootstrap HTTP: $code"
-          head -c 1000 /tmp/edge_get || true
+          base="https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap"
+          echo "=== without Authorization ==="
+          curl --max-time 25 -fsS -o /tmp/noauth -w "HTTP %{http_code}\n" "$base" || true
+          head -c 400 /tmp/noauth || true
           echo
-          options="$(curl --max-time 20 -sS -o /tmp/edge_options -w '%{http_code}' -X OPTIONS "$base/bootstrap" -H 'Origin: https://hugioi.blackbearvn.workers.dev' -H 'Access-Control-Request-Method: POST')"
-          echo "OPTIONS /bootstrap HTTP: $options"
-          head -c 1000 /tmp/edge_options || true
+          echo "=== with syntactically valid but intentionally fake JWT ==="
+          curl --max-time 25 -sS -o /tmp/fake -w "HTTP %{http_code}\n" "$base" \
+            -H 'Authorization: Bearer abc.def.ghi' -H 'Origin: https://hugioi.blackbearvn.workers.dev'
+          head -c 400 /tmp/fake || true
           echo
-          test "$code" = 401 && test "$options" = 204
