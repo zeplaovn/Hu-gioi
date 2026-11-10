@@ -505,11 +505,15 @@
     $('accountLabel').textContent = account.email || 'Tài khoản online';
     $('accountExit').textContent = 'Đăng xuất';
     const saved = store.load();
-    $('continueGame').hidden = !saved;
-    $('welcomeRebirth').textContent = saved
-      ? 'Đạo thân chỉ có một mạng. Thất bại sẽ mất toàn bộ kiếp này.'
-      : 'Kiếp thứ ' + ((UI.session.pavilion?.rebirths || 0) + 1) + ' · chọn Thiên mệnh, giữ trọn Thiên Tinh từ tiền kiếp.';
-    $('continueGame').title = saved ? 'Tiếp tục ' + saved.name + ' · ' + F.REALMS[saved.realm] : '';
+    if (saved?.created) {
+      // Nhân vật đã có trên máy chủ: bỏ qua màn tạo và màn "Tiếp tục".
+      // Vẫn giữ quy trình kiểm tra phiên và chính sách trước showForAccount().
+      start();
+      return;
+    }
+    $('continueGame').hidden = true;
+    $('continueGame').title = '';
+    $('welcomeRebirth').textContent = 'Kiếp thứ ' + ((UI.session.pavilion?.rebirths || 0) + 1) + ' · chọn Thiên mệnh, giữ trọn Thiên Tinh từ tiền kiếp.';
     $('welcome').hidden = false;
     renderCreation();
   }
