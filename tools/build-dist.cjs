@@ -7,6 +7,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { ALLOWED, DENIED_PART, DENIED_PATH } = require('../server/http/static.js');
+const { settings, injectConnectSrc, renderBrowserConfig } = require('../server/http/public-config.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
@@ -55,5 +56,8 @@ for (const start of roots) {
   }
 }
 /* _headers cần nằm ở thư mục xuất bản để Cloudflare Pages/Netlify áp CSP và các header bảo mật. */
-fs.copyFileSync(path.join(ROOT, '_headers'), path.join(OUT, '_headers'));
+const config = settings(process.env);
+fs.writeFileSync(path.join(OUT, 'client/config.js'), renderBrowserConfig(config));
+fs.writeFileSync(path.join(OUT, 'index.html'), injectConnectSrc(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), config));
+fs.writeFileSync(path.join(OUT, '_headers'), injectConnectSrc(fs.readFileSync(path.join(ROOT, '_headers'), 'utf8'), config));
 console.log(`dist/: ${copied} tệp (${minified} đã nén), bỏ qua ${skipped} tệp không dành cho trình duyệt.`);

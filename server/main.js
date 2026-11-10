@@ -53,7 +53,7 @@ function buildGameApi(env = process.env) {
   repository.purgeExpired(Date.now());
   const allowedOrigins = String(env.HU_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const loginGateway = jwt ? createSupabaseLoginGateway({
-    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY,
+    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY, allowedOrigins,
     trustedProxyIps: String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(x => x.trim()).filter(Boolean)
   }) : null;
   const accountAdmin = jwt && env.SUPABASE_SERVICE_ROLE_KEY

@@ -7,21 +7,6 @@
   const API = '/api/v1';
   const DEFAULT_SYNC_MS = 5000;
 
-  function endpoint() {
-    const configured = String(root.HU_API_ORIGIN || '').replace(/\/+$/, '');
-    if (!configured) {
-      if (!/^https?:$/.test(root.location?.protocol || '')) throw Error('Chơi online cần HTTP/HTTPS.');
-      return '';
-    }
-    const parsed = new URL(configured);
-    if (parsed.protocol !== 'https:' &&
-      !(parsed.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(parsed.hostname)))
-      throw Error('Máy chủ API cần HTTPS.');
-    if (parsed.username || parsed.password || parsed.search || parsed.hash || parsed.pathname !== '/')
-      throw Error('HU_API_ORIGIN chỉ được là origin của máy chủ.');
-    return parsed.origin;
-  }
-
   class RemoteSession {
     constructor({ fetchImpl = (...args) => root.fetch(...args), auth = root.HU_SUPABASE, clock = Date.now } = {}) {
       this.fetch = fetchImpl;
@@ -51,7 +36,7 @@
       if (!accessToken) throw Error('Phiên Supabase đã hết hạn. Hãy đăng nhập lại.');
       let response;
       try {
-        response = await this.fetch(endpoint() + API + path, {
+        response = await this.fetch(root.HU_PUBLIC_CONFIG.apiUrl(API + path), {
           method, headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json', Accept: 'application/json' },
           body: body === undefined ? undefined : JSON.stringify(body),
           cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',

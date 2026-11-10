@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#191816">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' file: data: blob:; font-src 'self' file:; connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co; media-src 'self' file:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src __HU_CONNECT_SRC__; media-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="Hư Giới — game idle tu tiên online, bảo vệ tài khoản và tiến trình trên máy chủ.">
 <title>Hư Giới · Tiên Lộ Vô Tận</title>
 <link rel="icon" href="data:,">
@@ -380,7 +380,7 @@
 <div id="itemTip" class="item-tip" role="tooltip" aria-hidden="true" hidden></div>
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 
-<!-- Classic scripts: mở trực tiếp file://, không cần bundler hoặc máy chủ. -->
+<!-- Classic scripts theo thứ tự để Node/browser dùng chung luật; gameplay bắt buộc API online + đăng nhập. -->
 <script src="client/assets/preload-manifest.js"></script>
 <script src="client/assets/player-preload.js"></script>
 <script src="client/platform/loader.js"></script>
@@ -411,6 +411,7 @@
 <script src="client/assets/asset-index.js"></script>
 <script src="client/assets/item-index.js"></script>
 <script src="client/assets/assets.js"></script>
+<script src="client/config.js"></script>
 <script src="client/session/remote-session.js"></script>
 <script src="client/auth/supabase.js"></script>
 <script src="client/auth/auth.js"></script>

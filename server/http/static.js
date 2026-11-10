@@ -3,6 +3,7 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
+const { settings, csp, injectConnectSrc, renderBrowserConfig } = require('./public-config.js');
 
 const ROOT = fs.realpathSync(path.resolve(__dirname, '..', '..'));
 const MIME = {
@@ -25,7 +26,7 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Resource-Policy': 'same-origin',
-  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co; media-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  'Content-Security-Policy': csp(settings())
 };
 
 function notFound(res) {
@@ -52,8 +53,19 @@ function serveStatic(req, res) {
   const { file, pathname } = target;
   fs.stat(file, (err, stat) => {
     if (err || !stat.isFile()) { notFound(res); return; }
+    const config = settings();
+    const headers = { ...SECURITY_HEADERS, 'Content-Security-Policy': csp(config) };
+    if (pathname === '/index.html' || pathname === '/client/config.js') {
+      const body = pathname === '/index.html'
+        ? injectConnectSrc(fs.readFileSync(file, 'utf8'), config)
+        : renderBrowserConfig(config);
+      res.writeHead(200, { ...headers, 'Content-Type': MIME[path.extname(file).toLowerCase()],
+        'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'no-store' });
+      res.end(req.method === 'HEAD' ? undefined : body);
+      return;
+    }
     res.writeHead(200, {
-      ...SECURITY_HEADERS,
+      ...headers,
       'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream',
       'Content-Length': stat.size,
       'Cache-Control': /^\/media\/audio\//i.test(pathname) ? 'public, max-age=31536000, immutable' : 'no-store'
