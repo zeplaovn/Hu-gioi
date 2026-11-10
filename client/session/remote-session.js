@@ -1,12 +1,12 @@
 /* HƯ GIỚI · RemoteSession v1.
-   Chỉ lưu và thực thi gameplay trên Node API /api/v1; trình duyệt giữ snapshot
+   Gameplay qua cấu hình /api/v1 (Node) hoặc Supabase Edge; trình duyệt giữ snapshot
    CHỈ ĐỌC để hiển thị. Mọi thay đổi kinh tế/thời gian/RNG do máy chủ quyết định. */
 (function (root) {
   'use strict';
   const H = root.HU_GAME, C = root.HU_COMMANDS;
-  const API = '/api/v1';
+  const API = String(root.HU_API_BASE || '/api/v1').replace(/\/+$/, '');
 
-  function endpoint() { return ''; }
+  function endpoint() { return API; }
 
   class RemoteSession {
     constructor({ fetchImpl = (...args) => root.fetch(...args), auth = root.HU_SUPABASE, clock = Date.now } = {}) {
@@ -24,6 +24,7 @@
       this.achievements = [];
       this.pending = Promise.resolve();
       this.lastSyncAttempt = 0;
+      this.lastSuccessfulCommandAt = 0;
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.syncInFlight = null;
     }
@@ -37,8 +38,13 @@
       if (!accessToken) throw Error('Phiên Supabase đã hết hạn. Hãy đăng nhập lại.');
       let response;
       try {
-        response = await this.fetch(endpoint() + API + path, {
-          method, headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json', Accept: 'application/json' },
+        response = await this.fetch(endpoint() + path, {
+          method, headers: {
+            Authorization: 'Bearer ' + accessToken,
+            ...(this.auth.publishableKey ? { apikey: this.auth.publishableKey } : {}),
+            'Content-Type': 'application/json', Accept: 'application/json',
+            ...(body?.requestId ? { 'X-Request-Id': body.requestId } : {})
+          },
           body: body === undefined ? undefined : JSON.stringify(body),
           cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
           keepalive: options.keepalive === true,
@@ -56,13 +62,35 @@
         error.code = info.code || 'HTTP_' + response.status;
         error.status = response.status;
         error.details = info.details;
-        const retryAfter = Number(response.headers?.get?.('retry-after'));
-        error.retryAfterMs = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 0;
+        const rawRetry = response.headers?.get?.('retry-after') || '';
+        const seconds = Number(rawRetry);
+        const retryMs = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(rawRetry) - this.clock();
+        error.retryAfterMs = Number.isFinite(retryMs) && retryMs > 0 ? Math.min(60000, retryMs) : 0;
+        if (response.status === 401) error.message = 'Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.';
+        else if (response.status === 429 && !info.message) error.message = 'Thao tác quá nhanh. Hãy thử lại sau.';
+        else if (response.status >= 500) error.message = 'Máy chủ game tạm thời không khả dụng. Hãy thử lại sau.';
         throw error;
       }
       return data;
     }
 
+    // Chỉ retry lỗi mạng/5xx/429 có giới hạn; body/requestId không đổi để
+    // receipt server bảo đảm idempotency. Không retry intent khi 409 conflict.
+    async requestWithRetry(path, method, body, options = {}) {
+      let last;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try { return await this.request(path, method, body, options); }
+        catch (error) {
+          last = error;
+          if (!['NETWORK_UNAVAILABLE', 'INVALID_RESPONSE', 'RATE_LIMITED'].includes(error.code) &&
+              !(error.status >= 500) && error.status !== 429) throw error;
+          if (attempt === 2) break;
+          const delay = Math.max(error.retryAfterMs || 0, 250 * 2 ** attempt);
+          await new Promise(resolve => root.setTimeout(resolve, delay));
+        }
+      }
+      throw last;
+    }
     run(work) {
       const next = this.pending.catch(() => {}).then(work);
       this.pending = next.catch(() => {});
@@ -73,6 +101,7 @@
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
       this.lastSyncAttempt = 0;
+      this.lastSuccessfulCommandAt = 0;
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.paused = false;
       this.deathNotified = false;
@@ -91,7 +120,12 @@
       if (info.pavilion) this.pavilion = info.pavilion;
       if (info.player?.id) {
         this.playerId = info.player.id;
-        await this.synchronize(true);
+        if (info.snapshot?.state) {
+          this.apply(info.snapshot);
+          this.lastSyncAttempt = this.clock();
+        } else {
+          await this.synchronize(true);
+        }
       } else {
         await this.previewCreation();
       }
@@ -139,10 +173,12 @@
       });
     }
     async synchronize(force = false) {
-      if (!this.playerId || !this.accountId || (this.paused && !force)) return null;
+      if (!this.playerId || !this.accountId || root.document?.hidden || (this.paused && !force)) return null;
+      if (!force && this.lastSuccessfulCommandAt && this.clock() - this.lastSuccessfulCommandAt < this.nextSyncInMs) return null;
       if (!force && this.clock() - this.lastSyncAttempt < this.nextSyncInMs) return null;
       this.lastSyncAttempt = this.clock();
       return this.run(async () => {
+        if (!force && this.lastSuccessfulCommandAt && this.clock() - this.lastSuccessfulCommandAt < this.nextSyncInMs) return null;
         let result;
         try { result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision }); }
         catch (error) {
@@ -166,7 +202,7 @@
         if (!requestId) throw Error('Trình duyệt thiếu mã yêu cầu an toàn.');
         const body = { protocolVersion: C.VERSION, requestId, expectedRevision: this.revision, ...command };
         let result;
-        try { result = await this.request('/players/' + this.playerId + '/commands', 'POST', body); }
+        try { result = await this.requestWithRetry('/players/' + this.playerId + '/commands', 'POST', body); }
         catch (error) {
           if (error.code === 'REVISION_CONFLICT' || Number.isSafeInteger(error.details?.currentRevision)) {
             // Một lệnh bị từ chối vẫn có thể lưu heartbeat online ở server.
@@ -177,6 +213,7 @@
           throw error;
         }
         this.apply(result);
+        this.lastSuccessfulCommandAt = this.clock();
         return result.result;
       });
     }
