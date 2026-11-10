@@ -86,11 +86,12 @@ test('after 10 attempts per IP in 15 minutes return 429 and Retry-After; spoofed
 });
 
 test('only explicitly trusted reverse proxies can provide client IP; NAT users share quota', async t => {
-  const f = await fixture(t, { trustedProxyIps: ['127.0.0.1'] });
+  const f = await fixture(t, { trustedProxyIps: ['127.0.0.1'], upstreamStatus: 401 });
   for (let i = 0; i < 10; i++)
-    assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 200);
+    assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 401);
   assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.8' } })).status, 429);
-  assert.equal((await f.call({ headers: { 'x-forwarded-for': '203.0.113.9' } })).status, 200);
+  // Email giới hạn toàn tài khoản: dùng email khác cho IP khác để đo độc lập IP bucket.
+  assert.equal((await f.call({ body: { email: 'someone-else@example.com', password: 'wrong-password' }, headers: { 'x-forwarded-for': '203.0.113.9' } })).status, 401);
 });
 
 test('reject cross-site browser submissions, overlarge bodies and invalid content type', async t => {
