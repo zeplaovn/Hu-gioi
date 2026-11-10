@@ -33,9 +33,9 @@
     emit(event) { this.listeners.forEach(fn => fn(event)); }
 
     async request(path, method = 'GET', body, options = {}) {
-      if (!this.auth?.accessToken) throw Error('Cần xác thực Supabase trước khi chơi online.');
+      if (!this.auth?.accessToken) throw Error('Vui lòng đăng nhập để tiếp tục hành trình.');
       const accessToken = await this.auth.accessToken();
-      if (!accessToken) throw Error('Phiên Supabase đã hết hạn. Hãy đăng nhập lại.');
+      if (!accessToken) throw Error('Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.');
       let response;
       try {
         response = await this.fetch(endpoint() + path, {
@@ -51,11 +51,11 @@
           signal: AbortSignal.timeout(20000)
         });
       } catch {
-        throw Object.assign(Error('Không kết nối được máy chủ game. Tiến trình không bị ghi cục bộ.'), { code: 'NETWORK_UNAVAILABLE' });
+        throw Object.assign(Error('Không thể kết nối với trò chơi. Hãy kiểm tra mạng rồi thử lại.'), { code: 'NETWORK_UNAVAILABLE' });
       }
       let data;
       try { data = await response.json(); }
-      catch { throw Object.assign(Error('Máy chủ phản hồi không hợp lệ.'), { code: 'INVALID_RESPONSE' }); }
+      catch { throw Object.assign(Error('Đã xảy ra sự cố kết nối. Vui lòng thử lại.'), { code: 'INVALID_RESPONSE' }); }
       if (!response.ok) {
         const info = data?.error || {};
         const error = Error(typeof info.message === 'string' ? info.message : 'Máy chủ game tạm thời không xử lý được yêu cầu.');
@@ -113,7 +113,7 @@
       this.accountId = account.id;
       const info = await this.request('/bootstrap');
       if (info.protocolVersion !== C.VERSION || info.schemaVersion !== H.VERSION)
-        throw Error('Phiên bản game và backend không tương thích. Hãy tải lại trang.');
+        throw Error('Trò chơi đã được cập nhật. Vui lòng tải lại trang để tiếp tục.');
       this.serverContentVersion = info.contentVersion;
       if (Number.isFinite(Number(info.nextSyncInMs)) && Number(info.nextSyncInMs) >= 3000)
         this.nextSyncInMs = Number(info.nextSyncInMs);
@@ -197,7 +197,7 @@
     dispatch(type, payload = {}) {
       const command = C.validate({ type, payload });
       return this.run(async () => {
-        if (!this.ready || this.paused || root.document?.hidden) throw Error('Đạo thân đang offline. Hãy trở lại tab game.');
+        if (!this.ready || this.paused || root.document?.hidden) throw Error('Bạn cần mở lại tab Hư Giới để tiếp tục tu luyện.');
         const requestId = root.crypto?.randomUUID?.();
         if (!requestId) throw Error('Trình duyệt thiếu mã yêu cầu an toàn.');
         const body = { protocolVersion: C.VERSION, requestId, expectedRevision: this.revision, ...command };
