@@ -1,5 +1,5 @@
 /* Supabase Auth/PostgREST adapter. Only the public publishable key is shipped to browsers.
-   Sessions live in sessionStorage, never localStorage; gameplay remains offline-only. */
+   Sessions live in sessionStorage, never localStorage. */
 (function (root) {
   'use strict';
   const URL = 'https://rvrwfeblishqadkpzspb.supabase.co';

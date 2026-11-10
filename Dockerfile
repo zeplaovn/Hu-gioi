@@ -7,4 +7,6 @@ USER node
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=8000 HU_DB_FILE=/data/game.sqlite
 EXPOSE 8000
 VOLUME ["/data"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD node -e "require('node:http').get('http://127.0.0.1:8000/api/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 CMD ["node", "server/main.js"]

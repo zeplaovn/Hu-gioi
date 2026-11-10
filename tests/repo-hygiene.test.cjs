@@ -45,3 +45,14 @@ test('tài liệu kiến trúc hiện hành không quảng bá phiên offline V8
   assert.doesNotMatch(architecture, /Schema V8|51 lệnh|Game chơi được.*offline/);
   assert.doesNotMatch(integration, /Schema lưu hiện là V8/);
 });
+
+test('Docker HEALTHCHECK và meta CSP cùng origin, không còn chú thích offline-only', () => {
+  const docker = fs.readFileSync(path.join(ROOT, 'Dockerfile'), 'utf8');
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const adapter = fs.readFileSync(path.join(ROOT, 'client/auth/supabase.js'), 'utf8');
+  const cspMeta = html.split('\n').find(line => line.includes('http-equiv="Content-Security-Policy"'));
+  assert.match(docker, /HEALTHCHECK[^\n]*[\s\S]*?\/api\/health/);
+  assert.ok(cspMeta);
+  assert.doesNotMatch(cspMeta, /file:/);
+  assert.doesNotMatch(adapter, /gameplay remains offline-only/);
+});
