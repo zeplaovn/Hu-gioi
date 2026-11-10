@@ -127,7 +127,7 @@ test('gateway chỉ cho phép CORS preflight + POST từ origin frontend đã đ
     const raw = JSON.stringify({ email: 'dao@example.com', password: 'long-password' });
     const req = http.request({
       host: '127.0.0.1', port: server.address().port, path: '/api/auth/supabase-login', method,
-      headers: { origin, 'sec-fetch-site': 'cross-site', 'content-type': 'application/json', 'content-length': Buffer.byteLength(raw) }
+      headers: { origin, 'sec-fetch-site': 'cross-site', 'content-type': 'application/json', ...(method === 'POST' ? { 'content-length': Buffer.byteLength(raw) } : {}) }
     }, res => {
       const chunks = []; res.on('data', chunk => chunks.push(chunk));
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString('utf8') }));
