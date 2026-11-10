@@ -90,6 +90,29 @@ test('bootstrap reads both owner records with one DB checkout and one query', as
   assert.match(statements[0], /row_to_json/);
 });
 
+test('transaction configures statement and lock timeouts with a single SQL statement', async t => {
+  const { repo } = await makePg(t);
+  const originalConnect = repo.pool.connect.bind(repo.pool);
+  const statements = [];
+  repo.pool.connect = async () => {
+    const c = await originalConnect();
+    return { ...c, queryObject: async q => {
+      statements.push(q.text);
+      return c.queryObject(q);
+    } };
+  };
+  const settings = await repo.transaction(async c =>
+    (await c.queryObject({
+      text: "SELECT current_setting('statement_timeout') AS statement_limit, current_setting('lock_timeout') AS lock_limit",
+      args: []
+    })).rows[0]);
+  assert.equal(settings.statement_limit, '1500ms');
+  assert.equal(settings.lock_limit, '900ms');
+  assert.equal(statements.filter(q => q.includes("set_config('statement_timeout'")).length, 1);
+  assert.equal(statements.filter(q => q.includes("set_config('lock_timeout'")).length, 1);
+  assert.equal(statements.length, 4, 'BEGIN, combined limits, verification, COMMIT');
+});
+
 test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/authenticated', async t => {
   const { db } = await makePg(t);
   const result = await db.query(`SELECT n.nspname, c.relname, c.relrowsecurity
