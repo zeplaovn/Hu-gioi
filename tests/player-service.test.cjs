@@ -226,3 +226,138 @@ test('RNG theo người chơi tiến bộ và được lưu: cùng lệnh ngẫu
   assert.match(seed, /^[0-9a-f]{64}$/);
   assert.equal(JSON.stringify(await svc.state('owner-a', id)).includes(seed), false, 'seed không lộ ra client');
 });
+
+
+/* BỘ HỢP ĐỒNG DÙNG CHUNG: chạy nguyên ca trên SQLite và Postgres/PGlite.
+ * Không thay thế ca SQLite lịch sử. Dữ liệu UUID phù hợp FK auth.users ở Postgres.
+ * PGlite chỉ chạy trên Node test, không được bundle vào client/Edge. */
+const { PGlite } = require('@electric-sql/pglite');
+const { PostgresPlayers } = require('../server/repositories/postgres-players.js');
+const OWNER_A = '11111111-1111-4111-8111-111111111111';
+const OWNER_B = '22222222-2222-4222-8222-222222222222';
+const migrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110070000_game_schema.sql'), 'utf8');
+
+async function sharedFixture(mode, t) {
+  let repo;
+  if (mode === 'sqlite') {
+    repo = new SqlitePlayers(':memory:');
+  } else {
+    const db = new PGlite();
+    await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated;
+      CREATE SCHEMA auth; CREATE TABLE auth.users (id uuid PRIMARY KEY);
+      INSERT INTO auth.users (id) VALUES ('${OWNER_A}'), ('${OWNER_B}');`);
+    await db.exec(migrationSQL);
+    // PGlite dùng một Postgres backend; pool giả tuần tự hóa giao dịch như
+    // driver connection pool size 1 của Edge, không mô phỏng mạng.
+    let previous = Promise.resolve();
+    const pool = {
+      async connect() {
+        const waiting = previous;
+        let unlock;
+        previous = new Promise(resolve => { unlock = resolve; });
+        await waiting;
+        return {
+          queryObject: async ({ text, args = [] }) => ({ rows: (await db.query(text, args)).rows }),
+          release: unlock
+        };
+      },
+      async end() { await previous; await db.close(); }
+    };
+    repo = new PostgresPlayers({ pool });
+  }
+  t.after(async () => { await repo.close(); });
+  const time = { now: T0 };
+  const service = new PlayerService({
+    repository: repo, clock: () => time.now, contentVersion: 'test',
+    config: { nextSyncInMs: 20000, onlineGraceMs: 60000, repositoryRates: mode === 'postgres' },
+    onError: () => {}
+  });
+  const make = async (owner, name) => {
+    const ticket = await service.previewCreation(owner);
+    return service.createPlayer(owner, {
+      ticketId: ticket.ticketId, name, gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+    });
+  };
+  const intent = async (owner, type, payload, requestId, revision = null) => ({
+    protocolVersion: 2, type, payload, requestId,
+    expectedRevision: revision ?? (await service.bootstrap(owner)).player.revision
+  });
+  return { repo, service, time, make, intent };
+}
+for (const adapter of ['sqlite', 'postgres']) {
+  test(`PlayerService hợp đồng [${adapter}]: owner 404, ticket 1 lần, tên duy nhất`, async t => {
+    const { service, make } = await sharedFixture(adapter, t);
+    const a = await make(OWNER_A, 'Tử Yên');
+    await assert.rejects(service.state(OWNER_B, a.playerId), { code: 'PLAYER_NOT_FOUND' });
+    const ticketB = await service.previewCreation(OWNER_B);
+    await assert.rejects(service.createPlayer(OWNER_B, {
+      ticketId: ticketB.ticketId, name: 'tử yên', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+    }), { code: 'NAME_TAKEN' });
+    await assert.rejects(service.previewCreation(OWNER_A), { code: 'PLAYER_EXISTS' });
+    await assert.rejects(service.createPlayer(OWNER_B, {
+      ticketId: a.ticketId || 'unknown', name: 'Hồ Tiên', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+    }), { code: 'TICKET_INVALID' });
+  });
+
+  test(`PlayerService hợp đồng [${adapter}]: receipt, replay, revision, concurrent command`, async t => {
+    const { service, make, intent } = await sharedFixture(adapter, t);
+    const { playerId } = await make(OWNER_A, 'Ngọc Chi');
+    const first = await intent(OWNER_A, 'buy', { code: 'HERB-001' }, 'shared-1', 0);
+    const one = await service.command(OWNER_A, playerId, first);
+    assert.equal(one.revision, 1);
+    const replay = await service.command(OWNER_A, playerId, first);
+    assert.equal(replay.replayed, true);
+    assert.equal(replay.state.stone, one.state.stone);
+    await assert.rejects(service.command(OWNER_A, playerId, {
+      ...first, type: 'sell'
+    }), { code: 'REQUEST_ID_REUSED' });
+    const stale = await intent(OWNER_A, 'buy', { code: 'HERB-001' }, 'shared-stale', 0);
+    await assert.rejects(service.command(OWNER_A, playerId, stale), { code: 'REVISION_CONFLICT' });
+    const x = await intent(OWNER_A, 'setPreference', { key: 'music', value: true }, 'shared-x');
+    const y = { ...x, requestId: 'shared-y' };
+    const results = await Promise.allSettled([
+      service.command(OWNER_A, playerId, x), service.command(OWNER_A, playerId, y)
+    ]);
+    assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
+    assert.equal(results.find(result => result.status === 'rejected').reason.code, 'REVISION_CONFLICT');
+  });
+
+  test(`PlayerService hợp đồng [${adapter}]: offline 20 phút, lỗi lệnh và pause lặp không cộng tiến trình`, async t => {
+    const { service, time, repo, make, intent } = await sharedFixture(adapter, t);
+    const { playerId } = await make(OWNER_A, 'Hắc Vân');
+    const original = await service.state(OWNER_A, playerId);
+    time.now += 20 * 60000;
+    await assert.rejects(service.command(OWNER_A, playerId,
+      await intent(OWNER_A, 'breakthrough', {}, 'shared-break')
+    ), { code: 'GAME_RULE_VIOLATION' });
+    const after = await service.sync(OWNER_A, playerId);
+    assert.equal(after.report.seconds, 0);
+    assert.equal(after.state.age, original.state.age);
+    assert.equal(after.state.qi, original.state.qi);
+    const first = await service.pause(OWNER_A, playerId);
+    const metadata = await repo.get(playerId);
+    time.now += 20 * 60000;
+    const second = await service.pause(OWNER_A, playerId);
+    assert.equal(second.revision, first.revision);
+    assert.equal((await repo.get(playerId)).lastSeenAt, metadata.lastSeenAt);
+    assert.equal((await service.sync(OWNER_A, playerId)).report.seconds, 0);
+  });
+
+  test(`PlayerService hợp đồng [${adapter}]: export bảo mật, erase, delete-account idempotent`, async t => {
+    const { service, repo, make } = await sharedFixture(adapter, t);
+    const { playerId } = await make(OWNER_A, 'Phàm Trần');
+    const seed = (await repo.get(playerId)).rngSeed;
+    const exported = await service.exportData(OWNER_A);
+    assert.equal(exported.player.id, playerId);
+    assert.ok(!JSON.stringify(exported).includes(seed));
+    assert.doesNotMatch(JSON.stringify(exported), /rngSeed|rng_seed/);
+    await assert.rejects(service.eraseData(OWNER_A, { confirm: 'wrong' }), { code: 'INVALID_REQUEST' });
+    assert.equal((await service.eraseData(OWNER_A, { confirm: 'delete-my-game-data' })).players, 1);
+    await assert.rejects(service.state(OWNER_A, playerId), { code: 'PLAYER_NOT_FOUND' });
+    const calls = [];
+    const admin = { deleteUser: async owner => { calls.push(owner); return { deleted: true }; } };
+    const removed = await service.deleteAccount(OWNER_A, { confirm: 'delete-my-account' }, admin);
+    assert.equal(removed.accountDeleted, true);
+    assert.deepEqual(calls, [OWNER_A]);
+  });
+}
