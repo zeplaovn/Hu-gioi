@@ -1,6 +1,6 @@
 # Kế hoạch thiết kế backend — Hư Giới
 
-> **Cập nhật nhánh Supabase Edge 10/11/2026:** Tài liệu dưới đây phần lớn là kế hoạch/lịch sử của backend Node+SQLite; tài liệu áp dụng cho kiến trúc mới ở [edge-deployment.md](edge-deployment.md), migration `supabase/migrations/20261110070000_game_schema.sql` và hợp đồng async `server/repositories/player-repository.js`. API duy nhất là `supabase/functions/api`, DB `game` không exposed; Thiên Mệnh Các xuyên kiếp dùng thêm `pavilion_accounts` và `pavilion_receipts`. Node SQLite vẫn cho dev/test, không thay luật engine/data. **Chưa chạy migration hoặc deploy.**
+> **Cập nhật nhánh Supabase Edge 10/11/2026:** Tài liệu dưới đây phần lớn là kế hoạch/lịch sử của backend Node+SQLite; tài liệu áp dụng cho kiến trúc mới ở [edge-deployment.md](edge-deployment.md), migration `supabase/migrations/20261110075419_game_schema.sql` và hợp đồng async `server/repositories/player-repository.js`. API duy nhất là `supabase/functions/api`, DB `game` không exposed; Thiên Mệnh Các xuyên kiếp dùng thêm `pavilion_accounts` và `pavilion_receipts`. Node SQLite vẫn cho dev/test, không thay luật engine/data. **Schema game đã migrate lên production ngày 10/11/2026; Edge Function v1 đã được tải lên, chưa xác nhận runtime có secret.**
 
 
 > **Bổ sung 10/11/2026:** Đã thêm hệ thống account Thiên Mệnh Các ngoài state V9; tạo kiếp mới sau reset được giữ Thiên Tinh và nâng cấp, nhận thưởng 5×bậc đại cảnh giới mỗi kiếp. Xem [thien-menh-cac.md](thien-menh-cac.md). Các phần kế hoạch sau đây là lịch sử.

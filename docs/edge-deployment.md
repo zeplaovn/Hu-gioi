@@ -1,6 +1,6 @@
 # Triển khai Hư Giới: Cloudflare Static + Supabase Edge API (FREE)
 
-> **Chưa deploy/migrate.** Đây là quy trình để chủ dự án duyệt rồi tự vận hành. Không áp dụng migration hoặc secrets lên project thật trong quá trình code review. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
+> **Trạng thái production 10/11/2026:** Schema `game` đã được áp dụng qua Supabase Migration `20261110075419_game_schema` và Edge Function `api` v1 đã được tải lên. Chưa xác nhận xử lý gameplay thành công cho tới khi cấu hình `HU_DB_POOLER_URL` và `HU_ALLOWED_ORIGINS`. Không chạy lại migration này hoặc migration consent v5. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
 
 ## Kiến trúc và ranh giới tin cậy
 
@@ -13,7 +13,7 @@
 
 ## 1. Kiểm tra trước migration (CHƯA chạy)
 
-Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Đường dẫn duy nhất để migrate: `supabase/migrations/20261110070000_game_schema.sql`. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
+Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Đường dẫn duy nhất để migrate: `supabase/migrations/20261110075419_game_schema.sql`. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
 
 ```sh
 npm ci
