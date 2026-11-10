@@ -227,6 +227,8 @@ test('B1: cleanup index migration can be applied twice without changing schema',
 test('B1: cleanup error rolls back savepoint, but command and live receipt still COMMIT', async t => {
   const { db, repo, svc, clock } = await makePg(t);
   const { playerId } = await spawn(svc, A, 'Dọn Dẹp An Toàn');
+  // Đồng bộ thời gian giả lập ở repository; mặc định repo dùng Date.now thật.
+  repo.clock = () => clock.now;
   await db.query(`INSERT INTO game.player_receipts
     (player_id, request_id, fingerprint, revision, response, created_at, expires_at)
     VALUES ($1, 'stale-test', 'old', 0, '{}'::jsonb, $2, $3)`,
