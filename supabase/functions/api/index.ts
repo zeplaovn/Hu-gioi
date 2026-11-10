@@ -70,6 +70,14 @@ const adminKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const accountAdmin = adminKey ? createAccountAdmin({ url: BASE, secretKey: adminKey }) : null;
 
 const consents = new Map();
+// Supabase Edge giới hạn khoảng 100 log / 10 giây. Khi upstream lỗi hàng loạt,
+// chỉ phát tối đa 80 dòng JSON / 10 giây / isolate, không log token/state/SQL.
+let logWindowAt = Date.now(), logWindowCount = 0;
+function logOperational(entry: Record<string, string | number>): void {
+  const now = Date.now();
+  if (now - logWindowAt >= 10000) { logWindowAt = now; logWindowCount = 0; }
+  if (logWindowCount++ < 80) console.error(JSON.stringify(entry));
+}
 async function requireConsent(userId: string): Promise<void> {
   const now = Date.now(), until = consents.get(userId) || 0;
   if (until > now) return;
@@ -203,10 +211,10 @@ export async function handleApi(req: Request): Promise<Response> {
       route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
   } catch (err) {
     const { status, body } = toEnvelope(err, requestId);
-    if (status >= 500) console.error(JSON.stringify({
+    if (status >= 500) logOperational({
       event: 'api_error', requestId, code: body.error.code, status,
       durationMs: Math.round(performance.now() - since)
-    })); // không token, state, SQL hoặc password, tối đa 1 log cho lỗi server
+    }); // không token, state, SQL hoặc password; đã giới hạn log/isolate
     const failure = err as { details?: { retryAfterMs?: number } } | null;
     const retryAfterMs = Number(failure?.details?.retryAfterMs || 0);
     return jsonReply(req, status, body, requestId, retryAfterMs > 0 ? {
