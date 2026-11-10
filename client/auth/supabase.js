@@ -36,7 +36,17 @@
   } catch { /* storage bị chặn: chỉ giữ phiên trong tab hiện tại */ }
 
   function rememberOnThisDevice(enabled) {
-    remember = !!enabled && !!root.localStorage && root.location?.protocol === 'https:';
+    let available = false;
+    try {
+      if (enabled && root.location?.protocol === 'https:' && root.localStorage) {
+        // Trình duyệt riêng tư có thể chặn cả thao tác ghi; kiểm tra trước khi chọn.
+        const probe = REMEMBER_STORAGE + ':probe';
+        root.localStorage.setItem(probe, '1');
+        root.localStorage.removeItem(probe);
+        available = true;
+      }
+    } catch { /* không thể lưu lâu dài */ }
+    remember = available;
     rememberUntil = remember ? Date.now() + REMEMBER_MS : 0;
     if (!remember) {
       try { root.localStorage?.removeItem(REMEMBER_STORAGE); } catch { /* private mode */ }
