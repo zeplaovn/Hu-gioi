@@ -77,3 +77,26 @@ test('RemoteSession serializes commands with current revision and reads only ser
   f.session.disconnect();
   assert.equal(f.session.ready, false);
 });
+
+test('RemoteSession hoãn heartbeat theo retryAfterMs khi server trả 429', async () => {
+  const f = fixture({ initialPlayer: true });
+  let now = 0, attempts = 0;
+  f.session.clock = () => now;
+  await f.session.connect(ACCOUNT);
+  f.session.nextSyncInMs = 5000;
+  f.session.request = async () => {
+    attempts++;
+    if (attempts === 1) throw Object.assign(Error('rate limited'), { status: 429, retryAfterMs: 20000 });
+    return { protocolVersion: 2, schemaVersion: 9, contentVersion: 'content', revision: 0,
+      state: { created: true, name: 'Vân Tiêu', settings: {} }, nextSyncInMs: 5000 };
+  };
+  now = 5000;
+  await assert.rejects(f.session.synchronize(), { status: 429 });
+  now = 10000;
+  assert.equal(await f.session.synchronize(), null);
+  assert.equal(attempts, 1);
+  now = 25000;
+  await f.session.synchronize();
+  assert.equal(attempts, 2);
+  assert.equal(f.session.nextSyncInMs, 5000);
+});

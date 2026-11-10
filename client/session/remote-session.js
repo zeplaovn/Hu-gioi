@@ -5,7 +5,6 @@
   'use strict';
   const H = root.HU_GAME, C = root.HU_COMMANDS;
   const API = '/api/v1';
-  const DEFAULT_SYNC_MS = 5000;
 
   function endpoint() {
     const configured = String(root.HU_API_ORIGIN || '').replace(/\/+$/, '');
@@ -38,7 +37,7 @@
       this.achievements = [];
       this.pending = Promise.resolve();
       this.lastSyncAttempt = 0;
-      this.nextSyncInMs = DEFAULT_SYNC_MS;
+      this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.syncInFlight = null;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
@@ -87,6 +86,7 @@
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
       this.lastSyncAttempt = 0;
+      this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.paused = false;
       this.deathNotified = false;
       this.game = new H.Game(H.create(this.clock()));
@@ -99,6 +99,8 @@
       if (info.protocolVersion !== C.VERSION || info.schemaVersion !== H.VERSION)
         throw Error('Phiên bản game và backend không tương thích. Hãy tải lại trang.');
       this.serverContentVersion = info.contentVersion;
+      if (Number.isFinite(Number(info.nextSyncInMs)) && Number(info.nextSyncInMs) >= 3000)
+        this.nextSyncInMs = Number(info.nextSyncInMs);
       if (info.pavilion) this.pavilion = info.pavilion;
       if (info.player?.id) {
         this.playerId = info.player.id;
@@ -123,7 +125,8 @@
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
       if (response.pavilion) this.pavilion = response.pavilion;
-      this.nextSyncInMs = Math.max(3000, Number(response.nextSyncInMs) || DEFAULT_SYNC_MS);
+      if (Number.isFinite(Number(response.nextSyncInMs)) && Number(response.nextSyncInMs) >= 3000)
+        this.nextSyncInMs = Number(response.nextSyncInMs);
       const before = this.game.s;
       this.game = new H.Game(response.state);
       if (Array.isArray(response.achievements)) this.achievements.push(...response.achievements);
@@ -153,7 +156,15 @@
       if (!force && this.clock() - this.lastSyncAttempt < this.nextSyncInMs) return null;
       this.lastSyncAttempt = this.clock();
       return this.run(async () => {
-        const result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision });
+        let result;
+        try { result = await this.request('/players/' + this.playerId + '/sync', 'POST', { lastRevision: this.revision }); }
+        catch (error) {
+          if (error.status === 429 && Number.isFinite(error.retryAfterMs) && error.retryAfterMs > 0) {
+            this.lastSyncAttempt = this.clock();
+            this.nextSyncInMs = Math.max(this.nextSyncInMs, error.retryAfterMs);
+          }
+          throw error;
+        }
         this.apply(result);
         this.paused = false;
         return result.report || null;

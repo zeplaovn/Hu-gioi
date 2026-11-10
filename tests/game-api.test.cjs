@@ -159,6 +159,18 @@ test('API: giới hạn tốc độ trả 429 kèm Retry-After', async t => {
   assert.equal((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status, 200);
 });
 
+test('pause được giới hạn riêng, không tiêu token của sync', async t => {
+  const { call, tokenA } = await boot(t, { limiter: new RateLimiter({ clock: () => 0 }) });
+  const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
+  const created = await call('POST', '/api/v1/players', { token: tokenA, body: {
+    ticketId: pv.data.ticketId, name: 'Huyền Tâm', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck'
+  } });
+  const url = '/api/v1/players/' + created.data.playerId;
+  for (let i = 0; i < 8; i++) assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 200);
+  assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 429);
+  assert.equal((await call('POST', url + '/pause', { token: tokenA, body: {} })).status, 200);
+});
+
 test('API: CORS chỉ cho origin trong danh sách; preflight không cần đăng nhập', async t => {
   const { call } = await boot(t, { allowedOrigins: ['https://game.example'] });
   const ok = await call('OPTIONS', '/api/v1/bootstrap', { headers: { origin: 'https://game.example', 'access-control-request-method': 'GET' } });

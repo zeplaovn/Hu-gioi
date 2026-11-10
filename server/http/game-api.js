@@ -87,7 +87,7 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
         case 'create': limit('create:' + who, LIMITS.create); out = service.createPlayer(who, body); status = 201; break;
         case 'state': limit('read:' + who, LIMITS.read); out = service.state(who, route.id); break;
         case 'sync': limit('sync:' + who, LIMITS.sync); out = service.sync(who, route.id, body); break;
-        case 'pause': limit('sync:' + who, LIMITS.sync); out = service.pause(who, route.id); break;
+        case 'pause': limit('pause:' + who, LIMITS.pause); out = service.pause(who, route.id); break;
         case 'commands': limit('cmd:' + who, LIMITS.command); out = service.command(who, route.id, body); break;
         case 'exportData': limit('export:' + who, LIMITS.export); out = service.exportData(who); break;
         case 'eraseData': limit('erase:' + who, LIMITS.erase); out = service.eraseData(who, body); break;

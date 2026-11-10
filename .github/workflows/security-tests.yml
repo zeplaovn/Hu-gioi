@@ -20,10 +20,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Verify game source constraints
-        run: npm run check
-      - name: Run security and integration tests
-        run: npm test
+      - name: Install dependencies and run mandatory verification
+        run: |
+          npm install --no-package-lock
+          npm run check && npm test && npm run build:min
       - name: Check built static files contain legal pages but no server source
         shell: bash
         run: |
