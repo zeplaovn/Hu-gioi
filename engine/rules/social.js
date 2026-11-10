@@ -33,7 +33,7 @@
       giftFriend(payload, now) {
         this.requireFeature('social');
         now = at(this, now);
-        const def = find(FRIENDS, payload.id), f = this.s.social.friends[payload.id], cost = giftCost(def), amount = Math.floor((8 + def.realm) * (1 + (this.s.pavilion?.tuongMao || 0) * .025));
+        const def = find(FRIENDS, payload.id), f = this.s.social.friends[payload.id], cost = giftCost(def), amount = Math.floor((8 + def.realm) * (1 + H.PAVILION.bonus(s.pavilion?.tuongMao)));
         if (!f?.metAt) throw Error('Hãy kết giao trước khi tặng lễ.');
         if (f.affinity >= 100) throw Error('Tình nghĩa đã viên mãn, không cần tặng thêm.');
         this.spend(cost);
@@ -62,7 +62,7 @@
         const id = payload.id, key = payload.code, npc = DESIGN.npc[id], x = item(key), s = this.s;
         if (!npc || !x || !this.count(key)) throw Error('Không tìm thấy vị đạo hữu hoặc vật phẩm phù hợp.');
         if (s.equipment.includes(key)) throw Error('Hãy tháo pháp bảo trước khi tặng.');
-        const delta = x.code === npc.likes ? Math.floor(5 * (1 + (s.pavilion?.tuongMao || 0) * .025)) : x.code === npc.dislikes ? -5 : 0;
+        const delta = x.code === npc.likes ? Math.floor(5 * (1 + H.PAVILION.bonus(s.pavilion?.tuongMao))) : x.code === npc.dislikes ? -5 : 0;
         this.take(key);
         const before = s.npcAffinities[id] || 0;
         s.npcAffinities[id] = Math.max(0, Math.min(100, before + delta));

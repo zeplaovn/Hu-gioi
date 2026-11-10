@@ -62,6 +62,9 @@ test('quy luật Thiên Tinh: mỗi lần vượt một đại cảnh giới nh�
   assert.equal(H.PAVILION.realmReward(0), 0);
   assert.equal(H.PAVILION.bonus(20), .5);
   assert.equal(H.PAVILION.bonus(300), .5);
+  const plain = H.create(T0), normal = new H.Game({ ...plain, pavilion: { ngoTinh: 20 } });
+  const tooMuch = new H.Game({ ...plain, pavilion: { ngoTinh: 2000 } });
+  assert.equal(normal.rate(), tooMuch.rate(), 'engine không vượt trần +50% kể cả khi snapshot hỏng');
   assert.equal(H.PAVILION.upgradeCost(0), 2);
   assert.equal(H.PAVILION.upgradeCost(5), 4);
   assert.equal(H.PAVILION.upgradeCost(10), 8);

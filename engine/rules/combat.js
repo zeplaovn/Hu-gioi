@@ -86,7 +86,7 @@
       },
       collectLoot(count = 1, offline = false) {
         const s = this.s, r = s.zone, kind = s.enemyKind;
-        const fortune = (1 + (s.talent?.phucDuyen || 0) * .02) * (1 + (s.pavilion?.phucDuyen || 0) * .025), herbFortune = (1 + (s.talent?.phucDuyen || 0) * .015) * (1 + (s.pavilion?.phucDuyen || 0) * .025);
+        const fortune = (1 + (s.talent?.phucDuyen || 0) * .02) * (1 + H.PAVILION.bonus(s.pavilion?.phucDuyen)), herbFortune = (1 + (s.talent?.phucDuyen || 0) * .015) * (1 + H.PAVILION.bonus(s.pavilion?.phucDuyen));
         s.enemyNum += count; s.progress.kill += count;
         s.stone += F.loot_linh_thach(r, kind) * count * fortune;
         const cores = offline ? count * F.yeu_dan_drop_chance(r, kind) : (this.rng() < F.yeu_dan_drop_chance(r, kind) ? 1 : 0);
