@@ -171,13 +171,16 @@ def run(url, folder):
             assert "NPC" in page.locator('.win.page[data-window="more"] .release-label').inner_text()
             shot(page, "08-friends-npc-label")
 
-            # Real Chromium tab switch: document.visibilitychange from opening
-            # another tab. Mark unsupported behavior rather than faking hidden.
-            hidden_events = page.evaluate("""() => {
+            # Check native tab-switch visibility if the Chromium runner emits
+            # it. Headless Chromium commonly keeps BOTH pages "visible" even
+            # after bring_to_front(), so this cannot be a mandatory assertion.
+            # In that case exercise the app's real event listener and real
+            # /pause + /sync HTTP requests via an explicitly recorded synthetic
+            # visibility state (never misreport this as a native tab switch).
+            page.evaluate("""() => {
                 window.__hu_visibility = [];
                 document.addEventListener('visibilitychange',
                     () => window.__hu_visibility.push(document.hidden));
-                return document.hidden;
             }""")
             auxiliary = desktop_ctx.new_page()
             auxiliary.goto("about:blank")
@@ -187,11 +190,44 @@ def run(url, folder):
             page.bring_to_front()
             page.wait_for_timeout(1400)
             d["visibility_events"] = page.evaluate("window.__hu_visibility")
-            d["tab_switched"] = bool(d["visibility_events"])
-            shot(page, "09-return-from-tab")
+            d["native_tab_switched"] = True in d["visibility_events"] and False in d["visibility_events"]
             auxiliary.close()
-            if not d["tab_switched"]:
-                raise AssertionError("Chromium emitted no visibilitychange on tab switching")
+            if d["native_tab_switched"]:
+                d["visibility_verification"] = "native_tab_switch"
+                assert any(r["status"] == 200 and r["url"].endswith("/pause")
+                           for r in d["network"]), "Hidden tab failed to send /pause"
+            else:
+                d["visibility_verification"] = "synthetic_headless_fallback"
+                # No mock API responses: the real browser handler must send an
+                # actual successful POST to the isolated local backend.
+                with page.expect_response(
+                    lambda r: r.request.method == "POST" and r.url.endswith("/pause") and r.status == 200,
+                    timeout=15000
+                ):
+                    page.evaluate("""() => {
+                        Object.defineProperty(document, 'hidden',
+                            {configurable: true, get: () => true});
+                        Object.defineProperty(document, 'visibilityState',
+                            {configurable: true, get: () => 'hidden'});
+                        document.dispatchEvent(new Event('visibilitychange'));
+                    }""")
+                page.wait_for_function("window.HU_UI.session.paused === true", timeout=5000)
+                with page.expect_response(
+                    lambda r: r.request.method == "POST" and r.url.endswith("/sync") and r.status == 200,
+                    timeout=15000
+                ):
+                    page.evaluate("""() => {
+                        Object.defineProperty(document, 'hidden',
+                            {configurable: true, get: () => false});
+                        Object.defineProperty(document, 'visibilityState',
+                            {configurable: true, get: () => 'visible'});
+                        document.dispatchEvent(new Event('visibilitychange'));
+                    }""")
+                page.wait_for_function("window.HU_UI.session.paused === false", timeout=5000)
+                d["visibility_events"] = page.evaluate("window.__hu_visibility")
+                assert d["visibility_events"][-2:] == [True, False], (
+                    "Fallback did not fire hidden + visible events")
+            shot(page, "09-return-from-tab")
 
             m = report["mobile"]
             mobile_ctx, mobile = setup_page(browser, url, "release_390x844",
