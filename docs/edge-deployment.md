@@ -79,6 +79,15 @@ supabase secrets set --env-file ./private-edge-secrets.env --project-ref rvrwfeb
 
 `HU_ALLOWED_ORIGINS` nếu chưa đặt sẽ mặc định duy nhất origin Cloudflare chính thức `https://hugioi.blackbearvn.workers.dev`; cấu hình secret tường minh vẫn được khuyến nghị và bắt buộc để thêm staging. Không dùng wildcard.\n\n`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS`, `HU_ONLINE_GRACE_MS` (tham khảo `server/presence-config.js`) (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
 
+Biến tùy chọn để giảm lượt gọi mạng (không phải secret; đặt cùng cách với secret nếu muốn đổi):
+
+| Biến | Mặc định | Giới hạn | Ý nghĩa |
+|---|---|---|---|
+| `HU_AUTH_CACHE_MS` | `0` (tắt) | 0–30000 | Cache kết quả xác minh JWT **thành công** trong một isolate. Tắt = hỏi Supabase Auth ở mọi request. Bật thì token bị thu hồi/đăng xuất vẫn dùng được tối đa chừng ấy ms; token bị từ chối và lỗi dịch vụ không bao giờ được cache. |
+| `HU_CONSENT_CACHE_MS` | `300000` | 0–900000 | Cache kết quả kiểm tra chấp thuận chính sách. Hiện không có luồng rút lại chấp thuận; đổi `POLICY_VERSION` cần deploy lại và các isolate cũ có thể giữ cache tới chừng ấy ms. |
+
+Không bật `HU_AUTH_CACHE_MS` khi chưa xác nhận chấp nhận độ trễ thu hồi phiên; đây là quyết định bảo mật của chủ dự án.
+
 ## 3. Deploy Edge API và Cloudflare Static — sau phê duyệt riêng
 
 ```sh
