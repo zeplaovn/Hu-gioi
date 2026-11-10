@@ -82,6 +82,7 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
       let out, status = 200;
       switch (route.name) {
         case 'bootstrap': limit('read:' + who, LIMITS.read); out = service.bootstrap(who); break;
+        case 'pavilionPurchase': limit('cmd:' + who, LIMITS.command); out = service.pavilionPurchase(who, body); break;
         case 'preview': limit('preview:' + who, LIMITS.preview); out = service.previewCreation(who); status = 201; break;
         case 'create': limit('create:' + who, LIMITS.create); out = service.createPlayer(who, body); status = 201; break;
         case 'state': limit('read:' + who, LIMITS.read); out = service.state(who, route.id); break;
@@ -105,6 +106,7 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
   function matchRoute(method, pathname) {
     if (method === 'OPTIONS') return { name: 'options' };
     if (method === 'GET' && pathname === '/api/v1/bootstrap') return { name: 'bootstrap' };
+    if (method === 'POST' && pathname === '/api/v1/pavilion/purchase') return { name: 'pavilionPurchase' };
     if (method === 'POST' && pathname === '/api/v1/creation/preview') return { name: 'preview' };
     if (method === 'POST' && pathname === '/api/v1/players') return { name: 'create' };
     if (method === 'GET' && pathname === '/api/v1/me/export') return { name: 'exportData' };

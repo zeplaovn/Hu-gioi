@@ -45,6 +45,21 @@ CREATE TABLE IF NOT EXISTS creation_tickets (
   used_at INTEGER
 );
 CREATE INDEX IF NOT EXISTS creation_tickets_owner ON creation_tickets (owner_id, created_at);
+CREATE TABLE IF NOT EXISTS pavilion_accounts (
+  owner_id TEXT PRIMARY KEY,
+  version INTEGER NOT NULL DEFAULT 0,
+  balance INTEGER NOT NULL DEFAULT 0 CHECK (balance >= 0),
+  total_earned INTEGER NOT NULL DEFAULT 0 CHECK (total_earned >= 0),
+  rebirths INTEGER NOT NULL DEFAULT 0,
+  upgrades TEXT NOT NULL DEFAULT '{}',
+  relics TEXT NOT NULL DEFAULT '{}'
+);
+CREATE TABLE IF NOT EXISTS pavilion_receipts (
+  owner_id TEXT NOT NULL REFERENCES pavilion_accounts(owner_id) ON DELETE CASCADE,
+  request_id TEXT NOT NULL,
+  fingerprint TEXT NOT NULL,
+  PRIMARY KEY (owner_id, request_id)
+);
 `;
 const DAY = 24 * 3600 * 1000;
 const nameKey = name => String(name).normalize('NFC').toLocaleLowerCase('vi');
@@ -94,12 +109,70 @@ class SqlitePlayers extends PlayerRepository {
       deleteOwnerTickets: p('DELETE FROM creation_tickets WHERE owner_id = ?'),
       countReceipts: p('SELECT COUNT(*) AS n FROM player_receipts WHERE player_id = ?'),
       purgeReceipts: p('DELETE FROM player_receipts WHERE expires_at <= ?'),
-      purgeTickets: p('DELETE FROM creation_tickets WHERE expires_at <= ? AND created_at <= ?')
+      purgeTickets: p('DELETE FROM creation_tickets WHERE expires_at <= ? AND created_at <= ?'),
+      pavilionEnsure: p('INSERT OR IGNORE INTO pavilion_accounts (owner_id) VALUES (?)'),
+      pavilionGet: p('SELECT * FROM pavilion_accounts WHERE owner_id = ?'),
+      pavilionSave: p('UPDATE pavilion_accounts SET balance = ?, total_earned = ?, rebirths = ?, upgrades = ?, relics = ?, version = ? WHERE owner_id = ? AND version = ?'),
+      pavilionReward: p('UPDATE pavilion_accounts SET balance = balance + ?, total_earned = total_earned + ?, version = version + 1 WHERE owner_id = ?'),
+      pavilionRebirth: p('UPDATE pavilion_accounts SET rebirths = rebirths + 1, version = version + 1 WHERE owner_id = ?'),
+      pavilionReceipt: p('SELECT fingerprint FROM pavilion_receipts WHERE owner_id = ? AND request_id = ?'),
+      pavilionPutReceipt: p('INSERT INTO pavilion_receipts (owner_id, request_id, fingerprint) VALUES (?, ?, ?)'),
+      pavilionSyncPlayer: p('UPDATE players SET state = ?, state_bytes = ?, revision = revision + 1, updated_at = ? WHERE owner_id = ?'),
+      deletePavilion: p('DELETE FROM pavilion_accounts WHERE owner_id = ?')
     };
   }
 
   getByOwner(ownerId) { const row = this.q.byOwner.get(ownerId); return row ? hydrate(row) : null; }
   get(playerId) { const row = this.q.byId.get(playerId); return row ? hydrate(row) : null; }
+  getPavilion(ownerId) {
+    const row = this.q.pavilionGet.get(ownerId);
+    return row ? {
+      version: row.version, balance: row.balance, totalEarned: row.total_earned, rebirths: row.rebirths,
+      upgrades: JSON.parse(row.upgrades), relics: JSON.parse(row.relics)
+    } : { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
+  }
+
+  /* Mua hàng bằng intent, không nhận giá/tiền/state từ client. Receipt gắn theo account,
+     không bị xóa khi nhân vật tọa hóa; cùng requestId chỉ được trả thưởng một lần. */
+  purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
+    return this.run(() => {
+      this.q.pavilionEnsure.run(ownerId);
+      const fingerprint = kind + ':' + key;
+      const prior = this.q.pavilionReceipt.get(ownerId, requestId);
+      if (prior) {
+        if (prior.fingerprint !== fingerprint) throw new GameError('REQUEST_ID_REUSED', 'Mã yêu cầu đã dùng cho giao dịch khác.');
+        return { replayed: true, pavilion: this.getPavilion(ownerId), record: this.getByOwner(ownerId) };
+      }
+      const account = this.getPavilion(ownerId);
+      if (account.version !== expectedVersion) throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
+      let cost, upgrades = { ...account.upgrades }, relics = { ...account.relics };
+      if (kind === 'upgrade' && Object.hasOwn(catalog.stats, key)) {
+        const current = upgrades[key] || 0;
+        cost = catalog.upgradeCost(current);
+        if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
+        upgrades[key] = current + 1;
+      } else if (kind === 'relic' && Object.hasOwn(catalog.relics, key)) {
+        const def = catalog.relics[key];
+        if ((relics[key] || 0) >= def.maxStored) throw new GameError('GAME_RULE_VIOLATION', 'Kho Kỳ Trân đã đạt giới hạn.');
+        cost = def.cost;
+        relics[key] = (relics[key] || 0) + 1;
+      } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
+      if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
+      const res = this.q.pavilionSave.run(account.balance - cost, account.totalEarned, account.rebirths,
+        JSON.stringify(upgrades), JSON.stringify(relics), account.version + 1, ownerId, account.version);
+      if (res.changes !== 1) throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đang thay đổi.');
+      const player = this.q.byOwner.get(ownerId);
+      if (player && kind === 'upgrade') {
+        const state = JSON.parse(player.state);
+        state.pavilion = { ...upgrades };
+        const json = JSON.stringify(state);
+        if (Buffer.byteLength(json) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
+        this.q.pavilionSyncPlayer.run(json, Buffer.byteLength(json), now, ownerId);
+      }
+      this.q.pavilionPutReceipt.run(ownerId, requestId, fingerprint);
+      return { replayed: false, cost, pavilion: this.getPavilion(ownerId), record: this.getByOwner(ownerId) };
+    });
+  }
 
   /* Mọi thay đổi chạy trong BEGIN IMMEDIATE ... COMMIT; lỗi bất kỳ → ROLLBACK. */
   run(work) {
@@ -130,13 +203,22 @@ class SqlitePlayers extends PlayerRepository {
       if (!t || t.owner_id !== ownerId || t.used_at) throw new GameError('TICKET_INVALID', 'Phiếu khởi nguyên không hợp lệ hoặc đã dùng.');
       if (t.expires_at <= now) throw new GameError('TICKET_EXPIRED', 'Phiếu khởi nguyên đã hết hạn. Hãy gieo lại.');
       if (this.q.byOwner.get(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
-      const rec = build(JSON.parse(t.preview));
+      this.q.pavilionEnsure.run(ownerId);
+      const account = this.getPavilion(ownerId);
+      const consumed = Object.fromEntries(Object.keys(account.relics).filter(k => account.relics[k] > 0).map(k => [k, 1]));
+      const rec = build(JSON.parse(t.preview), { ...account, consumed });
       const key = nameKey(rec.name);
       if (this.q.byNameKey.get(key)) throw new GameError('NAME_TAKEN', 'Đạo hiệu này đã có người dùng.');
       const id = crypto.randomUUID(), state = JSON.stringify(rec.state);
       this.q.insert.run(id, ownerId, rec.name, key, rec.schemaVersion, rec.contentVersion, state, Buffer.byteLength(state),
         rec.rngSeed, rec.rngCounter, now, now, now);
       this.q.useTicket.run(now, ticketId);
+      if (Object.keys(consumed).length) {
+        const relics = { ...account.relics };
+        for (const key of Object.keys(consumed)) relics[key]--;
+        this.q.pavilionSave.run(account.balance, account.totalEarned, account.rebirths,
+          JSON.stringify(account.upgrades), JSON.stringify(relics), account.version + 1, ownerId, account.version);
+      }
       return this.get(id);
     });
   }
@@ -160,6 +242,10 @@ class SqlitePlayers extends PlayerRepository {
       } else if (out.touch) {
         this.q.touch.run(out.touch.rngCounter, out.touch.lastSeenAt, playerId);
       }
+      if (out.pavilionAward) {
+        this.q.pavilionEnsure.run(tx.record.ownerId);
+        this.q.pavilionReward.run(out.pavilionAward, out.pavilionAward, tx.record.ownerId);
+      }
       if (out.receipt) {
         const r = out.receipt;
         this.q.putReceipt.run(playerId, r.requestId, r.fingerprint, r.revision, JSON.stringify(r.response), out.save?.lastSeenAt ?? 0, r.expiresAt);
@@ -174,6 +260,8 @@ class SqlitePlayers extends PlayerRepository {
       if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
       this.q.deletePlayer.run(playerId, ownerId);
       this.q.deleteOwnerTickets.run(ownerId);
+      this.q.pavilionEnsure.run(ownerId);
+      this.q.pavilionRebirth.run(ownerId);
       return { deleted: true };
     });
   }
@@ -182,11 +270,12 @@ class SqlitePlayers extends PlayerRepository {
   exportOwnerData(ownerId) {
     const row = this.q.byOwner.get(ownerId);
     const tickets = Number(this.q.ticketCount.get(ownerId, 0).n);
-    if (!row && !tickets) return null;
+    const pavilion = this.getPavilion(ownerId);
+    if (!row && !tickets && pavilion.totalEarned === 0 && pavilion.rebirths === 0) return null;
     return {
       player: row ? { id: row.id, name: row.name, revision: row.revision, schemaVersion: row.schema_version,
         state: JSON.parse(row.state), lastSeenAt: row.last_seen_at, createdAt: row.created_at, updatedAt: row.updated_at } : null,
-      tickets
+      tickets, pavilion
     };
   }
 
@@ -198,7 +287,8 @@ class SqlitePlayers extends PlayerRepository {
       if (row) receipts = Number(this.q.countReceipts.get(row.id).n);
       const players = Number(this.q.deleteOwnerPlayers.run(ownerId).changes);
       const tickets = Number(this.q.deleteOwnerTickets.run(ownerId).changes);
-      return { players, tickets, receipts };
+      const pavilionAccounts = Number(this.q.deletePavilion.run(ownerId).changes);
+      return { players, tickets, receipts, pavilionAccounts };
     });
   }
 
