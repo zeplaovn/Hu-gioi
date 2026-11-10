@@ -12,9 +12,7 @@ const { settings, injectConnectSrc, renderBrowserConfig } = require('../server/h
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
 const minify = process.argv.includes('--minify');
-/* Không đưa adapter offline/backup cũ vào frontend online. Giữ mã nguồn legacy
-   trong repository chỉ để kiểm thử, kiểm toán và di trú thủ công về sau. */
-const OMIT_ONLINE = new Set(['client/session/local-session.js', 'client/persistence/local-store.js']);
+/* Adapter offline đã chuyển tới legacy/, bên ngoài các gốc export. */
 
 let esbuild = null;
 if (minify) {
@@ -39,7 +37,7 @@ for (const start of roots) {
   const files = fs.statSync(start).isDirectory() ? [...walk(start)] : [start];
   for (const file of files) {
     const url = '/' + path.relative(ROOT, file).split(path.sep).join('/');
-    if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url) || OMIT_ONLINE.has(path.relative(ROOT, file).split(path.sep).join('/'))) { skipped++; continue; }
+    if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url)) { skipped++; continue; }
     const target = path.join(OUT, path.relative(ROOT, file));
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (esbuild && /\.(?:js|css)$/.test(file)) {
