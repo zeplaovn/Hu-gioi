@@ -1,10 +1,12 @@
-/* Hư Giới — Thiên mệnh được chọn một lần ở Khởi Nguyên, không có trọng sinh. */
+/* Hư Giới — Thiên Mệnh Các lưu Thiên Tinh xuyên kiếp trên máy chủ. */
 (function (root) {
   'use strict';
   const H = root.HU_GAME, F = H.F, UI = root.HU_UI;
   const { esc, num, row, btn, card, empty, tabs } = UI.kit;
   const TABS = [
     { id: 'destiny', label: 'Thiên mệnh', icon: '✦' },
+    { id: 'pavilion', label: 'Thiên Mệnh Các', icon: '✧' },
+    { id: 'relics', label: 'Kỳ Trân', icon: '◈' },
     { id: 'achievements', label: 'Thành tựu kiếp này', icon: '✧' },
     { id: 'story', label: 'Thiên Thư', icon: '❖' }
   ];
@@ -24,6 +26,40 @@
         { eyebrow: key === current ? 'ĐÃ CHỌN' : 'KHỞI NGUYÊN' })
       ).join('')}</div>`;
   }
+  function pavilion() {
+    const p = UI.session.pavilion || { balance: 0, upgrades: {} };
+    return '<p class="screen-lead">Thiên Tinh nhận khi đột phá đại cảnh giới: Trúc Cơ +5, Kim Đan +10, Nguyên Anh +15… Mỗi kiếp đều nhận đủ; kiếp mới không mất phí. Một thuộc tính tối đa 20 cấp, hiệu quả tối đa +50%.</p>' +
+      card('Thiên Tinh', row('Hiện có', num(p.balance) + ' ✧') +
+        row('Đã tích lũy', num(p.totalEarned || 0) + ' ✧') +
+        row('Số lần bắt đầu kiếp mới', num(p.rebirths || 0)), { eyebrow: 'KHO TÀI KHOẢN' }) +
+      '<div class="screen-grid">' + Object.entries(H.PAVILION.stats).map(([key, item]) => {
+        const lvl = Math.min(20, p.upgrades?.[key] || 0), cost = H.PAVILION.upgradeCost(lvl);
+        return card(item.name,
+          '<p>' + esc(item.desc) + '</p>' +
+          row('Cấp vĩnh viễn', lvl + '/20') +
+          row('Hiệu quả', '+' + (H.PAVILION.bonus(lvl) * 100).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + '%') +
+          (cost === null ? '<p class="gold">Đã viên mãn</p>' :
+            btn('Nâng cấp · ' + cost + ' Thiên Tinh', 'pavilionBuy', 'data-kind="upgrade" data-key="' + esc(key) + '"', p.balance < cost, 'btn-outline')),
+          { eyebrow: 'THIÊN PHÚ VĨNH HẰNG' });
+      }).join('') + '</div>';
+  }
+  function relics() {
+    const p = UI.session.pavilion || { balance: 0, relics: {} };
+    return '<p class="screen-lead">Kỳ Trân được giữ trong kho tài khoản. Khi tạo nhân vật mới, mỗi loại bảo vật đang có tự tiêu hao một món, giúp đạo thân nhập đạo nhanh hơn; tối đa 5 món mỗi loại.</p>' +
+      '<div class="screen-grid">' + Object.entries(H.PAVILION.relics).map(([key, item]) => {
+        const count = p.relics?.[key] || 0;
+        return card(item.name, '<p>' + esc(item.desc) + '</p>' +
+          row('Trong kho', count + '/' + item.maxStored) + row('Giá', item.cost + ' Thiên Tinh') +
+          btn('Đổi bảo vật', 'pavilionBuy', 'data-kind="relic" data-key="' + esc(key) + '"',
+            count >= item.maxStored || (p.balance || 0) < item.cost, 'btn-outline'),
+          { eyebrow: 'KỲ TRÂN XUYÊN KIẾP' });
+      }).join('') + '</div>';
+  }
+  UI.action('pavilionBuy', async (_, data) => {
+    const result = await UI.session.pavilionPurchase(data.kind, data.key);
+    if (result) UI.toast('Thiên Mệnh Các đã ghi nhận giao dịch. Thiên Tinh và bảo vật được lưu trên máy chủ.', { type: 'success' });
+  });
+
   function achievements() {
     const m = UI.s().meta, unlocked = Object.keys(m.achievements).length;
     return `<p class="screen-lead">Thành tựu chỉ ghi nhận trong kiếp này, không cấp điểm tích lũy. Đã đạt ${unlocked}/${H.META_ACHIEVEMENTS.length}.</p>
@@ -52,13 +88,13 @@
         }).join('') + '</div></section>').join('');
   }
 
-  const body = { destiny, achievements, story };
+  const body = { destiny, pavilion, relics, achievements, story };
   UI.register({
     id: 'meta', label: 'Thiên mệnh', icon: '✦', eyebrow: 'THIÊN MỆNH', tabs: TABS,
     render: tab => header() + tabs(TABS, tab) + '<div class="screen-body">' + (body[tab] || destiny)() + '</div>',
     signature: () => {
       const s = UI.s();
-      return [s.destiny, Object.keys(s.meta.achievements).length, s.realm, JSON.stringify(s.story)].join('|');
+      return [s.destiny, Object.keys(s.meta.achievements).length, s.realm, JSON.stringify(s.story), JSON.stringify(UI.session.pavilion)].join('|');
     }
   });
 })(typeof window !== 'undefined' ? window : globalThis);

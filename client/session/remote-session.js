@@ -32,6 +32,7 @@
       this.playerId = null;
       this.revision = 0;
       this.ticket = null;
+      this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
       this.serverContentVersion = '';
       this.listeners = new Set();
       this.achievements = [];
@@ -81,6 +82,7 @@
     disconnect() {
       this.accountId = null; this.playerId = null; this.ticket = null;
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
+      this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
       this.lastSyncAttempt = 0;
       this.paused = false;
       this.deathNotified = false;
@@ -94,6 +96,7 @@
       if (info.protocolVersion !== C.VERSION || info.schemaVersion !== H.VERSION)
         throw Error('Phiên bản game và backend không tương thích. Hãy tải lại trang.');
       this.serverContentVersion = info.contentVersion;
+      if (info.pavilion) this.pavilion = info.pavilion;
       if (info.player?.id) {
         this.playerId = info.player.id;
         await this.synchronize(true);
@@ -116,6 +119,7 @@
       if (!Number.isSafeInteger(response.revision) || response.revision < 0) throw Error('Revision từ máy chủ không hợp lệ.');
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
+      if (response.pavilion) this.pavilion = response.pavilion;
       this.nextSyncInMs = Math.max(3000, Number(response.nextSyncInMs) || DEFAULT_SYNC_MS);
       const before = this.game.s;
       this.game = new H.Game(response.state);
@@ -186,11 +190,42 @@
         if (this.playerId === playerId && this.accountId === accountId) this.apply(response);
       });
     }
+    /* Mọi giao dịch Thiên Tinh đi qua một hàng đợi chung với sync/commands.
+       Khi mất phản hồi sau commit, gửi lại cùng requestId để nhận receipt. */
+    pavilionPurchase(kind, key) {
+      return this.run(async () => {
+        if (!this.accountId || !['upgrade', 'relic'].includes(kind)) throw Error('Chưa thể mở Thiên Mệnh Các.');
+        const requestId = root.crypto?.randomUUID?.();
+        if (!requestId) throw Error('Trình duyệt thiếu mã giao dịch an toàn.');
+        const body = { requestId, expectedVersion: this.pavilion.version, kind, key };
+        let response;
+        for (let attempt = 0; attempt < 5; attempt++) {
+          try { response = await this.request('/pavilion/purchase', 'POST', body); break; }
+          catch (error) {
+            if (error.code === 'PAVILION_CONFLICT') {
+              const info = await this.request('/bootstrap');
+              if (info.pavilion) this.pavilion = info.pavilion;
+              this.emit({ type: 'conflict' });
+              throw Error('Thiên Mệnh Các đã thay đổi ở phiên khác. Hãy xem lại số dư và thử thao tác mới.');
+            }
+            if (!['NETWORK_UNAVAILABLE', 'RATE_LIMITED'].includes(error.code) && !(error.status >= 500)) throw error;
+            if (attempt === 4) throw error;
+            await new Promise(resolve => root.setTimeout(resolve, Math.min(4000, 350 * 2 ** attempt) + Math.floor(Math.random() * 250)));
+          }
+        }
+        if (!response) throw Error('Thiên Mệnh Các chưa xác nhận giao dịch.');
+        if (response.state) this.apply(response);
+        else if (response.pavilion) this.pavilion = response.pavilion;
+        this.emit({ type: 'pavilion', pavilion: this.pavilion });
+        return response.result;
+      });
+    }
     drainAchievements() { return this.achievements.splice(0); }
     async resetAfterDeath() {
       return this.run(async () => {
         if (!this.playerId) throw Error('Không có đạo thân để xóa.');
-        await this.request('/players/' + this.playerId + '/reset-after-death', 'POST', {});
+        const reset = await this.request('/players/' + this.playerId + '/reset-after-death', 'POST', {});
+        if (reset.pavilion) this.pavilion = reset.pavilion;
         this.playerId = null;
         this.game = new H.Game(H.create(this.clock()));
         this.ticket = null;

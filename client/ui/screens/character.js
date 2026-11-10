@@ -42,8 +42,8 @@
         return row(t.name, v + ' điểm · ' + t.effect(v));
       }).join(''), { eyebrow: 'KHỞI NGUYÊN' })}
       ${card('Đạo vận · Thiên mệnh', `
-        ${row('Đạo vận', num(s.daoVan))}${row('Tốc độ hấp thụ linh khí vĩnh viễn', '×' + num(F.prestige_mult(s.daoVan)))}${row('Số lần trọng sinh', s.rebirths)}${row('Điểm Thiên mệnh', num(s.meta?.points || 0))}
-        <div class="action-group"><button class="btn btn-outline" data-go="meta:prestige">Mở Trọng sinh ›</button><button class="btn btn-outline" data-go="meta">Mở Thiên mệnh ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
+        ${row('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${row('Số kiếp đã kết thúc', num(UI.session.pavilion?.rebirths || 0))}${row('Thiên Mệnh Các', 'Nâng cấp vĩnh viễn tối đa 20 cấp')}
+        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
     </div>`;
   }
 

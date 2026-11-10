@@ -93,7 +93,8 @@ class PlayerService {
     const rec = this.#own(this.repo.get(playerId), ownerId);
     if (!new H.Game(this.#state(rec, this.clock())).isDead())
       throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
-    return this.repo.deletePlayer(ownerId, playerId);
+    const deleted = this.repo.deletePlayer(ownerId, playerId);
+    return { ...deleted, pavilion: this.repo.getPavilion(ownerId) };
   }
 
   /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
