@@ -179,8 +179,8 @@ async function parseBody(req: Request): Promise<unknown> {
 }
 
 export async function handleApi(req: Request): Promise<Response> {
-  const requestId = REQUEST_ID.test(req.headers.get('x-request-id') || '')
-    ? req.headers.get('x-request-id') : crypto.randomUUID();
+  const candidateId = req.headers.get('x-request-id') || '';
+  const requestId: string = REQUEST_ID.test(candidateId) ? candidateId : crypto.randomUUID();
   const since = performance.now();
   if (req.method === 'OPTIONS') {
     const headers = corsHeaders(req);
