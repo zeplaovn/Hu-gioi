@@ -34,7 +34,7 @@ class RateLimiter {
 }
 const LIMITS = Object.freeze({
   command: { capacity: 30, perMinute: 600 },   // 10 lệnh/giây, dồn tối đa 30
-  sync: { capacity: 8, perMinute: 60000 / SYNC_INTERVAL_MS }, // tối thiểu một token mỗi heartbeat
+  sync: { capacity: 12, perMinute: 2 * 60000 / SYNC_INTERVAL_MS }, // hồi tối thiểu gấp đôi tần suất heartbeat
   pause: { capacity: 8, perMinute: 4 },       // tab ẩn không được tiêu token sync
   preview: { capacity: 5, perMinute: 6 },
   read: { capacity: 30, perMinute: 60 },

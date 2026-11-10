@@ -150,8 +150,8 @@ test('API: giới hạn tốc độ trả 429 kèm Retry-After', async t => {
   const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
   const id = (await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: pv.data.ticketId, name: 'Tô Mạc', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck' } })).data.playerId;
   const statuses = [];
-  for (let i = 0; i < 10; i++) statuses.push((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status);
-  assert.deepEqual(statuses.slice(0, 8), Array(8).fill(200));
+  for (let i = 0; i < 12; i++) statuses.push((await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} })).status);
+  assert.deepEqual(statuses, Array(12).fill(200));
   const limited = await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: {} });
   assert.equal(limited.status, 429);
   assert.equal(limited.data.error.code, 'RATE_LIMITED');
@@ -167,7 +167,7 @@ test('pause được giới hạn riêng, không tiêu token của sync', async 
     ticketId: pv.data.ticketId, name: 'Huyền Tâm', gender: 'nam', talent: { vanKhi: 8 }, destiny: 'luck'
   } });
   const url = '/api/v1/players/' + created.data.playerId;
-  for (let i = 0; i < 8; i++) assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 200);
+  for (let i = 0; i < 12; i++) assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 200);
   assert.equal((await call('POST', url + '/sync', { token: tokenA, body: {} })).status, 429);
   assert.equal((await call('POST', url + '/pause', { token: tokenA, body: {} })).status, 200);
 });
