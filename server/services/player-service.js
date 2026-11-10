@@ -130,8 +130,12 @@ class PlayerService {
 
   /* ---------- Truy vấn ---------- */
   async bootstrap(ownerId) {
-    const rec = await this.repo.getByOwner(ownerId);
-    const now = this.clock(), pavilion = await this.repo.getPavilion(ownerId);
+    // Postgres reads both tables in one round-trip. SQLite/dev keeps the
+    // existing repository contract and behavior.
+    const overview = typeof this.repo.getOwnerOverview === 'function'
+      ? await this.repo.getOwnerOverview(ownerId) : null;
+    const rec = overview ? overview.player : await this.repo.getByOwner(ownerId);
+    const now = this.clock(), pavilion = overview ? overview.pavilion : await this.repo.getPavilion(ownerId);
     // Trả snapshot đọc-thuần trong bootstrap để tránh thêm GET /state khi tải lại.
     // Không advance offline: chỉ sync/command đã khóa hàng mới thay đổi state.
     const snapshotData = rec ? await this.#response({
