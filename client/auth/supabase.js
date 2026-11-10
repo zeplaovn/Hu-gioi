@@ -1,11 +1,14 @@
 /* Supabase Auth/PostgREST adapter. Only the public publishable key is shipped to browsers.
-   Sessions live in sessionStorage, never localStorage. */
+   Access tokens are session-scoped; an explicitly chosen 30-day option persists ONLY
+   the refresh token in browser storage (not an HttpOnly cookie). */
 (function (root) {
   'use strict';
   const SUPABASE_URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
   const VERSION = '2026-11-10-v5';
   const STORAGE = 'huGioiSupabaseSessionV1';
+  const REMEMBER_STORAGE = 'huGioiRememberSessionV1';
+  const REMEMBER_MS = 30 * 24 * 60 * 60 * 1000;
   const OAUTH_PENDING = 'huGioiGoogleOAuthPkceV1';
   const OAUTH_MAX_AGE_MS = 10 * 60 * 1000;
   function validEmail(raw) {
@@ -19,17 +22,51 @@
     return domain.length <= 253 && labels.length > 1 && /^[a-zA-Z]{2,63}$/.test(labels[labels.length - 1]) &&
       labels.every(label => label.length <= 63 && /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(label));
   }
-  let current = null;
+  let current = null, remember = false, rememberUntil = 0;
   try { current = JSON.parse(root.sessionStorage?.getItem(STORAGE) || 'null'); } catch { /* private mode */ }
+  // Không lưu mật khẩu và access token lâu dài. Mã làm mới chỉ được giữ khi người chơi tự chọn.
+  try {
+    const stored = JSON.parse(root.localStorage?.getItem(REMEMBER_STORAGE) || 'null');
+    if (stored && typeof stored.refresh_token === 'string' && stored.refresh_token.length > 0 &&
+        Number.isFinite(stored.until) && stored.until > Date.now() && stored.until <= Date.now() + REMEMBER_MS) {
+      remember = true;
+      rememberUntil = stored.until;
+      if (!current?.refresh_token) current = { refresh_token: stored.refresh_token, expires_at: 0 };
+    } else root.localStorage?.removeItem(REMEMBER_STORAGE);
+  } catch { /* storage bị chặn: chỉ giữ phiên trong tab hiện tại */ }
+
+  function rememberOnThisDevice(enabled) {
+    remember = !!enabled && !!root.localStorage && root.location?.protocol === 'https:';
+    rememberUntil = remember ? Date.now() + REMEMBER_MS : 0;
+    if (!remember) {
+      try { root.localStorage?.removeItem(REMEMBER_STORAGE); } catch { /* private mode */ }
+    }
+    return remember;
+  }
+  function isRemembered() { return remember && rememberUntil > Date.now(); }
 
   function persist(data) {
     current = data && data.access_token && data.refresh_token
       ? { access_token: data.access_token, refresh_token: data.refresh_token,
           expires_at: data.expires_at || Math.floor(Date.now() / 1000) + (data.expires_in || 3600) } : null;
     try {
-      if (current) root.sessionStorage.setItem(STORAGE, JSON.stringify(current));
-      else root.sessionStorage.removeItem(STORAGE);
-    } catch { /* session remains in memory */ }
+      if (current) root.sessionStorage?.setItem(STORAGE, JSON.stringify(current));
+      else root.sessionStorage?.removeItem(STORAGE);
+    } catch { /* phiên vẫn còn trong bộ nhớ */ }
+    try {
+      if (current && isRemembered()) {
+        root.localStorage?.setItem(REMEMBER_STORAGE, JSON.stringify({
+          refresh_token: current.refresh_token, until: rememberUntil
+        }));
+      } else {
+        root.localStorage?.removeItem(REMEMBER_STORAGE);
+        if (!current) { remember = false; rememberUntil = 0; }
+      }
+    } catch {
+      // Nếu bộ nhớ dài hạn không dùng được, vẫn giữ phiên trong tab; không báo đã lưu.
+      remember = false;
+      rememberUntil = 0;
+    }
   }
 
   async function request(path, { method = 'GET', body, token, prefer } = {}) {
@@ -78,8 +115,15 @@
     }
   }
   async function token() {
-    if (!current?.access_token) return null;
-    if (current.expires_at * 1000 < Date.now() + 60000) return refresh();
+    if (!current?.refresh_token) return null;
+    if (!current.access_token || current.expires_at * 1000 < Date.now() + 60000) {
+      try { return await refresh(); }
+      catch (error) {
+        // Phiên đã bị thu hồi/hết hạn: quay lại đăng nhập, không vòng lặp vô hạn.
+        if (error.status === 400 || error.status === 401) return null;
+        throw error;
+      }
+    }
     return current.access_token;
   }
   function redirectUrl() {
@@ -110,7 +154,9 @@
     const hash = new Uint8Array(await root.crypto.subtle.digest('SHA-256', new root.TextEncoder().encode(verifier)));
     // PKCE verifier exists only in this tab. Never put it in a URL or log.
     try {
-      root.sessionStorage.setItem(OAUTH_PENDING, JSON.stringify({ verifier, redirect, created: Date.now() }));
+      root.sessionStorage.setItem(OAUTH_PENDING, JSON.stringify({
+        verifier, redirect, created: Date.now(), remember: isRemembered()
+      }));
     } catch {
       throw Error('Trình duyệt phải cho phép lưu trữ phiên để đăng nhập Google.');
     }
@@ -148,6 +194,7 @@
       method: 'POST', body: { auth_code: code, code_verifier: stored.verifier }
     });
     if (!data?.access_token || !data?.refresh_token) throw Error('Không thể hoàn tất đăng nhập Google. Vui lòng thử lại.');
+    rememberOnThisDevice(stored.remember === true);
     persist(data);
   }
 
@@ -264,5 +311,6 @@
       persist(null);
     }
   }
-  root.HU_SUPABASE = { user, signup, login, loginGoogle, accepted, accept, logout, accessToken: token, validEmail, publishableKey: KEY, VERSION };
+  root.HU_SUPABASE = { user, signup, login, loginGoogle, accepted, accept, logout,
+    accessToken: token, validEmail, rememberOnThisDevice, isRemembered, publishableKey: KEY, VERSION };
 })(typeof window !== 'undefined' ? window : globalThis);
