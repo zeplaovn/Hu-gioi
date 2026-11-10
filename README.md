@@ -18,7 +18,7 @@ npm test         # test backend /api/v1, RemoteSession, engine và giao diện
 
 `npm start` phục vụ giao diện và `/api/v1/*` khi cấu hình Supabase. Auth dùng Supabase JWT và hai bản ghi đồng ý chính sách. Backend từ chối hoạt động online khi thiếu xác thực hoặc quyền consent. Không bật `HU_LEGACY_AUTH` trong production.
 
-**Đăng nhập an toàn (chính sách v4):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Static-only không phục vụ gateway; bắt buộc chạy Node cùng origin và bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
+**Đăng nhập an toàn (chính sách v4):** email đúng cú pháp và xác minh qua Supabase; Node API `/api/auth/supabase-login` giới hạn 10 lượt thử trong 15 phút trên mỗi IP. Static-only không phục vụ gateway; cần Node API HTTPS cùng origin hoặc tách origin bằng HU_API_ORIGIN/HU_ALLOWED_ORIGINS và bật thêm giới hạn Supabase Auth/WAF để chống truy cập thẳng tới GoTrue. Liên hệ vận hành ghi trong dự thảo: RedEye Studio — zeplaovn@proton.me.\n\n`index.html` chỉ chơi được khi phục vụ qua HTTP(S) với API `/api/v1` đang hoạt động và cấu hình Supabase. Mở bằng `file://` chỉ hiển thị thông báo cần máy chủ, **không tạo/sửa bản lưu offline**. Node backend chỉ tính tiến trình khi phiên online hoạt động; offline và tab ẩn sẽ dừng tu luyện, tuổi tác và mọi hoạt động có hẹn giờ. Sự kiện tử vong không phát sinh khi offline.
 
 ## Tính năng thiết kế
 
@@ -79,7 +79,7 @@ server/                    Máy chủ HTTP
   main.js http/              File tĩnh + /api/health + /api/auth/* (thử nghiệm) + /api/v1/*
   auth/ http/ services/ repositories/   JWT, API /api/v1, PlayerService, kho SQLite; chat/ vẫn là khung
 css/  media/  _headers     Giao diện, hình ảnh/âm thanh, HTTP headers
-tools/                     Kiểm tra, preload, import dữ liệu; pending-engine/ chờ engine mới
+tools/                     Build static, backup SQLite và kiểm UI; không có pending-engine/
 docs/                      Tài liệu
 ```
 
@@ -106,7 +106,7 @@ Engine đã hoàn tất theo thứ tự state → time/creation → progression 
 | `HU_LEGACY_AUTH=1` | Dùng AuthService cookie thử nghiệm thay Supabase (chỉ dev/test) |
 | `HU_DB_FILE` | Đường dẫn SQLite, mặc định `.hu-gioi/game.sqlite` (không được nằm trong thư mục công khai) |
 | `HU_ALLOWED_ORIGINS` | Origin được gọi API khi game tĩnh ở domain khác (CORS), phân cách bằng dấu phẩy |
-| `HU_ONLINE_GRACE_MS` | Sau ngưỡng vắng heartbeat thì đóng băng thời gian game, mặc định 15000 ms; tab ẩn gửi tín hiệu pause ngay |
+| `HU_ONLINE_GRACE_MS` | Sau ngưỡng vắng heartbeat thì đóng băng thời gian game, mặc định 20000 ms; tab ẩn gửi tín hiệu pause ngay |
 
 | Method | Path | Mục đích |
 |---|---|---|
@@ -128,7 +128,7 @@ Ba API `/me/*` không đòi hỏi bản chấp thuận chính sách còn hiệu 
 
 Đảm bảo: client không gửi state/thời gian/RNG/giá; `requestId` idempotent (retry trả `replayed: true`, không trừ tiền hai lần); `expectedRevision` lệch trả `REVISION_CONFLICT`; lệnh bị luật từ chối không ghi state; snapshot không chứa seed bí cảnh; mỗi người chơi có chuỗi RNG riêng (HMAC) lưu ở máy chủ; giới hạn tốc độ, body ≤ 64 KB, envelope lỗi `{ error: { code, message, requestId, retryable } }`. Chạy một instance (SQLite ghi một process); nhiều instance cần chuyển sang PostgreSQL theo cùng hợp đồng `server/repositories/player-repository.js`.
 
-**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu game tĩnh chạy ở domain khác với API, cần thêm origin API vào `connect-src` của CSP (`_headers`, `server/http/static.js`) và `HU_ALLOWED_ORIGINS`.
+**Đã có:** `RemoteSession`, máy chủ cấp ticket tạo nhân vật, thực thi 48 lệnh engine, sync, reset sau tọa hóa, Thiên Mệnh Các theo tài khoản, đồng bộ cài đặt. **Chưa có:** máy chủ HTTPS đã triển khai, nhập save offline, PvP/chat nhiều người thật (các tính năng này vẫn chỉ là NPC/mô phỏng hoặc khung chưa triển khai), admin API và WebSocket. Nếu frontend tách domain API, đặt `HU_API_ORIGIN` khi build và `HU_ALLOWED_ORIGINS` trên Node; build tự sinh `dist/client/config.js` và CSP, không cần nới CSP thủ công.
 
 Email liên hệ hỗ trợ, khiếu nại và dữ liệu cá nhân: **[zeplaovn@proton.me](mailto:zeplaovn@proton.me)**. Chính sách quyền riêng tư và điều khoản trực tuyến phiên bản `2026-11-10-v5` (phi lợi nhuận, không thanh toán trực tuyến) yêu cầu chấp thuận lại; **phải mở rộng CHECK `policy_version` trên Supabase trước khi triển khai** (xem `supabase/sql/policy_acceptances.sql`).
 
