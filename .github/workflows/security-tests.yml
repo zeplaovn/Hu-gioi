@@ -38,7 +38,10 @@ jobs:
         run: |
           deno install
           deno check --node-modules-dir=auto index.ts
-          deno run --node-modules-dir=auto --allow-read=game.bundle.mjs bench-import.ts
+          deno test --node-modules-dir=auto --allow-read http.test.ts
+          deno run --node-modules-dir=auto --allow-read bench-import.ts
+      - name: Smoke Deno.serve HTTP without real DB
+        run: node tools/edge-http-smoke.cjs
       - name: Check built static files contain legal pages but no server source
         shell: bash
         run: |
