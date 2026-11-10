@@ -6,9 +6,10 @@ import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
 import { UUID, corsHeaders, routeOf, parseBody, bearerToken } from './http.ts';
 import { createContentionCounter } from './contention-counter.ts';
 import { createEdgeRateLimiter } from './api-rate-limit.ts';
+import { getVerifiedUserId } from './auth-user.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
-  createJwtVerifier, createAccountAdmin, shouldLogApiError, CONTENT_VERSION
+  createAccountAdmin, shouldLogApiError, CONTENT_VERSION
 } from './game.bundle.mjs';
 
 const BASE = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
@@ -63,11 +64,6 @@ const service = new PlayerService({
   config: { onlineGraceMs: grace, nextSyncInMs: syncInterval, repositoryRates: true },
   onError: () => { /* log bên ngoài, không log state/token */ }
 });
-const verifier = createJwtVerifier({
-  secret: Deno.env.get('HU_JWT_HS256_SECRET') || '',
-  jwksUrl: BASE + '/auth/v1/.well-known/jwks.json',
-  issuer: BASE + '/auth/v1', audience: 'authenticated'
-});
 const adminKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const accountAdmin = adminKey ? createAccountAdmin({ url: BASE, secretKey: adminKey }) : null;
 
@@ -118,10 +114,17 @@ async function authenticate(req: Request, route: string): Promise<string> {
     });
     throw new GameError('UNAUTHENTICATED', 'Bạn cần đăng nhập.');
   }
-  const claims = await verifier.verify(token);
-  if (!UUID.test(claims.sub)) throw new GameError('UNAUTHENTICATED', 'Phiên đăng nhập không hợp lệ.');
-  if (!DATA_RIGHTS.has(route)) await requireConsent(claims.sub);
-  return claims.sub;
+  // Supabase Auth is the single source of truth for both HS256 and ES256
+  // sessions; never trust a merely decoded JWT or user ID from the browser.
+  let userId: string | null;
+  try {
+    userId = await getVerifiedUserId(token, BASE, Deno.env.get('SUPABASE_ANON_KEY') || '');
+  } catch {
+    throw new GameError('MAINTENANCE', 'Dịch vụ xác thực tạm thời không khả dụng.');
+  }
+  if (!userId) throw new GameError('UNAUTHENTICATED', 'Phiên đăng nhập không hợp lệ.');
+  if (!DATA_RIGHTS.has(route)) await requireConsent(userId);
+  return userId;
 }
 function jsonReply(req: Request, status: number, data: unknown, requestId: string, extra: Record<string, string | number> = {}): Response {
   const headers = corsHeaders(req, ORIGINS);
