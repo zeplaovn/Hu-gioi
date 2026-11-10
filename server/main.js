@@ -24,6 +24,7 @@ function buildGameApi(env = process.env) {
   const { PlayerService } = require('./services/player-service.js');
   const { createGameApi } = require('./http/game-api.js');
   const { createSupabaseLoginGateway } = require('./http/supabase-login.js');
+  const { createClientIp } = require('./http/client-ip.js');
   const { computeContentVersion } = require('./content-version.js');
   const { AuthService } = require('./services/auth-service.js');
   const { createAccountAdmin } = require('./auth/account-admin.js');
@@ -52,14 +53,15 @@ function buildGameApi(env = process.env) {
   purge.unref();
   repository.purgeExpired(Date.now());
   const allowedOrigins = String(env.HU_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const trustedProxyIps = String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const clientIp = createClientIp({ trustedProxyIps, env: env.NODE_ENV, warn: text => console.warn(text) });
   const loginGateway = jwt ? createSupabaseLoginGateway({
-    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY, allowedOrigins,
-    trustedProxyIps: String(env.HU_AUTH_TRUSTED_PROXY_IPS || '').split(',').map(x => x.trim()).filter(Boolean)
+    url: env.SUPABASE_URL, publishableKey: env.SUPABASE_PUBLISHABLE_KEY, allowedOrigins, clientIp
   }) : null;
   const accountAdmin = jwt && env.SUPABASE_SERVICE_ROLE_KEY
     ? createAccountAdmin({ url: env.SUPABASE_URL, secretKey: env.SUPABASE_SERVICE_ROLE_KEY }) : null;
   const gameApi = createGameApi({
-    service, accountAdmin, ...(loginGateway ? { clientIp: loginGateway.clientIp } : {}), resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
+    service, accountAdmin, clientIp, resolvePrincipal: createPrincipalResolver({ jwt, legacy, verifyConsent }), allowedOrigins,
     log: err => console.error('[game-api]', err.cause?.stack || err.stack || err)
   });
   return { auth: legacy, gameApi, loginGateway, close() { clearInterval(purge); repository.close(); } };

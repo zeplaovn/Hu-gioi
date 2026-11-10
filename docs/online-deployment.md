@@ -34,6 +34,7 @@ HU_DB_FILE=/data/game.sqlite
 # Tùy chọn, CHỈ ở máy chủ: bật POST /api/v1/me/delete-account (xóa cả tài khoản Supabase). Không commit, không đưa lên frontend.
 # SUPABASE_SERVICE_ROLE_KEY=<sb_secret_... hoặc service_role>
 # HU_ALLOWED_ORIGINS=https://frontend.example.com (nếu tách frontend và API)
+# HU_AUTH_TRUSTED_PROXY_IPS=127.0.0.1 (điền đúng IP TCP của proxy, không phải IP user)
 ```
 
 Không bật `HU_LEGACY_AUTH` trên production. Nếu JWT Supabase còn ký HS256, server có thể yêu cầu `SUPABASE_JWT_SECRET` do host giữ bí mật; tuyệt đối không đưa secret này lên Git/frontend.
