@@ -1,6 +1,6 @@
 # Sách nghề và sổ công thức — bản thiết kế chờ duyệt
 
-> **TÌNH TRẠNG: DỰ THẢO, KHÔNG PHẢI GAMEPLAY ĐÃ TRIỂN KHAI.** Chủ dự án đã chốt cần **các cuốn sách riêng cho từng nghề, chứa công thức để học**. Cách chia tập, điều kiện học, giá/nguồn nhận và migration là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/inventory.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/items.js` trên `main` ngày 10/11/2026.
+> **TÌNH TRẠNG: ĐÃ DUYỆT 12 QUYỂN, CHƯA TRIỂN KHAI GAMEPLAY.** Chủ dự án chốt **sách công thức riêng cho từng nghề** và cấu trúc **4 nghề × 3 giới = 12 quyển**. Tên gọi, phân bố chính xác mã công thức, điều kiện học, giá/nguồn nhận, bồi hoàn bản lưu cũ và migration vẫn là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/inventory.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/items.js` trên `main` ngày 10/11/2026.
 
 ## 1. Bốn loại sách nghề
 
@@ -13,7 +13,7 @@
 
 Mã trong cột cuối **được xác nhận tồn tại**; đây là ví dụ công thức sẽ được đưa vào sách sau khi khóa dữ liệu, **không** phải danh sách đã học hoặc kết quả có trong game.
 
-## 2. Cách chia tập — **ĐỀ XUẤT A (khuyên dùng)**
+## 2. Cách chia tập — **ĐÃ ĐƯỢC DUYỆT**
 
 Mỗi nghề có **ba tập**, tương ứng Hạ Giới (bậc 0–4), Linh Giới (5–8), Tiên Giới (9–13), tổng **12 quyển**. Trong từng tập, danh sách mã công thức cụ thể phải được xuất từ `data/catalog.js` + `data/design.js`, rồi kiểm `item(code)`, tier, cost, nguyên liệu và ngưỡng mở; **không dùng tên hoặc vật phẩm không tồn tại**.
 
@@ -25,7 +25,7 @@ Mỗi nghề có **ba tập**, tương ứng Hạ Giới (bậc 0–4), Linh Gi�
 
 Mỗi tập **không thay thế điều kiện cảnh giới** hiện hành: biết công thức không cho phép tạo vật vượt cảnh giới. Một quyển dạy nhiều công thức, không cần một item sách riêng cho từng vật phẩm. Nội dung lời dẫn trong từng trang sách lấy từ `data/`.
 
-**ĐỀ XUẤT B (chưa chọn):** một quyển cho mỗi công thức. Ưu điểm tăng giá trị loot, nhược điểm số lượng vật phẩm sách rất lớn (60 đan, 82 pháp bảo, 36 phù, 69 hạt = 247 đầu công thức sơ bộ), tốn inventory/UI và vượt khả năng cân bằng hiện tại. Không tự chọn thay người thiết kế.
+**Phương án đã loại:** mỗi công thức có một cuốn sách riêng. Phương án này tạo ra khoảng 247 đầu công thức sơ bộ (60 đan, 82 pháp bảo, 36 phù, 69 hạt), gây quá tải túi đồ/UI. **Quyết định được duyệt** là nhiều công thức trong mỗi tập, không phải một sách một công thức.
 
 ## 3. Dự kiến luồng người chơi — **ĐỀ XUẤT**
 
@@ -46,6 +46,6 @@ Mỗi tập **không thay thế điều kiện cảnh giới** hiện hành: bi�
 
 ## 5. Liên hệ luật phàm nhân (đã chốt một phần)
 
-Khi Z đạt 100, **đã chốt:** nhân vật phế tu vi, trở thành phàm nhân, không tu luyện và không dùng vật phẩm; không tử vong ngay, chỉ chết khi cạn thọ nguyên. Vì sách nghề là vật phẩm học/tiêu hao nên **đang ở trạng thái phàm nhân không được học sách**. Quyết định còn thiếu: tuổi thọ còn lại được tính ra sao và có cho thực hiện hành động không dùng vật phẩm (chat, đọc sách đã học, đi lại) hay không. Theo V9, đồng hồ game chỉ tiến khi **online**.
+Khi Z đạt 100, **đã chốt:** nhân vật phế tu vi, trở thành phàm nhân, không tu luyện và không dùng vật phẩm; không tử vong ngay, chỉ chết khi cạn thọ nguyên. Vì sách nghề là vật phẩm học/tiêu hao nên **đang ở trạng thái phàm nhân không được học sách**. **ĐÃ DUYỆT:** giữ nguyên **số năm thọ nguyên còn lại** ngay trước khi bị phế, không tính lại theo trần thọ nguyên của phàm nhân để tránh chết ngay. Chỉ chết khi thời gian sống còn lại cạn. **CHƯA CHỐT:** tốc độ hao số năm còn lại khi đã bị phế và khả năng chat, đọc sách đã học, đi lại; không được dùng sách để học trong trạng thái phàm nhân. Theo V9, đồng hồ game chỉ tiến khi **online**.
 
 **Dừng tại đây để chủ dự án duyệt loại tập sách và thông số còn thiếu trước khi đưa dữ liệu sách và luật học công thức vào `engine/`.**
