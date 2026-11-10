@@ -1,6 +1,7 @@
 # Triển khai Hư Giới: Cloudflare Static + Supabase Edge API (FREE)
 
-> **Trạng thái production 10/11/2026:** Schema `game` đã được áp dụng qua Supabase Migration `20261110075419_game_schema` và Edge Function `api` v1 đã được tải lên. Chưa xác nhận xử lý gameplay thành công cho tới khi cấu hình `HU_DB_POOLER_URL` và `HU_ALLOWED_ORIGINS`. Không chạy lại migration này hoặc migration consent v5. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
+> Trạng thái: Hiện hành.
+> **Theo thông tin bàn giao 10/11/2026; chưa kiểm chứng bằng Dashboard production:** Schema `game` đã được áp dụng qua Supabase Migration `20261110075419_game_schema` và Edge Function `api` v1 đã được tải lên. Chưa xác nhận xử lý gameplay thành công cho tới khi cấu hình `HU_DB_POOLER_URL` và `HU_ALLOWED_ORIGINS`. Không chạy lại migration này hoặc migration consent v5. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
 
 ## Kiến trúc và ranh giới tin cậy
 
@@ -11,7 +12,7 @@
 - Đồng hồ, RNG, phần thưởng, thọ nguyên và sự hiện diện chỉ quyết định tại backend; client không gửi state/offline/time/price/reward; snapshot không có seed, export không có rng_seed.
 - Thiên Mệnh Các mới trên `main` (tích lũy qua kiếp) **được giữ**, có bảng account và receipt riêng. Mỗi hàng player được khóa `FOR UPDATE`; rate token nằm trong hàng `players` cùng giao dịch. Giới hạn theo IP chỉ còn ở Node gateway.
 
-## Trước khi mở cho người chơi
+## Trước khi mở cho người chơi — [checklist bàn giao](release-checklist.md)
 
 > **Checklist thao tác TAY trên Supabase/Cloudflare production — chưa được CI kiểm chứng.** CI/PGlite chỉ kiểm tra mã và database giả lập; không chứng minh Dashboard, secrets, hạn mức hay luồng người chơi thật đã sẵn sàng. Chủ dự án phải tích từng ô, lưu bằng chứng cấu hình **không chứa token, mật khẩu hoặc connection string**.
 
@@ -76,7 +77,7 @@ supabase secrets set --env-file ./private-edge-secrets.env --project-ref rvrwfeb
 # private-edge-secrets.env KHÔNG commit; chmod 0600; xóa sau khi thiết lập.
 ```
 
-`HU_ALLOWED_ORIGINS` nếu chưa đặt sẽ mặc định duy nhất origin Cloudflare chính thức `https://hugioi.blackbearvn.workers.dev`; cấu hình secret tường minh vẫn được khuyến nghị và bắt buộc để thêm staging. Không dùng wildcard.\n\n`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS=20000`, `HU_ONLINE_GRACE_MS=60000` (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
+`HU_ALLOWED_ORIGINS` nếu chưa đặt sẽ mặc định duy nhất origin Cloudflare chính thức `https://hugioi.blackbearvn.workers.dev`; cấu hình secret tường minh vẫn được khuyến nghị và bắt buộc để thêm staging. Không dùng wildcard.\n\n`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS`, `HU_ONLINE_GRACE_MS` (tham khảo `server/presence-config.js`) (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
 
 ## 3. Deploy Edge API và Cloudflare Static — sau phê duyệt riêng
 
@@ -145,7 +146,7 @@ npm run build:edge
 
 Kết quả mô hình CI (50 người × mỗi ngày 1h active + 0,5h idle × 30 ngày): active **179** calls/giờ (119 lệnh + 60 sync), idle **178** sync/giờ, **408.000/500.000** calls/tháng (81,6%). Có tính bootstrap/pause mỗi phiên, **chưa tính** retry, đăng ký, spam, nhiều tab, rate-limit rejection, admin. Nếu >500.000 trong dự đoán cho lưu lượng thực, **không triển khai gói Free** nếu chưa đổi thiết kế/giảm giờ. Người treo máy 24h/ngày vượt ngân sách nhanh.
 
-Bundle esbuild đo bằng `npm run build:edge` trên GitHub Actions Node24: **470.291 bytes (0,449 MiB)**, không đồng nghĩa kích thước packed final của Supabase CLI; cần kiểm tra khi deploy. Thời gian khởi động lạnh Deno/Edge và CPU sync/command thực tế **chưa đo được** khi chưa chạy Edge; không giả định <200ms. Có thể dùng `deno eval` import bundle để đo module load cục bộ (không thay thế cold start production) và Edge Metrics để đo sau phê duyệt.
+Bundle esbuild đo bằng `npm run build:edge` trên GitHub Actions Node24: **kích thước đọc trong log của commit triển khai**, không đồng nghĩa kích thước packed final của Supabase CLI; cần kiểm tra khi deploy. Thời gian khởi động lạnh Deno/Edge và CPU sync/command thực tế **chưa đo được** khi chưa chạy Edge; không giả định <200ms. Có thể dùng `deno eval` import bundle để đo module load cục bộ (không thay thế cold start production) và Edge Metrics để đo sau phê duyệt.
 
 ## Tài liệu nền đã đối chiếu
 

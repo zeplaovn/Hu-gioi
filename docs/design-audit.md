@@ -1,5 +1,6 @@
 # Kiểm toán luật design
 
+> Trạng thái: Lịch sử.
 Mọi số liệu dưới đây lấy từ chạy engine thật (`engine/game.js`, nhân vật mẫu Nhân tộc, Song linh căn, hạt giống cố định), không phải suy đoán. Tài liệu chia hai loại rõ ràng:
 
 - **Khắc nghiệt có chủ ý**: độ khó do chủ dự án muốn, mô phỏng thế giới tu tiên thực tế như tiểu thuyết (ví dụ *Phàm Nhân Tu Tiên*). **Không phải lỗi, không được làm dễ đi.** Mọi thay đổi phải qua hồi quy độ khó (xem cuối tài liệu).

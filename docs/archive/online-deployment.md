@@ -1,3 +1,9 @@
+# LỊCH SỬ — không còn là nguồn sự thật
+
+> Trạng thái: Lịch sử. Nội dung bên dưới giữ nguyên để đối chiếu; liên kết tương đối trong văn bản cũ có thể không còn hợp lệ khi chuyển thư mục. Runbook hiện hành: [Edge](../edge-deployment.md).
+
+---
+
 # Triển khai Node/SQLite để dev và đối chiếu hợp đồng
 
 > **Lưu ý (10/11/2026):** Đây là hướng dẫn **Node/SQLite fallback dành cho dev/test**, không còn là kiến trúc production mục tiêu. Cloudflare Worker tĩnh + Supabase Edge/Postgres dùng [docs/edge-deployment.md](edge-deployment.md). Không triển khai Node gateway trên Worker tĩnh. Ở mode Node, dùng file `client/config.js` đặt `HU_API_BASE='/api/v1'` và `HU_AUTH_MODE='gateway'` trước khi build; tuyệt đối không đổi luật gameplay. Mọi IP proxy trusted phải cấu hình `HU_AUTH_TRUSTED_PROXY_IPS` đúng địa chỉ kết nối thực; khi đứng sau Cloudflare, proxy tin cậy phải **ghi đè** X-Forwarded-For từ CF-Connecting-IP, không tin header do client gửi.
