@@ -111,7 +111,16 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             page.locator("#authPassword").fill("ci-test-password-1234")
             page.locator("#authSubmit").click()
             page.locator("#welcome").wait_for(state="visible", timeout=20000)
-    page.locator("#nameInput").fill("Vân " + name.removeprefix("after_") if name and name.startswith("after_") else "Vân Tiêu")
+    # Every viewport creates a different character in the shared in-memory CI server.
+    # Avoid NAME_TAKEN (409) without changing gameplay name uniqueness.
+    viewport = name.split("_", 1)[-1] if name else ""
+    test_names = {
+        "1366x768": "Vân Tiêu",
+        "390x844": "Vân Lam",
+        "360x640": "Vân Hàn",
+        "844x390": "Vân Phong",
+    }
+    page.locator("#nameInput").fill(test_names.get(viewport, "Vân Tiêu"))
     for _ in range(8):
         page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
     page.locator("#startNew").click()
@@ -187,6 +196,15 @@ def verify_log_float(page, folder, name, outcome):
 
 def verify_bubble(page, folder, name, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
+    # Limited release intentionally has no real chat service. The proof must
+    # ensure chat stays inaccessible, not wait 15s for a deliberately hidden UI.
+    if page.evaluate("() => window.HU_UI?.release?.chat === false"):
+        assert trigger.is_hidden(), "Chat bubble is visible in the limited release"
+        assert page.locator("#chatBubblePanel").is_hidden(), "Chat panel is visible"
+        menu_entry = page.locator('#menu [data-window="chat"]')
+        assert not menu_entry.count() or menu_entry.first.is_hidden(), "Chat menu is visible"
+        outcome["chat_hidden_for_release"] = True
+        return
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
     assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
