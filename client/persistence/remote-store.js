@@ -15,13 +15,13 @@
       async setAccount(id, account) {
         ready = false;
         session.disconnect();
-        if (!id || !account || id !== account.id) throw Error('Chơi online yêu cầu tài khoản hợp lệ.');
+        if (!id || !account || id !== account.id) throw Error('Vui lòng đăng nhập để tiếp tục.');
         return session.connect(account);
       },
       load() { return session.ready ? session.game.s : null; },
       write() { /* Trạng thái do backend lưu sau mỗi transaction. */ },
       async dispatch(type, payload) {
-        if (!ready || locked) throw Error('Chưa thể thực hiện lệnh online.');
+        if (!ready || locked) throw Error('Chưa thể thực hiện thao tác này. Vui lòng thử lại.');
         if (busy()) throw Error('Hãy chờ nghi lễ độ kiếp hoàn tất.');
         return session.dispatch(type, payload);
       },
@@ -34,21 +34,21 @@
           if (report) root.HU_UI?.refresh?.();
         }).catch(error => {
           syncFailedAt = Date.now();
-          notify('Đồng bộ online thất bại: ' + error.message);
+          notify('Chưa đồng bộ được tiến trình: ' + error.message);
         });
         return null;
       },
       synchronize() { return session.synchronize(true); },
       clearAll() { /* Không thể xóa bản nhân vật máy chủ bằng thao tác trình duyệt. */ },
-      fresh() { throw Error('Không thể tạo trạng thái nhân vật trên trình duyệt.'); },
+      fresh() { throw Error('Không thể tạo nhân vật lúc này. Vui lòng thử lại.'); },
       replace() { throw Error('Chỉ máy chủ được cập nhật dữ liệu nhân vật.'); },
       async resetAfterDeath() {
         ready = false;
         const preview = await session.resetAfterDeath();
         return preview;
       },
-      exportJson() { throw Error('Không thể xuất bản lưu online và dùng lại làm trạng thái tin cậy.'); },
-      async readImport() { throw Error('Nhập bản lưu offline vào nhân vật online chưa được hỗ trợ.'); },
+      exportJson() { throw Error('Không thể xuất bản lưu để nhập lại. Bạn có thể yêu cầu bản sao dữ liệu qua mục Quyền riêng tư.'); },
+      async readImport() { throw Error('Hiện chưa hỗ trợ nhập bản lưu cũ vào nhân vật.'); },
       keepBeforeImport() {}
     };
   }

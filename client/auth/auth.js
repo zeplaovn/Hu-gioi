@@ -51,7 +51,7 @@
     showForm();
   }
   async function enter(next) {
-    if (!next?.id) throw Error('Chơi online cần tài khoản Supabase hợp lệ.');
+    if (!next?.id) throw Error('Vui lòng đăng nhập để tiếp tục hành trình.');
     pending = null;
     account = next;
     notice('Đang tải tiến trình từ máy chủ…', true);
@@ -77,12 +77,12 @@
     $('authConsentPrivacy').checked = false;
     $('authConsentRelease').checked = false;
     $('authTitle').textContent = 'Xác nhận chính sách';
-    $('authSubtitle').textContent = 'Tài khoản cần chấp thuận chính sách trước khi tiếp tục.';
+    $('authSubtitle').textContent = 'Vui lòng đọc và đồng ý với từng văn bản dưới đây trước khi tiếp tục.';
     notice('');
     $('authConsentPrivacy').focus();
   }
   async function finish(next) {
-    if (!next?.id) throw Error('Supabase chưa xác minh tài khoản.');
+    if (!next?.id) throw Error('Chưa thể xác minh tài khoản. Vui lòng đăng nhập lại.');
     const consent = await SB.accepted();
     if (consent.has('privacy') && consent.has('release_terms')) await enter(next);
     else requireConsent(next);
@@ -96,7 +96,7 @@
     if (mode === 'signup') {
       if (password !== $('authConfirm').value) { notice('Mật khẩu nhập lại chưa trùng khớp.'); return; }
       if (!$('authPrivacy').checked || !$('authRelease').checked) {
-        notice('Cần tích chọn riêng cả hai chính sách trước khi tạo tài khoản.'); return;
+        notice('Vui lòng xác nhận cả Chính sách quyền riêng tư và Điều khoản sử dụng để đăng ký.'); return;
       }
     }
     busy = true;
@@ -116,7 +116,7 @@
         await finish(await SB.login(email, password));
       }
     } catch (error) {
-      notice(error instanceof TypeError ? 'Không kết nối được Supabase; game online tạm thời chưa sẵn sàng.' : error.message);
+      notice(error instanceof TypeError ? 'Không thể kết nối dịch vụ đăng nhập. Hãy thử lại sau.' : error.message);
     } finally {
       busy = false;
       $('authSubmit').disabled = false;
@@ -137,7 +137,7 @@
   async function acceptPending() {
     if (busy || !pending) return;
     if (!$('authConsentPrivacy').checked || !$('authConsentRelease').checked) {
-      notice('Cần xác nhận từng chính sách để sử dụng tài khoản.'); return;
+      notice('Vui lòng đọc và xác nhận cả hai văn bản để tiếp tục.'); return;
     }
     busy = true;
     $('authConsentContinue').disabled = true;
@@ -174,7 +174,7 @@
     $('authConsentContinue').addEventListener('click', acceptPending);
     $('authConsentLogout').addEventListener('click', logout);
     present();
-    if (root.location.protocol === 'file:' || typeof root.fetch !== 'function' || !SB) { notice('Hư Giới online cần mở từ website HTTPS và kết nối máy chủ game.'); return; }
+    if (root.location.protocol === 'file:' || typeof root.fetch !== 'function' || !SB) { notice('Vui lòng mở Hư Giới bằng địa chỉ website chính thức có kết nối bảo mật.'); return; }
     SB.user().then(next => {
       if (account || pending || $('authGate').hidden) return;
       if (next) return finish(next);

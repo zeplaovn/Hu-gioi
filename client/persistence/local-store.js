@@ -49,7 +49,7 @@
           }
           s.lastSaved = session.clock();
           localStorage.setItem(activeKey, JSON.stringify(s));
-        } catch { notify('Không thể tự lưu. Hãy xuất JSON trong Cài đặt.'); }
+        } catch { notify('Không thể lưu tiến trình. Hãy kiểm tra bộ nhớ trình duyệt.'); }
       },
       load() {
         for (const key of [activeKey, activeBackup, ...(guest ? LEGACY : [])]) {
@@ -97,9 +97,9 @@
         if (file.size > 5e6) throw Error('Bản lưu vượt 5 MB.');
         let raw;
         try { raw = JSON.parse(await file.text()); }
-        catch { throw Error('Tệp không phải JSON hợp lệ.'); }
+        catch { throw Error('Không đọc được tệp bản lưu. Vui lòng chọn đúng tệp.'); }
         assertSafeJson(raw);
-        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw Error('Bản lưu phải là một đối tượng JSON.');
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw Error('Tệp bản lưu không đúng định dạng.');
         const value = H.normalize(raw,session.clock());
         if (!value) throw Error('Chỉ nhận bản lưu nhân vật từ V4 đến V8 hợp lệ.');
         return value;

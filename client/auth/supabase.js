@@ -49,10 +49,17 @@
     let data = null;
     try { data = raw ? JSON.parse(raw) : null; } catch { /* invalid JSON */ }
     if (!response.ok) {
-      const fallback = response.status === 429 ? 'Thử quá nhiều lần. Vui lòng thử lại sau.'
-        : response.status === 401 || response.status === 400 ? 'Thông tin xác thực không hợp lệ.' : 'Dịch vụ tài khoản chưa sẵn sàng.';
-      const message = data?.msg || data?.message || data?.error_description || fallback;
-      throw Object.assign(new Error(String(message).slice(0, 200)), { status: response.status });
+      // Chỉ hiển thị thông báo đã biên soạn, không đưa lỗi từ nhà cung cấp ra giao diện.
+      const code = String(data?.code || '');
+      const message = response.status === 429 ? 'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau.'
+        : ['user_already_exists', 'email_exists', 'email_already_exists'].includes(code)
+          ? 'Email này đã có tài khoản. Hãy đăng nhập hoặc dùng email khác.'
+        : code === 'weak_password' ? 'Mật khẩu chưa đủ an toàn. Hãy chọn mật khẩu khó đoán hơn.'
+        : code === 'email_address_invalid' ? 'Email chưa hợp lệ. Vui lòng kiểm tra lại.'
+        : response.status === 400 ? 'Thông tin chưa hợp lệ. Vui lòng kiểm tra và thử lại.'
+        : response.status === 401 || response.status === 403 ? 'Phiên đăng nhập không còn hợp lệ. Hãy đăng nhập lại.'
+        : 'Dịch vụ tài khoản tạm thời chưa sẵn sàng. Vui lòng thử lại sau.';
+      throw Object.assign(new Error(message), { status: response.status });
     }
     return data;
   }
@@ -78,7 +85,7 @@
   function redirectUrl() {
     const loc = root.location;
     if (!loc || (loc.protocol !== 'https:' && !(loc.protocol === 'http:' && loc.hostname === 'localhost')))
-      throw Error('Đăng nhập Google yêu cầu HTTPS hoặc localhost.');
+      throw Error('Vui lòng mở Hư Giới từ địa chỉ website bảo mật để đăng nhập bằng Google.');
     return loc.origin + loc.pathname;
   }
 
@@ -97,7 +104,7 @@
   }
 
   async function loginGoogle() {
-    if (root.HU_AUTH_MODE !== 'direct') throw Error('Đăng nhập Google chỉ hỗ trợ chế độ Supabase Auth trực tiếp.');
+    if (root.HU_AUTH_MODE !== 'direct') throw Error('Đăng nhập bằng Google hiện chưa khả dụng.');
     const redirect = redirectUrl();
     const verifier = randomVerifier();
     const hash = new Uint8Array(await root.crypto.subtle.digest('SHA-256', new root.TextEncoder().encode(verifier)));
@@ -136,11 +143,11 @@
         Date.now() - stored.created > OAUTH_MAX_AGE_MS)
       throw Error('Phiên đăng nhập Google không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.');
     if (failure) throw Error('Google không hoàn tất đăng nhập. Vui lòng thử lại.');
-    if (!code) throw Error('Google không trả mã xác thực.');
+    if (!code) throw Error('Không thể xác nhận đăng nhập Google. Vui lòng thử lại.');
     const data = await request('/auth/v1/token?grant_type=pkce', {
       method: 'POST', body: { auth_code: code, code_verifier: stored.verifier }
     });
-    if (!data?.access_token || !data?.refresh_token) throw Error('Supabase không trả phiên Google hợp lệ.');
+    if (!data?.access_token || !data?.refresh_token) throw Error('Không thể hoàn tất đăng nhập Google. Vui lòng thử lại.');
     persist(data);
   }
 
@@ -216,8 +223,8 @@
       }
       try { data = await response.json(); } catch { data = null; }
       if (!response.ok) {
-        const message = response.status === 429 ? 'IP đã đăng nhập quá nhiều lần. Hãy thử lại sau.'
-          : data?.error || 'Dịch vụ đăng nhập chưa sẵn sàng.';
+        const message = response.status === 429 ? 'Bạn đã thử đăng nhập quá nhiều lần. Hãy thử lại sau.'
+          : 'Dịch vụ đăng nhập tạm thời chưa sẵn sàng. Vui lòng thử lại sau.';
         throw Object.assign(Error(message), { status: response.status });
       }
     }

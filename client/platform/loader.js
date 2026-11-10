@@ -23,7 +23,7 @@
     'Tu vi đầy ở viên mãn: bấm đột phá thủ công, cảnh giới lớn có thể gặp thiên kiếp.',
     'Thọ nguyên cạn là hết đường tu. Đừng quên đan trường sinh và bế quan định kỳ.',
     'Linh căn càng thuần, tốc độ tu luyện càng cao. Tạp chất tích tụ sẽ làm chậm tu vi.',
-    'Nghề phụ vẫn chạy khi bạn offline. Quay lại để nhận thành quả.',
+    'Nghề phụ tạm dừng khi rời game. Hãy trở lại để tiếp tục chế tác.',
     'Linh khí mùa xuân dồi dào hơn; mùa đông tu luyện chậm lại.',
     'Trang bị phẩm chất cao giúp sống sót qua các trận lịch luyện khó.'
   ];
@@ -99,8 +99,8 @@
       + (hintsComplete && assetsReady && engine === 'ready' ? 0.01 : 0);
     const label = !assetsReady
       ? 'Đang tải tài nguyên · ' + completed + '/' + list.length + (failures ? ' · ' + failures + ' tài nguyên lỗi' : '')
-      : engine === 'pending' ? 'Đã tải tài nguyên · đang khởi tạo engine…'
-        : engine === 'failed' ? 'Engine không thể khởi tạo.'
+      : engine === 'pending' ? 'Đã tải tài nguyên · đang chuẩn bị trò chơi…'
+        : engine === 'failed' ? 'Không thể chuẩn bị trò chơi.'
           : !hintsComplete ? 'Đã tải tài nguyên · đang hiển thị các mẹo chơi…'
             : failures ? 'Sẵn sàng · ' + failures + ' tài nguyên lỗi, dùng dự phòng.' : 'Đã sẵn sàng.';
     draw(fill, pct, track, progress, label);
@@ -111,9 +111,9 @@
     finished = true;
     stopInitialHints();
     clearTimeout(engineDeadline);
-    if (phaseLabel) phaseLabel.textContent = failed ? 'Engine chưa sẵn sàng' : 'Hoàn tất chuẩn bị';
+    if (phaseLabel) phaseLabel.textContent = failed ? 'Trò chơi chưa sẵn sàng' : 'Hoàn tất chuẩn bị';
     if (!failed) {
-      draw(fill, pct, track, 1, 'Tài nguyên và engine đã sẵn sàng');
+      draw(fill, pct, track, 1, 'Tài nguyên và trò chơi đã sẵn sàng');
       tip.textContent = failures ? 'Đã sẵn sàng · ' + failures + ' tài nguyên dùng dự phòng.' : 'Hoàn tất chuẩn bị.';
     }
     el.setAttribute('aria-busy', 'false');
@@ -122,7 +122,7 @@
       const note = doc.getElementById('engineNotice');
       if (note) {
         note.hidden = false;
-        note.textContent = 'Không thể khởi tạo engine. Hãy kiểm tra tập tin trò chơi và tải lại trang.';
+        note.textContent = 'Trò chơi chưa thể mở. Vui lòng tải lại trang hoặc thử lại sau.';
       }
     } else root.dispatchEvent(new Event('hu:loaded'));
     setTimeout(() => {
@@ -202,14 +202,14 @@
         draw(bar, number, meter, 0.88 * (total ? count / total : 1), 'Đang tải tài nguyên · ' + count + '/' + total);
         status.textContent = 'Đang tải tài nguyên · ' + count + '/' + total + (failed ? ' · ' + failed + ' tài nguyên lỗi' : '');
       });
-      draw(bar, number, meter, 0.88, 'Tải tài nguyên hoàn tất · đang xác thực engine');
-      status.textContent = 'Tài nguyên đã tải xong · đang xác thực engine…';
+      draw(bar, number, meter, 0.88, 'Tài nguyên đã tải xong · đang chuẩn bị trò chơi');
+      status.textContent = 'Tài nguyên đã tải xong · đang chuẩn bị trò chơi…';
       if (typeof start === 'function') await start(result);
-      draw(bar, number, meter, 0.99, 'Đã tải tài nguyên và khởi tạo engine · đang hiển thị mẹo chơi');
+      draw(bar, number, meter, 0.99, 'Đã chuẩn bị trò chơi · đang hiển thị mẹo chơi');
       entryLabel.textContent = 'Đã tải tài nguyên · đang hiển thị mẹo chơi…';
       status.textContent = 'Các mẹo chơi sẽ hiển thị đủ trước khi vào game.';
       await hintsReady;
-      draw(bar, number, meter, 1, 'Tài nguyên, engine và các mẹo chơi đã hoàn tất');
+      draw(bar, number, meter, 1, 'Tài nguyên và các mẹo chơi đã sẵn sàng');
       status.textContent = result.failed ? 'Sẵn sàng · ' + result.failed + ' tài nguyên dùng dự phòng.' : 'Đã sẵn sàng.';
     } finally {
       stopEntryHints();
