@@ -824,8 +824,8 @@
     },
     fit() {
       this.map.forEach((w, id) => {
-        if (id === 'chat' && (root.innerHeight || document.documentElement.clientHeight) <= 520) {
-          w.maximized = false;
+        if (id === 'chat' && !w.maximized &&
+            (root.innerHeight || document.documentElement.clientHeight) <= 520) {
           w.rect = this.defaultRect(id);
         } else if (w.maximized) {
           const W = root.innerWidth || 1280, H = root.innerHeight || 768;
