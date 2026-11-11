@@ -1,11 +1,12 @@
-/* Tạo dist/ chỉ gồm file game cần chạy trên trình duyệt để kiểm tra bản build:min. Production phục vụ trực tiếp bằng Node sau reverse proxy HTTPS.
-   Không đưa lên host: server/, tests/, docs/, tools/, demo/, .git, .github, README, package.json, bảng thiết kế .xlsx/.csv.
-   Chạy:  node tools/build-dist.cjs            (sao chép nguyên văn)
-          node tools/build-dist.cjs --minify   (xóa chú thích và nén; cần esbuild: npm i -g esbuild hoặc NODE_PATH trỏ tới nó)
-   Đây là biện pháp làm khó người đọc, không phải mã hóa: mã chạy ở trình duyệt thì người chơi luôn tải được. */
+/* Dựng dist/ cho Cloudflare Workers Static Assets; Node/SQLite chỉ dành cho dev/test.
+   Không xuất bản server/, tests/, docs/, tools/, demo/ hay tệp cấu hình riêng.
+   --minify giữ các classic script theo thứ tự cũ và gộp CSS trang chính thành
+   một stylesheet có content hash, không đổi CSS nguồn hoặc style trang pháp lý.
+   Minify không phải biện pháp bảo mật; client code luôn có thể đọc được. */
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
+const { createHash } = require('node:crypto');
 const { ALLOWED, DENIED_PART, DENIED_PATH } = require('../server/http/static.js');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -14,6 +15,13 @@ const minify = process.argv.includes('--minify');
 /* Không đưa adapter offline/backup cũ vào frontend online. Giữ mã nguồn legacy
    trong repository chỉ để kiểm thử, kiểm toán và di trú thủ công về sau. */
 const OMIT_ONLINE = new Set(['client/session/local-session.js', 'client/persistence/local-store.js']);
+const htmlSource = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const STYLE_TAG = /^<link rel="stylesheet" href="(css\/[a-z0-9-]+\.css)">\r?\n/gm;
+const cssInputs = [...htmlSource.matchAll(STYLE_TAG)].map(match => match[1]);
+const cssInputSet = new Set(cssInputs);
+if (minify && (!cssInputs.length || cssInputSet.size !== cssInputs.length))
+  throw Error('Danh sách stylesheet trang chính không hợp lệ.');
+
 
 let esbuild = null;
 if (minify) {
@@ -39,6 +47,11 @@ for (const start of roots) {
   for (const file of files) {
     const url = '/' + path.relative(ROOT, file).split(path.sep).join('/');
     if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url) || OMIT_ONLINE.has(path.relative(ROOT, file).split(path.sep).join('/'))) { skipped++; continue; }
+    // Các CSS này được gộp theo đúng thứ tự HTML; bản nguồn vẫn giữ trong Git.
+    if (minify && cssInputSet.has(path.relative(ROOT, file).split(path.sep).join('/'))) {
+      skipped++;
+      continue;
+    }
     const target = path.join(OUT, path.relative(ROOT, file));
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (esbuild && /\.(?:js|css)$/.test(file)) {
@@ -54,6 +67,28 @@ for (const start of roots) {
     copied++;
   }
 }
-/* Giữ _headers trong bản build để kiểm tra chính sách cache/bảo mật, không dùng dist/ làm hosting riêng. */
+if (minify) {
+  // Tất cả CSS trang game nằm trong css/: đường dẫn '../media/' vẫn đúng
+  // từ assets/; trang pháp lý tiếp tục dùng riêng css/legal.css.
+  const source = cssInputs.map(file => fs.readFileSync(path.join(ROOT, file), 'utf8')).join('\n');
+  const code = esbuild.transformSync(source, {
+    loader: 'css', minify: true, legalComments: 'none', charset: 'utf8', target: 'es2020'
+  }).code;
+  const fingerprint = createHash('sha256').update(code).digest('hex').slice(0, 16);
+  const href = 'assets/styles.' + fingerprint + '.css';
+  fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
+  fs.writeFileSync(path.join(OUT, href), code);
+  let first = true;
+  const html = htmlSource.replace(STYLE_TAG, () => {
+    if (!first) return '';
+    first = false;
+    return '<link rel="stylesheet" href="' + href + '">\n';
+  });
+  if (first) throw Error('Không tìm thấy CSS cần gộp trong index.html.');
+  fs.writeFileSync(path.join(OUT, 'index.html'), html);
+  console.log('CSS: ' + cssInputs.length + ' stylesheet → 1 tệp ' + href +
+    ' (' + Buffer.byteLength(code) + ' bytes, chưa gzip/brotli).');
+}
+/* _headers áp dụng cho Cloudflare Workers Static Assets, không áp dụng Node dev. */
 fs.copyFileSync(path.join(ROOT, '_headers'), path.join(OUT, '_headers'));
 console.log(`dist/: ${copied} tệp (${minified} đã nén), bỏ qua ${skipped} tệp không dành cho trình duyệt.`);

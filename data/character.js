@@ -56,8 +56,6 @@ const META_ACHIEVEMENTS=[
  {id:'meditate_10h',name:'Tọa vọng thiên thu',desc:'Nhập định 10 giờ.',points:4,check:s=>(s.progress?.meditate||0)>=36000},
  {id:'alchemy_10',name:'Lò lửa tinh thông',desc:'Luyện thành 10 mẻ đan.',points:2,check:s=>(s.progress?.alchemy||0)>=10},
  {id:'breaks_10',name:'Mười lần phá cảnh',desc:'Đột phá thành công 10 lần.',points:2,check:s=>(s.progress?.breaks||0)>=10},
- {id:'rebirth_1',name:'Nhất niệm luân hồi',desc:'Trọng sinh lần đầu.',points:3,check:s=>s.rebirths>=1},
- {id:'rebirth_5',name:'Ngũ kiếp tu hành',desc:'Trọng sinh 5 lần.',points:6,check:s=>s.rebirths>=5},
  {id:'pvp_10',name:'Luận kiếm thập thắng',desc:'Thắng 10 trận luận kiếm.',points:3,check:s=>(s.social?.pvp?.wins||0)>=10},
  {id:'friends_3',name:'Tri kỷ tứ phương',desc:'Kết giao 3 vị đạo hữu.',points:3,check:s=>Object.values(s.social?.friends||{}).filter(f=>f?.metAt>0).length>=3}
 ];

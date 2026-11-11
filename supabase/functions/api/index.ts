@@ -8,6 +8,7 @@ import { createContentionCounter } from './contention-counter.ts';
 import { createEdgeRateLimiter } from './api-rate-limit.ts';
 import { getVerifiedUserId } from './auth-user.ts';
 import { createVerifiedUserCache } from './auth-cache.ts';
+import { handleSocial } from './social.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
   createAccountAdmin, shouldLogApiError, CONTENT_VERSION
@@ -17,7 +18,7 @@ const BASE = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
 const DATABASE = Deno.env.get('HU_DB_POOLER_URL') || '';
 const ORIGINS = new Set((Deno.env.get('HU_ALLOWED_ORIGINS') || 'https://hugioi.blackbearvn.workers.dev')
   .split(',').map(x => x.trim()).filter(Boolean));
-const POLICY_VERSION = '2026-11-10-v5';
+const POLICY_VERSION = '2026-11-11-v7';
 const REQUIRED = new Set(['privacy', 'release_terms']);
 const REQUEST_ID = /^[A-Za-z0-9_-]{8,64}$/;
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
@@ -164,6 +165,13 @@ export async function handleApi(req: Request): Promise<Response> {
     let result, status = 200;
     switch (route.name) {
       case 'bootstrap': result = await service.bootstrap(ownerId); break;
+      case 'chatConnect':
+      case 'chatPoll':
+      case 'chatSend':
+      case 'chatLeave':
+      case 'leaderboard':
+        result = await handleSocial(repo, ownerId, route.name, body);
+        break;
       case 'preview': result = await service.previewCreation(ownerId); status = 201; break;
       case 'create': result = await service.createPlayer(ownerId, body); status = 201; break;
       case 'pavilionPurchase': result = await service.pavilionPurchase(ownerId, body); break;

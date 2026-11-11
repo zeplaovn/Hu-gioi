@@ -25,7 +25,7 @@ test('chấp thuận: cần đủ hai chính sách, chọn theo userId và versi
       assert.equal(req.hostname, 'rvrwfeblishqadkpzspb.supabase.co');
       assert.equal(req.pathname, '/rest/v1/policy_acceptances');
       assert.equal(req.searchParams.get('user_id'), 'eq.' + UID);
-      assert.equal(req.searchParams.get('policy_version'), 'eq.2026-11-10-v5');
+      assert.equal(req.searchParams.get('policy_version'), 'eq.2026-11-11-v7');
       assert.equal(options.headers.apikey, KEY);
       assert.equal(options.headers.Authorization, 'Bearer ' + TOKEN);
       return { ok: true, status: 200, json: async () => rows };

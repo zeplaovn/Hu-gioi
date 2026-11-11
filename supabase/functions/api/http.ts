@@ -35,6 +35,11 @@ export function routeOf(method: string, path: string): { name: string; id?: stri
     // Supabase Gateway có thể chuyển pathname vào function dưới dạng /api/...
     .replace(/^\/api(?=\/|$)/, '');
   if (method === 'GET' && pathname === '/bootstrap') return { name: 'bootstrap' };
+  if (method === 'POST' && pathname === '/social/chat/connect') return { name: 'chatConnect' };
+  if (method === 'POST' && pathname === '/social/chat/poll') return { name: 'chatPoll' };
+  if (method === 'POST' && pathname === '/social/chat/send') return { name: 'chatSend' };
+  if (method === 'POST' && pathname === '/social/chat/leave') return { name: 'chatLeave' };
+  if ((method === 'GET' || method === 'POST') && pathname === '/social/ranking') return { name: 'leaderboard' };
   if (method === 'POST' && pathname === '/creation/preview') return { name: 'preview' };
   if (method === 'POST' && pathname === '/players') return { name: 'create' };
   if (method === 'POST' && pathname === '/pavilion/purchase') return { name: 'pavilionPurchase' };

@@ -4,7 +4,7 @@
 
 **Ranh giới:** Cloudflare chỉ phát hành file tĩnh; `client/config.js` chọn Supabase Auth trực tiếp và Edge API. Edge xác minh bearer JWT và consent cho gameplay rồi xử lý bằng `PlayerService`, Postgres transactions và idempotent receipts. Client không có quyền ghi state/RNG/timing/phần thưởng tin cậy.
 
-**Database:** `supabase/config.toml` đặt `verify_jwt=false` để OPTIONS hoạt động; code `supabase/functions/api/index.ts` vẫn kiểm JWT. Schema `game` có RLS và không cấp quyền cho `anon`/`authenticated`; không mở Data API cho schema này. Policy consent v5 phải kiểm trên project thật trước khi deploy.
+**Database:** `supabase/config.toml` đặt `verify_jwt=false` để OPTIONS hoạt động; code `supabase/functions/api/index.ts` vẫn kiểm JWT. Schema `game` có RLS và không cấp quyền cho `anon`/`authenticated`; không mở Data API cho schema này. Policy consent v7 (`2026-11-11-v7`) phải kiểm trên project thật trước khi deploy.
 
 **CSP/cache:** `_headers` → `dist/_headers`, `script-src 'self'` không có `unsafe-inline`/`unsafe-eval`, `connect-src` chỉ cho origin Supabase, `/media/*` cache. Chỉ kiểm được cấu hình trong repo, cần kiểm HTTP headers Cloudflare sau deploy.
 

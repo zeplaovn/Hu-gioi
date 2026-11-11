@@ -172,7 +172,7 @@ test('snapshot gửi client không chứa seed bí cảnh; state bẩn bị ch�
   assert.throws(() => assertStateSafe({ a: undefined }, 65536), { code: 'STATE_CORRUPT' });
 });
 
-test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xóa để tạo nhân vật mới', async () => {
+test('thọ nguyên cạn: khởi đầu lại sau chết không mang theo tiền và chỉ chủ nhân được xóa', async () => {
   const { svc, clock, repo } = setup();
   const { playerId: id } = await spawn(svc);
   const current = await repo.get(id);
@@ -188,10 +188,13 @@ test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xó
   assert.equal(dead.report.seconds || 0, 0, 'offline không già thêm');
   const err = await (async () => { try { await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'd1')); } catch (e) { return e; } })();
   assert.equal(err.code, 'PLAYER_DEAD');
-  assert.equal(await code(async () => await svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
+  assert.equal((await svc.bootstrap('owner-a')).player.id, id);
+  assert.equal(await code(async () => svc.previewCreation('owner-a')), 'PLAYER_EXISTS');
   assert.equal((await svc.resetAfterDeath('owner-a', id)).deleted, true);
   assert.equal((await svc.bootstrap('owner-a')).player, null);
   assert.ok((await svc.previewCreation('owner-a')).ticketId);
+  assert.equal((await svc.bootstrap('owner-a')).pavilion.balance, 0);
 });
 
 test('dữ liệu bền qua khởi động lại (state, revision, receipt)', async () => {
@@ -236,6 +239,8 @@ const { PostgresPlayers } = require('../server/repositories/postgres-players.js'
 const OWNER_A = '11111111-1111-4111-8111-111111111111';
 const OWNER_B = '22222222-2222-4222-8222-222222222222';
 const migrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
+const socialMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
+const rankMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111032200_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
 
 async function sharedFixture(mode, t) {
   let repo;
@@ -247,6 +252,10 @@ async function sharedFixture(mode, t) {
       CREATE SCHEMA auth; CREATE TABLE auth.users (id uuid PRIMARY KEY);
       INSERT INTO auth.users (id) VALUES ('${OWNER_A}'), ('${OWNER_B}');`);
     await db.exec(migrationSQL);
+    // Production dùng cột combat_power, trigger ranking và bảng chat qua
+    // migration additive; fixture phải phản ánh cùng schema trước kiểm thử.
+    await db.exec(socialMigrationSQL);
+    await db.exec(rankMigrationSQL);
     // PGlite dùng một Postgres backend; pool giả tuần tự hóa giao dịch như
     // driver connection pool size 1 của Edge, không mô phỏng mạng.
     let previous = Promise.resolve();

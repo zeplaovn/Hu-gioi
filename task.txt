@@ -1,0 +1,647 @@
+TASK CHO GPT: TỐI ƯU BACKEND HƯ GIỚI (HUGIOI) - GIẢM CHI PHÍ VẬN HÀNH VÀ LƯU TRỮ
+==============================================================================
+
+*** LƯU Ý ƯU TIÊN: MỤC 11 (QUYẾT ĐỊNH MỚI CỦA CHỦ DỰ ÁN) GHI ĐÈ MỌI MỤC KHÁC KHI MÂU THUẪN. ***
+*** Thứ tự ưu tiên: (1) giảm tải backend, (2) tiết kiệm lưu trữ, (3) chơi vẫn mượt, (4) bảo mật mức vừa đủ. ***
+
+1. BỐI CẢNH
+-----------
+Repo: github.com/zeplaovn/Hugioi
+Game idle tu tiên tiếng Việt, server-authoritative. Kiến trúc hiện tại:
+- Frontend: Cloudflare Workers Static Assets (thư mục dist/).
+- API: một Supabase Edge Function "api" (Deno), file supabase/functions/api/index.ts.
+- DB: Postgres schema "game" qua Supavisor transaction pooler (cổng 6543), mỗi isolate dùng pool 1 kết nối.
+- Auth: Supabase Auth, đăng nhập trực tiếp bằng JWT.
+- Engine: engine/ + data/ dùng chung cho client và server. Protocol v2, 48 lệnh, state V9 (jsonb, tối đa 64 KB).
+- Mục tiêu hạ tầng: chạy gói FREE, quota 500.000 lượt gọi Edge/tháng. docs/edge-deployment.md mô phỏng
+  50 người chơi dùng khoảng 408.000 lượt/tháng (81,6%). Chưa tính chat, retry, nhiều tab.
+
+
+2. RÀNG BUỘC BẮT BUỘC
+---------------------
+- Làm trên nhánh riêng và mở PR. KHÔNG tự chạy migration thật, deploy production hay merge (README quy định).
+- Không tự quyết các vấn đề gameplay P0/P1 (docs/gameplay-decisions.md). Không đổi luật trong engine/ và data/.
+- Giữ nguyên các đảm bảo: server-authoritative, idempotency, optimistic revision, offline không tích lũy,
+  schema "game" không lộ ra Data API, RLS.
+- Mọi thay đổi schema phải là migration additive, có kế hoạch rollback và backfill. Không DROP dữ liệu.
+- Mọi đề xuất phải kèm số đo trước/sau (npm run edge:budget, tools/simulate-edge-calls.cjs,
+  EXPLAIN (ANALYZE, BUFFERS), pg_stat_statements). Không nêu con số nếu chưa đo hoặc chưa ghi rõ là ước tính.
+- Các hạn mức của Supabase/Cloudflare (Edge invocations, egress, dung lượng DB, Workers requests/ngày,
+  giá R2/D1/Durable Objects) phải kiểm tra lại trên tài liệu chính thức tại thời điểm làm.
+  Không dùng số từ trí nhớ.
+
+
+3. CÁC ĐIỂM TỐN CHI PHÍ ĐÃ PHÁT HIỆN (từ việc đọc code repo)
+-----------------------------------------------------------
+
+A. Số lượt gọi Edge
+  A1. "sync" chạy mỗi 20 giây = 3 lượt/phút/người đang online. Mỗi lần sync thường làm đổi state
+      nên revision tăng và ghi lại cả dòng.
+  A2. Chat polling (supabase/functions/api/social.ts, comment trong code ghi poll 6 giây) tạo khoảng
+      10 lượt/phút/người. Mỗi chatPoll chạy 4 truy vấn tuần tự: lấy player join leaderboard,
+      upsert heartbeat, select tin nhắn, count(*) presence.
+      Ước tính: 50 người x 1 giờ chat/ngày x 30 ngày x 600 lượt/giờ ~ 900.000 lượt/tháng,
+      vượt quota Free.
+      LƯU Ý: README ghi chat và bảng xếp hạng "đang ẩn", nhưng social.ts và các migration 20261111* đã có.
+      Cần xác nhận client có thực sự gọi hay không.
+  A3. "pause" (khi tab ẩn) cũng ghi DB và tăng revision.
+
+B. Độ trễ và số round-trip mỗi request (index.ts, postgres-players.js, player-service.js)
+  B1. HU_AUTH_CACHE_MS mặc định 0 -> mỗi request gọi HTTP sang Supabase Auth để xác minh JWT.
+      Doc nói hỗ trợ xác minh JWKS (ES256/RS256) nhưng code đang đi đường getVerifiedUserId.
+  B2. #response() luôn gọi thêm repo.getPavilion() ở một kết nối riêng, nằm ngoài transaction,
+      cho mọi sync và command.
+  B3. Transaction gồm BEGIN -> set_config -> SELECT FOR UPDATE -> (SELECT receipt) -> UPDATE ->
+      INSERT receipt -> (sweep) -> COMMIT. Mỗi bước là một round-trip từ Edge sang pooler.
+  B4. Edge Function có thể chạy ở region khác region của DB.
+
+C. Ghi DB và lưu trữ
+  C1. Mỗi sync hoặc command ghi lại toàn bộ cột state jsonb (tối đa 64 KB, bị TOAST) -> write amplification,
+      WAL, bloat. State còn chứa mảng "logs".
+  C2. player_receipts lưu cả response jsonb, TTL 7 ngày, dọn bằng DELETE. Khi load cao DELETE sinh dead tuple.
+  C3. rate_tokens jsonb nằm trong dòng players và bị ghi lại mỗi request.
+  C4. Trigger sync_player_leaderboard chạy lại 9 phép trích jsonb trên mọi lần UPDATE state.
+      Hai index leaderboard có INCLUDE làm tăng dung lượng.
+  C5. world_chat_messages KHÔNG có cơ chế xóa theo TTL -> bảng tăng vô hạn.
+      world_chat_presence bị count(*) mỗi lần poll.
+  C6. Mỗi response trả full snapshot state (và pavilion). Egress có thể cao: với state vài chục KB,
+      3 lần sync/phút có thể ra hàng MB mỗi giờ mỗi người. Cần đo kích thước state thực tế.
+
+
+4. CÁC HẠNG MỤC CẦN THỰC HIỆN (theo độ ưu tiên)
+-----------------------------------------------
+
+P0. ĐO ĐẠC TRƯỚC KHI SỬA
+  - Viết script hoặc test đo: số lượt gọi/giờ theo route, số SQL/round-trip mỗi route,
+    kích thước payload response, kích thước state trung bình, p50/p95 latency và CPU time.
+  - Dựng bảng chi phí theo mô hình người chơi (active, idle, chat bật/tắt) cho quy mô 50, 500, 5.000 người.
+  - Xác nhận client có bật chat và leaderboard hay không (client/ui/core.js) và interval poll thực tế.
+
+P1. GIẢM LƯỢT GỌI EDGE (ảnh hưởng lớn nhất lên quota)
+  1. Chat: thay polling bằng một trong các cách sau, rồi so sánh chi phí:
+     - Supabase Realtime Broadcast/Presence. Presence dùng track() thay cho bảng world_chat_presence,
+       số online lấy từ Presence thay vì count(*).
+     - Long-poll hoặc SSE nếu hạ tầng cho phép.
+     - Nếu vẫn polling: backoff thích ứng (6s -> 15s -> 30s khi kênh yên), dừng khi tab ẩn,
+       gộp connect/poll.
+  2. Presence bằng lease thay cho heartbeat dày: server cấp "presence lease" có hạn (ví dụ 90-120 giây),
+     client gia hạn thưa hơn. Hết lease thì không tính tiến trình.
+     Xem xét cho client mô phỏng tiến trình cục bộ bằng engine chung, server chỉ chốt checkpoint.
+     PHẢI ghi rõ đây là quyết định bảo mật/gameplay của chủ dự án.
+  3. Lazy materialization: heartbeat chỉ UPDATE last_seen_at, không ghi state.
+     Chỉ chạy advance đầy đủ khi có lệnh, khi phát hiện khoảng trống lớn hơn grace, hoặc theo checkpoint
+     mỗi N phút. Phải chứng minh bằng test rằng kết quả giống cách hiện tại (tính xác định theo RNG counter).
+  4. Gộp lệnh: cho phép client gửi nhiều intent trong một request (batch có thứ tự, mỗi intent có seq riêng).
+  5. Backoff: exponential backoff với jitter khi 429/5xx; tôn trọng Retry-After (server đã trả header này).
+  6. Chặn spam trước Edge: cân nhắc đặt Cloudflare Worker hoặc WAF/rate-limit phía trước, vì hiện
+     apiLimiter chỉ có tác dụng trong từng isolate.
+
+P2. GIẢM ĐỘ TRỄ VÀ SỐ TRUY VẤN MỖI REQUEST
+  1. Xác minh JWT cục bộ bằng JWKS cache (khóa bất đối xứng ES256) thay vì gọi Auth cho mỗi request.
+     Giữ kiểm tra exp. Ghi rõ đánh đổi về độ trễ thu hồi phiên.
+  2. Gộp getPavilion vào cùng transaction hoặc cùng truy vấn (JOIN pavilion_accounts).
+     Chỉ trả pavilion khi version thay đổi.
+  3. Giảm round-trip: gộp BEGIN/set_config hoặc chuyển phần lock+read thành một CTE/hàm PL/pgSQL.
+     Kiểm tra tương thích với PgBouncer/Supavisor transaction mode (không dùng prepared statement có trạng thái phiên).
+  4. Ghim region của Edge Function về cùng region với DB (kiểm tra cơ chế x-region của Supabase).
+  5. Cache trong isolate cho dữ liệu đọc nhiều: leaderboard top 50 (TTL 30-60 giây), consent (đã có), cấu hình.
+     Dùng request coalescing (singleflight) để một cache miss chỉ sinh một truy vấn.
+
+P3. GIẢM GHI DB VÀ DUNG LƯỢNG LƯU TRỮ
+  1. Idempotency không cần bảng receipt: lưu last_seq và last_response_digest ngay trong dòng players
+     (client gửi seq tăng dần). Bỏ INSERT mỗi lệnh.
+     Nếu vẫn dùng bảng receipt: giảm TTL xuống phút/giờ (cửa sổ retry thực tế), chỉ lưu fingerprint +
+     revision + kết quả nhỏ, và phân vùng theo ngày rồi DROP PARTITION thay vì DELETE.
+  2. Tách state nóng/lạnh: đưa phần ít đổi (logs, lịch sử, thành tựu, inventory lớn) sang cột/bảng riêng
+     hoặc giữ ở client. Cắt mảng logs có giới hạn cứng.
+  3. Nén và đổi định dạng: thử default_toast_compression = lz4, đặt STORAGE phù hợp cho cột state,
+     và so sánh với MessagePack/CBOR + zstd (cân nhắc dictionary) lưu ở bytea.
+     Đo CPU Edge vì giới hạn 2 giây CPU/request.
+  4. Delta thay vì ghi full: thử jsonb_set / JSON Merge Patch (RFC 7396) hoặc JSON Patch (RFC 6902)
+     cho các trường đổi thường xuyên. Đo lại với TOAST (UPDATE jsonb lớn vẫn có thể ghi lại toàn bộ giá trị).
+  5. Chỉnh bảng nóng: fillfactor thấp hơn cho players để tăng cơ hội HOT update; tinh chỉnh autovacuum riêng.
+  6. Leaderboard: ghi projection có điều tiết (không quá 1 lần/60 giây/người) hoặc để app tự quyết khi nào ghi,
+     thay vì trigger đọc 9 trường jsonb mỗi lần. Bỏ INCLUDE nếu không giảm đáng kể truy vấn.
+     Thử rank bằng cache hoặc Redis sorted set (skip list) nếu cần xếp hạng thời gian thực.
+  7. Chat: TTL xóa theo created_at (pg_cron hoặc partition theo ngày + DROP PARTITION), giới hạn số tin
+     giữ lại mỗi kênh, dùng BRIN cho cột thời gian nếu phân vùng. Thay count(*) presence bằng bộ đếm
+     (hoặc HyperLogLog nếu dùng Redis).
+  8. Giảm egress: response chỉ trả delta theo lastRevision mà client đã có (hiện sync đã nhận lastRevision
+     nhưng vẫn trả full snapshot). Bật nén (gzip/brotli) và loại trường client không cần.
+  9. Rate limit: chuyển token bucket sang một mốc thời gian duy nhất (GCRA) hoặc để ở bộ nhớ isolate;
+     chỉ ghi DB cho các lệnh đắt hoặc nhạy cảm, để giảm ghi vào dòng players.
+
+P4. FRONTEND VÀ TÀI SẢN TĨNH
+  - Kiểm tra dung lượng thư mục media/, css/, client/. Dùng hash tên file, Cache-Control: immutable,
+    Brotli, ảnh AVIF/WebP, lazy-load.
+  - Kiểm tra _headers và wrangler.jsonc để đảm bảo cache đúng. Không để tài sản lớn đi qua Supabase Storage
+    nếu egress tính tiền (so sánh với Cloudflare R2, kiểm tra giá egress hiện tại).
+
+P5. TÙY CHỌN KIẾN TRÚC DÀI HẠN (chỉ phân tích, chưa làm)
+  - Mô hình actor: mỗi người chơi là một actor giữ state trong bộ nhớ, ghi DB theo kiểu write-behind.
+    Ví dụ: Cloudflare Durable Objects, Orleans.
+  - Chuyển API sang Cloudflare Workers + Hyperdrive tới Postgres.
+  - Phân tích giá và giới hạn thực tế của từng phương án so với Supabase Edge ở 500 và 5.000 người chơi.
+    Nêu rõ rủi ro di trú.
+
+
+5. THUẬT TOÁN VÀ HỆ THỐNG ĐỂ THAM KHẢO
+--------------------------------------
+- Rate limiting: token bucket, GCRA, sliding window counter.
+  Bài của Stripe ("Scaling your API with rate limiters"), Cloudflare ("How we built rate limiting").
+- Idempotency: Idempotency-Key của Stripe; số thứ tự tuần tự kiểu TCP.
+- Đồng thời: optimistic concurrency (CAS theo revision), MVCC của Postgres, advisory lock (đã dùng).
+- Lease/heartbeat: lease của Chubby/etcd, Kubernetes Lease cho presence.
+- Retry: exponential backoff với jitter (AWS Architecture Blog), load shedding,
+  circuit breaker (Hystrix/Resilience4j).
+- Cache: cache-aside, stale-while-revalidate (RFC 5861), singleflight (Go groupcache), write-behind.
+- Lưu trữ state: event sourcing + snapshot (Martin Fowler), CQRS, delta encoding (RFC 6902/7396),
+  nén lz4/zstd, MessagePack/CBOR, Postgres TOAST và HOT update.
+- Leaderboard và đếm: Redis sorted set (skip list), HyperLogLog cho số online, keyset pagination (đã dùng).
+- Chat: cách Discord bucket tin nhắn theo kênh + cửa sổ thời gian ("How Discord Stores Trillions of Messages"),
+  fan-out của Twitch IRC, Supabase Realtime.
+- Phân vùng/TTL: pg_partman, DROP PARTITION thay cho DELETE hàng loạt.
+- Actor model: Orleans (Halo), Cloudflare Durable Objects, Akka.
+- Engine idle: tính tiến trình offline bằng công thức đóng (closed form) hoặc gộp tick theo đoạn thay vì
+  vòng lặp từng tick. Kiểm tra advance() trong engine/ xem độ phức tạp có tỉ lệ với thời gian trôi qua không.
+
+
+6. TIÊU CHÍ NGHIỆM THU
+----------------------
+- Báo cáo trước/sau cho từng hạng mục: lượt gọi Edge/giờ/người, số truy vấn/route, p95 latency,
+  byte response, dung lượng DB sau 30 ngày (mô phỏng).
+- Test tự động giữ nguyên: idempotency, revision conflict, offline không tích lũy, rate limit,
+  RLS/quyền anon và authenticated (npm run check, npm test, Deno test).
+- Mỗi migration có: lý do, rollback, backfill, ước lượng thời gian khóa bảng, kiểm chứng trên PGlite hoặc DB test.
+- Một PR hoặc một issue cho mỗi hạng mục, mô tả rõ đánh đổi (bảo mật, độ trễ, độ phức tạp) và đánh dấu
+  mục nào cần chủ dự án quyết định.
+
+
+7. CÁCH LÀM VIỆC YÊU CẦU
+------------------------
+1. Đọc docs/index.md, docs/architecture.md, docs/engine-contract.md, docs/security.md,
+   docs/gameplay-decisions.md trước.
+2. Làm P0, rồi trình bày kế hoạch xếp hạng theo "tiết kiệm được bao nhiêu / rủi ro / công sức"
+   TRƯỚC KHI viết code.
+3. Làm từng PR nhỏ, ưu tiên P1 và P2 (rủi ro thấp, hiệu quả cao), sau đó P3.
+4. Với thay đổi chạm vào bảo mật: phân loại và xử lý theo MỤC 10 (bảng quyết định D1-D14), không dừng toàn bộ công việc.
+   Với thay đổi chạm vào luật chơi (gameplay P0/P1): không tự quyết, gửi yêu cầu quyết định cho chủ dự án.
+
+
+8. BẢO MẬT: CÁC KỸ THUẬT NỔI TIẾNG CÓ THỂ ÁP DỤNG
+==================================================
+Nguyên tắc chung: giữ nguyên nền tảng đã tốt (server-authoritative, truy vấn tham số hóa, RLS, CORS whitelist,
+CSP script-src 'self', onlyKeys/strict schema, snapshot đã ẩn seed). Mục này chỉ bổ sung lớp phòng thủ.
+Khung tham chiếu: OWASP API Security Top 10, OWASP ASVS, OWASP Top 10, STRIDE (threat modeling), NIST SSDF.
+Mọi thay đổi chạm vào xác thực, bảo mật hoặc luật chơi cần chủ dự án duyệt trước.
+
+8.1 HIỆN TRẠNG ĐÃ TỐT (không cần sửa, chỉ giữ và có test bảo vệ)
+  - BOLA/IDOR: #own() không phân biệt "không tồn tại" và "của người khác".
+  - SQL injection: mọi truy vấn dùng tham số; ORDER BY của leaderboard dùng whitelist.
+  - Replay lệnh: requestId + fingerprint SHA-256 của lệnh chuẩn hóa (canonical JSON); REQUEST_ID_REUSED.
+  - Race/double-spend: SELECT ... FOR UPDATE, advisory lock, CAS theo revision/version.
+  - Dữ liệu client không tin cậy: không nhận state/time/RNG/giá/thưởng từ client; đồng hồ giao dịch không lùi.
+  - Mass assignment: onlyKeys() chặn khóa lạ; assertStateSafe() giới hạn độ sâu 24, kích thước 64 KB, cấm NaN/Infinity.
+  - RNG theo người chơi: HMAC-SHA256(seed, counter), seed không gửi ra client.
+  - Quyền dữ liệu cá nhân: export/erase/delete-account có xác nhận, consent theo phiên bản chính sách.
+
+8.2 XÁC THỰC VÀ PHIÊN
+  1. Chuẩn JWT BCP (RFC 8725): luôn kiểm whitelist thuật toán, iss, aud, exp, kid; chống alg-confusion
+     (không chấp nhận HS256 và RS/ES256 lẫn lộn). Nếu chuyển sang xác minh cục bộ qua JWKS (mục P2) thì dùng
+     thư viện chuẩn (jose), cache JWKS có TTL, xử lý xoay khóa.
+  2. Token ngắn hạn + refresh token xoay vòng có phát hiện tái sử dụng (refresh token rotation with reuse
+     detection, OAuth 2.0 Security BCP - RFC 9700). Bật trong Supabase Auth nếu có.
+  3. MFA/Passkeys (WebAuthn/FIDO2) tùy chọn cho tài khoản có giá trị cao. Danh sách phiên đang đăng nhập,
+     cho phép thu hồi.
+  4. Chống credential stuffing: Cloudflare Turnstile (hoặc CAPTCHA tương đương) ở đăng ký và đăng nhập,
+     Supabase Auth rate limit, Leaked Password Protection (so khớp HIBP theo k-anonymity), bắt buộc xác nhận email.
+  5. PKCE S256 cho Google OAuth (đã có). Giữ nguyên: không nhận token từ URL fragment; xóa code khỏi URL
+     trước khi đổi token.
+  6. Cân nhắc DPoP (RFC 9449) hoặc token binding nếu thấy rủi ro đánh cắp token; đánh giá chi phí/độ phức tạp
+     trước (không bắt buộc).
+  7. So sánh hằng thời gian (crypto.timingSafeEqual) cho mọi phép so khớp bí mật/chữ ký/fingerprint nhạy cảm.
+
+8.3 CHỐNG GIAN LẬN VÀ BOT (anti-cheat)
+  1. Phát hiện bất thường thống kê: theo dõi tốc độ tăng tu vi/tài nguyên mỗi người chơi, dùng z-score hoặc
+     EWMA (exponentially weighted moving average) so với phân phối của cả server; gắn cờ khi vượt ngưỡng.
+  2. Phát hiện bot: phân tích nhịp lệnh (khoảng cách thời gian giữa các lệnh quá đều, entropy thấp,
+     autocorrelation cao), hoạt động 24/7 không nghỉ, số lệnh/giờ quá cao.
+  3. Chống đa tài khoản/farm: giới hạn theo IP và theo thiết bị (ưu tiên tín hiệu ít xâm phạm; mọi dấu vân tay
+     thiết bị phải qua đánh giá quyền riêng tư và consent), phát hiện cụm tài khoản có hành vi giống nhau.
+  4. Phản ứng theo bậc: ghi log -> giảm tốc/ẩn khỏi bảng xếp hạng (shadow ban) -> khóa; có quy trình khiếu nại.
+     Cài honeypot (lệnh/endpoint bẫy mà client hợp lệ không bao giờ gọi).
+  5. Chống replay mạnh hơn: thêm nonce + cửa sổ thời gian ngắn cho lệnh nhạy cảm (mua Thiên Mệnh Các, đột phá),
+     hoặc số thứ tự tuần tự mỗi người chơi (liên kết với P3 idempotency bằng last_seq).
+  6. Tính công bằng của RNG: có thể áp dụng commit-reveal (server công bố hash cam kết của seed/kết quả rồi
+     mới tiết lộ) cho các cơ chế gieo/gacha; công khai tỉ lệ rơi và cơ chế bảo hiểm (pity timer).
+     Quyết định này thuộc về chủ dự án (liên quan gameplay).
+
+8.4 TOÀN VẸN KINH TẾ GAME (Thiên Tinh, Thiên Mệnh Các)
+  1. Sổ cái chỉ-ghi-thêm (append-only ledger) kiểu kế toán kép cho mọi biến động Thiên Tinh:
+     bảng ledger (owner_id, delta, reason, ref, created_at). balance = tổng ledger; có job đối soát định kỳ
+     phát hiện chênh lệch giữa balance và ledger.
+  2. Giữ CHECK balance >= 0 (đã có), thêm bất biến (invariants) kiểm tra sau mỗi giao dịch quan trọng
+     (không tạo tiền từ không khí, không âm, không vượt trần cấp).
+  3. Log kiểm toán (audit log) cho giao dịch giá trị cao, không chứa token/state/SQL.
+
+8.5 NGƯỜI DÙNG NHẬP LIỆU: CHAT, TÊN NHÂN VẬT
+  1. Chuẩn hóa tên bằng NFC (đã có) và THÊM kiểm tra "confusable skeleton" theo Unicode UTS #39
+     để chặn giả mạo (ví dụ chữ Cyrillic giống chữ Latin).
+  2. Bộ lọc ký tự trong chat hiện chỉ chặn \u0000-\u001F (trừ vài ký tự). Bổ sung chặn zero-width
+     (U+200B-U+200F, U+2060, U+FEFF) và bidi override/isolate (U+202A-U+202E, U+2066-U+2069)
+     để chống đảo chiều văn bản và tin nhắn "vô hình".
+  3. Giữ nguyên nguyên tắc: client luôn render bằng textContent/escape, không innerHTML. Thêm Trusted Types
+     nếu trình duyệt hỗ trợ.
+  4. Chống spam/lạm dụng: giới hạn 2 giây/tin (đã có), thêm giới hạn theo giờ/ngày, phát hiện tin lặp,
+     lọc từ cấm và liên kết, chức năng báo cáo/chặn (mute) người chơi, lưu bằng chứng khi bị báo cáo.
+  5. Kiểm tra kênh "sect" ở server (đã có); thêm test chống truy cập chéo kênh.
+
+8.6 HẠ TẦNG, TRIỂN KHAI VÀ CHUỖI CUNG ỨNG
+  1. Vai trò DB tối thiểu quyền: không dùng tài khoản chủ (postgres) cho pooler. Tạo role riêng (ví dụ hu_api)
+     chỉ có quyền cần thiết trên schema game, không BYPASSRLS, đặt statement_timeout/lock_timeout ở mức role.
+     Cân nhắc FORCE ROW LEVEL SECURITY. Giữ SECURITY INVOKER cho hàm/trigger (đã có) và search_path cố định.
+  2. Bí mật: HU_DB_POOLER_URL và các secret khác có quy trình xoay vòng (rotation) định kỳ và sau sự cố;
+     không đưa vào Git, log, lịch sử lệnh. Bật secret scanning + push protection của GitHub; quét thêm bằng
+     gitleaks hoặc trufflehog trong CI.
+  3. Chuỗi cung ứng: npm ci với lockfile (đã có), Dependabot/Renovate, npm audit, ghim phiên bản
+     (đã ghim wrangler); với Deno dùng deno.lock và import map thay vì import URL rải rác
+     (hiện import https://deno.land/x/postgres@v0.17.0); ghim GitHub Actions theo commit SHA;
+     token deploy quyền tối thiểu hoặc OIDC; tham khảo OpenSSF Scorecard, SLSA, Sigstore.
+  4. Phân tích mã tĩnh và kiểm thử: CodeQL hoặc Semgrep trong CI; property-based testing (fast-check) và fuzzing
+     cho C.validate, assertStateSafe, parseBody; quét động bằng OWASP ZAP/Nuclei trên môi trường staging.
+  5. Header bảo mật (kiểm tra _headers): HSTS, X-Content-Type-Options: nosniff, Referrer-Policy,
+     Permissions-Policy, COOP/CORP, CSP không dùng 'unsafe-inline'; SRI cho script ngoài nếu có.
+  6. Chống từ chối dịch vụ và "denial of wallet": API có URL công khai nên request rác tính vào quota.
+     Đặt Cloudflare (WAF, rate limiting, bot management/Turnstile) phía trước; giới hạn kích thước body,
+     độ sâu JSON; có "công tắc khẩn cấp" (maintenance flag) và cảnh báo ngân sách/quota; circuit breaker khi
+     DB hoặc Auth lỗi. Rate limit hiện chỉ theo isolate, cần lớp toàn cục.
+  7. Sao lưu: mã hóa, kiểm tra khôi phục định kỳ, bật PITR nếu gói hỗ trợ; kiểm soát quyền truy cập backup.
+  8. Quan sát và phản ứng sự cố: log có cấu trúc (đã giới hạn 80 dòng/10 giây/isolate), cảnh báo cho
+     auth_header_rejected, RATE_LIMITED, pg_contention bất thường, đăng nhập thất bại hàng loạt;
+     có runbook xử lý sự cố; công bố /.well-known/security.txt (RFC 9116) để nhận báo cáo lỗ hổng.
+
+8.7 QUYỀN RIÊNG TƯ VÀ TUÂN THỦ
+  - Tối thiểu hóa dữ liệu, giới hạn thời gian lưu (retention) cho chat, receipt, log; không log token/state/SQL.
+  - Giữ luồng consent theo phiên bản chính sách và export/erase hiện có; kiểm tra lại với quy định bảo vệ
+    dữ liệu cá nhân hiện hành tại Việt Nam (ví dụ Nghị định 13/2023/NĐ-CP) và các quy định thị trường mục tiêu.
+    GPT không phải luật sư: đánh dấu mục này để chủ dự án tham vấn pháp lý.
+
+8.8 THỨ TỰ ƯU TIÊN BẢO MẬT
+  Cao (làm sớm, chi phí thấp): role DB tối thiểu quyền; bộ lọc ký tự bidi/zero-width + confusable cho tên;
+    Turnstile ở đăng ký/đăng nhập; Cloudflare/WAF phía trước API; secret scanning + dependency scanning trong CI;
+    deno.lock + ghim Actions theo SHA; kiểm tra header bảo mật; công tắc khẩn cấp và cảnh báo quota.
+  Trung bình: xác minh JWT cục bộ theo RFC 8725; refresh token rotation; phát hiện bất thường và bot;
+    ledger + job đối soát; fuzzing/property-based test; security.txt.
+  Thấp/tùy chọn: MFA/Passkeys, DPoP, commit-reveal cho RNG, vân tay thiết bị (cần đánh giá quyền riêng tư).
+
+8.9 TIÊU CHÍ NGHIỆM THU BẢO MẬT
+  - Mỗi biện pháp có: mối đe dọa nó chặn (STRIDE/OWASP), test chứng minh (bao gồm test âm tính),
+    tác động lên chi phí/độ trễ (liên kết với mục 4), và kế hoạch rollback.
+  - Không giảm các đảm bảo ở mục 8.1; CI phải chạy lại toàn bộ test hiện có.
+  - Báo cáo rủi ro còn lại và các quyết định cần chủ dự án (đánh dấu rõ).
+
+
+9. RÀNG BUỘC TRẢI NGHIỆM: PHẢI CHƠI MƯỢT MÀ
+============================================
+NGUYÊN TẮC ƯU TIÊN: tiết kiệm chi phí (mục 4) và bảo mật (mục 8) KHÔNG được làm người chơi cảm thấy chậm,
+giật hoặc bị làm phiền. Khi có xung đột, trải nghiệm chơi mượt thắng, trừ khi đó là rủi ro bảo mật nghiêm trọng
+(khi đó xử lý theo quy trình ở MỤC 10, không tự đánh đổi và không dừng toàn bộ công việc). Mọi đề xuất phải ghi rõ "tác động lên cảm giác chơi" và cách giảm thiểu.
+
+9.1 NGÂN SÁCH ĐỘ TRỄ (đề xuất ban đầu, phải đo thực tế rồi chỉnh)
+  - Phản hồi UI cho thao tác bấm: dưới 100 ms (mô hình RAIL của Google; ngưỡng 0,1 giây của Jakob Nielsen).
+  - Hoạt ảnh/đếm số: giữ ổn định 60 fps (16 ms/khung), không để thao tác mạng chặn luồng vẽ.
+  - Lệnh gameplay: server xác nhận p95 dưới khoảng 300-500 ms (đo thực tế ở Việt Nam, rồi đặt SLO chính thức).
+  - Tin nhắn chat: hiển thị tới người khác dưới khoảng 1-2 giây.
+  - Core Web Vitals (INP, LCP, CLS) đo bằng real-user monitoring; không được xấu đi sau mỗi PR.
+  - Mỗi PR tối ưu phải báo cáo p50/p95 trước/sau. Làm xấu p95 thao tác chính hơn ngưỡng đã thỏa thuận
+    thì không được merge.
+
+9.2 KỸ THUẬT GIỮ CẢM GIÁC MƯỢT KHI GIẢM LƯỢT GỌI
+  1. Optimistic UI + client prediction + server reconciliation (netcode kiểu Gabriel Gambetta, Valve Source):
+     client dùng engine chung để hiển thị kết quả ngay lập tức, server vẫn là nguồn sự thật.
+     Khi server trả khác, hòa giải nhẹ nhàng (không giật lùi đột ngột, không popup lỗi).
+  2. Hiển thị tiến trình "sống" mà không cần gọi server liên tục: client nội suy/đếm tu vi và tài nguyên
+     theo công thức của engine giữa hai lần sync. Điều này cho phép giãn sync (mục P1) mà người chơi vẫn
+     thấy số chạy mượt. Sai lệch nhỏ khi server chốt phải được làm mượt (easing), không nhảy cóc.
+  3. Gộp lệnh KHÔNG được làm trễ lệnh đầu tiên: gửi ngay lệnh đầu, trong lúc chờ phản hồi thì gom các lệnh
+     sau thành một lô (adaptive batching với cửa sổ in-flight, tương tự Nagle/pipelining), tuyệt đối không dùng
+     bộ hẹn giờ chờ cố định làm trễ phản hồi.
+  4. Sync thích ứng: tăng giãn cách khi người chơi rảnh, NHƯNG quay về nhịp nhanh ngay khi có thao tác
+     (reset backoff theo hoạt động). Server đã trả nextSyncInMs: tận dụng để điều khiển.
+  5. Xử lý xung đột êm: REVISION_CONFLICT và RATE_LIMITED nên được client tự xử lý (đồng bộ lại, xếp hàng
+     lệnh, thử lại với jitter) mà không hiện lỗi cho người chơi, trừ khi thật sự không thể phục hồi.
+     Giới hạn tốc độ phía client (throttle cục bộ) để người chơi không bao giờ chạm 429 trong lúc chơi bình thường.
+  6. Hàng đợi lệnh offline ngắn hạn: mất mạng vài giây không làm mất thao tác; gửi lại theo thứ tự với
+     requestId/seq (idempotent). Hiển thị trạng thái kết nối rõ nhưng không gây hoảng.
+  7. Chat: ưu tiên Realtime/WebSocket thay polling để tin nhắn hiện gần như tức thì (cảm giác tốt hơn poll 6 giây
+     VÀ rẻ hơn). Nếu vẫn polling, tăng tần suất khi cửa sổ chat đang mở và đang gõ, giảm khi ẩn.
+     Hiển thị tin của chính mình ngay (optimistic) rồi xác nhận.
+  8. Tải trước và cache: preload dữ liệu tĩnh/engine, stale-while-revalidate cho leaderboard và dữ liệu đọc
+     nhiều (hiển thị ngay bản cũ, cập nhật nền). Dùng skeleton thay cho spinner chặn màn hình.
+  9. Giảm kích thước và độ trễ phản hồi: delta response, nén Brotli/gzip, JWT xác minh cục bộ, gộp truy vấn
+     pavilion, ghim region gần DB (mục P2, P3) đều làm game nhanh hơn: ưu tiên những mục này vì vừa rẻ vừa mượt.
+  10. Khởi động nguội (cold start) của Edge Function: giữ bundle nhỏ, khởi tạo lười (lazy init), đo thời gian khởi động.
+      KHÔNG dùng cron "giữ ấm" giả tạo (docs/edge-deployment.md đã cấm cho mục đích chống pause);
+      thay vào đó che độ trễ bằng optimistic UI.
+
+9.3 BẢO MẬT KHÔNG ĐƯỢC GÂY MA SÁT THỪA
+  - Dùng xác thực theo rủi ro (risk-based/adaptive): chỉ yêu cầu bước xác minh thêm (Turnstile tương tác, MFA)
+    khi có tín hiệu bất thường. Người chơi quen thuộc không bị CAPTCHA mỗi lần. Ưu tiên Turnstile chế độ
+    không tương tác/ẩn.
+  - Phát hiện bot và gian lận chạy phía server, bất đồng bộ, không nằm trên đường găng của lệnh gameplay
+    (không thêm truy vấn nặng vào mỗi lệnh; đẩy sang xử lý nền hoặc lấy mẫu).
+  - Giảm tốc/shadow ban chỉ áp cho tài khoản bị gắn cờ, không ảnh hưởng người chơi bình thường.
+  - Mọi kiểm tra bổ sung phải có ngân sách độ trễ riêng (ví dụ cộng thêm không quá vài ms CPU/lệnh) và được đo.
+  - Thông báo lỗi bằng tiếng Việt, rõ ràng, có hướng dẫn tiếp theo; không lộ chi tiết kỹ thuật hoặc cơ chế chống gian lận.
+
+9.4 CÁCH TRIỂN KHAI AN TOÀN CHO TRẢI NGHIỆM
+  - Feature flag cho từng thay đổi lớn (chat Realtime, sync thưa, lazy materialization, delta response);
+    bật dần theo phần trăm người chơi (canary), có nút tắt nhanh để quay về hành vi cũ.
+  - Đặt SLO và ngân sách lỗi (error budget, theo Google SRE) cho: tỉ lệ lỗi lệnh, p95 độ trễ, tỉ lệ
+    REVISION_CONFLICT. Vượt ngân sách thì dừng tối ưu và rollback.
+  - Kiểm thử trải nghiệm: thử trên mạng chậm/mất gói (throttle 3G, độ trễ 300 ms), thiết bị yếu, tab ẩn/hiện
+    lại, mất mạng rồi có mạng lại, nhiều tab. Ghi lại kết quả.
+  - Đo cảm nhận thực: thu thập metric ẩn danh phía client (độ trễ từ lúc bấm tới lúc UI đổi,
+    số lần hiển thị lỗi, số lần giật số khi hòa giải) với consent phù hợp, không gửi dữ liệu nhạy cảm.
+
+9.5 TIÊU CHÍ NGHIỆM THU VỀ TRẢI NGHIỆM
+  - Với mỗi hạng mục ở mục 4 và 8: bảng "Chi phí tiết kiệm / Rủi ro bảo mật giảm / Tác động tới cảm giác chơi",
+    kèm biện pháp giữ mượt đã dùng.
+  - p95 độ trễ thao tác chính và INP không xấu đi so với baseline (P0); chat không chậm hơn hiện tại.
+  - Không có thay đổi nào làm người chơi thấy số nhảy lùi, lệnh bị mất hoặc lỗi lặp lại trong lúc chơi bình thường.
+  - Nếu một tối ưu tiết kiệm lớn nhưng làm chơi kém mượt, GPT phải nêu phương án thay thế hoặc xin quyết định
+    của chủ dự án, không tự đánh đổi trải nghiệm để lấy chi phí.
+
+
+10. XỬ LÝ NGOẠI LỆ "RỦI RO BẢO MẬT NGHIÊM TRỌNG" (QUY TRÌNH QUYẾT ĐỊNH SẴN)
+===========================================================================
+Mục đích: GPT không phải dừng việc hay hỏi lại mỗi lần gặp xung đột giữa bảo mật và độ mượt.
+Chủ dự án duyệt MỘT LẦN bảng quyết định ở 10.4; sau đó GPT áp dụng. Chỉ hỏi lại với tình huống KHÔNG nằm
+trong bảng.
+
+10.1 THẾ NÀO LÀ "NGHIÊM TRỌNG"? (phân bậc rủi ro)
+  Chấm theo: tác động x khả năng xảy ra x phạm vi ảnh hưởng. Một rủi ro là NGHIÊM TRỌNG (bậc S0/S1) nếu thỏa
+  bất kỳ điều nào sau đây:
+  - Lộ hoặc sửa được dữ liệu của NGƯỜI CHƠI KHÁC, hoặc chiếm quyền tài khoản (account takeover).
+  - Làm sai lệch kinh tế game theo cách nhân bản/tạo tiền (Thiên Tinh, Thiên Mệnh Các), hoặc gian lận lan sang
+    người khác (bảng xếp hạng, chat, đấu).
+  - Lộ bí mật (DB URL, service-role key, seed RNG/seed bí cảnh), vượt qua RLS/Data API, vượt qua consent.
+  - Cho phép client quyết định state/thời gian/RNG/thưởng/giá (phá nguyên tắc server-authoritative).
+  - Có thể làm sập dịch vụ hoặc cạn quota Free chỉ bằng request rác (denial of wallet) mà không có lớp chặn.
+  - Vi phạm pháp lý/quyền riêng tư (xóa dữ liệu không trọn vẹn, lưu quá hạn, thu thập thiếu consent).
+
+  Bậc rủi ro:
+  S0 - CHẶN TUYỆT ĐỐI: không bao giờ đánh đổi lấy tốc độ/chi phí. (Danh sách ở 10.2.)
+  S1 - CAO: chỉ được đánh đổi nếu có biện pháp bù đắp (compensating control) đã ghi trong bảng 10.4.
+  S2 - TRUNG BÌNH: ưu tiên trải nghiệm; bảo vệ bằng giám sát và phản ứng theo bậc; không chặn người chơi thật.
+  S3 - THẤP/THẨM MỸ: ưu tiên trải nghiệm hoàn toàn (ví dụ gian lận chỉ ảnh hưởng chính người đó,
+     không đụng bảng xếp hạng/kinh tế chung).
+
+10.2 DANH SÁCH S0 (KHÔNG BAO GIỜ ĐÁNH ĐỔI)
+  S0-1. Client không bao giờ gửi hoặc quyết định state, thời gian, RNG, phần thưởng, giá, cờ offline.
+        Dự đoán phía client chỉ để HIỂN THỊ; server luôn tính lại và là nguồn sự thật.
+  S0-2. Schema game không lộ ra Data API; RLS bật; không cấp quyền cho anon/authenticated.
+  S0-3. Mọi route ghi dữ liệu xác thực JWT hợp lệ (alg whitelist, iss, aud, exp) và kiểm tra quyền sở hữu (#own).
+  S0-4. Không double-spend: khóa hàng/CAS theo revision/version và kiểm tra số dư ngay trong transaction.
+  S0-5. Seed RNG và seed bí cảnh không bao giờ ra khỏi server (snapshot/export đã loại).
+  S0-6. Truy vấn luôn tham số hóa; đầu ra người dùng luôn escape; CSP không nới lỏng.
+  S0-7. Consent theo phiên bản chính sách được kiểm tra trước route gameplay; xóa dữ liệu phải trọn vẹn.
+  S0-8. Không log token, state, SQL, mật khẩu, connection string.
+  S0-9. Idempotency/chống replay không yếu đi sau mọi tối ưu (kể cả khi bỏ bảng receipt).
+  Nếu một đề xuất tối ưu vi phạm S0: LOẠI đề xuất đó, tìm phương án khác. Đây là đường ranh không thương lượng.
+
+10.3 NGUYÊN TẮC "VỪA AN TOÀN VỪA MƯỢT" (cách giải xung đột, theo thứ tự thử)
+  1. Dời kiểm tra ra khỏi đường găng: chạy bất đồng bộ/lấy mẫu/nền (phát hiện bot, bất thường, đối soát ledger)
+     thay vì chặn từng lệnh.
+  2. Tiered security (bảo mật theo bậc route): route rẻ và tần suất cao (sync, command thường, chat poll)
+     dùng đường nhanh; route nhạy cảm, tần suất thấp (đăng ký, tạo nhân vật, mua Thiên Mệnh Các,
+     exportData, eraseData, deleteAccount, đổi mật khẩu) dùng đường chặt, chấp nhận trễ thêm vài chục ms.
+  3. Step-up khi có tín hiệu bất thường: người chơi bình thường không thấy gì; chỉ khi nghi ngờ mới thêm bước
+     xác minh (Turnstile tương tác, đăng nhập lại, MFA).
+  4. Tự chữa lành (self-healing): khi dữ liệu client lệch (revision, delta), server trả bản đầy đủ và client
+     hòa giải êm, không báo lỗi.
+  5. Fail-closed cho ghi và kinh tế; fail-soft (xuống cấp có kiểm soát) cho đọc không nhạy cảm:
+     - FAIL-CLOSED: xác thực, consent, mọi ghi, giao dịch kinh tế, lỗi DB khi ghi, lỗi xác minh chữ ký.
+     - FAIL-SOFT: bảng xếp hạng (trả bản cache cũ), số người online, lịch sử chat (trả bản đã cache),
+       chỉ số phụ, Turnstile ngừng hoạt động (cho qua nhưng siết rate limit theo IP/tài khoản).
+  6. Nếu vẫn xung đột và không phải S0: chọn phương án an toàn nhất mà ngân sách độ trễ (mục 9.1) cho phép,
+     chạy sau feature flag, đo, rồi báo cáo.
+
+10.4 BẢNG QUYẾT ĐỊNH SẴN (ĐỀ XUẤT; chủ dự án đánh dấu Đồng ý / Sửa một lần)
+  Trạng thái mặc định của mọi dòng: CHỜ XÁC NHẬN. GPT được phép bắt đầu triển khai sau flag khi dòng đó
+  được "Đồng ý"; dòng chưa duyệt thì chỉ phân tích/đề xuất, chưa merge.
+
+  D1  Xác minh JWT
+      Quyết định: xác minh cục bộ qua JWKS (ES256/RS256, alg whitelist, kiểm iss/aud/exp/kid, cache JWKS có TTL)
+      cho route tần suất cao (sync, pause, command, chat, leaderboard, state).
+      Route nhạy cảm (create, pavilionPurchase, exportData, eraseData, deleteAccount) vẫn hỏi Supabase Auth
+      (/auth/v1/user) để có thu hồi phiên tức thời.
+      Bù đắp: access token ngắn hạn; refresh token rotation với reuse detection; giới hạn độ trễ thu hồi
+      bằng thời hạn access token. Không bật HU_AUTH_CACHE_MS ở route nhạy cảm.
+      Bậc: S1. Tác động mượt: tốt hơn (bỏ một HTTP call mỗi request). Trạng thái: CHỜ XÁC NHẬN.
+
+  D2  Presence lease và sync thưa
+      Quyết định: server cấp lease ký (HMAC) có hạn 90-120 giây; client gia hạn mỗi nửa thời hạn lease;
+      tiến trình chỉ được server cộng trong khoảng lease hợp lệ; hết lease thì dừng tích lũy (giữ nguyên
+      "offline không tích lũy"). Client dự đoán chỉ để hiển thị (S0-1).
+      Bậc: S1 (liên quan gameplay). Tác động mượt: tốt (số chạy mượt nhờ nội suy). Trạng thái: CHỜ XÁC NHẬN.
+
+  D3  Lazy materialization (heartbeat chỉ cập nhật last_seen_at)
+      Quyết định: cho phép nếu có test chứng minh kết quả advance() giống hệt cách hiện tại trên bộ kịch bản
+      (kể cả khoảng trống lớn hơn grace, chuyển tab, nhiều tab). Lệch kết quả thì fail-closed (dùng đường cũ).
+      Bậc: S1. Trạng thái: CHỜ XÁC NHẬN.
+
+  D4  Chặn spam và DoS toàn cục
+      Quyết định: Cloudflare (WAF + rate limiting) phía trước API; client throttle cục bộ để người chơi thường
+      không chạm 429; server giữ 429 + Retry-After; thêm maintenance flag và cảnh báo quota.
+      Bậc: S0/S1 (denial of wallet). Tác động mượt: không đáng kể. Trạng thái: CHỜ XÁC NHẬN.
+
+  D5  Turnstile/CAPTCHA
+      Quyết định: chế độ không tương tác/ẩn ở đăng ký và đăng nhập; chỉ hiện tương tác khi rủi ro cao.
+      Turnstile ngừng hoạt động: fail-soft (cho qua + siết rate limit). Người chơi quen thuộc không bị CAPTCHA.
+      Bậc: S2. Trạng thái: CHỜ XÁC NHẬN.
+
+  D6  Chống gian lận/bot
+      Quyết định: phát hiện bất đồng bộ (mục 8.3), phản ứng theo bậc: ghi log -> giảm tốc -> ẩn khỏi bảng
+      xếp hạng -> khóa. KHÔNG tự động khóa vĩnh viễn; mọi khóa cần người xem xét và có quy trình khiếu nại.
+      Bậc: S2 (S1 nếu ảnh hưởng bảng xếp hạng/kinh tế chung). Trạng thái: CHỜ XÁC NHẬN.
+
+  D7  Idempotency bằng last_seq thay bảng receipt
+      Quyết định: cho phép nếu giữ fingerprint lệnh và bảo đảm replay cho cùng seq trả đúng kết quả cũ,
+      seq khác kết quả/lệnh thì REQUEST_ID_REUSED. Phải có test replay, đảo thứ tự, trùng lặp, đồng thời.
+      Bậc: S0-9 (không được yếu đi). Trạng thái: CHỜ XÁC NHẬN.
+
+  D8  Delta response
+      Quyết định: server so lastRevision của client; không khớp hoặc không chắc thì trả snapshot đầy đủ
+      (tự chữa lành). Client không bao giờ tin delta để ghi state lên server.
+      Bậc: S2. Trạng thái: CHỜ XÁC NHẬN.
+
+  D9  Role DB tối thiểu quyền (thay tài khoản postgres)
+      Quyết định: tạo role riêng cho pooler, không BYPASSRLS, chỉ quyền cần thiết trên schema game,
+      chuyển bằng migration additive và kế hoạch rollback; thử trên staging trước.
+      Bậc: S1. Tác động mượt: không. Trạng thái: CHỜ XÁC NHẬN.
+
+  D10 Xoay vòng bí mật
+      Quyết định: xoay vòng không gián đoạn (hai bí mật song song trong cửa sổ chuyển đổi), lịch định kỳ
+      và sau sự cố. Bậc: S1. Trạng thái: CHỜ XÁC NHẬN.
+
+  D11 Lọc chat và tên (bidi, zero-width, confusable UTS #39)
+      Quyết định: chặn ở server, thông báo tiếng Việt thân thiện khi bị từ chối. Bậc: S2.
+      Tác động mượt: không đáng kể. Trạng thái: CHỜ XÁC NHẬN.
+
+  D12 Vân tay thiết bị
+      Quyết định mặc định: KHÔNG áp dụng. Chỉ xem xét nếu qua đánh giá quyền riêng tư và có consent riêng.
+
+  D13 Commit-reveal cho RNG/gieo
+      Quyết định mặc định: KHÔNG áp dụng (thuộc quyết định gameplay P0/P1). Chỉ đề xuất, không triển khai.
+
+  D14 Dự đoán phía client (client prediction)
+      Quyết định: cho phép để hiển thị; server tính lại và là nguồn sự thật; chênh lệch được hòa giải bằng
+      easing. Bậc: S0-1 được giữ nguyên. Trạng thái: CHỜ XÁC NHẬN.
+
+10.5 QUY TRÌNH KHI GẶP XUNG ĐỘT (GPT làm theo thứ tự, KHÔNG dừng toàn bộ công việc)
+  1. Phân loại bậc rủi ro (S0-S3) theo 10.1 và ghi vào mô tả PR.
+  2. Nếu vi phạm S0: loại phương án, đề xuất phương án thay thế; tiếp tục các hạng mục khác.
+  3. Nếu thuộc dòng đã "Đồng ý" trong bảng 10.4: áp dụng đúng quyết định, chạy sau feature flag, đo độ trễ.
+  4. Nếu S1 nhưng chưa có trong bảng: soạn tối thiểu 2 phương án (một phương án giữ mượt), nêu bù đắp,
+     chọn phương án an toàn nhất trong ngân sách độ trễ, triển khai sau flag TẮT mặc định, rồi gửi
+     "yêu cầu quyết định" cho chủ dự án (mẫu ở 10.6). Không merge bật mặc định khi chưa được duyệt.
+  5. Nếu S2/S3: ưu tiên trải nghiệm, thêm giám sát; không cần hỏi.
+  6. Sau khi triển khai: đo p95 độ trễ, tỉ lệ lỗi, tỉ lệ người chơi bị thử thách thêm (challenge rate);
+     vượt ngưỡng thì tắt flag và rollback.
+
+10.6 MẪU "YÊU CẦU QUYẾT ĐỊNH" GỬI CHỦ DỰ ÁN (ngắn, một trang)
+  - Tình huống và mối đe dọa (mô tả bằng STRIDE/OWASP, bậc S?).
+  - Phương án A (an toàn nhất), phương án B (giữ mượt nhất), phương án C (nếu có).
+  - Với mỗi phương án: chi phí tiết kiệm, độ trễ thêm (đo được), rủi ro còn lại, độ phức tạp, cách rollback.
+  - Khuyến nghị của GPT và lý do. Quyết định mặc định nếu chủ dự án không phản hồi trong thời hạn:
+    PHƯƠNG ÁN AN TOÀN HƠN, flag vẫn TẮT.
+
+10.7 TIÊU CHÍ NGHIỆM THU CHO MỤC 10
+  - Không có tối ưu nào vi phạm danh sách S0 (có test tự động kiểm tra cho S0-1, S0-2, S0-3, S0-4, S0-9).
+  - Mỗi thay đổi bảo mật/hiệu năng có ghi bậc rủi ro, quyết định tương ứng ở 10.4 (hoặc yêu cầu quyết định),
+    số đo độ trễ trước/sau và kế hoạch rollback.
+  - Báo cáo tổng hợp: các dòng D1-D14 đã duyệt/chưa duyệt, rủi ro còn lại, và những gì đang chờ chủ dự án.
+
+
+11. QUYẾT ĐỊNH MỚI CỦA CHỦ DỰ ÁN (GHI ĐÈ CÁC MỤC TRƯỚC KHI MÂU THUẪN)
+====================================================================
+Chỉ đạo: (a) chat mỗi người 1 tin/15 giây; (b) sau 1 giờ xóa toàn bộ tin nhắn phía máy chủ;
+(c) bảng xếp hạng cập nhật 12 giờ/lần; (d) bảo mật không cần quá chặt; (e) backend ưu tiên giảm tải và
+tiết kiệm lưu trữ. Game vẫn phải chơi mượt (mục 9 còn hiệu lực).
+
+11.1 CHAT
+  Quy tắc sản phẩm:
+  - Giới hạn 1 tin / 15 giây / người (thay cho 2 giây trong social.ts).
+  - Tin nhắn có hiệu lực tối đa 1 giờ kể từ lúc gửi (rolling TTL): API KHÔNG BAO GIỜ trả tin quá 1 giờ
+    (lọc created_at > now - 1h ở mọi truy vấn đọc), và dữ liệu bị XÓA VẬT LÝ khỏi máy chủ trong vài phút sau đó.
+    Không lưu lịch sử dài hạn, không sao lưu riêng cho chat.
+  Việc cần làm (ưu tiên giảm tải và lưu trữ):
+  1. Bảng chat tạm: chuyển world_chat_messages (và world_chat_presence) sang UNLOGGED (không ghi WAL, nhẹ hơn;
+     mất dữ liệu khi DB crash là chấp nhận được vì chat vốn tạm thời). Làm bằng migration additive
+     (tạo bảng mới + chuyển dần), có rollback.
+  2. Dọn dẹp: pg_cron (nếu khả dụng trên gói đang dùng) chạy DELETE ... WHERE created_at < now - 1h mỗi ~5 phút
+     (bảng nhỏ nên bloat không đáng kể). Phương án dự phòng không cần pg_cron: dọn "cơ hội" trong chatSend
+     với advisory try-lock, tối đa 1 lần/5 phút. Nếu đo thấy bloat: chuyển sang phân vùng theo 15 phút và
+     DROP/TRUNCATE phân vùng cũ (không sinh dead tuple). GPT chọn sau khi đo và ghi lý do.
+  3. Giới hạn 15 giây bằng một câu UPDATE có điều kiện (conditional update làm rate limiter):
+     UPDATE presence SET last_chat_at = $now WHERE owner_id = $1 AND last_chat_at <= $now - 15000 RETURNING ...
+     Không cần advisory lock, không cần truy vấn "tin gần nhất" và có thể bỏ index (owner_id, created_at).
+     Khi không cập nhật được: trả RATE_LIMITED kèm retryAfterMs.
+  4. Client: hiện đồng hồ đếm ngược 15 giây ngay trên nút gửi và chặn gửi cục bộ để người chơi không bao giờ
+     thấy lỗi; hiển thị tin của mình ngay (optimistic).
+  5. Giảm tải đọc: với tốc độ tối đa 1 tin/15 giây/người, chat là kênh chậm, KHÔNG cần poll 6 giây.
+     Poll mỗi ~8-12 giây khi cửa sổ chat đang mở và tab hiển thị; dừng khi đóng chat hoặc tab ẩn.
+     (Nếu dùng Realtime thì kiểm tra hạn mức gói Free hiện hành trước.)
+  6. Micro-cache + singleflight: kết quả đọc theo kênh được cache trong isolate 3-5 giây và gộp các request
+     đồng thời cùng kênh thành một truy vấn, nên N người cùng poll chỉ tốn 1 truy vấn.
+  7. chatPoll không còn upsert heartbeat mỗi lần (heartbeat của sync/chat gửi đã đủ). Số người online:
+     tính từ bảng presence UNLOGGED và cache 30-60 giây, hoặc làm tròn/ước lượng; không count(*) mỗi lần poll.
+  8. Đơn giản hóa chống spam: giới hạn 15 giây đã là biện pháp chính. Giữ độ dài 1-400 ký tự và chặn ký tự điều khiển.
+     Không cần bộ lọc từ cấm hay kiểm tra confusable (UTS #39) ở giai đoạn này.
+  9. Xem lại các luồng liên quan: exportData, deleteOwnerData, deletePlayer (hiện xóa/đọc chat) đơn giản
+     hóa vì chat chỉ còn tối đa 1 giờ; kiểm tra kênh "sect" (hiện lấy sect_id qua join player_leaderboard,
+     xem 11.2 để không làm vỡ phụ thuộc này).
+
+11.2 BẢNG XẾP HẠNG (cập nhật 12 giờ/lần)
+  Mục tiêu: bỏ chi phí duy trì xếp hạng theo thời gian thực.
+  1. Gỡ trigger trg_sync_player_leaderboard (chạy trên MỌI lần UPDATE state/name/combat_power của players và
+     upsert vào player_leaderboard). Đây là một trong các khoản ghi thừa lớn nhất.
+  2. Thay bằng "ảnh chụp xếp hạng" (snapshot) làm mới 12 giờ/lần:
+     - Bảng nhỏ leaderboard_snapshot (mỗi chế độ power/realm: top N, ví dụ 50-100, kèm updated_at),
+       hoặc một dòng jsonb cho mỗi chế độ (rất nhỏ, ghi 2 dòng/12 giờ).
+     - Làm mới bằng pg_cron mỗi 12 giờ (không tốn lượt gọi Edge). Dự phòng không cần pg_cron: làm mới
+       "lười" ở request leaderboard đầu tiên sau khi snapshot hết hạn, có advisory try-lock/singleflight để chỉ
+       một request tính; các request khác trả bản cũ (stale-while-revalidate).
+     - Truy vấn làm mới quét players (ORDER BY combat_power DESC LIMIT N). Với quy mô nhỏ/vừa không cần index
+       riêng; GPT đo và quyết định. Phải loại người chơi đã tọa hóa (đọc migration
+       20261111040200_v7_consent_and_deceased_leaderboard.sql để giữ đúng luật hiện có).
+  3. Hạng của chính người chơi (trước đây dùng count(*) mỗi lần): chỉ hiển thị nếu nằm trong top N của snapshot;
+     ngoài top N hiển thị hạng ước lượng bằng bách phân vị (percentile) từ biểu đồ phân bố (histogram) lưu kèm
+     snapshot. Không chạy count(*) toàn bảng cho từng request. (Chủ dự án có thể chọn bỏ hạng ngoài top.)
+  4. Phục vụ bằng cache: danh sách top N giống nhau cho mọi người nên cho cache ở Cloudflare/CDN
+     (Cache-Control max-age lớn + stale-while-revalidate) và cache trong isolate; chỉ phần "của tôi" là nhỏ,
+     riêng từng người. Client hiển thị "cập nhật lần cuối: ..., lần sau: ...".
+  5. Lưu trữ: sau khi ổn định, DROP bảng player_leaderboard cùng các index (INCLUDE) và cột rating/wins/losses
+     không dùng. Trước đó phải xử lý phụ thuộc: social.ts lấy sect_id của người chơi từ player_leaderboard;
+     chuyển sang đọc từ players.state (sect.joined/sect.id) bằng một truy vấn theo owner_id.
+     Xóa các câu lệnh DELETE FROM game.player_leaderboard còn lại trong postgres-players.js.
+  6. Migration additive theo từng bước (thêm snapshot -> chuyển đọc -> gỡ trigger -> sau cùng mới DROP),
+     có rollback; không DROP khi chưa xác nhận.
+
+11.3 BẢO MẬT: NỚI LỎNG THEO CHỈ ĐẠO (mức vừa đủ)
+  Quy tắc: không đầu tư vào các lớp bảo vệ phụ gây tốn tải/độ trễ/công sức. Chỉ giữ các điều sau vì chi phí gần
+  bằng 0 và bỏ đi sẽ làm hỏng game (gian lận lan sang kinh tế và xếp hạng) hoặc rủi ro pháp lý:
+  GIỮ (tối thiểu, không đổi so với hiện trạng):
+   - Server quyết định state/thời gian/RNG/thưởng/giá (S0-1); client chỉ dự đoán để hiển thị.
+   - Schema game không lộ ra Data API, RLS bật (S0-2).
+   - Xác minh JWT hợp lệ và kiểm tra quyền sở hữu người chơi (S0-3).
+   - Khóa hàng/CAS theo revision, kiểm tra số dư trong transaction (S0-4) (đã có sẵn, không tốn thêm).
+   - Truy vấn tham số hóa, escape đầu ra, không lộ seed, không log token/mật khẩu/connection string.
+   - Luồng consent và xóa dữ liệu hiện có (liên quan pháp lý).
+   - Giới hạn tốc độ cơ bản theo isolate + một quy tắc rate limit cơ bản ở Cloudflare để tránh cạn quota
+     (đây là vấn đề chi phí, không phải "bảo mật cứng").
+  BỎ/HOÃN (không làm trong giai đoạn này): MFA/Passkeys, DPoP, sổ cái kế toán kép và job đối soát,
+   log kiểm toán, phát hiện bất thường/bot phức tạp, vân tay thiết bị, commit-reveal RNG,
+   kiểm tra confusable UTS #39, bộ lọc từ cấm, fuzzing/ZAP định kỳ, xoay vòng bí mật theo lịch
+   (chỉ xoay khi có sự cố), role DB riêng (làm sau nếu có thời gian), refresh token rotation tùy chỉnh,
+   Turnstile bắt buộc (chỉ bật khi thấy bị spam đăng ký).
+  Bảng quyết định mục 10.4 được điều chỉnh:
+   D1 JWT: xác minh cục bộ qua JWKS cho MỌI route trừ deleteAccount/eraseData; hoặc bật HU_AUTH_CACHE_MS tối đa
+      30000 ms. Độ trễ thu hồi phiên chấp nhận được.                              -> ĐÃ NỚI LỎNG
+   D2 Presence/sync: ưu tiên giãn nhịp sync (xem 11.4), không làm lease ký phức tạp.   -> ĐƠN GIẢN HÓA
+   D3 Lazy materialization: vẫn cho phép nếu có test tương đương; là ứng viên giảm ghi DB. -> GIỮ
+   D4 Chặn spam toàn cục: giữ ở mức cơ bản (rate limit + cảnh báo quota).               -> GIỮ (tối thiểu)
+   D5 Turnstile: tùy chọn, chỉ bật khi cần.                                             -> HOÃN
+   D6 Chống gian lận/bot: chỉ giới hạn tốc độ cơ bản, không xây hệ thống phát hiện.     -> HOÃN
+   D7 Idempotency: giữ (S0-9), cho phép last_seq/TTL ngắn để tiết kiệm lưu trữ.          -> GIỮ
+   D8 Delta response: cho phép để giảm egress, tự chữa lành bằng snapshot đầy đủ.        -> GIỮ
+   D9 Role DB riêng, D10 xoay bí mật theo lịch: HOÃN.
+   D11 Lọc chat: chỉ độ dài + ký tự điều khiển.                                         -> ĐƠN GIẢN HÓA
+   D12, D13: KHÔNG áp dụng. D14 client prediction: GIỮ (làm game mượt).
+
+11.4 GIẢM TẢI VÀ TIẾT KIỆM LƯU TRỮ: ƯU TIÊN SỐ 1 VÀ 2
+  Thắng nhanh (chủ yếu cấu hình, rủi ro thấp; đo UX rồi triển khai canary):
+   - HU_SYNC_INTERVAL_MS tăng từ 20000 lên 30000-60000 (giới hạn mã là 5000-60000) và HU_ONLINE_GRACE_MS
+     >= 3 lần nhịp sync (tối đa 180000). Kết hợp client dự đoán/nội suy để số vẫn chạy mượt.
+     Lưu ý đây ảnh hưởng nhịp presence nên phải đo trải nghiệm và báo cáo trước khi đặt làm mặc định.
+   - HU_AUTH_CACHE_MS = 30000; HU_CONSENT_CACHE_MS = 900000 (đã được chấp nhận theo 11.3).
+   - Không ghi DB khi pause lặp lại hoặc sync không đổi state (đã có một phần; kiểm tra và hoàn thiện).
+  Giảm ghi và lưu trữ:
+   - Receipt: giảm TTL từ 7 ngày xuống cửa sổ retry thực tế (vài phút đến 1 giờ) hoặc thay bằng last_seq
+     trong dòng players (mục P3). Chỉ lưu fingerprint + revision + kết quả nhỏ.
+   - pavilion_receipts hiện KHÔNG có hạn xóa nên tăng mãi: thêm TTL hoặc chỉ giữ request gần nhất
+     trên pavilion_accounts.
+   - creation_tickets: rút thời gian dọn từ 7 ngày xuống 1 ngày (giữ đủ để áp hạn mức gieo lại trong ngày).
+   - state: giới hạn cứng mảng logs, tách phần ít đổi, bật nén TOAST lz4, delta response (mục P3).
+   - Bỏ trigger/bảng/index leaderboard theo 11.2; bỏ các index chat không còn dùng theo 11.1.
+   - Mọi bảng có dữ liệu phát sinh liên tục phải có chính sách xóa (TTL) được ghi rõ trong mô tả migration.
+  Nghiệm thu giảm tải: báo cáo trước/sau cho (a) số lượt gọi Edge/giờ/người (active, idle, chat bật),
+   (b) số truy vấn và byte ghi (WAL) mỗi route, (c) dung lượng DB sau 30 ngày mô phỏng, (d) byte egress
+   mỗi giờ/người. Mục tiêu: nằm dưới quota Free ở quy mô đã đặt trong P0 với biên an toàn.
+
+11.5 GIỮ TRẢI NGHIỆM MƯỢT TRONG CÁC THAY ĐỔI TRÊN
+  - Chat chậm có chủ đích (15 giây/tin) nên phải đi kèm đồng hồ đếm ngược và hiển thị tin của mình ngay.
+  - Bảng xếp hạng 12 giờ phải có nhãn thời điểm cập nhật; mở bảng xếp hạng phải tức thì (đọc từ cache).
+  - Sync thưa phải có nội suy phía client; chênh lệch khi server chốt được làm mượt.
+  - Không thay đổi nào được làm tăng p95 độ trễ thao tác chính so với baseline (mục 9.1).
