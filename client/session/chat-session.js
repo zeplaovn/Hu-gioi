@@ -112,7 +112,7 @@
         this.cursor = String(data.cursor || this.cursor);
         this.state.online = Number(data.online) || 0;
         this.state.status = 'online'; this.state.error = ''; this.attempt = 0; this.emit();
-        this.schedule(gen, data.hasMore ? 1800 : 6000);
+        this.schedule(gen, data.hasMore ? 1800 : 10000);
       } catch (error) { this.fail(error, gen); }
     }
     async send(text, requestId) {
