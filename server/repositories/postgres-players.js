@@ -181,7 +181,7 @@ class PostgresPlayers extends PlayerRepository {
         throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
       await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
       const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]));
-      const consumed = {}; // Không mang Kỳ Trân từ kiếp trước sang đạo thân mới.
+      const consumed = { ...account.relics }; // Hàng Khởi Nguyên đã mua, chỉ phát một lần.
       const rec = await build(json(ticket.preview), { ...account, consumed });
       const serialized = JSON.stringify(rec.state);
       if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
@@ -202,6 +202,8 @@ class PostgresPlayers extends PlayerRepository {
         throw err;
       }
       await exec(c, 'UPDATE game.creation_tickets SET used_at = $1 WHERE id = $2', [big(now), ticketId]);
+      if (Object.keys(consumed).length)
+        await exec(c, "UPDATE game.pavilion_accounts SET relics = '{}'::jsonb, version = version + 1 WHERE owner_id = $1 AND version = $2", [ownerId, big(account.version)]);
       await this.sweep(c, ownerId, now, id);
       return hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1', [id]));
     });
@@ -284,7 +286,12 @@ class PostgresPlayers extends PlayerRepository {
     return this.transaction(async c => {
       await this.ownerLock(c, ownerId);
       const player = await one(c, 'SELECT * FROM game.players WHERE owner_id = $1 FOR UPDATE', [ownerId]);
-      await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
+      // Tặng ngân sách thử nghiệm một lần khi đổi món Khởi Nguyên đầu tiên.
+      // Chỉ INSERT khi chưa có đạo thân, không cấp lại bằng request trùng.
+      if (kind === 'starter' && !player)
+        await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id, balance, total_earned) VALUES ($1,$2,$2) ON CONFLICT DO NOTHING', [ownerId, big(catalog.starterGrant)]);
+      else
+        await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
       const row = await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]);
       const account = pavilion(row);
       const prior = await one(c, 'SELECT fingerprint FROM game.pavilion_receipts WHERE owner_id = $1 AND request_id = $2', [ownerId, requestId]);
@@ -292,6 +299,8 @@ class PostgresPlayers extends PlayerRepository {
         const cost = decodePavilionReceipt(prior.fingerprint, kind, key);
         return { replayed: true, cost, pavilion: account, record: hydrate(player) };
       }
+      if (kind === 'starter' && player)
+        throw new GameError('GAME_RULE_VIOLATION', 'Hàng Khởi Nguyên chỉ đổi trước khi tạo đạo thân.');
       if (account.version !== expectedVersion)
         throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
       const upgrades = { ...account.upgrades }, relics = { ...account.relics };
@@ -301,6 +310,12 @@ class PostgresPlayers extends PlayerRepository {
         cost = catalog.upgradeCost(current);
         if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
         upgrades[key] = current + 1;
+      } else if (kind === 'starter' && Object.hasOwn(catalog.starter, key)) {
+        const product = catalog.starter[key], held = relics[key] || 0;
+        if (!Number.isInteger(held) || held < 0 || held >= product.max)
+          throw new GameError('GAME_RULE_VIOLATION', 'Hàng Khởi Nguyên đã đạt giới hạn.');
+        cost = product.cost;
+        relics[key] = held + 1;
       } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
       if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
       await exec(c, `UPDATE game.pavilion_accounts SET

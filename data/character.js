@@ -39,10 +39,21 @@ const PAVILION_RELICS=Object.freeze({
  nguDaoNgoc:{name:'Ngộ Đạo Ngọc',desc:'Kiếp sau nhận 15% tu vi tầng đầu',cost:45,maxStored:5},
  truongSinhNgoc:{name:'Trường Sinh Ngọc',desc:'Kiếp sau tăng 1 năm thọ nguyên',cost:35,maxStored:5}
 });
+/* Quầy Khởi Nguyên của Thiên Mệnh Các: mua trước khi lập đạo thân.
+   Chi phí cố định do server kiểm soát; vật phẩm được nhận đúng một lần lúc tạo.
+   Tặng 10 Thiên Tinh cho tài khoản mới chỉ khi mua món starter đầu tiên. */
+const STARTER_GRANT = 10;
+const STARTER_TALENT_MAX = 4;
+const PAVILION_STARTER=Object.freeze({
+  talentPoint:{name:'Điểm Thiên Phú',desc:'+1 điểm phân bổ lúc tạo đạo thân (tối đa 4).',cost:4,max:STARTER_TALENT_MAX},
+  linhThach:{name:'Linh Thạch Nhập Thế',desc:'+200 linh thạch khởi đầu.',cost:2,max:2},
+  tuKhiDan:{name:'Tụ Khí Đan',desc:'+2 Tụ Khí Đan trong hành trang đầu game.',cost:3,max:2},
+  boiNguyenDan:{name:'Bồi Nguyên Đan',desc:'+2 Bồi Nguyên Đan hồi phục đầu game.',cost:2,max:2}
+});
 const pavilionBonus=level=>Math.min(20,Math.max(0,Math.floor(Number(level)||0)))*.025;
 const pavilionUpgradeCost=level=>level>=20?null:level<5?2:level<10?4:level<15?8:12;
 const pavilionRealmReward=realm=>Number.isInteger(realm)&&realm>0&&realm<=13?realm*5:0;
-const PAVILION=Object.freeze({stats:PAVILION_STATS,relics:PAVILION_RELICS,bonus:pavilionBonus,upgradeCost:pavilionUpgradeCost,realmReward:pavilionRealmReward});
+const PAVILION=Object.freeze({stats:PAVILION_STATS,relics:PAVILION_RELICS,starter:PAVILION_STARTER,starterGrant:STARTER_GRANT,starterTalentMax:STARTER_TALENT_MAX,bonus:pavilionBonus,upgradeCost:pavilionUpgradeCost,realmReward:pavilionRealmReward});
 const META_ACHIEVEMENTS=[
  {id:'first_break',name:'Phá vỡ tầng đầu',desc:'Đột phá thành công lần đầu.',points:1,check:s=>s.stage>1||s.realm>0},
  {id:'kim_dan',name:'Kết Đan',desc:'Bước vào cảnh giới Kết Đan.',points:2,check:s=>s.realm>=2},

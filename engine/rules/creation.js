@@ -35,15 +35,20 @@
         talent[key] = n;
         total += n;
       }
-      if (total > H.TALENT_MAX) throw Error('Thiên phú vượt quá 8 điểm.');
-      if (total !== H.TALENT_MAX) throw Error('Phải phân bổ đủ 8 điểm thiên phú trước khi vào game.');
+      // extraTalentPoints chỉ do máy chủ truyền từ các lần đổi Thiên Tinh hợp lệ;
+      // createPlayer() không chấp nhận trường này từ client.
+      const extra = profile.extraTalentPoints ?? 0;
+      if (!Number.isInteger(extra) || extra < 0 || extra > H.PAVILION.starterTalentMax)
+        throw Error('Điểm Thiên Phú Thiên Mệnh Các không hợp lệ.');
+      const required = H.TALENT_MAX + extra;
+      if (total !== required) throw Error('Phải phân bổ đủ ' + required + ' điểm thiên phú trước khi vào game.');
       const destiny = profile.destiny === undefined ? 'none' : profile.destiny;
       if (destiny !== 'none' && !Object.hasOwn(H.META_UPGRADES, destiny)) throw Error('Thiên mệnh khởi nguyên không hợp lệ.');
       const s = H.create(now);
       s.destiny = destiny;
       if (destiny !== 'none') s.meta.upgrades[destiny] = 1;
       s.extraLife = (s.meta.upgrades.life || 0) * 5;
-      Object.assign(s, { name, gender: profile.gender, race: profile.race, roots: [...profile.roots], rootType: profile.rootType, rootSub, age: profile.age, talent, created: true });
+      Object.assign(s, { name, gender: profile.gender, race: profile.race, roots: [...profile.roots], rootType: profile.rootType, rootSub, age: profile.age, talent, starterTalentPoints: extra, created: true });
       s.stone = H.startStone(talent, s.meta);
       const g = new H.Game(s, rng);
       g.add('MAT-001', 8);
@@ -59,10 +64,18 @@
        Thiên tinh và kho bảo vật luôn lưu ngoài state, theo tài khoản. */
     H.applyPavilionOnCreate = function (state, upgrades, relics) {
       state.pavilion = Object.fromEntries(Object.keys(H.PAVILION.stats).map(k => [k, Math.min(20, Math.max(0, Math.floor(upgrades?.[k] || 0)))]));
-      state.stone += (relics?.tuiLinhThach || 0) * 200;
-      state.extraLife += relics?.truongSinhNgoc || 0;
+      // Mỗi gói khởi nguyên đã trả tiền chỉ cấp một lần trong transaction tạo đạo thân.
       const game = new H.Game(state);
-      state.qi += (relics?.nguDaoNgoc || 0) * game.need() * .15;
+      const quantity = key => {
+        const limit = H.PAVILION.starter[key]?.max ?? 0;
+        const n = relics?.[key] ?? 0;
+        if (!Number.isInteger(n) || n < 0 || n > limit) throw Error('Hàng khởi nguyên không hợp lệ.');
+        return n;
+      };
+      if (quantity('talentPoint') !== state.starterTalentPoints) throw Error('Điểm Thiên Phú không khớp giao dịch.');
+      state.stone += quantity('linhThach') * 200;
+      game.add('PILL-002', quantity('tuKhiDan') * 2);
+      game.add('PILL-001', quantity('boiNguyenDan') * 2);
       state.hp = game.stats().HP;
       state.mp = game.maxMp();
       return state;

@@ -69,6 +69,7 @@
       version: VERSION, death: null, destiny: 'none', presencePaused: false, created: false, name: 'Hàn Thiên Sơn', gender: 'nam', race: 'nhan',
       roots: [72, 41, 38, 55, 47], rootType: 'Song', rootSub: '', chaosTries: 0,
       talent: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0 },
+      starterTalentPoints: 0,
       pavilion: { tuongMao: 0, phucDuyen: 0, canCot: 0, ngoTinh: 0, vanKhi: 0, coDuyen: 0 },
       realm: 0, stage: 1, qi: 0, hp: 100, mp: 100, stone: 380, jade: 6, zone: 0,
       auto: false, enemyHp: 0, enemyNum: 0, combatClock: 0, manualAt: 0, enemyKind: 'thường',
@@ -245,10 +246,12 @@
     for (const k of ['pity', 'rebirths', 'offlineCap', 'offlineEff', 'pillUses', 'enemyNum', 'chaosTries'])
       x[k] = integer(raw[k], 0, k === 'pity' ? 15 : k.startsWith('offline') ? 8 : 1e9);
 
+    x.starterTalentPoints = integer(raw.starterTalentPoints, 0, C.PAVILION.starterTalentMax);
     x.talent = {};
     let talentTotal = 0;
+    const allowedTalent = TALENT_MAX + x.starterTalentPoints;
     for (const t of TALENT_INFO) {
-      const v = Math.max(0, Math.min(TALENT_MAX - talentTotal, integer(raw.talent?.[t.key], 0, TALENT_MAX)));
+      const v = Math.max(0, Math.min(allowedTalent - talentTotal, integer(raw.talent?.[t.key], 0, TALENT_MAX)));
       x.talent[t.key] = v;
       talentTotal += v;
     }

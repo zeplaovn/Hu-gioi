@@ -114,6 +114,8 @@ class SqlitePlayers extends PlayerRepository {
       purgeReceipts: p('DELETE FROM player_receipts WHERE expires_at <= ?'),
       purgeTickets: p('DELETE FROM creation_tickets WHERE expires_at <= ? AND created_at <= ?'),
       pavilionEnsure: p('INSERT OR IGNORE INTO pavilion_accounts (owner_id) VALUES (?)'),
+      pavilionEnsureStarter: p('INSERT OR IGNORE INTO pavilion_accounts (owner_id, balance, total_earned) VALUES (?, ?, ?)'),
+      pavilionConsumeStarter: p("UPDATE pavilion_accounts SET relics = '{}', version = version + 1 WHERE owner_id = ? AND version = ?"),
       pavilionGet: p('SELECT * FROM pavilion_accounts WHERE owner_id = ?'),
       pavilionSave: p('UPDATE pavilion_accounts SET balance = ?, total_earned = ?, rebirths = ?, upgrades = ?, relics = ?, version = ? WHERE owner_id = ? AND version = ?'),
       pavilionReward: p('UPDATE pavilion_accounts SET balance = balance + ?, total_earned = total_earned + ?, version = version + 1 WHERE owner_id = ?'),
@@ -138,12 +140,17 @@ class SqlitePlayers extends PlayerRepository {
      không bị xóa khi nhân vật tọa hóa; cùng requestId chỉ được trả thưởng một lần. */
   async purchasePavilion(ownerId, { requestId, expectedVersion, kind, key, now, catalog }) {
     return this.run(async () => {
-      this.q.pavilionEnsure.run(ownerId);
+      const player = this.q.byOwner.get(ownerId);
+      if (kind === 'starter' && !player)
+        this.q.pavilionEnsureStarter.run(ownerId, catalog.starterGrant, catalog.starterGrant);
+      else this.q.pavilionEnsure.run(ownerId);
       const prior = this.q.pavilionReceipt.get(ownerId, requestId);
       if (prior) {
         const cost = decodePavilionReceipt(prior.fingerprint, kind, key);
         return { replayed: true, cost, pavilion: await this.getPavilion(ownerId), record: await this.getByOwner(ownerId) };
       }
+      if (kind === 'starter' && player)
+        throw new GameError('GAME_RULE_VIOLATION', 'Hàng Khởi Nguyên chỉ đổi trước khi tạo đạo thân.');
       const account = await this.getPavilion(ownerId);
       if (account.version !== expectedVersion) throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đã thay đổi. Xin đồng bộ lại.', { currentVersion: account.version });
       let cost, upgrades = { ...account.upgrades }, relics = { ...account.relics };
@@ -152,12 +159,17 @@ class SqlitePlayers extends PlayerRepository {
         cost = catalog.upgradeCost(current);
         if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
         upgrades[key] = current + 1;
+      } else if (kind === 'starter' && Object.hasOwn(catalog.starter, key)) {
+        const product = catalog.starter[key], held = relics[key] || 0;
+        if (!Number.isInteger(held) || held < 0 || held >= product.max)
+          throw new GameError('GAME_RULE_VIOLATION', 'Hàng Khởi Nguyên đã đạt giới hạn.');
+        cost = product.cost;
+        relics[key] = held + 1;
       } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
       if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
       const res = this.q.pavilionSave.run(account.balance - cost, account.totalEarned, account.rebirths,
         JSON.stringify(upgrades), JSON.stringify(relics), account.version + 1, ownerId, account.version);
       if (res.changes !== 1) throw new GameError('PAVILION_CONFLICT', 'Thiên Mệnh Các đang thay đổi.');
-      const player = this.q.byOwner.get(ownerId);
       if (player && kind === 'upgrade') {
         const state = JSON.parse(player.state);
         state.pavilion = { ...upgrades };
@@ -209,7 +221,7 @@ class SqlitePlayers extends PlayerRepository {
       if (this.q.byOwner.get(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
       this.q.pavilionEnsure.run(ownerId);
       const account = await this.getPavilion(ownerId);
-      const consumed = {}; // Không chuyển Kỳ Trân từ kiếp trước.
+      const consumed = { ...account.relics }; // Chỉ hàng Khởi Nguyên đã mua cho đạo thân này.
       const rec = await build(JSON.parse(t.preview), { ...account, consumed });
       const key = nameKey(rec.name);
       if (this.q.byNameKey.get(key)) throw new GameError('NAME_TAKEN', 'Đạo hiệu này đã có người dùng.');
@@ -217,6 +229,10 @@ class SqlitePlayers extends PlayerRepository {
       this.q.insert.run(id, ownerId, rec.name, key, rec.schemaVersion, rec.contentVersion, state, Buffer.byteLength(state),
         rec.rngSeed, rec.rngCounter, now, now, now);
       this.q.useTicket.run(now, ticketId);
+      if (Object.keys(consumed).length) {
+        const done = this.q.pavilionConsumeStarter.run(ownerId, account.version);
+        if (done.changes !== 1) throw new GameError('PAVILION_CONFLICT', 'Vật phẩm Khởi Nguyên đã thay đổi.');
+      }
       return await this.get(id);
     });
   }

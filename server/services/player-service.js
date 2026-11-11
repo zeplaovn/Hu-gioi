@@ -180,7 +180,7 @@ class PlayerService {
         const seed = crypto.randomBytes(32).toString('hex'), rng = seededRng(seed, 0);
         let state;
         try {
-          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny }, now, rng);
+          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny, extraTalentPoints: pavilion.consumed?.talentPoint || 0 }, now, rng);
           H.applyPavilionOnCreate(state, pavilion.upgrades, pavilion.consumed);
         }
         catch (err) { throw invalid('INVALID_PROFILE', err.message); }
@@ -199,8 +199,9 @@ class PlayerService {
       !Number.isSafeInteger(body.expectedVersion) || body.expectedVersion < 0 ||
       typeof body.key !== 'string' || typeof body.kind !== 'string')
       throw invalid('INVALID_REQUEST', 'Yêu cầu Thiên Mệnh Các không hợp lệ.');
-    // Kỳ Trân chuyển kiếp đã bị gỡ: không cho phép giao dịch relic qua API cũ.
-    if (body.kind !== 'upgrade') throw invalid('INVALID_REQUEST', 'Chỉ hỗ trợ nâng cấp Thiên Mệnh Các.');
+    // Shop starter chỉ dùng trước khi tạo đạo thân, repo kiểm tra và trừ tiền nguyên tử.
+    // Kỳ Trân chuyển kiếp cũ (kind=relic) vẫn bị khóa.
+    if (!['upgrade', 'starter'].includes(body.kind)) throw invalid('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
     const now = this.clock();
     const out = await this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
     if (out.record) {
