@@ -6,6 +6,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 const { PlayerRepository } = require('./player-repository.js');
+const GAME = require('../../engine/game.js');
 const { GameError } = require('../errors.js');
 const { encodePavilionReceipt, decodePavilionReceipt } = require('./pavilion-receipt.js');
 
@@ -255,9 +256,11 @@ class SqlitePlayers extends PlayerRepository {
     return this.run(() => {
       const row = this.q.byId.get(playerId);
       if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
+      if (!new GAME.Game(JSON.parse(row.state)).isDead())
+        throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
       this.q.deletePlayer.run(playerId, ownerId);
-      this.q.deleteOwnerTickets.run(ownerId);
-      this.q.pavilionEnsure.run(ownerId);
+      // Giữ ticket để giới hạn lượt khởi nguyên không bị lợi dụng.
+      this.q.deletePavilion.run(ownerId);
       return { deleted: true };
     });
   }
