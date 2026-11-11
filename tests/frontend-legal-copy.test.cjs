@@ -22,7 +22,7 @@ test('điều khoản và hướng dẫn cùng mô tả tiến trình tạm dừ
   const settings = read('client/ui/screens/settings.js');
   const loader = read('client/platform/loader.js');
   assert.match(terms, /Không có phần thưởng tích lũy khi ngoại tuyến/);
-  assert.match(terms, /Thiên Mệnh Các/);
+  assert.match(terms, /Tiến trình, xếp hạng, vật phẩm, Thiên Tinh và nâng cấp cũ đều bị xóa/);
   assert.match(settings, /Nghề phụ.*tạm dừng/);
   assert.match(settings, /Nhiệm vụ tông môn.*chỉ tiếp tục tính thời gian/);
   assert.match(loader, /Nghề phụ tạm dừng khi rời game/);
