@@ -241,8 +241,6 @@ def verify_log_float(page, folder, name, outcome):
 
 def verify_bubble(page, folder, name, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
-    # Limited release intentionally has no real chat service. The proof must
-    # ensure chat stays inaccessible, not wait 15s for a deliberately hidden UI.
     if page.evaluate("() => window.HU_UI?.release?.chat === false"):
         assert trigger.is_hidden(), "Chat bubble is visible in the limited release"
         assert page.locator("#chatBubblePanel").is_hidden(), "Chat panel is visible"
@@ -250,21 +248,23 @@ def verify_bubble(page, folder, name, outcome):
         assert not menu_entry.count() or menu_entry.first.is_hidden(), "Chat menu is visible"
         outcome["chat_hidden_for_release"] = True
         return
+    # Launcher hiện mở cửa sổ desktop Truyền âm, không mở chatBubblePanel
+    # legacy; cùng contract cho cả BEFORE/AFTER.
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
-    assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
-    if name.startswith("after_"):
-        assert trigger.is_hidden(), "Icon chat phải ẩn khi đang mở cửa sổ"
-        assert trigger.get_attribute("aria-expanded") == "true"
-        assert page.locator("#chatBubble .chat-bubble-icon").is_hidden(), "Hình icon chat chưa ẩn"
-        outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
-        page.locator(".chat-bubble-close").click()
-        assert page.locator("#chatBubblePanel").is_hidden(), "Không đóng được bằng nút ×"
-        assert trigger.is_visible(), "Icon chat không trở lại sau khi đóng"
-        outcome["chat_icon_persistent"] = True
-    else:
-        page.locator(".chat-bubble-close").click()
-        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng"
+    win = page.locator('.win.desktop-window[data-window="chat"]')
+    win.wait_for(state="visible", timeout=15000)
+    assert win.locator("#chatChannels").is_visible(), "Thiếu bốn kênh chat"
+    assert win.locator('#chatChannels [data-chat-channel="world"]').count() == 1
+    outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
+    win.locator(".win-min").click()
+    win.wait_for(state="hidden", timeout=15000)
+    trigger.click()
+    win.wait_for(state="visible", timeout=15000)
+    win.locator(".win-close").click()
+    assert win.count() == 0, "Cửa sổ chat vẫn tồn tại sau khi đóng"
+    assert trigger.is_visible(), "Nút mở Truyền âm không trở lại"
+    outcome["chat_icon_persistent"] = True
     outcome["chat_toggle"] = True
 
 def run_set(browser, folder, name, url, width, height, mobile):
