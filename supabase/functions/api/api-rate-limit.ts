@@ -7,7 +7,7 @@ const ROUTE_GROUP: Record<string, string> = {
   bootstrap: 'read', state: 'read', preview: 'preview', create: 'create',
   pavilionPurchase: 'pavilion', commands: 'command', sync: 'sync',
   chatConnect: 'chatConnect', chatPoll: 'chatPoll', chatSend: 'chatSend', chatLeave: 'chatConnect', leaderboard: 'leaderboard',
-  pause: 'pause', resetAfterDeath: 'create',
+  pause: 'pause',
   exportData: 'dataRights', eraseData: 'dataRights', deleteAccount: 'dataRights'
 };
 export function createEdgeRateLimiter({
