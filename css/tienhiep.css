@@ -27,33 +27,33 @@
 body{
   background:
     var(--paper-grain),
-    radial-gradient(ellipse 60% 45% at 12% 0%,#3d2c2233,transparent 70%),
+    radial-gradient(ellipse 60% 45% at 12% 0%,#24372d33,transparent 70%),
     radial-gradient(ellipse 55% 40% at 100% 100%,#2f3a2d26,transparent 70%),
     var(--bg);
 }
 ::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:#4a382c;border:2px solid #150f0c;border-radius:8px}
+::-webkit-scrollbar-thumb{background:#2d4438;border:2px solid #273f32;border-radius:8px}
 ::-webkit-scrollbar-thumb:hover{background:var(--brass-dim)}
 *{scrollbar-color:#4a382c transparent}
 
 /* ===== KHUNG PANEL: bớt cứng, viền đồng nhạt dần ở mép, góc bo mềm ===== */
 #game .box,.card,.win:not(.page){border-radius:14px}
 #game #status,#game #logPanel,#game #menu{
-  border-color:#4a382c;
-  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#251a15f5,#17100df7);
+  border-color:#3a5d4a;
+  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#16211cf5,#0e1511f7);
   box-shadow:0 8px 26px #0006,inset 0 1px 0 #ffffff0a;
 }
 #game #stage{
-  border-radius:16px;border-color:#4a382c;
+  border-radius:16px;border-color:#3a5d4a;
   box-shadow:0 10px 32px #0008,inset 0 0 70px #000a,inset 0 0 0 1px #b08d5726;
 }
 .card{
-  background:var(--paper-grain),linear-gradient(160deg,#281c16,#1d1410);
-  border-color:#4d3b2e;
+  background:var(--paper-grain),linear-gradient(160deg,#17241d,#111a15);
+  border-color:#3d604d;
   box-shadow:0 4px 18px #0004,inset 0 1px 0 #ffffff08;
 }
 .card-head h3,.section-title{letter-spacing:.015em}
-.stat-line{border-bottom:0;background:linear-gradient(90deg,transparent,#6f5a3c66 18%,#6f5a3c66 82%,transparent) bottom/100% 1px no-repeat}
+.stat-line{border-bottom:0;background:linear-gradient(90deg,transparent,#40635166 18%,#40635166 82%,transparent) bottom/100% 1px no-repeat}
 .stat-line:last-child{background:none}
 .divider{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--brass-dim),transparent)}
 .status-talents{border-top:0;border-bottom:0;padding:8px 0;
@@ -65,7 +65,7 @@ body{
 .status-avatar{
   border-radius:26px 26px 9px 9px;
   border:1px solid var(--brass-dim);
-  background:radial-gradient(circle at 50% 35%,#3a2b22,#16100d);
+  background:radial-gradient(circle at 50% 35%,#23352c,#0d1411);
   box-shadow:0 0 calc(4px + var(--linh) * 16px) rgba(176,141,87,calc(.15 + var(--linh) * .5)),inset 0 0 12px #000a;
   transition:box-shadow 1.2s ease;
 }
@@ -75,13 +75,13 @@ body{
   -webkit-background-clip:text;background-clip:text;color:transparent;
   text-shadow:none;filter:drop-shadow(0 1px 1px #000a);
 }
-.status-name{font-family:var(--serif);font-style:italic;letter-spacing:.03em;color:#cdbb9c}
+.status-name{font-family:var(--serif);font-style:italic;letter-spacing:.03em;color:#bbc7bf}
 #status .status-title .eyebrow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ===== THANH: tu vi là dòng linh khí chảy, sinh lực/linh khí như chất lỏng ===== */
 #status .status-progress .bar,
 #status .vital-row .meter{
-  border-radius:999px;border-color:#5d4a37;background:#0c0806;
+  border-radius:999px;border-color:#48725b;background:#070a09;
   box-shadow:inset 0 1px 4px #000c,0 0 0 1px #00000040;
 }
 #status .status-progress .bar{
@@ -102,18 +102,18 @@ body{
 }
 #status .vital-row .meter>i.hp{background:linear-gradient(90deg,#a63d30,#e07a64);box-shadow:0 0 8px #d9705e55}
 #status .vital-row .meter>i.mp{background:linear-gradient(90deg,#2d6f86,#7cc0d4);box-shadow:0 0 8px #5aa3b855}
-#status .vital-row .meter>i.life{background:linear-gradient(90deg,#8a6a2a,#e0b866);box-shadow:0 0 8px #d1a14f55}
+#status .vital-row .meter>i.life{background:linear-gradient(90deg,#406b56,#e0b866);box-shadow:0 0 8px #d1a14f55}
 #stage .enemy-health{border-radius:999px}
 #stage .enemy-health i{border-radius:inherit}
 
 /* ===== NÚT: sơn mài, không viền cứng; đột phá là con dấu chu sa ===== */
 .btn{border-radius:11px;letter-spacing:.015em}
 .btn-gold{
-  background:var(--paper-grain),linear-gradient(180deg,#c8452e,#8f2a18);
-  border-color:#d9704f;
-  text-shadow:0 1px 2px #5b1408;
+  background:var(--paper-grain),linear-gradient(180deg,#6fdba0,#3fae78);
+  border-color:#9be9c0;
+  text-shadow:none;
 }
-.btn-outline{background:var(--paper-grain),linear-gradient(180deg,#261a15,#1d1410);border-color:#5a4636}
+.btn-outline{background:var(--paper-grain),linear-gradient(180deg,#16221c,#111a15);border-color:#466f59}
 .btn-outline:not(:disabled):hover{border-color:var(--brass)}
 .btn{position:relative;overflow:hidden}
 .btn:not(:disabled):active{transform:translateY(0) scale(.985)}
@@ -125,12 +125,12 @@ body{
 #menu button:hover,.page-nav button:hover,.tab:hover,.zone-button:hover{
   background-image:radial-gradient(140px circle at var(--mx,50%) var(--my,50%),#f2d6931f,transparent 65%);
 }
-.btn-gold:not(:disabled):hover{background-image:radial-gradient(140px circle at var(--mx,50%) var(--my,50%),#ffe7b840,transparent 65%),linear-gradient(180deg,#d24d34,#9b2f1c)}
+.btn-gold:not(:disabled):hover{background-image:radial-gradient(140px circle at var(--mx,50%) var(--my,50%),#ffe7b840,transparent 65%),linear-gradient(180deg,#6ddba0,#2f9c68)}
 
 #btn-break{
   border-radius:12px;position:relative;
-  background:var(--paper-grain),linear-gradient(170deg,#2b1f19,#18110e);
-  border-color:#6f5a3c;
+  background:var(--paper-grain),linear-gradient(170deg,#1a2720,#0e1612);
+  border-color:#528268;
 }
 #btn-break.ready:not(.auto),.peak-cta{
   border-color:#e8c872;
@@ -159,26 +159,26 @@ body{
 /* ===== NHẬT KÝ: như cuộn trúc giản, con dấu thay cho nhãn hộp ===== */
 .log{font-family:var(--serif);line-height:1.65;gap:3px}
 @media(min-width:601px){.log{font-size:15.5px;line-height:1.75}}
-.log-entry{padding:2px 0 2px 8px;border-left:1px solid #4a382c;background:linear-gradient(90deg,#b08d570a,transparent 60%);animation:none}
+.log-entry{padding:2px 0 2px 8px;border-left:1px solid #3a5d4a;background:linear-gradient(90deg,#b08d570a,transparent 60%);animation:none}
 .log-tag{border:0;border-radius:3px;background:var(--seal-deep);color:var(--paper);font-family:var(--font);transform:rotate(-2deg);box-shadow:0 1px 0 #00000066}
 .log-entry.success .log-tag,.log-entry.loot .log-tag{background:#2f6b55;color:#e8f6ea}
-.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#8a6a2a;color:#fff3cf}
-.log-entry.danger .log-tag{background:#8f2a18;color:#ffe3da}
-.log-entry.info .log-tag{background:#4a382c;color:#e6d4b4}
+.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#406b56;color:#fff3cf}
+.log-entry.danger .log-tag{background:#2a8e5f;color:#ffe3da}
+.log-entry.info .log-tag{background:#2d4438;color:#e6d4b4}
 .log-time{font-family:var(--font);opacity:.7}
 .log-entry:first-child{border-left-color:var(--brass);background:linear-gradient(90deg,#b08d5722,transparent 70%)}
 .log-entry:first-child .log-text{color:#f1e6cf}
 .log-panel.collapsed{border-radius:14px}
 
 /* ===== HỘP THOẠI & THÔNG BÁO: mở như cuộn trục, thông báo như linh phù ===== */
-.game-modal{border-radius:16px;border-color:#6f5a3c;
-  background:var(--paper-grain),radial-gradient(ellipse at 50% -25%,#53624336,transparent 60%),#271b15}
-.modal-shade{background:radial-gradient(ellipse at 50% 40%,#0c0806b0,#050302e6);backdrop-filter:blur(6px) saturate(.8)}
+.game-modal{border-radius:16px;border-color:#528268;
+  background:var(--paper-grain),radial-gradient(ellipse at 50% -25%,#53624336,transparent 60%),#16231d}
+.modal-shade{background:radial-gradient(ellipse at 50% 40%,#070a09b0,#050302e6);backdrop-filter:blur(6px) saturate(.8)}
 .game-modal h2{letter-spacing:.03em}
 .toast-item{border-radius:6px 14px 6px 14px;border-top-width:1px;border-left-width:3px;
-  background:var(--paper-grain),linear-gradient(135deg,#2b1f19f5,#18110eec)}
+  background:var(--paper-grain),linear-gradient(135deg,#1a2720f5,#0e1612ec)}
 .toast-icon{border-radius:50%}
-.stage-tag,.stage-weather{border-radius:999px;border-color:#6f5a3c88;background:#1a120ecf}
+.stage-tag,.stage-weather{border-radius:999px;border-color:#52826888;background:#0f1713cf}
 .more-menu{border-radius:16px}
 
 /* ===== SÂN KHẤU: sương trôi, nhịp thở quanh đạo thân, linh quang thoảng qua ===== */
@@ -203,15 +203,15 @@ body{
 
 /* ===== TRANG RIÊNG: hiện ra như mực loang, không bật cứng ===== */
 .win.page>header{border-bottom-color:transparent;
-  background:linear-gradient(180deg,#291c17f2,#1d1410d9) padding-box;
+  background:linear-gradient(180deg,#18251ef2,#111a15d9) padding-box;
   box-shadow:0 1px 0 #b08d5733}
 .page-back,.page-nav button{border-radius:999px}
-.win.page{background:var(--paper-grain),linear-gradient(160deg,#211713,#150f0c)}
+.win.page{background:var(--paper-grain),linear-gradient(160deg,#141e19,#0c1310)}
 
 /* ===== ĐỌC ĐƯỢC: điều kiện mở khoá và câu tĩnh tu không được mờ như nền ===== */
-.zone-button:disabled{opacity:.85;border-style:dashed;color:#c9b99f;filter:none}
+.zone-button:disabled{opacity:.85;border-style:dashed;color:#bbc7bf;filter:none}
 .zone-button:disabled small{color:#d6b97d}
-#stage .idle-quote{background:#120c09b8;padding:5px 16px;border-radius:999px;font-size:13.5px;color:#f1e6cf}
+#stage .idle-quote{background:#0a100db8;padding:5px 16px;border-radius:999px;font-size:13.5px;color:#f1e6cf}
 
 /* Nút chat nổi không được che nội dung: chừa đáy trang để cuộn nội dung ra khỏi nút */
 .win.page .win-body{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
@@ -318,7 +318,7 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
 /* Khung chín phần: bốn góc + bốn viền + mặt trung tâm vẽ bằng CSS,
    tránh phụ thuộc atlas ảnh và không kéo giãn chữ hay nội dung. */
 #game #logPanel{
-  background:var(--corners),var(--paper-grain),linear-gradient(160deg,#261a15,#17100d);
+  background:var(--corners),var(--paper-grain),linear-gradient(160deg,#16221c,#0e1511);
 }
 #game #logPanel .log-head{min-height:44px}
 #game #logPanel .log-tools{gap:4px}
@@ -326,7 +326,7 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
 #game #logPanel .log-toggle{
   display:grid;place-items:center;flex:0 0 40px;
   width:40px;height:40px;min-width:40px;min-height:40px;padding:0;
-  border-radius:9px;border:1px solid #67513b;background:#2d211a;
+  border-radius:9px;border:1px solid #4e7c63;background:#1b2922;
   color:#eee0c7;font:700 20px/1 var(--font);
 }
 #game #logPanel .log-float-toggle:hover,
@@ -339,7 +339,7 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
   width:min(360px,calc(100vw - 24px));
   height:min(300px,calc(100dvh - 24px));
   min-width:0;min-height:0;margin:0;
-  overflow:hidden;border:1px solid #806646;border-radius:15px;
+  overflow:hidden;border:1px solid #5a9074;border-radius:15px;
   box-shadow:0 18px 45px #000c,0 0 0 1px #ffffff09;
 }
 #game #logPanel.log-floating .log-head{cursor:grab;touch-action:none;user-select:none}
@@ -367,7 +367,7 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
 #game #logPanel.log-floating.collapsed .log-count:not(.has-new){display:none}
 #game #logPanel.log-floating.collapsed .log-count.has-new{
   position:absolute;top:-7px;right:-7px;z-index:2;pointer-events:none;
-  background:#3b2c17;color:#ffe3a4;border-radius:999px;
+  background:#1e3027;color:#ffe3a4;border-radius:999px;
 }
 #game.page-open #logPanel.log-floating{visibility:visible}
 #game[data-layout="portrait"].log-floating{grid-template-rows:auto minmax(0,1fr) 0 auto}
@@ -416,46 +416,46 @@ body:has(#game.page-open) .chat-bubble .chat-bubble-icon{width:20px;height:20px}
   --brass:#a89578;--brass-dim:#6d6052;--brass-soft:#a8957830;
   --paper-grain:linear-gradient(#ffffff02,#ffffff02);
 }
-body{background:radial-gradient(ellipse 65% 55% at 20% 0%,#413d3514,transparent 75%),var(--bg)}
-::-webkit-scrollbar-thumb{background:#5e5750;border-color:#201d1a}
+body{background:radial-gradient(ellipse 65% 55% at 20% 0%,#2e423814,transparent 75%),var(--bg)}
+::-webkit-scrollbar-thumb{background:#446153;border-color:#283e32}
 *{scrollbar-color:#5e5750 transparent}
 #game #status,#game #logPanel,#game #menu{
-  border-color:#4c4741;
-  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#282521,#211e1b);
+  border-color:#466b57;
+  background:var(--corners),var(--paper-grain),linear-gradient(165deg,#1d2923,#17221d);
   box-shadow:0 4px 16px #0005,inset 0 1px 0 #ffffff07;
 }
-#game #logPanel{background:var(--corners),var(--paper-grain),linear-gradient(165deg,#282521,#211e1b)}
-#game #stage{border-color:#575046;box-shadow:0 7px 20px #0007,inset 0 0 28px #0005}
+#game #logPanel{background:var(--corners),var(--paper-grain),linear-gradient(165deg,#1d2923,#17221d)}
+#game #stage{border-color:#4d7761;box-shadow:0 7px 20px #0007,inset 0 0 28px #0005}
 .card,.win:not(.page){
-  background:var(--paper-grain),linear-gradient(160deg,#2a2722,#24211e);
-  border-color:#504b43;box-shadow:0 3px 12px #0003;
+  background:var(--paper-grain),linear-gradient(160deg,#1e2b24,#1a251f);
+  border-color:#496f5b;box-shadow:0 3px 12px #0003;
 }
-.win.page{background:linear-gradient(160deg,#272420,#1c1b19)}
-.win.page>header{background:linear-gradient(180deg,#302b26,#25221e);border-bottom-color:#554c43}
-.page-nav button{background:#302b26;border-color:#544c42;color:#dbd0c1}
-.page-nav button.on{background:#3a342b;border-color:#a89578;color:var(--gold)}
-#game #logPanel .log-head{border-bottom-color:#51483e}
-.log-entry{border-left-color:#6a5e51;background:transparent}
+.win.page{background:linear-gradient(160deg,#1c2822,#151d19)}
+.win.page>header{background:linear-gradient(180deg,#213029,#1a2620);border-bottom-color:#4b735e}
+.page-nav button{background:#213029;border-color:#4a725d;color:#d7deda}
+.page-nav button.on{background:#273930;border-color:#a89578;color:var(--gold)}
+#game #logPanel .log-head{border-bottom-color:#476d59}
+.log-entry{border-left-color:#5b8c72;background:transparent}
 .log-entry:first-child{background:linear-gradient(90deg,#a8957818,transparent 72%)}
 .log-text,.log-entry:first-child .log-text{color:#e1d9cd}
-.log-time{color:#b9ad9e;opacity:1}
+.log-time{color:#b1bfb6;opacity:1}
 .log-tag{transform:none;box-shadow:none}
 .log-entry.success .log-tag,.log-entry.loot .log-tag{background:#385849;color:#dce8df}
-.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#655638;color:#f0dfba}
+.log-entry.gold .log-tag,.log-entry.tribulation .log-tag{background:#3b5a4b;color:#f0dfba}
 .log-entry.danger .log-tag{background:#784b44;color:#f1d6d0}
 .btn-gold{
-  background:linear-gradient(180deg,#8f6152,#765145);
-  border-color:#a97b69;color:#f4e9dd;text-shadow:none;
-  box-shadow:inset 0 1px 0 #ffffff12;
+  background:linear-gradient(180deg,#6fdba0,#3fae78);
+  border-color:#9be9c0;color:#05160d;text-shadow:none;
+  box-shadow:inset 0 1px 0 #ffffff33,0 4px 14px #3fae7840;
 }
 .btn-gold:not(:disabled):hover{
-  background:linear-gradient(180deg,#996e5e,#805949);
-  box-shadow:0 3px 11px #0004;
+  background:linear-gradient(180deg,#82e6b0,#4bbf86);
+  box-shadow:0 6px 18px #3fae7866;
 }
-.btn-outline{background:#2d2925;border-color:#5d554b;color:#e0d7cc}
-.btn-outline:not(:disabled):hover{background:#37312b;border-color:#907a62}
+.btn-outline{background:#202e27;border-color:#527e67;color:#e0d7cc}
+.btn-outline:not(:disabled):hover{background:#26372f;border-color:#5c8f74}
 #btn-break.ready:not(.auto),.peak-cta{
-  background:linear-gradient(160deg,#695c45,#4b4131);
+  background:linear-gradient(160deg,#426353,#2f473b);
   border-color:#ad9873;box-shadow:0 0 0 1px #0005,0 4px 12px #0004;
 }
 .peak-cta{animation:none}
@@ -473,14 +473,14 @@ body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
   display:grid;visibility:visible;opacity:1;pointer-events:auto;
   border-color:#c1aa84;box-shadow:0 3px 12px #0008,0 0 0 1px #bdad9155;
 }
-.chat-bubble-panel{z-index:1;border-color:#61594f;background:#282521;box-shadow:0 9px 26px #0008}
-.chat-bubble-panel::after{background:#282521;border-color:#61594f}
-.chat-feed{background:#1f1d1a;border-color:#554d43}
-.chat-message{background:#302b26;border-color:#524b43}
-.chat-message.mine{background:#38372c;border-color:#8f805e}
+.chat-bubble-panel{z-index:1;border-color:#56846b;background:#1d2923;box-shadow:0 9px 26px #0008}
+.chat-bubble-panel::after{background:#1d2923;border-color:#56846b}
+.chat-feed{background:#16201b;border-color:#4b735e}
+.chat-message{background:#213029;border-color:#4a715c}
+.chat-message.mine{background:#273830;border-color:#5b8f74}
 .chat-message p{color:#e0d9cf}
-.chat-form input{background:#201e1c;border-color:#665b50;color:#e5dfd5}
-.toast-item{background:linear-gradient(135deg,#302a25f4,#24211ef2);border-color:#5b5146}
+.chat-form input{background:#18211d;border-color:#58886f;color:#e5dfd5}
+.toast-item{background:linear-gradient(135deg,#213028f4,#1a251ff2);border-color:#4f7a63}
 .win.page .win-body{color:var(--text)}
 @media (prefers-reduced-motion:reduce){
   .chat-bubble.has-new .chat-bubble-btn{animation:none}

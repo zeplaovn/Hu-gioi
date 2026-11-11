@@ -1,5 +1,5 @@
 /* Hư Giới · sân khấu nghề phụ và sơ đồ kinh mạch, tách biệt luật game. */
-.craft-scene{position:relative;isolation:isolate;overflow:hidden;min-height:305px;margin:0 0 20px;border:1px solid #765939;border-radius:16px;background-color:#24170f;background-image:linear-gradient(90deg,rgba(17,13,12,.84),rgba(17,13,12,.28) 55%,rgba(17,13,12,.5)),var(--scene-bg);background-size:cover;background-position:center;box-shadow:inset 0 0 65px #140c0a88,0 14px 32px #0005}
+.craft-scene{position:relative;isolation:isolate;overflow:hidden;min-height:305px;margin:0 0 20px;border:1px solid #53866b;border-radius:16px;background-color:#131e18;background-image:linear-gradient(90deg,rgba(11,16,14,.84),rgba(11,16,14,.28) 55%,rgba(11,16,14,.5)),var(--scene-bg);background-size:cover;background-position:center;box-shadow:inset 0 0 65px #140c0a88,0 14px 32px #0005}
 .craft-scene::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(0deg,#0b090acb,transparent 36%,#0b090a55)}
 .craft-scene-head,.craft-scene-foot{position:relative;z-index:2;max-width:50%;padding:20px 24px;color:#f4e8cf}
 .craft-scene-head h3{margin:5px 0 7px;font-size:clamp(22px,3vw,32px);color:#ffe3ab}
@@ -9,28 +9,28 @@
 .craft-scene-figure{position:absolute;z-index:1;bottom:-6%;right:7%;height:108%;max-width:70%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 12px 26px #09080888);pointer-events:none}
 .craft-scene-furnace{right:12%;height:96%;max-width:48%}
 .craft-scene .eyebrow{color:#f8d9a2}
-.craft-scene-count{display:inline-block;padding:4px 10px;border:1px solid #dfc38b7d;border-radius:999px;color:#ffe6bc;background:#160e0c9e;font-size:12px}
+.craft-scene-count{display:inline-block;padding:4px 10px;border:1px solid #dfc38b7d;border-radius:999px;color:#ffe6bc;background:#0d14109e;font-size:12px}
 .meridian-panel{display:grid;grid-template-columns:minmax(260px,1.05fr) minmax(260px,.95fr);gap:16px;margin:0 0 20px;align-items:start}
-.meridian-board,.meridian-info{min-width:0;padding:18px;border:1px solid #66513c;border-radius:14px;background:linear-gradient(145deg,#251b1a,#15181a);box-shadow:0 8px 24px #0004}
+.meridian-board,.meridian-info{min-width:0;padding:18px;border:1px solid #4e7c63;border-radius:14px;background:linear-gradient(145deg,#18241e,#15181a);box-shadow:0 8px 24px #0004}
 .meridian-panel h3{font-size:20px;margin:3px 0 9px;color:#f0dba9}
 .meridian-panel .info-note{margin:8px 0 12px}
 .meridian-toolbar{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
-.meridian-toolbar button{background:#211c19;border:1px solid #786045;border-radius:8px;padding:8px 11px;font-size:12.5px;color:#e7d8c2;cursor:pointer}
-.meridian-toolbar button[aria-pressed="true"]{background:#594426;border-color:#e4c477;color:#ffe8af}
-.meridian-map{position:relative;width:min(100%,440px);aspect-ratio:1312/1199;margin:0 auto;background:radial-gradient(ellipse at 50% 55%,#4b3c303d 0,#17191bcc 70%);border-radius:12px}
+.meridian-toolbar button{background:#16211c;border:1px solid #5a8f73;border-radius:8px;padding:8px 11px;font-size:12.5px;color:#e7d8c2;cursor:pointer}
+.meridian-toolbar button[aria-pressed="true"]{background:#2e4a3c;border-color:#e4c477;color:#ffe8af}
+.meridian-map{position:relative;width:min(100%,440px);aspect-ratio:1312/1199;margin:0 auto;background:radial-gradient(ellipse at 50% 55%,#2f463a3d 0,#17191bcc 70%);border-radius:12px}
 .meridian-map>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;pointer-events:none}
-.meridian-map-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#c3ba9a;opacity:.3;font-size:100px}
+.meridian-map-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#b4c2b9;opacity:.3;font-size:100px}
 .meridian-point{position:absolute;left:var(--point-x);top:var(--point-y);z-index:1;transform:translate(-50%,-50%);width:24px;height:24px;padding:0;border-radius:50%;border:2px solid #f9e4b1;background:var(--point-color,#d6c294);box-shadow:0 0 0 5px #211a1766,0 0 14px var(--point-color,#d6c294);cursor:pointer}
 .meridian-point:focus-visible{outline:3px solid #fff6cf;outline-offset:4px}
 .meridian-point[aria-pressed="true"]{z-index:3;width:30px;height:30px;border:3px solid white;box-shadow:0 0 0 6px #d9ba635e,0 0 22px var(--point-color,#fff)}
-.meridian-point::after{content:attr(data-label);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;max-width:115px;padding:4px 7px;border-radius:5px;background:#100e0de9;color:#f8ead1;font-size:10px;font-weight:650;pointer-events:none;opacity:0}
+.meridian-point::after{content:attr(data-label);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;max-width:115px;padding:4px 7px;border-radius:5px;background:#0b100ee9;color:#f8ead1;font-size:10px;font-weight:650;pointer-events:none;opacity:0}
 .meridian-point:hover::after,.meridian-point:focus-visible::after,.meridian-point[aria-pressed="true"]::after{opacity:1}
-.meridian-map-legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#bdaea0;margin:8px 0 0}
+.meridian-map-legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#b4c2b9;margin:8px 0 0}
 .meridian-info h4{margin:6px 0 14px;font-size:22px;color:#ffe2ad}
 .meridian-info .meridian-kind{font-size:12px;letter-spacing:.08em;color:#e0ba86;text-transform:uppercase}
 .meridian-info .stat-line{border-bottom:1px solid #ffffff17;padding:9px 0}
 .meridian-info .meridian-effect{line-height:1.6;font-size:14px;color:#ded5cb}
-.meridian-info .meridian-hint{font-size:12.5px;line-height:1.6;color:#b8aea4}
+.meridian-info .meridian-hint{font-size:12.5px;line-height:1.6;color:#b4c2b8}
 @media(max-width:730px){.meridian-panel{grid-template-columns:minmax(0,1fr)}.meridian-map{max-width:400px}.craft-scene{min-height:280px}.craft-scene-head,.craft-scene-foot{max-width:56%;padding:15px 14px}.craft-scene-figure{right:0;height:94%;max-width:65%}}
 @media(max-width:420px){.craft-scene{min-height:255px}.craft-scene-figure{height:86%;max-width:65%}.craft-scene-head h3{font-size:21px}.craft-scene-head p{font-size:12px}.meridian-point{width:20px;height:20px}.meridian-point[aria-pressed="true"]{width:26px;height:26px}}
 @media(prefers-reduced-motion:reduce){.meridian-point{transition:none}}
