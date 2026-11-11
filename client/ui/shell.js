@@ -521,8 +521,8 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'quests', 'chat'];
-  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, settings: 630, meta: 760, more: 720 };
+  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
+  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, ranking: 740, settings: 630, meta: 760, more: 720 };
   const BADGED = ['combat', 'craft'];
 
   const wins = {
