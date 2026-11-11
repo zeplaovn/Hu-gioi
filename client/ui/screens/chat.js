@@ -1,4 +1,4 @@
-/* Truyền âm vạn giới demo: render văn bản thuần, giữ bản nháp khi reconnect/đổi màn. */
+/* Truyền âm vạn giới online: chỉ render văn bản thuần; Bearer JWT ở ChatSession. */
 (function (root) {
   'use strict';
   const UI = root.HU_UI, { $, esc } = UI.kit;
@@ -190,6 +190,7 @@
     const game = document.getElementById('game');
     const show = !!(UI.release.chat && game && !game.hidden && UI.s && UI.s().created);
     if (show) bubbleBuild();
+    if (!show && session.state.status !== 'idle' && session.state.status !== 'unavailable') session.disconnect();
     if (bubble.el) bubble.el.hidden = !show;
   }
   if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 700);
