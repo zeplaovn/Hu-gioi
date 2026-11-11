@@ -172,7 +172,7 @@ test('snapshot gửi client không chứa seed bí cảnh; state bẩn bị ch�
   assert.throws(() => assertStateSafe({ a: undefined }, 65536), { code: 'STATE_CORRUPT' });
 });
 
-test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xóa để tạo nhân vật mới', async () => {
+test('thọ nguyên cạn: từ chối mọi lệnh, không có trọng sinh', async () => {
   const { svc, clock, repo } = setup();
   const { playerId: id } = await spawn(svc);
   const current = await repo.get(id);
@@ -188,10 +188,10 @@ test('thọ nguyên cạn: từ chối mọi lệnh và chỉ owner được xó
   assert.equal(dead.report.seconds || 0, 0, 'offline không già thêm');
   const err = await (async () => { try { await svc.command('owner-a', id, await envelope(svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'd1')); } catch (e) { return e; } })();
   assert.equal(err.code, 'PLAYER_DEAD');
-  assert.equal(await code(async () => await svc.resetAfterDeath('owner-b', id)), 'PLAYER_NOT_FOUND');
-  assert.equal((await svc.resetAfterDeath('owner-a', id)).deleted, true);
-  assert.equal((await svc.bootstrap('owner-a')).player, null);
-  assert.ok((await svc.previewCreation('owner-a')).ticketId);
+  assert.equal(typeof svc.resetAfterDeath, 'undefined');
+  assert.equal((await svc.bootstrap('owner-a')).player.id, id);
+  assert.equal(await code(async () => svc.previewCreation('owner-a')), 'PLAYER_EXISTS');
+  assert.equal(await code(async () => svc.state('owner-b', id)), 'PLAYER_NOT_FOUND');
 });
 
 test('dữ liệu bền qua khởi động lại (state, revision, receipt)', async () => {
