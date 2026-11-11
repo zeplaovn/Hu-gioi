@@ -92,6 +92,46 @@ def mock_supabase(page, name):
     page.route('https://rvrwfeblishqadkpzspb.supabase.co/**', respond)
 
 
+
+def mock_ci_chat(page, url):
+    """Only for browser CI: emulate Edge chat on a localhost test server.
+
+    Node's /api/v1 intentionally does not implement chat, while production
+    Supabase Edge does. Never use this fixture on a non-loopback target.
+    """
+    parsed = urlsplit(url)
+    assert parsed.scheme == 'http' and parsed.hostname == '127.0.0.1' and parsed.port in (8000, 8001)
+
+    def respond(route):
+        request = route.request
+        auth = request.headers.get('authorization', '')
+        headers = {'Content-Type': 'application/json', 'Cache-Control': 'no-store'}
+        if request.method != 'POST' or not auth.startswith('Bearer ci-access-token-'):
+            return route.fulfill(status=401, headers=headers, body='{"error":{"code":"UNAUTHENTICATED"}}')
+        try:
+            payload = request.post_data_json or {}
+        except ValueError:
+            return route.fulfill(status=400, headers=headers, body='{"error":{"code":"INVALID_JSON"}}')
+        channel = payload.get('channel') or 'world'
+        if channel not in ('world', 'sect', 'dao_huu', 'dao_lu'):
+            return route.fulfill(status=422, headers=headers, body='{"error":{"code":"INVALID_CHANNEL"}}')
+        path = urlsplit(request.url).path
+        if path.endswith('/social/chat/connect'):
+            result = {
+                'self': {'id': '11111111-2222-4333-8444-555555555555', 'name': 'CI Đạo Hữu'},
+                'messages': [], 'cursor': '0', 'online': 1, 'channel': channel
+            }
+        elif path.endswith('/social/chat/poll'):
+            result = {'messages': [], 'cursor': '0', 'online': 1, 'channel': channel, 'hasMore': False}
+        elif path.endswith('/social/chat/leave'):
+            result = {'left': True}
+        else:
+            return route.fulfill(status=404, headers=headers, body='{"error":{"code":"NOT_FOUND"}}')
+        route.fulfill(status=200, headers=headers, body=json.dumps(result, ensure_ascii=False))
+
+    page.route('**/api/v1/social/chat/**', respond)
+
+
 def enter_game(page, url, folder=None, name=None, outcome=None):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
@@ -231,6 +271,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
     page = ctx.new_page()
     mock_ci_config(page, url)
     mock_supabase(page, name)  # identical auth/consent fixture for before and after
+    mock_ci_chat(page, url)  # Edge-only chat is mocked only in browser CI
     errors = []
     game_api_responses = []
     game_api_failures = []
