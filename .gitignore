@@ -43,10 +43,6 @@ coverage/
 npm-debug.log*
 .cache/
 
-# Python (công cụ trong tools/)
-__pycache__/
-*.py[cod]
-
 # Hệ điều hành và editor
 .DS_Store
 Thumbs.db
