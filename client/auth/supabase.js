@@ -5,7 +5,7 @@
   'use strict';
   const SUPABASE_URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
   const KEY = 'sb_publishable_QM_k0s1fa71PVbhvhBOgSw_IRScC83P';
-  const VERSION = '2026-11-10-v5';
+  const VERSION = '2026-11-11-v6';
   const STORAGE = 'huGioiSupabaseSessionV1';
   const REMEMBER_STORAGE = 'huGioiRememberSessionV1';
   const REMEMBER_MS = 30 * 24 * 60 * 60 * 1000;
