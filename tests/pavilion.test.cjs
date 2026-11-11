@@ -1,4 +1,4 @@
-/* HƯ GIỚI — Thiên Mệnh Các: giao dịch SQLite, đột phá và tích lũy xuyên kiếp. */
+/* HƯ GIỚI — Thiên Mệnh Các: giao dịch SQLite, đột phá, không trọng sinh. */
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -120,44 +120,32 @@ test('mua cấp Thiên Mệnh Các: optimistic version, receipt một lần, đ�
   } finally { repo.close(); }
 });
 
-test('tạo kiếp mới miễn phí: giữ số dư, cấp vĩnh viễn, kho bảo vật; thưởng lại đầy đủ', async () => {
+test('không có trọng sinh: sau tọa hóa không thể reset để nhận lại Thiên Tinh hoặc tạo đạo thân thứ hai', async () => {
   const { repo, service } = setup();
   try {
     const id = (await spawn(service, 'a', 'Tô Thiên Vân')).playerId;
     await forceAscension({ repo, service }, id, 'a', 'first-ascend');
-    await buy(service, 'a', 'permanent-lvl', 'upgrade', 'canCot');
-    await addPoints(repo, id, 150);
-    await buy(service, 'a', 'relic-purchase1', 'relic', 'tuiLinhThach');
-    await buy(service, 'a', 'relic-purchase2', 'relic', 'tuiLinhThach');
-    await buy(service, 'a', 'relic-purchase3', 'relic', 'nguDaoNgoc');
-    const account = (await service.bootstrap('a')).pavilion;
+    await buy(service, 'a', 'current-upgrade', 'upgrade', 'canCot');
+    await assert.rejects(
+      buy(service, 'a', 'legacy-relic', 'relic', 'tuiLinhThach'),
+      { code: 'INVALID_REQUEST' }
+    );
     const rec = await repo.get(id);
     await repo.transact(id, tx => ({ save: {
       state: { ...rec.state, death: { cause: 'combat', at: T0 } },
       revision: tx.record.revision + 1, rngCounter: tx.record.rngCounter,
       lastSeenAt: T0, schemaVersion: H.VERSION, contentVersion: 'test'
     } }));
-    const reset = await service.resetAfterDeath('a', id);
-    assert.equal(reset.deleted, true);
-    assert.equal(reset.pavilion.balance, account.balance);
-    assert.equal(reset.pavilion.rebirths, 1);
-    assert.equal(reset.pavilion.relics.tuiLinhThach, 2);
-    assert.equal((await service.bootstrap('a')).player, null);
-    const next = await spawn(service, 'a', 'Tô Vân Kiếp');
-    assert.equal(next.state.pavilion.canCot, 1);
-    assert.ok(next.state.stone >= 580, 'cộng 200 linh thạch từ bảo vật một lần');
-    assert.ok(next.state.qi > 0, 'Ngộ Đạo Ngọc khởi đầu có tu vi');
-    assert.equal(next.pavilion.relics.tuiLinhThach, 1);
-    assert.equal(next.pavilion.relics.nguDaoNgoc, 0);
-    assert.equal(next.pavilion.balance, account.balance);
-    const second = await forceAscension({ repo, service }, next.playerId, 'a', 'second-ascend');
-    assert.equal(second.result.thienTinh, 5);
-    assert.equal(second.pavilion.totalEarned, account.totalEarned + 5);
-    assert.equal(second.pavilion.balance, account.balance + 5);
+    assert.equal(typeof service.resetAfterDeath, 'undefined', 'không còn API tạo kiếp mới');
+    const snapshot = await service.bootstrap('a');
+    assert.equal(snapshot.player.id, id, 'đạo thân đã tọa hóa vẫn không thể tái tạo');
+    assert.equal(snapshot.pavilion.rebirths, 0);
+    assert.equal(snapshot.pavilion.upgrades.canCot, 1);
+    await assert.rejects(spawn(service, 'a', 'Tô Vân Kiếp'), { code: 'PLAYER_EXISTS' });
   } finally { repo.close(); }
 });
 
-test('kho tài khoản bền vững khi đóng/mở SQLite và bị xóa đúng quyền dữ liệu', async () => {
+test('Thiên Tinh bền vững khi đóng/mở SQLite và bị xóa đúng quyền dữ liệu', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-pavilion-'));
   const dbFile = path.join(dir, 'game.sqlite');
   try {
@@ -166,7 +154,7 @@ test('kho tài khoản bền vững khi đóng/mở SQLite và bị xóa đúng 
     const id = (await spawn(service1, 'account-persist', 'Thạch Đạo Nhân')).playerId;
     await addPoints(firstRepo, id, 80);
     await buy(service1, 'account-persist', 'persist-0001', 'upgrade', 'ngoTinh');
-    await buy(service1, 'account-persist', 'persist-0002', 'relic', 'tuiLinhThach');
+    await assert.rejects(buy(service1, 'account-persist', 'persist-0002', 'relic', 'tuiLinhThach'), { code: 'INVALID_REQUEST' });
     const expected = (await service1.bootstrap('account-persist')).pavilion;
     firstRepo.close();
 
