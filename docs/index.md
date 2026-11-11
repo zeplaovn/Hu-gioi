@@ -6,6 +6,8 @@
 
 | Chủ đề (nguồn sự thật duy nhất) | Tài liệu |
 |---|---|
+| Nhiệm vụ bản final (mục 11 ưu tiên cao nhất) | [task.txt](../task.txt) |
+| Gate chuẩn bị production | [Production readiness](production-readiness.md) |
 | Kiến trúc runtime Edge/Postgres | [Kiến trúc](architecture.md) |
 | Build, migration, deploy, rollback | [Runbook Edge](edge-deployment.md) |
 | Dọn nguồn frontend, CSS bundle và JS UI | [Tối ưu frontend](frontend-optimization.md) |
@@ -36,4 +38,4 @@
 
 ## Việc chờ chủ dự án
 
-Xem đủ 9 ô trong [checklist](release-checklist.md): Cloudflare logs; deploy thủ công; consent v7/migration index; Edge environment; Supabase Auth; quota/alert; branch protection; smoke staging/production; P0/P1. **Chưa có mục nào được xác nhận.** [README](../README.md).
+Xem đủ 14 mục trong [checklist](release-checklist.md) và kế hoạch [production readiness](production-readiness.md): CI của `final`, xác minh migration/consent v7, cấu hình và quota chính thức, chat giới hạn 15 giây + TTL 1 giờ, bảng xếp hạng snapshot 12 giờ, tối ưu backend có số đo và smoke staging. **Chưa có mục nào được xác nhận bằng bằng chứng sản xuất.** [README](../README.md).
