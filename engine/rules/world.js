@@ -66,7 +66,8 @@
         if (s.claimed.includes('fragments')) throw Error('Đã nhận thưởng.');
         if (!parts.length || !parts.every(x => this.count(x.code) > 0)) throw Error('Chưa đủ sáu mảnh.');
         parts.forEach(x => this.take(x.code));
-        s.daoVan += 10;
+        // Phần thưởng Thiên Tinh được cộng atomically tại repository khi commit command.
+        // Không dùng Đạo vận trong state nữa, tránh hai loại tiền song song.
         s.claimed.push('fragments');
         return 10;
       },
