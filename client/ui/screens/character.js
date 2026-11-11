@@ -75,7 +75,8 @@
     if (!M) return '';
     const state = UI.s(), ui = UI.view, media = root.HU_CUSTOM_MEDIA;
     const group = ui.meridianGroup === 'ky' ? 'ky' : 'chinh';
-    const tone = ui.meridianTone === 'vang' ? 'vang' : 'xanh';
+    // Chính Kinh luôn màu xanh, Kỳ Kinh luôn màu vàng.
+    const tone = group === 'ky' ? 'vang' : 'xanh';
     const list = group === 'ky' ? M.KY_KINH : M.CHINH_KINH;
     const picked = Number.isInteger(ui.meridianIndex) && ui.meridianIndex >= 0 && ui.meridianIndex < list.length
       ? ui.meridianIndex : 0;
@@ -86,7 +87,7 @@
         '" data-label="' + esc(item.short) + '" aria-label="Xem ' + esc(item.name) +
         '" aria-pressed="' + (i === picked) + '" title="' + esc(item.name) +
         '" style="--point-x:' + x + '%;--point-y:' + y + '%;--point-color:' +
-        (M.HE_COLOR[item.he] || '#ddc18b') + '"></button>';
+        (group === 'ky' ? '#e5c458' : '#75bfed') + '"></button>';
     }).join('');
     const preview = M.preview(state.roots, state.rootType, state.rootSub);
     const relation = M.relation(current.he, preview.heList);
@@ -109,14 +110,11 @@
       '<h3>Huyệt vị trên đạo thể</h3>' +
       '<p class="info-note">Chọn các điểm sáng để xem thông tin. Vị trí chỉ mang tính minh họa, chưa phải cơ chế thông mạch đang hoạt động.</p>' +
       '<div class="meridian-toolbar" role="group" aria-label="Loại kinh mạch">' +
-      option('meridianGroup', 'group', 'chinh', '12 Chính Kinh', group === 'chinh') +
-      option('meridianGroup', 'group', 'ky', '8 Kỳ Kinh', group === 'ky') + '</div>' +
-      '<div class="meridian-toolbar" role="group" aria-label="Màu đạo thể">' +
-      option('meridianTone', 'tone', 'xanh', 'Thanh quang', tone === 'xanh') +
-      option('meridianTone', 'tone', 'vang', 'Kim quang', tone === 'vang') + '</div>' +
+      option('meridianGroup', 'group', 'chinh', '12 Chính Kinh · Màu xanh', group === 'chinh') +
+      option('meridianGroup', 'group', 'ky', '8 Kỳ Kinh · Màu vàng', group === 'ky') + '</div>' +
       '<div class="meridian-map">' + figure + points + '</div>' +
       '<div class="meridian-map-legend"><span>● Chạm điểm sáng để tra cứu</span><span>' +
-      (group === 'chinh' ? '12 Chính Kinh' : '8 Kỳ Kinh') + '</span></div></div>' +
+      (group === 'chinh' ? '12 Chính Kinh · Màu xanh' : '8 Kỳ Kinh · Màu vàng') + '</span></div></div>' +
       '<div class="meridian-info"><span class="meridian-kind">' + esc(current.kind) + '</span>' +
       '<h4>' + esc(current.name) + '</h4>' +
       row('Ngũ hành', esc(current.he)) +
@@ -181,7 +179,6 @@
 
   UI.action('meridianPick', (el, d) => { const n = Number(d.index); if (Number.isInteger(n)) UI.view.meridianIndex = n; });
   UI.action('meridianGroup', (el, d) => { UI.view.meridianGroup = d.group === 'ky' ? 'ky' : 'chinh'; UI.view.meridianIndex = 0; });
-  UI.action('meridianTone', (el, d) => { UI.view.meridianTone = d.tone === 'vang' ? 'vang' : 'xanh'; });
 
   UI.action('equip', async (el, d) => {
     await UI.command('equip', { code: d.code });
