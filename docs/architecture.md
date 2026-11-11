@@ -17,6 +17,6 @@ Browser ──> Cloudflare Static Assets (dist/)
 
 **Dev/legacy:** `server/main.js` và `server/repositories/sqlite-players.js` chỉ dùng Node/SQLite dev/test. `LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) không thuộc gói frontend.
 
-**Giới hạn UI:** chat và bảng xếp hạng ẩn, tương tác xã hội NPC/mô phỏng, xem `client/ui/core.js`. Không quảng bá thành multiplayer thật.
+**Trạng thái UI bản hiện hành:** `client/ui/core.js` bật `release.chat` và `release.ranking`. Chat có 4 kênh (Thế giới, Tông môn, Đạo hữu, Đạo lữ), gửi và nhận qua `client/session/chat-session.js` + `supabase/functions/api/social.ts`, yêu cầu JWT và consent; bảng xếp hạng người chơi thật theo Lực chiến hoặc Cảnh giới. Các tương tác Tri kỷ, Luận kiếm, Đấu giá và hoạt động NPC/tông môn mô phỏng **không** trở thành PvP/multiplayer thực. Khi chết và bắt đầu lại, nhân vật được khởi tạo lại từ đầu; không hồi sinh nhân vật cũ. Không nhầm tính năng xã hội thật với cơ chế NPC mô phỏng.
 
 Nguồn chi tiết: [runbook Edge](edge-deployment.md), [bảo mật](security.md), [hợp đồng engine](engine-contract.md), [Gameplay V9](gameplay-v9.md), [Thiên Mệnh Các](thien-menh-cac.md), [sổ quyết định](gameplay-decisions.md).

@@ -354,6 +354,18 @@
     if (logState.follow) feed.scrollTop = feed.scrollHeight;
   }
 
+  // Chỉ đánh máy khi còn log trong hàng đợi; không đánh thức JS ~42 lần/giây
+  // trong lúc không có tin mới. Tab ẩn sẽ tiếp tục khi hiện trở lại.
+  function scheduleLogPump() {
+    if (!logState.live || logState.timer || document.hidden ||
+        (!logState.current && !logState.queue.length)) return;
+    logState.timer = root.setTimeout(() => {
+      logState.timer = 0;
+      pumpLog();
+      scheduleLogPump();
+    }, 24);
+  }
+
   function queueLog(message, opts = {}) {
     const text = String(message ?? '').trim();
     if (!text) return;
@@ -375,6 +387,7 @@
     logState.queue.push({ text: text.slice(0, 240), type, at: now });
     if (logState.queue.length > 30) logState.queue.splice(0, logState.queue.length - 30);
     pumpLog(true);
+    scheduleLogPump();
   }
 
   function seedLogFeed(logs) {
@@ -406,6 +419,7 @@
     seedLogFeed(UI.s().logs);
     if (!logState.bound) {
       logState.bound = true;
+      document.addEventListener('visibilitychange', scheduleLogPump);
       feed.addEventListener('scroll', () => {
         const near = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 28;
         logState.follow = near;
@@ -439,7 +453,7 @@
     }
     setLogFloating(logFloatState.floating, false);
     setLogCollapsed(logState.collapsed, false);
-    if (!logState.timer) logState.timer = root.setInterval(pumpLog, 24);
+    scheduleLogPump();
   }
 
   function syncLogOwner() {

@@ -8,7 +8,7 @@ Game idle tu tiên tiếng Việt. **Bản phát hành thử nghiệm giới h�
 - Supabase Auth đăng nhập trực tiếp (`HU_AUTH_MODE='direct'`) và một Edge Function `api` Deno (`HU_API_BASE` trong `client/config.js`).
 - Postgres schema `game` qua transaction pooler 6543; engine và server chạy ở Edge. Node/SQLite chỉ dành cho dev/test.
 - State V9, protocol v2, 48 lệnh. Không có gameplay offline hoặc guest.
-- Tri kỷ, Đạo hữu, Luận kiếm, Đấu giá, Tông môn là NPC/mô phỏng; chat và bảng xếp hạng đang ẩn.
+- Chat **đã bật** qua Edge API (Thế giới, Tông môn, Đạo hữu, Đạo lữ); bảng xếp hạng người chơi thật hiển thị **Lực chiến** và **Cảnh giới**. Các hoạt động Tri kỷ, Luận kiếm, Đấu giá và phần NPC trong Tông môn vẫn là mô phỏng. Khi nhân vật chết và bắt đầu lại, tiến trình/bảng xếp hạng được đặt lại (xem [kiến trúc](docs/architecture.md)).
 
 ## Kiểm thử (Node.js 24+)
 

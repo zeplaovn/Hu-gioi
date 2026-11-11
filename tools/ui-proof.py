@@ -13,7 +13,7 @@ CASES = [
     ("idle", None, None),
     ("world-map", "world", "map"),
     ("world-dungeons", "world", "dungeons"),
-    ("world-quests", "world", "quests"),
+    ("world-quests", "quests", None),
     ("world-sect", "world", "sect"),
     ("world-shop", "world", "shop"),
     ("world-auction", "world", "auction"),
@@ -92,6 +92,46 @@ def mock_supabase(page, name):
     page.route('https://rvrwfeblishqadkpzspb.supabase.co/**', respond)
 
 
+
+def mock_ci_chat(page, url):
+    """Only for browser CI: emulate Edge chat on a localhost test server.
+
+    Node's /api/v1 intentionally does not implement chat, while production
+    Supabase Edge does. Never use this fixture on a non-loopback target.
+    """
+    parsed = urlsplit(url)
+    assert parsed.scheme == 'http' and parsed.hostname == '127.0.0.1' and parsed.port in (8000, 8001)
+
+    def respond(route):
+        request = route.request
+        auth = request.headers.get('authorization', '')
+        headers = {'Content-Type': 'application/json', 'Cache-Control': 'no-store'}
+        if request.method != 'POST' or not auth.startswith('Bearer ci-access-token-'):
+            return route.fulfill(status=401, headers=headers, body='{"error":{"code":"UNAUTHENTICATED"}}')
+        try:
+            payload = request.post_data_json or {}
+        except ValueError:
+            return route.fulfill(status=400, headers=headers, body='{"error":{"code":"INVALID_JSON"}}')
+        channel = payload.get('channel') or 'world'
+        if channel not in ('world', 'sect', 'dao_huu', 'dao_lu'):
+            return route.fulfill(status=422, headers=headers, body='{"error":{"code":"INVALID_CHANNEL"}}')
+        path = urlsplit(request.url).path
+        if path.endswith('/social/chat/connect'):
+            result = {
+                'self': {'id': '11111111-2222-4333-8444-555555555555', 'name': 'CI Đạo Hữu'},
+                'messages': [], 'cursor': '0', 'online': 1, 'channel': channel
+            }
+        elif path.endswith('/social/chat/poll'):
+            result = {'messages': [], 'cursor': '0', 'online': 1, 'channel': channel, 'hasMore': False}
+        elif path.endswith('/social/chat/leave'):
+            result = {'left': True}
+        else:
+            return route.fulfill(status=404, headers=headers, body='{"error":{"code":"NOT_FOUND"}}')
+        route.fulfill(status=200, headers=headers, body=json.dumps(result, ensure_ascii=False))
+
+    page.route('**/api/v1/social/chat/**', respond)
+
+
 def enter_game(page, url, folder=None, name=None, outcome=None):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
@@ -138,22 +178,27 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
     page.locator("#menu button").first.wait_for(state="visible", timeout=25000)
 
 def open_page(page, section):
-    current = page.locator(".win.page")
+    # Bản desktop hiện hành giữ nhiều cửa sổ đồng thời; nhấn lại menu sẽ
+    # thu nhỏ cửa sổ, không phải mở tab mới. Focus cửa sổ sẵn có thay vì toggle.
+    current = page.locator(f'.win.desktop-window[data-window="{section}"]')
     if current.count():
-        btn = current.last.locator(f'[data-open-page="{section}"]')
-        if btn.count() and btn.first.is_visible():
-            btn.first.click()
-            return
-        page.locator(".win.page .page-back").last.click()
-    page.locator(f'#menu button[data-window="{section}"]').click()
+        if current.first.is_visible():
+            page.evaluate("(id) => window.HU_UI.windows.focus(id)", section)
+        else:
+            page.locator(f'#windowTaskbar [data-task-window="{section}"]').first.click()
+    else:
+        page.locator(f'#menu button[data-window="{section}"]').click()
+    current.first.wait_for(state="visible", timeout=15000)
 
 def set_tab(page, section, tab):
-    btn = page.locator(f'.win.page[data-window="{section}"] .tabbar [data-tab="{tab}"]')
+    if tab is None:
+        return
+    btn = page.locator(f'.win.desktop-window[data-window="{section}"] .tabbar [data-tab="{tab}"]')
     btn.first.click()
     page.wait_for_timeout(250)
 
 def snap(page, folder, prefix, name, where="top"):
-    area = page.locator(".win.page .win-body")
+    area = page.locator(".win.desktop-window.top .win-body")
     if area.count():
         area.last.evaluate("(element, where) => { element.scrollTop = where === 'bottom' ? element.scrollHeight : 0; }", where)
     page.wait_for_timeout(200)
@@ -196,8 +241,6 @@ def verify_log_float(page, folder, name, outcome):
 
 def verify_bubble(page, folder, name, outcome):
     trigger = page.locator("#chatBubble .chat-bubble-btn")
-    # Limited release intentionally has no real chat service. The proof must
-    # ensure chat stays inaccessible, not wait 15s for a deliberately hidden UI.
     if page.evaluate("() => window.HU_UI?.release?.chat === false"):
         assert trigger.is_hidden(), "Chat bubble is visible in the limited release"
         assert page.locator("#chatBubblePanel").is_hidden(), "Chat panel is visible"
@@ -205,21 +248,23 @@ def verify_bubble(page, folder, name, outcome):
         assert not menu_entry.count() or menu_entry.first.is_hidden(), "Chat menu is visible"
         outcome["chat_hidden_for_release"] = True
         return
+    # Launcher hiện mở cửa sổ desktop Truyền âm, không mở chatBubblePanel
+    # legacy; cùng contract cho cả BEFORE/AFTER.
     trigger.wait_for(state="visible", timeout=15000)
     trigger.click()
-    assert page.locator("#chatBubblePanel").is_visible(), "Bảng chat không mở"
-    if name.startswith("after_"):
-        assert trigger.is_hidden(), "Icon chat phải ẩn khi đang mở cửa sổ"
-        assert trigger.get_attribute("aria-expanded") == "true"
-        assert page.locator("#chatBubble .chat-bubble-icon").is_hidden(), "Hình icon chat chưa ẩn"
-        outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
-        page.locator(".chat-bubble-close").click()
-        assert page.locator("#chatBubblePanel").is_hidden(), "Không đóng được bằng nút ×"
-        assert trigger.is_visible(), "Icon chat không trở lại sau khi đóng"
-        outcome["chat_icon_persistent"] = True
-    else:
-        page.locator(".chat-bubble-close").click()
-        assert page.locator("#chatBubblePanel").is_hidden(), "Bảng chat không đóng"
+    win = page.locator('.win.desktop-window[data-window="chat"]')
+    win.wait_for(state="visible", timeout=15000)
+    assert win.locator("#chatChannels").is_visible(), "Thiếu bốn kênh chat"
+    assert win.locator('#chatChannels [data-chat-channel="world"]').count() == 1
+    outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
+    win.locator(".win-min").click()
+    win.wait_for(state="hidden", timeout=15000)
+    trigger.click()
+    win.wait_for(state="visible", timeout=15000)
+    win.locator(".win-close").click()
+    assert win.count() == 0, "Cửa sổ chat vẫn tồn tại sau khi đóng"
+    assert trigger.is_visible(), "Nút mở Truyền âm không trở lại"
+    outcome["chat_icon_persistent"] = True
     outcome["chat_toggle"] = True
 
 def run_set(browser, folder, name, url, width, height, mobile):
@@ -231,6 +276,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
     page = ctx.new_page()
     mock_ci_config(page, url)
     mock_supabase(page, name)  # identical auth/consent fixture for before and after
+    mock_ci_chat(page, url)  # Edge-only chat is mocked only in browser CI
     errors = []
     game_api_responses = []
     game_api_failures = []
@@ -270,14 +316,13 @@ def run_set(browser, folder, name, url, width, height, mobile):
                 open_page(page, section)
                 set_tab(page, section, tab)
             else:
-                current = page.locator(".win.page .page-back")
-                if current.count():
-                    current.last.click()
+                # Không tự đóng cửa sổ ở case idle; chụp nguyên sân khấu hiện hành.
+                pass
             outcome["screenshots"].append(snap(page, folder, name, key))
             if section in ("world", "character", "craft", "settings"):
                 outcome["screenshots"].append(snap(page, folder, name, key, "bottom"))
         # Thanh menu thứ năm trở đi được phép cuộn, và Menu không dùng dấu X.
-        page.locator(".win.page .page-back").last.click()
+        page.evaluate("() => window.HU_UI.windows.closeAll()")
         outcome["screenshots"].append(snap(page, folder, name, "menu"))
         if name.startswith("after_"):
             assert page.locator("#menuToggle .ico").inner_text().strip() != "✕", "Nút Menu còn hiện X"

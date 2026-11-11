@@ -1,15 +1,21 @@
-# Checklist phát hành thử nghiệm giới hạn
+# Checklist phát hành product / production — nhánh `final`
 
-> Trạng thái: Hiện hành. Tất cả mục chưa hoàn thành; chỉ chủ dự án có thể xác nhận bằng bằng chứng ngoài Git.
+> Trạng thái: Hiện hành. **Checklist chưa đạt; CHƯA SẴN SÀNG production.** Nguồn việc chuẩn: [`task.txt`](../task.txt), **mục 11 ghi đè các mục mâu thuẫn**. Kế hoạch và mốc nghiệm thu: [production-readiness.md](production-readiness.md). Tất cả checkbox chưa hoàn thành; chỉ xác nhận bằng bằng chứng từ staging/prod và người sở hữu game.
 
 - [ ] **1. Cloudflare Workers Builds:** Mở log Workers Builds của `hugioi`, tìm nguyên nhân, gửi log đã che secret để sửa build hoặc Dashboard đúng chỗ; không suy luận chỉ từ build local.
-- [ ] **2. Deploy Edge thủ công:** Tạo GitHub Actions Secret `SUPABASE_ACCESS_TOKEN`; sau khi check xanh, tự chạy workflow `.github/workflows/edge-bundle-build.yml` bằng `workflow_dispatch`. Không dán secret vào chat hoặc repo.
-- [ ] **3. Consent và index migration:** Xác minh bằng truy vấn đọc constraint `public.policy_acceptances.policy_version` cho `2026-11-10-v5`; xác nhận backup và lịch sử migration rồi mới phê duyệt áp dụng `supabase/migrations/20261110095400_game_cleanup_indexes.sql` lên database thật. Không chạy lại migration một cách mù quáng.
+- [ ] **2. Deploy Edge thủ công (SAU khi duyệt):** xác minh GitHub Actions Secret `SUPABASE_ACCESS_TOKEN` và môi trường staging; khi tất cả gate đạt, chủ dự án mới chạy `.github/workflows/edge-bundle-build.yml` bằng `workflow_dispatch`. Không tự deploy hoặc đưa secret vào chat/repo.
+- [ ] **3. Consent và schema/migration:** runtime hiện tại dùng `2026-11-11-v7`; đối chiếu constraint `public.policy_acceptances.policy_version`, lịch sử tất cả migration gốc và xã hội ngày 11/11, backup/restore thử. Không cho rằng code trong Git đã được migrate trên production. Mọi migration mới phải additive, qua staging và có rollback; không tự DROP bảng/trigger/dữ liệu đang chạy.
 - [ ] **4. Edge environment:** Xác minh `SUPABASE_URL`, cấu hình `HU_DB_POOLER_URL` đúng transaction pooler cổng 6543 và `HU_ALLOWED_ORIGINS` theo origin frontend được phép (không dùng wildcard).
-- [ ] **5. Supabase Auth:** Xác minh và cấu hình giới hạn tốc độ đăng nhập/đăng ký/email, CAPTCHA, xác nhận email, Site URL và redirect allowlist trong Dashboard.
-- [ ] **6. Hạn mức/cảnh báo:** Cấu hình cảnh báo số lượt gọi Edge Functions và dung lượng PostgreSQL. Edge API công khai nên request rác vẫn có thể được tính vào hạn mức.
-- [ ] **7. Branch protection:** Bắt buộc `security`, `browser-proof` và `Workers Builds: hugioi` xanh trước merge; không bỏ qua check đỏ để phát hành.
-- [ ] **8. Smoke sau deploy:** Kiểm staging/production bằng tài khoản thử riêng: OPTIONS/JWT/consent, đăng nhập email và Google (PKCE; regex `base64url` đã sửa ở commit `2996e9b`, cần xác nhận trên trình duyệt thật), bootstrap, preview, tạo nhân vật, vài lệnh, idle, reload, API 503/retry, metrics, rollback. Không thao tác trên tài khoản người chơi thật.
-- [ ] **9. Duyệt gameplay:** Chủ dự án duyệt 30 P0 và 14 P1 trong [sổ quyết định](gameplay-decisions.md), cùng [bản nháp cao giới](content-draft-realms-5-13.md) và [sách nghề](profession-manuals-proposal.md); ngoài phạm vi phát hành thử nghiệm.
+- [ ] **5. Supabase Auth:** xác minh xác nhận email, Site URL, redirect allowlist, giới hạn tốc độ Auth và quyền truy cập tài khoản. CAPTCHA/Turnstile là tùy chọn theo mục 11.3 của task; không bật chặn tương tác bắt buộc khi chưa cần.
+- [ ] **6. Hạn mức/cảnh báo:** đối chiếu quota Free Edge/DB/egress và Cloudflare tại tài liệu chính thức vào ngày triển khai; theo dõi Edge calls, WAL/DB size, p95 latency, lỗi 429/5xx, cảnh báo ngân sách. Mô phỏng 408.000 lượt/tháng/50 người **chưa tính chat** không phải dấu kiểm đạt.
+- [ ] **7. Branch protection và CI:** chạy đầy đủ `npm run check`, `npm test`, `npm run build:min`, `npm run build:edge`, `npm run edge:budget`, browser proof/mobile/Chromium và Workers Builds cho **commit cuối nhánh `final`**. PR #70 đã xanh 4 workflow trên commit cũ, nhưng không thay cho gate mới.
+- [ ] **8. Smoke staging rồi mới xét production:** dùng tài khoản thử: OPTIONS/JWT/consent v7, đăng nhập email/Google PKCE, bootstrap/preview/tạo nhân vật, lệnh/replay/idempotency, idle/ẩn tab/mất mạng, nhiều tab, chat 4 kênh, xếp hạng, reset sau tử vong, 503/retry, metrics/rollback. Không thao tác trên tài khoản người chơi thật.
+- [ ] **9. Duyệt gameplay:** đối chiếu 30 P0/14 P1 trong [sổ quyết định](gameplay-decisions.md), [cao giới](content-draft-realms-5-13.md), [sách nghề](profession-manuals-proposal.md). **Đặc biệt giải quyết mâu thuẫn Thiên Tinh/Thiên Mệnh Các được kế thừa hay xóa sau tử vong** giữa sổ quyết định và backend hiện tại. Không tự thay luật.
+
+- [ ] **10. Chat theo task §11.1:** server từ chối gửi dưới 15 giây, client có đếm ngược/optimistic; API không trả tin quá 1 giờ và dọn vật lý vài phút sau đó; kiểm thử kênh riêng/tông môn, retry/idempotency và giảm polling khi cửa sổ đóng/tab ẩn.
+- [ ] **11. Ranking theo task §11.2:** chụp Lực chiến/Cảnh giới mỗi 12 giờ; UI ghi lúc cập nhật; loại nhân vật đã chết và xử lý reset ngay cả khi snapshot còn hạn; giữ hoạt động kênh chat tông môn sau khi chuyển phụ thuộc `sect_id`.
+- [ ] **12. Tối ưu backend theo task §11.4:** baseline số SQL/route, p50/p95, byte response, WAL, state; đo trước/sau của sync/auth/consent cache, receipt TTL, bảng chat và leaderboard. Không đánh đổi idempotency, RLS, server-authoritative.
+- [ ] **13. Retention và database:** `player_receipts`, `pavilion_receipts`, `creation_tickets`, `world_chat_messages` đều có chính sách TTL đã kiểm thử; migration chỉ additive cho tới khi có xác nhận rollback, không tự xóa dữ liệu thật.
+- [ ] **14. Product UX:** test cửa sổ desktop, 12 chính kinh và 8 kỳ kinh, bản đồ, nhiệm vụ ngoài menu, chat 4 kênh, 390/844/1366px, máy yếu, mạng chậm; không tăng p95/LCP/INP so với baseline đo.
 
 **Không tự tích ô nào khi chưa có bằng chứng.** Xem [runbook Edge](edge-deployment.md).

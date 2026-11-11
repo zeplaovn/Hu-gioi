@@ -1,14 +1,14 @@
 # Triển khai Hư Giới: Cloudflare Static + Supabase Edge API (FREE)
 
 > Trạng thái: Hiện hành.
-> **Theo thông tin bàn giao 10/11/2026; chưa kiểm chứng bằng Dashboard production:** Schema `game` đã được áp dụng qua Supabase Migration `20261110075419_game_schema` và Edge Function `api` v1 đã được tải lên. Chưa xác nhận xử lý gameplay thành công cho tới khi cấu hình `HU_DB_POOLER_URL` và `HU_ALLOWED_ORIGINS`. Không chạy lại migration này hoặc migration consent v5. Backend Edge là mục tiêu phát hành; Node/SQLite vẫn giữ để dev/test. Gói Free không bảo đảm uptime.
+> **Thông tin bàn giao production ngày 10/11/2026 chưa được xác minh qua Dashboard.** Mã nguồn hiện hành ngày 11/11/2026 đã có các migration bổ sung chat/ranking và chính sách `2026-11-11-v7`. Trước khi deploy phải kiểm tra lịch sử migration thực tế, `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS` và policy v7; không giả định database đã được cập nhật chỉ vì file có trong Git. Không chạy lại bất kỳ migration đã áp dụng. Backend Edge là mục tiêu phát hành; Node/SQLite chỉ cho dev/test. Gói Free không bảo đảm uptime.
 
 ## Kiến trúc và ranh giới tin cậy
 
 - Trang tĩnh: Cloudflare Worker assets, origin `https://hugioi.blackbearvn.workers.dev`. `index.html` nạp `client/config.js` **trước** `remote-session.js` và `auth/supabase.js`; CSP chỉ `script-src 'self'`. `HU_AUTH_MODE='direct'` gọi HTTPS Supabase Auth `/auth/v1/token?grant_type=password` bằng publishable key **công khai**, không gọi Node login gateway.
 - API duy nhất: `https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api`; Deno route và xác minh JWT (ES256/RS256 qua JWKS, HS256 chỉ khi có secret), `verify_jwt=false` để preflight OPTIONS chạy không cần token; API bearer token vẫn bắt buộc cho mọi gameplay route.
-- Database: **schema riêng `game`**, 5 bảng `players`, `player_receipts`, `creation_tickets`, `pavilion_accounts`, `pavilion_receipts`. Không cấp quyền hay policy RLS cho `anon` hoặc `authenticated`. Không thêm `game` vào Data API exposed schemas. Function kết nối qua `HU_DB_POOLER_URL` (Supavisor **transaction pooler, port 6543**) lấy từ dashboard > Connect. `SUPABASE_DB_URL` mặc định là direct, **không dùng** cho gameplay.
-- `public.policy_acceptances` **đã tồn tại** với v5 `2026-11-10-v5`. **Không** chạy lại `supabase/sql/policy_acceptances.sql`. Edge đọc trực tiếp bảng này, đòi đủ `privacy` và `release_terms` cho route gameplay; `/me/*` chỉ cần JWT.
+- Database: **schema riêng `game`**, 8 bảng theo migrations hiện hành: `players`, `player_receipts`, `creation_tickets`, `pavilion_accounts`, `pavilion_receipts`, `world_chat_messages`, `world_chat_presence`, `player_leaderboard`. Không cấp quyền hay policy RLS cho `anon` hoặc `authenticated`. Không thêm `game` vào Data API exposed schemas. Function kết nối qua `HU_DB_POOLER_URL` (Supavisor **transaction pooler, port 6543**) lấy từ dashboard > Connect. `SUPABASE_DB_URL` mặc định là direct, **không dùng** cho gameplay.
+- `public.policy_acceptances` có các version lịch sử; runtime hiện tại **chỉ chấp nhận consent v7 `2026-11-11-v7`**. Migration `20261111040200_v7_consent_and_deceased_leaderboard.sql` bổ sung constraint v7. **Không** chạy lại `supabase/sql/policy_acceptances.sql`. Edge đọc trực tiếp bảng này, đòi đủ `privacy` và `release_terms` cho route gameplay; `/me/*` chỉ cần JWT.
 - Đồng hồ, RNG, phần thưởng, thọ nguyên và sự hiện diện chỉ quyết định tại backend; client không gửi state/offline/time/price/reward; snapshot không có seed, export không có rng_seed.
 - Thiên Mệnh Các mới trên `main` (tích lũy qua kiếp) **được giữ**, có bảng account và receipt riêng. Mỗi hàng player được khóa `FOR UPDATE`; rate token nằm trong hàng `players` cùng giao dịch. Giới hạn theo IP chỉ còn ở Node gateway.
 
@@ -16,17 +16,17 @@
 
 > **Checklist thao tác TAY trên Supabase/Cloudflare production — chưa được CI kiểm chứng.** CI/PGlite chỉ kiểm tra mã và database giả lập; không chứng minh Dashboard, secrets, hạn mức hay luồng người chơi thật đã sẵn sàng. Chủ dự án phải tích từng ô, lưu bằng chứng cấu hình **không chứa token, mật khẩu hoặc connection string**.
 
-- [ ] **Policy consent v5 trước Edge deploy:** Trước khi triển khai function sử dụng `2026-11-10-v5`, kiểm tra constraint của `public.policy_acceptances` bằng `pg_get_constraintdef`. Nếu chưa cho phép v5, thực hiện `ALTER TABLE` mở phiên bản `2026-11-10-v5` **trước khi** deploy; câu lệnh tham khảo có chú thích trong `supabase/sql/policy_acceptances.sql`. Trên project đã áp dụng v5, **chỉ xác minh, không DROP/ADD lại constraint**. Lưu ảnh/trích kết quả xác minh đã che thông tin tài khoản.
+- [ ] **Policy consent v7 trước Edge deploy:** Kiểm tra constraint `public.policy_acceptances` bằng `pg_get_constraintdef` và lịch sử Supabase Migrations; xác nhận version `2026-11-11-v7` hợp lệ. Nếu migration v7 chưa được áp dụng, **dừng deploy và xin duyệt migration tương ứng**; không sửa constraint trực tiếp trên production hoặc chạy lại v5/v6. Lưu bằng chứng xác minh đã che dữ liệu tài khoản.
 - [ ] **Secrets / runtime:** Kiểm tra `SUPABASE_URL` do Supabase Edge runtime cấp; đặt `HU_DB_POOLER_URL` đúng URI **transaction pooler cổng 6543**, và đặt tường minh `HU_ALLOWED_ORIGINS` là các origin frontend được duyệt (không có `*`). Thiếu/sai `SUPABASE_URL` hoặc `HU_DB_POOLER_URL` khiến function **fail-fast khi khởi động**. Hiện mã có fallback `HU_ALLOWED_ORIGINS` về origin Cloudflare chính thức nếu chưa đặt, **nhưng checklist production bắt buộc đặt tường minh**. Chỉ ghi trạng thái có/không, không chụp giá trị secret.
 - [ ] **Supabase Auth:** Tại Dashboard kiểm tra giới hạn tốc độ đăng nhập/đăng ký và gửi email, **CAPTCHA nếu khả dụng**, xác nhận email đang bật, Site URL và redirect allowlist hợp lệ. Chụp bằng chứng vào checklist vận hành (che địa chỉ cá nhân, token và các bí mật).
 - [ ] **Hạn mức Free và cảnh báo:** Cấu hình cảnh báo/thủ tục theo dõi số lượt gọi **Edge Functions** và **dung lượng PostgreSQL**, kèm ngưỡng cảnh báo phù hợp với hạn mức gói miễn phí. Edge API có **URL công khai** nên request rác, request bị từ chối và nhiều tab vẫn có thể tính vào hạn mức; không xem test quota nội bộ là cam kết chi phí.
-- [ ] **Smoke thật sau deploy:** Chạy lại mục **“5. Xác minh sau deploy”** trên Supabase/Cloudflare production: kiểm tra OPTIONS 204, không có JWT → 401, đăng nhập thật → consent v5 → bootstrap → preview → tạo nhân vật thử → lệnh → reload và đối chiếu dữ liệu PostgreSQL; kiểm tra metrics và rollback. Dùng tài khoản test riêng, **không thực hiện xóa tài khoản thật**.
+- [ ] **Smoke thật sau deploy:** Chạy lại mục **“5. Xác minh sau deploy”** trên Supabase/Cloudflare production: kiểm tra OPTIONS 204, không có JWT → 401, đăng nhập thật → consent v7 → bootstrap → preview → tạo nhân vật thử → lệnh → reload và đối chiếu dữ liệu PostgreSQL; kiểm tra metrics và rollback. Dùng tài khoản test riêng, **không thực hiện xóa tài khoản thật**.
 
 **Trạng thái khi checklist chưa được chủ dự án xác nhận:** *chưa được CI kiểm chứng; chưa mở cho người chơi*.
 
 ## 1. Kiểm tra trước migration (CHƯA chạy)
 
-Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Đường dẫn duy nhất để migrate: `supabase/migrations/20261110075419_game_schema.sql`. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
+Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Nguồn migration duy nhất là **toàn bộ tập tin có thứ tự trong `supabase/migrations/`**, gồm migration schema gốc, cleanup indexes và 4 migration xã hội/policy ngày 11/11; đối chiếu history trước khi làm bất kỳ thay đổi nào. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
 
 ```sh
 npm ci
@@ -41,7 +41,7 @@ supabase db push --remote --dry-run
 # supabase db push --remote
 ```
 
-**Checklist review SQL trước khi duyệt:** xác nhận đã backup, bảng public.policy_acceptances và constraint v5 đúng, `game` không nằm trong Dashboard > Integrations > Data API > Exposed Schemas, tài khoản `postgres` của connection pooler có quyền bảng riêng, 5 bảng có `relrowsecurity=true`, `pg_policies` game rỗng, foreign keys auth.users `ON DELETE CASCADE`, state ≤64 KB, tên `name_key` unique, receipt và ticket đúng hạn. Supabase migrations có thể tạo `supabase_migrations` history; không sửa thủ công.
+**Checklist review SQL trước khi duyệt:** xác nhận đã backup, bảng public.policy_acceptances và constraint v7 đúng, `game` không nằm trong Dashboard > Integrations > Data API > Exposed Schemas, tài khoản `postgres` của connection pooler có quyền bảng riêng, 8 bảng có `relrowsecurity=true`, `pg_policies` game rỗng, foreign keys auth.users `ON DELETE CASCADE`, state ≤64 KB, tên `name_key` unique, receipt và ticket đúng hạn. Supabase migrations có thể tạo `supabase_migrations` history; không sửa thủ công.
 
 Sau migration được phê duyệt, dùng truy vấn đọc để kiểm chứng:
 
@@ -132,14 +132,14 @@ Dashboard > Authentication > Providers > Email: bật email/password, kiểm tra
 - Supabase Dashboard > Authentication > Providers > Google: bật provider, nhập **Client ID** và **Client Secret** tại Dashboard (không commit vào Git hoặc đưa vào client).
 - Supabase Dashboard > Authentication > URL Configuration: Site URL `https://hugioi.blackbearvn.workers.dev`, thêm chính URL này vào Redirect URLs; với staging dùng allowlist chính xác, không wildcard tùy tiện. Frontend khởi tạo Authorization Code + PKCE S256, chuyển hướng qua Supabase Auth và đổi `code` lấy phiên bằng `/auth/v1/token?grant_type=pkce`.
 - Chế độ Google chỉ áp dụng `HU_AUTH_MODE='direct'` và HTTPS (hoặc localhost). PKCE verifier chỉ lưu ở `sessionStorage`, mã OAuth được dọn khỏi URL trước khi đổi token. Không nhận JWT trực tiếp từ URL fragment. Browser cần cho phép sessionStorage và Web Crypto.
-- Xác minh bằng tài khoản Google thử nghiệm: redirect Google → Supabase callback → Cloudflare → xác minh `/auth/v1/user` → **consent v5** → bootstrap/reload/logout. Thử từ chối quyền Google, refresh tab trong lúc redirect, và mở URL callback ngoài phiên gốc; không được tự động nhận token.
+- Xác minh bằng tài khoản Google thử nghiệm: redirect Google → Supabase callback → Cloudflare → xác minh `/auth/v1/user` → **consent v7** → bootstrap/reload/logout. Thử từ chối quyền Google, refresh tab trong lúc redirect, và mở URL callback ngoài phiên gốc; không được tự động nhận token.
 - Tài khoản email/password cũ được giữ nguyên; việc gộp tài khoản với Google phụ thuộc hành vi liên kết danh tính của Supabase. Không tự gộp người chơi chỉ theo địa chỉ email.
 
 ## 5. Xác minh sau deploy
 
 - Từ terminal: `curl -i https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap` **không JWT** phải 401; preflight `OPTIONS` với `Origin: https://hugioi.blackbearvn.workers.dev` phải 204 và trả `Vary: Origin`, allow origin/header.
 - Thử origin ngoài whitelist: không có `Access-Control-Allow-Origin`.
-- Đăng ký → xác nhận email → đăng nhập trực tiếp Supabase → đồng ý đủ 2 chính sách v5 → bootstrap → gieo phiếu → tạo nhân vật → 20 lệnh → reload → so sánh revision, state và seed bị ẩn.
+- Đăng ký → xác nhận email → đăng nhập trực tiếp Supabase → đồng ý đủ 2 chính sách v7 → bootstrap → gieo phiếu → tạo nhân vật → 20 lệnh → reload → so sánh revision, state và seed bị ẩn.
 - Test offline 20 phút: sync đầu tiên trả 0 giây; gửi lệnh breakthrough lỗi; sync ngay sau vẫn 0 giây, không cộng tuổi/tu vi. Pause tab ẩn → reload → không được tiến triển.
 - Test /me/export không có seed, /me/erase và /me/delete-account với account test riêng. Đặc biệt không thử xóa tài khoản production thật.
 - Kiểm tra SQL roles bằng truy vấn ở mục 1 và chắc chắn `game` không exposed.

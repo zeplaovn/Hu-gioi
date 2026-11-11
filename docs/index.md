@@ -6,12 +6,15 @@
 
 | Chủ đề (nguồn sự thật duy nhất) | Tài liệu |
 |---|---|
+| Nhiệm vụ bản final (mục 11 ưu tiên cao nhất) | [task.txt](../task.txt) |
+| Gate chuẩn bị production | [Production readiness](production-readiness.md) |
 | Kiến trúc runtime Edge/Postgres | [Kiến trúc](architecture.md) |
 | Build, migration, deploy, rollback | [Runbook Edge](edge-deployment.md) |
+| Dọn nguồn frontend, CSS bundle và JS UI | [Tối ưu frontend](frontend-optimization.md) |
 | Secrets, JWT, CSP, Auth, quota | [Bảo mật](security.md) |
 | Hợp đồng engine và lệnh | [Engine contract](engine-contract.md) |
 | Sinh tử, tiến trình online | [Gameplay V9](gameplay-v9.md) |
-| Tài sản xuyên kiếp | [Thiên Mệnh Các](thien-menh-cac.md) |
+| Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại | [Thiên Mệnh Các](thien-menh-cac.md) |
 | Dữ liệu design hiện tích hợp | [Tích hợp thiết kế](design-integration.md) |
 | Đồ họa nhân vật | [Bộ nhân vật](player-pack.md) |
 | Đồ họa nghề phụ và kinh mạch (tùy chọn) | [Gói asset Đan Các · Lò Rèn · Kinh Mạch Đồ](asset-pack-crafting-meridians.md) |
@@ -35,4 +38,4 @@
 
 ## Việc chờ chủ dự án
 
-Xem đủ 9 ô trong [checklist](release-checklist.md): Cloudflare logs; deploy thủ công; consent v5/migration index; Edge environment; Supabase Auth; quota/alert; branch protection; smoke staging/production; P0/P1. **Chưa có mục nào được xác nhận.** [README](../README.md).
+Xem đủ 14 mục trong [checklist](release-checklist.md) và kế hoạch [production readiness](production-readiness.md): CI của `final`, xác minh migration/consent v7, cấu hình và quota chính thức, chat giới hạn 15 giây + TTL 1 giờ, bảng xếp hạng snapshot 12 giờ, tối ưu backend có số đo và smoke staging. **Chưa có mục nào được xác nhận bằng bằng chứng sản xuất.** [README](../README.md).
