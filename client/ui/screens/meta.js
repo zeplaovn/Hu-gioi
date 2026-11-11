@@ -42,18 +42,7 @@
           { eyebrow: 'THIÊN PHÚ' });
       }).join('') + '</div>';
   }
-  function relics() {
-    const p = UI.session.pavilion || { balance: 0, relics: {} };
-    return '<p class="screen-lead">Kỳ Trân được giữ trong kho tài khoản. Khi tạo nhân vật mới, mỗi loại bảo vật đang có tự tiêu hao một món, giúp đạo thân nhập đạo nhanh hơn; tối đa 5 món mỗi loại.</p>' +
-      '<div class="screen-grid">' + Object.entries(H.PAVILION.relics).map(([key, item]) => {
-        const count = p.relics?.[key] || 0;
-        return card(item.name, '<p>' + esc(item.desc) + '</p>' +
-          row('Trong kho', count + '/' + item.maxStored) + row('Giá', item.cost + ' Thiên Tinh') +
-          btn('Đổi bảo vật', 'pavilionBuy', 'data-kind="relic" data-key="' + esc(key) + '"',
-            count >= item.maxStored || (p.balance || 0) < item.cost, 'btn-outline'),
-          { eyebrow: 'KỲ TRÂN XUYÊN KIẾP' });
-      }).join('') + '</div>';
-  }
+
   UI.action('pavilionBuy', async (el, data) => {
     if (el?.disabled) return UI.KEEP;
     const label = el?.textContent;
