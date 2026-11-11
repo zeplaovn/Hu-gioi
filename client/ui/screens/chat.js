@@ -54,6 +54,18 @@
       </form>
     </section>`;
   }
+  function refreshComposer() {
+    const send = $('chatSend');
+    if (!send) return;
+    const left = Math.max(0, Math.ceil(((session.lastSentAt || 0) + 15000 - Date.now()) / 1000));
+    send.disabled = sending || session.state.status !== 'online' || !draft.trim() || left > 0;
+    send.innerHTML = sending ? 'Đang gửi…' : left ? left + ' giây' : 'Gửi <span aria-hidden="true">➤</span>';
+    if ($('chatLimit')) $('chatLimit').textContent = left
+      ? 'Hồi linh truyền âm · còn ' + left + ' giây để gửi tin tiếp theo'
+      : 'Tối đa 400 ký tự · Mỗi tin cách nhau 15 giây';
+    if ($('chatLength')) $('chatLength').textContent = draft.length + '/400';
+  }
+
   function update() {
     if (!$('chatFeed')) return;
     const state = session.state, feed = $('chatFeed');
@@ -69,9 +81,7 @@
     feed.setAttribute('aria-label', 'Tin nhắn kênh ' + (CHANNELS.find(x => x.id === session.channel)?.title || 'thế giới'));
     $('chatConnect').hidden = ['connecting', 'online'].includes(state.status) || !session.available;
     $('chatDisconnect').hidden = !['connecting', 'online', 'offline'].includes(state.status);
-    $('chatSend').disabled = sending || state.status !== 'online' || !draft.trim();
-    $('chatSend').innerHTML = sending ? 'Đang gửi…' : 'Gửi <span aria-hidden="true">➤</span>';
-    if ($('chatLength')) $('chatLength').textContent = draft.length + '/400';
+    refreshComposer();
     document.querySelectorAll('[data-chat-channel]').forEach(el => el.tabIndex = el.dataset.chatChannel === session.channel ? 0 : -1);
     const follow = feed.scrollHeight - feed.clientHeight - feed.scrollTop < 48;
     const ids = new Set(state.messages.map(m => m.id));
@@ -250,9 +260,15 @@
     const game = document.getElementById('game');
     const show = !!(UI.release.chat && game && !game.hidden && UI.s && UI.s().created);
     if (show) bubbleBuild();
-    if (!show && session.state.status !== 'idle' && session.state.status !== 'unavailable') { session.disconnect(); opened = false; }
+    // Giảm tải DB: chỉ mở/poll kênh khi cửa sổ Truyền âm nhìn thấy được;
+    // thu nhỏ/đóng cửa sổ hoặc ẩn tab thì ngắt vòng poll sau tối đa 1 giây.
+    const win = UI.windows?.map?.get('chat');
+    const visible = !!(show && win && !win.minimized && !root.document.hidden);
+    if (!visible && opened) { opened = false; session.disconnect(); }
+    if (visible && !opened && session.available) { opened = true; void session.connect(); }
     if (bubble.el) bubble.el.hidden = !show;
+    if (visible) refreshComposer();
   }
-  if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 700);
+  if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 1000);
   UI.register({ id: 'chat', label: 'Truyền âm', icon: '✧', eyebrow: 'TRUYỀN ÂM', render, mount, update });
 })(typeof window !== 'undefined' ? window : globalThis);
