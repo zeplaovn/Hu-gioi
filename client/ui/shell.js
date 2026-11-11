@@ -1708,6 +1708,7 @@
       if (fn && !store.locked) { store.catchUp(); await safe(fn); store.write(); refresh(); }
       return;
     }
+    if (name === 'resetAfterDeath') { await safe(() => UI.resetAfterDeath?.()); return; }
     if (!$('modalLayer').hidden) return;
     if (store.locked) { toast('Một tab khác đang chơi. Đóng tab kia rồi tải lại trang.'); return; }
     if (trib.pageOpen) {
