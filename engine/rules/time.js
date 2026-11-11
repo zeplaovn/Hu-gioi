@@ -111,16 +111,11 @@
               exploring.text = result.text;
             }
           } else if (exploring.kind === 'monster' && !exploring.cleared) {
-            // Không còn chiến đấu thủ công: trận chạm trán được luận định khi
-            // kết thúc lịch luyện, không phát sinh tiến trình đánh quái mỗi giây.
-            const foe = this.enemy(), chance = F.win_probability(this.stats(exploring.end).CP, foe.CP);
-            if (this.rng() < chance) {
-              this.collectLoot(1, false);
-              exploring.cleared = true;
-              exploring.text = 'Đã vượt qua ' + exploring.name + ', thu nhận chiến lợi phẩm.';
-            } else {
-              exploring.text = 'Gặp ' + exploring.name + ', đạo thân tránh được hiểm họa nhưng chưa thể thu được chiến lợi phẩm.';
-            }
+            // Không còn chiến đấu thủ công: trận chạm trán được luận định khi kết thúc
+            // lịch luyện theo lựa chọn của người chơi (mặc định là giao chiến).
+            exploring.text = this.resolveExplorationMonster(exploring);
+          } else if (exploring.kind === 'npc') {
+            exploring.text = this.resolveExplorationNpc(exploring);
           }
           this.log('Lịch luyện kết thúc · ' + exploring.name + '. ' + exploring.text);
           s.exploration.last = exploring;

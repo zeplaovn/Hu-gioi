@@ -54,12 +54,12 @@ function run(g, type, payload = {}, now = NOW) {
   return C.execute(g, { type, payload }, now);
 }
 
-test('hợp đồng: engine READY, đủ 48 lệnh và phân miền rõ ràng', () => {
+test('hợp đồng: engine READY, đủ 49 lệnh và phân miền rõ ràng', () => {
   assert.equal(H.READY, true);
   assert.deepEqual(H.MISSING, []);
   assert.equal(H.VERSION, 9);
   assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8, 9]);
-  assert.equal(C.types.length, 48);
+  assert.equal(C.types.length, 49);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -71,7 +71,7 @@ test('hợp đồng: engine READY, đủ 48 lệnh và phân miền rõ ràng', 
     progression: ['absorb', 'upgrade', 'breakthrough', 'setAuto'],
     inventory: ['buy', 'sell', 'equip', 'learn', 'activate', 'use', 'sellYao', 'bid'],
     crafting: ['craft', 'forge', 'garden'],
-    combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration'],
+    combat: ['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration', 'exploreChoice'],
     world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot', 'storyMark'],
     adventures: ['startDungeon', 'abortDungeon', 'enterDungeon', 'dungeonAct'],
     social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel'],

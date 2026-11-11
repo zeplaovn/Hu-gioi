@@ -1,7 +1,7 @@
 # Tích hợp dữ liệu thiết kế
 
 > Trạng thái: Hiện hành.
-> **Trạng thái nguồn:** Snapshot `data/design-raw.js` và lớp ánh xạ `data/design.js` đã nằm trong repository. Game **online-only**, state V9, protocol v2/48 lệnh. Tài liệu này mô tả nội dung được engine dùng, **không** phải hướng dẫn chạy game offline.
+> **Trạng thái nguồn:** Snapshot `data/design-raw.js` và lớp ánh xạ `data/design.js` đã nằm trong repository. Game **online-only**, state V9, protocol v2/49 lệnh. Tài liệu này mô tả nội dung được engine dùng, **không** phải hướng dẫn chạy game offline.
 >
 > **Lưu ý công cụ:** Một số phiên bản tài liệu cũ nhắc `tools/import-game-design.mjs`, nhưng **file đó hiện không còn trong repository**. Không chạy lệnh import/ghi đè theo hướng dẫn cũ; muốn thêm snapshot phải tạo lại công cụ có test liên kết và được review như một thay đổi dữ liệu.
 

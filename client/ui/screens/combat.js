@@ -12,18 +12,39 @@
       <p class="info-note">${journey
         ? 'Đang hành tẩu trong bí cảnh. Phải kết thúc chuyến đi mới có thể trở về đài Tu luyện hoặc đổi địa điểm.'
         : 'Chọn địa điểm phù hợp đạo hạnh, sau đó khởi hành. Một chuyến lịch luyện kéo dài đúng mười phút.'}</p>
+      ${journey ? `<div class="exploration-clock" role="timer" aria-label="Thời gian lịch luyện còn lại">
+            <span>Thời gian trở về</span><strong id="explorationCountdown">${countdown}</strong>
+            <div class="meter-bar" aria-hidden="true"><i id="explorationProgress" style="width:${(100 - remain / 6).toFixed(1)}%"></i></div>
+          </div>${eventBlock()}` : ''}
       <div class="zone-list">${H.ZONES.map(z => `
         <button class="zone-button ${z.id === s.zone ? 'active' : ''}" data-act="travel" data-index="${z.id}"
           ${journey || z.realm > s.realm ? 'disabled' : ''} aria-pressed="${z.id === s.zone}">
           <b>${esc(z.name)}</b><small>${z.realm > s.realm ? 'Mở ở ' + F.REALMS[z.realm] : esc(z.desc)}</small>
         </button>`).join('')}</div>
-      ${journey
-        ? `<div class="exploration-clock" role="timer" aria-label="Thời gian lịch luyện còn lại">
-            <span>Thời gian trở về</span><strong id="explorationCountdown">${countdown}</strong>
-            <div class="meter-bar" aria-hidden="true"><i id="explorationProgress" style="width:${(100 - remain / 6).toFixed(1)}%"></i></div>
-          </div>`
-        : btn('Khởi hành lịch luyện · 10 phút', 'exploreStart', '', false, 'btn-gold')}
+      ${journey ? '' : btn('Khởi hành lịch luyện · 10 phút', 'exploreStart', '', false, 'btn-gold')}
     `, { eyebrow: 'BÍ CẢNH', cls: 'zone-card' });
+  }
+
+  /* Sự kiện ngẫu nhiên của chuyến đi hiện tại: quái, NPC hoặc kỳ duyên địa bảo.
+     Quái và NPC cho chọn cách ứng phó; kết quả chỉ được tính khi hết chuyến. */
+  const EVENT_LABELS = { monster: 'YÊU THÚ CHẶN ĐƯỜNG', npc: 'GẶP GỠ ĐẠO HỮU', encounter: 'KỲ DUYÊN ĐỊA BẢO' };
+  function eventBlock() {
+    const s = UI.s(), e = s.exploration?.active;
+    if (!e) return '';
+    const options = (H.EXPLORE_CHOICES || {})[e.kind], chosen = e.choice >= 0, tamMaMax = H.TAM_MA_MAX || 100;
+    const choices = options ? `<div class="event-choices" role="group" aria-label="Cách ứng phó">${options.map((o, i) => `
+        <button class="event-choice ${chosen && e.choice === i ? 'active' : ''}" data-act="exploreChoice" data-index="${i}"
+          ${chosen ? 'disabled' : ''} aria-pressed="${chosen && e.choice === i}">
+          <b>${esc(o.label)}</b><small>${esc(o.desc)}</small>
+        </button>`).join('')}</div>` : '';
+    const note = e.kind === 'encounter'
+      ? 'Cơ duyên sẽ hiển lộ khi chuyến đi kết thúc. Phúc Duyên và Vận Khí càng cao, kỳ ngộ càng quý.'
+      : chosen ? 'Đã quyết định. Kết quả được tính khi chuyến đi kết thúc.'
+        : e.kind === 'npc' ? 'Không chọn thì chỉ lướt qua, không đổi tâm ma. Tâm ma hiện tại: ' + num(s.tamMa || 0) + '/' + tamMaMax + '.'
+          : 'Không chọn thì mặc định giao chiến. Tâm ma hiện tại: ' + num(s.tamMa || 0) + '/' + tamMaMax + '.';
+    return `<section class="event-block event-${esc(e.kind)}" aria-label="Sự kiện lịch luyện">
+      <span class="eyebrow gold">${EVENT_LABELS[e.kind] || 'SỰ KIỆN'}</span><h3>${esc(e.name)}</h3>
+      <p class="event-text">${esc(e.text)}</p>${choices}<p class="info-note">${note}</p></section>`;
   }
 
   function journalCard() {
@@ -56,7 +77,7 @@
     render: panel, panel, update,
     signature: () => {
       const s = UI.s(), e = s.exploration?.active;
-      return [s.zone, e?.start || 0, e?.end || 0, s.exploration?.last?.end || 0,
+      return [s.zone, e?.start || 0, e?.end || 0, e?.kind || '', e?.choice ?? -1, s.tamMa || 0, s.exploration?.last?.end || 0,
         s.logs[0] || '', s.logs.length].join('|');
     }
   });
@@ -67,6 +88,14 @@
       { type: 'gold', title: 'Lịch luyện' });
     UI.go('combat');
     // Rerender ngay để vô hiệu hóa nút khởi hành và bộ chọn nơi, không chờ tick tiếp theo.
+    // Cuộn về đầu để người chơi thấy ngay sự kiện vừa gặp, vì nút Khởi hành nằm cuối danh sách địa điểm.
+    const reveal = () => { const body = $('explorationCountdown')?.closest('.win-body'); if (body) body.scrollTop = 0; };
+    reveal(); setTimeout(reveal, 0);
+  });
+  UI.action('exploreChoice', async (el, d) => {
+    const e = UI.s().exploration?.active, option = (H.EXPLORE_CHOICES || {})[e?.kind]?.[Number(d.index)];
+    await UI.command('exploreChoice', { index: Number(d.index) });
+    UI.toast('Đã chọn "' + (option?.label || 'ứng phó') + '". Kết quả sẽ có khi chuyến đi kết thúc.', { type: 'info', title: 'Lịch luyện' });
   });
   UI.action('travel', async (el, d) => {
     if (UI.s().exploration?.active) throw Error('Chuyến lịch luyện chưa kết thúc; chưa thể đổi địa điểm.');

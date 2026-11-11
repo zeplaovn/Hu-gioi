@@ -3,7 +3,7 @@
 > Trạng thái: Hiện hành.
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 48 lệnh và state V9. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
+> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 49 lệnh và state V9. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
 > Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
@@ -38,7 +38,7 @@ Phần **engine phải cung cấp**:
 
 `LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
 
-## 4. Lệnh (48, protocol V2)
+## 4. Lệnh (49, protocol V2)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -65,6 +65,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `castManual` | combat | `code` |
 | `activateArtifact` | combat | `code` |
 | `startExploration` | combat | — |
+| `exploreChoice` | combat | `index` |
 | `setEnemyKind` | combat | `kind` |
 | `travel` | combat | `zone` |
 | `claimQuest` | world | `id` |
@@ -97,7 +98,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).
 
-`execute` **từ chối tất cả 48 lệnh khi `isDead()`**, không có lệnh hồi sinh. `resetAfterDeath` là endpoint backend riêng chỉ dùng sau khi máy chủ xác nhận chết và chủ tài khoản yêu cầu xóa.
+`execute` **từ chối tất cả 49 lệnh khi `isDead()`**, không có lệnh hồi sinh. `resetAfterDeath` là endpoint backend riêng chỉ dùng sau khi máy chủ xác nhận chết và chủ tài khoản yêu cầu xóa.
 
 ## 5. Phương thức truy vấn UI đang gọi
 
@@ -108,7 +109,7 @@ Các phép tính/tra cứu chỉ-đọc mà UI gọi trên `UI.g()` (tức `sess
 ## 6. Trường state UI đang đọc (`UI.s()`)
 
 Tên: `name`, `gender`, `age`, `race`, `created`, `destiny`, `death`, `roots`, `rootType`, `rootSub`, `rootCraft`, `talent`, `chaosTries`.
-Cảnh giới và tu luyện: `realm`, `stage`, `qi`, `progress`, `totalRunExp`, `breakBonus`, `pity`, `daoVan`, `rebirths`, `extraLife`, `tech`, `auto`, `tick`.
+Cảnh giới và tu luyện: `realm`, `stage`, `qi`, `progress`, `totalRunExp`, `tamMa`, `breakBonus`, `pity`, `daoVan`, `rebirths`, `extraLife`, `tech`, `auto`, `tick`.
 Chiến đấu: `hp`, `mp`, `shield`, `reduction`, `zone`, `enemyKind`, `enemyNum`, `enemyHp`, `cooldowns`, `designCombat`, `activeManuals`, `encounter`, `dungeon`.
 Kinh tế và hành trang: `stone`, `bag`, `equipment`, `learned`, `yaoValue`, `claimed`, `completed`, `auction`, `pillUses`, `pillRealmExp`.
 Nghề phụ: `alchemySkill`, `craftQueue`, `craftBoost`, `garden`, `gardenSoils`.

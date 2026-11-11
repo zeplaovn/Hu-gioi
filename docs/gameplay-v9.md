@@ -20,10 +20,20 @@
 - Trở lại game làm mới mốc `lastUpdate` mà không catch-up. Trong trường hợp mạng mất đột ngột, việc xác định đã offline có thể trễ tối đa bằng ngưỡng heartbeat; đây là giới hạn của kết nối HTTP, không phải một hệ thống presence realtime tuyệt đối.
 - Nếu người chơi đã ở trạng thái tử vong do lệnh online trước đó, đóng tab không làm đảo ngược cái chết.
 
+## Lịch luyện: sự kiện ngẫu nhiên và tâm ma
+
+- Khi khởi hành (`startExploration`) một chuyến 10 phút bốc **một** sự kiện theo tỉ lệ cố định ở `EXPLORE_WEIGHTS` (`data/adventures.js`): **quái 45% · NPC 30% · kỳ duyên 25%**.
+- **Quái** và **NPC** cho phép chọn một cách ứng phó bằng lệnh `exploreChoice { index: 0–2 }` (chọn một lần, trong lúc chuyến đi diễn ra). Kết quả chỉ được tính khi chuyến đi kết thúc; không chọn thì quái dùng **giao chiến** (như trước), NPC chỉ lướt qua.
+  - Quái: *Giao chiến* (thắng theo `win_probability`, thua tay trắng) · *Né tránh* (an toàn, không thu được gì) · *Thương lượng* (xác suất 15–75%, giảm khi tâm ma cao; thành công nhận 60% linh thạch quái, thất bại mất 6% sinh lực tối đa nhưng không bao giờ tử vong).
+  - NPC: *Sẻ lòng* (tâm ma −12, tu vi ít) · *Lắng nghe* (tâm ma −4, tu vi vừa) · *Tranh luận hơn thua* (tâm ma +10, tu vi nhiều).
+- **Kỳ duyên** dùng lại hệ kỳ ngộ có sẵn (`ENCOUNTERS`, `resolveEncounter`), không có lựa chọn.
+- **Tâm ma** (`state.tamMa`, số nguyên 0–100, mặc định 0): mỗi điểm giảm 0,15% xác suất đột phá nền (tối đa −15%). Đan `GIAI_DOC` giảm 20 điểm. Tâm ma không tự suy giảm theo thời gian.
+- Hằng số: `TAM_MA_MAX`, `TAM_MA_BREAK_PENALTY`, `TAM_MA_CLEANSE`, `EXPLORE_CHOICES`. **Các con số này là đề xuất cân bằng chờ chủ dự án duyệt.**
+
 ## Thiên mệnh và tương thích
 
 - `state.destiny` lưu lựa chọn tại Khởi Nguyên, hiệu lực một cấp của `META_UPGRADES` hiện có; `meta.achievements` chỉ là nhật ký thành tựu trong kiếp hiện tại, không cộng điểm mua nâng cấp.
-- `engine/state/player.js` dùng V9, chấp nhận V4–V9; `engine/protocol/commands.js` dùng protocol V2 và có 48 lệnh.
+- `engine/state/player.js` dùng V9, chấp nhận V4–V9; `engine/protocol/commands.js` dùng protocol V2 và có 49 lệnh.
 - Khi một nhân vật V8 đang tồn tại được nâng lên V9, người chơi không được tự đưa phiên bản state/hành trang client lên server; chỉ backend chạy normalize. Chưa có công cụ cho nhân vật cũ chọn Thiên mệnh giữa kiếp. Tạo lại sau khi chết mới chọn.
 
 ## Quyết định thiết kế tạm thời cần chủ dự án xác nhận

@@ -40,6 +40,7 @@
     castManual: { code },
     activateArtifact: { code },
     startExploration: {},
+    exploreChoice: { index: integer(0, 2) },
     setEnemyKind: { kind: oneOf(Object.keys(F.MONSTER_MULT)) },
     travel: { zone: integer(0, D.ZONES.length - 1) },
     // world

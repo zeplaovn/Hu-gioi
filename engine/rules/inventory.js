@@ -93,7 +93,7 @@
           else if (x.effect === 'CUNG_CO') {
             if (s.permanent >= e.tran_moi_canh_gioi) throw Error('Đã đạt trần củng cố cảnh giới.');
             s.permanent = Math.min(e.tran_moi_canh_gioi, s.permanent + e.cong_gop);
-          } else if (x.effect === 'GIAI_DOC') s.debuffs = [];
+          } else if (x.effect === 'GIAI_DOC') { s.debuffs = []; this.addTamMa(-H.TAM_MA_CLEANSE); }
           else if (x.effect === 'CHIEN_DAU') s.buffs.push({ type: 'attack', points: e.tang_ATK, end: now + e.thoi_luong * 1000 });
           else if (x.effect === 'TRONG_SINH') s.rebirthKeep = Math.max(s.rebirthKeep, e.giu_tien_do);
         } else if (x.kind === 'HERB' && x.design?.['cách dùng']?.includes('ăn trực tiếp')) {

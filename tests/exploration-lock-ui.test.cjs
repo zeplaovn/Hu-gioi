@@ -90,7 +90,9 @@ test('khi nạp lại game, tiếp tục chuyến đang chạy hoặc tự về 
 test('chỉ được đổi nơi trước khi khởi hành; chạm trán yêu thú được kết toán khi trở về', () => {
   const combat = read('engine/rules/combat.js'), time = read('engine/rules/time.js');
   assert.match(combat, /if \(this\.s\.exploration\?\.active\) throw Error\('Đang lịch luyện; chưa thể đổi địa điểm/);
-  assert.match(time, /const foe = this\.enemy\(\), chance = F\.win_probability/);
-  assert.match(time, /this\.collectLoot\(1, false\)/);
+  // Trận chạm trán chỉ được luận định một lần khi hết chuyến, theo lựa chọn (mặc định giao chiến).
+  assert.match(time, /exploring\.text = this\.resolveExplorationMonster\(exploring\)/);
+  assert.match(combat, /const foe = this\.enemy\(\), chance = F\.win_probability/);
+  assert.match(combat, /this\.collectLoot\(1, false\)/);
   assert.match(time, /s\.exploration\.active = null/);
 });

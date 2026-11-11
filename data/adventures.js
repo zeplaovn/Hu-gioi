@@ -96,7 +96,24 @@
     { id: 'power', name: 'Đan chiến đấu', kind: 'PILL', effect: 'CHIEN_DAU', count: 1, cost: 180, rank: 1, sect: 'huyetsat' },
     { id: 'herbs', name: 'Linh thảo', kind: 'HERB', count: 4, cost: 100, rank: 0, sect: 'vanduoc' }
   ];
-  const data = { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX: 10, DUNGEONS, ENCOUNTER_RARITIES, ENCOUNTERS, ENCOUNTER_INTERVAL: 180, SECTS, SECT_RANKS, SECT_MISSIONS, SECT_SHOP };
+  /* Sự kiện khi khởi hành Lịch luyện. Thứ tự và tỉ lệ: quái 45% · NPC 30% · kỳ duyên 25%. */
+  const EXPLORE_WEIGHTS = [['monster', .45], ['npc', .30], ['encounter', .25]];
+  /* Tâm ma: chỉ số 0–100. Mỗi điểm làm giảm xác suất đột phá nền (0,15%/điểm, tối đa −15%). */
+  const TAM_MA_MAX = 100, TAM_MA_BREAK_PENALTY = .0015, TAM_MA_CLEANSE = 20;
+  /* Lựa chọn cho sự kiện NPC và quái. Kết quả chỉ tính khi chuyến đi kết thúc; không chọn thì dùng lựa chọn mặc định (index 0 cho quái, bỏ qua cho NPC). */
+  const EXPLORE_CHOICES = {
+    npc: [
+      { id: 'share', label: 'Sẻ lòng', desc: 'Thẳng thắn bày tỏ tâm sự. Tâm ma giảm nhiều, tu vi tăng ít.', tamMa: -12, exp: 20 },
+      { id: 'listen', label: 'Lắng nghe', desc: 'Kiên nhẫn nghe đạo hữu đàm đạo. Tâm ma giảm nhẹ, tu vi tăng vừa.', tamMa: -4, exp: 40 },
+      { id: 'argue', label: 'Tranh luận hơn thua', desc: 'Cố giành phần thắng trong luận đạo. Tu vi tăng nhiều nhưng tâm ma tăng.', tamMa: 10, exp: 80 }
+    ],
+    monster: [
+      { id: 'fight', label: 'Giao chiến', desc: 'Đối đầu trực diện. Thắng thì thu chiến lợi phẩm, thua thì tay trắng.' },
+      { id: 'evade', label: 'Né tránh', desc: 'Lẳng lặng vòng qua. An toàn nhưng không thu được gì.' },
+      { id: 'bargain', label: 'Thương lượng', desc: 'Dùng lời lẽ khiến yêu thú nhường đường. Thành thì nhận một phần linh thạch, bại thì hao tổn sinh lực. Tâm ma cao khiến khó thành hơn.' }
+    ]
+  };
+  const data = { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX: 10, DUNGEONS, ENCOUNTER_RARITIES, ENCOUNTERS, ENCOUNTER_INTERVAL: 180, EXPLORE_WEIGHTS, EXPLORE_CHOICES, TAM_MA_MAX, TAM_MA_BREAK_PENALTY, TAM_MA_CLEANSE, SECTS, SECT_RANKS, SECT_MISSIONS, SECT_SHOP };
   root.HU_ADVENTURE_DATA = data;
   if (typeof module !== 'undefined' && module.exports) module.exports = data;
 })(typeof window !== 'undefined' ? window : globalThis);

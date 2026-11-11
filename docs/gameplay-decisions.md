@@ -14,7 +14,7 @@
 | ID | Trạng thái | Quyết định được xác nhận | Mã nguồn/tài liệu |
 |---|---|---|---|
 | **K01** | **CHỐT** | Game **online-only**, Node/SQLite server-authoritative, Supabase JWT; đồng hồ/RNG/giá/thưởng do máy chủ giữ. **Không tính thời gian offline/ẩn tab.** | `docs/gameplay-v9.md`, `PlayerService`, `RemoteSession` |
-| **K02** | **CHỐT hiện trạng** | Engine hiện **state V9**, protocol **v2**, **48 lệnh/9 miền**. Không quay lại V8/51 lệnh do tài liệu cũ. | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
+| **K02** | **CHỐT hiện trạng** | Engine hiện **state V9**, protocol **v2**, **49 lệnh/9 miền** (48 lệnh ban đầu + `exploreChoice` cho sự kiện Lịch luyện, **chờ chủ dự án duyệt**). Không quay lại V8/51 lệnh do tài liệu cũ. | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
 | **K03** | **CHỐT** | Mỗi đạo thân **một mạng**. Tọa hóa → server xác minh → xóa đạo thân đã chết → tạo đạo thân mới. Không hồi sinh người cũ; tạo kiếp mới **không mất Thiên Tinh**. | `docs/gameplay-v9.md`, `server/services/player-service.js` |
 | **K04** | **CHỐT & ĐÃ CÀI** | Thưởng **Thiên Tinh đầy đủ trong mỗi kiếp**, khi đột phá đại cảnh giới lên bậc `r` nhận `5×r`: Trúc Cơ +5, Kết Đan/Kim Đan +10, Nguyên Anh +15...; không giảm thưởng qua các kiếp, không thuế chuyển kiếp. | `docs/thien-menh-cac.md` (PR #31 đã merge) |
 | **K05** | **CHỐT & ĐÃ CÀI** | Thiên Mệnh Các thuộc **tài khoản**; 6 thuộc tính tối đa 20 cấp, hiệu quả chính tối đa +50% tương đối; Thiên Tinh, nâng cấp và Kỳ Trân chưa dùng được giữ sau khi xóa đạo thân; xóa toàn bộ dữ liệu tài khoản thì xóa luôn. | `data/character.js`, `server/repositories/sqlite-players.js` |
