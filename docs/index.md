@@ -2,6 +2,12 @@
 
 > Trạng thái: Hiện hành. Mục lục nguồn sự thật; không thay thế sổ quyết định gameplay.
 
+## Hồ sơ tổng hợp (đọc trước)
+
+- [Tổng hợp công việc và trạng thái](PROJECT-STATUS.md)
+- [Hồ sơ GAME](GAME.md)
+- [Hồ sơ SYSTEM](SYSTEM.md)
+
 ## Hiện hành
 
 | Chủ đề (nguồn sự thật duy nhất) | Tài liệu |
