@@ -255,7 +255,7 @@
        Khi mất phản hồi sau commit, gửi lại cùng requestId để nhận receipt. */
     pavilionPurchase(kind, key) {
       return this.run(async () => {
-        if (!this.accountId || kind !== 'upgrade') throw Error('Chưa thể mở Thiên Mệnh Các.');
+        if (!this.accountId || !['upgrade', 'starter'].includes(kind)) throw Error('Chưa thể mở Thiên Mệnh Các.');
         const requestId = secureRequestId();
         const body = { requestId, expectedVersion: this.pavilion.version, kind, key };
         let response;
