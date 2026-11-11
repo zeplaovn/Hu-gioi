@@ -8,6 +8,7 @@ import { createContentionCounter } from './contention-counter.ts';
 import { createEdgeRateLimiter } from './api-rate-limit.ts';
 import { getVerifiedUserId } from './auth-user.ts';
 import { createVerifiedUserCache } from './auth-cache.ts';
+import { handleSocial } from './social.ts';
 import {
   PlayerService, PostgresPlayers, GameError, toEnvelope,
   createAccountAdmin, shouldLogApiError, CONTENT_VERSION
@@ -164,6 +165,13 @@ export async function handleApi(req: Request): Promise<Response> {
     let result, status = 200;
     switch (route.name) {
       case 'bootstrap': result = await service.bootstrap(ownerId); break;
+      case 'chatConnect':
+      case 'chatPoll':
+      case 'chatSend':
+      case 'chatLeave':
+      case 'leaderboard':
+        result = await handleSocial(repo, ownerId, route.name, body);
+        break;
       case 'preview': result = await service.previewCreation(ownerId); status = 201; break;
       case 'create': result = await service.createPlayer(ownerId, body); status = 201; break;
       case 'pavilionPurchase': result = await service.pavilionPurchase(ownerId, body); break;

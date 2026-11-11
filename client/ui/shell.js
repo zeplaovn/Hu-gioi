@@ -521,8 +521,8 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world'];
-  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 700, character: 670, world: 740, settings: 580, meta: 760, more: 660 };
+  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'quests'];
+  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 700, character: 670, world: 740, quests: 700, settings: 580, meta: 760, more: 660 };
   const BADGED = ['combat', 'craft'];
 
   const wins = {
@@ -924,6 +924,7 @@
 
   function go(target, { silent = false } = {}) {
     if (!UI.release.allowed(target)) return;
+    if (target === 'world:quests') target = 'quests'; // Liên kết cũ từ NPC / URL vẫn hoạt động.
     if (target === 'chat' && UI.chatBubble) { UI.chatBubble.open(); return; }
     if (!UI.s().created) return;
     if (['running', 'settling'].includes(trib.phase)) return;

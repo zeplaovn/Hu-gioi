@@ -401,10 +401,10 @@ body.in-tribulation{overflow:hidden}
 
 /* Bản đồ chính ba giới: một ảnh duy nhất, kéo/cuộn/phóng to bằng cảm ứng và bàn phím. */
 .interactive-map{position:relative;display:block;width:100%;max-width:none;margin:0 0 16px;padding:0;border:1px solid #6f5339;border-radius:14px;background:#0d151b;overflow:hidden}
-.interactive-map .map-viewport{height:clamp(280px,57vh,740px);width:100%;overflow:hidden;touch-action:none;cursor:grab;outline-offset:-4px}
+.interactive-map .map-viewport{height:clamp(350px,61dvh,710px);width:100%;overflow:hidden;touch-action:none;cursor:grab;outline-offset:-4px;background:#14242c}
 .interactive-map .map-viewport.dragging{cursor:grabbing}
 .interactive-map .map-viewport:focus-visible{outline:3px solid #e7ce98}
-.interactive-map .map-image{display:block;width:100%;height:100%;object-fit:contain;object-position:center center;max-width:none;max-height:none;pointer-events:none;user-select:none;transform-origin:center center;will-change:transform}
+.interactive-map .map-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center center;max-width:none;max-height:none;pointer-events:none;user-select:none;transform-origin:center center;will-change:transform}
 .interactive-map .map-toolbar{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #bda26d66;border-radius:10px;background:#0a111ce8;z-index:2}
 .interactive-map .map-toolbar button{width:38px;height:38px;border:1px solid #c6a978;border-radius:6px;background:#23333b;color:#f4e4bb;font-size:22px;cursor:pointer}
 .interactive-map .map-toolbar button:hover{background:#34505b}
@@ -412,7 +412,7 @@ body.in-tribulation{overflow:hidden}
 .interactive-map .map-zoom-label{min-width:45px;text-align:center;font:700 12px var(--font);color:#e7d1a3}
 .interactive-map figcaption{padding:9px 13px;color:#d2c3a8;font-size:12px;text-align:center}
 @media(max-width:600px){
-  .interactive-map .map-viewport{height:clamp(300px,53dvh,590px)}
+  .interactive-map .map-viewport{height:clamp(320px,55dvh,590px)}
   .interactive-map .map-toolbar{top:7px;left:7px;gap:3px;padding:4px}
   .interactive-map .map-toolbar button{width:34px;height:34px}
 }
