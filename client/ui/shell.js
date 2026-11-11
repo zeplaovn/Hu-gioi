@@ -125,7 +125,7 @@
     engineRecent: new Map(), toastRecent: new Map(), lastPrune: 0
   };
   // Trạng thái chỉ thuộc giao diện; dữ liệu tu luyện và bản lưu không thay đổi.
-  const logFloatState = { floating: false, x: null, y: null, loaded: false };
+  const logFloatState = { floating: false, maximized: false, x: null, y: null, loaded: false };
   let logDrag = null, suppressLogToggleClick = false;
 
   function classifyLog(text) {
@@ -191,6 +191,7 @@
   function setLogCollapsed(collapsed, persist = true) {
     const panel = $('logPanel'), btn = $('logToggle');
     logState.collapsed = !!collapsed;
+    if (logState.collapsed && logFloatState.maximized) setLogMaximized(false);
     if (panel) panel.classList.toggle('collapsed', logState.collapsed);
     document.body.classList.toggle('log-collapsed', logState.collapsed);
     if (btn) {
@@ -207,6 +208,7 @@
     updateLogChrome();
     if (logFloatState.floating) positionFloatingLog();
     if (persist) try { localStorage.setItem(LOG_KEY, logState.collapsed ? '1' : '0'); } catch { /* bỏ qua */ }
+    if (logFloatState.floating) UI.windows?.updateTaskbar?.();
   }
 
 
@@ -214,7 +216,7 @@
      atlas vì repo không có atlas dành cho .box. Bố cục và tọa độ là thuần UI. */
   function positionFloatingLog(x = logFloatState.x, y = logFloatState.y) {
     const panel = $('logPanel');
-    if (!panel || !logFloatState.floating) return;
+    if (!panel || !logFloatState.floating || logFloatState.maximized) return;
     const width = root.innerWidth || document.documentElement.clientWidth;
     const height = root.innerHeight || document.documentElement.clientHeight;
     const maxX = Math.max(8, width - panel.offsetWidth - 8);
@@ -235,10 +237,24 @@
     } catch { /* quyền lưu bị chặn: vẫn dùng được trong phiên hiện tại */ }
   }
 
+  function setLogMaximized(enabled) {
+    const panel = $('logPanel'), toggle = $('logMaxToggle');
+    if (!panel) return;
+    logFloatState.maximized = !!enabled && logFloatState.floating;
+    panel.classList.toggle('log-maximized', logFloatState.maximized);
+    if (toggle) {
+      toggle.textContent = logFloatState.maximized ? '❐' : '▢';
+      toggle.setAttribute('aria-label', logFloatState.maximized ? 'Khôi phục kích thước nhật ký' : 'Phóng to nhật ký');
+      toggle.title = logFloatState.maximized ? 'Khôi phục kích thước nhật ký' : 'Phóng to nhật ký';
+    }
+    if (!logFloatState.maximized) positionFloatingLog();
+    UI.windows?.updateTaskbar?.();
+  }
   function setLogFloating(floating, persist = true) {
     const panel = $('logPanel'), game = $('game'), btn = $('logFloatToggle');
     if (!panel) return;
     logFloatState.floating = !!floating;
+    if (!logFloatState.floating) setLogMaximized(false);
     panel.classList.toggle('log-floating', logFloatState.floating);
     game?.classList.toggle('log-floating', logFloatState.floating);
     document.body.classList.toggle('log-floating', logFloatState.floating);
@@ -255,14 +271,27 @@
       panel.style.removeProperty('left');
     }
     if (persist) saveFloatingLog();
+    UI.windows?.updateTaskbar?.();
   }
 
   function bindFloatingLog() {
     const panel = $('logPanel'), head = panel?.querySelector('.log-head');
     if (!panel || !head) return;
     $('logFloatToggle')?.addEventListener('click', () => setLogFloating(!logFloatState.floating));
+    const tools = panel.querySelector('.log-tools');
+    if (tools && !$('logMaxToggle')) {
+      const max = document.createElement('button');
+      max.id = 'logMaxToggle'; max.type = 'button'; max.className = 'log-max-toggle';
+      max.textContent = '▢'; max.title = 'Phóng to nhật ký'; max.setAttribute('aria-label',max.title);
+      tools.insertBefore(max,$('logFloatToggle') || tools.firstChild);
+      max.addEventListener('click', () => {
+        if (!logFloatState.floating) setLogFloating(true);
+        if (logState.collapsed) setLogCollapsed(false);
+        setLogMaximized(!logFloatState.maximized);
+      });
+    }
     head.addEventListener('pointerdown', e => {
-      if (!logFloatState.floating || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if (!logFloatState.floating || logFloatState.maximized || (e.pointerType === 'mouse' && e.button !== 0)) return;
       const toggle = e.target.closest('#logToggle');
       if (e.target.closest('button') && !(logState.collapsed && toggle)) return;
       const rect = panel.getBoundingClientRect();
@@ -629,14 +658,18 @@
         document.body.appendChild(this.taskbar);
         this.taskbar.addEventListener('click', e => {
           const button = e.target.closest('[data-task-window]');
-          if (button) this.toggle(button.dataset.taskWindow);
+          if (button?.dataset.taskWindow === '__log') setLogCollapsed(!logState.collapsed);
+          else if (button) this.toggle(button.dataset.taskWindow);
         });
       }
-      this.taskbar.hidden = !this.map.size || $('game')?.hidden === true;
+      const logInTaskbar = logFloatState.floating && $('logPanel');
+      this.taskbar.hidden = (!this.map.size && !logInTaskbar) || $('game')?.hidden === true;
       this.taskbar.innerHTML = [...this.map.entries()].map(([id,w]) =>
         '<button type="button" class="window-task' + (w.minimized ? ' minimized' : '') +
         (this.topId() === id ? ' active' : '') + '" data-task-window="' + esc(id) +
-        '" aria-pressed="' + String(this.topId() === id) + '">' + esc(w.def.label) + '</button>').join('');
+        '" aria-pressed="' + String(this.topId() === id) + '">' + esc(w.def.label) + '</button>').join('') +
+        (logInTaskbar ? '<button type="button" data-task-window="__log" class="window-task' +
+          (logState.collapsed ? ' minimized' : ' active') + '" aria-pressed="' + String(!logState.collapsed) + '">Nhật ký</button>' : '');
     },
     minimize(id) {
       const w = this.map.get(id); if (!w) return;
