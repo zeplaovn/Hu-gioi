@@ -13,11 +13,18 @@
 
   const session = () => { try { return UI.s && UI.s().created ? UI.s() : null; } catch { return null; } };
   const game = () => { try { return UI.g(); } catch { return null; } };
+  // MediaQueryList không thay đổi giữa các khung hình; matches vẫn phản ánh
+  // thay đổi thiết lập hệ thống mà không phải tạo mới mỗi 500 ms.
+  const motionQuery = typeof root.matchMedia === 'function'
+    ? root.matchMedia('(prefers-reduced-motion: reduce)') : null;
   const reducedMotion = s => {
     const mode = s.settings && s.settings.motionMode;
-    const mq = typeof root.matchMedia === 'function' ? root.matchMedia('(prefers-reduced-motion: reduce)') : null;
-    return mode === 'reduced' || (mode !== 'full' && !!(mq && mq.matches));
+    return mode === 'reduced' || (mode !== 'full' && !!motionQuery?.matches);
   };
+  const dotButtons = new Map();
+  function textIfChanged(element, value) {
+    if (element && element.textContent !== value) element.textContent = value;
+  }
   const fxOn = s => !document.hidden && !reducedMotion(s) && s.settings.cultivationEffects !== false && (!UI.vfx || UI.vfx.effectsEnabled());
 
   /* ---------- Dựng DOM một lần ---------- */
@@ -104,13 +111,22 @@
       const tier = coinTierFor(v);
       if (tier !== state.coinTier) { state.coinTier = tier; ico.innerHTML = `<img src="${esc(A.moneyIcon(tier))}" alt="" decoding="async">`; }
     });
-    $('chipStone').setAttribute('aria-label', 'Linh thạch ' + money(s.stone));
-    $('chipStone').title = 'Linh thạch: đơn vị Hạ, Trung, Thượng · ' + money(s.stone);
+    const stoneText = money(s.stone);
+    const stoneChip = $('chipStone');
+    const stoneLabel = 'Linh thạch ' + stoneText;
+    if (stoneChip.getAttribute('aria-label') !== stoneLabel)
+      stoneChip.setAttribute('aria-label', stoneLabel);
+    const stoneTitle = 'Linh thạch: đơn vị Hạ, Trung, Thượng · ' + stoneText;
+    if (stoneChip.title !== stoneTitle) stoneChip.title = stoneTitle;
     const thienTinh = UI.session.pavilion?.balance || 0;
-    $('chipDao').setAttribute('aria-label', 'Thiên Tinh ' + num(thienTinh));
-    $('chipDao').title = 'Thiên Tinh: ' + num(thienTinh);
-    $('chipRateVal').textContent = '+' + num(g.rate()) + '/giây';
-    tween('dao', UI.session.pavilion?.balance || 0, v => { $('chipDaoVal').textContent = num(Math.round(v)); });
+    const daoChip = $('chipDao');
+    const daoText = num(thienTinh);
+    const daoLabel = 'Thiên Tinh ' + daoText;
+    if (daoChip.getAttribute('aria-label') !== daoLabel)
+      daoChip.setAttribute('aria-label', daoLabel);
+    if (daoChip.title !== daoLabel) daoChip.title = daoLabel;
+    textIfChanged($('chipRateVal'), '+' + num(g.rate()) + '/giây');
+    tween('dao', thienTinh, v => { textIfChanged($('chipDaoVal'), num(Math.round(v))); });
   }
 
   /* ---------- Dải tầng, nút đột phá đại cảnh giới (tu vi xem ở bảng trạng thái) ---------- */
@@ -140,8 +156,12 @@
 
   /* ---------- Chấm thông báo trên tab ---------- */
   function dot(id, on) {
-    const btn = document.querySelector('#menu [data-window="' + id + '"]');
-    if (!btn) return;
+    let btn = dotButtons.get(id);
+    if (!btn || !btn.isConnected) {
+      btn = document.querySelector('#menu [data-window="' + id + '"]');
+      if (!btn) { dotButtons.delete(id); return; }
+      dotButtons.set(id, btn);
+    }
     let el = btn.querySelector('.badge.dot');
     if (on && !el) { el = mk('em', 'badge dot'); btn.append(el); }
     if (el) el.hidden = !on;
@@ -152,7 +172,8 @@
     const claimable = quests.some(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]);
     dot('world', claimable);
     dot('idle', !s.completed && g.isPeakStage() && s.qi >= g.need());
-    dot('craft', s.garden.some(p => !p.wilt && p.end <= Date.now()) || s.craftQueue.some(j => j.end <= Date.now()));
+    const now = Date.now();
+    dot('craft', s.garden.some(p => !p.wilt && p.end <= now) || s.craftQueue.some(j => j.end <= now));
   }
 
   /* ---------- Tự động đột phá + hiệu ứng ---------- */
@@ -198,8 +219,9 @@
     const prev = state.prev;
     if (prev && prev.created === s.created && s.realm === prev.realm && s.stage > prev.stage) onAutoStage(s, g, s.stage - prev.stage);
     state.prev = { created: s.created, realm: s.realm, stage: s.stage };
-    $('stage')?.classList.toggle('low-fx', reducedMotion(s));
-    $('scene')?.classList.toggle('low-fx', reducedMotion(s) || s.settings.cultivationEffects === false);
+    const lowMotion = reducedMotion(s);
+    $('stage')?.classList.toggle('low-fx', lowMotion);
+    $('scene')?.classList.toggle('low-fx', lowMotion || s.settings.cultivationEffects === false);
   }
 
   /* ---------- Đếm số cho popup (phần tử [data-countup]) ---------- */
