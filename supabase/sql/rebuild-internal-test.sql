@@ -1,5 +1,5 @@
--- INTERNAL TEST ONLY. The live project was verified EMPTY (0 auth users, 0 game/consent rows).
--- Do NOT run against production or an environment with any accounts.
+-- INTERNAL TEST ONLY. Rebuilds EMPTY game tables; test Auth accounts and consent history are preserved.
+-- NEVER run against production. Requires all game.* tables to have zero rows.
 -- Recreates public.policy_acceptances and ALL game.* tables/indexes/RLS/functions from
 -- the exact historical schema migrations already applied to Supabase.
 -- Does NOT alter Supabase-managed auth/storage/realtime or migration ledger.
@@ -12,9 +12,6 @@ DECLARE
   candidate record;
   populated boolean;
 BEGIN
-  IF EXISTS (SELECT 1 FROM auth.users) THEN
-    RAISE EXCEPTION 'REFUSED: auth.users is not empty. Only reset an empty internal test project.';
-  END IF;
   IF EXISTS (
     SELECT 1 FROM pg_tables WHERE schemaname = 'game'
       AND tablename NOT IN ('players','player_receipts','creation_tickets',
@@ -32,7 +29,6 @@ BEGIN
   FOR candidate IN
     SELECT schemaname, tablename FROM pg_tables
     WHERE schemaname = 'game'
-      OR (schemaname = 'public' AND tablename = 'policy_acceptances')
   LOOP
     EXECUTE format('SELECT EXISTS (SELECT 1 FROM %I.%I)', candidate.schemaname, candidate.tablename)
       INTO populated;
@@ -42,6 +38,12 @@ BEGIN
   END LOOP;
 END;
 $internal_test_empty$;
+
+-- Do not destroy existing account/consent history: snapshot in this transaction.
+LOCK TABLE public.policy_acceptances IN ACCESS EXCLUSIVE MODE;
+CREATE TEMP TABLE hu_policy_acceptances_snapshot ON COMMIT DROP AS
+  SELECT user_id,policy_kind,policy_version,accepted_at
+  FROM public.policy_acceptances;
 
 DROP SCHEMA IF EXISTS game CASCADE;
 DROP TABLE IF EXISTS public.policy_acceptances CASCADE;
@@ -482,5 +484,13 @@ CREATE INDEX IF NOT EXISTS game_player_receipts_player_expires
   ON game.player_receipts (player_id, expires_at);
 CREATE INDEX IF NOT EXISTS game_creation_tickets_owner_expires
   ON game.creation_tickets (owner_id, expires_at);
+
+-- Restore the versioned consent ledger with its original acceptance timestamps.
+-- auth.users and all Supabase-managed schemas were never modified.
+INSERT INTO public.policy_acceptances(user_id,policy_kind,policy_version,accepted_at)
+SELECT s.user_id,s.policy_kind,s.policy_version,s.accepted_at
+FROM pg_temp.hu_policy_acceptances_snapshot AS s
+JOIN auth.users AS u ON u.id = s.user_id
+ON CONFLICT DO NOTHING;
 
 COMMIT;
