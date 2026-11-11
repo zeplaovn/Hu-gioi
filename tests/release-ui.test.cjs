@@ -105,6 +105,8 @@ function releaseHarness() {
 
 test('cờ tắt: menu Thêm không Chat/ranking; giao du và thế giới có nhãn mô phỏng', () => {
   const { UI, items, bodyChildren, tick } = releaseHarness();
+  // Feature flag có thể tắt cho các bản không dùng Edge API thật.
+  UI.release.chat = false; UI.release.ranking = false;
   assert.equal(UI.release.chat, false);
   assert.equal(UI.release.ranking, false);
   assert.equal(UI.release.allowed('chat'), false);
@@ -139,13 +141,15 @@ test('thông báo khóa Giao du không còn quảng bá bảng xếp hạng đan
 
 test('bật lại cờ: menu ranking và nút chat nổi xuất hiện; tắt lại sẽ ẩn', () => {
   const { UI, items, bodyChildren, bubble, tick } = releaseHarness();
+  assert.equal(UI.release.chat, true);
+  assert.equal(UI.release.ranking, true);
   UI.release.ranking = true;
   UI.release.syncMoreMenu();
   assert.equal(items.length, 1);
   assert.equal(items[0].dataset.moreGo, 'more:ranking');
   assert.equal(UI.release.allowed('more:ranking'), true);
   assert.match(UI.screens.more.render('ranking'), /data-tab="ranking"/);
-  assert.match(UI.screens.more.render('ranking'), /Bảng tham khảo danh vọng NPC mô phỏng/);
+  assert.match(UI.screens.more.render('ranking'), /Bảng xếp hạng người chơi thật/);
   UI.release.chat = true;
   tick();
   assert.equal(bodyChildren.length, 1);
