@@ -191,6 +191,8 @@ def open_page(page, section):
     current.first.wait_for(state="visible", timeout=15000)
 
 def set_tab(page, section, tab):
+    if tab is None:
+        return
     btn = page.locator(f'.win.desktop-window[data-window="{section}"] .tabbar [data-tab="{tab}"]')
     btn.first.click()
     page.wait_for_timeout(250)
