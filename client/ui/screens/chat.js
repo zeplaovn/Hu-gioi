@@ -17,7 +17,7 @@
     return `<section class="chat-panel" aria-label="Truyền âm vạn giới">
       <header class="chat-heading">
         <div class="chat-brand"><span class="chat-seal" aria-hidden="true">✧</span><div>
-          <span class="eyebrow gold">LINH TẤN · TRUYỀN ÂM</span>
+          <span class="eyebrow gold">TRUYỀN ÂM · VẠN GIỚI</span>
           <h2>Truyền âm</h2></div></div>
         <span id="chatOnline" class="chat-online" aria-label="Số đạo hữu trực tuyến"></span>
       </header>
