@@ -91,26 +91,18 @@ class PlayerService {
     this.onError = onError;
   }
 
-  /* Tọa hóa thực: xóa được bất kỳ tử vong nào đã được engine xác nhận. */
-  async resetAfterDeath(ownerId, playerId) {
-    const rec = this.#own(await this.repo.get(playerId), ownerId);
-    if (!new H.Game(this.#state(rec, this.clock())).isDead())
-      throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
-    const deleted = await this.repo.deletePlayer(ownerId, playerId);
-    return { ...deleted, pavilion: await this.repo.getPavilion(ownerId) };
-  }
-
   /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
   async exportData(ownerId) {
     const data = await this.repo.exportOwnerData(ownerId);
     return {
       format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
       player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
-      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || await this.repo.getPavilion(ownerId)
+      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || await this.repo.getPavilion(ownerId),
+      sentChatMessages: data?.chatMessages || []
     };
   }
 
-  /* Quyền xóa dữ liệu: khác resetAfterDeath, không yêu cầu nhân vật đã tọa hóa. Cần xác nhận rõ ràng. */
+  /* Quyền xóa dữ liệu tự nguyện; không phải cách trọng sinh, cần xác nhận rõ ràng. */
   async eraseData(ownerId, body) {
     onlyKeys(body, ['confirm']);
     if (body.confirm !== ERASE_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa dữ liệu.');
@@ -197,6 +189,8 @@ class PlayerService {
       !Number.isSafeInteger(body.expectedVersion) || body.expectedVersion < 0 ||
       typeof body.key !== 'string' || typeof body.kind !== 'string')
       throw invalid('INVALID_REQUEST', 'Yêu cầu Thiên Mệnh Các không hợp lệ.');
+    // Kỳ Trân chuyển kiếp đã bị gỡ: không cho phép giao dịch relic qua API cũ.
+    if (body.kind !== 'upgrade') throw invalid('INVALID_REQUEST', 'Chỉ hỗ trợ nâng cấp Thiên Mệnh Các.');
     const now = this.clock();
     const out = await this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
     if (out.record) {
