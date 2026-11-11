@@ -241,6 +241,7 @@ const OWNER_B = '22222222-2222-4222-8222-222222222222';
 const migrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
 const socialMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
 const rankMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111032200_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
+const deadMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111051000_exclude_dead_from_live_leaderboards.sql'), 'utf8');
 
 async function sharedFixture(mode, t) {
   let repo;
@@ -254,6 +255,7 @@ async function sharedFixture(mode, t) {
     await db.exec(migrationSQL);
     await db.exec(socialMigrationSQL);
     await db.exec(rankMigrationSQL);
+    await db.exec(deadMigrationSQL);
     // PGlite dùng một Postgres backend; pool giả tuần tự hóa giao dịch như
     // driver connection pool size 1 của Edge, không mô phỏng mạng.
     let previous = Promise.resolve();
