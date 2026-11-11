@@ -40,7 +40,7 @@ h1,h2,h3{font-family:var(--serif);line-height:1.15}
 /* ===== chữ & tiện ích ===== */
 .eyebrow{display:block;font-size:12.5px;font-weight:800;letter-spacing:.16em;color:#bfae9d;text-transform:uppercase}
 .eyebrow.gold{color:var(--gold)}
-.gold{color:var(--gold)} .jade{color:var(--jade)} .cyan{color:var(--cyan)} .danger{color:var(--danger)} .muted{color:var(--muted)}
+.gold{color:var(--gold)} .jade{color:var(--jade)} .danger{color:var(--danger)} .muted{color:var(--muted)}
 .small{font-size:14px}.tiny{font-size:13px}
 .center{text-align:center}
 .nowrap{white-space:nowrap}
@@ -59,11 +59,8 @@ h1,h2,h3{font-family:var(--serif);line-height:1.15}
 .btn-gold:not(:disabled):hover{box-shadow:inset 0 1px 0 #ffffff33,0 6px 20px #c8452e66}
 .btn-outline{background:#211712;border-color:#533a30;color:#e3dbd3}
 .btn-outline:not(:disabled):hover{background:#30211b;border-color:#a68d73}
-.btn-ghost{background:transparent;border-color:transparent;color:#cabcad;padding:6px 8px}
-.btn-ghost:not(:disabled):hover{color:var(--gold);background:#ffffff08}
 .btn-danger{background:#3a1d19;border-color:#7c3b31;color:#ffc4b7}
 .btn-wide{width:100%}
-.btn-sm{padding:7px 10px;font-size:14px;border-radius:8px}
 .text-btn{border:0;background:transparent;color:#e1cba4;padding:2px 4px;font-size:14px;font-weight:700}
 .text-btn:hover{color:var(--gold)}
 /* ===== form ===== */
@@ -151,10 +148,7 @@ body.modal-open{overflow:hidden}
 .game-modal.is-busy .modal-buttons{display:none}
 .game-modal.is-busy .modal-x{display:none}
 .game-modal.is-busy .modal-symbol{animation:busyPulse 1.15s ease-in-out infinite}
-.modal-pending{position:relative;margin-top:14px;padding-top:12px;color:#e7d6b9;font-size:14px;letter-spacing:.03em}
-.modal-pending::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#e3ceab,#e6c164,transparent);background-size:220% 100%;animation:busyBar 1.2s linear infinite}
 @keyframes busyPulse{50%{filter:drop-shadow(0 0 26px #e6d3b3);transform:scale(1.06)}}
-@keyframes busyBar{to{background-position:-220% 0}}
 /* chồng thông báo */
 .toasts{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:120;display:flex;flex-direction:column;align-items:flex-end;gap:8px;width:min(380px,calc(100vw - 24px));max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;pointer-events:none}
 .toast-item{position:relative;pointer-events:auto;display:flex;align-items:flex-start;gap:10px;width:100%;padding:11px 12px 13px;border:1px solid #5c4135;border-top:2px solid var(--gold);border-radius:11px;background:linear-gradient(135deg,#2c1f19f2,#1b130fe8);box-shadow:0 10px 30px #0009;backdrop-filter:blur(10px);opacity:0;transform:translateY(10px) scale(.98);transition:opacity .22s,transform .22s;overflow:hidden;cursor:pointer}
@@ -225,6 +219,6 @@ body.modal-open{overflow:hidden}
 /* ===== Logo Hư Giới lơ lửng (dùng chung mọi nơi có logo) =====
    Dùng thuộc tính translate/rotate riêng nên không đè transform đã đặt cho từng logo. */
 @keyframes huLogoFloat{0%,100%{translate:0 0;rotate:-.35deg}50%{translate:0 -9px;rotate:.35deg}}
-.loading-logo,.auth-logo,.brand-logo,.scene-logo{animation:huLogoFloat 6.5s ease-in-out infinite;will-change:translate,rotate}
-@media(prefers-reduced-motion:reduce){.loading-logo,.auth-logo,.brand-logo,.scene-logo{animation:none;will-change:auto}}
-body.reduced-motion .loading-logo,body.reduced-motion .auth-logo,body.reduced-motion .brand-logo,body.reduced-motion .scene-logo{animation:none;will-change:auto}
+.loading-logo, .auth-logo, .brand-logo, .scene-logo{animation:huLogoFloat 6.5s ease-in-out infinite;will-change:translate,rotate}
+@media(prefers-reduced-motion:reduce){.loading-logo, .auth-logo, .brand-logo, .scene-logo{animation:none;will-change:auto}}
+body.reduced-motion .loading-logo, body.reduced-motion .auth-logo, body.reduced-motion .brand-logo, body.reduced-motion .scene-logo{animation:none;will-change:auto}

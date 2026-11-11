@@ -15,15 +15,32 @@
     { id: 'bag', label: 'Hành trang', icon: '◈' }
   ];
 
+  /* Thanh tiến độ nhỏ kèm nhãn; dùng chung cho tu vi và thọ nguyên ở đầu màn. */
+  function meter(label, text, percent, cls) {
+    return `<div class="char-meter"><div class="char-meter-top"><span>${label}</span><b>${text}</b></div>${bar(percent, cls)}</div>`;
+  }
+
   function header() {
     const s = UI.s(), g = UI.g();
+    const need = g.need(), life = H.raceLife(s.race, s.realm) + s.extraLife;
+    const qiPct = need > 0 ? s.qi / need * 100 : 0, agePct = life > 0 ? s.age / life * 100 : 0;
     return `<header class="char-header">
       <div class="portrait"><img src="${A.heroPortrait(s.gender, s.realm)}" alt="${esc(s.name)}" decoding="async"></div>
-      <div><span class="eyebrow gold">${esc(H.rootLabel(s.rootType, s.rootSub).toUpperCase())}</span><h2>${esc(s.name)}</h2>
-        <p>${g.realmLabel()} · ${F.realm_map(s.zone)}</p>
-        <p class="muted">Chủng tộc ${H.raceName(s.race)} · Tuổi ${num(Math.floor(s.age))} / thọ nguyên ${num(H.raceLife(s.race, s.realm) + s.extraLife)} năm</p></div>
+      <div class="char-id">
+        <span class="eyebrow gold">${esc(H.rootLabel(s.rootType, s.rootSub).toUpperCase())}</span>
+        <h2>${esc(s.name)}</h2>
+        <p class="char-realm">${g.realmLabel()} · ${F.realm_map(s.zone)}</p>
+        <p class="muted">${H.raceName(s.race)}</p>
+      </div>
+      <div class="char-meters">
+        ${meter('Tu vi', num(s.qi) + ' / ' + num(need), qiPct, 'qi')}
+        ${meter('Thọ nguyên', num(Math.floor(s.age)) + ' / ' + num(life) + ' năm', agePct, 'age')}
+      </div>
     </header>`;
   }
+
+  /* Ô chỉ số: nhãn nhỏ phía trên, giá trị lớn phía dưới. */
+  const tile = (label, value, cls = '') => `<div class="stat-tile ${cls}"><span>${label}</span><b>${value}</b></div>`;
 
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();

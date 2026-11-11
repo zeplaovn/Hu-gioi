@@ -22,7 +22,6 @@
 .scene-orbit::before,.scene-orbit::after{content:'';position:absolute;inset:13%;border:1px solid #e5d7b824;border-radius:50%}
 .scene-orbit::after{inset:50% -11%;height:1px;border:0;border-radius:0;background:linear-gradient(90deg,transparent,#e5d7b866,transparent)}
 .welcome-brand{display:flex;align-items:center;gap:12px;color:#fff9e9;text-shadow:0 2px 16px #07120e;position:relative}
-.brand-seal{width:42px;height:42px;display:grid;place-items:center;background:var(--ink-seal);border:1px solid #e4a18c;font:700 25px/1 var(--serif);box-shadow:inset 0 0 0 3px #8e372c,0 2px 12px #0004}
 .welcome-brand b,.welcome-brand small{display:block}
 .welcome-brand b{font:700 22px/1.05 var(--serif);letter-spacing:.13em}
 .welcome-brand small{margin-top:4px;font-size:9px;letter-spacing:.2em;color:#e4e5d4}
@@ -132,9 +131,6 @@ body.ui-preview #menu button.on:disabled{opacity:1}
 .stage-tag,.stage-rate,.stage-weather{border-radius:3px;border-color:#b3bea372;background:#1d1410db;color:#ebeadb}
 .stage-weather:empty{display:none}
 .stage-rate{color:#f4d595}
-#stage .mode-switch{border-radius:3px;border-color:#9eb29685;background:#1f1511f2}
-#stage .mode-switch button{border-radius:2px;color:#d0dfd2}
-#stage .mode-switch button.active{background:#315447;color:#f2ddb0;box-shadow:inset 0 -2px #d0b677}
 #game #menu{background:linear-gradient(180deg,#2c1f19,#18110e);gap:6px}
 #menu button{border-radius:3px;color:#cad9ce}
 #menu button:hover{background:#b9d2ad14}

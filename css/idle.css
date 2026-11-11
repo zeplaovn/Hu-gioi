@@ -94,18 +94,6 @@
 }
 
 /* ===== POPUP BẾ QUAN TRỞ VỀ ===== */
-.report-hero{display:flex;flex-direction:column;gap:10px;padding:14px 12px;margin:2px 0 6px;border-radius:14px;border:1px solid #6a5a4a;
-  background:radial-gradient(120% 120% at 50% 0%,#3c2921 0%,#211712 70%);box-shadow:inset 0 0 30px #d3b37b18}
-.report-hero .rh-time{text-align:center}
-.report-hero .rh-time span{display:block;font-size:12px;letter-spacing:.14em;color:#d4bb8f}
-.report-hero .rh-time b{display:block;font:800 clamp(28px,5vw,38px)/1.15 var(--serif);color:#fff2c2;text-shadow:0 0 18px #e5b13f66}
-.report-hero .rh-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.report-hero .rh-grid>div{padding:9px 6px;text-align:center;border-radius:10px;background:#18100dcc;border:1px solid #543a2f;min-width:0}
-.report-hero .rh-grid span{display:block;font-size:11.5px;color:#b8a593}
-.report-hero .rh-grid b{display:flex;justify-content:center;align-items:center;gap:.2em;font-size:clamp(16px,2.6vw,20px);color:var(--jade);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.report-hero .rh-grid b.up{color:#f2d679}
-.report-hero .rh-note{text-align:center;font-size:12.5px;color:#9fe2c0}
-@media(max-width:420px){.report-hero .rh-grid b{font-size:15px}}
 
 /* Nút đột phá trên thanh trạng thái mobile: gọn, vì đã có nút lớn trên sân khấu */
 #game:not([data-layout="wide"]) .btn-break{max-width:124px;min-width:0;line-height:1.15;text-align:center}

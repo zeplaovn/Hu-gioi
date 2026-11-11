@@ -8,15 +8,10 @@
 /* Ô chủng tộc / linh căn: hai dòng, có thông số ngay trên ô */
 .field .field-main{display:block;font-weight:800;font-size:15px;color:#f3ead0}
 .field .field-main em{font-style:normal;font-weight:700;font-size:12.5px;color:#9fe2c0;margin-left:4px}
-.field .field-sub{display:block;font-weight:500;font-size:12.5px;color:#c1b09f;line-height:1.35}
 #raceValue,#rootValue{flex-direction:column;gap:2px;text-align:center}
 .root-field{flex-wrap:nowrap}
-.root-field .root-line{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px}
-.root-field .root-line-label{font-size:11.5px;font-weight:600;color:#b1a08f;letter-spacing:.04em}
 .chip{background:#18110e}
 .purity{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:1px}
-.purity-bar{height:6px;border-radius:5px;background:#0b0806;border:1px solid #4f392f;overflow:hidden}
-.purity-bar i{display:block;height:100%;background:linear-gradient(90deg,#876f56,#e6d4b4)}
 .purity b{font-size:12px;font-weight:700;color:#e6d4b4}
 
 /* Hộp thoại thông tin: chủng tộc, quy tắc linh căn, bảng kinh mạch */
@@ -34,13 +29,11 @@
 .rule-chips i{font-style:normal}
 .rule-chips b{color:#f1e6c8}
 @media(max-width:560px){.rule-line{grid-template-columns:1fr;gap:1px}}
-.he-tag{display:inline-block;border:1px solid;border-radius:999px;padding:0 7px;font-size:11.5px;font-weight:700;line-height:1.6;white-space:nowrap}
 .rar{font-weight:750}
 .rar.rainbow{background:linear-gradient(90deg,#ff7b7b,#ffd36b,#8dff9a,#dbc092,#c58bff);-webkit-background-clip:text;background-clip:text;color:transparent!important}
 .creation-info-dialog{width:min(760px,calc(100vw - 24px))}
 
 .chip{padding:0 7px;font-size:13px;line-height:1.55}
-.purity-bar{flex:0 1 90px}
 
 /* Desktop: thẻ vừa khít màn hình, cột biểu mẫu tự cuộn để cột trái không bị kéo dài */
 @media(min-width:1101px){

@@ -6,8 +6,6 @@
 .create-left{min-width:0;display:flex;flex-direction:column}
 .create-scene{overflow:hidden;background:url('../media/assets/world/bg/ha_gioi/day/xuan.webp') center/cover no-repeat;isolation:isolate}
 .create-scene::before{content:'';position:absolute;inset:0;z-index:1}
-.scene-logo{position:absolute;left:50%;top:10px;width:min(340px,58%);height:auto;z-index:2;transform:translateX(-50%);filter:drop-shadow(0 1px 6px #ffffff88) drop-shadow(0 10px 26px #000b)}
-.scene-caption{position:absolute;left:18px;bottom:14px;z-index:3;font-size:12.5px;letter-spacing:.14em;color:#f2eadc;text-transform:uppercase;text-shadow:0 2px 8px #000}
 .create-rebirth{font-size:clamp(22px,2vw,28px);margin:8px 0 2px;color:#f1e6c8;text-wrap:balance}
 .story{color:#d1c4b8;font-size:15.5px;line-height:1.8;max-width:64ch}
 .story b{color:var(--gold)}
@@ -16,9 +14,6 @@
 .info-box .small{font-size:13.5px}
 .info-box.root-box{display:flex;flex-direction:column;gap:7px}
 .root-box .root-rate{color:#cabbac;font:400 13px var(--font);white-space:nowrap}
-.root-cell{height:44px;border:1px solid #4f382e;background:#231814;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#a49382}
-.root-cell.on{color:#ffe08b;border-color:#b99b4e;background:#292b22}
-.root-cell b{font-size:13px;text-shadow:0 0 6px currentColor,0 0 12px #ffffff33}
 .root-doc{font-size:13px;line-height:1.55;color:#b8a593;border-top:1px dashed #4d372d;padding-top:6px}
 .root-doc b{color:#eee3cf}
 .root-elem-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px 12px}
@@ -71,7 +66,6 @@
   .create-rebirth{font-size:26px;margin:6px 0 0}
   .story{font-size:15px;line-height:1.7}
   .info-box{padding:10px 12px;font-size:13.5px;line-height:1.6}
-  .root-cell{height:40px}
   .root-doc{font-size:12.5px;line-height:1.5}
   .create-right{padding:22px 28px 18px;gap:9px}
   .create-heading h1{font-size:36px}
@@ -90,7 +84,6 @@
   .story.dim{display:none}
   .info-box{padding:9px 11px;font-size:13.5px;line-height:1.55}
   .info-box .info-title{font-size:16px}
-  .root-cell{height:36px}
   .root-doc{font-size:12.5px;line-height:1.45;padding-top:4px}
   .field{min-height:34px;padding:6px 9px}
   .dice{width:36px;height:36px}
@@ -102,16 +95,11 @@
   .foot-note{font-size:12px}
 }
 @media(max-width:1100px){
-  .scene-logo{width:min(310px,56%)}
-}
-@media(max-width:1100px){
   /* Một cột: giữ nút bắt đầu luôn trong tầm tay thay vì bắt người chơi cuộn hết trang. */
   #startNew{bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:6}
 }
 @media(max-width:620px){
   .create-scene{aspect-ratio:16/10}
-  .scene-logo{width:min(230px,60%);left:50%;top:8px;transform:translateX(-50%)}
-  .scene-caption{left:12px;bottom:10px;font-size:11.5px}
   .create-rebirth{font-size:21px}
   .story{font-size:14.5px}
   .form-grid{grid-template-columns:86px minmax(0,1fr) 42px}
@@ -139,11 +127,7 @@
 .root-tier-list i{font-style:normal;padding:0 6px;border-radius:6px}
 .root-tier-list i.is-current{color:#ffe08b;background:#2a2417;border:1px solid #b99b4e;font-weight:700}
 .root-tier-list s{text-decoration:none;color:#86735f}
-.chip-di{color:#dfc89f;border-color:#dfc89f}
 @media(max-width:620px){.root-tier-name{flex-basis:96px}}
-
-.root-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0}
-.root-line-label{font-size:12px;letter-spacing:.04em;color:#b4a28f;min-width:104px}
 .root-elem-title{margin:10px 0 3px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#b4a28f}
 .root-section-title{margin:16px 0 8px;font:700 16px var(--serif)}
 .root-section-title small{font:400 12px system-ui;color:#b4a28f}
