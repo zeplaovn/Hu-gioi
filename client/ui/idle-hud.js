@@ -31,7 +31,7 @@
     hud.append(mk('div', 'idle-chips', `
       <div class="idle-chip stone" id="chipStone" title="Linh thạch"><span class="chip-ico" id="chipStoneIco"></span><b id="chipStoneVal">0</b></div>
       <div class="idle-chip rate" id="chipRate" title="Tốc độ hấp thụ linh khí mỗi giây"><span class="chip-ico" aria-hidden="true">☯</span><b id="chipRateVal">+0/giây</b></div>
-      <div class="idle-chip dao" id="chipDao" title="Đạo vận"><span class="chip-ico" aria-hidden="true">✧</span><b id="chipDaoVal">0</b></div>`));
+      <div class="idle-chip dao" id="chipDao" title="Thiên Tinh"><span class="chip-ico" aria-hidden="true">✧</span><b id="chipDaoVal">0</b></div>`));
     hud.querySelector('.idle-chips').id = 'idleChips';
 
     const deck = mk('div', 'idle-deck', `
@@ -106,10 +106,11 @@
     });
     $('chipStone').setAttribute('aria-label', 'Linh thạch ' + money(s.stone));
     $('chipStone').title = 'Linh thạch: đơn vị Hạ, Trung, Thượng · ' + money(s.stone);
-    $('chipDao').setAttribute('aria-label', 'Đạo vận ' + num(s.daoVan));
-    $('chipDao').title = 'Đạo vận: ' + num(s.daoVan);
+    const thienTinh = UI.session.pavilion?.balance || 0;
+    $('chipDao').setAttribute('aria-label', 'Thiên Tinh ' + num(thienTinh));
+    $('chipDao').title = 'Thiên Tinh: ' + num(thienTinh);
     $('chipRateVal').textContent = '+' + num(g.rate()) + '/giây';
-    tween('dao', s.daoVan, v => { $('chipDaoVal').textContent = num(Math.round(v)); });
+    tween('dao', UI.session.pavilion?.balance || 0, v => { $('chipDaoVal').textContent = num(Math.round(v)); });
   }
 
   /* ---------- Dải tầng, nút đột phá đại cảnh giới (tu vi xem ở bảng trạng thái) ---------- */
