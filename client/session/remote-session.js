@@ -297,5 +297,5 @@
 
 
   }
-  root.HU_REMOTE_SESSION = { RemoteSession };
+  root.HU_REMOTE_SESSION = { RemoteSession, secureRequestId };
 })(typeof window !== 'undefined' ? window : globalThis);
