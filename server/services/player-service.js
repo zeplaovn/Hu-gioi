@@ -323,10 +323,13 @@ class PlayerService {
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
-        ? H.PAVILION.realmReward(run.game.s.realm) : 0;
+        ? H.PAVILION.realmReward(run.game.s.realm)
+        : command.type === 'fragments' && result === 10 ? 10 : 0;
       if (earned) {
-        result = { ...result, thienTinh: earned };
-        run.logs.push('Thiên Mệnh Các · đột phá đại cảnh giới, nhận +' + earned + ' Thiên Tinh.');
+        if (typeof result === 'object' && result !== null) result = { ...result, thienTinh: earned };
+        // claimFragments vẫn trả số 10 theo protocol hiện có; không đổi dạng result.
+        run.logs.push((command.type === 'fragments' ? 'Hợp nhất đạo ấn' : 'Đột phá đại cảnh giới') +
+          ' · nhận +' + earned + ' Thiên Tinh.');
       }
       const revision = rec.revision + 1;
       const response = { serverTime: now, revision, result: clean(result), report: clean(report), logs: run.logs, achievements: clean(achievements), died: run.game.isDead() };
