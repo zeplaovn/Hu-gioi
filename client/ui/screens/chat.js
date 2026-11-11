@@ -124,7 +124,7 @@
     $('chatInput').addEventListener('input', event => { draft = event.target.value; error = ''; update(); });
     $('chatForm').addEventListener('submit', async event => {
       event.preventDefault();
-      if (sending || !draft.trim()) return;
+      if (sending || !draft.trim() || Date.now() < (session.lastSentAt || 0) + 15000) return;
       const text = draft.trim();
       if (text.length > 400) return;
       if (!pending || pending.text !== text || pending.channel !== session.channel) {
