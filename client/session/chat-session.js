@@ -92,7 +92,7 @@
         this.cursor = String(data.cursor || this.state.messages.at(-1)?.id || '0');
         this.state.online = Number(data.online) || 0;
         this.state.status = 'online'; this.state.error = ''; this.attempt = 0; this.emit();
-        this.schedule(gen, 6000);
+        this.schedule(gen, 10000);
       } catch (error) { this.fail(error, gen); }
     }
     receive(message) {
