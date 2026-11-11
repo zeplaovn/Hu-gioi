@@ -45,7 +45,7 @@
   function nameError() {
     const value = $('nameInput').value;
     if (!value.length || H.cleanName(value)) return '';
-    return 'Đạo hiệu cần 2–' + H.NAME_MAX + ' ký tự, không chứa ký tự đặc biệt.';
+    return 'Đạo hiệu cần 2–' + H.NAME_MAX + ' ký tự, chỉ gồm chữ và số (có dấu tiếng Việt), không ký tự đặc biệt.';
   }
 
   function syncName() {
@@ -428,7 +428,9 @@
     }));
 
     $('nameInput').addEventListener('input', e => {
-      creation.name = e.target.value;
+      const clean = H.sanitizeText(e.target.value);
+      if (clean !== e.target.value) e.target.value = clean;
+      creation.name = clean;
       creation.nameAuto = false;
       syncName();
     });

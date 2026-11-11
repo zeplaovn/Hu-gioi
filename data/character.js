@@ -84,7 +84,13 @@ const startStone=(talent,meta)=>380+(talent?.tuongMao||0)*20+(meta?.upgrades?.st
 function rollRace(rng=Math.random){let r=rng()*100,acc=0;for(const [id,,w] of RACES){acc+=w;if(r<acc)return id}return 'nhan'}
 const oneOf=(a,rng)=>a[Math.floor(rng()*a.length)];
 function randomName(gender='nam',rng=Math.random){return (oneOf(NAME_FAMILY,rng)+' '+oneOf(gender==='nu'?NAME_FEMALE:NAME_MALE,rng)).slice(0,NAME_MAX)}
-function cleanName(raw){const c=String(raw??'').normalize('NFC').replace(/\s+/g,' ').trim();return c.length>=2&&c.length<=NAME_MAX&&!/[\u0000-\u001f\u007f<>&"'`[\]]/.test(c)?c:null}
-const API={PAVILION,rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,lifePace,raceBonus,startStone,rollRace,randomName,cleanName};
+/* Chỉ chữ cái ASCII, chữ tiếng Việt (NFC) và chữ số; giữa các từ cho phép đúng 1 dấu cách. */
+const TEXT_CHARS='0-9A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯư\\u1EA0-\\u1EF9';
+const TEXT_OK=new RegExp('^['+TEXT_CHARS+']+(?: ['+TEXT_CHARS+']+)*$');
+const TEXT_BAD=new RegExp('[^'+TEXT_CHARS+' ]','g');
+/* Lọc khi gõ: bỏ ký tự không hợp lệ, gộp dấu cách; giữ 1 dấu cách cuối để còn gõ tiếp từ sau. */
+const sanitizeText=raw=>String(raw??'').normalize('NFC').replace(TEXT_BAD,'').replace(/ {2,}/g,' ').replace(/^ /,'');
+function cleanName(raw){const c=String(raw??'').normalize('NFC').replace(/\s+/g,' ').trim();return c.length>=2&&c.length<=NAME_MAX&&TEXT_OK.test(c)?c:null}
+const API={PAVILION,rootType,rollRoots,DI_LINH_CAN:R.DI_LINH_CAN,ROOT_GROUPS:R.GROUPS,ROOT_TYPES:R.TYPES,rootLabel:R.label,DI_KEYS:R.DI_KEYS,CHAOS:R.CHAOS,diFromRoots:R.diFromRoots,RACES,LEGACY_RACES,NAME_MAX,TALENT_INFO,TALENT_MAX,META_UPGRADES,META_ACHIEVEMENTS,RACE_LIFE,RACE_BONUS,raceName,raceLife,lifePace,raceBonus,startStone,rollRace,randomName,cleanName,sanitizeText,TEXT_OK};
 root.HU_CHARACTER=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);

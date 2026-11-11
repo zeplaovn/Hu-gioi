@@ -51,7 +51,7 @@
         <div class="chat-compose-row"><input id="chatInput" type="text" maxlength="${MAX_TEXT}" autocomplete="off"
           placeholder="Nhập lời truyền âm…" value="${esc(draft)}" aria-describedby="chatError chatLimit">
           <button type="submit" class="btn btn-gold" id="chatSend" aria-label="Gửi lời truyền âm">Gửi <span aria-hidden="true">➤</span></button></div>
-        <div class="chat-compose-meta"><small id="chatLimit">Tối đa ${MAX_TEXT} ký tự · Mỗi tin cách nhau 15 giây</small><span id="chatLength" aria-live="off"></span></div>
+        <div class="chat-compose-meta"><small id="chatLimit">Tối đa ${MAX_TEXT} ký tự, chỉ chữ và số · Mỗi tin cách nhau 15 giây</small><span id="chatLength" aria-live="off"></span></div>
         <p id="chatError" class="chat-error" role="status" aria-live="polite"></p>
       </form>
     </section>`;
@@ -64,7 +64,7 @@
     send.innerHTML = sending ? 'Đang gửi…' : left ? left + ' giây' : 'Gửi <span aria-hidden="true">➤</span>';
     if ($('chatLimit')) $('chatLimit').textContent = left
       ? 'Hồi linh truyền âm · còn ' + left + ' giây để gửi tin tiếp theo'
-      : 'Tối đa ' + MAX_TEXT + ' ký tự · Mỗi tin cách nhau 15 giây';
+      : 'Tối đa ' + MAX_TEXT + ' ký tự, chỉ chữ và số · Mỗi tin cách nhau 15 giây';
     if ($('chatLength')) $('chatLength').textContent = Array.from(draft).length + '/' + MAX_TEXT;
   }
 
@@ -146,12 +146,16 @@
       switchChannel(CHANNELS[next].id);
       $('chatChannels')?.querySelector('[data-chat-channel="' + CHANNELS[next].id + '"]')?.focus();
     });
-    $('chatInput').addEventListener('input', event => { draft = event.target.value; error = ''; update(); });
+    $('chatInput').addEventListener('input', event => {
+      const clean = root.HU_CHARACTER.sanitizeText(event.target.value);
+      if (clean !== event.target.value) event.target.value = clean;
+      draft = clean; error = ''; update();
+    });
     $('chatForm').addEventListener('submit', async event => {
       event.preventDefault();
       if (sending || !draft.trim() || Date.now() < (session.lastSentAt || 0) + 15000) return;
       const text = draft.trim();
-      if (Array.from(text).length > MAX_TEXT) return;
+      if (Array.from(text).length > MAX_TEXT || !root.HU_CHARACTER.TEXT_OK.test(text)) return;
       if (!pending || pending.text !== text || pending.channel !== session.channel) {
         try {
           pending = { text, channel: session.channel, id: root.HU_REMOTE_SESSION.secureRequestId() };

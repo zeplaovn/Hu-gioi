@@ -11,6 +11,9 @@ type Database = {
 };
 const LIMIT = 50;
 const MAX_TEXT = 80; // ký tự (code point), khớp client và CHECK trong DB
+// Chỉ chữ ASCII, chữ tiếng Việt (NFC), chữ số; giữa các từ đúng 1 dấu cách. Khớp data/character.js và CHECK trong DB.
+const TEXT_CHARS = '0-9A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯư\\u1EA0-\\u1EF9';
+const TEXT_OK = new RegExp(`^[${TEXT_CHARS}]+(?: [${TEXT_CHARS}]+)*$`);
 const textLength = (s: string) => Array.from(s).length;
 const fail = (code: string, msg: string) => { throw new GameError(code, msg); };
 const asSafe = (v: unknown): number => {
@@ -111,9 +114,9 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
   }
   if (route === 'chatSend') {
     const body = strict(rawBody, ['text', 'requestId', 'channel']);
-    const text = typeof body.text === 'string' ? body.text.trim() : '';
-    if (!text || textLength(text) > MAX_TEXT || /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(text))
-      return fail('INVALID_REQUEST', `Lời truyền âm phải dài 1–${MAX_TEXT} ký tự và không chứa ký tự điều khiển.`);
+    const text = typeof body.text === 'string' ? body.text.normalize('NFC').trim() : '';
+    if (!text || textLength(text) > MAX_TEXT || !TEXT_OK.test(text))
+      return fail('INVALID_REQUEST', `Lời truyền âm dài 1–${MAX_TEXT} ký tự, chỉ gồm chữ cái, chữ số và dấu cách.`);
     const requestId = body.requestId;
     if (typeof requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
       return fail('INVALID_REQUEST', 'Mã tin nhắn không hợp lệ.');
