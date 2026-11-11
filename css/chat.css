@@ -138,3 +138,21 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
   .win.desktop-window[data-window="chat"] .chat-channels{gap:4px;padding:7px 8px;grid-template-columns:repeat(4,minmax(0,1fr))}
   .win.desktop-window[data-window="chat"] .chat-channels>button{min-height:36px;font-size:11px;padding:5px 2px}
 }
+
+/* Khung nhỏ trên điện thoại / Chrome DevTools: ưu tiên transcript + composer. */
+@media(max-width:650px){
+  .win.desktop-window[data-window="chat"]{min-height:280px}
+  .chat-heading{padding:7px 10px}
+  .chat-seal{width:30px;height:30px;border-radius:9px;font-size:22px}
+  .chat-heading .eyebrow{font-size:9px}
+  .chat-heading h2{font-size:18px}
+  .chat-context{display:none}
+  .chat-connection{padding:4px 9px}
+  .chat-connection .btn{min-height:28px;padding:3px 8px}
+  .chat-transcript{min-height:54px}
+  .chat-form{padding:7px 9px max(7px,env(safe-area-inset-bottom,0px))}
+  .chat-form label{display:none}
+  .chat-compose-row input,.chat-compose-row .btn{min-height:38px}
+  .chat-compose-meta{margin-top:3px}
+  .chat-compose-meta small{font-size:10px}
+}
