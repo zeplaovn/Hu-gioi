@@ -1,6 +1,6 @@
 # Checklist phát hành product / production — nhánh `final`
 
-> Trạng thái: Hiện hành. **Checklist chưa đạt; CHƯA SẴN SÀNG production.** Nguồn việc chuẩn: [`task.txt`](../task.txt), **mục 11 ghi đè các mục mâu thuẫn**. Kế hoạch và mốc nghiệm thu: [production-readiness.md](production-readiness.md). Tất cả checkbox chưa hoàn thành; chỉ xác nhận bằng bằng chứng từ staging/prod và người sở hữu game.
+> Trạng thái: Hiện hành. **Checklist chưa đạt; CHƯA SẴN SÀNG production.** Nguồn việc chuẩn: [`task.txt`](../task.txt), **mục 11 ghi đè các mục mâu thuẫn**. Kế hoạch và mốc nghiệm thu hiện hành: [SYSTEM](SYSTEM.md) và [tổng hợp](PROJECT-STATUS.md). Tất cả checkbox chưa hoàn thành; chỉ xác nhận bằng bằng chứng từ staging/prod và người sở hữu game.
 
 - [ ] **1. Cloudflare Workers Builds:** Mở log Workers Builds của `hugioi`, tìm nguyên nhân, gửi log đã che secret để sửa build hoặc Dashboard đúng chỗ; không suy luận chỉ từ build local.
 - [ ] **2. Deploy Edge thủ công (SAU khi duyệt):** xác minh GitHub Actions Secret `SUPABASE_ACCESS_TOKEN` và môi trường staging; khi tất cả gate đạt, chủ dự án mới chạy `.github/workflows/edge-bundle-build.yml` bằng `workflow_dispatch`. Không tự deploy hoặc đưa secret vào chat/repo.
@@ -10,7 +10,7 @@
 - [ ] **6. Hạn mức/cảnh báo:** đối chiếu quota Free Edge/DB/egress và Cloudflare tại tài liệu chính thức vào ngày triển khai; theo dõi Edge calls, WAL/DB size, p95 latency, lỗi 429/5xx, cảnh báo ngân sách. Mô phỏng 408.000 lượt/tháng/50 người **chưa tính chat** không phải dấu kiểm đạt.
 - [ ] **7. Branch protection và CI:** chạy đầy đủ `npm run check`, `npm test`, `npm run build:min`, `npm run build:edge`, `npm run edge:budget`, browser proof/mobile/Chromium và Workers Builds cho **commit cuối nhánh `final`**. PR #70 đã xanh 4 workflow trên commit cũ, nhưng không thay cho gate mới.
 - [ ] **8. Smoke staging rồi mới xét production:** dùng tài khoản thử: OPTIONS/JWT/consent v7, đăng nhập email/Google PKCE, bootstrap/preview/tạo nhân vật, lệnh/replay/idempotency, idle/ẩn tab/mất mạng, nhiều tab, chat 4 kênh, xếp hạng, reset sau tử vong, 503/retry, metrics/rollback. Không thao tác trên tài khoản người chơi thật.
-- [ ] **9. Duyệt gameplay:** đối chiếu 30 P0/14 P1 trong [sổ quyết định](gameplay-decisions.md), [cao giới](content-draft-realms-5-13.md), [sách nghề](profession-manuals-proposal.md). **Đặc biệt giải quyết mâu thuẫn Thiên Tinh/Thiên Mệnh Các được kế thừa hay xóa sau tử vong** giữa sổ quyết định và backend hiện tại. Không tự thay luật.
+- [ ] **9. Duyệt gameplay:** đối chiếu 30 P0/14 P1 trong [sổ quyết định](gameplay-decisions.md), [cao giới](content-draft-realms-5-13.md), [sách nghề](profession-manuals-proposal.md). **Xác nhận luật hiện hành: Thiên Tinh và nâng cấp bị xóa khi reset sau tử vong**; nghiệm thu backend và UI, không tự đổi luật.
 
 - [ ] **10. Chat theo task §11.1:** server từ chối gửi dưới 15 giây, client có đếm ngược/optimistic; API không trả tin quá 1 giờ và dọn vật lý vài phút sau đó; kiểm thử kênh riêng/tông môn, retry/idempotency và giảm polling khi cửa sổ đóng/tab ẩn.
 - [ ] **11. Ranking theo task §11.2:** chụp Lực chiến/Cảnh giới mỗi 12 giờ; UI ghi lúc cập nhật; loại nhân vật đã chết và xử lý reset ngay cả khi snapshot còn hạn; giữ hoạt động kênh chat tông môn sau khi chuyển phụ thuộc `sect_id`.

@@ -40,7 +40,7 @@ Khi thêm hoặc sửa vật phẩm, đảm bảo mã không đụng mã cũ, b�
 2. Chỉnh đúng file `data/` (không nhận số liệu từ client), duy trì ánh xạ legacy và các mã item/tier hiện có. Nếu cần tự động import từ JSON/Excel, **xây dựng công cụ import và test trước**, vì chưa có script `tools/import-game-design.mjs` trong repo.
 3. Bổ sung test liên kết tại `tests/engine.test.cjs`, `tests/meridians.test.cjs`, `tests/story.test.cjs` hoặc một test dữ liệu mới. Không đổi schema state nếu chưa có migration V4–V9.
 4. Chạy `npm run check && npm test`, đánh giá thay đổi thời gian tu, tỷ lệ thành công, loot và kinh tế. Nếu đổi state/tính cân bằng, thêm kiểm thử phiên server và bản lưu cũ.
-5. Cập nhật [sổ quyết định](gameplay-decisions.md), [kiểm kê](gameplay-audit.md), `data/README.md` và tài liệu gameplay khi thay đổi đã được duyệt.
+5. Cập nhật [sổ quyết định](gameplay-decisions.md), [GAME](GAME.md), `data/README.md` và tài liệu gameplay khi thay đổi đã được duyệt.
 
 ## 5. Mở khóa theo cảnh giới
 

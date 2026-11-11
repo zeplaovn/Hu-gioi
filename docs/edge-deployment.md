@@ -1,6 +1,6 @@
 # Triển khai Hư Giới: Cloudflare Static + Supabase Edge API (FREE)
 
-> Trạng thái: Hiện hành.
+> Trạng thái: Hiện hành. Hồ sơ chính: [SYSTEM](SYSTEM.md); không dùng hướng dẫn Node/SQLite cũ.
 > **Thông tin bàn giao production ngày 10/11/2026 chưa được xác minh qua Dashboard.** Mã nguồn hiện hành ngày 11/11/2026 đã có các migration bổ sung chat/ranking và chính sách `2026-11-11-v7`. Trước khi deploy phải kiểm tra lịch sử migration thực tế, `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS` và policy v7; không giả định database đã được cập nhật chỉ vì file có trong Git. Không chạy lại bất kỳ migration đã áp dụng. Backend Edge là mục tiêu phát hành; Node/SQLite chỉ cho dev/test. Gói Free không bảo đảm uptime.
 
 ## Kiến trúc và ranh giới tin cậy
@@ -8,9 +8,9 @@
 - Trang tĩnh: Cloudflare Worker assets, origin `https://hugioi.blackbearvn.workers.dev`. `index.html` nạp `client/config.js` **trước** `remote-session.js` và `auth/supabase.js`; CSP chỉ `script-src 'self'`. `HU_AUTH_MODE='direct'` gọi HTTPS Supabase Auth `/auth/v1/token?grant_type=password` bằng publishable key **công khai**, không gọi Node login gateway.
 - API duy nhất: `https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api`; Deno route và xác minh JWT (ES256/RS256 qua JWKS, HS256 chỉ khi có secret), `verify_jwt=false` để preflight OPTIONS chạy không cần token; API bearer token vẫn bắt buộc cho mọi gameplay route.
 - Database: **schema riêng `game`**, 8 bảng theo migrations hiện hành: `players`, `player_receipts`, `creation_tickets`, `pavilion_accounts`, `pavilion_receipts`, `world_chat_messages`, `world_chat_presence`, `player_leaderboard`. Không cấp quyền hay policy RLS cho `anon` hoặc `authenticated`. Không thêm `game` vào Data API exposed schemas. Function kết nối qua `HU_DB_POOLER_URL` (Supavisor **transaction pooler, port 6543**) lấy từ dashboard > Connect. `SUPABASE_DB_URL` mặc định là direct, **không dùng** cho gameplay.
-- `public.policy_acceptances` có các version lịch sử; runtime hiện tại **chỉ chấp nhận consent v7 `2026-11-11-v7`**. Migration `20261111040200_v7_consent_and_deceased_leaderboard.sql` bổ sung constraint v7. **Không** chạy lại `supabase/sql/policy_acceptances.sql`. Edge đọc trực tiếp bảng này, đòi đủ `privacy` và `release_terms` cho route gameplay; `/me/*` chỉ cần JWT.
+- `public.policy_acceptances` có các version lịch sử; runtime hiện tại **chỉ chấp nhận consent v7 `2026-11-11-v7`**. Migration `20261111023603_v7_consent_and_deceased_leaderboard.sql` bổ sung constraint v7. **Không** chạy lại `supabase/sql/policy_acceptances.sql`. Edge đọc trực tiếp bảng này, đòi đủ `privacy` và `release_terms` cho route gameplay; `/me/*` chỉ cần JWT.
 - Đồng hồ, RNG, phần thưởng, thọ nguyên và sự hiện diện chỉ quyết định tại backend; client không gửi state/offline/time/price/reward; snapshot không có seed, export không có rng_seed.
-- Thiên Mệnh Các mới trên `main` (tích lũy qua kiếp) **được giữ**, có bảng account và receipt riêng. Mỗi hàng player được khóa `FOR UPDATE`; rate token nằm trong hàng `players` cùng giao dịch. Giới hạn theo IP chỉ còn ở Node gateway.
+- Thiên Mệnh Các trên `main` chỉ có hiệu lực trong **kiếp hiện tại**; reset sau tử vong xóa cả kho, dù bảng account và receipt được tách riêng. Mỗi hàng player được khóa `FOR UPDATE`; rate token nằm trong hàng `players` cùng giao dịch. Giới hạn theo IP chỉ còn ở Node gateway.
 
 ## Trước khi mở cho người chơi — [checklist bàn giao](release-checklist.md)
 
@@ -26,7 +26,7 @@
 
 ## 1. Kiểm tra trước migration (CHƯA chạy)
 
-Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Nguồn migration duy nhất là **toàn bộ tập tin có thứ tự trong `supabase/migrations/`**, gồm migration schema gốc, cleanup indexes và 4 migration xã hội/policy ngày 11/11; đối chiếu history trước khi làm bất kỳ thay đổi nào. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
+Cần Supabase CLI phiên bản hiện hành, Node 24, npm và quyền project. Xem `supabase --version`, `supabase --help`, `supabase db push --help`. CLI v3 ưu tiên `--remote` cho DB; `db push` **mặc định local**, đừng lẫn target! Nguồn migration duy nhất là **toàn bộ tập tin có thứ tự trong `supabase/migrations/`**, gồm migration schema gốc, cleanup indexes và các migration xã hội/policy ngày 11/11; đối chiếu history trước khi làm bất kỳ thay đổi nào. Tuyệt đối không có lệnh phá dữ liệu, `db reset` production hoặc chạy lại `policy_acceptances.sql`.
 
 ```sh
 npm ci

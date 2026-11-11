@@ -1,14 +1,13 @@
 # Hư Giới · Tiên Lộ Vô Tận
 
-Game idle tu tiên tiếng Việt. **Bản phát hành thử nghiệm giới hạn chưa được xác minh sẵn sàng cho người chơi production.**
+Game idle tu tiên tiếng Việt, **đang thử nghiệm nội bộ, chưa phát hành production**.
 
-## Kiến trúc
-
-- Cloudflare Workers Static Assets phục vụ `dist/` do `npm run build:min` tạo.
-- Supabase Auth đăng nhập trực tiếp (`HU_AUTH_MODE='direct'`) và một Edge Function `api` Deno (`HU_API_BASE` trong `client/config.js`).
-- Postgres schema `game` qua transaction pooler 6543; engine và server chạy ở Edge. Node/SQLite chỉ dành cho dev/test.
-- State V9, protocol v2, 49 lệnh. Không có gameplay offline hoặc guest.
-- Tri kỷ, Đạo hữu, Luận kiếm, Đấu giá, Tông môn là NPC/mô phỏng; chat và bảng xếp hạng đang ẩn.
+## Phiên bản hiện tại
+- Cloudflare Workers Static Assets phục vụ `dist/`; Supabase Auth (JWT, direct) và Edge Function `api` (Deno); PostgreSQL private schema `game` qua transaction pooler 6543.
+- State **V9**, protocol **v2**, **49 lệnh**. Game **online-only**; nhân vật một mạng, chết bắt đầu lại **không kế thừa** Thiên Tinh hoặc vật phẩm.
+- **Thiên Mệnh Các** ở màn tạo nhân vật là shop starter (PR #77 đã merge; giá vẫn là giá thử nghiệm).
+- Chat thật gồm **Thế giới, Tông môn, Đạo hữu, Đạo lữ**; bảng xếp hạng **Lực chiến/Cảnh giới** (PR #78 đã merge). Bản Edge test đã hotfix route, cần nghiệm thu JWT/máy thật.
+- Tri kỷ, Luận kiếm, Đấu giá và tương tác NPC vẫn là mô phỏng. Kinh Mạch Đồ 12 chính kinh xanh / 8 kỳ kinh vàng hiện là **UI tra cứu**, chưa có luật vận hành kinh mạch.
 
 ## Kiểm thử (Node.js 24+)
 
@@ -18,16 +17,17 @@ npm run check
 npm test
 npm run build:min
 npm run build:edge
+npm run edge:budget
 ```
 
-`npm start` dùng Node/SQLite dev, không phải production. `npm run edge:budget` chỉ mô phỏng lưu lượng.
+`npm start` dùng Node/SQLite **dev/test**; không phải backend production. `npm run edge:budget` chỉ mô phỏng.
 
-## Tài liệu và bàn giao
+## Hồ sơ nguồn sự thật
+- [Tổng hợp công việc](docs/PROJECT-STATUS.md)
+- [GAME — Gameplay/UI](docs/GAME.md)
+- [SYSTEM — Backend/DB/API](docs/SYSTEM.md)
+- [Mục lục tài liệu chuyên môn](docs/index.md)
+- [Checklist trước release](docs/release-checklist.md)
+- [Task backend](task.txt) — §11 ưu tiên.
 
-- [Mục lục và nguồn sự thật](docs/index.md).
-- [Kiến trúc](docs/architecture.md), [bảo mật](docs/security.md), [hợp đồng engine](docs/engine-contract.md).
-- [Runbook Edge](docs/edge-deployment.md), [checklist chủ dự án](docs/release-checklist.md).
-- [Gameplay V9](docs/gameplay-v9.md), [Thiên Mệnh Các](docs/thien-menh-cac.md).
-- [Các quyết định P0/P1 còn mở](docs/gameplay-decisions.md).
-
-**Không tự chạy migration thật, deploy production hoặc merge PR khi chưa được duyệt.**
+**Merge mã/tài liệu không đồng nghĩa deploy, migrate database hoặc chứng nhận production-ready.**
