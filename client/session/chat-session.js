@@ -11,6 +11,7 @@
       this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '', channel: 'world' };
       this.listeners = new Set();
       this.timer = null; this.generation = 0; this.attempt = 0; this.cursor = '0'; this.wanted = false;
+      this.lastSentAt = 0;
       root.addEventListener?.('offline', () => {
         if (!this.wanted) return;
         this.stopTransport(); this.state.status = 'offline'; this.state.online = 0;
@@ -118,6 +119,7 @@
     async send(text, requestId) {
       if (this.state.status !== 'online') throw Error('Chưa kết nối máy chủ chat.');
       const { message } = await this.request('chat/send', 'POST', { text, requestId, channel: this.channel });
+      this.lastSentAt = Date.now();
       this.receive(message);
       return message;
     }
