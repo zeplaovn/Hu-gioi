@@ -22,7 +22,31 @@ test('asset mới chỉ kích hoạt sau khi được chép đầy đủ', () =>
   ];
   assert.equal(new Set(paths).size, 15);
   assert.ok(paths.every(file => file.startsWith('media/assets/custom/2026-11/') && file.endsWith('.webp')));
-  if (MEDIA.installed) paths.forEach(file => assert.ok(existsSync(path.join(ROOT, file)), file));
+  assert.equal(MEDIA.installed, true, 'Gói ảnh được triển khai trực tiếp cùng repository');
+  paths.forEach(file => {
+    const full = path.join(ROOT, file);
+    assert.ok(existsSync(full), 'Thiếu ảnh đã kích hoạt: ' + file);
+    const buffer = readFileSync(full);
+    assert.equal(buffer.toString('ascii', 0, 4), 'RIFF', 'Không phải WebP: ' + file);
+    assert.equal(buffer.toString('ascii', 8, 12), 'WEBP', 'Không phải WebP: ' + file);
+  });
+});
+
+test('bốn đạo thể là ảnh gốc có alpha và giữ đúng 1312 × 1199 pixel', () => {
+  for (const gender of ['nam', 'nu']) {
+    for (const tone of ['xanh', 'vang']) {
+      const file = MEDIA.meridian(gender, tone);
+      const content = readFileSync(path.join(ROOT, file));
+      assert.equal(content.toString('ascii', 12, 16), 'VP8X', file);
+      assert.ok(content[20] & 0x10, 'Ảnh không còn alpha: ' + file);
+      assert.equal(content.readUIntLE(24, 3) + 1, 1312, file);
+      assert.equal(content.readUIntLE(27, 3) + 1, 1199, file);
+    }
+  }
+  const src = read('client/ui/screens/character.js');
+  assert.ok(src.includes('media?.installed'));
+  assert.ok(src.includes('media.meridian(state.gender, tone)'));
+  assert.match(src, /<img src=/);
 });
 
 test('HTML tải stylesheet và manifest trước giao diện nghề phụ, nhân vật', () => {

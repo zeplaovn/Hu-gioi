@@ -1,6 +1,6 @@
 # Gói giao diện nghề phụ và Kinh Mạch Đồ (11/11/2026)
 
-> Trạng thái: Mã giao diện đã có trên `main`. 15 ảnh WebP được chuẩn bị trong gói ZIP phát hành riêng; chưa đưa ảnh nhị phân vào GitHub. **Giữ `installed: false` cho tới khi sao chép đủ ảnh.**
+> Trạng thái: Hiện hành. Đã đóng gói đủ 15 ảnh gốc trong repository.
 
 ## Tính năng
 
@@ -13,40 +13,13 @@
 
 Kinh Mạch Đồ hiện là **bản tra cứu thiết kế**. Không tạo huyệt vị thật, không sửa chỉ số và không bổ sung lệnh máy chủ. Các hiệu ứng ghi trong bảng kinh mạch **chưa được kích hoạt**. Tiến trình nghề phụ vẫn theo thời gian online và do máy chủ ghi nhận.
 
-## Cài bộ ảnh từ ZIP đã chuẩn bị
+## Bộ ảnh gốc đã được cài
 
-Gói `hugioi-custom-assets-2026-11.zip` (tạo từ tệp bàn giao `asset.zip`) chứa **15 tệp WebP**, `asset-manifest.json` (SHA-256 + kích thước từng ảnh), và `README.md`. Các hình nguồn gồm 3 nền PNG, 4 ảnh PNG kinh mạch, 4 GIF động. Mỗi GIF tạo một WebP động (8 frame) và một WebP tĩnh.
+Tất cả 15 tệp WebP nằm trực tiếp trong repository tại `media/assets/custom/2026-11/`; biến `HU_CUSTOM_MEDIA.installed` được bật. **Không cần giải nén hay cài ZIP thủ công.** Trên môi trường triển khai mới, các tệp được lấy từ commit Git và có mặt sau bước build/deploy.
 
-Từ thư mục repository đã checkout, chạy:
+- Bốn ảnh tu sĩ ngồi thiền được **chuyển trực tiếp từ PNG gốc** trong `asset.zip` sang WebP chất lượng cao, giữ kích thước **1312 × 1199**, nền alpha trong suốt, giới tính nam/nữ, hai màu Thanh quang/Kim quang.
+- Hai nền Đan Các, Lò Rèn và một ảnh lò đan lấy từ PNG gốc.
+- Bốn hoạt cảnh nghề phụ xuất phát từ GIF gốc, giữ tám khung hình mỗi hoạt cảnh; thêm bốn ảnh tĩnh khi bật Giảm chuyển động.
+- Mã điều khiển `client/assets/custom-media.js` trỏ đúng những đường dẫn này, cả hai màn Kinh Mạch Đồ và Nghề phụ đều sử dụng ảnh thật.
 
-```sh
-python3 tools/install-custom-assets.py /duong/dan/hugioi-custom-assets-2026-11.zip
-npm test
-npm run build:min
-git status
-```
-
-Installer chỉ nhận đúng bộ 15 đường dẫn dưới `media/assets/custom/2026-11/`, kiểm SHA-256 và chữ ký WebP cho **mọi** tệp trước khi ghi. Khi đủ ảnh mới đổi `installed: false` thành `installed: true` trong `client/assets/custom-media.js`.
-
-> **Lưu ý phát hành:** cài đặt trong bản clone chỉ thay đổi file local. Để phát hành trên GitHub, cần `git add media/assets/custom/2026-11 client/assets/custom-media.js`, commit và push. Các file ZIP bị `.gitignore` bỏ qua; không cần commit ZIP. Chưa cài đủ ảnh thì giữ `installed: false` để giao diện cũ tiếp tục hoạt động.
-
-## Cấu trúc asset đích
-
-```text
-media/assets/custom/2026-11/
-  workshops/dan-cac.webp
-  workshops/lo-ren.webp
-  workshops/lo-dan.webp
-  meridians/nam-xanh.webp
-  meridians/nam-vang.webp
-  meridians/nu-xanh.webp
-  meridians/nu-vang.webp
-  animations/nam/luyen-dan.webp
-  animations/nam/luyen-dan-still.webp
-  animations/nam/ren-vu-khi.webp
-  animations/nam/ren-vu-khi-still.webp
-  animations/nu/luyen-dan.webp
-  animations/nu/luyen-dan-still.webp
-  animations/nu/ren-vu-khi.webp
-  animations/nu/ren-vu-khi-still.webp
-```
+Có thể chạy `npm test` và `npm run build:min` để kiểm tra đủ ảnh trước khi triển khai. Khi xem bản production, cần xác nhận commit có chứa 15 file ảnh đã được build/deploy; merge vào `main` thôi chưa chắc website đã dùng bản mới.
