@@ -199,8 +199,9 @@ class PlayerService {
       !Number.isSafeInteger(body.expectedVersion) || body.expectedVersion < 0 ||
       typeof body.key !== 'string' || typeof body.kind !== 'string')
       throw invalid('INVALID_REQUEST', 'Yêu cầu Thiên Mệnh Các không hợp lệ.');
-    // Kỳ Trân chuyển kiếp đã bị gỡ: không cho phép giao dịch relic qua API cũ.
-    if (body.kind !== 'upgrade') throw invalid('INVALID_REQUEST', 'Chỉ hỗ trợ nâng cấp Thiên Mệnh Các.');
+    // Shop starter chỉ dùng trước khi tạo đạo thân, repo kiểm tra và trừ tiền nguyên tử.
+    // Kỳ Trân chuyển kiếp cũ (kind=relic) vẫn bị khóa.
+    if (!['upgrade', 'starter'].includes(body.kind)) throw invalid('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
     const now = this.clock();
     const out = await this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
     if (out.record) {
