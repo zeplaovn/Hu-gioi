@@ -40,7 +40,7 @@
     points: TALENT_MAX, talent: blankTalent(), destiny: 'exp'
   });
   let creation = freshCreation();
-  let rolling = '', entering = false;
+  let rolling = '', entering = false, shopping = false;
 
   function nameError() {
     const value = $('nameInput').value;
@@ -147,13 +147,42 @@
     return M ? M.preview(creation.roots, creation.rootType, creation.rootSub) : null;
   }
 
+  function syncPurchasedPoints() {
+    const bought = Math.max(0, Math.min(H.PAVILION.starterTalentMax, Number(UI.session?.pavilion?.relics?.talentPoint) || 0));
+    const distributed = TALENT_KEYS.reduce((sum, key) => sum + (creation.talent[key] || 0), 0);
+    creation.points = Math.max(0, TALENT_MAX + bought - distributed);
+    return TALENT_MAX + bought;
+  }
+
+  function renderShop() {
+    const host = $('creationShop');
+    if (!host) return;
+    const pavilion = UI.session?.pavilion || { balance: 0, totalEarned: 0, version: 0, relics: {}, upgrades: {} };
+    const firstPurchase = pavilion.version === 0 && pavilion.balance === 0 && pavilion.totalEarned === 0 &&
+      !Object.keys(pavilion.relics || {}).length && !Object.keys(pavilion.upgrades || {}).length;
+    const balance = Number(pavilion.balance || 0) + (firstPurchase ? H.PAVILION.starterGrant : 0);
+    host.innerHTML = '<div class="creation-shop-wallet"><strong>Thiên Tinh: ' + num(balance) + ' ✧</strong>' +
+      (firstPurchase ? '<small>Tặng ' + H.PAVILION.starterGrant + ' Thiên Tinh khi đổi món đầu tiên trong quầy Khởi Nguyên.</small>' :
+        '<small>Còn ' + num(pavilion.balance || 0) + ' Thiên Tinh · hàng đã mua chờ nhận khi nhập thế.</small>') + '</div>' +
+      '<div class="creation-shop-grid">' + Object.entries(H.PAVILION.starter).map(([key, item]) => {
+        const count = Number(pavilion.relics?.[key]) || 0;
+        const sold = count >= item.max;
+        const disabled = shopping || entering || !UI.session?.accountId || !!UI.session?.playerId || sold || balance < item.cost;
+        return '<article class="creation-shop-item"><div><strong>' + esc(item.name) + '</strong><p>' + esc(item.desc) +
+          '</p><small>Đã đổi ' + count + '/' + item.max + '</small></div><button type="button" class="btn btn-outline" data-starter="' +
+          key + '" ' + (disabled ? 'disabled ' : '') + 'aria-label="Đổi ' + esc(item.name) + '">' +
+          (sold ? 'Đã đủ' : item.cost + ' Thiên Tinh') + '</button></article>';
+      }).join('') + '</div>';
+  }
+
   function renderStats() {
+    const total = syncPurchasedPoints();
     const points = $('pointsValue');
     if (points) {
       const complete = creation.points === 0;
       points.textContent = complete
-        ? 'Đã phân bổ đủ ' + TALENT_MAX + '/' + TALENT_MAX + ' điểm thiên phú.'
-        : 'Còn ' + creation.points + '/' + TALENT_MAX + ' điểm — cần phân bổ hết để bắt đầu.';
+        ? 'Đã phân bổ đủ ' + total + '/' + total + ' điểm thiên phú.'
+        : 'Còn ' + creation.points + '/' + total + ' điểm — cần phân bổ hết để bắt đầu.';
       points.classList.toggle('points-complete', complete);
       points.classList.toggle('points-pending', !complete);
     }
@@ -164,7 +193,7 @@
       for (const d of [-1, 1]) {
         const b = document.querySelector('[data-stat="' + t.key + '"][data-delta="' + d + '"]');
         if (!b) continue;
-        const off = d > 0 ? creation.points <= 0 : v <= 0;
+        const off = d > 0 ? creation.points <= 0 || v >= TALENT_MAX : v <= 0;
         b.disabled = off;
         const img = b.querySelector('img');
         if (img) img.src = PM(d) + (off ? 'disable' : 'normal') + '.png';
@@ -207,6 +236,7 @@
     $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + '</span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
     if ($('destinySelect')) $('destinySelect').value = creation.destiny;
+    renderShop();
     renderStats();
     syncName();
   }
@@ -314,9 +344,23 @@
   }
 
   function bindCreation() {
+    $('creationShop')?.addEventListener('click', async event => {
+      const button = event.target.closest('button[data-starter]');
+      if (!button || button.disabled || shopping || entering || store.ready) return;
+      const key = button.dataset.starter;
+      if (!Object.hasOwn(H.PAVILION.starter, key)) return;
+      shopping = true; renderShop();
+      try {
+        await UI.session.pavilionPurchase('starter', key);
+        renderCreation();
+        UI.toast('Đã đổi ' + H.PAVILION.starter[key].name + '. Sẽ nhận khi tạo đạo thân.', { type: 'success' });
+      } catch (err) {
+        UI.toast('Thiên Mệnh Các: ' + err.message, { type: 'danger' });
+      } finally { shopping = false; renderCreation(); }
+    });
     $('createForm').addEventListener('submit', async e => {
       e.preventDefault();
-      if (!H.READY || entering || store.ready) return;
+      if (!H.READY || entering || shopping || store.ready) return;
       if (store.locked) { UI.toast('Game đang mở ở tab khác. Đóng tab kia rồi tải lại trang.'); return; }
       const name = H.cleanName($('nameInput').value);
       if (!name) { syncName(); return; }
@@ -518,7 +562,7 @@
     }
     $('continueGame').hidden = true;
     $('continueGame').title = '';
-    $('welcomeRebirth').textContent = 'Khai mở một đạo thân · chọn Thiên mệnh khởi nguyên.';
+    $('welcomeRebirth').textContent = 'Khai mở một đạo thân · đổi Thiên Tinh tại Thiên Mệnh Các.';
     $('welcome').hidden = false;
     renderCreation();
   }
