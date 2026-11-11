@@ -19,7 +19,7 @@ const { quotaIpKey } = require('./client-ip.js');
 
 const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|pause|reset-after-death)$`, 'i');
+const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|pause)$`, 'i');
 
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
 
@@ -105,7 +105,6 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
         case 'exportData': limit('export:' + who, LIMITS.export); out = await service.exportData(who); break;
         case 'eraseData': limit('erase:' + who, LIMITS.erase); out = await service.eraseData(who, body); break;
         case 'deleteAccount': limit('erase:' + who, LIMITS.erase); out = await service.deleteAccount(who, body, accountAdmin); break;
-        case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
       }
       send(res, status, out, requestId, route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
     } catch (err) {
@@ -128,7 +127,7 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
     const m = PLAYER_ROUTE.exec(pathname);
     if (m) {
       const expected = m[2] === 'state' ? 'GET' : 'POST';
-      if (method === expected) return { name: m[2] === 'reset-after-death' ? 'resetAfterDeath' : m[2], id: m[1].toLowerCase() };
+      if (method === expected) return { name: m[2], id: m[1].toLowerCase() };
     }
     return null;
   }
