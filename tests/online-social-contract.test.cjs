@@ -29,7 +29,7 @@ test('bốn phòng chat cách ly bằng channel_key và quyền tông môn do ba
   assert.match(api, /channelOf\(body\.channel \|\| 'world', me\)/);
   assert.match(api, /if \(!me\.sect_id\)/);
   assert.match(api, /pg_advisory_xact_lock/);
-  assert.match(api, /now - asSafe\(last\.created_at\) < 2000/);
+  assert.match(api, /now - asSafe\(last\.created_at\) < 15000/);
   assert.match(api, /LIMIT = 50/);
   for (const channel of ['world','sect','dao_huu','dao_lu']) assert.ok(client.includes(channel));
 });

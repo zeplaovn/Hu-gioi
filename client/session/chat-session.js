@@ -11,6 +11,7 @@
       this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '', channel: 'world' };
       this.listeners = new Set();
       this.timer = null; this.generation = 0; this.attempt = 0; this.cursor = '0'; this.wanted = false;
+      this.lastSentAt = 0;
       root.addEventListener?.('offline', () => {
         if (!this.wanted) return;
         this.stopTransport(); this.state.status = 'offline'; this.state.online = 0;
@@ -92,7 +93,7 @@
         this.cursor = String(data.cursor || this.state.messages.at(-1)?.id || '0');
         this.state.online = Number(data.online) || 0;
         this.state.status = 'online'; this.state.error = ''; this.attempt = 0; this.emit();
-        this.schedule(gen, 6000);
+        this.schedule(gen, 10000);
       } catch (error) { this.fail(error, gen); }
     }
     receive(message) {
@@ -112,12 +113,13 @@
         this.cursor = String(data.cursor || this.cursor);
         this.state.online = Number(data.online) || 0;
         this.state.status = 'online'; this.state.error = ''; this.attempt = 0; this.emit();
-        this.schedule(gen, data.hasMore ? 1800 : 6000);
+        this.schedule(gen, data.hasMore ? 1800 : 10000);
       } catch (error) { this.fail(error, gen); }
     }
     async send(text, requestId) {
       if (this.state.status !== 'online') throw Error('Chưa kết nối máy chủ chat.');
       const { message } = await this.request('chat/send', 'POST', { text, requestId, channel: this.channel });
+      this.lastSentAt = Date.now();
       this.receive(message);
       return message;
     }

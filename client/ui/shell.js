@@ -752,6 +752,11 @@
       const layout = $('game')?.dataset.layout || 'wide';
       const W = root.innerWidth || document.documentElement.clientWidth || 1280;
       const H = root.innerHeight || document.documentElement.clientHeight || 800;
+      // Truyền âm trên màn ngang thấp: không bó cửa sổ vào sân khấu chỉ cao
+      // ~180 px, nếu không transcript và ô nhập sẽ bị cắt.
+      if (id === 'chat' && H <= 520)
+        return this.clampRect({ x: (W - Math.min(W - 16, WINDOW_SIZE.chat)) / 2, y: 8,
+          w: Math.min(W - 16, WINDOW_SIZE.chat), h: H - 16 });
       const stage = $('stage')?.getBoundingClientRect();
       const pad = layout === 'portrait' ? 8 : 12;
       const maxW = stage ? Math.max(260, stage.width - pad * 2) : W - 16;
@@ -791,6 +796,8 @@
       return this.clampRect({ x, y, w: width, h: height });
     },
     loadRect(id) {
+      // Vị trí cửa sổ chat cũ lưu ở chiều ngang không còn đủ chỗ soạn tin.
+      if (id === 'chat' && (root.innerHeight || document.documentElement.clientHeight) <= 520) return null;
       try {
         const raw = JSON.parse(localStorage.getItem(this.key(id)) || 'null');
         if (raw && ['x', 'y', 'w', 'h'].every(k => Number.isFinite(raw[k]))) return this.clampRect(raw);
@@ -816,8 +823,11 @@
       el.style.height = r.h + 'px';
     },
     fit() {
-      this.map.forEach(w => {
-        if (w.maximized) {
+      this.map.forEach((w, id) => {
+        if (id === 'chat' && !w.maximized &&
+            (root.innerHeight || document.documentElement.clientHeight) <= 520) {
+          w.rect = this.defaultRect(id);
+        } else if (w.maximized) {
           const W = root.innerWidth || 1280, H = root.innerHeight || 768;
           w.rect = { x: 8, y: 8, w: W - 16, h: Math.max(180, H - 64) };
         } else w.rect = this.clampRect(w.rect);
