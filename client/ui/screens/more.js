@@ -16,15 +16,31 @@
 
   const { PVP_CD, DISCUSS_CD, FRIENDS, DAO, RIVALS, giftCost } = H;
 
-  const RANKS = [
-    { name: 'Đạo Tổ Huyền Cơ', realm: 13, rating: 1380, title: 'Chấp chưởng thiên đạo' },
-    { name: 'Thiên Kiếm Tôn', realm: 12, rating: 1310, title: 'Kiếm ý phá vân' },
-    { name: 'Bạch Cốt Tiên', realm: 11, rating: 1250, title: 'Tử khí hóa tiên' },
-    { name: 'Lưu Ly Chân Nhân', realm: 10, rating: 1180, title: 'Một niệm thành xuân' },
-    { name: 'Vô Danh Kiếm Khách', realm: 9, rating: 1120, title: 'Kiếm xuất vô ảnh' },
-    { name: 'Mộc Uyển Nhi', realm: 7, rating: 1070, title: 'Linh dược chi chủ' },
-    { name: 'Tần Trường Ca', realm: 6, rating: 1020, title: 'Ca vang ba giới' }
-  ];
+  // Danh sách người chơi lấy từ backend; không dựng sẵn NPC giả.
+  const leaderboardState = { data: null, error: '', at: 0, owner: '', pending: null };
+  async function loadLeaderboard(force = false) {
+    const owner = UI.session?.accountId;
+    if (!owner) return;
+    if (leaderboardState.owner !== owner) {
+      Object.assign(leaderboardState, { data: null, error: '', at: 0, owner, pending: null });
+    }
+    if (leaderboardState.pending) return leaderboardState.pending;
+    if (!force && Date.now() - leaderboardState.at < 30000) return;
+    const task = UI.session.request('/social/ranking')
+      .then(data => { if (leaderboardState.owner === owner) {
+        leaderboardState.data = data; leaderboardState.error = ''; leaderboardState.at = Date.now();
+      } })
+      .catch(error => { if (leaderboardState.owner === owner) {
+        leaderboardState.error = error.message; leaderboardState.at = Date.now();
+      } })
+      .finally(() => {
+        if (leaderboardState.pending === task) leaderboardState.pending = null;
+        if (leaderboardState.owner === owner && UI.windows?.has('more') && UI.tabState.more === 'ranking')
+          UI.windows.render('more');
+      });
+    leaderboardState.pending = task;
+    return task;
+  }
 
   const affinityRank = v => v >= 90 ? 'Sinh tử chi giao' : v >= 50 ? 'Tri kỷ' : v >= 20 ? 'Tương tri' : 'Sơ giao';
   const pvpTier = r => r >= 1350 ? 'Kiếm tiên' : r >= 1200 ? 'Tông sư' : r >= 1050 ? 'Kiếm khách' : r >= 900 ? 'Tán tu' : 'Sơ nhập';
@@ -92,17 +108,23 @@
   }
 
   function ranking() {
-    const s = UI.s(), pvp = s.social.pvp;
-    const entries = [...RANKS.map(r => ({ ...r, you: false })), { name: s.name, realm: s.realm, rating: pvp.rating, title: 'Đạo hữu hữu duyên', you: true }]
-      .sort((a, b) => b.rating - a.rating);
-    const mine = entries.findIndex(e => e.you) + 1;
-    return `<p class="screen-lead">Bảng tham khảo danh vọng NPC mô phỏng, không phải bảng xếp hạng người chơi thật. Thứ hạng tham khảo thay đổi sau mỗi trận luận kiếm.</p>
-      ${card('Thứ hạng của bạn', `<div class="rank-me"><b>#${mine}</b><span>${esc(s.name)}</span><em>${num(pvp.rating)} danh vọng</em></div>${row('Cảnh giới', UI.g().realmLabel())}${row('Thắng / Thua', num(pvp.wins) + ' / ' + num(pvp.losses))}`, { eyebrow: 'HIỆN TẠI' })}
-      <div class="rank-list">${entries.map((e, i) => `<div class="rank-row ${e.you ? 'you' : ''} ${i < 3 ? 'top' : ''}">
-        <span class="rank-no">${i < 3 ? ['Ⅰ', 'Ⅱ', 'Ⅲ'][i] : '#' + (i + 1)}</span>
-        <span class="rank-name"><b>${esc(e.name)}</b><small>${esc(F.REALMS[e.realm] || '')} · ${esc(e.title || '')}</small></span>
-        <span class="rank-rating">${num(e.rating)}<small>danh vọng</small></span>
-      </div>`).join('')}</div>`;
+    const data = leaderboardState.data, entries = data?.entries || [], me = data?.me;
+    const refresh = '<div class="action-group"><button type="button" class="btn btn-outline" data-act="rankingRefresh">Cập nhật bảng xếp hạng</button></div>';
+    const myCard = me
+      ? card('Thứ hạng của bạn', '<div class="rank-me"><b>#' + num(me.rank) + '</b><span>' + esc(me.name) +
+          '</span><em>' + num(me.rating) + ' danh vọng</em></div>' +
+          row('Cảnh giới', esc(F.REALMS[me.realm] || '')) + row('Thắng / Thua', num(me.wins) + ' / ' + num(me.losses)),
+          { eyebrow: 'TÀI KHOẢN ĐÃ XÁC THỰC' })
+      : '';
+    const rows = entries.map((e, i) => '<div class="rank-row ' + (e.you ? 'you' : '') + ' ' + (i < 3 ? 'top' : '') + '">' +
+      '<span class="rank-no">' + (i < 3 ? ['Ⅰ', 'Ⅱ', 'Ⅲ'][i] : '#' + (i + 1)) + '</span>' +
+      '<span class="rank-name"><b>' + esc(e.name) + '</b><small>' +
+      esc(F.REALMS[e.realm] || '') + (e.you ? ' · Bạn' : '') + '</small></span>' +
+      '<span class="rank-rating">' + num(e.rating) + '<small>danh vọng</small></span></div>').join('');
+    return '<p class="screen-lead">Bảng xếp hạng người chơi thật, cập nhật khi danh vọng Luận Kiếm thay đổi. Mỗi lần chỉ tải tối đa 50 người chơi.</p>' +
+      (leaderboardState.error ? '<p class="info-note" role="alert">' + esc(leaderboardState.error) + '</p>' : '') +
+      (!data && !leaderboardState.error ? '<p class="info-note" role="status">Đang tải bảng xếp hạng…</p>' : '') +
+      myCard + '<div class="rank-list">' + (rows || (data ? '<p class="empty-note">Chưa có đạo hữu trong bảng xếp hạng.</p>' : '')) + '</div>' + refresh;
   }
 
   const body = { friends, dao, pvp, ranking };
@@ -115,14 +137,17 @@
     id: 'more', label: 'Giao du', icon: '♡', eyebrow: 'GIAO DU', tabs: TABS,
     render: tab => {
       const active = UI.release.allowed('more:' + tab) ? tab : 'friends';
-      return `<header class="screen-title"><span class="eyebrow gold">GIAO DU</span><h2>Giao du</h2></header>${tabs(UI.release.tabs(TABS), active)}<div class="screen-body">${UI.release.notice(active)}${UI.g().featureOpen('social') ? body[active]() : lockedMore()}</div>`;
+      return `<header class="screen-title"><span class="eyebrow gold">GIAO DU</span><h2>Giao du</h2></header>${tabs(UI.release.tabs(TABS), active)}<div class="screen-body">${UI.release.notice(active)}${(active === 'ranking' || UI.g().featureOpen('social')) ? body[active]() : lockedMore()}</div>`;
     },
-    signature: () => {
+    mount: tab => { if (tab === 'ranking') void loadLeaderboard(); },
+    signature: tab => {
       const s = UI.s(), now = Date.now(), pvp = s.social.pvp;
       const f = Object.values(s.social.friends).map(v => v.affinity + ':' + (v.discussAt <= now ? 1 : 0)).join(',');
-      return s.realm + '|' + f + '|' + pvp.rating + '|' + pvp.wins + '|' + pvp.losses + '|' + pvp.streak + '|' + pvp.best + '|' + (pvp.lastAt + PVP_CD <= now ? 1 : 0);
+      return (tab === 'ranking' ? leaderboardState.at + ':' + leaderboardState.owner : '') + '|' + s.realm + '|' + f + '|' + pvp.rating + '|' + pvp.wins + '|' + pvp.losses + '|' + pvp.streak + '|' + pvp.best + '|' + (pvp.lastAt + PVP_CD <= now ? 1 : 0);
     }
   });
+
+  UI.action('rankingRefresh', () => { void loadLeaderboard(true); return UI.KEEP; });
 
   const findFriend = id => FRIENDS.find(f => f.id === id);
   const findDao = id => DAO.find(f => f.id === id);
