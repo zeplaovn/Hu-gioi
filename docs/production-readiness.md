@@ -1,6 +1,7 @@
 # Hư Giới — kế hoạch chuẩn bị bản production (nhánh `final`)
 
-> Ngày đối chiếu: 11/11/2026. Trạng thái: **PREPARATION / NOT PRODUCTION-READY**.
+> Trạng thái: Hiện hành. **Kế hoạch chuẩn bị, CHƯA SẴN SÀNG production.**
+> Ngày đối chiếu: 11/11/2026.
 > Nguồn chỉ đạo: [`task.txt`](../task.txt), toàn bộ 11 mục được lưu nguyên văn; **mục 11 có ưu tiên cao nhất khi có mâu thuẫn**.
 > Nhánh `final` bắt đầu từ `perf/cleanup-css-ui-20261111` (PR #70). Không tự merge, migrate hoặc deploy production.
 
