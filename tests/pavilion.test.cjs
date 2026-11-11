@@ -120,28 +120,31 @@ test('mua cấp Thiên Mệnh Các: optimistic version, receipt một lần, đ�
   } finally { repo.close(); }
 });
 
-test('không có trọng sinh: sau tọa hóa không thể reset để nhận lại Thiên Tinh hoặc tạo đạo thân thứ hai', async () => {
+test('tử vong: có thể tạo lại từ đầu, không giữ Thiên Tinh hay nâng cấp', async () => {
   const { repo, service } = setup();
   try {
-    const id = (await spawn(service, 'a', 'Tô Thiên Vân')).playerId;
-    await forceAscension({ repo, service }, id, 'a', 'first-ascend');
-    await buy(service, 'a', 'current-upgrade', 'upgrade', 'canCot');
-    await assert.rejects(
-      buy(service, 'a', 'legacy-relic', 'relic', 'tuiLinhThach'),
-      { code: 'INVALID_REQUEST' }
-    );
-    const rec = await repo.get(id);
+    const id = (await spawn(service,'a','Tô Thiên Vân')).playerId;
+    await forceAscension({ repo,service }, id,'a','first-ascend');
+    await buy(service,'a','current-upgrade','upgrade','canCot');
+    await assert.rejects(buy(service,'a','legacy-relic','relic','tuiLinhThach'), { code:'INVALID_REQUEST' });
+    const record = await repo.get(id);
+    await assert.rejects(service.resetAfterDeath('a',id), { code:'GAME_RULE_VIOLATION' });
     await repo.transact(id, tx => ({ save: {
-      state: { ...rec.state, death: { cause: 'combat', at: T0 } },
+      state: { ...record.state, death: { cause:'combat', at:T0 } },
       revision: tx.record.revision + 1, rngCounter: tx.record.rngCounter,
-      lastSeenAt: T0, schemaVersion: H.VERSION, contentVersion: 'test'
+      lastSeenAt:T0, schemaVersion:H.VERSION, contentVersion:'test'
     } }));
-    assert.equal(typeof service.resetAfterDeath, 'undefined', 'không còn API tạo kiếp mới');
-    const snapshot = await service.bootstrap('a');
-    assert.equal(snapshot.player.id, id, 'đạo thân đã tọa hóa vẫn không thể tái tạo');
-    assert.equal(snapshot.pavilion.rebirths, 0);
-    assert.equal(snapshot.pavilion.upgrades.canCot, 1);
-    await assert.rejects(spawn(service, 'a', 'Tô Vân Kiếp'), { code: 'PLAYER_EXISTS' });
+    await assert.rejects(spawn(service,'a','Tô Vân Kiếp'), { code:'PLAYER_EXISTS' });
+    const reset = await service.resetAfterDeath('a',id);
+    assert.equal(reset.deleted,true);
+    assert.equal(reset.pavilion.balance,0);
+    assert.equal(reset.pavilion.totalEarned,0);
+    assert.deepEqual(reset.pavilion.upgrades,{});
+    assert.equal(reset.pavilion.rebirths,0);
+    const next = await spawn(service,'a','Tô Vân Kiếp');
+    assert.notEqual(next.playerId,id);
+    assert.equal(next.pavilion.balance,0);
+    assert.equal(next.state.pavilion?.canCot || 0,0);
   } finally { repo.close(); }
 });
 
