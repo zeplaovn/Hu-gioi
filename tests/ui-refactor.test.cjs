@@ -74,7 +74,7 @@ test('từ điển chỉ số sử dụng thuật ngữ tu tiên nhất quán', 
   assert.doesNotMatch(char, /Tốc tu|tốc tu|HP \+| MP · | ATK \+| DEF \+/);
 });
 
-test('phần tạo nhân vật vẫn bắt buộc dùng đủ tám điểm, không hiện dòng giải thích cũ', () => {
+test('phần tạo nhân vật bắt buộc phân bổ đủ 8 điểm gốc cộng điểm Thiên Mệnh Các, không hiện chú thích cũ', () => {
   const html = read('index.html');
   const boot = read('client/ui/boot.js');
   const rule = read('engine/rules/creation.js');
