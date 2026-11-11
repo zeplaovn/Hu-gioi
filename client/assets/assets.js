@@ -93,7 +93,7 @@
     forge: BG_BASE + 'room/luyen_khi.webp',
     talisman: BG_BASE + 'room/ve_phu.webp',
     garden: BASE + 'ui/linh_dien/BG.webp',
-    logo: BG_BASE + 'logo.webp' /* có kèm logo.png */
+    logo: BG_BASE + 'logo.webp'
   };
   const MAPS = { ha_gioi: MAP_BASE + 'MAP-HG.webp', linh_gioi: MAP_BASE + 'MAP-LG.webp', tien_gioi: MAP_BASE + 'MAP-TG.webp' };
   const SEASON_FILES = { spring: 'xuan', summer: 'ha', autumn: 'thu', winter: 'dong' };

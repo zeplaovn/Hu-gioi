@@ -43,3 +43,9 @@
 - **[task.txt](../task.txt)**: yêu cầu tối ưu backend; §11 là ưu tiên mới nhất. Mọi hạng mục “đã hoàn thành” phải có code/test/deployment proof tương ứng.
 
 Không coi việc merge tài liệu vào main là cấp phép chạy migration, deploy Supabase/Cloudflare hoặc công bố game.
+
+## V. Xóa tài sản/công cụ đã thay thế (11/11/2026)
+- Loại bỏ `media/assets/world/bg/logo.png` (giao diện và preload dùng `logo.webp`) và `media/assets/world/bg/forest.webp` (ảnh nền cũ chỉ còn trong preload, không còn đường hiển thị từ mã client). Xóa đường dẫn preload forest để giảm tải không cần thiết.
+- Loại `tools/install-custom-assets.py` — công cụ cài lại ZIP của đợt nhập asset, trong khi toàn bộ 15 WebP đã có sẵn trên Git; không dùng trong CI hay runtime.
+- **Giữ** `bi_canh.png` vì đang là fallback khi `bi_canh.webp` thất bại; giữ `tra_cuu_item.html` vì test item-art đọc, giữ atlas, bảng thiết kế, file XLSX/CSV làm nguồn tác giả, assets NPC, và adapters dev/test.
+- Không thay đổi API, game rules, Supabase migrations, cơ chế shop/chat/rank hoặc dữ liệu người chơi. Mọi xóa file đều còn trong lịch sử Git.

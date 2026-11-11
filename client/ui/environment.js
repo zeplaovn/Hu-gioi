@@ -63,7 +63,7 @@
       requested = '';
       if (next.src === A.BG.combat && !combatWebpMissing) {
         combatWebpMissing = true;
-        update(s); // File bi_canh.webp chưa có: dùng ngay ảnh bi_canh.png.
+        update(s); // Nếu WebP lỗi tải, fallback sang ảnh PNG có sẵn.
       }
     };
     image.src = next.src;
