@@ -77,7 +77,15 @@ test('kinh mạch hiển thị đủ 12 chính kinh, 8 kỳ kinh và không tạ
   assert.match(src, /M\.KY_KINH/);
   assert.match(src, /UI\.action\('meridianPick'/);
   assert.match(src, /UI\.action\('meridianGroup'/);
-  assert.match(src, /UI\.action\('meridianTone'/);
+  // Nhóm quyết định màu ảnh và điểm mạch; không được chọn màu độc lập.
+  assert.match(src, /const tone = group === 'ky' \? 'vang' : 'xanh'/);
+  assert.match(src, /group === 'ky' \? '#e5c458' : '#75bfed'/);
+  assert.match(src, /12 Chính Kinh · Màu xanh/);
+  assert.match(src, /8 Kỳ Kinh · Màu vàng/);
+  assert.match(src, /media\.meridian\(state\.gender, tone\)/);
+  assert.match(src, /media\?\.meridianFallback\?\.\(state\.gender, tone\)/);
+  assert.doesNotMatch(src, /UI\.action\('meridianTone'/);
+  assert.doesNotMatch(src, /aria-label="Màu đạo thể"/);
   assert.match(src, /chưa cộng vào chỉ số nhân vật/);
   assert.doesNotMatch(src, /UI\.command\('(?:meridian|openMeridian|advanceMeridian)'/);
 });
