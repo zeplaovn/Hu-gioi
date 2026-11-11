@@ -259,17 +259,7 @@
       });
     }
     drainAchievements() { return this.achievements.splice(0); }
-    async resetAfterDeath() {
-      return this.run(async () => {
-        if (!this.playerId) throw Error('Không có đạo thân để xóa.');
-        const reset = await this.request('/players/' + this.playerId + '/reset-after-death', 'POST', {});
-        if (reset.pavilion) this.pavilion = reset.pavilion;
-        this.playerId = null;
-        this.game = new H.Game(H.create(this.clock()));
-        this.ticket = null;
-        return this.previewCreation();
-      });
-    }
+
   }
   root.HU_REMOTE_SESSION = { RemoteSession };
 })(typeof window !== 'undefined' ? window : globalThis);
