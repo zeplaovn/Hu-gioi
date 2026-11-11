@@ -11,7 +11,7 @@ Browser → Cloudflare Workers Static Assets (dist/)
 - Frontend: `index.html`, `client/`, `css/`, `media/`; `npm run build:min` tạo `dist/`. CSS được bundle/hash khi build, không xóa 16 CSS nguồn chỉ vì dist dùng một bundle.
 - Gameplay: `engine/` + `data/` là luật dùng chung; `server/services/player-service.js` làm nguồn chân lý cho intent và revision.
 - API production hướng tới `supabase/functions/api/index.ts`, `http.ts`, `social.ts`; `tools/build-edge.cjs` tạo bundle. Bundle sinh ra không được commit.
-- `server/main.js`, `server/repositories/sqlite-players.js`, `client/session/local-session.js`, `client/persistence/local-store.js`, Docker/Compose là **dev/test/legacy**, không dùng triển khai Cloudflare production. Khi dùng gateway Node dev sau reverse proxy, phải cấu hình `HU_AUTH_TRUSTED_PROXY_IPS` đúng IP proxy, proxy tin cậy ghi đè header forwarded và bảo vệ `SUPABASE_URL`.
+- Node/SQLite dev/test: `server/main.js`, `server/repositories/sqlite-players.js`, `client/session/local-session.js`, `client/persistence/local-store.js`, Docker/Compose là **dev/test/legacy**, không dùng triển khai Cloudflare production. Khi dùng gateway Node dev sau reverse proxy, phải cấu hình `HU_AUTH_TRUSTED_PROXY_IPS` đúng IP proxy, proxy tin cậy ghi đè header forwarded và bảo vệ `SUPABASE_URL`.
 
 ## 2. Xác thực, API và đồng bộ
 - JWT có xác minh tại backend; `verify_jwt=false` trên Edge là cấu hình cho preflight, **không** mở gameplay vô danh. Ràng buộc owner, kiểm tra consent cả privacy và release_terms, policy `2026-11-11-v7`; `/me/*` có quy tắc riêng.
