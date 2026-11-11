@@ -156,3 +156,25 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
   .chat-compose-meta{margin-top:3px}
   .chat-compose-meta small{font-size:10px}
 }
+
+/* Chế độ ngang thấp (844×390): giảm chrome để không cắt ô soạn. */
+@media(max-height:520px){
+  .win.desktop-window[data-window="chat"]{min-height:180px}
+  .chat-heading{padding:5px 10px}
+  .chat-seal{display:none}
+  .chat-heading .eyebrow{display:none}
+  .chat-heading h2{margin:0;font-size:18px}
+  .chat-online{padding:3px 7px;font-size:10px}
+  .chat-context{display:none}
+  .chat-connection{padding:3px 10px}
+  .chat-connection .btn{min-height:26px;padding:2px 8px}
+  .chat-transcript{min-height:54px}
+  .chat-feed{padding:7px 10px}
+  .chat-form{padding:5px 9px}
+  .chat-form label{display:none}
+  .chat-compose-meta{display:none}
+  .chat-compose-row input,.chat-compose-row .btn{min-height:34px}
+  .chat-error{margin:2px 0 0}
+  .win.desktop-window[data-window="chat"] .chat-channels{padding:5px 9px}
+  .win.desktop-window[data-window="chat"] .chat-channels>button{min-height:30px;padding:4px}
+}
