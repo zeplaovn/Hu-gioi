@@ -170,6 +170,9 @@ test('Postgres contract: tử vong xóa sạch xếp hạng, chat và Thiên Tin
     lastSeenAt: CLOCK, schemaVersion: H.VERSION, contentVersion: 'test'
   }}));
   assert.equal((await db.query('SELECT count(*)::int AS n FROM game.player_leaderboard WHERE owner_id=$1', [A])).rows[0].n, 0);
+  // Một lần ghi trạng thái sau khi chết không được làm hồi sinh vị trí trên Thiên Bảng.
+  await db.query('UPDATE game.players SET state = state WHERE id = $1', [id]);
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.player_leaderboard WHERE owner_id=$1', [A])).rows[0].n, 0);
   const died = await svc.bootstrap(A);
   assert.equal(died.player.id, id);
   await assert.rejects(spawn(svc, A, 'Tịnh Đạo'), { code: 'PLAYER_EXISTS' });
