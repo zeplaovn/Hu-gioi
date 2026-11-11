@@ -232,7 +232,7 @@
        Khi mất phản hồi sau commit, gửi lại cùng requestId để nhận receipt. */
     pavilionPurchase(kind, key) {
       return this.run(async () => {
-        if (!this.accountId || !['upgrade', 'relic'].includes(kind)) throw Error('Chưa thể mở Thiên Mệnh Các.');
+        if (!this.accountId || kind !== 'upgrade') throw Error('Chưa thể mở Thiên Mệnh Các.');
         const requestId = root.crypto?.randomUUID?.();
         if (!requestId) throw Error('Trình duyệt thiếu mã giao dịch an toàn.');
         const body = { requestId, expectedVersion: this.pavilion.version, kind, key };
