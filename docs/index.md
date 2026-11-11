@@ -16,6 +16,7 @@
 | Hợp đồng engine và lệnh | [Engine contract](engine-contract.md) |
 | Sinh tử, tiến trình online | [Gameplay V9](gameplay-v9.md) |
 | Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại | [Thiên Mệnh Các](thien-menh-cac.md) |
+| Thiên Mệnh Các trước khi lập đạo thân (đề xuất test) | [Quầy Khởi Nguyên](creation-pavilion-shop.md) |
 | Dữ liệu design hiện tích hợp | [Tích hợp thiết kế](design-integration.md) |
 | Đồ họa nhân vật | [Bộ nhân vật](player-pack.md) |
 | Đồ họa nghề phụ và kinh mạch (tùy chọn) | [Gói asset Đan Các · Lò Rèn · Kinh Mạch Đồ](asset-pack-crafting-meridians.md) |
