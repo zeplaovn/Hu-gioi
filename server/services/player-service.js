@@ -218,16 +218,16 @@ class PlayerService {
     const out = await this.repo.transact(playerId, async tx => {
       const rec = this.#own(tx.record, ownerId);
       const before = JSON.stringify(rec.state);
-      const run = this.#run(rec, now);
+      const at = this.#monotonic(rec, now), run = this.#run(rec, at);
       let report, achievements = [];
       try {
         if (run.game.isDead()) {
-          if (!run.game.s.death) run.game.markDeath('lifespan', now);
-          run.game.s.lastUpdate = now;
+          if (!run.game.s.death) run.game.markDeath('lifespan', at);
+          run.game.s.lastUpdate = at;
           report = { died: true, cause: run.game.s.death?.cause || 'lifespan' };
         } else {
-          report = run.game.advance(now, run.offline);
-          if (!run.game.isDead()) achievements = run.game.checkMeta(now);
+          report = run.game.advance(at, run.offline);
+          if (!run.game.isDead()) achievements = run.game.checkMeta(at);
         }
         run.game.s.presencePaused = false;
       } catch (err) {
@@ -240,7 +240,7 @@ class PlayerService {
       const changed = JSON.stringify(run.game.s) !== before, revision = rec.revision + (changed ? 1 : 0);
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       return {
-        save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
+        save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: at, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
         value: { rec, state: run.game.s, revision, report, achievements: clean(achievements), logs: run.logs, died: run.game.isDead() }
       };
     }, this.#dbRate('sync', ownerId, now));
@@ -257,14 +257,14 @@ class PlayerService {
       // Khi trở lại sync, presencePaused vẫn buộc advance đóng băng toàn bộ thời gian ẩn.
       if (rec.state.presencePaused && rec.schemaVersion === H.VERSION)
         return { value: { rec, revision: rec.revision, state: rec.state } };
-      const run = this.#run(rec, now);
-      if (!run.game.isDead()) run.game.advance(now, run.offline);
-      else run.game.s.lastUpdate = now;
+      const at = this.#monotonic(rec, now), run = this.#run(rec, at);
+      if (!run.game.isDead()) run.game.advance(at, run.offline);
+      else run.game.s.lastUpdate = at;
       run.game.s.presencePaused = true;
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       const revision = rec.revision + 1;
       return {
-        save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
+        save: { state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: at, schemaVersion: H.VERSION, contentVersion: this.contentVersion },
         value: { rec, revision, state: run.game.s }
       };
     }, this.#dbRate('pause', ownerId, now));
@@ -285,15 +285,15 @@ class PlayerService {
       if (rec.revision !== expectedRevision) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.', { currentRevision: rec.revision });
 
       const previousRealm = rec.state.realm;
-      const run = this.#run(rec, now), save = revision => ({
-        state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
+      const at = this.#monotonic(rec, now), run = this.#run(rec, at), save = revision => ({
+        state: run.game.s, revision, rngCounter: run.rng.counter(), lastSeenAt: at, schemaVersion: H.VERSION, contentVersion: this.contentVersion
       });
       let report, result = null, achievements = [], failure = null;
       // Chốt trạng thái sau advance, trước khi thực thi intent không đáng tin.
       let advancedState = null, advancedCounter = rec.rngCounter;
       try {
         if (run.game.isDead()) throw new GameError('PLAYER_DEAD', 'Đạo thân đã tọa hóa; hãy trở về Khởi Nguyên.');
-        report = run.game.advance(now, run.offline);
+        report = run.game.advance(at, run.offline);
         run.game.s.presencePaused = false;
         advancedState = JSON.stringify(run.game.s);
         advancedCounter = run.rng.counter();
@@ -302,8 +302,8 @@ class PlayerService {
           // thay vì ném lỗi làm trình duyệt không nhận kết quả.
           result = { died: true, cause: run.game.s.death?.cause || 'lifespan' };
         } else {
-          result = C.execute(run.game, command, now);
-          if (!run.game.isDead()) achievements = run.game.checkMeta(now);
+          result = C.execute(run.game, command, at);
+          if (!run.game.isDead()) achievements = run.game.checkMeta(at);
         }
       } catch (err) { failure = classify(err); if (failure.code === 'INTERNAL') this.onError(err); }
 
@@ -316,10 +316,10 @@ class PlayerService {
           failure.details = { ...(failure.details || {}), currentRevision: rec.revision + 1 };
           return { save: {
             state: preserved, revision: rec.revision + 1, rngCounter: advancedCounter,
-            lastSeenAt: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion
+            lastSeenAt: at, schemaVersion: H.VERSION, contentVersion: this.contentVersion
           }, value: { error: failure } };
         }
-        return { touch: { rngCounter: advancedCounter, lastSeenAt: now }, value: { error: failure } };
+        return { touch: { rngCounter: advancedCounter, lastSeenAt: at }, value: { error: failure } };
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
@@ -350,6 +350,13 @@ class PlayerService {
     // Không phân biệt "không tồn tại" và "của người khác" để tránh dò ID.
     if (!rec || rec.ownerId !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
     return rec;
+  }
+  /* Đồng hồ giao dịch không được lùi. `now` được lấy trước khi giữ khóa hàng, nên có thể cũ hơn
+     bản ghi mà request khác vừa commit; dùng nó trực tiếp sẽ lùi lastUpdate/lastSeenAt và lần sau
+     cộng trùng khoảng bị chồng. Kẹp về mốc lớn nhất đã được ghi (chỉ làm chậm, không bao giờ cộng thêm). */
+  #monotonic(rec, now) {
+    const stamp = v => Number.isFinite(Number(v)) ? Number(v) : 0;
+    return Math.max(now, stamp(rec.lastSeenAt), stamp(rec.state?.lastUpdate));
   }
   #state(rec, now) {
     if (rec.schemaVersion === H.VERSION) return rec.state;
