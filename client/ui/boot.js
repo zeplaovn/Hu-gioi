@@ -252,8 +252,35 @@
         '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tổng tu vi hành trình</span><b>' + num(s.totalRunExp) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Hành trình đã kết thúc. Không có trọng sinh hoặc khôi phục đạo thân sau khi tọa hóa. Bạn có thể xuất dữ liệu hoặc xóa dữ liệu theo quyền tài khoản ở phần Cài đặt.</p>',
-      null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', vfx: ['loi_kiep', 'ha_gioi'] });
+      '<p class="info-note">Bạn có thể bắt đầu lại từ Khởi Nguyên. Nhân vật, cảnh giới, lực chiến, vật phẩm, Thiên Tinh và nâng cấp sẽ về 0. Không có thưởng hoặc cộng dồn trọng sinh.</p>' +
+      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Bắt đầu lại từ đầu</button></div>',
+      null, 'Đóng', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', vfx: ['loi_kiep', 'ha_gioi'] });
+  };
+
+
+  UI.resetAfterDeath = async function () {
+    if (!deathOpen || store.locked) return;
+    store.ready = false;
+    try {
+      const preview = await store.resetAfterDeath();
+      creation = { ...freshCreation(), ...preview };
+    } catch (error) {
+      store.ready = true;
+      UI.toast('Không thể bắt đầu lại: ' + error.message, { type: 'danger' });
+      return;
+    }
+    UI.closeModal(true); deathOpen = false;
+    UI.windows?.closeAll();
+    UI.tabState = {};
+    UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
+    UI.current = 'idle'; rolling = '';
+    $('continueGame').hidden = true; $('continueGame').title = '';
+    $('welcomeRebirth').textContent = 'Khởi đầu mới · không giữ lại tài nguyên hoặc sức mạnh.';
+    $('game').hidden = true; $('welcome').hidden = false;
+    document.body.classList.remove('in-game');
+    try { root.history?.replaceState(null, '', root.location.pathname + root.location.search); } catch {}
+    renderCreation();
+    $('nameInput')?.focus({ preventScroll: true });
   };
 
 
