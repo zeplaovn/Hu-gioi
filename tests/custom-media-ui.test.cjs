@@ -80,6 +80,12 @@ test('kinh mạch hiển thị đủ 12 chính kinh, 8 kỳ kinh và không tạ
   // Nhóm quyết định màu ảnh và điểm mạch; không được chọn màu độc lập.
   assert.match(src, /const tone = group === 'ky' \? 'vang' : 'xanh'/);
   assert.match(src, /group === 'ky' \? '#e5c458' : '#75bfed'/);
+  // Nút chỉ chuyển loại kinh mạch, không có nút chọn Thanh quang / Kim quang.
+  assert.match(src, /option\('meridianGroup', 'group', 'chinh', '12 Chính Kinh', group === 'chinh'\)/);
+  assert.match(src, /option\('meridianGroup', 'group', 'ky', '8 Kỳ Kinh', group === 'ky'\)/);
+  assert.doesNotMatch(src, /option\('meridianGroup', 'group', 'chinh', '12 Chính Kinh · Màu xanh'/);
+  assert.doesNotMatch(src, /option\('meridianGroup', 'group', 'ky', '8 Kỳ Kinh · Màu vàng'/);
+  // Chú thích màu vẫn có ở bản đồ, đổi tự động theo nhóm.
   assert.match(src, /12 Chính Kinh · Màu xanh/);
   assert.match(src, /8 Kỳ Kinh · Màu vàng/);
   assert.match(src, /media\.meridian\(state\.gender, tone\)/);
