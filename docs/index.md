@@ -12,7 +12,7 @@
 | Secrets, JWT, CSP, Auth, quota | [Bảo mật](security.md) |
 | Hợp đồng engine và lệnh | [Engine contract](engine-contract.md) |
 | Sinh tử, tiến trình online | [Gameplay V9](gameplay-v9.md) |
-| Tài sản xuyên kiếp | [Thiên Mệnh Các](thien-menh-cac.md) |
+| Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại | [Thiên Mệnh Các](thien-menh-cac.md) |
 | Dữ liệu design hiện tích hợp | [Tích hợp thiết kế](design-integration.md) |
 | Đồ họa nhân vật | [Bộ nhân vật](player-pack.md) |
 | Đồ họa nghề phụ và kinh mạch (tùy chọn) | [Gói asset Đan Các · Lò Rèn · Kinh Mạch Đồ](asset-pack-crafting-meridians.md) |
