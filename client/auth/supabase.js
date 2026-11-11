@@ -237,18 +237,20 @@
     }
   }
 
-  async function signup(email, password) {
+  const captchaBody = options => options && typeof options.captchaToken === 'string' && options.captchaToken
+    ? { gotrue_meta_security: { captcha_token: options.captchaToken } } : {};
+  async function signup(email, password, options) {
     if (!validEmail(email)) throw Error('Email không hợp lệ. Vui lòng nhập địa chỉ email đúng định dạng.');
     const redirect = root.location?.protocol === 'https:' || root.location?.hostname === 'localhost'
       ? '?redirect_to=' + encodeURIComponent(root.location.origin + root.location.pathname)
       : '';
     const data = await request('/auth/v1/signup' + redirect, {
-      method: 'POST', body: { email, password, data: { policy_notice_version: VERSION } }
+      method: 'POST', body: { email, password, data: { policy_notice_version: VERSION }, ...captchaBody(options) }
     });
     if (data?.access_token) persist(data);
     return data;
   }
-  async function login(email, password) {
+  async function login(email, password, options) {
     if (!validEmail(email)) throw Error('Email không hợp lệ. Vui lòng nhập địa chỉ email đúng định dạng.');
     const direct = root.HU_AUTH_MODE === 'direct';
     let data;
@@ -257,7 +259,7 @@
       // Chỉ gửi mật khẩu tới Supabase Auth cùng publishable key công khai.
       try {
         data = await request('/auth/v1/token?grant_type=password', {
-          method: 'POST', body: { email: email.toLowerCase(), password }
+          method: 'POST', body: { email: email.toLowerCase(), password, ...captchaBody(options) }
         });
       } catch (error) {
         const message = error.status === 429 ? 'Dịch vụ xác thực đang giới hạn tốc độ. Hãy thử lại sau.'

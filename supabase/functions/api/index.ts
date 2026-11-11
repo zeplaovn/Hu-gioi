@@ -71,7 +71,20 @@ const service = new PlayerService({
   config: { onlineGraceMs: grace, nextSyncInMs: syncInterval, repositoryRates: true },
   onError: () => { /* log bên ngoài, không log state/token */ }
 });
-const adminKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+/* Supabase đã đánh dấu SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY là deprecated; runtime mới cấp
+   SUPABASE_PUBLISHABLE_KEYS / SUPABASE_SECRET_KEYS (chuỗi JSON dạng dictionary). Giữ khóa cũ làm ưu tiên để
+   không đổi hành vi hiện tại, và tự chuyển sang khóa mới khi khóa cũ bị gỡ. */
+function runtimeKey(legacy: string, dict: string): string {
+  const old = Deno.env.get(legacy);
+  if (old) return old;
+  try {
+    const keys = JSON.parse(Deno.env.get(dict) || '{}') as Record<string, unknown>;
+    const value = keys.default ?? Object.values(keys)[0];
+    return typeof value === 'string' ? value : '';
+  } catch { return ''; }
+}
+const adminKey = runtimeKey('SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEYS');
+const publicApiKey = runtimeKey('SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEYS');
 const accountAdmin = adminKey ? createAccountAdmin({ url: BASE, secretKey: adminKey }) : null;
 
 const consents = new Map();
@@ -126,7 +139,7 @@ async function authenticate(req: Request, route: string): Promise<string> {
   let userId: string | null;
   try {
     userId = await authCache.lookup(token, t =>
-      getVerifiedUserId(t, BASE, Deno.env.get('SUPABASE_ANON_KEY') || ''));
+      getVerifiedUserId(t, BASE, publicApiKey));
   } catch {
     throw new GameError('MAINTENANCE', 'Dịch vụ xác thực tạm thời không khả dụng.');
   }

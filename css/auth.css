@@ -77,5 +77,7 @@
 
 /* [hidden] phải thắng quy tắc display:flex của form và consent. */
 .auth-form label[hidden], .auth-message[hidden] { display:none !important; }
+.auth-captcha { margin:4px 0; min-height:78px; }
+.auth-captcha[hidden] { display:none !important; }
 
 /* Chơi khách cần chấp thuận điều khoản nhưng không bị buộc đăng ký email. */

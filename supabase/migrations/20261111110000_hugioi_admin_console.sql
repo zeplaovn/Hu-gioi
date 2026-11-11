@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS game.admin_users (
 );
 CREATE TABLE IF NOT EXISTS game.admin_audit_log (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  admin_user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  -- SET NULL (không CASCADE): xóa tài khoản admin không được xóa dấu vết audit của họ.
+  admin_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   action text NOT NULL,
   target_id text,
   reason text,

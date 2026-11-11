@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a1410">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co; media-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://js.hcaptcha.com https://*.hcaptcha.com; style-src 'self' 'unsafe-inline' https://*.hcaptcha.com; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co https://hcaptcha.com https://*.hcaptcha.com; media-src 'self'; object-src 'none'; frame-src https://hcaptcha.com https://*.hcaptcha.com; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="Hư Giới — game idle tu tiên online, bảo vệ tài khoản và tiến trình trên máy chủ.">
 <title>Hư Giới · Tiên Lộ Vô Tận</title>
 <link rel="icon" href="data:,">
@@ -75,6 +75,7 @@
           <label class="auth-check" for="authRelease"><input id="authRelease" type="checkbox" required><span>Tôi đồng ý với <a href="client/legal/release.html" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng Hư Giới</a> (10/11/2026).</span></label>
           <p class="auth-legal-note">Không tích sẵn. Hư Giới miễn phí, phi lợi nhuận và không có thanh toán trực tuyến.</p>
         </div>
+        <div id="authCaptcha" class="auth-captcha" hidden></div>
         <p id="authMessage" class="auth-message" role="alert" hidden></p>
         <button id="authSubmit" class="auth-submit" type="submit">Bước vào Hư Giới</button>
       </form>
@@ -420,6 +421,7 @@
 <script src="client/config.js"></script>
 <script src="client/session/remote-session.js"></script>
 <script src="client/auth/supabase.js"></script>
+<script src="client/auth/captcha.js"></script>
 <script src="client/auth/auth.js"></script>
 <script src="client/session/chat-session.js"></script>
 <script src="client/persistence/remote-store.js"></script>

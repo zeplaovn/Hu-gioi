@@ -103,6 +103,9 @@
         notice('Vui lòng xác nhận cả Chính sách quyền riêng tư và Điều khoản sử dụng để đăng ký.'); return;
       }
     }
+    const captcha = root.HU_CAPTCHA;
+    const captchaToken = captcha?.enabled ? captcha.token() : '';
+    if (captcha?.enabled && !captchaToken) { notice('Vui lòng hoàn tất xác minh CAPTCHA.'); return; }
     busy = true;
     $('authSubmit').disabled = true;
     $('authForm').setAttribute('aria-busy', 'true');
@@ -110,7 +113,7 @@
     try {
       SB.rememberOnThisDevice?.($('authRemember').checked);
       if (mode === 'signup') {
-        const data = await SB.signup(email, password);
+        const data = await SB.signup(email, password, { captchaToken });
         if (data?.access_token) {
           await SB.accept({ id: data.user.id });
           await finish({ id: data.user.id, email: data.user.email });
@@ -118,11 +121,12 @@
           notice('Vui lòng kiểm tra email và xác nhận địa chỉ trước khi đăng nhập.', true);
         }
       } else {
-        await finish(await SB.login(email, password));
+        await finish(await SB.login(email, password, { captchaToken }));
       }
     } catch (error) {
       notice(error instanceof TypeError ? 'Không thể kết nối dịch vụ đăng nhập. Hãy thử lại sau.' : error.message);
     } finally {
+      root.HU_CAPTCHA?.reset?.();
       busy = false;
       $('authSubmit').disabled = false;
       $('authForm').removeAttribute('aria-busy');
@@ -175,6 +179,7 @@
     if (bound) return;
     bound = true;
     $('authForm').addEventListener('submit', submit);
+    if (root.HU_CAPTCHA?.enabled) root.HU_CAPTCHA.mount($('authCaptcha')).catch(() => notice('Không tải được CAPTCHA. Hãy tải lại trang.'));
     $('authGoogle').addEventListener('click', loginGoogle);
     document.querySelectorAll('[data-auth-view]').forEach(b => b.addEventListener('click', () => selectMode(b.dataset.authView)));
     $('switchAccount').addEventListener('click', logout);
