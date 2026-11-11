@@ -13,6 +13,7 @@ const CLOCK = 1800000000000;
 const migration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
 const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
 const rankMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111032200_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
+const deadMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111051000_exclude_dead_from_live_leaderboards.sql'), 'utf8');
 
 async function makePg(t, { statementTimeoutMs, lockTimeoutMs } = {}) {
   const db = new PGlite();
@@ -22,6 +23,7 @@ async function makePg(t, { statementTimeoutMs, lockTimeoutMs } = {}) {
   await db.exec(migration);
   await db.exec(socialMigration);
   await db.exec(rankMigration);
+  await db.exec(deadMigration);
   const log = [];
   const settingsAtLock = [];
   const pool = {
