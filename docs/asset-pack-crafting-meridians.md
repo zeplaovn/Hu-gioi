@@ -1,6 +1,6 @@
 # Gói giao diện nghề phụ và Kinh Mạch Đồ (11/11/2026)
 
-> Trạng thái: Hiện hành. Gói ảnh tùy chọn; chỉ bật khi đã cài đủ tệp.
+> Trạng thái: Hiện hành. Đã đóng gói đủ 15 ảnh gốc trong repository.
 
 ## Tính năng
 
@@ -13,20 +13,13 @@
 
 Kinh Mạch Đồ hiện là **bản tra cứu thiết kế**. Không tạo huyệt vị thật, không sửa chỉ số và không bổ sung lệnh máy chủ. Các hiệu ứng ghi trong bảng kinh mạch **chưa được kích hoạt**. Tiến trình nghề phụ vẫn theo thời gian online và do máy chủ ghi nhận.
 
-## Cài đặt gói ảnh
+## Bộ ảnh gốc đã được cài
 
-Mã giao diện có mặt trên nhánh này. 15 file ảnh WebP thuộc gói ZIP bàn giao riêng và **chưa được đẩy lên GitHub trong PR**.
+Tất cả 15 tệp WebP nằm trực tiếp trong repository tại `media/assets/custom/2026-11/`; biến `HU_CUSTOM_MEDIA.installed` được bật. **Không cần giải nén hay cài ZIP thủ công.** Trên môi trường triển khai mới, các tệp được lấy từ commit Git và có mặt sau bước build/deploy.
 
-Sau khi checkout nhánh hoặc merge PR, giải nén gói `hugioi_asset_package.zip`, chạy:
+- Bốn ảnh tu sĩ ngồi thiền được **chuyển trực tiếp từ PNG gốc** trong `asset.zip` sang WebP chất lượng cao, giữ kích thước **1312 × 1199**, nền alpha trong suốt, giới tính nam/nữ, hai màu Thanh quang/Kim quang.
+- Hai nền Đan Các, Lò Rèn và một ảnh lò đan lấy từ PNG gốc.
+- Bốn hoạt cảnh nghề phụ xuất phát từ GIF gốc, giữ tám khung hình mỗi hoạt cảnh; thêm bốn ảnh tĩnh khi bật Giảm chuyển động.
+- Mã điều khiển `client/assets/custom-media.js` trỏ đúng những đường dẫn này, cả hai màn Kinh Mạch Đồ và Nghề phụ đều sử dụng ảnh thật.
 
-```sh
-python3 install_assets.py /duong/dan/toi/repository/Hugioi
-npm test
-npm run build:min
-```
-
-Script cài đặt sao chép các tệp vào `media/assets/custom/2026-11/` và đổi `installed: false` thành `installed: true` trong `client/assets/custom-media.js`.
-
-Để đưa ảnh lên repository sau khi cài đặt, kiểm tra file và commit/push qua git như bình thường. Đừng bật `installed` nếu chưa chép đầy đủ 15 ảnh.
-
-Khi chưa cài ảnh, giao diện cũ tiếp tục chạy; sơ đồ kinh mạch vẫn dùng nền đơn giản và các nút tra cứu.
+Có thể chạy `npm test` và `npm run build:min` để kiểm tra đủ ảnh trước khi triển khai. Khi xem bản production, cần xác nhận commit có chứa 15 file ảnh đã được build/deploy; merge vào `main` thôi chưa chắc website đã dùng bản mới.
