@@ -128,3 +128,15 @@ test('docs hiện hành có trong mục lục, được gắn trạng thái và 
       /LocalSession(?![^\n]{0,40}legacy)/, 'Thiếu nhãn legacy: ' + doc);
   }
 });
+
+test('không để asset không dùng trong preload và không bỏ PNG dự phòng chiến đấu', () => {
+  const preload = fs.readFileSync(path.join(ROOT, 'client/assets/preload-manifest.js'), 'utf8');
+  assert.doesNotMatch(preload, /media\/assets\/world\/bg\/forest\.webp/);
+  for (const old of ['media/assets/world/bg/forest.webp', 'media/assets/world/bg/logo.png', 'tools/install-custom-assets.py']) {
+    assert.equal(fs.existsSync(path.join(ROOT, old)), false, 'File cũ còn sót: ' + old);
+  }
+  for (const live of ['media/assets/world/bg/logo.webp', 'media/assets/world/bg/bi_canh.webp',
+    'media/assets/world/bg/bi_canh.png', 'media/assets/custom/2026-11/workshops/dan-cac.webp']) {
+    assert.equal(fs.existsSync(path.join(ROOT, live)), true, 'Asset đang dùng hoặc fallback bị mất: ' + live);
+  }
+});
