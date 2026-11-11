@@ -68,7 +68,7 @@
 
   function achievements() {
     const m = UI.s().meta, unlocked = Object.keys(m.achievements).length;
-    return `<p class="screen-lead">Thành tựu chỉ ghi nhận trong kiếp này, không cấp điểm tích lũy. Đã đạt ${unlocked}/${H.META_ACHIEVEMENTS.length}.</p>
+    return `<p class="screen-lead">Thành tựu gắn với đạo thân hiện tại, không cấp điểm tích lũy. Đã đạt ${unlocked}/${H.META_ACHIEVEMENTS.length}.</p>
       <div class="meta-ach-grid">${H.META_ACHIEVEMENTS.map(a => {
         const at = m.achievements[a.id];
         return `<article class="meta-ach ${at ? 'on' : 'locked'}"><span class="meta-ach-icon" aria-hidden="true">${at ? '✦' : '○'}</span>
@@ -94,7 +94,7 @@
         }).join('') + '</div></section>').join('');
   }
 
-  const body = { destiny, pavilion, relics, achievements, story };
+  const body = { destiny, pavilion, achievements, story };
   UI.register({
     id: 'meta', label: 'Thiên mệnh', icon: '✦', eyebrow: 'THIÊN MỆNH', tabs: TABS,
     render: tab => header() + tabs(TABS, tab) + '<div class="screen-body">' + (body[tab] || destiny)() + '</div>',
