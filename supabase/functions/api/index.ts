@@ -179,6 +179,7 @@ export async function handleApi(req: Request): Promise<Response> {
       case 'sync': result = await service.sync(ownerId, route.id, body); break;
       case 'commands': result = await service.command(ownerId, route.id, body); break;
       case 'pause': result = await service.pause(ownerId, route.id); break;
+      case 'resetAfterDeath': result = await service.resetAfterDeath(ownerId, route.id); break;
       case 'exportData': result = await service.exportData(ownerId); break;
       case 'eraseData': result = await service.eraseData(ownerId, body); break;
       case 'deleteAccount': result = await service.deleteAccount(ownerId, body, accountAdmin); break;
