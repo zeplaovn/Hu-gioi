@@ -10,20 +10,20 @@
 .field .field-main em{font-style:normal;font-weight:700;font-size:12.5px;color:#9fe2c0;margin-left:4px}
 #raceValue,#rootValue{flex-direction:column;gap:2px;text-align:center}
 .root-field{flex-wrap:nowrap}
-.chip{background:#18110e}
+.chip{background:#0e1612}
 .purity{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:1px}
 .purity b{font-size:12px;font-weight:700;color:#e6d4b4}
 
 /* Hộp thoại thông tin: chủng tộc, quy tắc linh căn, bảng kinh mạch */
 .race-list{display:grid;gap:6px;margin:8px 0}
-.race-row{padding:8px 10px;border:1px solid #4d362c;border-radius:10px;background:#1e1511cc}
+.race-row{padding:8px 10px;border:1px solid #3c5f4c;border-radius:10px;background:#121b16cc}
 .race-row.is-current{border-color:var(--gold);background:#1b2a26}
 .race-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .race-head b{font:700 15px var(--serif);color:#f1e6c8}
-.race-head span{font-size:12.5px;color:#b1a08f}
+.race-head span{font-size:12.5px;color:#a5b5aa}
 .race-fx{font-size:13px;color:#9fe2c0;margin:1px 0}
 .root-rules{display:flex;flex-direction:column;gap:5px;margin:8px 0;padding-top:4px}
-.rule-line{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,1.6fr);gap:10px;font-size:13px;line-height:1.5;color:#c8b9aa;padding:4px 0;border-bottom:1px dashed #3e2b23}
+.rule-line{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,1.6fr);gap:10px;font-size:13px;line-height:1.5;color:#c0cbc4;padding:4px 0;border-bottom:1px dashed #314e3e}
 .rule-line>span:first-child{color:#e3dbd2;font-weight:650}
 .rule-chips{display:flex;flex-wrap:wrap;gap:4px 8px}
 .rule-chips i{font-style:normal}
