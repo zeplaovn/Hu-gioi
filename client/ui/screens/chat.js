@@ -49,7 +49,7 @@
         <div class="chat-compose-row"><input id="chatInput" type="text" maxlength="400" autocomplete="off"
           placeholder="Nhập lời truyền âm…" value="${esc(draft)}" aria-describedby="chatError chatLimit">
           <button type="submit" class="btn btn-gold" id="chatSend" aria-label="Gửi lời truyền âm">Gửi <span aria-hidden="true">➤</span></button></div>
-        <div class="chat-compose-meta"><small id="chatLimit">Tối đa 400 ký tự · Mỗi tin cách nhau 2 giây</small><span id="chatLength" aria-live="off"></span></div>
+        <div class="chat-compose-meta"><small id="chatLimit">Tối đa 400 ký tự · Mỗi tin cách nhau 15 giây</small><span id="chatLength" aria-live="off"></span></div>
         <p id="chatError" class="chat-error" role="status" aria-live="polite"></p>
       </form>
     </section>`;
