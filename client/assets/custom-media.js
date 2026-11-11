@@ -1,10 +1,10 @@
-/* Hư Giới · bộ hình ảnh nghề phụ và kinh mạch tùy chọn.
-   Asset đi kèm được phân phối trong gói riêng. Chỉ bật installed sau khi đã chép đủ ảnh. */
+/* Hư Giới · asset gốc nghề phụ và Kinh Mạch Đồ.
+   Toàn bộ 15 WebP được lưu cùng repository; không phụ thuộc tệp ZIP riêng. */
 (function (root) {
   'use strict';
   const BASE = 'media/assets/custom/2026-11/';
   const MEDIA = Object.freeze({
-    installed: false,
+    installed: true,
     base: BASE,
     backgrounds: Object.freeze({
       dan: BASE + 'workshops/dan-cac.webp',
