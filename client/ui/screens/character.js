@@ -110,8 +110,8 @@
       '<h3>Huyệt vị trên đạo thể</h3>' +
       '<p class="info-note">Chọn các điểm sáng để xem thông tin. Vị trí chỉ mang tính minh họa, chưa phải cơ chế thông mạch đang hoạt động.</p>' +
       '<div class="meridian-toolbar" role="group" aria-label="Loại kinh mạch">' +
-      option('meridianGroup', 'group', 'chinh', '12 Chính Kinh · Màu xanh', group === 'chinh') +
-      option('meridianGroup', 'group', 'ky', '8 Kỳ Kinh · Màu vàng', group === 'ky') + '</div>' +
+      option('meridianGroup', 'group', 'chinh', '12 Chính Kinh', group === 'chinh') +
+      option('meridianGroup', 'group', 'ky', '8 Kỳ Kinh', group === 'ky') + '</div>' +
       '<div class="meridian-map">' + figure + points + '</div>' +
       '<div class="meridian-map-legend"><span>● Chạm điểm sáng để tra cứu</span><span>' +
       (group === 'chinh' ? '12 Chính Kinh · Màu xanh' : '8 Kỳ Kinh · Màu vàng') + '</span></div></div>' +
