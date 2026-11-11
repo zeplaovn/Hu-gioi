@@ -43,7 +43,9 @@ test('toàn bộ migration dựng được database trắng từ đầu và khô
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where c.relkind='r' and (n.nspname='game' or n.nspname='public' and c.relname='policy_acceptances')
       order by tbl`)).rows;
-    assert.equal(tables.length, 9);
+    assert.equal(tables.length, 11, '9 bảng game/Auth hiện hành + 2 bảng admin riêng tư');
+    assert.ok(tables.some(row => row.tbl === 'game.admin_users'));
+    assert.ok(tables.some(row => row.tbl === 'game.admin_audit_log'));
     assert.ok(tables.every(row => row.rls), 'mọi bảng nghiệp vụ đều phải bật RLS');
     const scopes = (await db.query(`select schemaname,tablename,policyname from pg_policies
       where schemaname in ('game','public') order by schemaname,tablename`)).rows;
