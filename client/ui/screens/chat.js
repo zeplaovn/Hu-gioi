@@ -66,7 +66,7 @@
     $('chatChannels')?.addEventListener('click', event => {
       const tab = event.target.closest('[data-chat-channel]');
       if (!tab || tab.dataset.chatChannel === session.channel) return;
-      pending = null; error = ''; session.connect(tab.dataset.chatChannel); update();
+      pending = null; error = ''; void session.connect(tab.dataset.chatChannel); update();
     });
     $('chatInput').addEventListener('input', event => { draft = event.target.value; error = ''; update(); });
     $('chatForm').addEventListener('submit', async event => {
@@ -83,7 +83,8 @@
       } catch (e) { error = e.message; }
       finally { sending = false; update(); }
     });
-    if (!opened && session.available) { opened = true; session.connect(); }
+    // Phiên mới hoặc nhân vật bắt đầu lại: kết nối lại sau khi đóng/mở cửa sổ.
+    if (session.available && (!opened || session.state.status === 'idle')) { opened = true; session.connect(); }
     update();
   }
   session.subscribe(update);
@@ -200,7 +201,7 @@
     const game = document.getElementById('game');
     const show = !!(UI.release.chat && game && !game.hidden && UI.s && UI.s().created);
     if (show) bubbleBuild();
-    if (!show && session.state.status !== 'idle' && session.state.status !== 'unavailable') session.disconnect();
+    if (!show && session.state.status !== 'idle' && session.state.status !== 'unavailable') { session.disconnect(); opened = false; }
     if (bubble.el) bubble.el.hidden = !show;
   }
   if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 700);
