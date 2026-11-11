@@ -259,6 +259,20 @@
       });
     }
     drainAchievements() { return this.achievements.splice(0); }
+    /* Bắt đầu lại sau tử vong: số dư/cấp/kho và bảng xếp hạng reset tại server. */
+    async resetAfterDeath() {
+      return this.run(async () => {
+        if (!this.playerId) throw Error('Không có đạo thân để bắt đầu lại.');
+        const reset = await this.request('/players/' + this.playerId + '/reset-after-death', 'POST', {});
+        this.playerId = null; this.revision = 0; this.ticket = null;
+        this.pavilion = reset.pavilion || { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
+        this.game = new H.Game(H.create(this.clock()));
+        this.achievements = []; this.deathNotified = false; this.paused = false;
+        this.emit({ type: 'reset' });
+        return this.previewCreation();
+      });
+    }
+
 
   }
   root.HU_REMOTE_SESSION = { RemoteSession };
