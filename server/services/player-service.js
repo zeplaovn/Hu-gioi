@@ -180,7 +180,7 @@ class PlayerService {
         const seed = crypto.randomBytes(32).toString('hex'), rng = seededRng(seed, 0);
         let state;
         try {
-          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny }, now, rng);
+          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny, extraTalentPoints: pavilion.consumed?.talentPoint || 0 }, now, rng);
           H.applyPavilionOnCreate(state, pavilion.upgrades, pavilion.consumed);
         }
         catch (err) { throw invalid('INVALID_PROFILE', err.message); }
