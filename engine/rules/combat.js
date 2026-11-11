@@ -3,7 +3,7 @@
 (function (root) {
   'use strict';
   const domain = 'combat';
-  const commands = Object.freeze(['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration']);
+  const commands = Object.freeze(['strike', 'skill', 'castManual', 'activateArtifact', 'setEnemyKind', 'travel', 'startExploration', 'exploreChoice']);
 
   function install(API) {
     const H = API, F = H.F, { ITEMS, ENEMY_NAMES, DESIGN, item } = H;
@@ -20,20 +20,21 @@
         const s = this.s;
         if (s.exploration?.active) throw Error('Lịch luyện đang diễn ra. Hãy đợi chuyến đi kết thúc.');
         if (s.dungeon?.active || s.dungeon?.run) throw Error('Cần hoàn tất hành trình bí cảnh trước khi lịch luyện.');
-        const kinds = ['monster', 'npc', 'encounter'];
-        const kind = kinds[Math.min(2, Math.floor(this.rng() * 3))];
-        const e = { kind, start: now, end: now + 600000, npcId: '', name: '', text: '', cleared: false };
+        const roll = this.rng();
+        let acc = 0, kind = H.EXPLORE_WEIGHTS[H.EXPLORE_WEIGHTS.length - 1][0];
+        for (const [k, weight] of H.EXPLORE_WEIGHTS) { acc += weight; if (roll < acc) { kind = k; break; } }
+        const e = { kind, start: now, end: now + 600000, npcId: '', name: '', text: '', cleared: false, choice: -1 };
         if (kind === 'monster') {
           const monsterKinds = ['thường', 'tinh anh', 'boss'];
           s.enemyKind = monsterKinds[Math.min(2, Math.floor(this.rng() * 3))];
           s.enemyHp = 0;
           e.name = this.enemy().name;
-          e.text = 'Yêu thú chặn đường. Hãy xuất chiêu để vượt qua thử thách.';
+          e.text = 'Yêu thú chặn đường. Hãy chọn giao chiến, né tránh hoặc thương lượng.';
         } else if (kind === 'npc') {
           const ids = Object.keys(H.DESIGN.npc);
           e.npcId = ids[Math.min(ids.length - 1, Math.floor(this.rng() * ids.length))] || '';
           e.name = H.DESIGN.npc[e.npcId]?.['tên NPC'] || 'Kỳ nhân';
-          e.text = 'Hữu duyên gặp gỡ một vị đạo hữu trên đường lịch luyện.';
+          e.text = 'Hữu duyên gặp một vị đạo hữu trên đường lịch luyện. Cách bạn đối đáp sẽ ảnh hưởng tâm ma.';
         } else {
           const events = H.ENCOUNTERS.filter(v => v.rarity <= Math.max(0, Math.min(4, s.realm)));
           const ev = events[Math.min(events.length - 1, Math.floor(this.rng() * events.length))] || H.ENCOUNTERS[0];
@@ -45,6 +46,57 @@
         s.exploration = { ...(s.exploration || {}), active: e };
         this.log('Khởi hành lịch luyện · ' + e.name + ' · 10 phút.');
         return e;
+      },
+      /* Chọn cách ứng phó cho sự kiện NPC hoặc quái đang diễn ra. Kết quả chỉ được tính khi chuyến đi kết thúc. */
+      exploreChoice(payload) {
+        const e = this.s.exploration?.active;
+        if (!e) throw Error('Chưa có chuyến lịch luyện nào đang diễn ra.');
+        const options = H.EXPLORE_CHOICES[e.kind];
+        if (!options) throw Error('Sự kiện này không có lựa chọn.');
+        if (e.choice >= 0) throw Error('Bạn đã chọn cách ứng phó cho sự kiện này.');
+        const option = options[payload.index];
+        if (!option) throw Error('Lựa chọn không hợp lệ.');
+        e.choice = payload.index;
+        this.log('Lịch luyện · ' + e.name + ': chọn "' + option.label + '".');
+        return option.id;
+      },
+      addTamMa(n) {
+        const before = this.s.tamMa;
+        this.s.tamMa = Math.max(0, Math.min(H.TAM_MA_MAX, before + n));
+        return this.s.tamMa - before;
+      },
+      /* Kết toán sự kiện NPC khi hết chuyến: không chọn thì chỉ lướt qua, không đổi tâm ma. */
+      resolveExplorationNpc(e) {
+        const s = this.s, option = H.EXPLORE_CHOICES.npc[e.choice];
+        if (!option) return 'Lướt qua ' + e.name + ', không để lại dấu vết trong tâm trí.';
+        const delta = this.addTamMa(option.tamMa);
+        const exp = this.gainExp(F.base_rate(s.realm) * option.exp);
+        const mind = delta === 0 ? 'tâm ma không đổi' : 'tâm ma ' + (delta > 0 ? '+' : '') + delta;
+        return 'Đàm đạo cùng ' + e.name + ' (' + option.label + '): tu vi +' + F.fmt(exp) + ', ' + mind + '.';
+      },
+      /* Kết toán sự kiện quái khi hết chuyến. Mặc định (không chọn) là giao chiến như trước. */
+      resolveExplorationMonster(e) {
+        const s = this.s, option = H.EXPLORE_CHOICES.monster[e.choice >= 0 ? e.choice : 0];
+        if (option.id === 'evade') return 'Né tránh ' + e.name + ', bình yên vô sự nhưng không thu được gì.';
+        if (option.id === 'bargain') {
+          const chance = Math.max(.15, Math.min(.75, .4 + (s.talent?.phucDuyen || 0) * .015 - s.tamMa * .002));
+          if (this.rng() < chance) {
+            const gain = F.loot_linh_thach(s.zone, s.enemyKind) * .6;
+            s.stone += gain;
+            e.cleared = true;
+            return 'Thương lượng thành công, ' + e.name + ' nhường đường và tặng ' + F.format_linh_thach(gain) + '.';
+          }
+          const loss = Math.min(Math.max(0, s.hp - 1), this.stats(e.end).HP * .06);
+          s.hp -= loss;
+          return 'Thương lượng với ' + e.name + ' đổ vỡ, sinh lực −' + F.fmt(loss) + '.';
+        }
+        const foe = this.enemy(), chance = F.win_probability(this.stats(e.end).CP, foe.CP);
+        if (this.rng() < chance) {
+          this.collectLoot(1, false);
+          e.cleared = true;
+          return 'Đã vượt qua ' + e.name + ', thu nhận chiến lợi phẩm.';
+        }
+        return 'Gặp ' + e.name + ', đạo thân tránh được hiểm họa nhưng chưa thể thu được chiến lợi phẩm.';
       },
       enemy() {
         const s = this.s;

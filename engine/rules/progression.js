@@ -113,8 +113,8 @@
       },
       chance() {
         const s = this.s;
-        return Math.min(.98, (F.p_breakthrough(s.realm, s.stage - 1, s.breakBonus + (s.sect.blessing ? .1 : 0), s.pity) +
-          (s.talent?.vanKhi || 0) * .003 + (s.meta?.upgrades?.luck || 0) * .003) * (1 + H.PAVILION.bonus(s.pavilion?.vanKhi)));
+        return Math.max(0, Math.min(.98, (F.p_breakthrough(s.realm, s.stage - 1, s.breakBonus + (s.sect.blessing ? .1 : 0), s.pity) +
+          (s.talent?.vanKhi || 0) * .003 + (s.meta?.upgrades?.luck || 0) * .003 - (s.tamMa || 0) * H.TAM_MA_BREAK_PENALTY) * (1 + H.PAVILION.bonus(s.pavilion?.vanKhi))));
       },
       tribulation() {
         const s = this.s, st = this.stats();

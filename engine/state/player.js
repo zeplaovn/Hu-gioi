@@ -76,7 +76,7 @@
       bag: initialBag(), equipment: [], tech: [1, 1, 1, 1], cooldowns: [0, 0, 0, 0],
       learned: {}, activeManuals: [], pity: 0, breakBonus: 0, shield: 0, reduction: 0,
       pillUses: 0, pillRealmExp: 0, permanent: 0, buffs: [], debuffs: [],
-      totalRunExp: 0, daoVan: 0, rebirths: 0, rebirthKeep: 0, completed: false,
+      tamMa: 0, totalRunExp: 0, daoVan: 0, rebirths: 0, rebirthKeep: 0, completed: false,
       offlineCap: 0, offlineEff: 0, age: 18, extraLife: 0, alchemySkill: 0, craftBoost: 0,
       craftQueue: [], garden: [], gardenSoils: ['đất thường', 'linh điền', 'hỏa địa', 'hàn đàm'],
       offlineKills: 0, yaoValue: 0, progress: { kill: 0, meditate: 0, travel: 1, breaks: 0, alchemy: 0 },
@@ -241,6 +241,7 @@
       x.totalRunExp += x.qi;
     }
 
+    x.tamMa = integer(raw.tamMa, 0, A.TAM_MA_MAX);
     for (const k of ['pity', 'rebirths', 'offlineCap', 'offlineEff', 'pillUses', 'enemyNum', 'chaosTries'])
       x[k] = integer(raw[k], 0, k === 'pity' ? 15 : k.startsWith('offline') ? 8 : 1e9);
 
@@ -264,7 +265,8 @@
       return { kind: e.kind, eventId: ENCOUNTERS.some(v => v.id === e.eventId) ? e.eventId : '',
         npcId: typeof e.npcId === 'string' && Object.hasOwn(DESIGN.npc, e.npcId) ? e.npcId : '',
         text: String(e.text || '').slice(0, 500), name: String(e.name || '').slice(0, 100),
-        cleared: !!e.cleared, start: finite(e.start, 0, now), end: finite(e.end, 0, now + 600000) };
+        cleared: !!e.cleared, choice: Number.isInteger(e.choice) && e.choice >= 0 && e.choice <= 2 ? e.choice : -1,
+        start: finite(e.start, 0, now), end: finite(e.end, 0, now + 600000) };
     };
     x.exploration = { active: cleanEvent(active), last: cleanEvent(ex?.last) };
     if (x.exploration.active && (x.exploration.active.end <= x.exploration.active.start ||

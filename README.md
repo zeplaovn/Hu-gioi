@@ -7,7 +7,7 @@ Game idle tu tiên tiếng Việt. **Bản phát hành thử nghiệm giới h�
 - Cloudflare Workers Static Assets phục vụ `dist/` do `npm run build:min` tạo.
 - Supabase Auth đăng nhập trực tiếp (`HU_AUTH_MODE='direct'`) và một Edge Function `api` Deno (`HU_API_BASE` trong `client/config.js`).
 - Postgres schema `game` qua transaction pooler 6543; engine và server chạy ở Edge. Node/SQLite chỉ dành cho dev/test.
-- State V9, protocol v2, 48 lệnh. Không có gameplay offline hoặc guest.
+- State V9, protocol v2, 49 lệnh. Không có gameplay offline hoặc guest.
 - Tri kỷ, Đạo hữu, Luận kiếm, Đấu giá, Tông môn là NPC/mô phỏng; chat và bảng xếp hạng đang ẩn.
 
 ## Kiểm thử (Node.js 24+)

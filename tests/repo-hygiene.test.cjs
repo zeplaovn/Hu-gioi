@@ -44,7 +44,7 @@ test('tài liệu kiến trúc hiện hành không quảng bá phiên offline V8
   const architecture = fs.readFileSync(path.join(ROOT, 'docs/architecture.md'), 'utf8');
   const integration = fs.readFileSync(path.join(ROOT, 'docs/design-integration.md'), 'utf8');
   assert.match(architecture, /state V9/i);
-  assert.match(architecture, /48 lệnh/);
+  assert.match(architecture, /49 lệnh/);
   assert.match(integration, /online-only/);
   assert.doesNotMatch(architecture, /Schema V8|51 lệnh|Game chơi được.*offline/);
   assert.doesNotMatch(integration, /Schema lưu hiện là V8/);
@@ -117,11 +117,11 @@ test('docs hiện hành có trong mục lục, được gắn trạng thái và 
     assert.ok(index.includes('(' + name + ')'), 'docs/index.md thiếu: ' + name);
     assert.match(source, /^> Trạng thái: (Hiện hành|Đề xuất|Lịch sử)/m,
       'Thiếu dòng trạng thái: ' + doc);
-    assert.doesNotMatch(source, /HU_API_ORIGIN|49 lệnh/, 'Từ ngữ lỗi thời: ' + doc);
+    assert.doesNotMatch(source, /HU_API_ORIGIN/, 'Từ ngữ lỗi thời: ' + doc);
   }
   const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
   assert.ok(readme.trimEnd().split(/\r?\n/).length <= 80, 'README vượt 80 dòng');
-  assert.doesNotMatch(readme, /HU_API_ORIGIN|49 lệnh/);
+  assert.doesNotMatch(readme, /HU_API_ORIGIN/);
   for (const doc of ['docs/architecture.md', 'docs/edge-deployment.md', 'docs/security.md',
     'docs/engine-contract.md', 'docs/gameplay-v9.md', 'docs/thien-menh-cac.md']) {
     assert.doesNotMatch(fs.readFileSync(path.join(ROOT, doc), 'utf8'),

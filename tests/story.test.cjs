@@ -79,7 +79,7 @@ test('Vạn Kiếp Tàng Thư: nội dung không lộ chỉ số kỹ thuật v�
 test('protocol: lệnh storyMark đúng một miền, kiểm tra cảnh giới, thiện cảm và lựa chọn', () => {
   const g = make();
   assert.equal(H.OWNERS.storyMark, 'world');
-  assert.equal(C.types.length, 48);
+  assert.equal(C.types.length, 49);
   assert.deepEqual(g.s.story, { read: {}, flags: {} });
   assert.equal(run(g, 'ha-01').id, 'ha-01');
   assert.equal(g.s.story.read['ha-01'], true);
