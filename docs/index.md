@@ -8,6 +8,7 @@
 |---|---|
 | Kiến trúc runtime Edge/Postgres | [Kiến trúc](architecture.md) |
 | Build, migration, deploy, rollback | [Runbook Edge](edge-deployment.md) |
+| Dọn nguồn frontend, CSS bundle và JS UI | [Tối ưu frontend](frontend-optimization.md) |
 | Secrets, JWT, CSP, Auth, quota | [Bảo mật](security.md) |
 | Hợp đồng engine và lệnh | [Engine contract](engine-contract.md) |
 | Sinh tử, tiến trình online | [Gameplay V9](gameplay-v9.md) |
@@ -35,4 +36,4 @@
 
 ## Việc chờ chủ dự án
 
-Xem đủ 9 ô trong [checklist](release-checklist.md): Cloudflare logs; deploy thủ công; consent v5/migration index; Edge environment; Supabase Auth; quota/alert; branch protection; smoke staging/production; P0/P1. **Chưa có mục nào được xác nhận.** [README](../README.md).
+Xem đủ 9 ô trong [checklist](release-checklist.md): Cloudflare logs; deploy thủ công; consent v7/migration index; Edge environment; Supabase Auth; quota/alert; branch protection; smoke staging/production; P0/P1. **Chưa có mục nào được xác nhận.** [README](../README.md).
