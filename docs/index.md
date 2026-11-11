@@ -10,6 +10,7 @@
 | Gate chuẩn bị production | [Production readiness](production-readiness.md) |
 | Kiến trúc runtime Edge/Postgres | [Kiến trúc](architecture.md) |
 | Build, migration, deploy, rollback | [Runbook Edge](edge-deployment.md) |
+| Dựng lại database test, RLS và migration chuẩn | [Database internal rebuild](internal-db-rebuild.md) |
 | Dọn nguồn frontend, CSS bundle và JS UI | [Tối ưu frontend](frontend-optimization.md) |
 | Secrets, JWT, CSP, Auth, quota | [Bảo mật](security.md) |
 | Hợp đồng engine và lệnh | [Engine contract](engine-contract.md) |
