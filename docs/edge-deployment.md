@@ -88,6 +88,18 @@ Biến tùy chọn để giảm lượt gọi mạng (không phải secret; đ�
 
 Không bật `HU_AUTH_CACHE_MS` khi chưa xác nhận chấp nhận độ trễ thu hồi phiên; đây là quyết định bảo mật của chủ dự án.
 
+## 2b. Biến môi trường build (Cloudflare, dùng chung tên với Hugioi-dashboard)
+
+`tools/build-dist.cjs` đọc các biến công khai sau lúc build và đưa vào `dist/` (mã client, `index.html` và `_headers` CSP):
+
+| Biến | Tác dụng |
+| --- | --- |
+| `SUPABASE_URL` | `https://<project>.supabase.co`; thay URL trong adapter và `connect-src` |
+| `SUPABASE_PUBLISHABLE_KEY` | khóa `sb_publishable_...`; từ chối `sb_secret_` / `service_role` |
+| `HCAPTCHA_SITEKEY` | bật hCaptcha ở form đăng nhập/đăng ký (rỗng = tắt) |
+
+Không đặt biến thì giữ mặc định trong mã nguồn. Chỉ bật CAPTCHA trong Supabase Auth sau khi game và dashboard đều đã có sitekey, vì CAPTCHA áp dụng cho cả project.
+
 ## 3. Deploy Edge API và Cloudflare Static — sau phê duyệt riêng
 
 ```sh

@@ -23,6 +23,39 @@ if (minify && (!cssInputs.length || cssInputSet.size !== cssInputs.length))
   throw Error('Danh sách stylesheet trang chính không hợp lệ.');
 
 
+/* Cấu hình công khai đọc từ biến môi trường lúc build (cùng tên với Hugioi-dashboard):
+   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, HCAPTCHA_SITEKEY. Không đặt biến nào => giữ mặc định trong mã nguồn.
+   Chỉ nhận khóa công khai: từ chối service_role / sb_secret_. */
+const DEFAULT_URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
+const envUrl = String(process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+const envKey = String(process.env.SUPABASE_PUBLISHABLE_KEY || '').trim();
+const envCaptcha = String(process.env.HCAPTCHA_SITEKEY || '').trim();
+function jwtRole(token) {
+  try { return JSON.parse(Buffer.from((token.split('.')[1] || '').replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8')).role || ''; }
+  catch { return ''; }
+}
+if (envUrl && !/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(envUrl)) throw Error('SUPABASE_URL phải là https://<project>.supabase.co (CSP chỉ cho phép *.supabase.co).');
+if (envKey && (envKey.startsWith('sb_secret_') || jwtRole(envKey) === 'service_role')) throw Error('SUPABASE_PUBLISHABLE_KEY không được là secret/service_role key.');
+if (envKey && !/^sb_publishable_[A-Za-z0-9_-]{16,}$/.test(envKey) && jwtRole(envKey) !== 'anon') throw Error('SUPABASE_PUBLISHABLE_KEY phải là khóa sb_publishable_... (hoặc anon JWT cũ).');
+if (envCaptcha && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(envCaptcha)) throw Error('HCAPTCHA_SITEKEY không hợp lệ.');
+function swap(text, from, to, label) {
+  if (!text.includes(from)) throw Error('Không tìm thấy ' + label + ' để thay bằng biến môi trường.');
+  return text.split(from).join(to);
+}
+/* rel: đường dẫn tương đối trong repo. Trả về nội dung đã thay giá trị theo env (hoặc nguyên bản). */
+function inject(rel, text) {
+  if (rel === 'client/auth/supabase.js') {
+    if (envUrl) text = swap(text, "const SUPABASE_URL = '" + DEFAULT_URL + "';", "const SUPABASE_URL = '" + envUrl + "';", 'SUPABASE_URL');
+    if (envKey) text = text.replace(/const KEY = '[^']*';/, () => "const KEY = '" + envKey + "';");
+  } else if (rel === 'client/config.js') {
+    if (envCaptcha) text = swap(text, "root.HU_HCAPTCHA_SITEKEY = '';", "root.HU_HCAPTCHA_SITEKEY = '" + envCaptcha + "';", 'HU_HCAPTCHA_SITEKEY');
+  } else if ((rel === 'index.html' || rel === '_headers') && envUrl && envUrl !== DEFAULT_URL) {
+    text = swap(text, DEFAULT_URL, envUrl, 'CSP connect-src');
+  }
+  return text;
+}
+let injected = 0;
+
 let esbuild = null;
 if (minify) {
   try { esbuild = require('esbuild'); }
@@ -53,8 +86,17 @@ for (const start of roots) {
       continue;
     }
     const target = path.join(OUT, path.relative(ROOT, file));
+    const rel = path.relative(ROOT, file).split(path.sep).join('/');
     fs.mkdirSync(path.dirname(target), { recursive: true });
-    if (esbuild && /\.(?:js|css)$/.test(file)) {
+    if (/\.(?:js|html)$/.test(file)) {
+      const before = fs.readFileSync(file, 'utf8');
+      const after = inject(rel, before);
+      if (after !== before) injected++;
+      if (esbuild && file.endsWith('.js')) {
+        fs.writeFileSync(target, esbuild.transformSync(after, { loader: 'js', minify: true, legalComments: 'none', charset: 'utf8', target: 'es2020' }).code);
+        minified++;
+      } else fs.writeFileSync(target, after);
+    } else if (esbuild && /\.(?:js|css)$/.test(file)) {
       const loader = file.endsWith('.css') ? 'css' : 'js';
       const source = fs.readFileSync(file, 'utf8');
       /* Không bó (bundle) và không đổi định dạng: giữ nguyên classic script, biến toàn cục và thứ tự thẻ <script>. */
@@ -85,10 +127,11 @@ if (minify) {
     return '<link rel="stylesheet" href="' + href + '">\n';
   });
   if (first) throw Error('Không tìm thấy CSS cần gộp trong index.html.');
-  fs.writeFileSync(path.join(OUT, 'index.html'), html);
+  fs.writeFileSync(path.join(OUT, 'index.html'), inject('index.html', html));
   console.log('CSS: ' + cssInputs.length + ' stylesheet → 1 tệp ' + href +
     ' (' + Buffer.byteLength(code) + ' bytes, chưa gzip/brotli).');
 }
 /* _headers áp dụng cho Cloudflare Workers Static Assets, không áp dụng Node dev. */
-fs.copyFileSync(path.join(ROOT, '_headers'), path.join(OUT, '_headers'));
+fs.writeFileSync(path.join(OUT, '_headers'), inject('_headers', fs.readFileSync(path.join(ROOT, '_headers'), 'utf8')));
+if (envUrl || envKey || envCaptcha) console.log('Public config từ biến môi trường: ' + [envUrl && 'SUPABASE_URL', envKey && 'SUPABASE_PUBLISHABLE_KEY', envCaptcha && 'HCAPTCHA_SITEKEY'].filter(Boolean).join(', ') + '.');
 console.log(`dist/: ${copied} tệp (${minified} đã nén), bỏ qua ${skipped} tệp không dành cho trình duyệt.`);
