@@ -95,3 +95,20 @@
 }
 body.reduced-motion .scene-photo,body.reduced-motion .scene-mist,body.reduced-motion .scene-orbit,body.reduced-motion .scene-orbit::before,body.reduced-motion .scene-motes i{animation:none!important}
 body.reduced-motion .scene-motes{display:none}
+
+/* Quầy Thiên Mệnh Các trong màn Khởi Nguyên — điều khiển chạm đủ 44px. */
+.creation-shop{display:grid;gap:10px;width:100%;min-width:0}
+.creation-shop-wallet{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;
+  padding:10px 12px;border:1px solid #95713c;border-radius:9px;background:#1a1a13}
+.creation-shop-wallet strong{color:#f8d78b;font-size:15px}
+.creation-shop-wallet small{font-size:12px;color:#c9bca4;line-height:1.5}
+.creation-shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.creation-shop-item{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;
+  padding:10px;border:1px solid #3a5849;border-radius:9px;background:#0f1915}
+.creation-shop-item>div{min-width:0}
+.creation-shop-item strong{display:block;font-size:13.5px;color:#ead4a4;line-height:1.4}
+.creation-shop-item p{margin:4px 0;color:#bbcac0;font-size:12px;line-height:1.45}
+.creation-shop-item small{font-size:11.5px;color:#a9b8ab}
+.creation-shop-item button{min-height:44px;min-width:102px;flex-shrink:0;font-size:12px;padding:8px}
+@media(max-width:900px){.creation-shop-grid{grid-template-columns:1fr}}
+@media(max-width:420px){.creation-shop-item{flex-wrap:wrap}.creation-shop-item button{width:100%}}
