@@ -50,7 +50,7 @@ test('màn thiên kiếp khớp luật tự động vượt tiểu cảnh, khôn
 test('trạm truyền âm thông báo tình trạng chưa kết nối mà không lộ đường dẫn kỹ thuật', () => {
   const chat = read('client/ui/screens/chat.js');
   assert.match(chat, /TRUYỀN ÂM · VẠN GIỚI/);
-  assert.match(chat, /Trạm truyền âm hiện chưa khai mở/);
+  assert.match(chat, /Truyền âm cần kết nối HTTPS và tài khoản đã đăng nhập/);
   assert.doesNotMatch(chat, /TRUYỀN ÂM · DEMO|<code>\/api\/chat|docs\/backend-plan/);
   assert.match(chat, /chat-bubble-icon/);
 });
