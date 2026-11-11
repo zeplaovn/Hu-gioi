@@ -41,9 +41,9 @@
         const v = s.talent?.[t.key] || 0;
         return row(t.name, v + ' điểm · ' + t.effect(v));
       }).join(''), { eyebrow: 'KHỞI NGUYÊN' })}
-      ${card('Đạo vận · Thiên mệnh', `
-        ${row('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${row('Số kiếp đã kết thúc', num(UI.session.pavilion?.rebirths || 0))}${row('Thiên Mệnh Các', 'Nâng cấp vĩnh viễn tối đa 20 cấp')}
-        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
+      ${card('Thiên Tinh · Thiên mệnh', `
+        ${row('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${row('Thiên Mệnh Các', 'Nâng cấp tối đa 20 cấp bằng Thiên Tinh')}
+        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'THIÊN MỆNH' })}
     </div>`;
   }
 
@@ -181,7 +181,7 @@
     render: tab => header() + tabs(TABS, tab) + `<div class="screen-body">${{ stats, skills, roots, bag }[tab]()}</div>`,
     signature: () => {
       const s = UI.s();
-      return [s.realm, s.stage, s.daoVan, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, s.rebirths, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
+      return [s.realm, s.stage, UI.session.pavilion?.balance || 0, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
     }
   });
 
