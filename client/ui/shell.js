@@ -29,7 +29,7 @@
 
   function classifyToast(message) {
     if (/thất bại|không thể|không đủ|chưa đủ|lỗi|hỏng|đang mở|quá mạnh|chưa mở|không có/i.test(message)) return 'danger';
-    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|trọng sinh|phi thăng/i.test(message)) return 'tribulation';
+    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|phi thăng/i.test(message)) return 'tribulation';
     if (/nhận|mua|thu hoạch|yêu đan|cơ duyên|rơi|phần thưởng/i.test(message)) return 'loot';
     if (/thành công|đã |nâng|may mắn|hoàn tất|chúc mừng/i.test(message)) return 'success';
     return 'info';
@@ -130,7 +130,7 @@
 
   function classifyLog(text) {
     if (/thất bại|trọng thương|tổn hại|không đủ|chưa đủ|rút lui|lỗi|hỏng|nguy hiểm/i.test(text)) return 'danger';
-    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|trọng sinh|chứng đạo|phi thăng/i.test(text)) return 'tribulation';
+    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|chứng đạo|phi thăng/i.test(text)) return 'tribulation';
     if (/nhận|mua|thu hoạch|luyện thành|rơi|phần thưởng|cống hiến|đấu giá|kỳ ngộ/i.test(text)) return 'loot';
     if (/thành công|hoàn thành|nâng|thăng|kết giao|tặng|thắng|đã /i.test(text)) return 'success';
     return 'info';
@@ -1637,7 +1637,6 @@
   }
 
   async function run(name, el) {
-    if (name === 'resetAfterDeath') { if (UI.resetAfterDeath) safe(() => UI.resetAfterDeath()); return; }
     if (name === 'modalClose') { closeModal(); return; }
     if (name === 'modalConfirm') {
       if ($('modalLayer').hidden) return;
