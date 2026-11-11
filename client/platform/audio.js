@@ -7,9 +7,7 @@
   if (!UI) return;
 
   const TRACKS = [
-    { id: 'hu_gioi', title: 'Hư Giới', src: 'media/audio/hu_gioi.mp3' },
-    { id: 'ngoc_hoa_tram', title: 'Ngọc Hoa Trâm', src: 'media/audio/ngoc_hoa_tram.mp3' },
-    { id: 'thien_thu', title: 'Thiên Thu', src: 'media/audio/thien_thu.mp3' }
+    { id: 'vo_uu', title: 'Vô Ưu', src: 'media/audio/vo_uu.mp3' }
   ];
   const DEFAULTS = { music: true, musicVolume: 40, musicTrack: 'auto' };
   const FADE_MS = 600;

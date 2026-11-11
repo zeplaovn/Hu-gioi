@@ -396,7 +396,7 @@
       combatEffects: raw.settings?.combatEffects !== false,
       music: raw.settings?.music !== false,
       musicVolume: Number.isFinite(Number(raw.settings?.musicVolume)) ? Math.max(0, Math.min(100, Math.round(Number(raw.settings.musicVolume)))) : 40,
-      musicTrack: ['hu_gioi', 'ngoc_hoa_tram', 'thien_thu'].includes(raw.settings?.musicTrack) ? raw.settings.musicTrack : 'auto'
+      musicTrack: ['vo_uu'].includes(raw.settings?.musicTrack) ? raw.settings.musicTrack : 'auto'
     };
     x.logs = Array.isArray(raw.logs) ? raw.logs.slice(0, 38).map(v => String(v).slice(0, 240)) : x.logs;
     x.createdAt = finite(raw.createdAt, now, now);

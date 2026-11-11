@@ -79,7 +79,7 @@
       },
       preference(key,value) {
         if (locked) return;
-        const enums = { season:['auto','spring','summer','autumn','winter'], motionMode:['auto','full','reduced'], musicTrack:['auto','hu_gioi','ngoc_hoa_tram','thien_thu'] };
+        const enums = { season:['auto','spring','summer','autumn','winter'], motionMode:['auto','full','reduced'], musicTrack:['auto','vo_uu'] };
         const booleans = ['seasonEffects','cultivationEffects','combatEffects','music'];
         if (Object.hasOwn(enums,key) ? !enums[key].includes(value) : booleans.includes(key) ? typeof value !== 'boolean' : key === 'musicVolume' ? !Number.isInteger(value) || value < 0 || value > 100 : true) throw Error('Cài đặt không hợp lệ.');
         session.game.s.settings[key] = value;

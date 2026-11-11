@@ -15,7 +15,7 @@
         const options = {
           season: ['auto', 'spring', 'summer', 'autumn', 'winter'],
           motionMode: ['auto', 'full', 'reduced'],
-          musicTrack: ['auto', 'hu_gioi', 'ngoc_hoa_tram', 'thien_thu']
+          musicTrack: ['auto', 'vo_uu']
         };
         const bools = ['seasonEffects', 'cultivationEffects', 'combatEffects', 'music'];
         const valid = Object.hasOwn(options, key) ? options[key].includes(value)

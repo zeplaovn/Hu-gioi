@@ -83,7 +83,7 @@ test('HTML/JS/CSS no-cache, media 24h must-revalidate, không trùng Cache-Contr
     assert.equal(res.status, 200, pathname);
     assert.equal(res.headers['cache-control'], 'no-cache', pathname);
   }
-  const media = await get('/media/audio/hu_gioi.mp3', 'HEAD');
+  const media = await get('/media/audio/vo_uu.mp3', 'HEAD');
   assert.equal(media.status, 200);
   assert.equal(media.headers['cache-control'], 'public, max-age=86400, must-revalidate');
   const { readFileSync } = require('node:fs');
@@ -98,7 +98,7 @@ test('HTML/JS/CSS no-cache, media 24h must-revalidate, không trùng Cache-Contr
       rules.push(rule);
     } else if (rule && /^\s+Cache-Control:/i.test(line)) rule.cache++;
   }
-  for (const pathname of ['/index.html', '/client/main.js', '/css/base.css', '/engine/game.js', '/data/balance.js', '/media/audio/hu_gioi.mp3']) {
+  for (const pathname of ['/index.html', '/client/main.js', '/css/base.css', '/engine/game.js', '/data/balance.js', '/media/audio/vo_uu.mp3']) {
     const count = rules.filter(item => item.route === pathname ||
       (item.route.endsWith('/*') && pathname.startsWith(item.route.slice(0, -1))))
       .reduce((total, item) => total + item.cache, 0);
