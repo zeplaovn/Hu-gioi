@@ -5,6 +5,7 @@
 'use strict';
 const { GameError, mapPostgresError } = require('../errors.js');
 const { PlayerRepository } = require('./player-repository.js');
+const GAME = require('../../engine/game.js');
 const { encodePavilionReceipt, decodePavilionReceipt } = require('./pavilion-receipt.js');
 
 const DAY = 86400000;
@@ -20,6 +21,13 @@ const toInt = x => {
 };
 const unique = err => err?.code === '23505' || err?.cause?.code === '23505';
 const bytes = s => new TextEncoder().encode(s).byteLength;
+/* Tính chiến lực bằng engine server, không dựa vào client hay SQL gần đúng. */
+const combatPower = state => {
+  const value = new GAME.Game(state).stats().CP;
+  if (!Number.isFinite(value) || value < 0)
+    throw new GameError('STATE_CORRUPT', 'Chiến lực nhân vật không hợp lệ.');
+  return Math.min(Number.MAX_SAFE_INTEGER, Math.round(value));
+};
 
 function hydrate(r) {
   if (!r) return null;
@@ -181,10 +189,10 @@ class PostgresPlayers extends PlayerRepository {
       try {
         await exec(c, `INSERT INTO game.players
           (id, owner_id, name, name_key, revision, schema_version, content_version, state,
-           rng_seed, rng_counter, last_seen_at, created_at, updated_at)
-          VALUES ($1,$2,$3,$4,0,$5,$6,$7::jsonb,$8,$9,$10,$10,$10)`, [
+           rng_seed, rng_counter, last_seen_at, created_at, updated_at, combat_power)
+          VALUES ($1,$2,$3,$4,0,$5,$6,$7::jsonb,$8,$9,$10,$10,$10,$11)`, [
           id, ownerId, rec.name, nameKey(rec.name), rec.schemaVersion, rec.contentVersion,
-          serialized, rec.rngSeed, big(rec.rngCounter), big(now)
+          serialized, rec.rngSeed, big(rec.rngCounter), big(now), big(combatPower(rec.state))
         ]);
       } catch (err) {
         if (unique(err)) {
@@ -233,11 +241,11 @@ class PostgresPlayers extends PlayerRepository {
         const changed = await rows(c, `UPDATE game.players SET
           state = $1::jsonb, revision = $2, rng_counter = $3, last_seen_at = $4,
           schema_version = $5, content_version = $6, updated_at = $7,
-          rate_tokens = $8::jsonb, tokens_at = $7
+          rate_tokens = $8::jsonb, tokens_at = $7, combat_power = $11
           WHERE id = $9 AND revision = $10 RETURNING id`, [
           state, big(s.revision), big(s.rngCounter), big(s.lastSeenAt), s.schemaVersion,
           s.contentVersion, big(s.lastSeenAt), JSON.stringify(rateTokens || rec.rateTokens),
-          playerId, big(rec.revision)
+          playerId, big(rec.revision), big(combatPower(s.state))
         ]);
         if (changed.length !== 1) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.');
       } else if (out.touch || rateTokens) {
@@ -303,8 +311,8 @@ class PostgresPlayers extends PlayerRepository {
         const serialized = JSON.stringify(state);
         if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
         updatedPlayer = await one(c, `UPDATE game.players SET
-          state = $1::jsonb, revision = revision + 1, updated_at = $2
-          WHERE owner_id = $3 RETURNING *`, [serialized, big(now), ownerId]);
+          state = $1::jsonb, revision = revision + 1, updated_at = $2, combat_power = $4
+          WHERE owner_id = $3 RETURNING *`, [serialized, big(now), ownerId, big(combatPower(state))]);
       }
       await exec(c, `INSERT INTO game.pavilion_receipts
         (owner_id, request_id, fingerprint, created_at) VALUES ($1,$2,$3,$4)`,
