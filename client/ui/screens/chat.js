@@ -83,12 +83,12 @@
       } catch (e) { error = e.message; }
       finally { sending = false; update(); }
     });
-    if (!opened && session.available) { opened = true; session.connect(UI.s().name); }
+    if (!opened && session.available) { opened = true; session.connect(); }
     update();
   }
   session.subscribe(update);
   root.addEventListener('pagehide', () => session.disconnect());
-  UI.action('chatConnect', () => { error = ''; session.connect(UI.s().name); return UI.KEEP; });
+  UI.action('chatConnect', () => { error = ''; session.connect(); return UI.KEEP; });
   UI.action('chatDisconnect', () => { error = ''; session.disconnect(); return UI.KEEP; });
   /* Bong bóng chat nổi ngoài màn chơi: bấm để mở khung nhỏ, đóng lại vẫn giữ kết nối và đếm tin mới. */
   const bubble = { el: null, panel: null, btn: null, badge: null, open: false, unread: 0, seen: 0 };
