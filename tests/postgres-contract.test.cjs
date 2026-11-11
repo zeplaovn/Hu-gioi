@@ -15,6 +15,7 @@ const B = '22222222-2222-4222-8222-222222222222';
 const CLOCK = 1800000000000;
 const migration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
 const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
+const extendedMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111032200_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
 
 async function makePg(t) {
   const db = new PGlite();
@@ -23,6 +24,7 @@ async function makePg(t) {
     INSERT INTO auth.users VALUES ('${A}'), ('${B}');`);
   await db.exec(migration);
   await db.exec(socialMigration);
+  await db.exec(extendedMigration);
   let queued = Promise.resolve();
   const pool = {
     async connect() {
@@ -78,6 +80,7 @@ test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/a
   }
   await db.exec(migration); // idempotent
   await db.exec(socialMigration); // index + trigger idempotent
+  await db.exec(extendedMigration); // kênh chat + combat power idempotent
 });
 
 test('Postgres contract: ticket, owner 404, name unique, receipt, optimistic revision, export', async t => {
@@ -143,39 +146,46 @@ test('Postgres contract: two concurrent commands on same revision serialize into
   assert.equal((await svc.bootstrap(A)).player.revision, 1);
 });
 
-test('Postgres contract: tử vong không trọng sinh; xóa dữ liệu xóa cả chat và leaderboard', async t => {
+test('Postgres contract: tử vong xóa sạch xếp hạng, chat và Thiên Tinh khi khởi đầu lại', async t => {
   const { svc, repo, db } = await makePg(t);
   const first = await spawn(svc, A, 'Tịnh Thiên');
   const id = first.playerId;
+  assert.ok(Number((await db.query('SELECT combat_power FROM game.players WHERE id=$1', [id])).rows[0].combat_power) > 0);
   await repo.transact(id, async tx => ({ pavilionAward: 8, value: null }));
-  assert.equal((await svc.bootstrap(A)).pavilion.balance, 8);
   const purchased = await svc.pavilionPurchase(A, {
     requestId: 'pavilion-up1', expectedVersion: 1, kind: 'upgrade', key: 'ngoTinh'
   });
   assert.equal(purchased.pavilion.upgrades.ngoTinh, 1);
   await db.query(`INSERT INTO game.world_chat_messages
-    (owner_id, sender_name, body, request_id, created_at)
-    VALUES ($1, $2, $3, $4, $5)`, [A, 'Tịnh Thiên', 'Xin chào', '33333333-3333-4333-8333-333333333333', CLOCK]);
-  await db.query('INSERT INTO game.world_chat_presence(owner_id,seen_at) VALUES ($1,$2)', [A, CLOCK]);
+    (owner_id,sender_name,body,request_id,created_at,channel_key)
+    VALUES ($1,$2,$3,$4,$5,$6)`,
+    [A,'Tịnh Thiên','Xin chào','33333333-3333-4333-8333-333333333333',CLOCK,'dao_huu']);
+  await db.query('INSERT INTO game.world_chat_presence(owner_id,seen_at) VALUES ($1,$2)', [A,CLOCK]);
   await repo.transact(id, async tx => ({ save: {
     state: { ...tx.record.state, death: { cause: 'combat', at: CLOCK } },
     revision: tx.record.revision + 1, rngCounter: tx.record.rngCounter,
     lastSeenAt: CLOCK, schemaVersion: H.VERSION, contentVersion: 'test'
   }}));
-  assert.equal(typeof svc.resetAfterDeath, 'undefined');
-  assert.equal((await svc.bootstrap(A)).player.id, id);
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.player_leaderboard WHERE owner_id=$1', [A])).rows[0].n, 0);
+  const died = await svc.bootstrap(A);
+  assert.equal(died.player.id, id);
   await assert.rejects(spawn(svc, A, 'Tịnh Đạo'), { code: 'PLAYER_EXISTS' });
   const exported = await svc.exportData(A);
   assert.equal(exported.sentChatMessages.length, 1);
-  assert.equal(exported.sentChatMessages[0].text, 'Xin chào');
+  const reset = await svc.resetAfterDeath(A,id);
+  assert.equal(reset.deleted, true);
+  assert.equal(reset.pavilion.balance, 0);
+  assert.deepEqual(reset.pavilion.upgrades, {});
+  assert.equal((await svc.bootstrap(A)).player, null);
+  for (const table of ['world_chat_messages','world_chat_presence','player_leaderboard']) {
+    assert.equal((await db.query('SELECT count(*)::int AS n FROM game.' + table + ' WHERE owner_id=$1', [A])).rows[0].n, 0);
+  }
+  const again = await spawn(svc,A,'Tịnh Đạo');
+  assert.notEqual(again.playerId,id);
+  assert.equal(again.pavilion.balance,0);
+  assert.ok(Number((await db.query('SELECT combat_power FROM game.players WHERE id=$1', [again.playerId])).rows[0].combat_power) > 0);
   const erased = await svc.eraseData(A, { confirm: 'delete-my-game-data' });
   assert.equal(erased.players, 1);
-  assert.equal(erased.chatMessages, 1);
-  assert.equal((await svc.bootstrap(A)).player, null);
-  assert.equal((await svc.bootstrap(A)).pavilion.balance, 0);
-  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.world_chat_messages WHERE owner_id=$1', [A])).rows[0].n, 0);
-  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.world_chat_presence WHERE owner_id=$1', [A])).rows[0].n, 0);
-  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.player_leaderboard WHERE owner_id=$1', [A])).rows[0].n, 0);
   await spawn(svc, B, 'Ngân Vũ');
   await db.query('DELETE FROM auth.users WHERE id=$1', [B]);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM game.players WHERE owner_id=$1', [B])).rows[0].n, 0);
