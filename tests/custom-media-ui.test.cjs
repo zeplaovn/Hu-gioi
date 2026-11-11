@@ -44,8 +44,8 @@ test('bốn đạo thể là ảnh gốc có alpha và giữ đúng 1312 × 1199
     }
   }
   const src = read('client/ui/screens/character.js');
-  assert.match(src, /media\\?\\.installed/);
-  assert.match(src, /media\\.meridian\\(state\\.gender, tone\\)/);
+  assert.ok(src.includes('media?.installed'));
+  assert.ok(src.includes('media.meridian(state.gender, tone)'));
   assert.match(src, /<img src=/);
 });
 
