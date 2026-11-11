@@ -13,7 +13,7 @@ CASES = [
     ("idle", None, None),
     ("world-map", "world", "map"),
     ("world-dungeons", "world", "dungeons"),
-    ("world-quests", "world", "quests"),
+    ("world-quests", "quests", None),
     ("world-sect", "world", "sect"),
     ("world-shop", "world", "shop"),
     ("world-auction", "world", "auction"),
@@ -178,22 +178,25 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
     page.locator("#menu button").first.wait_for(state="visible", timeout=25000)
 
 def open_page(page, section):
-    current = page.locator(".win.page")
+    # Bản desktop hiện hành giữ nhiều cửa sổ đồng thời; nhấn lại menu sẽ
+    # thu nhỏ cửa sổ, không phải mở tab mới. Focus cửa sổ sẵn có thay vì toggle.
+    current = page.locator(f'.win.desktop-window[data-window="{section}"]')
     if current.count():
-        btn = current.last.locator(f'[data-open-page="{section}"]')
-        if btn.count() and btn.first.is_visible():
-            btn.first.click()
-            return
-        page.locator(".win.page .page-back").last.click()
-    page.locator(f'#menu button[data-window="{section}"]').click()
+        if current.first.is_visible():
+            page.evaluate("(id) => window.HU_UI.windows.focus(id)", section)
+        else:
+            page.locator(f'#windowTaskbar [data-task-window="{section}"]').first.click()
+    else:
+        page.locator(f'#menu button[data-window="{section}"]').click()
+    current.first.wait_for(state="visible", timeout=15000)
 
 def set_tab(page, section, tab):
-    btn = page.locator(f'.win.page[data-window="{section}"] .tabbar [data-tab="{tab}"]')
+    btn = page.locator(f'.win.desktop-window[data-window="{section}"] .tabbar [data-tab="{tab}"]')
     btn.first.click()
     page.wait_for_timeout(250)
 
 def snap(page, folder, prefix, name, where="top"):
-    area = page.locator(".win.page .win-body")
+    area = page.locator(".win.desktop-window.top .win-body")
     if area.count():
         area.last.evaluate("(element, where) => { element.scrollTop = where === 'bottom' ? element.scrollHeight : 0; }", where)
     page.wait_for_timeout(200)
@@ -311,14 +314,13 @@ def run_set(browser, folder, name, url, width, height, mobile):
                 open_page(page, section)
                 set_tab(page, section, tab)
             else:
-                current = page.locator(".win.page .page-back")
-                if current.count():
-                    current.last.click()
+                # Không tự đóng cửa sổ ở case idle; chụp nguyên sân khấu hiện hành.
+                pass
             outcome["screenshots"].append(snap(page, folder, name, key))
             if section in ("world", "character", "craft", "settings"):
                 outcome["screenshots"].append(snap(page, folder, name, key, "bottom"))
         # Thanh menu thứ năm trở đi được phép cuộn, và Menu không dùng dấu X.
-        page.locator(".win.page .page-back").last.click()
+        page.evaluate("() => window.HU_UI.windows.closeAll()")
         outcome["screenshots"].append(snap(page, folder, name, "menu"))
         if name.startswith("after_"):
             assert page.locator("#menuToggle .ico").inner_text().strip() != "✕", "Nút Menu còn hiện X"
