@@ -48,7 +48,8 @@ test('chỉ tài khoản chưa có nhân vật mới mở màn tạo nhân vật
   assert.deepEqual(h.events, ['verified:true', 'load', 'renderCreation']);
   assert.equal(h.elements.welcome.hidden, false);
   assert.equal(h.elements.continueGame.hidden, true);
-  assert.match(h.elements.welcomeRebirth.textContent, /Kiếp thứ 4/);
+  assert.match(h.elements.welcomeRebirth.textContent, /Khai mở một đạo thân/);
+  assert.doesNotMatch(h.elements.welcomeRebirth.textContent, /Kiếp thứ|trọng sinh/);
 });
 
 test('không khôi phục game nếu chưa xác minh tài khoản', async () => {
