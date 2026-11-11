@@ -494,3 +494,12 @@ body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
 }
 /* Chuông thông báo chỉ xuất hiện khi khung được thu gọn. */
 #game #logPanel.log-floating:not(.collapsed) .log-toggle::after{content:none;background:none}
+
+/* Floating nhật ký dùng cùng thanh tiêu đề desktop và thanh tác vụ với mọi ứng dụng. */
+#game #logPanel.log-floating:not(.collapsed):not(.log-maximized){resize:both;min-width:270px;min-height:190px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 72px)}
+#game #logPanel.log-floating .log-head{background:linear-gradient(180deg,#31231a,#211a17);border-bottom:1px solid #755c3c}
+#game #logPanel .log-max-toggle{display:none}
+#game #logPanel.log-floating .log-max-toggle{display:grid;place-items:center;flex:0 0 35px;min-width:35px;height:35px;padding:0;border:1px solid #685640;border-radius:7px;background:#2e251d;color:#e3d0b1;font:700 17px/1 var(--font);cursor:pointer}
+#game #logPanel.log-floating .log-max-toggle:hover,#game #logPanel.log-floating .log-max-toggle:focus-visible{border-color:#daba72;color:#ffecbb}
+#game #logPanel.log-floating.log-maximized{left:8px!important;top:8px!important;width:calc(100vw - 16px)!important;height:calc(100dvh - 76px)!important;max-width:none;max-height:none;border-radius:9px;resize:none}
+#game #logPanel.log-floating.collapsed .log-max-toggle{display:none}

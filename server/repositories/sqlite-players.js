@@ -6,6 +6,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 const { PlayerRepository } = require('./player-repository.js');
+const GAME = require('../../engine/game.js');
 const { GameError } = require('../errors.js');
 const { encodePavilionReceipt, decodePavilionReceipt } = require('./pavilion-receipt.js');
 
@@ -116,7 +117,6 @@ class SqlitePlayers extends PlayerRepository {
       pavilionGet: p('SELECT * FROM pavilion_accounts WHERE owner_id = ?'),
       pavilionSave: p('UPDATE pavilion_accounts SET balance = ?, total_earned = ?, rebirths = ?, upgrades = ?, relics = ?, version = ? WHERE owner_id = ? AND version = ?'),
       pavilionReward: p('UPDATE pavilion_accounts SET balance = balance + ?, total_earned = total_earned + ?, version = version + 1 WHERE owner_id = ?'),
-      pavilionRebirth: p('UPDATE pavilion_accounts SET rebirths = rebirths + 1, version = version + 1 WHERE owner_id = ?'),
       pavilionReceipt: p('SELECT fingerprint FROM pavilion_receipts WHERE owner_id = ? AND request_id = ?'),
       pavilionPutReceipt: p('INSERT INTO pavilion_receipts (owner_id, request_id, fingerprint) VALUES (?, ?, ?)'),
       pavilionSyncPlayer: p('UPDATE players SET state = ?, state_bytes = ?, revision = revision + 1, updated_at = ? WHERE owner_id = ?'),
@@ -152,11 +152,6 @@ class SqlitePlayers extends PlayerRepository {
         cost = catalog.upgradeCost(current);
         if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
         upgrades[key] = current + 1;
-      } else if (kind === 'relic' && Object.hasOwn(catalog.relics, key)) {
-        const def = catalog.relics[key];
-        if ((relics[key] || 0) >= def.maxStored) throw new GameError('GAME_RULE_VIOLATION', 'Kho Kỳ Trân đã đạt giới hạn.');
-        cost = def.cost;
-        relics[key] = (relics[key] || 0) + 1;
       } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
       if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
       const res = this.q.pavilionSave.run(account.balance - cost, account.totalEarned, account.rebirths,
@@ -214,7 +209,7 @@ class SqlitePlayers extends PlayerRepository {
       if (this.q.byOwner.get(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
       this.q.pavilionEnsure.run(ownerId);
       const account = await this.getPavilion(ownerId);
-      const consumed = Object.fromEntries(Object.keys(account.relics).filter(k => account.relics[k] > 0).map(k => [k, 1]));
+      const consumed = {}; // Không chuyển Kỳ Trân từ kiếp trước.
       const rec = await build(JSON.parse(t.preview), { ...account, consumed });
       const key = nameKey(rec.name);
       if (this.q.byNameKey.get(key)) throw new GameError('NAME_TAKEN', 'Đạo hiệu này đã có người dùng.');
@@ -222,12 +217,6 @@ class SqlitePlayers extends PlayerRepository {
       this.q.insert.run(id, ownerId, rec.name, key, rec.schemaVersion, rec.contentVersion, state, Buffer.byteLength(state),
         rec.rngSeed, rec.rngCounter, now, now, now);
       this.q.useTicket.run(now, ticketId);
-      if (Object.keys(consumed).length) {
-        const relics = { ...account.relics };
-        for (const key of Object.keys(consumed)) relics[key]--;
-        this.q.pavilionSave.run(account.balance, account.totalEarned, account.rebirths,
-          JSON.stringify(account.upgrades), JSON.stringify(relics), account.version + 1, ownerId, account.version);
-      }
       return await this.get(id);
     });
   }
@@ -267,10 +256,11 @@ class SqlitePlayers extends PlayerRepository {
     return this.run(() => {
       const row = this.q.byId.get(playerId);
       if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
+      if (!new GAME.Game(JSON.parse(row.state)).isDead())
+        throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
       this.q.deletePlayer.run(playerId, ownerId);
-      this.q.deleteOwnerTickets.run(ownerId);
-      this.q.pavilionEnsure.run(ownerId);
-      this.q.pavilionRebirth.run(ownerId);
+      // Giữ ticket để giới hạn lượt khởi nguyên không bị lợi dụng.
+      this.q.deletePavilion.run(ownerId);
       return { deleted: true };
     });
   }

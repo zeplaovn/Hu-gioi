@@ -8,6 +8,20 @@
 
   function endpoint() { return API; }
 
+  // Safari cũ không có crypto.randomUUID() nhưng vẫn có getRandomValues().
+  // Giữ UUID v4 theo CSPRNG; tuyệt đối không dùng Math.random cho idempotency.
+  function secureRequestId() {
+    const secure = root.crypto;
+    if (typeof secure?.randomUUID === 'function') return secure.randomUUID();
+    if (typeof secure?.getRandomValues !== 'function') throw Error('Trình duyệt không hỗ trợ mã giao dịch an toàn.');
+    const bytes = new Uint8Array(16);
+    secure.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 15) | 64;
+    bytes[8] = (bytes[8] & 63) | 128;
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+  }
+
   class RemoteSession {
     constructor({ fetchImpl = (...args) => root.fetch(...args), auth = root.HU_SUPABASE, clock = Date.now } = {}) {
       this.fetch = fetchImpl;
@@ -36,6 +50,14 @@
       if (!this.auth?.accessToken) throw Error('Vui lòng đăng nhập để tiếp tục hành trình.');
       const accessToken = await this.auth.accessToken();
       if (!accessToken) throw Error('Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.');
+      // AbortSignal.timeout() không tồn tại trên Safari/iOS cũ: fallback
+      // AbortController đảm bảo request vẫn chạy và có giới hạn thời gian.
+      const timeoutSignal = root.AbortSignal;
+      const controller = typeof timeoutSignal?.timeout === 'function' ? null
+        : typeof root.AbortController === 'function' ? new root.AbortController() : null;
+      const signal = controller?.signal || timeoutSignal?.timeout?.(20000);
+      if (!signal) throw Error('Trình duyệt không hỗ trợ hủy yêu cầu mạng an toàn.');
+      const deadline = controller ? root.setTimeout(() => controller.abort(), 20000) : null;
       let response;
       try {
         response = await this.fetch(endpoint() + path, {
@@ -48,10 +70,12 @@
           body: body === undefined ? undefined : JSON.stringify(body),
           cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
           keepalive: options.keepalive === true,
-          signal: AbortSignal.timeout(20000)
+          signal
         });
       } catch {
         throw Object.assign(Error('Không thể kết nối với trò chơi. Hãy kiểm tra mạng rồi thử lại.'), { code: 'NETWORK_UNAVAILABLE' });
+      } finally {
+        if (deadline !== null) root.clearTimeout(deadline);
       }
       let data;
       try { data = await response.json(); }
@@ -198,8 +222,7 @@
       const command = C.validate({ type, payload });
       return this.run(async () => {
         if (!this.ready || this.paused || root.document?.hidden) throw Error('Bạn cần mở lại tab Hư Giới để tiếp tục tu luyện.');
-        const requestId = root.crypto?.randomUUID?.();
-        if (!requestId) throw Error('Trình duyệt thiếu mã yêu cầu an toàn.');
+        const requestId = secureRequestId();
         const body = { protocolVersion: C.VERSION, requestId, expectedRevision: this.revision, ...command };
         let result;
         try { result = await this.requestWithRetry('/players/' + this.playerId + '/commands', 'POST', body); }
@@ -232,9 +255,8 @@
        Khi mất phản hồi sau commit, gửi lại cùng requestId để nhận receipt. */
     pavilionPurchase(kind, key) {
       return this.run(async () => {
-        if (!this.accountId || !['upgrade', 'relic'].includes(kind)) throw Error('Chưa thể mở Thiên Mệnh Các.');
-        const requestId = root.crypto?.randomUUID?.();
-        if (!requestId) throw Error('Trình duyệt thiếu mã giao dịch an toàn.');
+        if (!this.accountId || kind !== 'upgrade') throw Error('Chưa thể mở Thiên Mệnh Các.');
+        const requestId = secureRequestId();
         const body = { requestId, expectedVersion: this.pavilion.version, kind, key };
         let response;
         for (let attempt = 0; attempt < 5; attempt++) {
@@ -259,17 +281,21 @@
       });
     }
     drainAchievements() { return this.achievements.splice(0); }
+    /* Bắt đầu lại sau tử vong: số dư/cấp/kho và bảng xếp hạng reset tại server. */
     async resetAfterDeath() {
       return this.run(async () => {
-        if (!this.playerId) throw Error('Không có đạo thân để xóa.');
+        if (!this.playerId) throw Error('Không có đạo thân để bắt đầu lại.');
         const reset = await this.request('/players/' + this.playerId + '/reset-after-death', 'POST', {});
-        if (reset.pavilion) this.pavilion = reset.pavilion;
-        this.playerId = null;
+        this.playerId = null; this.revision = 0; this.ticket = null;
+        this.pavilion = reset.pavilion || { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
         this.game = new H.Game(H.create(this.clock()));
-        this.ticket = null;
+        this.achievements = []; this.deathNotified = false; this.paused = false;
+        this.emit({ type: 'reset' });
         return this.previewCreation();
       });
     }
+
+
   }
-  root.HU_REMOTE_SESSION = { RemoteSession };
+  root.HU_REMOTE_SESSION = { RemoteSession, secureRequestId };
 })(typeof window !== 'undefined' ? window : globalThis);

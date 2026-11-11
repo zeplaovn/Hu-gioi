@@ -1,14 +1,23 @@
-/* Truyền âm vạn giới demo: render văn bản thuần, giữ bản nháp khi reconnect/đổi màn. */
+/* Truyền âm vạn giới online: chỉ render văn bản thuần; Bearer JWT ở ChatSession. */
 (function (root) {
   'use strict';
   const UI = root.HU_UI, { $, esc } = UI.kit;
   const session = new root.HU_CHAT_SESSION.ChatSession();
   let draft = '', sending = false, error = '', pending = null, opened = false;
+  const CHANNELS = [
+    { id: 'world', title: 'Thế giới', help: 'Kênh công khai toàn máy chủ.' },
+    { id: 'sect', title: 'Tông môn', help: 'Chỉ thành viên cùng tông môn được đọc và gửi.' },
+    { id: 'dao_huu', title: 'Đạo hữu', help: 'Phòng đạo hữu công khai, không phải nhắn tin riêng.' },
+    { id: 'dao_lu', title: 'Đạo lữ', help: 'Phòng đạo lữ công khai, không phải nhắn tin riêng.' }
+  ];
   const labels = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', online: 'Đã kết nối', offline: 'Mất kết nối', unavailable: 'Hãy mở Hư Giới từ đường dẫn trực tuyến để truyền âm' };
 
   function render() {
     return `<section class="chat-panel"><header class="chat-heading"><div><span class="eyebrow gold">TRUYỀN ÂM · VẠN GIỚI</span><h2>Truyền âm vạn giới</h2></div><span id="chatOnline" class="chat-online"></span></header>
-      <p class="info-note">Gửi lời truyền âm đến đạo hữu bốn phương. Chỉ có thể truyền tin khi kênh đã kết nối.</p>
+      <div id="chatChannels" class="chat-channels" role="tablist" aria-label="Kênh Truyền âm">
+        ${CHANNELS.map(ch => '<button type="button" role="tab" data-chat-channel="' + ch.id +
+          '" aria-selected="' + (ch.id === session.channel) + '">' + esc(ch.title) + '</button>').join('')}</div>
+      <p class="info-note" id="chatChannelInfo">${esc(CHANNELS.find(x => x.id === session.channel)?.help || '')}</p>
       <div class="chat-connection"><span id="chatStatus" role="status"></span><button type="button" class="btn btn-outline" data-act="chatConnect" id="chatConnect">Kết nối</button><button type="button" class="btn btn-outline" data-act="chatDisconnect" id="chatDisconnect">Rời kênh</button></div>
       ${!session.available ? '<p class="info-note">Trạm truyền âm hiện chưa khai mở. Bạn chưa thể gửi hoặc nhận lời nhắn lúc này.</p>' : ''}
       <div id="chatFeed" class="chat-feed" role="log" aria-label="Tin nhắn kênh thế giới" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
@@ -23,6 +32,12 @@
     $('chatStatus').dataset.status = state.status;
     $('chatOnline').textContent = state.online + ' đạo hữu đang hiện diện';
     $('chatError').textContent = error || state.error;
+    document.querySelectorAll('[data-chat-channel]').forEach(el => {
+      el.classList.toggle('on', el.dataset.chatChannel === session.channel);
+      el.setAttribute('aria-selected', String(el.dataset.chatChannel === session.channel));
+    });
+    if ($('chatChannelInfo')) $('chatChannelInfo').textContent = CHANNELS.find(x => x.id === session.channel)?.help || '';
+    feed.setAttribute('aria-label', 'Tin nhắn kênh ' + (CHANNELS.find(x => x.id === session.channel)?.title || 'thế giới'));
     $('chatConnect').hidden = ['connecting', 'online'].includes(state.status) || !session.available;
     $('chatDisconnect').hidden = !['connecting', 'online', 'offline'].includes(state.status);
     $('chatSend').disabled = sending || state.status !== 'online' || !draft.trim();
@@ -48,13 +63,24 @@
     if (follow) feed.scrollTop = feed.scrollHeight;
   }
   function mount() {
+    $('chatChannels')?.addEventListener('click', event => {
+      const tab = event.target.closest('[data-chat-channel]');
+      if (!tab || tab.dataset.chatChannel === session.channel) return;
+      pending = null; error = ''; void session.connect(tab.dataset.chatChannel); update();
+    });
     $('chatInput').addEventListener('input', event => { draft = event.target.value; error = ''; update(); });
     $('chatForm').addEventListener('submit', async event => {
       event.preventDefault();
       if (sending || !draft.trim()) return;
       const text = draft.trim();
       if (text.length > 400) return;
-      if (!pending || pending.text !== text) pending = { text, id: root.crypto.randomUUID ? root.crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2) };
+      if (!pending || pending.text !== text || pending.channel !== session.channel) {
+        try {
+          pending = { text, channel: session.channel, id: root.HU_REMOTE_SESSION.secureRequestId() };
+        } catch (e) {
+          error = e.message; update(); return;
+        }
+      }
       sending = true; error = ''; update();
       try {
         await session.send(text, pending.id);
@@ -63,12 +89,13 @@
       } catch (e) { error = e.message; }
       finally { sending = false; update(); }
     });
-    if (!opened && session.available) { opened = true; session.connect(UI.s().name); }
+    // Phiên mới hoặc nhân vật bắt đầu lại: kết nối lại sau khi đóng/mở cửa sổ.
+    if (session.available && (!opened || session.state.status === 'idle')) { opened = true; session.connect(); }
     update();
   }
   session.subscribe(update);
   root.addEventListener('pagehide', () => session.disconnect());
-  UI.action('chatConnect', () => { error = ''; session.connect(UI.s().name); return UI.KEEP; });
+  UI.action('chatConnect', () => { error = ''; session.connect(); return UI.KEEP; });
   UI.action('chatDisconnect', () => { error = ''; session.disconnect(); return UI.KEEP; });
   /* Bong bóng chat nổi ngoài màn chơi: bấm để mở khung nhỏ, đóng lại vẫn giữ kết nối và đếm tin mới. */
   const bubble = { el: null, panel: null, btn: null, badge: null, open: false, unread: 0, seen: 0 };
@@ -107,7 +134,7 @@
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       const rect = bubble.el.getBoundingClientRect();
       gesture = { id: e.pointerId, x: e.clientX, y: e.clientY, left: rect.left, top: rect.top, moved: false };
-      bubble.btn.setPointerCapture(e.pointerId);
+      try { bubble.btn.setPointerCapture(e.pointerId); } catch { /* touch WebKit: click vẫn hoạt động */ }
     });
     bubble.btn.addEventListener('pointermove', e => {
       if (!gesture || e.pointerId !== gesture.id) return;
@@ -144,8 +171,7 @@
       '<div id="chatBubblePanel" class="chat-bubble-panel" role="dialog" aria-label="Truyền âm vạn giới" hidden><button type="button" class="chat-bubble-close" aria-label="Thu nhỏ chat">×</button><div class="chat-bubble-body"></div></div>';
     document.body.appendChild(el);
     bubble.el = el; bubble.btn = el.querySelector('.chat-bubble-btn'); bubble.panel = el.querySelector('.chat-bubble-panel'); bubble.badge = el.querySelector('.chat-bubble-badge');
-    bubble.panel.querySelector('.chat-bubble-body').innerHTML = render();
-    mount();
+    // Launcher chỉ mở cửa sổ desktop, không tạo form chat trùng id.
     bubbleDraggable();
     bubble.btn.addEventListener('click', e => {
       if (dragSuppressClick) { dragSuppressClick = false; e.preventDefault(); e.stopPropagation(); return; }
@@ -165,31 +191,23 @@
   function bubbleToggle(force) {
     if (!UI.release.chat) return;
     bubbleBuild();
-    bubble.open = force === undefined ? !bubble.open : !!force;
-    bubble.panel.hidden = !bubble.open;
-    bubble.btn.setAttribute('aria-expanded', String(bubble.open));
-    bubble.btn.setAttribute('aria-label', 'Mở chat thế giới');
-    bubble.btn.title = 'Mở chat thế giới';
-    bubble.el.classList.toggle('open', bubble.open);
-    bubble.btn.tabIndex = bubble.open ? -1 : 0;
+    const wins = UI.windows;
+    if (!wins) return;
+    const w = wins.map.get('chat');
+    if (force === false) { if (w) wins.minimize('chat'); }
+    else if (force === true) wins.open('chat');
+    else wins.toggle('chat');
+    bubble.open = wins.has('chat') && !wins.map.get('chat')?.minimized;
     bubbleCount();
-    if (bubble.open) {
-      update();
-      const f = $('chatFeed');
-      if (f) f.scrollTop = f.scrollHeight;
-      bubble.panel.querySelector('.chat-bubble-close')?.focus({ preventScroll: true });
-      bubble.btn.setAttribute('aria-hidden', 'true');
-    } else {
-      bubble.btn.removeAttribute('aria-hidden');
-      bubble.btn.focus({ preventScroll: true });
-    }
   }
+
   UI.chatBubble = { open: () => bubbleToggle(true), close: () => bubbleToggle(false), toggle: () => bubbleToggle() };
   /* Chỉ hiện khi đã vào game (có #game hiển thị), nên dựng sau khi nhân vật được tạo. */
   function bubbleSync() {
     const game = document.getElementById('game');
     const show = !!(UI.release.chat && game && !game.hidden && UI.s && UI.s().created);
     if (show) bubbleBuild();
+    if (!show && session.state.status !== 'idle' && session.state.status !== 'unavailable') { session.disconnect(); opened = false; }
     if (bubble.el) bubble.el.hidden = !show;
   }
   if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 700);

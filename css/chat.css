@@ -44,3 +44,10 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
 .chat-bubble.drag-positioned{position:fixed}
 .chat-bubble.drag-positioned .chat-bubble-panel::after{display:none}
 @media(max-width:420px){.chat-bubble.drag-positioned .chat-bubble-panel{width:min(350px,calc(100vw - 20px))}}
+
+.chat-channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.chat-channels>button{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid #746247;border-radius:8px;background:#251c17;color:#e7dbcc;min-height:36px;padding:6px 8px;cursor:pointer}
+.chat-channels>button.on,.chat-channels>button[aria-selected="true"]{color:#ffe6af;background:#5d4426;border-color:#e5bb6d}
+.chat-channels>button:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
+.ranking-modes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+@media(max-width:420px){.chat-channels{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.chat-channels>button{min-height:32px;font-size:12px}}

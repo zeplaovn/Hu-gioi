@@ -6,6 +6,7 @@ type Rule = { capacity: number; perMinute: number };
 const ROUTE_GROUP: Record<string, string> = {
   bootstrap: 'read', state: 'read', preview: 'preview', create: 'create',
   pavilionPurchase: 'pavilion', commands: 'command', sync: 'sync',
+  chatConnect: 'chatConnect', chatPoll: 'chatPoll', chatSend: 'chatSend', chatLeave: 'chatConnect', leaderboard: 'leaderboard',
   pause: 'pause', resetAfterDeath: 'create',
   exportData: 'dataRights', eraseData: 'dataRights', deleteAccount: 'dataRights'
 };
@@ -22,7 +23,11 @@ export function createEdgeRateLimiter({
     command: { capacity: 30, perMinute: 600 },
     sync: { capacity: 12, perMinute: Math.max(2, 2 * 60000 / syncIntervalMs) },
     pause: { capacity: 8, perMinute: 4 },
-    dataRights: { capacity: 5, perMinute: 2 }
+    dataRights: { capacity: 5, perMinute: 2 },
+    chatConnect: { capacity: 4, perMinute: 8 },
+    chatPoll: { capacity: 12, perMinute: 15 },
+    chatSend: { capacity: 6, perMinute: 30 },
+    leaderboard: { capacity: 6, perMinute: 6 }
   };
   const buckets = new Map<string, Bucket>();
   function refill(b: Bucket, now: number): number {

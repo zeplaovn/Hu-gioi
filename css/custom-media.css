@@ -34,3 +34,13 @@
 @media(max-width:730px){.meridian-panel{grid-template-columns:minmax(0,1fr)}.meridian-map{max-width:400px}.craft-scene{min-height:280px}.craft-scene-head,.craft-scene-foot{max-width:56%;padding:15px 14px}.craft-scene-figure{right:0;height:94%;max-width:65%}}
 @media(max-width:420px){.craft-scene{min-height:255px}.craft-scene-figure{height:86%;max-width:65%}.craft-scene-head h3{font-size:21px}.craft-scene-head p{font-size:12px}.meridian-point{width:20px;height:20px}.meridian-point[aria-pressed="true"]{width:26px;height:26px}}
 @media(prefers-reduced-motion:reduce){.meridian-point{transition:none}}
+
+/* Tra cứu theo thứ tự 12 Chính Kinh / 8 Kỳ Kinh; cùng thao tác với điểm sáng trên đạo thể. */
+.meridian-sequence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0 0}
+.meridian-sequence-item{display:flex;align-items:center;gap:7px;min-width:0;padding:7px 8px;border-radius:8px;background:#191d20;border:1px solid #4f5557;color:#dfd9c9;text-align:left;cursor:pointer}
+.meridian-sequence-item>b{flex:0 0 20px;font:700 11px var(--font);color:#8cd1ec}
+.meridian-sequence-item>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
+.meridian-sequence-item:hover,.meridian-sequence-item:focus-visible{border-color:#c3aa72;outline-offset:2px}
+.meridian-sequence-item.selected{background:#3b3322;border-color:#dfbe72}
+.meridian-sequence-item.selected>b{color:#ffe2a0}
+@media(max-width:430px){.meridian-sequence{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -7,10 +7,10 @@
   if (!H || !F || !A) throw new Error('Thiếu lõi game. Kiểm tra thứ tự thẻ script.');
   const UI = root.HU_UI = root.HU_UI || {};
   // Một cấu hình phát hành cho các điểm vào UI và nhãn nội dung giả lập.
-  // Đổi chat/ranking thành true sau khi có backend thật; không đổi luật engine.
+  // Chat/ranking người chơi thật đi qua Edge API JWT + schema game private.
   const release = UI.release = {
-    chat: false,
-    ranking: false,
+    chat: true,
+    ranking: true,
     labels: Object.freeze({
       friends: 'NPC · mô phỏng',
       dao: 'NPC · mô phỏng',
@@ -40,7 +40,7 @@
       entry.type = 'button';
       entry.setAttribute('role', 'menuitem');
       entry.dataset.moreGo = 'more:ranking';
-      entry.innerHTML = '<span class="more-ico" aria-hidden="true">♛</span><span><b>Bảng xếp hạng</b><small>Danh vọng mô phỏng</small></span>';
+      entry.innerHTML = '<span class="more-ico" aria-hidden="true">♛</span><span><b>Bảng xếp hạng</b><small>Người chơi online</small></span>';
       menu.appendChild(entry);
     }
   };

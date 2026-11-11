@@ -10,7 +10,6 @@
   const TABS = [
     { id: 'map', label: 'Bản đồ', icon: '✥' },
     { id: 'dungeons', label: 'Bí cảnh', icon: '⚔' },
-    { id: 'quests', label: 'Nhiệm vụ', icon: '✦' },
     { id: 'sect', label: 'Tông môn', icon: '⌂' },
     { id: 'shop', label: 'Cửa hàng', icon: '◈' },
     { id: 'auction', label: 'Đấu giá', icon: '⚖' }
@@ -19,7 +18,7 @@
   const mapView = { zoom: 1, x: 0, y: 0 };
   const map = () => {
     const s = UI.s(), here = A.worldOf(s.realm);
-    return `<figure class="world-map interactive-map">
+    return `<figure class="world-map interactive-map" style="--map-wallpaper:url('${abs(A.MAPS[here])}')">
       <div class="map-toolbar" role="group" aria-label="Điều khiển bản đồ">
         <button type="button" data-map-zoom="in" aria-label="Phóng to bản đồ">＋</button>
         <button type="button" data-map-zoom="out" aria-label="Thu nhỏ bản đồ">−</button>
@@ -42,11 +41,19 @@
     const clampMap = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
     const apply = () => {
       const r = viewport.getBoundingClientRect();
-      const boundX = Math.max(0, r.width * (mapView.zoom - 1) / 2);
-      const boundY = Math.max(0, r.height * (mapView.zoom - 1) / 2);
+      // object-fit:cover có phần ảnh vượt khung ngay cả ở zoom 100%.
+      // Kẹp theo kích thước ảnh thật để kéo được tới cả bốn rìa bản đồ.
+      const baseScale = image.naturalWidth && image.naturalHeight
+        ? Math.max(r.width / image.naturalWidth, r.height / image.naturalHeight) : 1;
+      const coverWidth = (image.naturalWidth || r.width) * baseScale;
+      const coverHeight = (image.naturalHeight || r.height) * baseScale;
+      image.style.width = coverWidth + 'px';
+      image.style.height = coverHeight + 'px';
+      const boundX = Math.max(0, (coverWidth * mapView.zoom - r.width) / 2);
+      const boundY = Math.max(0, (coverHeight * mapView.zoom - r.height) / 2);
       mapView.x = clampMap(mapView.x, -boundX, boundX);
       mapView.y = clampMap(mapView.y, -boundY, boundY);
-      image.style.transform = 'translate3d(' + mapView.x + 'px,' + mapView.y + 'px,0) scale(' + mapView.zoom.toFixed(2) + ')';
+      image.style.transform = 'translate3d(calc(-50% + ' + mapView.x + 'px),calc(-50% + ' + mapView.y + 'px),0) scale(' + mapView.zoom.toFixed(2) + ')';
       label.textContent = Math.round(mapView.zoom * 100) + '%';
     };
     const zoom = factor => { mapView.zoom = clampMap(Math.round(mapView.zoom * factor * 100) / 100, 1, 4); apply(); };
@@ -84,14 +91,15 @@
         apply();
       }
     });
+    image.addEventListener('load', apply, { once: true });
     apply();
   }
 
   const quests = () => {
     const s = UI.s(), g = UI.g(), fragments = H.ITEMS.filter(x => x.kind === 'QITEM');
-    return `<p class="screen-lead">Mỗi nhiệm vụ nhận thưởng một lần trong mỗi vòng tu hành.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
+    return `<p class="screen-lead">Mỗi nhiệm vụ chỉ có thể nhận thưởng một lần với nhân vật hiện tại.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
       card(name, `${row('Tiến độ', num(Math.min(max, s.progress[id])) + ' / ' + max)}${bar(Math.min(max, s.progress[id]) / max * 100, 'quest-progress')}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p>${btn(s.claimed.includes(id) ? 'Đã nhận' : s.progress[id] < max ? 'Chưa đủ tiến độ' : 'Nhận thưởng', 'claimQuest', `data-id="${id}"`, s.claimed.includes(id) || s.progress[id] < max)}`)).join('')}
-      ${card('Hợp nhất đạo ấn', `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để đổi 10 Đạo vận.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}${btn('Hợp ấn', 'fragments', '', !fragments.every(x => g.count(x.code) > 0) || s.claimed.includes('fragments'))}`)}</div>`;
+      ${card('Hợp nhất đạo ấn', `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để nhận 10 Thiên Tinh vào tài khoản.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}${btn('Hợp ấn', 'fragments', '', !fragments.every(x => g.count(x.code) > 0) || s.claimed.includes('fragments'))}`)}</div>`;
   };
 
   const sect = () => UI.adventure.sect();
@@ -123,7 +131,7 @@
       const gifts=[[like,'Tặng món thích'],[dislike,'Tặng món không thích']].map(([x,label])=>{if(!x)return '';const key=Object.keys(s.bag).find(k=>H.item(k)?.code===x.code&&!s.equipment.includes(k)&&g.count(k)>0);return btn(label,'npcGift',`data-id="${esc(id)}" ${codeAttr(key||x.code)}`,!key,'btn-outline')}).join('');
       const sells=['bán đồ','luyện đan thuê'].includes(role),teaches=['dạy công pháp','dạy bí tịch'].includes(role),price=offer&&(sells||teaches)?g.npcPrice(id):0;
       const trade=price?btn((teaches?'Học ':'Mua ')+esc(offer.name)+' · '+moneyHTML(price)+(disc>0?' <small>(−'+Math.round(disc*100)+'%)</small>':''),'npcOffer',`data-id="${esc(id)}"`,offer.tier>s.realm+1||s.stone<price):'';
-      const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="world:quests">Nhiệm vụ chung</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
+      const link=role==='giao nhiệm vụ'?'<button class="btn btn-outline" data-go="quests">Nhiệm vụ chung</button>':role==='luyện đan thuê'?'<button class="btn btn-outline" data-go="craft:dan">Mở luyện đan</button>':'';
       return card(esc(n['tên NPC']),`<div class="npc-profile"><img src="${esc(n.ảnh)}" alt="" loading="lazy" decoding="async"><p>${esc(n['bối cảnh'])}</p></div>`+
         row('Địa điểm',esc(n['địa điểm']))+row('Quan hệ',esc(n['quan hệ']))+row('Thân phận',esc(roleName))+row('Thiện cảm',num(s.npcAffinities[id]||0)+'/100')+
         row('Thích',esc(like?.name||'—'))+row('Không thích',esc(dislike?.name||'—'))+npcQuestBlock(n,g.npcQuestInfo(id),like)+`<div class="action-group">${btn('Trò chuyện', 'openNpcDialogue', `data-id="${esc(id)}"`, false, 'btn-gold')}${gifts}${trade}${link}</div>`,{eyebrow:'KỲ NHÂN HẠ GIỚI'});
@@ -148,7 +156,7 @@
   };
 
   UI.lorePanels = { npcs, encounter };
-  const body = { map, dungeons, quests, sect, shop, auction };
+  const body = { map, dungeons, sect, shop, auction };
   UI.register({
     id: 'world', label: 'Thế giới', icon: 'ICON-MENU-007', eyebrow: 'BA GIỚI', tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">BA GIỚI</span><h2>Thế giới</h2></header>${tabs(TABS, tab)}<div class="screen-body">${UI.release.notice(tab)}${body[tab]()}</div>`,
@@ -159,6 +167,17 @@
       return [s.realm, s.stage, s.sect.joined, s.sect.id, s.sect.earned, s.sect.contribution, s.sect.mission?.id || '', s.sect.mission?.end || 0, s.sect.blessing, s.sect.last?.at, s.sect.repeat, s.meta?.points || 0,
         s.dungeon.active?.end || 0, s.dungeon.last?.at || 0, s.dungeon.run ? [s.dungeon.run.floor, s.dungeon.run.turn, Math.round(s.hp), Math.round(s.dungeon.run.sta)].join(',') : '', tab === 'npc' ? [s.progress.kill, JSON.stringify(s.npcQuests), Object.values(s.npcAffinities).join(',')].join('/') : '', s.encounter.total, Math.floor(Date.now() / 864e5),
         tab === 'dungeons' || tab === 'sect' ? Math.floor(s.hp / g.stats().HP * 10) : '', s.stone >= F.price_ha(s.realm)].join('|');
+    }
+  });
+
+  // Nhiệm vụ là một màn độc lập trong menu chính, không nằm lẫn với bản đồ.
+  UI.register({
+    id: 'quests', label: 'Nhiệm vụ', icon: '✦', eyebrow: 'NHIỆM VỤ',
+    render: () => '<header class="screen-title"><span class="eyebrow gold">TU HÀNH</span><h2>Nhiệm vụ</h2></header><div class="screen-body">' + quests() + '</div>',
+    signature: () => {
+      const s = UI.s();
+      return [JSON.stringify(s.progress), s.claimed.join(','), s.stone, UI.session.pavilion?.balance || 0, Object.entries(s.bag)
+        .filter(([code]) => H.item(code)?.kind === 'QITEM').map(([code, n]) => code + ':' + n).join(',')].join('|');
     }
   });
 
@@ -228,7 +247,7 @@
   });
   UI.action('fragments', async () => {
     await UI.command('claimFragments');
-    UI.toast('Hợp nhất đạo ấn · +10 Đạo vận.', { type: 'gold', title: 'Đạo ấn' });
+    UI.toast('Hợp nhất đạo ấn · +10 Thiên Tinh.', { type: 'gold', title: 'Đạo ấn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(120px,19vw,200px)', style: { left: '50%', bottom: '22%', transform: 'translateX(-50%)' } });
   });
   UI.action('encounter', async (el, d) => {

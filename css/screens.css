@@ -416,7 +416,7 @@ body.in-tribulation{overflow:hidden}
 .interactive-map .map-zoom-label{min-width:45px;text-align:center;font:700 12px var(--font);color:#e7d1a3}
 .interactive-map figcaption{padding:9px 13px;color:#c4cfc8;font-size:12px;text-align:center}
 @media(max-width:600px){
-  .interactive-map .map-viewport{height:clamp(300px,53dvh,590px)}
+  .interactive-map .map-viewport{height:clamp(320px,55dvh,590px)}
   .interactive-map .map-toolbar{top:7px;left:7px;gap:3px;padding:4px}
   .interactive-map .map-toolbar button{width:34px;height:34px}
 }

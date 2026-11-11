@@ -91,7 +91,8 @@ class PlayerService {
     this.onError = onError;
   }
 
-  /* Tọa hóa thực: xóa được bất kỳ tử vong nào đã được engine xác nhận. */
+  /* Bắt đầu lại sau khi chết thật. Không thưởng/cộng dồn trọng sinh:
+   * toàn bộ Thiên Tinh, Thiên Mệnh Các, xếp hạng và tiến trình được xóa. */
   async resetAfterDeath(ownerId, playerId) {
     const rec = this.#own(await this.repo.get(playerId), ownerId);
     if (!new H.Game(this.#state(rec, this.clock())).isDead())
@@ -106,11 +107,12 @@ class PlayerService {
     return {
       format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
       player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
-      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || await this.repo.getPavilion(ownerId)
+      pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || await this.repo.getPavilion(ownerId),
+      sentChatMessages: data?.chatMessages || []
     };
   }
 
-  /* Quyền xóa dữ liệu: khác resetAfterDeath, không yêu cầu nhân vật đã tọa hóa. Cần xác nhận rõ ràng. */
+  /* Quyền xóa dữ liệu tự nguyện; không phải cách trọng sinh, cần xác nhận rõ ràng. */
   async eraseData(ownerId, body) {
     onlyKeys(body, ['confirm']);
     if (body.confirm !== ERASE_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa dữ liệu.');
@@ -197,6 +199,8 @@ class PlayerService {
       !Number.isSafeInteger(body.expectedVersion) || body.expectedVersion < 0 ||
       typeof body.key !== 'string' || typeof body.kind !== 'string')
       throw invalid('INVALID_REQUEST', 'Yêu cầu Thiên Mệnh Các không hợp lệ.');
+    // Kỳ Trân chuyển kiếp đã bị gỡ: không cho phép giao dịch relic qua API cũ.
+    if (body.kind !== 'upgrade') throw invalid('INVALID_REQUEST', 'Chỉ hỗ trợ nâng cấp Thiên Mệnh Các.');
     const now = this.clock();
     const out = await this.repo.purchasePavilion(ownerId, { ...body, now, catalog: H.PAVILION });
     if (out.record) {
@@ -323,10 +327,13 @@ class PlayerService {
       }
       assertStateSafe(run.game.s, this.cfg.maxStateBytes);
       const earned = command.type === 'breakthrough' && result?.success && run.game.s.realm > previousRealm
-        ? H.PAVILION.realmReward(run.game.s.realm) : 0;
+        ? H.PAVILION.realmReward(run.game.s.realm)
+        : command.type === 'claimFragments' && result === 10 ? 10 : 0;
       if (earned) {
-        result = { ...result, thienTinh: earned };
-        run.logs.push('Thiên Mệnh Các · đột phá đại cảnh giới, nhận +' + earned + ' Thiên Tinh.');
+        if (typeof result === 'object' && result !== null) result = { ...result, thienTinh: earned };
+        // claimFragments vẫn trả số 10 theo protocol hiện có; không đổi dạng result.
+        run.logs.push((command.type === 'claimFragments' ? 'Hợp nhất đạo ấn' : 'Đột phá đại cảnh giới') +
+          ' · nhận +' + earned + ' Thiên Tinh.');
       }
       const revision = rec.revision + 1;
       const response = { serverTime: now, revision, result: clean(result), report: clean(report), logs: run.logs, achievements: clean(achievements), died: run.game.isDead() };
