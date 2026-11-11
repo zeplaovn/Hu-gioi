@@ -8,6 +8,7 @@
 - [Mục lục](index.md).
 
 ## Tài liệu kỹ thuật vẫn còn hiệu lực
+- [Admin Console RPC](admin-console.md) — đặc tả kết nối dashboard, migration chưa tự triển khai.
 - [Kiến trúc](architecture.md)
 - [Hợp đồng engine](engine-contract.md)
 - [Gameplay V9](gameplay-v9.md)
