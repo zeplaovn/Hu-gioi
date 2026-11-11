@@ -89,6 +89,13 @@
         '" style="--point-x:' + x + '%;--point-y:' + y + '%;--point-color:' +
         (group === 'ky' ? '#e5c458' : '#75bfed') + '"></button>';
     }).join('');
+    // Danh sách theo thứ tự tuần hoàn kinh mạch, từ Phế (01) đến Can (12).
+    // Giúp chọn đúng tên khi các điểm trên hình nằm sát nhau.
+    const ordered = list.map((item, i) =>
+      '<button type="button" class="meridian-sequence-item' + (i === picked ? ' selected' : '') +
+      '" data-act="meridianPick" data-index="' + i + '" aria-pressed="' + (i === picked) +
+      '" title="' + esc(item.name) + '"><b>' + String(i + 1).padStart(2, '0') + '</b><span>' +
+      esc(item.short) + '</span></button>').join('');
     const preview = M.preview(state.roots, state.rootType, state.rootSub);
     const relation = M.relation(current.he, preview.heList);
     const connection = current.he === 'Trung hòa' ? 'Trung hòa'
@@ -114,7 +121,8 @@
       option('meridianGroup', 'group', 'ky', '8 Kỳ Kinh', group === 'ky') + '</div>' +
       '<div class="meridian-map">' + figure + points + '</div>' +
       '<div class="meridian-map-legend"><span>● Chạm điểm sáng để tra cứu</span><span>' +
-      (group === 'chinh' ? '12 Chính Kinh · Màu xanh' : '8 Kỳ Kinh · Màu vàng') + '</span></div></div>' +
+      (group === 'chinh' ? '12 Chính Kinh · Màu xanh' : '8 Kỳ Kinh · Màu vàng') + '</span></div>' +
+      '<div class="meridian-sequence" role="group" aria-label="Danh sách kinh mạch theo thứ tự">' + ordered + '</div></div>' +
       '<div class="meridian-info"><span class="meridian-kind">' + esc(current.kind) + '</span>' +
       '<h4>' + esc(current.name) + '</h4>' +
       row('Ngũ hành', esc(current.he)) +
