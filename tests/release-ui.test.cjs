@@ -133,6 +133,7 @@ test('cờ tắt: menu Thêm không Chat/ranking; giao du và thế giới có n
 
 test('thông báo khóa Giao du không còn quảng bá bảng xếp hạng đang ẩn', () => {
   const { UI, setSocialOpen } = releaseHarness();
+  UI.release.ranking = false;
   setSocialOpen(false);
   const locked = UI.screens.more.render('friends');
   assert.match(locked, /Giao du NPC/);
