@@ -7,7 +7,8 @@
   class ChatSession {
     constructor() {
       this.available = ['http:', 'https:'].includes(root.location?.protocol) && !!root.HU_SUPABASE?.accessToken;
-      this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '' };
+      this.channel = 'world';
+      this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '', channel: 'world' };
       this.listeners = new Set();
       this.timer = null; this.generation = 0; this.attempt = 0; this.cursor = '0'; this.wanted = false;
       root.addEventListener?.('offline', () => {
@@ -56,7 +57,7 @@
       const hadConnection = this.state.status === 'online';
       this.wanted = false; this.stopTransport();
       if (hadConnection) this.request('chat/leave').catch(() => {});
-      this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '' };
+      this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '', channel: this.channel };
       this.cursor = '0'; this.emit();
     }
     schedule(generation, ms) {
@@ -70,16 +71,21 @@
       this.emit();
       if (!error.permanent) this.schedule(generation, Math.min(30000, 2000 * 2 ** Math.min(this.attempt++, 4)));
     }
-    async connect() {
+    async connect(channel = this.channel) {
       if (!this.available) return;
+      if (!['world','sect','dao_huu','dao_lu'].includes(channel)) throw Error('Kênh chat không hợp lệ.');
+      const switched = channel !== this.channel;
+      this.channel = channel;
       this.wanted = true; this.stopTransport();
+      if (switched) { this.cursor = '0'; this.state.messages = []; }
+      this.state.channel = channel;
       const gen = this.generation;
       if (root.navigator?.onLine === false) {
         this.state.status = 'offline'; this.state.error = 'Đang ngoại tuyến.'; this.emit(); return;
       }
       this.state.status = 'connecting'; this.state.error = ''; this.emit();
       try {
-        const data = await this.request('chat/connect');
+        const data = await this.request('chat/connect', 'POST', { channel });
         if (gen !== this.generation) return;
         this.state.self = data.self;
         this.state.messages = Array.isArray(data.messages) ? data.messages.slice(-100) : [];
@@ -90,7 +96,7 @@
       } catch (error) { this.fail(error, gen); }
     }
     receive(message) {
-      if (!message || this.state.messages.some(m => m.id === message.id)) return;
+      if (!message || message.channel !== this.channel || this.state.messages.some(m => m.id === message.id)) return;
       this.state.messages.push(message);
       if (this.state.messages.length > 100) this.state.messages = this.state.messages.slice(-100);
       this.cursor = String(message.id);
@@ -100,7 +106,7 @@
       if (gen !== this.generation || !this.wanted) return;
       if (root.document?.hidden || root.navigator?.onLine === false) { this.schedule(gen, 12000); return; }
       try {
-        const data = await this.request('chat/poll', 'POST', { since: Number(this.cursor) });
+        const data = await this.request('chat/poll', 'POST', { since: Number(this.cursor), channel: this.channel });
         if (gen !== this.generation) return;
         if (Array.isArray(data.messages)) for (const m of data.messages) this.receive(m);
         this.cursor = String(data.cursor || this.cursor);
@@ -111,10 +117,10 @@
     }
     async send(text, requestId) {
       if (this.state.status !== 'online') throw Error('Chưa kết nối máy chủ chat.');
-      const { message } = await this.request('chat/send', 'POST', { text, requestId });
+      const { message } = await this.request('chat/send', 'POST', { text, requestId, channel: this.channel });
       this.receive(message);
       return message;
     }
   }
-  root.HU_CHAT_SESSION = { ChatSession };
+  root.HU_CHAT_SESSION = { ChatSession, CHANNELS: ['world','sect','dao_huu','dao_lu'] };
 })(typeof window !== 'undefined' ? window : globalThis);

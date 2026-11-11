@@ -101,11 +101,11 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
         case 'state': limit('read:' + who, LIMITS.read); out = await service.state(who, route.id); break;
         case 'sync': limit('sync:' + who, LIMITS.sync); out = await service.sync(who, route.id, body); break;
         case 'pause': limit('pause:' + who, LIMITS.pause); out = await service.pause(who, route.id); break;
+        case 'reset-after-death': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
         case 'commands': limit('cmd:' + who, LIMITS.command); out = await service.command(who, route.id, body); break;
         case 'exportData': limit('export:' + who, LIMITS.export); out = await service.exportData(who); break;
         case 'eraseData': limit('erase:' + who, LIMITS.erase); out = await service.eraseData(who, body); break;
         case 'deleteAccount': limit('erase:' + who, LIMITS.erase); out = await service.deleteAccount(who, body, accountAdmin); break;
-        case 'resetAfterDeath': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
       }
       send(res, status, out, requestId, route.name === 'exportData' ? { 'Content-Disposition': 'attachment; filename="hu-gioi-du-lieu.json"' } : {});
     } catch (err) {
@@ -128,7 +128,7 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
     const m = PLAYER_ROUTE.exec(pathname);
     if (m) {
       const expected = m[2] === 'state' ? 'GET' : 'POST';
-      if (method === expected) return { name: m[2] === 'reset-after-death' ? 'resetAfterDeath' : m[2], id: m[1].toLowerCase() };
+      if (method === expected) return { name: m[2], id: m[1].toLowerCase() };
     }
     return null;
   }

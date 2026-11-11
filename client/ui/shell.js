@@ -29,7 +29,7 @@
 
   function classifyToast(message) {
     if (/thất bại|không thể|không đủ|chưa đủ|lỗi|hỏng|đang mở|quá mạnh|chưa mở|không có/i.test(message)) return 'danger';
-    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|trọng sinh|phi thăng/i.test(message)) return 'tribulation';
+    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|phi thăng/i.test(message)) return 'tribulation';
     if (/nhận|mua|thu hoạch|yêu đan|cơ duyên|rơi|phần thưởng/i.test(message)) return 'loot';
     if (/thành công|đã |nâng|may mắn|hoàn tất|chúc mừng/i.test(message)) return 'success';
     return 'info';
@@ -125,12 +125,12 @@
     engineRecent: new Map(), toastRecent: new Map(), lastPrune: 0
   };
   // Trạng thái chỉ thuộc giao diện; dữ liệu tu luyện và bản lưu không thay đổi.
-  const logFloatState = { floating: false, x: null, y: null, loaded: false };
+  const logFloatState = { floating: false, maximized: false, x: null, y: null, loaded: false };
   let logDrag = null, suppressLogToggleClick = false;
 
   function classifyLog(text) {
     if (/thất bại|trọng thương|tổn hại|không đủ|chưa đủ|rút lui|lỗi|hỏng|nguy hiểm/i.test(text)) return 'danger';
-    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|trọng sinh|chứng đạo|phi thăng/i.test(text)) return 'tribulation';
+    if (/thiên kiếp|lôi kiếp|độ kiếp|đột phá|chứng đạo|phi thăng/i.test(text)) return 'tribulation';
     if (/nhận|mua|thu hoạch|luyện thành|rơi|phần thưởng|cống hiến|đấu giá|kỳ ngộ/i.test(text)) return 'loot';
     if (/thành công|hoàn thành|nâng|thăng|kết giao|tặng|thắng|đã /i.test(text)) return 'success';
     return 'info';
@@ -191,6 +191,7 @@
   function setLogCollapsed(collapsed, persist = true) {
     const panel = $('logPanel'), btn = $('logToggle');
     logState.collapsed = !!collapsed;
+    if (logState.collapsed && logFloatState.maximized) setLogMaximized(false);
     if (panel) panel.classList.toggle('collapsed', logState.collapsed);
     document.body.classList.toggle('log-collapsed', logState.collapsed);
     if (btn) {
@@ -207,6 +208,7 @@
     updateLogChrome();
     if (logFloatState.floating) positionFloatingLog();
     if (persist) try { localStorage.setItem(LOG_KEY, logState.collapsed ? '1' : '0'); } catch { /* bỏ qua */ }
+    if (logFloatState.floating) UI.windows?.updateTaskbar?.();
   }
 
 
@@ -214,7 +216,7 @@
      atlas vì repo không có atlas dành cho .box. Bố cục và tọa độ là thuần UI. */
   function positionFloatingLog(x = logFloatState.x, y = logFloatState.y) {
     const panel = $('logPanel');
-    if (!panel || !logFloatState.floating) return;
+    if (!panel || !logFloatState.floating || logFloatState.maximized) return;
     const width = root.innerWidth || document.documentElement.clientWidth;
     const height = root.innerHeight || document.documentElement.clientHeight;
     const maxX = Math.max(8, width - panel.offsetWidth - 8);
@@ -235,10 +237,24 @@
     } catch { /* quyền lưu bị chặn: vẫn dùng được trong phiên hiện tại */ }
   }
 
+  function setLogMaximized(enabled) {
+    const panel = $('logPanel'), toggle = $('logMaxToggle');
+    if (!panel) return;
+    logFloatState.maximized = !!enabled && logFloatState.floating;
+    panel.classList.toggle('log-maximized', logFloatState.maximized);
+    if (toggle) {
+      toggle.textContent = logFloatState.maximized ? '❐' : '▢';
+      toggle.setAttribute('aria-label', logFloatState.maximized ? 'Khôi phục kích thước nhật ký' : 'Phóng to nhật ký');
+      toggle.title = logFloatState.maximized ? 'Khôi phục kích thước nhật ký' : 'Phóng to nhật ký';
+    }
+    if (!logFloatState.maximized) positionFloatingLog();
+    UI.windows?.updateTaskbar?.();
+  }
   function setLogFloating(floating, persist = true) {
     const panel = $('logPanel'), game = $('game'), btn = $('logFloatToggle');
     if (!panel) return;
     logFloatState.floating = !!floating;
+    if (!logFloatState.floating) setLogMaximized(false);
     panel.classList.toggle('log-floating', logFloatState.floating);
     game?.classList.toggle('log-floating', logFloatState.floating);
     document.body.classList.toggle('log-floating', logFloatState.floating);
@@ -255,14 +271,27 @@
       panel.style.removeProperty('left');
     }
     if (persist) saveFloatingLog();
+    UI.windows?.updateTaskbar?.();
   }
 
   function bindFloatingLog() {
     const panel = $('logPanel'), head = panel?.querySelector('.log-head');
     if (!panel || !head) return;
     $('logFloatToggle')?.addEventListener('click', () => setLogFloating(!logFloatState.floating));
+    const tools = panel.querySelector('.log-tools');
+    if (tools && !$('logMaxToggle')) {
+      const max = document.createElement('button');
+      max.id = 'logMaxToggle'; max.type = 'button'; max.className = 'log-max-toggle';
+      max.textContent = '▢'; max.title = 'Phóng to nhật ký'; max.setAttribute('aria-label',max.title);
+      tools.insertBefore(max,$('logFloatToggle') || tools.firstChild);
+      max.addEventListener('click', () => {
+        if (!logFloatState.floating) setLogFloating(true);
+        if (logState.collapsed) setLogCollapsed(false);
+        setLogMaximized(!logFloatState.maximized);
+      });
+    }
     head.addEventListener('pointerdown', e => {
-      if (!logFloatState.floating || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if (!logFloatState.floating || logFloatState.maximized || (e.pointerType === 'mouse' && e.button !== 0)) return;
       const toggle = e.target.closest('#logToggle');
       if (e.target.closest('button') && !(logState.collapsed && toggle)) return;
       const rect = panel.getBoundingClientRect();
@@ -521,17 +550,18 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'quests'];
-  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 700, character: 670, world: 740, quests: 700, settings: 580, meta: 760, more: 660 };
+  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
+  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, ranking: 740, settings: 630, meta: 760, more: 720 };
   const BADGED = ['combat', 'craft'];
 
   const wins = {
     map: new Map(),
+    taskbar: null,
     has(id) { return this.map.has(id); },
     key(id) { return 'huGioiWin:' + ($('game')?.dataset.layout || 'wide') + ':' + id; },
     topId() {
       let top = null, z = -1;
-      this.map.forEach((w, id) => { const n = +w.el.style.zIndex || 0; if (n >= z) { z = n; top = id; } });
+      this.map.forEach((w, id) => { if (w.minimized) return; const n = +w.el.style.zIndex || 0; if (n >= z) { z = n; top = id; } });
       return top;
     },
     open(id) {
@@ -542,12 +572,11 @@
       if (this.map.has(id)) {
         const w = this.map.get(id);
         if (w.tab !== tabOf(def)) this.render(id);
-        this.focus(id); return w.el;
+        this.restore(id); return w.el;
       }
-      this.closeOthers(id);
       const el = document.createElement('section');
-      const isPage = id !== 'combat';
-      el.className = isPage ? 'win page' : 'win';
+      const isPage = false;
+      el.className = 'win desktop-window';
       el.dataset.window = id;
       el.tabIndex = -1;
       el.setAttribute('role', 'dialog');
@@ -559,31 +588,33 @@
       const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' + WINDOW_ORDER.filter(k => k !== 'idle' && UI.screens[k]).map(k =>
         '<button type="button" data-open-page="' + k + '" class="' + (k === id ? 'on' : '') + '" aria-label="' + esc(UI.screens[k].label) + '" title="' + esc(UI.screens[k].label) + '"' + (k === id ? ' aria-current="page"' : '') + '>' + navIcon(k) + '<span>' + esc(UI.screens[k].label) + '</span></button>').join('') + '</nav>' : '';
       el.innerHTML = '<header>' + (isPage ? '<button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' : '') +
-        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '<button class="win-close" type="button" aria-label="Đóng">✕</button></header><div class="win-body"></div>' + (isPage ? '' : '<div class="rz" aria-hidden="true"></div>');
+        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '<span class="win-controls"><button class="win-min" type="button" aria-label="Thu nhỏ" title="Thu nhỏ">─</button><button class="win-max" type="button" aria-label="Phóng to" title="Phóng to">▢</button><button class="win-close" type="button" aria-label="Đóng">✕</button></span></header><div class="win-body"></div>' + (isPage ? '' : '<div class="rz" aria-hidden="true"></div>');
       $('wins').appendChild(el);
-      const rect = this.clampRect((isPage ? null : this.loadRect(id)) || this.defaultRect(id));
+      const rect = this.clampRect(this.loadRect(id) || this.defaultRect(id));
       this.setRect(el, rect);
-      this.map.set(id, { el, body: el.querySelector('.win-body'), rect, def, sig: '' });
+      this.map.set(id, { el, body: el.querySelector('.win-body'), rect, def, sig: '', minimized: false, maximized: false, restoreRect: null });
       el.addEventListener('pointerdown', () => this.focus(id), true);
       el.querySelector('.win-close').addEventListener('click', e => { e.stopPropagation(); this.close(id); });
-      el.querySelector('.page-back')?.addEventListener('click', e => { e.stopPropagation(); this.close(id); try { $('stage')?.focus?.({ preventScroll: true }); } catch { /* bỏ qua */ } });
-      if (!isPage) {
-        drag(el.querySelector('header'), el, id);
-        resize(el.querySelector('.rz'), el, id);
-      }
+      el.querySelector('.win-min').addEventListener('click', e => { e.stopPropagation(); this.minimize(id); });
+      el.querySelector('.win-max').addEventListener('click', e => { e.stopPropagation(); this.maximize(id); });
+      el.querySelector('header').addEventListener('dblclick', e => { if (!e.target.closest('button')) this.maximize(id); });
+      drag(el.querySelector('header'), el, id);
+      resize(el.querySelector('.rz'), el, id);
       this.render(id);
       this.focus(id);
       markMenu();
+      this.updateTaskbar();
       updateStage();
       return el;
     },
     close(id) {
       const w = this.map.get(id);
       if (!w) return;
-      if (id === 'combat') this.saveRect(id, w.rect);
+      if (!w.maximized) this.saveRect(id, w.rect);
       w.el.remove();
       this.map.delete(id);
       if (UI.current === id) UI.current = this.topId() || 'idle';
+      this.updateTaskbar();
       markMenu();
       updateStage();
     },
@@ -593,7 +624,7 @@
         if (id === except) return;
         const w = this.map.get(id);
         if (!w) return;
-        if (id === 'combat') this.saveRect(id, w.rect);
+        if (!w.maximized) this.saveRect(id, w.rect);
         w.el.remove();
         this.map.delete(id);
         removed = true;
@@ -605,20 +636,79 @@
       }
     },
     closeAll() {
-      this.map.forEach((w, id) => { if (id === 'combat') this.saveRect(id, w.rect); });
+      this.map.forEach((w, id) => { if (!w.maximized) this.saveRect(id, w.rect); });
       this.map.forEach(w => w.el.remove());
       this.map.clear();
+      this.updateTaskbar();
       UI.current = 'idle';
       markMenu();
       updateStage();
     },
-    toggle(id) { this.has(id) ? this.close(id) : this.open(id); },
+    toggle(id) {
+      if (!this.has(id)) return this.open(id);
+      const w = this.map.get(id);
+      return w.minimized || this.topId() !== id ? this.restore(id) : this.minimize(id);
+    },
+    updateTaskbar() {
+      if (!this.taskbar) {
+        this.taskbar = document.createElement('nav');
+        this.taskbar.id = 'windowTaskbar';
+        this.taskbar.className = 'window-taskbar';
+        this.taskbar.setAttribute('aria-label', 'Thanh tác vụ');
+        document.body.appendChild(this.taskbar);
+        this.taskbar.addEventListener('click', e => {
+          const button = e.target.closest('[data-task-window]');
+          if (button?.dataset.taskWindow === '__log') setLogCollapsed(!logState.collapsed);
+          else if (button) this.toggle(button.dataset.taskWindow);
+        });
+      }
+      const logInTaskbar = logFloatState.floating && $('logPanel');
+      this.taskbar.hidden = (!this.map.size && !logInTaskbar) || $('game')?.hidden === true;
+      this.taskbar.innerHTML = [...this.map.entries()].map(([id,w]) =>
+        '<button type="button" class="window-task' + (w.minimized ? ' minimized' : '') +
+        (this.topId() === id ? ' active' : '') + '" data-task-window="' + esc(id) +
+        '" aria-pressed="' + String(this.topId() === id) + '">' + esc(w.def.label) + '</button>').join('') +
+        (logInTaskbar ? '<button type="button" data-task-window="__log" class="window-task' +
+          (logState.collapsed ? ' minimized' : ' active') + '" aria-pressed="' + String(!logState.collapsed) + '">Nhật ký</button>' : '');
+    },
+    minimize(id) {
+      const w = this.map.get(id); if (!w) return;
+      w.minimized = true; w.el.hidden = true;
+      if (UI.current === id) UI.current = this.topId() || 'idle';
+      this.updateTaskbar(); markMenu(); updateStage();
+    },
+    restore(id) {
+      const w = this.map.get(id);
+      if (!w) return this.open(id);
+      w.minimized = false; w.el.hidden = false;
+      this.focus(id); return w.el;
+    },
+    maximize(id) {
+      const w = this.map.get(id); if (!w) return;
+      if (w.maximized) {
+        w.maximized = false;
+        w.rect = this.clampRect(w.restoreRect || this.defaultRect(id));
+        w.restoreRect = null;
+      } else {
+        w.restoreRect = { ...w.rect }; w.maximized = true;
+        const W = root.innerWidth || 1280, H = root.innerHeight || 768;
+        w.rect = { x: 8, y: 8, w: W - 16, h: Math.max(180,H - 64) };
+      }
+      this.setRect(w.el,w.rect);
+      w.el.classList.toggle('maximized',w.maximized);
+      w.el.querySelector('.win-max').textContent = w.maximized ? '❐' : '▢';
+      w.el.querySelector('.win-max').setAttribute('aria-label',w.maximized ? 'Khôi phục kích thước' : 'Phóng to');
+      if (!w.maximized) this.saveRect(id,w.rect);
+      this.focus(id);
+    },
     focus(id) {
       const w = this.map.get(id);
       if (!w) return;
+      if (w.minimized) { w.minimized = false; w.el.hidden = false; }
       w.el.style.zIndex = ++zTop;
       this.map.forEach((v, k) => v.el.classList.toggle('top', k === id));
       UI.current = id;
+      this.updateTaskbar();
       markMenu();
     },
     render(id) {
@@ -645,7 +735,6 @@
       return { x: a.left, y: a.top, w: a.width, h: bottom - a.top };
     },
     defaultRect(id) {
-      if (id !== 'combat') { const page = this.pageRect(); if (page) return this.clampRect(page); }
       const layout = $('game')?.dataset.layout || 'wide';
       const W = root.innerWidth || document.documentElement.clientWidth || 1280;
       const H = root.innerHeight || document.documentElement.clientHeight || 800;
@@ -712,10 +801,19 @@
       el.style.width = r.w + 'px';
       el.style.height = r.h + 'px';
     },
-    fit() { this.map.forEach((w, id) => { w.rect = this.clampRect(id === 'combat' ? w.rect : this.defaultRect(id)); this.setRect(w.el, w.rect); }); },
+    fit() {
+      this.map.forEach(w => {
+        if (w.maximized) {
+          const W = root.innerWidth || 1280, H = root.innerHeight || 768;
+          w.rect = { x: 8, y: 8, w: W - 16, h: Math.max(180, H - 64) };
+        } else w.rect = this.clampRect(w.rect);
+        this.setRect(w.el, w.rect);
+      });
+    },
     relayout() {
       this.map.forEach((w, id) => {
-        w.rect = this.clampRect((id === 'combat' ? this.loadRect(id) : null) || this.defaultRect(id));
+        w.maximized = false; w.restoreRect = null;
+        w.rect = this.clampRect(this.loadRect(id) || this.defaultRect(id));
         this.setRect(w.el, w.rect);
         this.render(id);
       });
@@ -839,8 +937,7 @@
   }
 
   function markMenu() {
-    const pageOpen = [...wins.map.keys()].some(id => id !== 'combat');
-    $('game')?.classList.toggle('page-open', pageOpen);
+    $('game')?.classList.remove('page-open'); // Không chặn sân khấu như trang phủ.
     $$('#menu [data-window]').forEach(b => {
       const on = b.dataset.window === 'tribulation' ? trib.pageOpen : b.dataset.window === 'idle' ? wins.map.size === 0 && !trib.pageOpen : wins.has(b.dataset.window);
       b.classList.toggle('on', on);
@@ -925,7 +1022,6 @@
   function go(target, { silent = false } = {}) {
     if (!UI.release.allowed(target)) return;
     if (target === 'world:quests') target = 'quests'; // Liên kết cũ từ NPC / URL vẫn hoạt động.
-    if (target === 'chat' && UI.chatBubble) { UI.chatBubble.open(); return; }
     if (!UI.s().created) return;
     if (['running', 'settling'].includes(trib.phase)) return;
     closeMoreMenu();
@@ -1637,7 +1733,6 @@
   }
 
   async function run(name, el) {
-    if (name === 'resetAfterDeath') { if (UI.resetAfterDeath) safe(() => UI.resetAfterDeath()); return; }
     if (name === 'modalClose') { closeModal(); return; }
     if (name === 'modalConfirm') {
       if ($('modalLayer').hidden) return;
@@ -1646,6 +1741,7 @@
       if (fn && !store.locked) { store.catchUp(); await safe(fn); store.write(); refresh(); }
       return;
     }
+    if (name === 'resetAfterDeath') { await safe(() => UI.resetAfterDeath?.()); return; }
     if (!$('modalLayer').hidden) return;
     if (store.locked) { toast('Một tab khác đang chơi. Đóng tab kia rồi tải lại trang.'); return; }
     if (trib.pageOpen) {

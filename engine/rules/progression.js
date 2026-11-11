@@ -69,7 +69,7 @@
         const talent = (s.talent?.ngoTinh || 0) * .015;
         const meta = 1 + (s.meta?.upgrades?.exp || 0) * .03;
         const pavilion = 1 + H.PAVILION.bonus(s.pavilion?.ngoTinh);
-        return F.cultivation_rate(s.realm, add, [up, Math.min(.25, buff), race, talent], s.rootType, F.prestige_mult(s.daoVan)) *
+        return F.cultivation_rate(s.realm, add, [up, Math.min(.25, buff), race, talent], s.rootType, 1 /* hệ số Đạo vận cũ đã ngừng sử dụng */) *
           meta * pavilion * (1 + this.rootEffects().rate + (this.sectDefinition()?.rate || 0));
       },
       stats(now = this.s.lastUpdate) {

@@ -47,21 +47,20 @@
     const glossary = Object.entries(S).map(([key, label]) =>
       '<div class="stat-definition"><dt>' + esc(label) + '</dt><dd>' + esc(UI.statDescriptions[key] || '') + '</dd></div>'
     ).join('');
-    const power = [[S.hp, num(st.HP)], [S.mp, num(g.maxMp())], [S.sta, num(st.STA)], [S.atk, num(st.ATK)], [S.def, num(st.DEF)], [S.spd, num(st.SPD)],
-      [S.cp, num(st.CP)], [S.crit, pct(st.CRIT)], [S.critDamage, pct(st.CRIT_DMG)], [S.dodge, pct(st.DODGE)]];
-    const talents = H.TALENT_INFO.map(t => {
-      const v = s.talent?.[t.key] || 0;
-      return `<li class="talent-chip"><b>${esc(t.name)}</b><span>${v} điểm</span><small>${esc(t.effect(v))}</small></li>`;
-    }).join('');
-    const pillCap = .25 * F.realm_exp_total(s.realm);
-    return `<div class="char-sheet">
-      ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v]) => tile(k, v)).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
-      ${card('Thiên phú khởi nguyên', `<ul class="talent-list">${talents}</ul>`, { eyebrow: 'KHỞI NGUYÊN', cls: 'sheet-talent' })}
-      ${card('Tu luyện', `<div class="stat-tiles tiles-3">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
-      ${card('Đạo vận · Thiên mệnh', `<div class="stat-tiles tiles-2">${tile('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${tile('Số kiếp đã qua', num(UI.session.pavilion?.rebirths || 0))}</div>
-        <p class="info-note">Thiên Mệnh Các cho nâng cấp vĩnh viễn, tối đa 20 cấp.</p>
-        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI', cls: 'sheet-rebirth' })}
-      ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ', cls: 'sheet-glossary' })}
+    return `<div class="screen-grid">
+      ${card('Chiến lực', [[S.hp, st.HP], [S.mp, g.maxMp()], [S.sta, st.STA], [S.atk, st.ATK], [S.def, st.DEF], [S.spd, st.SPD], [S.cp, st.CP]].map(([k, v]) => row(k, num(v))).join('') + row(S.crit, pct(st.CRIT)) + row(S.critDamage, pct(st.CRIT_DMG)) + row(S.dodge, pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
+      ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ' })}
+      ${card('Tu luyện', `
+        ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row(S.qiRate, num(g.rate()) + ' tu vi/giây')}
+        ${row('Tu vi từ đan / giới hạn', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
+        ${row('Đan đã dùng ở tầng này', s.pillUses + ' viên')}`, { eyebrow: 'ĐẠO CẢNH' })}
+      ${card('Thiên phú khởi nguyên', H.TALENT_INFO.map(t => {
+        const v = s.talent?.[t.key] || 0;
+        return row(t.name, v + ' điểm · ' + t.effect(v));
+      }).join(''), { eyebrow: 'KHỞI NGUYÊN' })}
+      ${card('Thiên Tinh · Thiên mệnh', `
+        ${row('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${row('Thiên Mệnh Các', 'Nâng cấp tối đa 20 cấp bằng Thiên Tinh')}
+        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'THIÊN MỆNH' })}
     </div>`;
   }
 
@@ -199,7 +198,7 @@
     render: tab => header() + tabs(TABS, tab) + `<div class="screen-body">${{ stats, skills, roots, bag }[tab]()}</div>`,
     signature: () => {
       const s = UI.s();
-      return [s.realm, s.stage, s.daoVan, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, s.rebirths, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
+      return [s.realm, s.stage, UI.session.pavilion?.balance || 0, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
     }
   });
 

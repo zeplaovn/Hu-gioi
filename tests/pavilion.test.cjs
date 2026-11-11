@@ -1,4 +1,4 @@
-/* HƯ GIỚI — Thiên Mệnh Các: giao dịch SQLite, đột phá và tích lũy xuyên kiếp. */
+/* HƯ GIỚI — Thiên Mệnh Các: giao dịch SQLite, đột phá, không trọng sinh. */
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -120,44 +120,35 @@ test('mua cấp Thiên Mệnh Các: optimistic version, receipt một lần, đ�
   } finally { repo.close(); }
 });
 
-test('tạo kiếp mới miễn phí: giữ số dư, cấp vĩnh viễn, kho bảo vật; thưởng lại đầy đủ', async () => {
+test('tử vong: có thể tạo lại từ đầu, không giữ Thiên Tinh hay nâng cấp', async () => {
   const { repo, service } = setup();
   try {
-    const id = (await spawn(service, 'a', 'Tô Thiên Vân')).playerId;
-    await forceAscension({ repo, service }, id, 'a', 'first-ascend');
-    await buy(service, 'a', 'permanent-lvl', 'upgrade', 'canCot');
-    await addPoints(repo, id, 150);
-    await buy(service, 'a', 'relic-purchase1', 'relic', 'tuiLinhThach');
-    await buy(service, 'a', 'relic-purchase2', 'relic', 'tuiLinhThach');
-    await buy(service, 'a', 'relic-purchase3', 'relic', 'nguDaoNgoc');
-    const account = (await service.bootstrap('a')).pavilion;
-    const rec = await repo.get(id);
+    const id = (await spawn(service,'a','Tô Thiên Vân')).playerId;
+    await forceAscension({ repo,service }, id,'a','first-ascend');
+    await buy(service,'a','current-upgrade','upgrade','canCot');
+    await assert.rejects(buy(service,'a','legacy-relic','relic','tuiLinhThach'), { code:'INVALID_REQUEST' });
+    const record = await repo.get(id);
+    await assert.rejects(service.resetAfterDeath('a',id), { code:'GAME_RULE_VIOLATION' });
     await repo.transact(id, tx => ({ save: {
-      state: { ...rec.state, death: { cause: 'combat', at: T0 } },
+      state: { ...record.state, death: { cause:'combat', at:T0 } },
       revision: tx.record.revision + 1, rngCounter: tx.record.rngCounter,
-      lastSeenAt: T0, schemaVersion: H.VERSION, contentVersion: 'test'
+      lastSeenAt:T0, schemaVersion:H.VERSION, contentVersion:'test'
     } }));
-    const reset = await service.resetAfterDeath('a', id);
-    assert.equal(reset.deleted, true);
-    assert.equal(reset.pavilion.balance, account.balance);
-    assert.equal(reset.pavilion.rebirths, 1);
-    assert.equal(reset.pavilion.relics.tuiLinhThach, 2);
-    assert.equal((await service.bootstrap('a')).player, null);
-    const next = await spawn(service, 'a', 'Tô Vân Kiếp');
-    assert.equal(next.state.pavilion.canCot, 1);
-    assert.ok(next.state.stone >= 580, 'cộng 200 linh thạch từ bảo vật một lần');
-    assert.ok(next.state.qi > 0, 'Ngộ Đạo Ngọc khởi đầu có tu vi');
-    assert.equal(next.pavilion.relics.tuiLinhThach, 1);
-    assert.equal(next.pavilion.relics.nguDaoNgoc, 0);
-    assert.equal(next.pavilion.balance, account.balance);
-    const second = await forceAscension({ repo, service }, next.playerId, 'a', 'second-ascend');
-    assert.equal(second.result.thienTinh, 5);
-    assert.equal(second.pavilion.totalEarned, account.totalEarned + 5);
-    assert.equal(second.pavilion.balance, account.balance + 5);
+    await assert.rejects(spawn(service,'a','Tô Vân Kiếp'), { code:'PLAYER_EXISTS' });
+    const reset = await service.resetAfterDeath('a',id);
+    assert.equal(reset.deleted,true);
+    assert.equal(reset.pavilion.balance,0);
+    assert.equal(reset.pavilion.totalEarned,0);
+    assert.deepEqual(reset.pavilion.upgrades,{});
+    assert.equal(reset.pavilion.rebirths,0);
+    const next = await spawn(service,'a','Tô Vân Kiếp');
+    assert.notEqual(next.playerId,id);
+    assert.equal(next.pavilion.balance,0);
+    assert.equal(next.state.pavilion?.canCot || 0,0);
   } finally { repo.close(); }
 });
 
-test('kho tài khoản bền vững khi đóng/mở SQLite và bị xóa đúng quyền dữ liệu', async () => {
+test('Thiên Tinh bền vững khi đóng/mở SQLite và bị xóa đúng quyền dữ liệu', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-pavilion-'));
   const dbFile = path.join(dir, 'game.sqlite');
   try {
@@ -166,7 +157,7 @@ test('kho tài khoản bền vững khi đóng/mở SQLite và bị xóa đúng 
     const id = (await spawn(service1, 'account-persist', 'Thạch Đạo Nhân')).playerId;
     await addPoints(firstRepo, id, 80);
     await buy(service1, 'account-persist', 'persist-0001', 'upgrade', 'ngoTinh');
-    await buy(service1, 'account-persist', 'persist-0002', 'relic', 'tuiLinhThach');
+    await assert.rejects(buy(service1, 'account-persist', 'persist-0002', 'relic', 'tuiLinhThach'), { code: 'INVALID_REQUEST' });
     const expected = (await service1.bootstrap('account-persist')).pavilion;
     firstRepo.close();
 

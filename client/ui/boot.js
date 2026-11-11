@@ -250,43 +250,39 @@
       '<div class="offline-list">' +
         '<div><span>Hưởng thọ</span><b>' + num(Math.floor(s.age)) + ' tuổi</b></div>' +
         '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
-        '<div><span>Tu vi kiếp này</span><b>' + num(s.totalRunExp) + '</b></div>' +
+        '<div><span>Tổng tu vi hành trình</span><b>' + num(s.totalRunExp) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Kiếp này đã khép lại. Trở về Khởi Nguyên sẽ xóa nhân vật, vật phẩm, linh thạch và thành tựu kiếp này. Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân còn trong kho vẫn được giữ theo tài khoản. Chuyển kiếp miễn phí.</p>' +
-      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Trở về Khởi Nguyên</button></div>',
-      null, '', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', busy: true, vfx: ['loi_kiep', 'ha_gioi'] });
-    document.querySelector('[data-act="resetAfterDeath"]')?.focus();
+      '<p class="info-note">Bạn có thể bắt đầu lại từ Khởi Nguyên. Nhân vật, cảnh giới, lực chiến, vật phẩm, Thiên Tinh và nâng cấp sẽ về 0. Không có thưởng hoặc cộng dồn trọng sinh.</p>' +
+      '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Bắt đầu lại từ đầu</button></div>',
+      null, 'Đóng', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', vfx: ['loi_kiep', 'ha_gioi'] });
   };
+
+
   UI.resetAfterDeath = async function () {
     if (!deathOpen || store.locked) return;
-    /* Xóa nhân vật chỉ khi máy chủ xác nhận đã tọa hóa. */
     store.ready = false;
     try {
       const preview = await store.resetAfterDeath();
       creation = { ...freshCreation(), ...preview };
     } catch (error) {
       store.ready = true;
-      UI.toast('Không thể xóa nhân vật trên máy chủ: ' + error.message, { type: 'danger' });
+      UI.toast('Không thể bắt đầu lại: ' + error.message, { type: 'danger' });
       return;
     }
-    UI.closeModal(true);
-    deathOpen = false;
+    UI.closeModal(true); deathOpen = false;
     UI.windows?.closeAll();
     UI.tabState = {};
     UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
-    UI.current = 'idle';
-    // Giữ nguyên tuổi/chủng tộc/linh căn trong ticket vừa cấp bởi máy chủ.
-    rolling = '';
-    $('continueGame').hidden = true;
-    $('continueGame').title = '';
-    $('welcomeRebirth').textContent = 'Bước vào kiếp thứ ' + ((UI.session.pavilion?.rebirths || 0) + 1) + ' · Thiên Tinh được giữ vĩnh viễn.';
-    $('game').hidden = true;
-    $('welcome').hidden = false;
+    UI.current = 'idle'; rolling = '';
+    $('continueGame').hidden = true; $('continueGame').title = '';
+    $('welcomeRebirth').textContent = 'Khởi đầu mới · không giữ lại tài nguyên hoặc sức mạnh.';
+    $('game').hidden = true; $('welcome').hidden = false;
     document.body.classList.remove('in-game');
-    try { root.history?.replaceState(null, '', root.location.pathname + root.location.search); } catch { /* file:// */ }
+    try { root.history?.replaceState(null, '', root.location.pathname + root.location.search); } catch {}
     renderCreation();
     $('nameInput')?.focus({ preventScroll: true });
   };
+
 
   function start() {
     const s = UI.s();
@@ -513,7 +509,7 @@
     }
     $('continueGame').hidden = true;
     $('continueGame').title = '';
-    $('welcomeRebirth').textContent = 'Kiếp thứ ' + ((UI.session.pavilion?.rebirths || 0) + 1) + ' · chọn Thiên mệnh, giữ trọn Thiên Tinh từ tiền kiếp.';
+    $('welcomeRebirth').textContent = 'Khai mở một đạo thân · chọn Thiên mệnh khởi nguyên.';
     $('welcome').hidden = false;
     renderCreation();
   }

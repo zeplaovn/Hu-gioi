@@ -5,6 +5,7 @@
 'use strict';
 const { GameError, mapPostgresError } = require('../errors.js');
 const { PlayerRepository } = require('./player-repository.js');
+const GAME = require('../../engine/game.js');
 const { encodePavilionReceipt, decodePavilionReceipt } = require('./pavilion-receipt.js');
 
 const DAY = 86400000;
@@ -20,6 +21,13 @@ const toInt = x => {
 };
 const unique = err => err?.code === '23505' || err?.cause?.code === '23505';
 const bytes = s => new TextEncoder().encode(s).byteLength;
+/* Tính chiến lực bằng engine server, không dựa vào client hay SQL gần đúng. */
+const combatPower = state => {
+  const value = new GAME.Game(state).stats().CP;
+  if (!Number.isFinite(value) || value < 0)
+    throw new GameError('STATE_CORRUPT', 'Chiến lực nhân vật không hợp lệ.');
+  return Math.min(Number.MAX_SAFE_INTEGER, Math.round(value));
+};
 
 function hydrate(r) {
   if (!r) return null;
@@ -173,7 +181,7 @@ class PostgresPlayers extends PlayerRepository {
         throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
       await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
       const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]));
-      const consumed = Object.fromEntries(Object.keys(account.relics).filter(k => account.relics[k] > 0).map(k => [k, 1]));
+      const consumed = {}; // Không mang Kỳ Trân từ kiếp trước sang đạo thân mới.
       const rec = await build(json(ticket.preview), { ...account, consumed });
       const serialized = JSON.stringify(rec.state);
       if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
@@ -181,10 +189,10 @@ class PostgresPlayers extends PlayerRepository {
       try {
         await exec(c, `INSERT INTO game.players
           (id, owner_id, name, name_key, revision, schema_version, content_version, state,
-           rng_seed, rng_counter, last_seen_at, created_at, updated_at)
-          VALUES ($1,$2,$3,$4,0,$5,$6,$7::jsonb,$8,$9,$10,$10,$10)`, [
+           rng_seed, rng_counter, last_seen_at, created_at, updated_at, combat_power)
+          VALUES ($1,$2,$3,$4,0,$5,$6,$7::jsonb,$8,$9,$10,$10,$10,$11)`, [
           id, ownerId, rec.name, nameKey(rec.name), rec.schemaVersion, rec.contentVersion,
-          serialized, rec.rngSeed, big(rec.rngCounter), big(now)
+          serialized, rec.rngSeed, big(rec.rngCounter), big(now), big(combatPower(rec.state))
         ]);
       } catch (err) {
         if (unique(err)) {
@@ -194,12 +202,6 @@ class PostgresPlayers extends PlayerRepository {
         throw err;
       }
       await exec(c, 'UPDATE game.creation_tickets SET used_at = $1 WHERE id = $2', [big(now), ticketId]);
-      if (Object.keys(consumed).length) {
-        const relics = { ...account.relics };
-        for (const key of Object.keys(consumed)) relics[key]--;
-        await exec(c, `UPDATE game.pavilion_accounts
-          SET relics = $1::jsonb, version = version + 1 WHERE owner_id = $2`, [JSON.stringify(relics), ownerId]);
-      }
       await this.sweep(c, ownerId, now, id);
       return hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1', [id]));
     });
@@ -239,13 +241,17 @@ class PostgresPlayers extends PlayerRepository {
         const changed = await rows(c, `UPDATE game.players SET
           state = $1::jsonb, revision = $2, rng_counter = $3, last_seen_at = $4,
           schema_version = $5, content_version = $6, updated_at = $7,
-          rate_tokens = $8::jsonb, tokens_at = $7
+          rate_tokens = $8::jsonb, tokens_at = $7, combat_power = $11
           WHERE id = $9 AND revision = $10 RETURNING id`, [
           state, big(s.revision), big(s.rngCounter), big(s.lastSeenAt), s.schemaVersion,
           s.contentVersion, big(s.lastSeenAt), JSON.stringify(rateTokens || rec.rateTokens),
-          playerId, big(rec.revision)
+          playerId, big(rec.revision), big(combatPower(s.state))
         ]);
         if (changed.length !== 1) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.');
+        if (new GAME.Game(s.state).isDead()) {
+          // Nhân vật đã tọa hóa lập tức rời bảng xếp hạng; không chờ bấm bắt đầu lại.
+          await exec(c, 'DELETE FROM game.player_leaderboard WHERE player_id = $1', [playerId]);
+        }
       } else if (out.touch || rateTokens) {
         await exec(c, `UPDATE game.players SET rng_counter = $1, last_seen_at = $2,
           rate_tokens = $3::jsonb, tokens_at = $4 WHERE id = $5`, [
@@ -295,12 +301,6 @@ class PostgresPlayers extends PlayerRepository {
         cost = catalog.upgradeCost(current);
         if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
         upgrades[key] = current + 1;
-      } else if (kind === 'relic' && Object.hasOwn(catalog.relics, key)) {
-        const def = catalog.relics[key];
-        if ((relics[key] || 0) >= def.maxStored)
-          throw new GameError('GAME_RULE_VIOLATION', 'Kho Kỳ Trân đã đạt giới hạn.');
-        cost = def.cost;
-        relics[key] = (relics[key] || 0) + 1;
       } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
       if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
       await exec(c, `UPDATE game.pavilion_accounts SET
@@ -315,8 +315,8 @@ class PostgresPlayers extends PlayerRepository {
         const serialized = JSON.stringify(state);
         if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
         updatedPlayer = await one(c, `UPDATE game.players SET
-          state = $1::jsonb, revision = revision + 1, updated_at = $2
-          WHERE owner_id = $3 RETURNING *`, [serialized, big(now), ownerId]);
+          state = $1::jsonb, revision = revision + 1, updated_at = $2, combat_power = $4
+          WHERE owner_id = $3 RETURNING *`, [serialized, big(now), ownerId, big(combatPower(state))]);
       }
       await exec(c, `INSERT INTO game.pavilion_receipts
         (owner_id, request_id, fingerprint, created_at) VALUES ($1,$2,$3,$4)`,
@@ -326,15 +326,21 @@ class PostgresPlayers extends PlayerRepository {
         version: account.version + 1, upgrades, relics }, record: hydrate(updatedPlayer) };
     });
   }
+  /* Tử vong: xóa sạch tiến trình và Thiên Tinh nhưng giữ auth.users cùng phiếu
+   * khởi nguyên cũ để hạn mức gieo lại không thể bị reset bằng chết liên tục.
+   * Kiểm tra sống/chết trong transaction đã khóa hàng, không tin browser. */
   async deletePlayer(ownerId, playerId) {
     return this.transaction(async c => {
       await this.ownerLock(c, ownerId);
-      const player = await one(c, 'SELECT id FROM game.players WHERE id = $1 AND owner_id = $2 FOR UPDATE', [playerId, ownerId]);
-      if (!player) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
+      const player = await one(c, 'SELECT id, state FROM game.players WHERE id = $1 AND owner_id = $2 FOR UPDATE', [playerId, ownerId]);
+      if (!player) throw new GameError('PLAYER_NOT_FOUND','Không tìm thấy đạo thân.');
+      if (!new GAME.Game(json(player.state)).isDead())
+        throw new GameError('GAME_RULE_VIOLATION','Đạo thân chưa tọa hóa.');
+      // Bản ghi xếp hạng tự xóa bằng FK CASCADE, không cộng chỉ số chuyển kiếp.
+      await exec(c, 'DELETE FROM game.world_chat_messages WHERE owner_id = $1', [ownerId]);
+      await exec(c, 'DELETE FROM game.world_chat_presence WHERE owner_id = $1', [ownerId]);
       await exec(c, 'DELETE FROM game.players WHERE id = $1 AND owner_id = $2', [playerId, ownerId]);
-      await exec(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
-      await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
-      await exec(c, 'UPDATE game.pavilion_accounts SET rebirths = rebirths + 1, version = version + 1 WHERE owner_id = $1', [ownerId]);
+      await exec(c, 'DELETE FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId]);
       return { deleted: true };
     });
   }
@@ -344,8 +350,12 @@ class PostgresPlayers extends PlayerRepository {
       const ticketRow = await one(c, 'SELECT count(*)::bigint AS n FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
       const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId]));
       const tickets = toInt(ticketRow.n);
-      if (!player && !tickets && account.totalEarned === 0 && account.rebirths === 0) return null;
-      return { player: player ? {
+      const chatRows = await rows(c, `SELECT id, sender_name, body, created_at
+        FROM game.world_chat_messages WHERE owner_id = $1 ORDER BY id ASC`, [ownerId]);
+      if (!player && !tickets && account.totalEarned === 0 && account.rebirths === 0 && !chatRows.length) return null;
+      return { chatMessages: chatRows.map(r => ({
+        id: String(r.id), name: String(r.sender_name), text: String(r.body), at: toInt(r.created_at)
+      })), player: player ? {
         id: player.id, name: player.name, revision: toInt(player.revision), schemaVersion: player.schema_version,
         state: json(player.state), lastSeenAt: toInt(player.last_seen_at),
         createdAt: toInt(player.created_at), updatedAt: toInt(player.updated_at)
@@ -358,10 +368,13 @@ class PostgresPlayers extends PlayerRepository {
       const player = await one(c, 'SELECT id FROM game.players WHERE owner_id = $1 FOR UPDATE', [ownerId]);
       const receipts = player ? toInt((await one(c,
         'SELECT count(*)::bigint AS n FROM game.player_receipts WHERE player_id = $1', [player.id])).n) : 0;
+      // Erasure phải xóa cả tin nhắn/presence; đây là dữ liệu mới ngoài gameplay state.
+      const deletedChat = await rows(c, 'DELETE FROM game.world_chat_messages WHERE owner_id = $1 RETURNING id', [ownerId]);
+      await exec(c, 'DELETE FROM game.world_chat_presence WHERE owner_id = $1', [ownerId]);
       const deletedPlayer = await rows(c, 'DELETE FROM game.players WHERE owner_id = $1 RETURNING id', [ownerId]);
       const deletedTickets = await rows(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1 RETURNING id', [ownerId]);
       const deletedPavilion = await rows(c, 'DELETE FROM game.pavilion_accounts WHERE owner_id = $1 RETURNING owner_id', [ownerId]);
-      return { players: deletedPlayer.length, tickets: deletedTickets.length, receipts, pavilionAccounts: deletedPavilion.length };
+      return { players: deletedPlayer.length, tickets: deletedTickets.length, receipts, pavilionAccounts: deletedPavilion.length, chatMessages: deletedChat.length };
     });
   }
   async purgeExpired(now) {

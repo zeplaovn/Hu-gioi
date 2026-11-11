@@ -76,7 +76,7 @@
   function completedCard() {
     return card('Đạo Tổ viên mãn', `
       <p>Đạo cơ đã hợp nhất với Thiên đạo. Không còn lôi kiếp nào có thể lay chuyển bạn.</p>
-      <p class="info-note">Đạo quả viên mãn. Không còn cơ chế trọng sinh chủ động.</p>
+      <p class="info-note">Đạo quả viên mãn. Hành trình tu luyện đã hoàn tất.</p>
       <div class="action-group"><button class="btn btn-outline" data-go="idle">Về tiên sơn</button></div>`, { eyebrow: 'ĐẠO TỔ', cls: 'wide' });
   }
 

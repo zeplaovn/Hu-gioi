@@ -16,27 +16,28 @@
 
   const { PVP_CD, DISCUSS_CD, FRIENDS, DAO, RIVALS, giftCost } = H;
 
-  // Danh sách người chơi lấy từ backend; không dựng sẵn NPC giả.
-  const leaderboardState = { data: null, error: '', at: 0, owner: '', pending: null };
+  // Chế độ top độc lập, cache ngắn, không truy vấn toàn bộ game.players.state.
+  const leaderboardState = { data: null, error: '', at: 0, owner: '', mode: 'power', pending: null };
   async function loadLeaderboard(force = false) {
-    const owner = UI.session?.accountId;
+    const owner = UI.session?.accountId, mode = leaderboardState.mode;
     if (!owner) return;
-    if (leaderboardState.owner !== owner) {
+    if (leaderboardState.owner !== owner)
       Object.assign(leaderboardState, { data: null, error: '', at: 0, owner, pending: null });
-    }
     if (leaderboardState.pending) return leaderboardState.pending;
     if (!force && Date.now() - leaderboardState.at < 30000) return;
-    const task = UI.session.request('/social/ranking')
-      .then(data => { if (leaderboardState.owner === owner) {
+    const task = UI.session.request('/social/ranking', 'POST', { mode })
+      .then(data => { if (leaderboardState.owner === owner && leaderboardState.mode === mode) {
         leaderboardState.data = data; leaderboardState.error = ''; leaderboardState.at = Date.now();
       } })
-      .catch(error => { if (leaderboardState.owner === owner) {
+      .catch(error => { if (leaderboardState.owner === owner && leaderboardState.mode === mode) {
         leaderboardState.error = error.message; leaderboardState.at = Date.now();
       } })
       .finally(() => {
         if (leaderboardState.pending === task) leaderboardState.pending = null;
-        if (leaderboardState.owner === owner && UI.windows?.has('more') && UI.tabState.more === 'ranking')
-          UI.windows.render('more');
+        if (leaderboardState.owner === owner) {
+          if (UI.windows?.has('ranking')) UI.windows.render('ranking');
+          if (UI.windows?.has('more') && UI.tabState.more === 'ranking') UI.windows.render('more');
+        }
       });
     leaderboardState.pending = task;
     return task;
@@ -108,23 +109,35 @@
   }
 
   function ranking() {
-    const data = leaderboardState.data, entries = data?.entries || [], me = data?.me;
-    const refresh = '<div class="action-group"><button type="button" class="btn btn-outline" data-act="rankingRefresh">Cập nhật bảng xếp hạng</button></div>';
-    const myCard = me
-      ? card('Thứ hạng của bạn', '<div class="rank-me"><b>#' + num(me.rank) + '</b><span>' + esc(me.name) +
-          '</span><em>' + num(me.rating) + ' danh vọng</em></div>' +
-          row('Cảnh giới', esc(F.REALMS[me.realm] || '')) + row('Thắng / Thua', num(me.wins) + ' / ' + num(me.losses)),
-          { eyebrow: 'TÀI KHOẢN ĐÃ XÁC THỰC' })
-      : '';
-    const rows = entries.map((e, i) => '<div class="rank-row ' + (e.you ? 'you' : '') + ' ' + (i < 3 ? 'top' : '') + '">' +
-      '<span class="rank-no">' + (i < 3 ? ['Ⅰ', 'Ⅱ', 'Ⅲ'][i] : '#' + (i + 1)) + '</span>' +
-      '<span class="rank-name"><b>' + esc(e.name) + '</b><small>' +
-      esc(F.REALMS[e.realm] || '') + (e.you ? ' · Bạn' : '') + '</small></span>' +
-      '<span class="rank-rating">' + num(e.rating) + '<small>danh vọng</small></span></div>').join('');
-    return '<p class="screen-lead">Bảng xếp hạng người chơi thật, cập nhật khi danh vọng Luận Kiếm thay đổi. Mỗi lần chỉ tải tối đa 50 người chơi.</p>' +
+    const mode = leaderboardState.mode, data = leaderboardState.data;
+    const entries = data?.entries || [], me = data?.me;
+    const modeNav = '<div class="ranking-modes" role="group" aria-label="Loại bảng xếp hạng">' +
+      [['power','Lực chiến'],['realm','Cảnh giới']].map(([id,label]) =>
+        '<button type="button" data-act="rankingMode" data-mode="' + id +
+        '" aria-pressed="' + (mode === id) + '" class="btn ' + (mode === id ? 'btn-gold' : 'btn-outline') +
+        '">' + label + '</button>').join('') + '</div>';
+    const value = e => mode === 'realm'
+      ? esc(F.REALMS[e.realm] || '') + ' · tầng ' + num(e.stage)
+      : num(e.power) + ' lực chiến';
+    const myCard = me ? card('Thứ hạng của bạn',
+      '<div class="rank-me"><b>#' + num(me.rank) + '</b><span>' + esc(me.name) +
+      '</span><em>' + value(me) + '</em></div>' +
+      row('Lực chiến', num(me.power)) +
+      row('Cảnh giới', esc(F.REALMS[me.realm] || '') + ' · tầng ' + num(me.stage)),
+      { eyebrow: 'NHÂN VẬT HIỆN TẠI' }) : '';
+    const items = entries.map((e,i) => '<div class="rank-row ' + (e.you ? 'you' : '') + ' ' +
+      (i < 3 ? 'top' : '') + '"><span class="rank-no">' +
+      (i < 3 ? ['Ⅰ','Ⅱ','Ⅲ'][i] : '#' + (i + 1)) + '</span><span class="rank-name"><b>' +
+      esc(e.name) + '</b><small>' + esc(F.REALMS[e.realm] || '') + ' · tầng ' + num(e.stage) +
+      (e.you ? ' · Bạn' : '') + '</small></span><span class="rank-rating">' +
+      (mode === 'realm' ? esc(F.REALMS[e.realm] || '') : num(e.power)) +
+      '<small>' + (mode === 'realm' ? 'tầng ' + num(e.stage) : 'lực chiến') + '</small></span></div>').join('');
+    return '<p class="screen-lead">Bảng xếp hạng người chơi thật · Top 50 Lực chiến hoặc Cảnh giới. Khi tọa hóa và bắt đầu lại, nhân vật cũ không còn trên bảng xếp hạng.</p>' +
+      modeNav +
       (leaderboardState.error ? '<p class="info-note" role="alert">' + esc(leaderboardState.error) + '</p>' : '') +
       (!data && !leaderboardState.error ? '<p class="info-note" role="status">Đang tải bảng xếp hạng…</p>' : '') +
-      myCard + '<div class="rank-list">' + (rows || (data ? '<p class="empty-note">Chưa có đạo hữu trong bảng xếp hạng.</p>' : '')) + '</div>' + refresh;
+      myCard + '<div class="rank-list">' + (items || (data ? '<p class="empty-note">Chưa có tu sĩ trong bảng xếp hạng.</p>' : '')) + '</div>' +
+      '<button type="button" class="btn btn-outline" data-act="rankingRefresh">Làm mới thứ hạng</button>';
   }
 
   const body = { friends, dao, pvp, ranking };
@@ -147,6 +160,21 @@
     }
   });
 
+  UI.register({
+    id: 'ranking', label: 'Bảng xếp hạng', icon: '♛', eyebrow: 'THIÊN BẢNG',
+    render: () => '<header class="screen-title"><span class="eyebrow gold">THIÊN BẢNG</span><h2>Bảng xếp hạng</h2></header><div class="screen-body">' + ranking() + '</div>',
+    mount: () => { void loadLeaderboard(); },
+    signature: () => [leaderboardState.at,leaderboardState.mode,leaderboardState.owner].join('|')
+  });
+  UI.action('rankingMode', (el,data) => {
+    const mode = data.mode;
+    if (!['power','realm'].includes(mode) || leaderboardState.mode === mode) return UI.KEEP;
+    leaderboardState.mode = mode; leaderboardState.data = null;
+    leaderboardState.error = ''; leaderboardState.at = 0;
+    if (UI.windows?.has('ranking')) UI.windows.render('ranking');
+    if (UI.windows?.has('more') && UI.tabState.more === 'ranking') UI.windows.render('more');
+    return UI.KEEP;
+  });
   UI.action('rankingRefresh', () => { void loadLeaderboard(true); return UI.KEEP; });
 
   const findFriend = id => FRIENDS.find(f => f.id === id);
