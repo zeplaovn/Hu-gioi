@@ -35,7 +35,7 @@ test('từ chối mã nguồn máy chủ, test, tài liệu, công cụ, file �
   const blocked = [
     '/server/main.js', '/Server/main.js', '/SERVER/http/static.js', '/%73erver/main.js',
     '/tests/engine.test.cjs', '/TESTS/engine.test.cjs', '/docs/architecture.md', '/docs/backend-plan.md',
-    '/tools/ui-proof.py', '/demo/player-pack-preview.html', '/README.md', '/data/README.md',
+    '/tools/ui-proof.py', '/demo/preview.html', '/README.md', '/data/README.md',
     '/package.json', '/PACKAGE.JSON', '/_headers',
     '/.git/config', '/.git/HEAD', '/.github/workflows/ui-verification.yml', '/.gitignore', '/.env',
     '/media/.env', '/css/.hidden', '/client/.secret.js'

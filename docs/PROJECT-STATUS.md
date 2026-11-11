@@ -49,3 +49,9 @@ Không coi việc merge tài liệu vào main là cấp phép chạy migration, 
 - Loại `tools/install-custom-assets.py` — công cụ cài lại ZIP của đợt nhập asset, trong khi toàn bộ 15 WebP đã có sẵn trên Git; không dùng trong CI hay runtime.
 - **Giữ** `bi_canh.png` vì đang là fallback khi `bi_canh.webp` thất bại; giữ `tra_cuu_item.html` vì test item-art đọc, giữ atlas, bảng thiết kế, file XLSX/CSV làm nguồn tác giả, assets NPC, và adapters dev/test.
 - Không thay đổi API, game rules, Supabase migrations, cơ chế shop/chat/rank hoặc dữ liệu người chơi. Mọi xóa file đều còn trong lịch sử Git.
+
+## VI. Dọn demo/tool — 11/11/2026
+- Kiểm kê trên `main` trước đợt này: **1 demo** (`demo/player-pack-preview.html`) và **11 tool** trong `tools/`. Demo sprite độc lập không thuộc giao diện phát hành; đã loại bỏ và thay hướng dẫn thử bằng UI game hiện hành.
+- **Không xóa 11 tool còn có điểm sử dụng:** `build-dist.cjs`, `build-edge.cjs`, `check-css-bundle.cjs`, `simulate-edge-calls.cjs` được gọi qua npm; `bench-service.cjs`, `edge-http-smoke.cjs`, `online-ci-server.cjs`, `release-browser-smoke.py`, `release-security-audit.cjs`, `ui-proof.py` được gọi trong GitHub Actions; `backup-db.cjs` còn kiểm thử hồi quy SQLite trong `tests/game-api.test.cjs` (chỉ dành cho dev/test).
+- `tools/release-browser-smoke.py` vẫn đang chạy trong CI, nhưng có một số điều kiện kiểm tra chat/ranking ở phiên bản cũ; đây là **nợ bảo trì test cần cập nhật**, không phải tool không dùng. Không bỏ gate browser smoke chỉ để giảm file.
+- Không sửa gameplay, backend, SQL, asset dùng trong game, hoặc triển khai production.
