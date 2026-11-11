@@ -15,35 +15,53 @@
     { id: 'bag', label: 'Hành trang', icon: '◈' }
   ];
 
+  /* Thanh tiến độ nhỏ kèm nhãn; dùng chung cho tu vi và thọ nguyên ở đầu màn. */
+  function meter(label, text, percent, cls) {
+    return `<div class="char-meter"><div class="char-meter-top"><span>${label}</span><b>${text}</b></div>${bar(percent, cls)}</div>`;
+  }
+
   function header() {
     const s = UI.s(), g = UI.g();
+    const need = g.need(), life = H.raceLife(s.race, s.realm) + s.extraLife;
+    const qiPct = need > 0 ? s.qi / need * 100 : 0, agePct = life > 0 ? s.age / life * 100 : 0;
     return `<header class="char-header">
       <div class="portrait"><img src="${A.heroPortrait(s.gender, s.realm)}" alt="${esc(s.name)}" decoding="async"></div>
-      <div><span class="eyebrow gold">${esc(H.rootLabel(s.rootType, s.rootSub).toUpperCase())}</span><h2>${esc(s.name)}</h2>
-        <p>${g.realmLabel()} · ${F.realm_map(s.zone)}</p>
-        <p class="muted">Chủng tộc ${H.raceName(s.race)} · Tuổi ${num(Math.floor(s.age))} / thọ nguyên ${num(H.raceLife(s.race, s.realm) + s.extraLife)} năm</p></div>
+      <div class="char-id">
+        <span class="eyebrow gold">${esc(H.rootLabel(s.rootType, s.rootSub).toUpperCase())}</span>
+        <h2>${esc(s.name)}</h2>
+        <p class="char-realm">${g.realmLabel()} · ${F.realm_map(s.zone)}</p>
+        <p class="muted">${H.raceName(s.race)}</p>
+      </div>
+      <div class="char-meters">
+        ${meter('Tu vi', num(s.qi) + ' / ' + num(need), qiPct, 'qi')}
+        ${meter('Thọ nguyên', num(Math.floor(s.age)) + ' / ' + num(life) + ' năm', agePct, 'age')}
+      </div>
     </header>`;
   }
+
+  /* Ô chỉ số: nhãn nhỏ phía trên, giá trị lớn phía dưới. */
+  const tile = (label, value, cls = '') => `<div class="stat-tile ${cls}"><span>${label}</span><b>${value}</b></div>`;
 
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();
     const glossary = Object.entries(S).map(([key, label]) =>
       '<div class="stat-definition"><dt>' + esc(label) + '</dt><dd>' + esc(UI.statDescriptions[key] || '') + '</dd></div>'
     ).join('');
-    return `<div class="screen-grid">
-      ${card('Chiến lực', [[S.hp, st.HP], [S.mp, g.maxMp()], [S.sta, st.STA], [S.atk, st.ATK], [S.def, st.DEF], [S.spd, st.SPD], [S.cp, st.CP]].map(([k, v]) => row(k, num(v))).join('') + row(S.crit, pct(st.CRIT)) + row(S.critDamage, pct(st.CRIT_DMG)) + row(S.dodge, pct(st.DODGE)), { eyebrow: 'CHỈ SỐ' })}
-      ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ' })}
-      ${card('Tu luyện', `
-        ${row('Tu vi', num(s.qi) + ' / ' + num(g.need()))}${row(S.qiRate, num(g.rate()) + ' tu vi/giây')}
-        ${row('Tu vi từ đan / giới hạn', num(s.pillRealmExp) + ' / ' + num(.25 * F.realm_exp_total(s.realm)))}
-        ${row('Đan đã dùng ở tầng này', s.pillUses + ' viên')}`, { eyebrow: 'ĐẠO CẢNH' })}
-      ${card('Thiên phú khởi nguyên', H.TALENT_INFO.map(t => {
-        const v = s.talent?.[t.key] || 0;
-        return row(t.name, v + ' điểm · ' + t.effect(v));
-      }).join(''), { eyebrow: 'KHỞI NGUYÊN' })}
-      ${card('Đạo vận · Thiên mệnh', `
-        ${row('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${row('Số kiếp đã kết thúc', num(UI.session.pavilion?.rebirths || 0))}${row('Thiên Mệnh Các', 'Nâng cấp vĩnh viễn tối đa 20 cấp')}
-        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI' })}
+    const power = [[S.hp, num(st.HP)], [S.mp, num(g.maxMp())], [S.sta, num(st.STA)], [S.atk, num(st.ATK)], [S.def, num(st.DEF)], [S.spd, num(st.SPD)],
+      [S.cp, num(st.CP)], [S.crit, pct(st.CRIT)], [S.critDamage, pct(st.CRIT_DMG)], [S.dodge, pct(st.DODGE)]];
+    const talents = H.TALENT_INFO.map(t => {
+      const v = s.talent?.[t.key] || 0;
+      return `<li class="talent-chip"><b>${esc(t.name)}</b><span>${v} điểm</span><small>${esc(t.effect(v))}</small></li>`;
+    }).join('');
+    const pillCap = .25 * F.realm_exp_total(s.realm);
+    return `<div class="char-sheet">
+      ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v]) => tile(k, v)).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
+      ${card('Thiên phú khởi nguyên', `<ul class="talent-list">${talents}</ul>`, { eyebrow: 'KHỞI NGUYÊN', cls: 'sheet-talent' })}
+      ${card('Tu luyện', `<div class="stat-tiles tiles-3">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
+      ${card('Đạo vận · Thiên mệnh', `<div class="stat-tiles tiles-2">${tile('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${tile('Số kiếp đã qua', num(UI.session.pavilion?.rebirths || 0))}</div>
+        <p class="info-note">Thiên Mệnh Các cho nâng cấp vĩnh viễn, tối đa 20 cấp.</p>
+        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI', cls: 'sheet-rebirth' })}
+      ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ', cls: 'sheet-glossary' })}
     </div>`;
   }
 
