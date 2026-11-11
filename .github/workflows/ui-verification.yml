@@ -42,7 +42,7 @@ jobs:
       - name: Chuẩn bị Playwright dành riêng cho CI
         run: |
           python -m pip install playwright
-          python -m playwright install --with-deps chromium
+          python -m playwright install --with-deps chromium webkit
       - name: Chụp trước/sau (cả hai dùng CI API cục bộ + mock Supabase) và kiểm tra file://
         shell: bash
         env:
