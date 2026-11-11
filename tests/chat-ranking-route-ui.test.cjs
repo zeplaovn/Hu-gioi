@@ -19,7 +19,7 @@ test('Edge route table must register all four chat endpoints and both leaderboar
   assert.match(index,/const ownerId = await authenticate\(req, route\.name\)/);
   assert.ok(index.indexOf('await authenticate(req, route.name)') < index.indexOf('await handleSocial(repo, ownerId'));
   assert.match(index,/await handleSocial\(repo, ownerId, route\.name, body\)/);
-  assert.match(social,/WHERE channel_key = \$1 AND id > \$2/);
+  assert.match(social,/WHERE m\.channel_key = \$1 AND m\.id > \$2/);
   assert.match(social,/if \(!me\.sect_id\)/);
   assert.match(social,/pg_advisory_xact_lock/);
   assert.match(social,/now - asSafe\(last\.created_at\) < 15000/);

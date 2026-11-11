@@ -10,6 +10,8 @@
     { id: 'dao_huu', title: 'Đạo hữu', help: 'Phòng đạo hữu công khai, không phải nhắn tin riêng.' },
     { id: 'dao_lu', title: 'Đạo lữ', help: 'Phòng đạo lữ công khai, không phải nhắn tin riêng.' }
   ];
+  const MAX_TEXT = 80; // khớp Edge API và CHECK trong DB
+  const REALM_NAMES = () => root.HU_BALANCE?.REALMS || [];
   const labels = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', online: 'Đã kết nối', offline: 'Mất kết nối', unavailable: 'Hãy mở Hư Giới từ đường dẫn trực tuyến để truyền âm' };
 
   function render() {
@@ -46,10 +48,10 @@
       </div>
       <form id="chatForm" class="chat-form" aria-label="Soạn lời truyền âm">
         <label for="chatInput">Gửi lời truyền âm</label>
-        <div class="chat-compose-row"><input id="chatInput" type="text" maxlength="400" autocomplete="off"
+        <div class="chat-compose-row"><input id="chatInput" type="text" maxlength="${MAX_TEXT}" autocomplete="off"
           placeholder="Nhập lời truyền âm…" value="${esc(draft)}" aria-describedby="chatError chatLimit">
           <button type="submit" class="btn btn-gold" id="chatSend" aria-label="Gửi lời truyền âm">Gửi <span aria-hidden="true">➤</span></button></div>
-        <div class="chat-compose-meta"><small id="chatLimit">Tối đa 400 ký tự · Mỗi tin cách nhau 15 giây</small><span id="chatLength" aria-live="off"></span></div>
+        <div class="chat-compose-meta"><small id="chatLimit">Tối đa ${MAX_TEXT} ký tự · Mỗi tin cách nhau 15 giây</small><span id="chatLength" aria-live="off"></span></div>
         <p id="chatError" class="chat-error" role="status" aria-live="polite"></p>
       </form>
     </section>`;
@@ -62,8 +64,31 @@
     send.innerHTML = sending ? 'Đang gửi…' : left ? left + ' giây' : 'Gửi <span aria-hidden="true">➤</span>';
     if ($('chatLimit')) $('chatLimit').textContent = left
       ? 'Hồi linh truyền âm · còn ' + left + ' giây để gửi tin tiếp theo'
-      : 'Tối đa 400 ký tự · Mỗi tin cách nhau 15 giây';
-    if ($('chatLength')) $('chatLength').textContent = draft.length + '/400';
+      : 'Tối đa ' + MAX_TEXT + ' ký tự · Mỗi tin cách nhau 15 giây';
+    if ($('chatLength')) $('chatLength').textContent = Array.from(draft).length + '/' + MAX_TEXT;
+  }
+
+  /* Tên hiển thị: "Tên • Cảnh giới" (cảnh giới tô màu theo bậc); admin do máy chủ xác nhận hiện
+     "Admin • Hư Giới Chi Chủ". Chỉ dùng textContent; lớp CSS lấy từ số nguyên đã kẹp 0–13. */
+  function fillName(node, message, mine) {
+    node.textContent = '';
+    if (message.admin === true) {
+      node.className = 'chat-name chat-admin';
+      node.append('Admin • Hư Giới Chi Chủ');
+    } else {
+      node.className = 'chat-name';
+      node.append(String(message.name || 'Vô danh'));
+      const realm = Number.isInteger(message.realm) ? Math.max(0, Math.min(13, message.realm)) : -1;
+      const label = realm >= 0 ? REALM_NAMES()[realm] : '';
+      if (label) {
+        node.append(' • ');
+        const tag = document.createElement('span');
+        tag.className = 'chat-realm realm-' + realm;
+        tag.textContent = label;
+        node.append(tag);
+      }
+    }
+    if (mine) node.append(' · Bạn');
   }
 
   function update() {
@@ -93,7 +118,7 @@
       el.className = 'chat-message' + (message.senderId === state.self?.id ? ' mine' : '');
       el.dataset.message = message.id;
       const heading = document.createElement('header'), name = document.createElement('b'), time = document.createElement('time'), content = document.createElement('p');
-      name.textContent = message.name + (message.senderId === state.self?.id ? ' · Bạn' : '');
+      fillName(name, message, message.senderId === state.self?.id);
       name.title = 'Đạo hữu ' + message.senderId.slice(0, 8);
       time.dateTime = new Date(message.at).toISOString();
       time.textContent = new Date(message.at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
@@ -126,7 +151,7 @@
       event.preventDefault();
       if (sending || !draft.trim() || Date.now() < (session.lastSentAt || 0) + 15000) return;
       const text = draft.trim();
-      if (text.length > 400) return;
+      if (Array.from(text).length > MAX_TEXT) return;
       if (!pending || pending.text !== text || pending.channel !== session.channel) {
         try {
           pending = { text, channel: session.channel, id: root.HU_REMOTE_SESSION.secureRequestId() };

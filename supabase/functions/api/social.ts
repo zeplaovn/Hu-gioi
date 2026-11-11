@@ -10,6 +10,8 @@ type Database = {
   transaction: <T>(work: (db: Db) => Promise<T>) => Promise<T>;
 };
 const LIMIT = 50;
+const MAX_TEXT = 80; // ký tự (code point), khớp client và CHECK trong DB
+const textLength = (s: string) => Array.from(s).length;
 const fail = (code: string, msg: string) => { throw new GameError(code, msg); };
 const asSafe = (v: unknown): number => {
   const n = Number(v);
@@ -26,9 +28,18 @@ const rows = async (c: Db, text: string, args: unknown[] = []): Promise<Row[]> =
   (await c.queryObject({ text, args })).rows;
 const first = async (c: Db, text: string, args: unknown[] = []): Promise<Row | null> =>
   (await rows(c, text, args))[0] || null;
+/* Cảnh giới lấy từ bảng xếp hạng (null nếu chưa có, ví dụ người chơi đã tọa hóa); admin do máy chủ xác định
+ * qua game.admin_users, không bao giờ tin tên hoặc cờ do client gửi. */
+const MESSAGE_SELECT = `SELECT m.id, m.owner_id, m.sender_name, m.body, m.created_at, m.channel_key,
+    l.realm AS realm, (a.user_id IS NOT NULL) AS is_admin
+  FROM game.world_chat_messages m
+  LEFT JOIN game.player_leaderboard l ON l.owner_id = m.owner_id
+  LEFT JOIN game.admin_users a ON a.user_id = m.owner_id AND a.enabled AND a.role IN ('owner','admin')`;
 const asMessage = (r: Row) => ({
   id: String(r.id), senderId: String(r.owner_id), name: String(r.sender_name),
-  text: String(r.body), at: asSafe(r.created_at), channel: String(r.channel_key || 'world').startsWith('sect:') ? 'sect' : String(r.channel_key || 'world')
+  text: String(r.body), at: asSafe(r.created_at), channel: String(r.channel_key || 'world').startsWith('sect:') ? 'sect' : String(r.channel_key || 'world'),
+  realm: r.realm === null || r.realm === undefined ? null : Math.max(0, Math.min(13, asSafe(r.realm))),
+  admin: r.is_admin === true
 });
 const player = (c: Db, ownerId: string) =>
   first(c, `SELECT p.id,p.name,l.sect_id FROM game.players p
@@ -70,8 +81,8 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
       if (!me) return fail('PLAYER_NOT_FOUND', 'Bạn cần có đạo thân trước khi truyền âm.');
       const channelKey = channelOf(body.channel || 'world', me);
       await heartbeat(c, ownerId, now);
-      const history = await rows(c, `SELECT id, owner_id, sender_name, body, created_at, channel_key
-        FROM game.world_chat_messages WHERE channel_key = $1 ORDER BY id DESC LIMIT ${LIMIT}`, [channelKey]);
+      const history = await rows(c, `${MESSAGE_SELECT}
+        WHERE m.channel_key = $1 ORDER BY m.id DESC LIMIT ${LIMIT}`, [channelKey]);
       const messages = history.reverse().map(asMessage);
       return { self: { id: ownerId, name: String(me.name) }, messages, online: await onlineCount(c, now),
         cursor: messages.at(-1)?.id || '0', channel: body.channel || 'world' };
@@ -85,8 +96,8 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
       if (!me) return fail('PLAYER_NOT_FOUND', 'Đạo thân không tồn tại.');
       const channelKey = channelOf(body.channel || 'world', me);
       await heartbeat(c, ownerId, now);
-      const found = await rows(c, `SELECT id, owner_id, sender_name, body, created_at, channel_key
-        FROM game.world_chat_messages WHERE channel_key = $1 AND id > $2 ORDER BY id ASC LIMIT ${LIMIT}`, [channelKey, String(since)]);
+      const found = await rows(c, `${MESSAGE_SELECT}
+        WHERE m.channel_key = $1 AND m.id > $2 ORDER BY m.id ASC LIMIT ${LIMIT}`, [channelKey, String(since)]);
       return { messages: found.map(asMessage), online: await onlineCount(c, now), channel: body.channel || 'world',
         cursor: found.length ? String(found.at(-1)?.id) : String(since), hasMore: found.length === LIMIT };
     });
@@ -101,16 +112,16 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
   if (route === 'chatSend') {
     const body = strict(rawBody, ['text', 'requestId', 'channel']);
     const text = typeof body.text === 'string' ? body.text.trim() : '';
-    if (!text || text.length > 400 || /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(text))
-      return fail('INVALID_REQUEST', 'Lời truyền âm phải dài 1–400 ký tự và không chứa ký tự điều khiển.');
+    if (!text || textLength(text) > MAX_TEXT || /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(text))
+      return fail('INVALID_REQUEST', `Lời truyền âm phải dài 1–${MAX_TEXT} ký tự và không chứa ký tự điều khiển.`);
     const requestId = body.requestId;
     if (typeof requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
       return fail('INVALID_REQUEST', 'Mã tin nhắn không hợp lệ.');
     return repo.transaction(async c => {
       // Khóa ngắn theo user, chống gửi đồng thời vượt 15 giây giữa các isolate.
       await rows(c, 'SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [ownerId]);
-      const previous = await first(c, `SELECT id, owner_id, sender_name, body, created_at, channel_key
-        FROM game.world_chat_messages WHERE owner_id = $1 AND request_id = $2`, [ownerId, requestId]);
+      const previous = await first(c, `${MESSAGE_SELECT}
+        WHERE m.owner_id = $1 AND m.request_id = $2`, [ownerId, requestId]);
       const me = await player(c, ownerId);
       if (!me) return fail('PLAYER_NOT_FOUND', 'Bạn cần có đạo thân trước khi truyền âm.');
       const channelKey = channelOf(body.channel || 'world', me);
@@ -126,10 +137,12 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
       const saved = await first(c, `INSERT INTO game.world_chat_messages
         (owner_id, sender_name, body, request_id, created_at, channel_key)
         VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id, owner_id, sender_name, body, created_at, channel_key`,
+        RETURNING id`,
         [ownerId, String(me.name).slice(0, 60), text, requestId, now, channelKey]);
       if (!saved) return fail('MAINTENANCE', 'Chưa thể lưu lời truyền âm.');
-      return { message: asMessage(saved), replayed: false };
+      const full = await first(c, `${MESSAGE_SELECT} WHERE m.id = $1`, [saved.id]);
+      if (!full) return fail('MAINTENANCE', 'Chưa thể lưu lời truyền âm.');
+      return { message: asMessage(full), replayed: false };
     });
   }
   if (route === 'leaderboard') {

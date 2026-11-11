@@ -25,7 +25,7 @@ test('bốn phòng chat cách ly bằng channel_key và quyền tông môn do ba
   const api = read('supabase/functions/api/social.ts');
   const client = read('client/session/chat-session.js');
   assert.match(sql, /game_world_chat_channel_id/);
-  assert.match(api, /WHERE channel_key = \$1 AND id > \$2 ORDER BY id ASC/);
+  assert.match(api, /WHERE m\.channel_key = \$1 AND m\.id > \$2 ORDER BY m\.id ASC/);
   assert.match(api, /channelOf\(body\.channel \|\| 'world', me\)/);
   assert.match(api, /if \(!me\.sect_id\)/);
   assert.match(api, /pg_advisory_xact_lock/);
