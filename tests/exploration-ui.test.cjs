@@ -89,7 +89,7 @@ test('cửa sổ Lịch luyện đóng được và các menu khác mở đượ
   assert.doesNotMatch(windows, /exploration\?\.active/, 'không khóa cửa sổ trong chuyến lịch luyện');
   assert.doesNotMatch(routing, /exploration\?\.active/, 'không ép trở lại Lịch luyện');
   assert.doesNotMatch(hash, /exploration\?\.active/, 'đổi đường dẫn vẫn vào menu được');
-  assert.match(windows, /if \(id === 'combat'\) this\.saveRect\(id, w\.rect\)/);
+  assert.match(windows, /if \(!w\.maximized\) this\.saveRect\(id, w\.rect\)/);
   assert.match(shell, /if \(wins\.has\('combat'\)\) wins\.close\('combat'\)/, 'menu Lịch luyện phải đóng/mở luân phiên');
 });
 
