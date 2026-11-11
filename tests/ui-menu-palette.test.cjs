@@ -5,14 +5,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const read = p => fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 
-test('icon chat không bị mất khi đang mở cửa sổ', () => {
-  const css=read('css/tienhiep.css');
+test('launcher chat mở duy nhất một desktop window và không nhân bản form', () => {
   const chat=read('client/ui/screens/chat.js');
-  assert.match(css,/\.chat-bubble\.open \.chat-bubble-btn,[\s\S]*?visibility:hidden!important;opacity:0!important/);
-  assert.match(css,/\.chat-bubble\{z-index:170\}/);
-  assert.match(css,/\.chat-bubble-panel\{z-index:1/);
-  assert.match(chat,/bubble\.btn\.setAttribute\('aria-expanded', String\(bubble\.open\)\)/);
-  assert.match(chat,/bubble\.btn\.setAttribute\('aria-hidden', 'true'\)/);
+  const shell=read('client/ui/shell.js');
+  const css=read('css/shell.css');
+  assert.match(chat, /UI\.windows/);
+  assert.match(chat, /wins\.toggle\('chat'\)/);
+  assert.match(chat, /chat-channels/);
+  assert.match(shell, /'chat', 'ranking'/);
+  assert.match(css, /\.win-controls/);
+  assert.match(css, /\.window-taskbar/);
 });
 
 test('Cài đặt chỉ vào qua nút ⚙ ở thanh trạng thái (không có mục menu, không phím tắt S); giữ hệ thống lưu game', () => {
@@ -32,10 +34,11 @@ test('màu dịu, giữ tương phản chữ và không phủ bộ lọc lên sp
   assert.doesNotMatch(css,/filter:\s*grayscale\(/);
 });
 
-test('chỉ hiện icon khi cửa sổ tương ứng được thu gọn', () => {
-  const css = read('css/tienhiep.css'), chat = read('client/ui/screens/chat.js');
-  assert.match(css,/chat-bubble\.open \.chat-bubble-btn/);
-  assert.match(css,/logPanel\.log-floating:not\(\.collapsed\) \.log-toggle::after/);
-  assert.match(chat,/bubble\.btn\.tabIndex = bubble\.open \? -1 : 0/);
-  assert.match(chat,/bubble\.btn\.removeAttribute\('aria-hidden'\)/);
+test('thu nhỏ giữ nội dung cửa sổ trên thanh tác vụ và có thể khôi phục', () => {
+  const shell=read('client/ui/shell.js'), css=read('css/shell.css');
+  assert.match(shell,/minimize\(id\)/);
+  assert.match(shell,/restore\(id\)/);
+  assert.match(shell,/maximize\(id\)/);
+  assert.match(shell,/data-task-window/);
+  assert.match(css,/window-task\.minimized/);
 });
