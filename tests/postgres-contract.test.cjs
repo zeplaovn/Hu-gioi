@@ -14,6 +14,7 @@ const A = '11111111-1111-4111-8111-111111111111';
 const B = '22222222-2222-4222-8222-222222222222';
 const CLOCK = 1800000000000;
 const migration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
+const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
 
 async function makePg(t) {
   const db = new PGlite();
@@ -21,6 +22,7 @@ async function makePg(t) {
     CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid primary key);
     INSERT INTO auth.users VALUES ('${A}'), ('${B}');`);
   await db.exec(migration);
+  await db.exec(socialMigration);
   let queued = Promise.resolve();
   const pool = {
     async connect() {
@@ -65,7 +67,8 @@ test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/a
     FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname='game' AND c.relkind='r' ORDER BY c.relname`);
   assert.deepEqual(result.rows.map(x => x.relname), [
-    'creation_tickets', 'pavilion_accounts', 'pavilion_receipts', 'player_receipts', 'players'
+    'creation_tickets', 'pavilion_accounts', 'pavilion_receipts', 'player_leaderboard', 'player_receipts', 'players',
+    'world_chat_messages', 'world_chat_presence'
   ]);
   assert.ok(result.rows.every(x => x.relrowsecurity === true));
   assert.equal((await db.query(`SELECT count(*)::int AS n FROM pg_policies WHERE schemaname='game'`)).rows[0].n, 0);
@@ -74,6 +77,7 @@ test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/a
     assert.equal((await db.query('SELECT has_table_privilege($1, $2, $3) AS allowed', [role, 'game.players', 'SELECT'])).rows[0].allowed, false);
   }
   await db.exec(migration); // idempotent
+  await db.exec(socialMigration); // index + trigger idempotent
 });
 
 test('Postgres contract: ticket, owner 404, name unique, receipt, optimistic revision, export', async t => {
@@ -139,7 +143,7 @@ test('Postgres contract: two concurrent commands on same revision serialize into
   assert.equal((await svc.bootstrap(A)).player.revision, 1);
 });
 
-test('Postgres contract: account erase and cascade, pavilion persists across reincarnation', async t => {
+test('Postgres contract: tử vong không trọng sinh; xóa dữ liệu xóa cả chat và leaderboard', async t => {
   const { svc, repo, db } = await makePg(t);
   const first = await spawn(svc, A, 'Tịnh Thiên');
   const id = first.playerId;
@@ -149,20 +153,29 @@ test('Postgres contract: account erase and cascade, pavilion persists across rei
     requestId: 'pavilion-up1', expectedVersion: 1, kind: 'upgrade', key: 'ngoTinh'
   });
   assert.equal(purchased.pavilion.upgrades.ngoTinh, 1);
+  await db.query(`INSERT INTO game.world_chat_messages
+    (owner_id, sender_name, body, request_id, created_at)
+    VALUES ($1, $2, $3, $4, $5)`, [A, 'Tịnh Thiên', 'Xin chào', '33333333-3333-4333-8333-333333333333', CLOCK]);
+  await db.query('INSERT INTO game.world_chat_presence(owner_id,seen_at) VALUES ($1,$2)', [A, CLOCK]);
   await repo.transact(id, async tx => ({ save: {
     state: { ...tx.record.state, death: { cause: 'combat', at: CLOCK } },
     revision: tx.record.revision + 1, rngCounter: tx.record.rngCounter,
     lastSeenAt: CLOCK, schemaVersion: H.VERSION, contentVersion: 'test'
   }}));
-  const deleted = await svc.resetAfterDeath(A, id);
-  assert.equal(deleted.deleted, true);
-  assert.equal((await svc.bootstrap(A)).pavilion.upgrades.ngoTinh, 1);
-  const next = await spawn(svc, A, 'Tịnh Đạo');
-  assert.equal(next.state.pavilion.ngoTinh, 1);
+  assert.equal(typeof svc.resetAfterDeath, 'undefined');
+  assert.equal((await svc.bootstrap(A)).player.id, id);
+  await assert.rejects(spawn(svc, A, 'Tịnh Đạo'), { code: 'PLAYER_EXISTS' });
+  const exported = await svc.exportData(A);
+  assert.equal(exported.sentChatMessages.length, 1);
+  assert.equal(exported.sentChatMessages[0].text, 'Xin chào');
   const erased = await svc.eraseData(A, { confirm: 'delete-my-game-data' });
   assert.equal(erased.players, 1);
+  assert.equal(erased.chatMessages, 1);
   assert.equal((await svc.bootstrap(A)).player, null);
   assert.equal((await svc.bootstrap(A)).pavilion.balance, 0);
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.world_chat_messages WHERE owner_id=$1', [A])).rows[0].n, 0);
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.world_chat_presence WHERE owner_id=$1', [A])).rows[0].n, 0);
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM game.player_leaderboard WHERE owner_id=$1', [A])).rows[0].n, 0);
   await spawn(svc, B, 'Ngân Vũ');
   await db.query('DELETE FROM auth.users WHERE id=$1', [B]);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM game.players WHERE owner_id=$1', [B])).rows[0].n, 0);
