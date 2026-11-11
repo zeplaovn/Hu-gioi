@@ -1,6 +1,6 @@
 # Thiên Mệnh Các · Quầy Khởi Nguyên
 
-> Trạng thái: Đề xuất. Bản thử nghiệm nội bộ trong PR; giá và lượng tặng có thể thay theo quyết định cân bằng của chủ dự án.
+> Trạng thái: Hiện hành. **PR #77 đã merge vào main**; chức năng shop starter có mã và test, **giá/lượng thưởng vẫn là mức test chưa duyệt cân bằng**.
 
 Màn tạo đạo thân có ba bước: **(01) Chọn đạo thân; (02) Thiên Mệnh Các — đổi Thiên Tinh; (03) Phân bổ thiên phú**. Lựa chọn một Dấu ấn Thiên Mệnh miễn phí vẫn còn ở bước 02, nhưng **Thiên Mệnh Các là cửa hàng thật**, không còn chỉ là ô chọn Thiên mệnh.
 
@@ -26,6 +26,6 @@ Màn tạo đạo thân có ba bước: **(01) Chọn đạo thân; (02) Thiên 
 
 ## Nghiệm thu
 
-`tests/creation-pavilion-shop.test.cjs` kiểm tra cả SQLite và PostgreSQL/PGlite: giá + quà nhập môn đúng một lần, receipt replay, version conflict, mã hàng không hợp lệ, từ chối tạo khi phân bổ thiếu điểm, cấp thuốc khi tạo nhân vật, không cấp lại khi tạo xong, và reload giữ điểm. Mọi thay đổi chỉ lên nhánh tính năng, **không tự deploy Edge/Cloudflare hay chỉnh Supabase đang dùng**.
+`tests/creation-pavilion-shop.test.cjs` kiểm tra cả SQLite và PostgreSQL/PGlite: giá + quà nhập môn đúng một lần, receipt replay, version conflict, mã hàng không hợp lệ, từ chối tạo khi phân bổ thiếu điểm, cấp thuốc khi tạo nhân vật, không cấp lại khi tạo xong, và reload giữ điểm. PR #77 đã merge; **merge mã không chứng minh đã deploy Edge/Cloudflare hay nghiệm thu production**.
 
 **Cần chủ dự án duyệt** mức 10 Thiên Tinh tặng, giá 4/2/3/2 và giới hạn 4 điểm trước khi phát hành công khai; đây là giá mặc định đề xuất để test nội bộ, không phải luật game đã chốt.

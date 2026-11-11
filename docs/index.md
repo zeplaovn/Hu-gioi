@@ -1,50 +1,34 @@
 # Bản đồ tài liệu Hư Giới
+> Trạng thái: Hiện hành. Các file GAME/SYSTEM là hồ sơ phiên bản hiện tại; tài liệu phụ chỉ ghi chi tiết kỹ thuật và quyết định chưa chốt.
 
-> Trạng thái: Hiện hành. Mục lục nguồn sự thật; không thay thế sổ quyết định gameplay.
+## Đọc trước
+- [Tổng hợp công việc](PROJECT-STATUS.md) — duy nhất một sổ việc đã làm, chưa làm và trạng thái.
+- [GAME](GAME.md) — luật chơi, UI, mạng xã hội, gameplay.
+- [SYSTEM](SYSTEM.md) — kiến trúc, Edge API, auth, database, tối ưu và release.
+- [Mục lục](index.md).
 
-## Hồ sơ tổng hợp (đọc trước)
+## Tài liệu kỹ thuật vẫn còn hiệu lực
+- [Kiến trúc](architecture.md)
+- [Hợp đồng engine](engine-contract.md)
+- [Gameplay V9](gameplay-v9.md)
+- [Thiên Mệnh Các](thien-menh-cac.md)
+- [Shop Khởi Nguyên](creation-pavilion-shop.md)
+- [Tích hợp dữ liệu thiết kế](design-integration.md)
+- [Bộ nhân vật](player-pack.md)
+- [Asset nghề và kinh mạch](asset-pack-crafting-meridians.md)
+- [Edge deploy/rollback](edge-deployment.md)
+- [Dựng lại database test](internal-db-rebuild.md)
+- [Bảo mật](security.md)
+- [Checklist release](release-checklist.md)
 
-- [Tổng hợp công việc và trạng thái](PROJECT-STATUS.md)
-- [Hồ sơ GAME](GAME.md)
-- [Hồ sơ SYSTEM](SYSTEM.md)
+## Thiết kế, dự thảo và bằng chứng chưa bị thay thế
+- [Sổ quyết định gameplay](gameplay-decisions.md) — còn các mục P0/P1 chưa duyệt.
+- [Kiểm toán độ khó](design-audit.md) — giữ số đo và bằng chứng.
+- [Cao giới 5–13](content-draft-realms-5-13.md) — dự thảo.
+- [Sách nghề](profession-manuals-proposal.md) — dự thảo.
+- [Cốt truyện](prompt-story.md) — tài liệu phát triển.
 
-## Hiện hành
+## Đã loại bản cũ
+Đã gỡ các bản chụp cũ: hướng dẫn online Node/SQLite trong `docs/archive/`, kiểm kê gameplay trước chat thật, nhật ký frontend optimization, hotfix chat/rank v9 và production-readiness cũ. Nội dung đang sử dụng đã được đưa vào [GAME](GAME.md), [SYSTEM](SYSTEM.md), [Tổng hợp](PROJECT-STATUS.md); lịch sử vẫn có trong Git. **Không** xóa migration hoặc mã dev/test.
 
-| Chủ đề (nguồn sự thật duy nhất) | Tài liệu |
-|---|---|
-| Nhiệm vụ bản final (mục 11 ưu tiên cao nhất) | [task.txt](../task.txt) |
-| Gate chuẩn bị production | [Production readiness](production-readiness.md) |
-| Kiến trúc runtime Edge/Postgres | [Kiến trúc](architecture.md) |
-| Build, migration, deploy, rollback | [Runbook Edge](edge-deployment.md) |
-| Dựng lại database test, RLS và migration chuẩn | [Database internal rebuild](internal-db-rebuild.md) |
-| Khôi phục route Truyền âm và Thiên Bảng trên Supabase Edge | [Chat/ranking API hotfix v9](chat-rank-404-hotfix.md) |
-| Dọn nguồn frontend, CSS bundle và JS UI | [Tối ưu frontend](frontend-optimization.md) |
-| Secrets, JWT, CSP, Auth, quota | [Bảo mật](security.md) |
-| Hợp đồng engine và lệnh | [Engine contract](engine-contract.md) |
-| Sinh tử, tiến trình online | [Gameplay V9](gameplay-v9.md) |
-| Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại | [Thiên Mệnh Các](thien-menh-cac.md) |
-| Thiên Mệnh Các trước khi lập đạo thân (đề xuất test) | [Quầy Khởi Nguyên](creation-pavilion-shop.md) |
-| Dữ liệu design hiện tích hợp | [Tích hợp thiết kế](design-integration.md) |
-| Đồ họa nhân vật | [Bộ nhân vật](player-pack.md) |
-| Đồ họa nghề phụ và kinh mạch (tùy chọn) | [Gói asset Đan Các · Lò Rèn · Kinh Mạch Đồ](asset-pack-crafting-meridians.md) |
-| Việc chủ dự án cần làm | [Checklist](release-checklist.md) |
-| Mục lục | [Bản đồ tài liệu](index.md) |
-
-## Đề xuất (chưa được chốt)
-
-- [Sổ quyết định P0/P1](gameplay-decisions.md) — 30 P0, 14 P1 đang mở.
-- [Kiểm kê gameplay](gameplay-audit.md).
-- [Nội dung cao giới 5–13](content-draft-realms-5-13.md).
-- [Sách nghề và sổ công thức](profession-manuals-proposal.md).
-- [Prompt cốt truyện](prompt-story.md).
-
-## Lịch sử (không là nguồn sự thật)
-
-- [Kiểm toán thiết kế](design-audit.md) — bằng chứng cho luật độ khó có chủ ý, còn được test hồi quy dùng.
-- [Hướng dẫn Node/SQLite](archive/online-deployment.md) — chỉ cho dev/legacy, còn được test vệ sinh repo dùng.
-
-Đã gỡ khỏi cây (còn trong git, commit `1bd987b`): `docs/archive/backend-plan.md` (kế hoạch backend Node, nguồn của các con số 30 ngày/Elo K=32 trong sổ quyết định) và `docs/archive/supabase-security-setup.md` (thiết lập Supabase cũ, đã được thay bằng [Runbook Edge](edge-deployment.md) và [Bảo mật](security.md)). Xem bằng `git show 1bd987b:docs/archive/<tên-file>`.
-
-## Việc chờ chủ dự án
-
-Xem đủ 14 mục trong [checklist](release-checklist.md) và kế hoạch [production readiness](production-readiness.md): CI của `final`, xác minh migration/consent v7, cấu hình và quota chính thức, chat giới hạn 15 giây + TTL 1 giờ, bảng xếp hạng snapshot 12 giờ, tối ưu backend có số đo và smoke staging. **Chưa có mục nào được xác nhận bằng bằng chứng sản xuất.** [README](../README.md).
+Nguồn yêu cầu backend còn mở: [task.txt](../task.txt) §11 ưu tiên khi mâu thuẫn. Release chỉ khi [checklist](release-checklist.md) có bằng chứng thực tế.

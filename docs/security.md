@@ -14,4 +14,4 @@
 
 **Giới hạn chưa kiểm chứng:** Client gọi Supabase Auth thẳng, do đó rate limit đăng ký/đăng nhập, CAPTCHA, xác nhận email, redirect allowlist phụ thuộc Dashboard Supabase. Edge function có URL công khai; traffic rác vẫn có thể tính quota. Cần alerts và thực hành backup/restore.
 
-Node/SQLite và reverse proxy cùng origin chỉ là **dev/legacy**; xem [hướng dẫn lưu trữ lịch sử](archive/online-deployment.md), không dùng để deploy production. Đầu mối duy nhất: [runbook Edge](edge-deployment.md) và [checklist chủ dự án](release-checklist.md).
+Node/SQLite và reverse proxy cùng origin chỉ là **dev/legacy**; xem [hồ sơ SYSTEM](SYSTEM.md), không dùng để deploy production. Đầu mối duy nhất: [runbook Edge](edge-deployment.md) và [checklist chủ dự án](release-checklist.md).

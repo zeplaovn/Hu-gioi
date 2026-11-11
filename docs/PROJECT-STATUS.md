@@ -1,28 +1,45 @@
-# Hư Giới — Tổng hợp công việc (11/11/2026)
+# Hư Giới — Tổng hợp công việc và trạng thái mới nhất
+> Trạng thái: Hiện hành. Đối chiếu GitHub main tại `82da14cd40f78ffa1f82309e604cbdd734acd190` (11/11/2026). Nội dung này phân biệt mã đã merge với deployment và nghiệm thu thực tế.
 
-**Môi trường:** thử nghiệm nội bộ; chưa công bố, chưa đạt chuẩn production. **Nguồn đối chiếu:** main tại commit `82da14cd`, lịch sử PR/commit và các tài liệu hiện hành. Trạng thái “đã làm” chỉ xác nhận thay đổi được ghi nhận trong GitHub, **không đồng nghĩa đã nghiệm thu trên thiết bị thật**.
+**Tình trạng phát hành: thử nghiệm nội bộ; chưa xác nhận production-ready.** Đây là **một file tổng hợp duy nhất** về các việc đã làm, còn lại và các quyết định; chi tiết gameplay ở [GAME.md](GAME.md), chi tiết backend ở [SYSTEM.md](SYSTEM.md).
 
-## Phân loại
-- [GAME.md](GAME.md): gameplay, giao diện, tài sản, trải nghiệm.
-- [SYSTEM.md](SYSTEM.md): kiến trúc, backend, cơ sở dữ liệu, API, xác thực, hiệu năng.
-- [task.txt](../task.txt): yêu cầu tối ưu còn mở; mục 11 ưu tiên khi xung đột.
-- [docs/index.md](index.md): liên kết tài liệu kỹ thuật chi tiết.
+## I. Công việc đã có trên main (có thể kiểm tra bằng mã và lịch sử Git)
 
-## Các nhóm công việc đã ghi nhận
-1. Engine V9, protocol v2/49 lệnh, online-only, tử vong và tạo lại nhân vật không kế thừa; hệ thống Thiên Tinh, Thiên Mệnh Các.
-2. Lịch luyện có sự kiện quái/NPC/kỳ duyên và Tâm Ma; giao diện tông xanh, bản đồ, kinh mạch, asset, desktop windows, chat responsive.
-3. Chat bốn kênh, xếp hạng Lực chiến/Cảnh giới; khắc phục lệch route Edge gây 404 (PR #78 đã merge main).
-4. Supabase Auth/JWT, consent v7; hotfix drift Edge v8 (PR #76), Edge chat/rank v9 (PR #78).
-5. Dựng lại schema test và migration ledger (PR #73); các bảo đảm RLS, leaderboard loại người chết, idempotency.
-6. Nghiên cứu giảm lượt Edge, write amplification, receipt, latency, payload, chat polling và TTL; các phương án trong task.txt **chưa mặc nhiên được triển khai**.
+| Hệ | Nội dung đã có trong mã/main | Bằng chứng/giới hạn |
+|---|---|---|
+| GAME | State V9, protocol v2, 49 lệnh; server quyết định thời gian/RNG/state | `engine/`, `data/`, `engine/protocol/commands.js` |
+| GAME | Online-only; tab ẩn/offline không tích lũy; tử vong một mạng, tạo lại không kế thừa | `server/services/player-service.js`, `docs/gameplay-v9.md` |
+| GAME | Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại, quầy starter trước tạo nhân vật | PR #77 đã merge, `tests/creation-pavilion-shop.test.cjs`; **giá test chưa duyệt** |
+| GAME | Sự kiện Lịch luyện 45% quái, 30% NPC, 25% kỳ duyên; Tâm Ma | `data/adventures.js`, `engine/rules/adventures.js`; cần duyệt cân bằng |
+| GAME | Kinh Mạch Đồ 12 chính kinh (xanh), 8 kỳ kinh (vàng), asset WebP; nghề phụ và UI màn chơi | `docs/asset-pack-crafting-meridians.md`; **kinh mạch mới là hiển thị**, chưa có luật vận hành |
+| GAME | Chat 4 kênh, UI messenger desktop-window và mobile, rank Lực chiến/Cảnh giới | PR #78 đã merge; phải thử thiết bị và tài khoản thật |
+| SYSTEM | Supabase Auth/JWT, consent v7, private schema game, RLS, receipt/CAS | `server/`, `supabase/`, `docs/security.md` |
+| SYSTEM | Schema test nội bộ được dựng lại, migration history chuẩn và kiểm tra tử vong/rank | PR #73; chỉ mô tả môi trường test, **không reset production** |
+| SYSTEM | Edge consent v8 và chat/rank hotfix v9 đã báo cáo áp dụng trên test | PR #76 và #78; **chưa có authenticated browser smoke 200** |
+| SYSTEM | Source frontend có build CSS bundle/hash; giảm polling chat khi ẩn/đóng | `tools/build-dist.cjs`, `client/session/chat-session.js` |
+| DOCS | Tổng hợp GAME/SYSTEM/PROJECT-STATUS, gỡ tài liệu snapshot và chỉnh thông tin lỗi thời | Nhánh `chore/consolidate-game-system-docs-20261111` |
 
-## Trạng thái cần kiểm tra trước release
-- Chạy `npm ci && npm run check && npm test && npm run build:min && npm run build:edge`.
-- Nghiệm thu browser trên desktop/mobile: tạo nhân vật, chat connect/send, rank, consent và tử vong.
-- Kiểm tra Edge deployment thực tế so với source, migration ledger, quota, rollback, security.
-- Xác nhận các PR/nhánh chức năng khác đã merge hay chưa trước khi tuyên bố tính năng hoàn tất.
-- Đo thực tế p50/p95, số query/round-trip, Edge calls, state/receipt size; tránh dùng số ước tính làm benchmark.
-- Chủ dự án duyệt giá Thiên Mệnh Các, quyết định cân bằng gameplay và release gates.
+## II. Những việc CHƯA HOÀN THÀNH hoặc chưa đủ bằng chứng
 
-## Quy tắc tài liệu
-Tài liệu này là **bảng tổng hợp**, không thay thế code, migration, runbook vận hành, hợp đồng API, test hoặc sổ quyết định gameplay. Những tài liệu cũ chỉ xóa khi đã đối chiếu toàn bộ tham chiếu và có bằng chứng không còn được dùng. Không xóa migration đã chạy, dữ liệu test, tài liệu bảo mật hoặc tài liệu rollback chỉ vì tên cũ.
+1. **Backend F0:** benchmark thực tế Edge calls/giờ, SQL round-trips, p50/p95 latency, WAL, DB size, byte response/egress; mô hình 50/500/5.000 người. Mô phỏng quota cũ không phải đo production.
+2. **Chat F1:** 15 giây/tin ở server và client đã có mã; nhưng **TTL 1 giờ, xóa vật lý, UNLOGGED, giảm heartbeat/count, cache/singleflight** chưa được xác nhận hoàn tất theo `task.txt` §11.1.
+3. **Ranking F1:** hiện có rank live, loại người chết; **ảnh chụp 12 giờ/lần, giảm trigger/ghi DB** chưa triển khai đầy đủ theo §11.2.
+4. **Backend F2/F3:** tối ưu sync, xác minh JWT/cache, receipts và retention `pavilion_receipts`, `creation_tickets`, state JSONB, response delta; cần migration additive, rollback, đo trước/sau.
+5. **GAME:** luật kinh mạch Z=100, 12 sách nghề, nội dung cao giới và các mục P0/P1 chưa chốt; kinh mạch hiển thị không đồng nghĩa gameplay đã triển khai.
+6. **Release:** CI cho commit cuối, test mobile thật 390×844 và desktop, consent/bootstrap, chat/rank JWT 200, reset tử vong, migration, rollback; chủ dự án xác nhận.
+
+## III. Kiểm kê file main trước dọn
+
+- Git tree `main`: **953 file** trong **1.183 entry** gồm thư mục; khoảng **59,47 MiB** file tracked.
+- `media/`: **698 file**, khoảng **57,29 MiB**; không phát hiện blob SHA trùng nhau trên toàn cây.
+- `docs/`: 23 Markdown gốc. Không xóa asset, mã nguồn, migration, tests hoặc tools chỉ vì tên cũ.
+- **Đã chọn loại bỏ khỏi nhánh tổng hợp:** `docs/archive/online-deployment.md`, `docs/gameplay-audit.md`, `docs/frontend-optimization.md`, `docs/chat-rank-404-hotfix.md`, `docs/production-readiness.md`, `docs/REPOSITORY-AUDIT-2026-11-11.md` (audit tạm của nhánh). Nội dung vận hành/việc còn mở được quy về hồ sơ hiện hành; lịch sử vẫn xem trong Git.
+- Không xóa `docs/design-audit.md` (bằng chứng thiết kế), `docs/gameplay-decisions.md` (quyết định chưa duyệt), `docs/engine-contract.md` (hợp đồng API), các runbook Edge, SQL/migrations hoặc test.
+
+## IV. Cách sử dụng bộ tài liệu
+- **[GAME.md](GAME.md)**: chỉ có luật game, UI, tính năng, gameplay chờ duyệt.
+- **[SYSTEM.md](SYSTEM.md)**: runtime, auth, API, DB, performance, release.
+- **[docs/index.md](index.md)**: mục lục các tài liệu chuyên môn vẫn còn dùng.
+- **[task.txt](../task.txt)**: yêu cầu tối ưu backend; §11 là ưu tiên mới nhất. Mọi hạng mục “đã hoàn thành” phải có code/test/deployment proof tương ứng.
+
+Không coi việc merge tài liệu vào main là cấp phép chạy migration, deploy Supabase/Cloudflare hoặc công bố game.

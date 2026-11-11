@@ -63,12 +63,12 @@ test('Docker HEALTHCHECK và meta CSP cùng origin, không còn chú thích offl
 
 test('triển khai Edge có tài liệu riêng, Cloudflare chỉ phục vụ dist; Node gateway vẫn tách riêng cho dev', () => {
   const edge = fs.readFileSync(path.join(ROOT, 'docs/edge-deployment.md'), 'utf8');
-  const node = fs.readFileSync(path.join(ROOT, 'docs/archive/online-deployment.md'), 'utf8');
+  const node = fs.readFileSync(path.join(ROOT, 'docs/SYSTEM.md'), 'utf8');
   const config = fs.readFileSync(path.join(ROOT, 'wrangler.jsonc'), 'utf8');
   assert.match(edge, /Supabase Edge/i);
   assert.match(edge, /HU_DB_POOLER_URL/);
   assert.match(edge, /game.*RLS|RLS.*game/s);
-  assert.match(node, /Node\/SQLite.*dev/i);
+  assert.match(node, /Node\/SQLite[\s\S]{0,180}dev\/test/i);
   assert.match(node, /HU_AUTH_TRUSTED_PROXY_IPS/);
   assert.match(config, /"directory": "\.\/dist"/);
   assert.doesNotMatch(config, /api\/v1|SUPABASE_SERVICE_ROLE_KEY|node:sqlite/);

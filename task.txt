@@ -1,3 +1,5 @@
+CẬP NHẬT TRẠNG THÁI 11/11/2026: main có State V9 / protocol V2 / 49 lệnh; chat frontend poll 10s khi mở/hiện tab và server hạn 15s/tin; chat TTL 1h và rank snapshot 12h vẫn là VIỆC CHƯA HOÀN THÀNH. Xem docs/PROJECT-STATUS.md, docs/GAME.md, docs/SYSTEM.md. Thông số, tên migration và mô tả 48 lệnh/6s trong phần khảo sát bên dưới là snapshot lịch sử, không dùng như trạng thái runtime.
+
 TASK CHO GPT: TỐI ƯU BACKEND HƯ GIỚI (HUGIOI) - GIẢM CHI PHÍ VẬN HÀNH VÀ LƯU TRỮ
 ==============================================================================
 
@@ -12,7 +14,7 @@ Game idle tu tiên tiếng Việt, server-authoritative. Kiến trúc hiện t�
 - API: một Supabase Edge Function "api" (Deno), file supabase/functions/api/index.ts.
 - DB: Postgres schema "game" qua Supavisor transaction pooler (cổng 6543), mỗi isolate dùng pool 1 kết nối.
 - Auth: Supabase Auth, đăng nhập trực tiếp bằng JWT.
-- Engine: engine/ + data/ dùng chung cho client và server. Protocol v2, 48 lệnh, state V9 (jsonb, tối đa 64 KB).
+- Engine: engine/ + data/ dùng chung cho client và server. Protocol v2, 49 lệnh, state V9 (jsonb, tối đa 64 KB).
 - Mục tiêu hạ tầng: chạy gói FREE, quota 500.000 lượt gọi Edge/tháng. docs/edge-deployment.md mô phỏng
   50 người chơi dùng khoảng 408.000 lượt/tháng (81,6%). Chưa tính chat, retry, nhiều tab.
 
@@ -575,7 +577,7 @@ tiết kiệm lưu trữ. Game vẫn phải chơi mượt (mục 9 còn hiệu l
        một request tính; các request khác trả bản cũ (stale-while-revalidate).
      - Truy vấn làm mới quét players (ORDER BY combat_power DESC LIMIT N). Với quy mô nhỏ/vừa không cần index
        riêng; GPT đo và quyết định. Phải loại người chơi đã tọa hóa (đọc migration
-       20261111040200_v7_consent_and_deceased_leaderboard.sql để giữ đúng luật hiện có).
+       20261111023603_v7_consent_and_deceased_leaderboard.sql để giữ đúng luật hiện có).
   3. Hạng của chính người chơi (trước đây dùng count(*) mỗi lần): chỉ hiển thị nếu nằm trong top N của snapshot;
      ngoài top N hiển thị hạng ước lượng bằng bách phân vị (percentile) từ biểu đồ phân bố (histogram) lưu kèm
      snapshot. Không chạy count(*) toàn bảng cho từng request. (Chủ dự án có thể chọn bỏ hạng ngoài top.)

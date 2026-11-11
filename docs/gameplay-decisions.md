@@ -1,9 +1,9 @@
 # Sổ quyết định gameplay trước phát hành — Hư Giới · Tiên Lộ Vô Tận
 
 > Trạng thái: Đề xuất.
-> **Cần chủ dự án duyệt; chưa phải lệnh triển khai.** File này là **đầu mối duy nhất để ghi lựa chọn** về các luật/nội dung còn thiếu. Bản kiểm kê đầy đủ ở [gameplay-audit.md](gameplay-audit.md); thiết kế sách nghề ở [profession-manuals-proposal.md](profession-manuals-proposal.md).
+> **Cần chủ dự án duyệt; chưa phải lệnh triển khai.** File này là **đầu mối duy nhất để ghi lựa chọn** về các luật/nội dung còn thiếu. Hồ sơ hiện hành ở [GAME.md](GAME.md); thiết kế sách nghề ở [profession-manuals-proposal.md](profession-manuals-proposal.md).
 >
-> **Đối chiếu repository ngày 10/11/2026**, `main` commit `132158529d221a1241aef9d8ab52beb671053926`. **PR #31 Thiên Mệnh Các và PR #32 kiểm kê đều đã MERGE** — một số ghi chú trước đó nói “chưa merge” đã lỗi thời; mục này cập nhật theo code mới, không giả định source V8/51 lệnh.
+> **Đối chiếu lại ngày 11/11/2026:** main `82da14cd`; PR #77 và #78 đã merge. Các quyết định chưa được chủ dự án duyệt vẫn giữ dạng đề xuất; mô tả runtime hiện hành theo [GAME](GAME.md) và [SYSTEM](SYSTEM.md).
 >
 > **Cách duyệt:** Giữ `[ ]` và đổi thành `[x]` ở lựa chọn phù hợp, hoặc ghi ở `Khác:`. Một lựa chọn **ĐỀ XUẤT** chưa trở thành yêu cầu game cho đến khi chủ dự án xác nhận. Nếu có quyết định đối nghịch đặc tả, **dừng lập trình phần liên quan và hỏi**, không ngầm chọn A. Với nội dung chưa có số liệu, chỉ chốt *nguyên tắc* trước; bảng số cuối phải dựa trên bot và được phê duyệt riêng.
 >
@@ -13,11 +13,11 @@
 
 | ID | Trạng thái | Quyết định được xác nhận | Mã nguồn/tài liệu |
 |---|---|---|---|
-| **K01** | **CHỐT** | Game **online-only**, Node/SQLite server-authoritative, Supabase JWT; đồng hồ/RNG/giá/thưởng do máy chủ giữ. **Không tính thời gian offline/ẩn tab.** | `docs/gameplay-v9.md`, `PlayerService`, `RemoteSession` |
+| **K01** | **CHỐT** | Game **online-only**, Supabase Edge/Postgres server-authoritative (Node/SQLite chỉ dev/test), Supabase JWT; đồng hồ/RNG/giá/thưởng do máy chủ giữ. **Không tính thời gian offline/ẩn tab.** | `docs/gameplay-v9.md`, `PlayerService`, `RemoteSession` |
 | **K02** | **CHỐT hiện trạng** | Engine hiện **state V9**, protocol **v2**, **49 lệnh/9 miền** (48 lệnh ban đầu + `exploreChoice` cho sự kiện Lịch luyện, **chờ chủ dự án duyệt**). Không quay lại V8/51 lệnh do tài liệu cũ. | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
-| **K03** | **CHỐT** | Mỗi đạo thân **một mạng**. Tọa hóa → server xác minh → xóa đạo thân đã chết → tạo đạo thân mới. Không hồi sinh người cũ; tạo kiếp mới **không mất Thiên Tinh**. | `docs/gameplay-v9.md`, `server/services/player-service.js` |
-| **K04** | **CHỐT & ĐÃ CÀI** | Thưởng **Thiên Tinh đầy đủ trong mỗi kiếp**, khi đột phá đại cảnh giới lên bậc `r` nhận `5×r`: Trúc Cơ +5, Kết Đan/Kim Đan +10, Nguyên Anh +15...; không giảm thưởng qua các kiếp, không thuế chuyển kiếp. | `docs/thien-menh-cac.md` (PR #31 đã merge) |
-| **K05** | **CHỐT & ĐÃ CÀI** | Thiên Mệnh Các thuộc **tài khoản**; 6 thuộc tính tối đa 20 cấp, hiệu quả chính tối đa +50% tương đối; Thiên Tinh, nâng cấp và Kỳ Trân chưa dùng được giữ sau khi xóa đạo thân; xóa toàn bộ dữ liệu tài khoản thì xóa luôn. | `data/character.js`, `server/repositories/sqlite-players.js` |
+| **K03** | **CHỐT** | Mỗi đạo thân **một mạng**. Tọa hóa → server xác minh → xóa đạo thân đã chết → tạo đạo thân mới. Không hồi sinh người cũ; reset sau tử vong **xóa cả Thiên Tinh, nâng cấp, Kỳ Trân và thứ hạng**, đúng backend hiện hành. | `docs/gameplay-v9.md`, `server/services/player-service.js` |
+| **K04** | **CHỐT & ĐÃ CÀI** | Thưởng **Thiên Tinh đầy đủ trong mỗi kiếp**, khi đột phá đại cảnh giới lên bậc `r` nhận `5×r`: Trúc Cơ +5, Kết Đan/Kim Đan +10, Nguyên Anh +15...; mỗi đạo thân mới chỉ kiếm thưởng từ các đại đột phá của chính mình, **không cộng dồn** giữa các lần reset. | `docs/thien-menh-cac.md` (PR #31 đã merge) |
+| **K05** | **CHỐT & ĐÃ CÀI** | Thiên Mệnh Các thuộc **tài khoản**; 6 thuộc tính tối đa 20 cấp, hiệu quả chính tối đa +50% tương đối; Thiên Tinh, nâng cấp và Kỳ Trân **bị xóa sau khi reset đạo thân chết** dù lưu ở bảng account riêng; xóa toàn bộ dữ liệu tài khoản thì xóa luôn. | `data/character.js`, `server/repositories/sqlite-players.js` |
 | **K06** | **CHỐT** | Khi tạp chất **Z đạt 100**, nhân vật **bị phế tu vi, thành phàm nhân**, **không tu luyện**, **không dùng vật phẩm**; **không chết ngay** mà chỉ chết khi thọ nguyên cạn. **Chưa cài luật này** vào engine. | Quyết định người thiết kế sau Bước 0; `data/meridians.js` hiện chỉ preview |
 | **K07** | **CHỐT** | Khi phế tu vi, **giữ số năm thọ nguyên còn lại tại thời điểm đó**; không đổi ngưỡng tử vong ngay theo tuổi thọ phàm nhân. **Tốc độ tiêu hao số năm này chưa chốt.** | Quyết định người thiết kế; `engine/rules/time.js` chưa hỗ trợ |
 | **K08** | **CHỐT** | **12 sách nghề**: Luyện đan, Luyện khí, Chế phù, Linh điền; **mỗi nghề 3 tập** theo **Hạ Giới (0–4), Linh Giới (5–8), Tiên Giới (9–13)**. Mỗi quyển dạy **nhiều công thức**; loại phương án một cuốn/một công thức. **Chưa cài.** | `docs/profession-manuals-proposal.md` |
