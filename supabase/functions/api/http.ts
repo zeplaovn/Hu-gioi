@@ -39,18 +39,18 @@ export function routeOf(method: string, path: string): { name: string; id?: stri
   if (method === 'POST' && pathname === '/social/chat/poll') return { name: 'chatPoll' };
   if (method === 'POST' && pathname === '/social/chat/send') return { name: 'chatSend' };
   if (method === 'POST' && pathname === '/social/chat/leave') return { name: 'chatLeave' };
-  if (method === 'GET' && pathname === '/social/ranking') return { name: 'leaderboard' };
+  if ((method === 'GET' || method === 'POST') && pathname === '/social/ranking') return { name: 'leaderboard' };
   if (method === 'POST' && pathname === '/creation/preview') return { name: 'preview' };
   if (method === 'POST' && pathname === '/players') return { name: 'create' };
   if (method === 'POST' && pathname === '/pavilion/purchase') return { name: 'pavilionPurchase' };
   if (method === 'GET' && pathname === '/me/export') return { name: 'exportData' };
   if (method === 'POST' && pathname === '/me/erase') return { name: 'eraseData' };
   if (method === 'POST' && pathname === '/me/delete-account') return { name: 'deleteAccount' };
-  const match = /^\/players\/([0-9a-f-]{36})\/(state|sync|commands|pause)$/i.exec(pathname);
+  const match = /^\/players\/([0-9a-f-]{36})\/(state|sync|commands|pause|reset-after-death)$/i.exec(pathname);
   if (!match || !UUID.test(match[1])) return null;
   const op = match[2];
   if (method !== (op === 'state' ? 'GET' : 'POST')) return null;
-  return { name: op, id: match[1].toLowerCase() };
+  return { name: op === 'reset-after-death' ? 'resetAfterDeath' : op, id: match[1].toLowerCase() };
 }
 export async function parseBody(req: Request): Promise<unknown> {
   if (req.method !== 'POST') return {};
