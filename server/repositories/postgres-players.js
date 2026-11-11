@@ -248,6 +248,10 @@ class PostgresPlayers extends PlayerRepository {
           playerId, big(rec.revision), big(combatPower(s.state))
         ]);
         if (changed.length !== 1) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.');
+        if (new GAME.Game(s.state).isDead()) {
+          // Nhân vật đã tọa hóa lập tức rời bảng xếp hạng; không chờ bấm bắt đầu lại.
+          await exec(c, 'DELETE FROM game.player_leaderboard WHERE player_id = $1', [playerId]);
+        }
       } else if (out.touch || rateTokens) {
         await exec(c, `UPDATE game.players SET rng_counter = $1, last_seen_at = $2,
           rate_tokens = $3::jsonb, tokens_at = $4 WHERE id = $5`, [
