@@ -91,6 +91,16 @@ class PlayerService {
     this.onError = onError;
   }
 
+  /* Bắt đầu lại sau khi chết thật. Không thưởng/cộng dồn trọng sinh:
+   * toàn bộ Thiên Tinh, Thiên Mệnh Các, xếp hạng và tiến trình được xóa. */
+  async resetAfterDeath(ownerId, playerId) {
+    const rec = this.#own(await this.repo.get(playerId), ownerId);
+    if (!new H.Game(this.#state(rec, this.clock())).isDead())
+      throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
+    const deleted = await this.repo.deletePlayer(ownerId, playerId);
+    return { ...deleted, pavilion: await this.repo.getPavilion(ownerId) };
+  }
+
   /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
   async exportData(ownerId) {
     const data = await this.repo.exportOwnerData(ownerId);
