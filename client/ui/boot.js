@@ -337,9 +337,18 @@
       $('createForm').setAttribute('aria-busy', 'true');
       syncName();
       try {
-        const images = [...A.INTRO, A.zoneBg(0), A.heroPortrait(profile.gender, 0)];
-        for (const action of ['dung_yen', 'di_chuyen', 'tan_cong']) {
-          for (let i = 0; i < A.heroFrames(profile.gender, 0, action); i++) images.push(A.heroSrc(profile.gender, 0, action, i));
+        // Không chặn nút Bắt đầu trên điện thoại để tải cả bộ hoạt ảnh chưa dùng.
+        // Intro tự tải cảnh kế tiếp khi chuyển; những khung di chuyển/đánh tự tải khi chơi.
+        const compactEntry = typeof root.matchMedia === 'function'
+          ? root.matchMedia('(max-width: 900px), (pointer: coarse)').matches
+          : Number(root.innerWidth) > 0 && root.innerWidth <= 900;
+        const images = compactEntry
+          ? [A.INTRO[0], A.zoneBg(0), A.heroPortrait(profile.gender, 0), A.heroSrc(profile.gender, 0, 'dung_yen', 0)]
+          : [...A.INTRO, A.zoneBg(0), A.heroPortrait(profile.gender, 0)];
+        if (!compactEntry) {
+          for (const action of ['dung_yen', 'di_chuyen', 'tan_cong']) {
+            for (let i = 0; i < A.heroFrames(profile.gender, 0, action); i++) images.push(A.heroSrc(profile.gender, 0, action, i));
+          }
         }
         await root.HU_LOADER.enter(images, () => {
           if (!H.READY) throw new Error('Trò chơi chưa sẵn sàng. Vui lòng tải lại trang.');

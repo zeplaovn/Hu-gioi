@@ -7,8 +7,20 @@
   if (!el) return;
   const fill = el.querySelector('.loading-fill'), pct = el.querySelector('.loading-pct');
   const track = el.querySelector('.loading-track'), tip = el.querySelector('.loading-tip');
+  // Trên mạng di động chỉ chờ những hình thật sự cần để vào game.
+  // Manifest đầy đủ ~10 MB/97 ảnh khiến màn loading có thể kẹt hàng phút trên 3G;
+  // các hình còn lại vẫn được trình duyệt tải khi màn chơi cần đến.
+  const compactStartup = typeof root.matchMedia === 'function'
+    ? root.matchMedia('(max-width: 900px), (pointer: coarse)').matches
+    : Number(root.innerWidth) > 0 && root.innerWidth <= 900;
+  const criticalImages = [
+    'media/assets/chars/player/realistic/nam/portrait.webp',
+    'media/assets/chars/player/realistic/nam/thien_dinh/00.webp',
+    'media/assets/chars/player/realistic/nu/portrait.webp',
+    'media/assets/chars/player/realistic/nu/thien_dinh/00.webp'
+  ];
   const list = [...new Set([
-    ...(Array.isArray(root.HU_PRELOAD) ? root.HU_PRELOAD : []),
+    ...(compactStartup ? criticalImages : Array.isArray(root.HU_PRELOAD) ? root.HU_PRELOAD : []),
     'media/assets/world/bg/ha_gioi/day/xuan.webp',
     'media/assets/world/bg/logo.webp'
   ].filter(Boolean))];

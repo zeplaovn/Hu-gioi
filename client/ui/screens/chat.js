@@ -74,7 +74,13 @@
       if (sending || !draft.trim()) return;
       const text = draft.trim();
       if (text.length > 400) return;
-      if (!pending || pending.text !== text || pending.channel !== session.channel) pending = { text, channel: session.channel, id: root.crypto.randomUUID ? root.crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2) };
+      if (!pending || pending.text !== text || pending.channel !== session.channel) {
+        try {
+          pending = { text, channel: session.channel, id: root.HU_REMOTE_SESSION.secureRequestId() };
+        } catch (e) {
+          error = e.message; update(); return;
+        }
+      }
       sending = true; error = ''; update();
       try {
         await session.send(text, pending.id);
@@ -128,7 +134,7 @@
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       const rect = bubble.el.getBoundingClientRect();
       gesture = { id: e.pointerId, x: e.clientX, y: e.clientY, left: rect.left, top: rect.top, moved: false };
-      bubble.btn.setPointerCapture(e.pointerId);
+      try { bubble.btn.setPointerCapture(e.pointerId); } catch { /* touch WebKit: click vẫn hoạt động */ }
     });
     bubble.btn.addEventListener('pointermove', e => {
       if (!gesture || e.pointerId !== gesture.id) return;

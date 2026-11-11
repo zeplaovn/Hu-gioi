@@ -133,6 +133,10 @@ def mock_ci_chat(page, url):
 
 
 def enter_game(page, url, folder=None, name=None, outcome=None):
+    # Dùng tap thật cho iOS giả lập; các bài proof khác vẫn giữ hành vi cũ.
+    touch = name in ("after_390x844", "webkit_390x844")
+    def activate(locator):
+        locator.tap() if touch else locator.click()
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
     # Màn Tiên Tịch: chụp Đăng nhập/Đăng ký và vào chế độ offline để kiểm luồng game cũ.
@@ -149,7 +153,7 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
             page.locator('[data-auth-view="login"]').click()
             page.locator("#authEmail").fill("ci@example.invalid")
             page.locator("#authPassword").fill("ci-test-password-1234")
-            page.locator("#authSubmit").click()
+            activate(page.locator("#authSubmit"))
             page.locator("#welcome").wait_for(state="visible", timeout=20000)
     # Every viewport creates a different character in the shared in-memory CI server.
     # Avoid NAME_TAKEN (409) without changing gameplay name uniqueness.
@@ -160,20 +164,23 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
         "360x640": "Vân Hàn",
         "844x390": "Vân Phong",
     }
-    page.locator("#nameInput").fill(test_names.get(viewport, "Vân Tiêu"))
+    page.locator("#nameInput").fill("Vân Băng" if name == "webkit_390x844" else test_names.get(viewport, "Vân Tiêu"))
     for _ in range(8):
-        page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first.click()
-    page.locator("#startNew").click()
+        activate(page.locator('#statGrid .stat-pm[data-delta="1"]:not([disabled])').first)
+    activate(page.locator("#startNew"))
     page.locator('#gameLoading').wait_for(state='hidden', timeout=45000)
     # Không dựa vào thời gian chờ cố định: mở đầu được tạo ngay sau loading.
     intro = page.locator('#storyIntro')
     intro.wait_for(state='visible', timeout=15000)
-    intro.press('Escape')
+    if touch:
+        for _ in range(5): intro.tap()
+    else:
+        intro.press('Escape')
     intro.wait_for(state='detached', timeout=15000)
     # Nhân vật được tạo sau intro; lúc này tutorial mới khởi tạo.
     tutorial = page.locator('#tutorialLayer')
     tutorial.wait_for(state='visible', timeout=15000)
-    page.locator('#tutorialSkip').click()
+    activate(page.locator('#tutorialSkip'))
     tutorial.wait_for(state='detached', timeout=15000)
     page.locator("#menu button").first.wait_for(state="visible", timeout=25000)
 
@@ -274,6 +281,13 @@ def run_set(browser, folder, name, url, width, height, mobile):
         device_scale_factor=1, reduced_motion="reduce",
     )
     page = ctx.new_page()
+    if name == "after_390x844":
+        # Simulate old iOS/WebKit: features missing in Safari 15.x. Before branch
+        # keeps the baseline untouched; only the patched mobile flow is tested.
+        page.add_init_script("""
+            Object.defineProperty(AbortSignal, 'timeout', { configurable: true, value: undefined });
+            Object.defineProperty(crypto, 'randomUUID', { configurable: true, value: undefined });
+        """)
     mock_ci_config(page, url)
     mock_supabase(page, name)  # identical auth/consent fixture for before and after
     mock_ci_chat(page, url)  # Edge-only chat is mocked only in browser CI
@@ -304,6 +318,23 @@ def run_set(browser, folder, name, url, width, height, mobile):
         assert page.locator('#game').is_visible(), f"{name}: game main screen #game is not visible"
         assert page.locator('#menu button').first.is_visible(), f"{name}: game main menu not visible"
         outcome["gameplay_reached"] = True
+        if name == "after_390x844":
+            assert page.evaluate("typeof AbortSignal.timeout") == "undefined"
+            assert page.evaluate("typeof crypto.randomUUID") == "undefined"
+            # Touch navigation and a genuine server-authoritative game command.
+            page.locator('#menu button[data-window="world"]').tap()
+            world = page.locator('.win.desktop-window[data-window="world"]')
+            world.wait_for(state="visible", timeout=15000)
+            world.locator('[data-tab="shop"]').first.tap()
+            world.locator('.win-close').tap()
+            assert world.count() == 0, "Touch không đóng được cửa sổ"
+            rev = page.evaluate("""async () => {
+                const ui = window.HU_UI, old = ui.session.revision;
+                await ui.command('buy', { code: 'HERB-001' });
+                return { before: old, after: ui.session.revision };
+            }""")
+            assert rev["after"] == rev["before"] + 1, "Lệnh mobile không được server xác nhận"
+            outcome["mobile_touch_and_command"] = True
         # Capture the loaded game before opening modal pages or chat fixtures.
         outcome["screenshots"].append(snap(page, folder, name, "game-main"))
         verify_bubble(page, folder, name, outcome)
@@ -375,6 +406,60 @@ def run_set(browser, folder, name, url, width, height, mobile):
         ctx.close()
     return outcome
 
+def run_webkit_mobile(playwright, url, folder):
+    """WebKit touch smoke: iOS engine under localhost with old Safari APIs disabled.
+
+    Not a physical iPhone: no production network calls; this catches Safari
+    DOM/touch regressions that Chromium mobile emulation cannot cover.
+    """
+    parsed = urlsplit(url)
+    assert parsed.scheme == "http" and parsed.hostname == "127.0.0.1" and parsed.port == 8001
+    outcome = {"url": url, "viewport": "WebKit 390x844", "screenshots": [],
+               "errors": [], "gameplay_reached": False}
+    browser = playwright.webkit.launch(headless=True)
+    ctx = browser.new_context(viewport={"width": 390, "height": 844},
+                              is_mobile=True, has_touch=True, device_scale_factor=1,
+                              reduced_motion="reduce")
+    page = ctx.new_page()
+    page.add_init_script("""
+        Object.defineProperty(AbortSignal, 'timeout', { configurable: true, value: undefined });
+        Object.defineProperty(crypto, 'randomUUID', { configurable: true, value: undefined });
+    """)
+    mock_ci_config(page, url)
+    mock_supabase(page, "webkit_390x844")
+    mock_ci_chat(page, url)
+    page.on("pageerror", lambda error: outcome["errors"].append("pageerror: " + str(error)))
+    try:
+        enter_game(page, url, folder, "webkit_390x844", outcome)
+        assert page.locator("#game").is_visible()
+        assert page.evaluate("typeof AbortSignal.timeout") == "undefined"
+        assert page.evaluate("typeof crypto.randomUUID") == "undefined"
+        outcome["gameplay_reached"] = True
+        page.locator('#menu button[data-window="world"]').tap()
+        world = page.locator('.win.desktop-window[data-window="world"]')
+        world.wait_for(state="visible", timeout=15000)
+        world.locator('[data-tab="shop"]').first.tap()
+        world.locator('.win-close').tap()
+        assert world.count() == 0, "WebKit touch không đóng được cửa sổ"
+        revisions = page.evaluate("""async () => {
+            const ui = window.HU_UI, before = ui.session.revision;
+            await ui.command('buy', { code: 'HERB-001' });
+            return { before, after: ui.session.revision };
+        }""")
+        assert revisions["after"] == revisions["before"] + 1, "WebKit không ghi được lệnh gameplay"
+        outcome["webkit_touch_and_command"] = True
+        outcome["screenshots"].append(snap(page, folder, "webkit_390x844", "mobile-play"))
+    except Exception as e:
+        outcome["exception"] = str(e)
+        try:
+            outcome["screenshots"].append(snap(page, folder, "webkit_390x844", "failure"))
+        except Exception:
+            pass
+    finally:
+        ctx.close()
+        browser.close()
+    return outcome
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--before", required=True)
@@ -389,6 +474,8 @@ def main():
         for width, height in [(1366, 768), (390, 844), (360, 640), (844, 390)]:
             for label, url in (("before", args.before), ("after", args.after)):
                 report.append(run_set(browser, folder, f"{label}_{width}x{height}", url, width, height, width < 900))
+        # Kiểm thử WebKit riêng để bắt lỗi thao tác chạm/iPhone ngoài Chromium.
+        report.append(run_webkit_mobile(p, args.after, folder))
         # Smoke test file:// không dùng mạng, chỉ kiểm tra nạp script/DOM.
         file_ctx = browser.new_context()
         file_page = file_ctx.new_page()
