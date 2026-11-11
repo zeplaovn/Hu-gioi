@@ -92,8 +92,14 @@
     const relation = M.relation(current.he, preview.heList);
     const connection = current.he === 'Trung hòa' ? 'Trung hòa'
       : relation === 'same' ? 'Cùng hệ linh căn' : relation === 'sinh' ? 'Hệ tương sinh' : 'Chưa có liên hệ cùng hệ';
-    const figure = media?.installed
-      ? '<img src="' + abs(media.meridian(state.gender, tone)) + '" alt="Minh họa tu sĩ ngồi thiền để tra cứu vị trí kinh mạch" loading="lazy" decoding="async">'
+    // WebP chất lượng cao chỉ có khi đã cài gói ảnh; SVG minh họa có sẵn trên web.
+    const person = media?.installed
+      ? media.meridian(state.gender, tone)
+      : media?.meridianFallback?.(state.gender, tone);
+    const figure = person
+      ? '<img class="meridian-person" src="' + esc(abs(person)) + '" alt="Tu sĩ ' +
+        (state.gender === 'nu' ? 'nữ' : 'nam') + ' ngồi thiền · ' +
+        (tone === 'vang' ? 'Kim quang' : 'Thanh quang') + '" loading="eager" decoding="async">'
       : '<div class="meridian-map-fallback" aria-hidden="true">☯</div>';
     const option = (action, key, val, label, pressed) =>
       '<button type="button" data-act="' + action + '" data-' + key + '="' + val +
