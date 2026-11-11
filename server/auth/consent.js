@@ -4,7 +4,7 @@
 const crypto = require('node:crypto');
 const { GameError } = require('../errors.js');
 
-const VERSION = '2026-11-11-v6';
+const VERSION = '2026-11-11-v7';
 const REQUIRED = ['privacy', 'release_terms'];
 
 function createConsentVerifier({
