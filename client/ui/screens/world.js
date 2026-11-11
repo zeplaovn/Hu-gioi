@@ -47,11 +47,13 @@
         ? Math.max(r.width / image.naturalWidth, r.height / image.naturalHeight) : 1;
       const coverWidth = (image.naturalWidth || r.width) * baseScale;
       const coverHeight = (image.naturalHeight || r.height) * baseScale;
+      image.style.width = coverWidth + 'px';
+      image.style.height = coverHeight + 'px';
       const boundX = Math.max(0, (coverWidth * mapView.zoom - r.width) / 2);
       const boundY = Math.max(0, (coverHeight * mapView.zoom - r.height) / 2);
       mapView.x = clampMap(mapView.x, -boundX, boundX);
       mapView.y = clampMap(mapView.y, -boundY, boundY);
-      image.style.transform = 'translate3d(' + mapView.x + 'px,' + mapView.y + 'px,0) scale(' + mapView.zoom.toFixed(2) + ')';
+      image.style.transform = 'translate3d(calc(-50% + ' + mapView.x + 'px),calc(-50% + ' + mapView.y + 'px),0) scale(' + mapView.zoom.toFixed(2) + ')';
       label.textContent = Math.round(mapView.zoom * 100) + '%';
     };
     const zoom = factor => { mapView.zoom = clampMap(Math.round(mapView.zoom * factor * 100) / 100, 1, 4); apply(); };
