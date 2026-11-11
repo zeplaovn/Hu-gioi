@@ -140,3 +140,11 @@ test('không để asset không dùng trong preload và không bỏ PNG dự ph�
     assert.equal(fs.existsSync(path.join(ROOT, live)), true, 'Asset đang dùng hoặc fallback bị mất: ' + live);
   }
 });
+
+test('không còn trang demo sprite và vẫn giữ công cụ build, test, backup đang được dùng', () => {
+  assert.equal(fs.existsSync(path.join(ROOT, 'demo')), false, 'Đã loại bỏ demo độc lập khỏi repository');
+  for (const filename of ['build-dist.cjs','build-edge.cjs','check-css-bundle.cjs',
+    'simulate-edge-calls.cjs','online-ci-server.cjs','ui-proof.py','backup-db.cjs']) {
+    assert.ok(fs.existsSync(path.join(ROOT, 'tools', filename)), 'Không được xóa tool còn sử dụng: ' + filename);
+  }
+});
