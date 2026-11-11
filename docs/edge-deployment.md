@@ -135,6 +135,12 @@ Dashboard > Authentication > Providers > Email: bật email/password, kiểm tra
 - Xác minh bằng tài khoản Google thử nghiệm: redirect Google → Supabase callback → Cloudflare → xác minh `/auth/v1/user` → **consent v7** → bootstrap/reload/logout. Thử từ chối quyền Google, refresh tab trong lúc redirect, và mở URL callback ngoài phiên gốc; không được tự động nhận token.
 - Tài khoản email/password cũ được giữ nguyên; việc gộp tài khoản với Google phụ thuộc hành vi liên kết danh tính của Supabase. Không tự gộp người chơi chỉ theo địa chỉ email.
 
+### Kiểm tra version consent của Edge đã triển khai (bắt buộc)
+
+Mã nguồn cùng dùng `2026-11-11-v7` ở `client/auth/supabase.js`, `server/auth/consent.js` và `supabase/functions/api/index.ts`. **CI chỉ kiểm tra mã nguồn; Edge Function đã deploy có thể vẫn đang chạy bản cũ.** Ngày 11/11/2026, test nội bộ phát hiện Edge deployment v7 vẫn chứa `POLICY_VERSION = '2026-11-10-v5'`, nên người dùng đã chấp thuận v7 vẫn gặp `CONSENT_REQUIRED` tại `/bootstrap`. Đã hotfix Edge deployment v8 bằng cách thay **duy nhất** constant đó thành `2026-11-11-v7`; dữ liệu consent/Auth không bị thay đổi.
+
+Sau **mỗi lần** deploy Edge: dùng Supabase Dashboard → Edge Functions → `api` → Source (hoặc API quản trị `get_edge_function`) để đọc **mã của bản đang ACTIVE**, không chỉ file Git, và so `POLICY_VERSION` với `HU_SUPABASE.VERSION`. Cần đủ hai consent `privacy` và `release_terms` của **cùng người dùng và cùng version**; không tự thêm v5 hoặc bỏ qua kiểm tra consent để chữa lỗi. Bằng tài khoản test thật: xác nhận `GET /bootstrap` trả 200 sau khi accept v7, refresh trang và xác nhận phiên tiếp tục; thử tài khoản chưa accept phải vẫn bị từ chối. Không dán JWT/password vào ticket, log hoặc ảnh.
+
 ## 5. Xác minh sau deploy
 
 - Từ terminal: `curl -i https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap` **không JWT** phải 401; preflight `OPTIONS` với `Origin: https://hugioi.blackbearvn.workers.dev` phải 204 và trả `Vary: Origin`, allow origin/header.
