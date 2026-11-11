@@ -173,7 +173,7 @@ class PostgresPlayers extends PlayerRepository {
         throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
       await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
       const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1 FOR UPDATE', [ownerId]));
-      const consumed = Object.fromEntries(Object.keys(account.relics).filter(k => account.relics[k] > 0).map(k => [k, 1]));
+      const consumed = {}; // Không mang Kỳ Trân từ kiếp trước sang đạo thân mới.
       const rec = await build(json(ticket.preview), { ...account, consumed });
       const serialized = JSON.stringify(rec.state);
       if (bytes(serialized) > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
@@ -194,12 +194,6 @@ class PostgresPlayers extends PlayerRepository {
         throw err;
       }
       await exec(c, 'UPDATE game.creation_tickets SET used_at = $1 WHERE id = $2', [big(now), ticketId]);
-      if (Object.keys(consumed).length) {
-        const relics = { ...account.relics };
-        for (const key of Object.keys(consumed)) relics[key]--;
-        await exec(c, `UPDATE game.pavilion_accounts
-          SET relics = $1::jsonb, version = version + 1 WHERE owner_id = $2`, [JSON.stringify(relics), ownerId]);
-      }
       await this.sweep(c, ownerId, now, id);
       return hydrate(await one(c, 'SELECT * FROM game.players WHERE id = $1', [id]));
     });
@@ -295,12 +289,6 @@ class PostgresPlayers extends PlayerRepository {
         cost = catalog.upgradeCost(current);
         if (cost === null) throw new GameError('GAME_RULE_VIOLATION', 'Thuộc tính Thiên Mệnh đã viên mãn cấp 20.');
         upgrades[key] = current + 1;
-      } else if (kind === 'relic' && Object.hasOwn(catalog.relics, key)) {
-        const def = catalog.relics[key];
-        if ((relics[key] || 0) >= def.maxStored)
-          throw new GameError('GAME_RULE_VIOLATION', 'Kho Kỳ Trân đã đạt giới hạn.');
-        cost = def.cost;
-        relics[key] = (relics[key] || 0) + 1;
       } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');
       if (account.balance < cost) throw new GameError('INSUFFICIENT_TINH', 'Không đủ Thiên Tinh để đổi.');
       await exec(c, `UPDATE game.pavilion_accounts SET
@@ -334,7 +322,6 @@ class PostgresPlayers extends PlayerRepository {
       await exec(c, 'DELETE FROM game.players WHERE id = $1 AND owner_id = $2', [playerId, ownerId]);
       await exec(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
       await exec(c, 'INSERT INTO game.pavilion_accounts (owner_id) VALUES ($1) ON CONFLICT DO NOTHING', [ownerId]);
-      await exec(c, 'UPDATE game.pavilion_accounts SET rebirths = rebirths + 1, version = version + 1 WHERE owner_id = $1', [ownerId]);
       return { deleted: true };
     });
   }
@@ -344,8 +331,12 @@ class PostgresPlayers extends PlayerRepository {
       const ticketRow = await one(c, 'SELECT count(*)::bigint AS n FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
       const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId]));
       const tickets = toInt(ticketRow.n);
-      if (!player && !tickets && account.totalEarned === 0 && account.rebirths === 0) return null;
-      return { player: player ? {
+      const chatRows = await rows(c, `SELECT id, sender_name, body, created_at
+        FROM game.world_chat_messages WHERE owner_id = $1 ORDER BY id ASC`, [ownerId]);
+      if (!player && !tickets && account.totalEarned === 0 && account.rebirths === 0 && !chatRows.length) return null;
+      return { chatMessages: chatRows.map(r => ({
+        id: String(r.id), name: String(r.sender_name), text: String(r.body), at: toInt(r.created_at)
+      })), player: player ? {
         id: player.id, name: player.name, revision: toInt(player.revision), schemaVersion: player.schema_version,
         state: json(player.state), lastSeenAt: toInt(player.last_seen_at),
         createdAt: toInt(player.created_at), updatedAt: toInt(player.updated_at)
@@ -358,10 +349,13 @@ class PostgresPlayers extends PlayerRepository {
       const player = await one(c, 'SELECT id FROM game.players WHERE owner_id = $1 FOR UPDATE', [ownerId]);
       const receipts = player ? toInt((await one(c,
         'SELECT count(*)::bigint AS n FROM game.player_receipts WHERE player_id = $1', [player.id])).n) : 0;
+      // Erasure phải xóa cả tin nhắn/presence; đây là dữ liệu mới ngoài gameplay state.
+      const deletedChat = await rows(c, 'DELETE FROM game.world_chat_messages WHERE owner_id = $1 RETURNING id', [ownerId]);
+      await exec(c, 'DELETE FROM game.world_chat_presence WHERE owner_id = $1', [ownerId]);
       const deletedPlayer = await rows(c, 'DELETE FROM game.players WHERE owner_id = $1 RETURNING id', [ownerId]);
       const deletedTickets = await rows(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1 RETURNING id', [ownerId]);
       const deletedPavilion = await rows(c, 'DELETE FROM game.pavilion_accounts WHERE owner_id = $1 RETURNING owner_id', [ownerId]);
-      return { players: deletedPlayer.length, tickets: deletedTickets.length, receipts, pavilionAccounts: deletedPavilion.length };
+      return { players: deletedPlayer.length, tickets: deletedTickets.length, receipts, pavilionAccounts: deletedPavilion.length, chatMessages: deletedChat.length };
     });
   }
   async purgeExpired(now) {
