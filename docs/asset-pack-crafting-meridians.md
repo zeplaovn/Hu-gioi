@@ -6,7 +6,7 @@
 
 - **Luyện đan:** nền Đan Các, hoạt cảnh 8 frame theo giới tính nhân vật, nút **Xem riêng lò đan**.
 - **Luyện khí:** nền Lò Rèn và hoạt cảnh rèn kiếm 8 frame theo giới tính, tuân thủ khóa mở theo cảnh giới.
-- **Linh căn:** bổ sung **Kinh Mạch Đồ** tra cứu 12 Chính Kinh, 8 Kỳ Kinh bằng điểm đánh dấu trên đạo thể; hai bảng màu Thanh quang / Kim quang.
+- **Linh căn:** bổ sung **Kinh Mạch Đồ** tra cứu **12 Chính Kinh bằng màu xanh (Thanh quang)** và **8 Kỳ Kinh bằng màu vàng (Kim quang)**. Khi chuyển loại kinh mạch, ảnh đạo thể và điểm đánh dấu đổi màu đồng bộ; không có nút đổi màu độc lập.
 - **Giảm chuyển động:** dùng 4 ảnh WebP tĩnh thay vì phát hoạt cảnh.
 
 ## Quan trọng: không sửa luật game
