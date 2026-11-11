@@ -107,7 +107,7 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
     if (typeof requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
       return fail('INVALID_REQUEST', 'Mã tin nhắn không hợp lệ.');
     return repo.transaction(async c => {
-      // Khóa ngắn theo user, chống gửi đồng thời vượt 2 giây từ các isolate khác nhau.
+      // Khóa ngắn theo user, chống gửi đồng thời vượt 15 giây giữa các isolate.
       await rows(c, 'SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [ownerId]);
       const previous = await first(c, `SELECT id, owner_id, sender_name, body, created_at, channel_key
         FROM game.world_chat_messages WHERE owner_id = $1 AND request_id = $2`, [ownerId, requestId]);
@@ -121,8 +121,8 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
       }
       const last = await first(c, `SELECT created_at FROM game.world_chat_messages
         WHERE owner_id = $1 ORDER BY created_at DESC LIMIT 1`, [ownerId]);
-      if (last && now - asSafe(last.created_at) < 2000)
-        return fail('RATE_LIMITED', 'Mỗi tin nhắn cách nhau ít nhất 2 giây.');
+      if (last && now - asSafe(last.created_at) < 15000)
+        return fail('RATE_LIMITED', 'Mỗi tin nhắn cách nhau ít nhất 15 giây.');
       const saved = await first(c, `INSERT INTO game.world_chat_messages
         (owner_id, sender_name, body, request_id, created_at, channel_key)
         VALUES ($1, $2, $3, $4, $5, $6)
