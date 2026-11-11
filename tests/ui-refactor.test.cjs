@@ -81,5 +81,6 @@ test('phần tạo nhân vật bắt buộc phân bổ đủ 8 điểm gốc c�
   assert.doesNotMatch(html, /Bạn phải phân bổ đủ 8 điểm thiên phú/);
   assert.match(html, /id="startNew"[^>]*disabled/);
   assert.match(boot, /creation\.points !== 0/);
-  assert.match(rule, /total !== H\.TALENT_MAX/);
+  assert.match(rule, /const required = H\.TALENT_MAX \+ extra/);
+  assert.match(rule, /total !== required/);
 });
