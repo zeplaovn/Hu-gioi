@@ -19,6 +19,11 @@
     meridian(gender, tone = 'xanh') {
       const who = gender === 'nu' ? 'nu' : 'nam';
       return BASE + 'meridians/' + who + '-' + (tone === 'vang' ? 'vang' : 'xanh') + '.webp';
+    },
+    // SVG có sẵn trong repository để đạo thể luôn hiển thị dù chưa cài gói WebP.
+    meridianFallback(gender, tone = 'xanh') {
+      const who = gender === 'nu' ? 'nu' : 'nam';
+      return BASE + 'meridians/' + who + '-' + (tone === 'vang' ? 'vang' : 'xanh') + '-fallback.svg';
     }
   });
   root.HU_CUSTOM_MEDIA = MEDIA;

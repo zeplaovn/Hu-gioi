@@ -4,10 +4,10 @@
 
 ## Tính năng
 
-- **Luyện đan:** bối cảnh Đan Các, hoạt cảnh 8 khung theo giới tính nhân vật, nút **Xem riêng lò đan**.
-- **Luyện khí:** bối cảnh Lò Rèn và hoạt cảnh rèn kiếm 8 khung theo giới tính, tuân thủ khóa mở theo cảnh giới.
+- **Luyện đan:** nền Đan Các, hoạt cảnh 8 frame theo giới tính nhân vật, nút **Xem riêng lò đan**.
+- **Luyện khí:** nền Lò Rèn và hoạt cảnh rèn kiếm 8 frame theo giới tính, tuân thủ khóa mở theo cảnh giới.
 - **Linh căn:** bổ sung **Kinh Mạch Đồ** tra cứu 12 Chính Kinh, 8 Kỳ Kinh bằng điểm đánh dấu trên đạo thể; hai bảng màu Thanh quang / Kim quang.
-- Tôn trọng tùy chọn **Giảm chuyển động** bằng cách dùng ảnh tĩnh thay cho hoạt ảnh.
+- **Giảm chuyển động:** dùng 4 ảnh WebP tĩnh thay vì phát hoạt cảnh.
 
 ## Quan trọng: không sửa luật game
 
