@@ -263,6 +263,20 @@ def verify_bubble(page, folder, name, outcome):
     win.wait_for(state="visible", timeout=15000)
     assert win.locator("#chatChannels").is_visible(), "Thiếu bốn kênh chat"
     assert win.locator('#chatChannels [data-chat-channel="world"]').count() == 1
+    if name.startswith("after_") or name.startswith("webkit_"):
+        assert win.locator(".chat-panel").is_visible(), "Chưa dựng giao diện messenger"
+        assert win.locator("#chatInput").is_visible(), "Ô soạn chat bị khuất trong khung mobile"
+        rect = win.evaluate("""el => {
+          const panel = el.querySelector('.chat-panel').getBoundingClientRect();
+          const feed = el.querySelector('.chat-transcript').getBoundingClientRect();
+          const composer = el.querySelector('.chat-form').getBoundingClientRect();
+          return { feedH: feed.height, gap: composer.top - feed.bottom,
+            composerBottom: composer.bottom, panelBottom: panel.bottom };
+        }""")
+        assert rect["feedH"] >= 54, "Vùng tin nhắn quá nhỏ"
+        assert abs(rect["gap"]) < 5, "Transcript không sát ô soạn chat"
+        assert rect["composerBottom"] <= rect["panelBottom"] + 4, "Ô soạn bị cắt khuất"
+        outcome["chat_composer_fits_window"] = True
     outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
     win.locator(".win-min").click()
     win.wait_for(state="hidden", timeout=15000)
