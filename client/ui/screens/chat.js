@@ -13,22 +13,51 @@
   const labels = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', online: 'Đã kết nối', offline: 'Mất kết nối', unavailable: 'Hãy mở Hư Giới từ đường dẫn trực tuyến để truyền âm' };
 
   function render() {
-    return `<section class="chat-panel"><header class="chat-heading"><div><span class="eyebrow gold">TRUYỀN ÂM · VẠN GIỚI</span><h2>Truyền âm vạn giới</h2></div><span id="chatOnline" class="chat-online"></span></header>
-      <div id="chatChannels" class="chat-channels" role="tablist" aria-label="Kênh Truyền âm">
+    const activeChannel = CHANNELS.find(x => x.id === session.channel) || CHANNELS[0];
+    return `<section class="chat-panel" aria-label="Truyền âm vạn giới">
+      <header class="chat-heading">
+        <div class="chat-brand"><span class="chat-seal" aria-hidden="true">✧</span><div>
+          <span class="eyebrow gold">LINH TẤN · TRUYỀN ÂM</span>
+          <h2>Truyền âm</h2></div></div>
+        <span id="chatOnline" class="chat-online" aria-label="Số đạo hữu trực tuyến"></span>
+      </header>
+      <nav id="chatChannels" class="chat-channels" role="tablist" aria-label="Chuyển kênh Truyền âm">
         ${CHANNELS.map(ch => '<button type="button" role="tab" data-chat-channel="' + ch.id +
-          '" aria-selected="' + (ch.id === session.channel) + '">' + esc(ch.title) + '</button>').join('')}</div>
-      <p class="info-note" id="chatChannelInfo">${esc(CHANNELS.find(x => x.id === session.channel)?.help || '')}</p>
-      <div class="chat-connection"><span id="chatStatus" role="status"></span><button type="button" class="btn btn-outline" data-act="chatConnect" id="chatConnect">Kết nối</button><button type="button" class="btn btn-outline" data-act="chatDisconnect" id="chatDisconnect">Rời kênh</button></div>
-      ${!session.available ? '<p class="info-note">Trạm truyền âm hiện chưa khai mở. Bạn chưa thể gửi hoặc nhận lời nhắn lúc này.</p>' : ''}
-      <div id="chatFeed" class="chat-feed" role="log" aria-label="Tin nhắn kênh thế giới" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
-      <p id="chatEmpty" class="empty-note">Chưa có tin nhắn. Hãy gửi lời chào đến các vị đạo hữu!</p>
-      <form id="chatForm" class="chat-form"><label for="chatInput">Lời truyền âm</label><div><input id="chatInput" type="text" maxlength="400" autocomplete="off" placeholder="Gửi lời đến đạo hữu bốn phương…" value="${esc(draft)}" aria-describedby="chatError chatLimit"><button type="submit" class="btn btn-gold" id="chatSend">Gửi</button></div><small id="chatLimit">Tối đa 400 ký tự · mỗi tin cách nhau 2 giây.</small></form>
-      <p id="chatError" class="chat-error" role="status"></p></section>`;
+          '" aria-selected="' + (ch.id === session.channel) + '" tabindex="' + (ch.id === session.channel ? 0 : -1) +
+          '">' + esc(ch.title) + '</button>').join('')}</nav>
+      <div class="chat-context">
+        <p id="chatChannelInfo">${esc(activeChannel.help)}</p>
+        <span class="chat-retention">Tin lưu tạm thời · Chỉ dành cho người chơi</span>
+      </div>
+      <div class="chat-connection">
+        <span id="chatStatus" role="status" aria-live="polite"></span>
+        <div class="chat-connection-actions">
+          <button type="button" class="btn btn-outline" data-act="chatConnect" id="chatConnect">Thử kết nối</button>
+          <button type="button" class="btn btn-outline" data-act="chatDisconnect" id="chatDisconnect">Rời kênh</button>
+        </div>
+      </div>
+      ${!session.available ? '<p class="chat-availability" role="status">Truyền âm cần kết nối HTTPS và tài khoản đã đăng nhập.</p>' : ''}
+      <div class="chat-transcript">
+        <div id="chatFeed" class="chat-feed" role="log" aria-label="Tin nhắn kênh thế giới" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+        <div id="chatEmpty" class="chat-empty">
+          <span aria-hidden="true">✧</span><strong>Chưa có lời truyền âm</strong>
+          <p>Kết nối và gửi lời chào tới các đạo hữu đang hành tẩu trong Hư Giới.</p>
+        </div>
+      </div>
+      <form id="chatForm" class="chat-form" aria-label="Soạn lời truyền âm">
+        <label for="chatInput">Gửi lời truyền âm</label>
+        <div class="chat-compose-row"><input id="chatInput" type="text" maxlength="400" autocomplete="off"
+          placeholder="Nhập lời truyền âm…" value="${esc(draft)}" aria-describedby="chatError chatLimit">
+          <button type="submit" class="btn btn-gold" id="chatSend" aria-label="Gửi lời truyền âm">Gửi <span aria-hidden="true">➤</span></button></div>
+        <div class="chat-compose-meta"><small id="chatLimit">Tối đa 400 ký tự · Mỗi tin cách nhau 2 giây</small><span id="chatLength" aria-live="off"></span></div>
+        <p id="chatError" class="chat-error" role="status" aria-live="polite"></p>
+      </form>
+    </section>`;
   }
   function update() {
     if (!$('chatFeed')) return;
     const state = session.state, feed = $('chatFeed');
-    $('chatStatus').textContent = labels[state.status];
+    $('chatStatus').textContent = labels[state.status] || 'Chưa kết nối';
     $('chatStatus').dataset.status = state.status;
     $('chatOnline').textContent = state.online + ' đạo hữu đang hiện diện';
     $('chatError').textContent = error || state.error;
@@ -41,7 +70,9 @@
     $('chatConnect').hidden = ['connecting', 'online'].includes(state.status) || !session.available;
     $('chatDisconnect').hidden = !['connecting', 'online', 'offline'].includes(state.status);
     $('chatSend').disabled = sending || state.status !== 'online' || !draft.trim();
-    $('chatSend').textContent = sending ? 'Đang gửi…' : 'Gửi';
+    $('chatSend').innerHTML = sending ? 'Đang gửi…' : 'Gửi <span aria-hidden="true">➤</span>';
+    if ($('chatLength')) $('chatLength').textContent = draft.length + '/400';
+    document.querySelectorAll('[data-chat-channel]').forEach(el => el.tabIndex = el.dataset.chatChannel === session.channel ? 0 : -1);
     const follow = feed.scrollHeight - feed.clientHeight - feed.scrollTop < 48;
     const ids = new Set(state.messages.map(m => m.id));
     [...feed.children].forEach(el => { if (!ids.has(el.dataset.message)) el.remove(); });
@@ -59,14 +90,26 @@
       content.textContent = message.text;
       heading.append(name, time); el.append(heading, content); feed.append(el);
     }
-    $('chatEmpty').hidden = !!state.messages.length;
+    $('chatEmpty').hidden = !!state.messages.length || state.status === 'connecting';
     if (follow) feed.scrollTop = feed.scrollHeight;
   }
   function mount() {
+    const switchChannel = channel => {
+      if (!CHANNELS.some(item => item.id === channel) || channel === session.channel) return;
+      pending = null; error = ''; void session.connect(channel); update();
+    };
     $('chatChannels')?.addEventListener('click', event => {
       const tab = event.target.closest('[data-chat-channel]');
-      if (!tab || tab.dataset.chatChannel === session.channel) return;
-      pending = null; error = ''; void session.connect(tab.dataset.chatChannel); update();
+      if (tab) switchChannel(tab.dataset.chatChannel);
+    });
+    $('chatChannels')?.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const current = CHANNELS.findIndex(ch => ch.id === session.channel);
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? CHANNELS.length - 1 :
+        (current + (event.key === 'ArrowRight' ? 1 : -1) + CHANNELS.length) % CHANNELS.length;
+      switchChannel(CHANNELS[next].id);
+      $('chatChannels')?.querySelector('[data-chat-channel="' + CHANNELS[next].id + '"]')?.focus();
     });
     $('chatInput').addEventListener('input', event => { draft = event.target.value; error = ''; update(); });
     $('chatForm').addEventListener('submit', async event => {
