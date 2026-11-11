@@ -10,7 +10,7 @@ function encodePavilionReceipt(kind, key, cost) {
 function decodePavilionReceipt(fingerprint, kind, key) {
   // Prevent new-format "kind:key#cost" from being mistaken for a legacy
   // intent whose untrusted key itself contains the receipt separator.
-  if (!['upgrade', 'relic'].includes(kind) || typeof key !== 'string' || /[:#]/.test(key))
+  if (!['upgrade', 'relic', 'starter'].includes(kind) || typeof key !== 'string' || /[:#]/.test(key))
     throw reused();
   const prefix = kind + ':' + key;
   if (fingerprint === prefix) return null; // old receipt without cost
