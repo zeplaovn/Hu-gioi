@@ -9,10 +9,11 @@ const root = path.resolve(__dirname, '..');
 const ID = '11111111-2222-4333-8444-555555555555';
 const USER = { id: ID, email: 'test@example.invalid' };
 
-function createAdapter(initialHash = '') {
+function createAdapter(initialHash = '', initialSession = null) {
   const records = [];
   const requests = [];
   const storage = new Map();
+  if (initialSession) storage.set('huGioiSupabaseSessionV1', JSON.stringify(initialSession));
   const location = { protocol: 'https:', origin: 'https://game.example.invalid', pathname: '/', search: '', hash: initialHash };
   const window = {
     location,
@@ -115,4 +116,16 @@ test('registration rejects malformed email before any network request', async ()
   }
   assert.equal(requests.length, 0);
   assert.equal(sb.validEmail('Dao.Huu+1@example.com'), true);
+});
+
+test('làm mới token chỉ chạy một lần khi nhiều request cùng gặp token hết hạn', async () => {
+  const { sb, requests, storage } = createAdapter('', {
+    access_token: 'expired-access', refresh_token: 'refresh-1', expires_at: 1
+  });
+  const [a, b, c] = await Promise.all([sb.accessToken(), sb.accessToken(), sb.accessToken()]);
+  assert.deepEqual([a, b, c], ['access', 'access', 'access']);
+  const refreshes = requests.filter(x => String(x.input).includes('grant_type=refresh_token'));
+  assert.equal(refreshes.length, 1);
+  assert.equal(JSON.parse(refreshes[0].init.body).refresh_token, 'refresh-1');
+  assert.equal(JSON.parse(storage.get('huGioiSupabaseSessionV1')).refresh_token, 'refresh');
 });

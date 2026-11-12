@@ -8,6 +8,31 @@
 
   function endpoint() { return API; }
 
+  /* Phân biệt client cũ với máy chủ chưa được deploy lại. Trước đây cả hai
+     trường hợp đều báo "tải lại trang", khiến người chơi reload vô ích khi
+     Edge API vẫn đang chạy bundle cũ. */
+  function versionError(info) {
+    const serverProtocol = Number(info?.protocolVersion);
+    const serverSchema = Number(info?.schemaVersion);
+    const clientOutdated = (Number.isFinite(serverProtocol) && serverProtocol > C.VERSION) ||
+      (Number.isFinite(serverSchema) && serverSchema > H.VERSION);
+    const error = Error(clientOutdated
+      ? 'Trò chơi đã được cập nhật. Vui lòng tải lại trang để tiếp tục.'
+      : 'Máy chủ game đang được cập nhật. Vui lòng thử lại sau ít phút.');
+    error.code = clientOutdated ? 'CLIENT_OUTDATED' : 'SERVER_OUTDATED';
+    error.details = {
+      client: { protocolVersion: C.VERSION, schemaVersion: H.VERSION },
+      server: { protocolVersion: serverProtocol, schemaVersion: serverSchema }
+    };
+    return error;
+  }
+  function assertVersions(info) {
+    const protocolVersion = Number(info?.protocolVersion);
+    const schemaVersion = Number(info?.schemaVersion);
+    if (protocolVersion !== C.VERSION || schemaVersion !== H.VERSION)
+      throw versionError({ protocolVersion, schemaVersion });
+  }
+
   // Safari cũ không có crypto.randomUUID() nhưng vẫn có getRandomValues().
   // Giữ UUID v4 theo CSPRNG; tuyệt đối không dùng Math.random cho idempotency.
   function secureRequestId() {
@@ -141,8 +166,7 @@
       this.disconnect();
       this.accountId = account.id;
       const info = await this.request('/bootstrap');
-      if (info.protocolVersion !== C.VERSION || info.schemaVersion !== H.VERSION)
-        throw Error('Trò chơi đã được cập nhật. Vui lòng tải lại trang để tiếp tục.');
+      assertVersions(info);
       this.serverContentVersion = info.contentVersion;
       if (Number.isFinite(Number(info.nextSyncInMs)) && Number(info.nextSyncInMs) >= 3000)
         this.nextSyncInMs = Number(info.nextSyncInMs);
@@ -168,9 +192,13 @@
       return ticket.preview;
     }
     apply(response) {
-      if (response.protocolVersion !== C.VERSION || response.schemaVersion !== H.VERSION ||
-        response.contentVersion !== this.serverContentVersion || !response.state || !response.state.created)
-        throw Error('Trò chơi đã được cập nhật. Vui lòng tải lại trang để tiếp tục.');
+      assertVersions(response);
+      if (response.contentVersion !== this.serverContentVersion) {
+        const error = Error('Trò chơi vừa được cập nhật. Vui lòng tải lại trang để tiếp tục.');
+        error.code = 'CONTENT_VERSION_MISMATCH';
+        throw error;
+      }
+      if (!response.state || !response.state.created) throw Error('Chưa thể tải tiến trình. Vui lòng thử lại.');
       if (!Number.isSafeInteger(response.revision) || response.revision < 0) throw Error('Chưa thể tải tiến trình. Vui lòng thử lại.');
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
@@ -320,9 +348,21 @@
       return this.run(async () => {
         if (!this.playerId) throw Error('Không có đạo thân để xóa.');
         const id = this.playerId;
-        await this.request('/players/' + id + '/delete-character', 'POST', { confirm: 'delete-character' });
+        const deleted = await this.request('/players/' + id + '/delete-character', 'POST', { confirm: 'delete-character' });
         this.playerId = null;
         this.ticket = null;
+        // Nhân vật mới bắt đầu ở revision 0. Nếu giữ revision cũ, apply() sẽ coi
+        // snapshot tạo nhân vật là phản hồi cũ và bỏ qua, khiến phiên giữ trạng
+        // thái của đạo thân đã xóa cho tới khi tải lại trang.
+        this.revision = 0;
+        this.game = new H.Game(H.create(this.clock()));
+        this.pavilion = deleted.pavilion || { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
+        this.achievements = []; this.deathNotified = false; this.paused = false;
+        this.lastSyncAttempt = 0; this.lastSuccessfulCommandAt = 0;
+        if (this.resumeTimer !== null) root.clearTimeout(this.resumeTimer);
+        this.resumeTimer = null;
+        this.predictable = false; this.serverOffset = 0; this.forcedRevision = -1;
+        this.emit({ type: 'reset' });
         return true;
       });
     }

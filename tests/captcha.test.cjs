@@ -7,11 +7,19 @@ const path = require('node:path');
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 const SITEKEY = '10000000-ffff-ffff-ffff-000000000001';
 
-function captcha(sitekey) {
-  const appended = [];
-  const root = { HU_HCAPTCHA_SITEKEY: sitekey, document: { head: { appendChild: el => appended.push(el) }, createElement: () => ({}) } };
+function captcha(sitekey, options = {}) {
+  const appended = [], timers = [];
+  const root = {
+    HU_HCAPTCHA_SITEKEY: sitekey,
+    document: {
+      head: { appendChild: el => { appended.push(el); options.onScript?.(el, root); } },
+      createElement: () => ({})
+    },
+    setTimeout: (fn, ms) => { timers.push(fn); return timers.length; },
+    clearTimeout() {}
+  };
   vm.runInNewContext(read('client/auth/captcha.js'), { window: root, globalThis: root, Promise, String, RegExp, Error });
-  return { root, appended };
+  return { root, appended, timers };
 }
 
 test('CAPTCHA tắt khi sitekey trống hoặc sai định dạng và không tải script bên thứ ba', async () => {
@@ -22,6 +30,53 @@ test('CAPTCHA tắt khi sitekey trống hoặc sai định dạng và không t�
     assert.equal(appended.length, 0);
   }
   assert.equal(captcha(SITEKEY).root.HU_CAPTCHA.enabled, true);
+});
+
+test('CAPTCHA chờ hcaptcha.render sẵn sàng thay vì render ngay trong script.onload', async () => {
+  let rendered = null;
+  const container = { hidden: true };
+  const { root, appended, timers } = captcha(SITEKEY);
+  const mounting = root.HU_CAPTCHA.mount(container);
+  assert.equal(appended.length, 1);
+  assert.match(appended[0].src, /render=explicit/);
+  assert.match(appended[0].src, /onload=__huGioiHcaptchaReady/);
+  // Một số trình duyệt bắn script.onload trước khi API hcaptcha tồn tại.
+  appended[0].onload();
+  await Promise.resolve();
+  assert.equal(container.hidden, true);
+  root.hcaptcha = { render: (el, opts) => { rendered = { el, opts }; return 7; } };
+  timers.shift()();
+  await mounting;
+  assert.equal(container.hidden, false);
+  assert.equal(rendered.el, container);
+  assert.equal(rendered.opts.sitekey, SITEKEY);
+  root.HU_CAPTCHA.reset();
+  assert.equal(root.HU_CAPTCHA.token(), '');
+});
+
+test('CAPTCHA dùng callback onload của hCaptcha khi API sẵn sàng', async () => {
+  const container = { hidden: true };
+  const { root, appended } = captcha(SITEKEY);
+  const mounting = root.HU_CAPTCHA.mount(container);
+  assert.equal(typeof root.__huGioiHcaptchaReady, 'function');
+  root.hcaptcha = { render: () => 1 };
+  root.__huGioiHcaptchaReady();
+  await mounting;
+  assert.equal(container.hidden, false);
+  assert.equal(appended.length, 1);
+});
+
+test('CAPTCHA báo lỗi và cho phép thử lại khi không tải được script', async () => {
+  const { root, appended, timers } = captcha(SITEKEY);
+  const first = root.HU_CAPTCHA.mount({ hidden: true });
+  appended[0].onerror();
+  await assert.rejects(first, /Không tải được hCaptcha/);
+  const second = root.HU_CAPTCHA.mount({ hidden: true });
+  assert.equal(appended.length, 2);
+  root.hcaptcha = { render: () => 1 };
+  appended[1].onload();
+  await second;
+  assert.equal(timers.length, 0);
 });
 
 test('Mặc định client/config.js để trống sitekey (không đổi hành vi trước khi bật CAPTCHA)', () => {

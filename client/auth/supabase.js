@@ -111,18 +111,33 @@
     return data;
   }
 
+  let refreshing = null;
+  /* Single-flight: Supabase luân chuyển refresh token sau mỗi lần dùng. Nhiều
+     request đồng thời cùng thấy access token hết hạn sẽ dùng chung một lần làm
+     mới; nếu không, lần thứ hai gửi refresh token đã bị thu hồi và người chơi
+     bị đăng xuất giữa chừng. */
   async function refresh() {
     if (!current?.refresh_token) return null;
-    try {
-      const data = await request('/auth/v1/token?grant_type=refresh_token', {
-        method: 'POST', body: { refresh_token: current.refresh_token }
-      });
-      persist(data);
-      return current?.access_token || null;
-    } catch (error) {
-      if (error.status === 400 || error.status === 401) persist(null);
-      throw error;
-    }
+    if (refreshing) return refreshing;
+    const refreshToken = current.refresh_token;
+    refreshing = (async () => {
+      try {
+        const data = await request('/auth/v1/token?grant_type=refresh_token', {
+          method: 'POST', body: { refresh_token: refreshToken }
+        });
+        // Đăng xuất hoặc đăng nhập tài khoản khác trong lúc chờ: không ghi đè
+        // phiên mới bằng kết quả làm mới của phiên cũ.
+        if (current?.refresh_token !== refreshToken) return current?.access_token || null;
+        persist(data);
+        return current?.access_token || null;
+      } catch (error) {
+        if ((error.status === 400 || error.status === 401) && current?.refresh_token === refreshToken) persist(null);
+        throw error;
+      } finally {
+        refreshing = null;
+      }
+    })();
+    return refreshing;
   }
   async function token() {
     if (!current?.refresh_token) return null;
