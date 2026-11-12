@@ -117,7 +117,7 @@
       } catch (error) { this.fail(error, gen); }
     }
     async send(text, requestId) {
-      if (this.state.status !== 'online') throw Error('Chưa kết nối máy chủ chat.');
+      if (this.state.status !== 'online') throw Error('Chưa kết nối truyền âm. Vui lòng thử lại.');
       const { message } = await this.request('chat/send', 'POST', { text, requestId, channel: this.channel });
       this.lastSentAt = Date.now();
       this.receive(message);

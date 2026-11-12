@@ -56,7 +56,7 @@
       const controller = typeof timeoutSignal?.timeout === 'function' ? null
         : typeof root.AbortController === 'function' ? new root.AbortController() : null;
       const signal = controller?.signal || timeoutSignal?.timeout?.(20000);
-      if (!signal) throw Error('Trình duyệt không hỗ trợ hủy yêu cầu mạng an toàn.');
+      if (!signal) throw Error('Trình duyệt này chưa hỗ trợ trò chơi. Vui lòng cập nhật trình duyệt và thử lại.');
       const deadline = controller ? root.setTimeout(() => controller.abort(), 20000) : null;
       let response;
       try {
@@ -132,7 +132,7 @@
       this.game = new H.Game(H.create(this.clock()));
     }
     async connect(account) {
-      if (!account?.id) throw Error('Phải đăng nhập và chấp thuận chính sách để chơi online.');
+      if (!account?.id) throw Error('Vui lòng đăng nhập và đồng ý với các điều khoản để tiếp tục.');
       this.disconnect();
       this.accountId = account.id;
       const info = await this.request('/bootstrap');
@@ -165,8 +165,8 @@
     apply(response) {
       if (response.protocolVersion !== C.VERSION || response.schemaVersion !== H.VERSION ||
         response.contentVersion !== this.serverContentVersion || !response.state || !response.state.created)
-        throw Error('Dữ liệu từ máy chủ không khớp phiên bản game.');
-      if (!Number.isSafeInteger(response.revision) || response.revision < 0) throw Error('Revision từ máy chủ không hợp lệ.');
+        throw Error('Trò chơi đã được cập nhật. Vui lòng tải lại trang để tiếp tục.');
+      if (!Number.isSafeInteger(response.revision) || response.revision < 0) throw Error('Chưa thể tải tiến trình. Vui lòng thử lại.');
       if (response.revision < this.revision) return; // Phản hồi cũ không ghi đè snapshot mới.
       this.revision = response.revision;
       if (response.pavilion) this.pavilion = response.pavilion;

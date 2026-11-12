@@ -40,7 +40,7 @@
       entry.type = 'button';
       entry.setAttribute('role', 'menuitem');
       entry.dataset.moreGo = 'more:ranking';
-      entry.innerHTML = '<span class="more-ico" aria-hidden="true">♛</span><span><b>Bảng xếp hạng</b><small>Người chơi online</small></span>';
+      entry.innerHTML = '<span class="more-ico" aria-hidden="true">♛</span><span><b>Bảng xếp hạng</b><small>Người chơi trực tuyến</small></span>';
       menu.appendChild(entry);
     }
   };
