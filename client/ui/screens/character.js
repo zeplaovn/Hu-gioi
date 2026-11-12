@@ -10,8 +10,7 @@
 
   const TABS = [
     { id: 'stats', label: 'Đạo thể', icon: '☯' },
-    { id: 'skills', label: 'Công pháp', icon: '✧' },
-    { id: 'roots', label: 'Linh căn', icon: '❋' },
+    { id: 'roots', label: 'Kinh mạch', icon: '❋' },
     { id: 'bag', label: 'Hành trang', icon: '◈' }
   ];
 
@@ -55,12 +54,13 @@
     }).join('');
     const pillCap = .25 * F.realm_exp_total(s.realm);
     return `<div class="char-sheet">
-      ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v]) => tile(k, v)).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
+      ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v], i) => tile(k, v, 'stat-tone-' + (i % 5))).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
       ${card('Thiên phú khởi nguyên', `<ul class="talent-list">${talents}</ul>`, { eyebrow: 'KHỞI NGUYÊN', cls: 'sheet-talent' })}
       ${card('Tu luyện', `<div class="stat-tiles tiles-4">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}${tile('Tâm ma', num(s.tamMa || 0) + '<small>/ ' + (H.TAM_MA_MAX || 100) + ' · đột phá −' + (Math.min(15, (s.tamMa || 0) * (H.TAM_MA_BREAK_PENALTY || .0015) * 100)).toFixed(1).replace('.', ',') + '%</small>', s.tamMa >= 50 ? 'tile-warn' : '')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
       ${card('Đạo vận · Thiên mệnh', `<div class="stat-tiles tiles-2">${tile('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${tile('Số kiếp đã qua', num(UI.session.pavilion?.rebirths || 0))}</div>
         <p class="info-note">Thiên Mệnh Các cho nâng cấp vĩnh viễn, tối đa 20 cấp.</p>
         <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI', cls: 'sheet-rebirth' })}
+      <details class="char-techniques"${UI.tabState?.character === 'skills' ? ' open' : ''}><summary>Công pháp & bồi dưỡng</summary>${skills()}</details>
       ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ', cls: 'sheet-glossary' })}
     </div>`;
   }
@@ -165,32 +165,42 @@
     else if(d?.group==='công pháp')detail=row('Hệ',esc(d['hệ']))+row('Kỹ năng',esc(d['công dụng'])+' · '+d['tiêu hao mp']+' linh lực · '+d['hồi chiêu (giây)']+' giây');
     else if(d?.group==='bí tịch')detail=row('Thể loại',esc(d['thể loại']))+row('Công dụng',esc(d['công dụng']));
     else if(d?.group==='linh thảo')detail=row('Cách dùng',esc(d['cách dùng']))+row('Hiệu quả',esc(d['hiệu quả']));
-    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub]))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${detail}`;
+    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub]))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${row('Nguồn gốc', 'Chưa có dữ liệu nguồn nhận')}${detail}`;
+  }
+
+  function bagOrder() {
+    const player = UI.session?.playerId;
+    if (!player) return [];
+    if (UI.view.bagOrderPlayer !== player) {
+      UI.view.bagOrderPlayer = player;
+      try { const saved = JSON.parse(root.localStorage?.getItem('hugioi.bag-order.' + player) || '[]'); UI.view.bagOrder = Array.isArray(saved) ? saved.filter(x => typeof x === 'string').slice(0, 1000) : []; }
+      catch { UI.view.bagOrder = []; }
+    }
+    return UI.view.bagOrder || [];
   }
 
   function bag() {
     const s = UI.s(), g = UI.g(), v = UI.view;
     const slots = Array.from({ length: 4 }, (_, i) => {
-      const key = s.equipment[i];
-      return key
-        ? `<button class="gear-slot" data-act="equip" ${codeAttr(key)} aria-label="Tháo ${esc(H.item(key).name)}" title="Bấm để tháo">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
-        : `<div class="gear-slot empty" aria-label="Ô pháp bảo ${i + 1} trống"><span>＋</span><small>Ô ${i + 1} · trống</small></div>`;
+      const key = s.equipment[i], item = key && H.item(key);
+      return `<button type="button" class="gear-slot ${key ? '' : 'empty'} gear-corner-${i}" data-gear-drop="${i}" ${key ? `data-act="equip" ${codeAttr(key)}` : ''} aria-label="${key ? 'Tháo ' + esc(item.name) : 'Ô pháp bảo ' + (i + 1) + ' trống'}">${key ? img(key) : '<span>＋</span>'}<small>${key ? esc(item.name) : 'Ô ' + (i + 1)}</small></button>`;
     }).join('');
     /* Hành trang chứa cả các ô trang bị và toàn bộ vật phẩm trong túi. */
     const xs = Object.keys(s.bag).map(H.item).filter(Boolean)
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
-    const visible = xs;
-    if (!xs.some(x => x.key === v.selected)) v.selected = visible[0]?.key || '';
+    const order = bagOrder();
+    const visible = xs.slice().sort((a,b) => { const ai=order.indexOf(a.key), bi=order.indexOf(b.key); return (ai < 0 ? Number.MAX_SAFE_INTEGER : ai) - (bi < 0 ? Number.MAX_SAFE_INTEGER : bi); });
+    if (!xs.some(x => x.key === v.selected)) v.selected = '';
     const x = H.item(v.selected), usable = x && (['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind)||(x.kind==='HERB'&&x.design?.['cách dùng']?.includes('ăn trực tiếp')));
     const main = x ? `${img(v.selected, 'detail-img')}<h3 class="detail-title">${esc(x.name)}</h3>${itemDescription(v.selected)}${row('Giá bán', moneyHTML(F.shop_sell_price(g.price(v.selected))))}
       <div class="detail-actions">${btn(x.kind === 'EQ' ? (s.equipment.includes(v.selected) ? 'Tháo' : 'Trang bị') : x.kind === 'BT' ? 'Lĩnh ngộ' : usable ? 'Sử dụng' : 'Công dụng',
         x.kind === 'EQ' ? 'equip' : x.kind === 'BT' ? 'learn' : usable ? 'consume' : 'info', codeAttr(v.selected))}${btn('Bán 1', 'sell', codeAttr(v.selected), s.equipment.includes(v.selected), 'btn-outline')}</div>` : empty('Chọn một vật phẩm.');
-    return `<p class="screen-lead">${Object.keys(s.bag).length} loại và phẩm chất trong túi. Giá bán bằng 40% giá trị vật phẩm.</p>
-      <section id="equippedItems" class="card"><header class="card-head"><h3>Pháp bảo đang trang bị · ${s.equipment.length}/4</h3></header><div class="gear-row">${slots}</div><p class="info-note">Chọn pháp bảo bên dưới để trang bị. Bấm ô đang mặc để tháo; tối đa cao hơn cảnh giới một bậc.</p></section>
-      <div class="inventory-layout">
-        <div class="card"><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Không có vật phẩm phù hợp.')}</div></div>
-        <div class="card item-detail">${main}</div>
-      </div>`;
+    return `<div class="inventory-scene-layout">
+      <section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Kéo pháp bảo vào ô trống hoặc chọn rồi bấm Trang bị; ô trống đầu tiên sẽ được dùng.</p></section>
+      <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Túi trữ vật đang trống.')}</div></section>
+      <section class="card item-detail inventory-detail" aria-live="polite">${main}</section>
+    </div>`;
+
   }
 
   UI.register({
@@ -202,6 +212,57 @@
       return [s.realm, s.stage, UI.session.pavilion?.balance || 0, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
     }
   });
+
+  let draggedEquip = '';
+  const moveItem = (key, before) => {
+    if (!key || !before || key === before) return;
+    const keys = Array.from(document.querySelectorAll('.inventory-items [data-drag-item]'), el => el.dataset.dragItem);
+    const from = keys.indexOf(key), to = keys.indexOf(before);
+    if (from < 0 || to < 0) return;
+    keys.splice(from, 1); keys.splice(keys.indexOf(before), 0, key); UI.view.bagOrder = keys;
+    try { if (UI.session?.playerId) root.localStorage?.setItem('hugioi.bag-order.' + UI.session.playerId, JSON.stringify(keys)); } catch { /* vị trí vẫn dùng được trong phiên hiện tại */ }
+    UI.refresh();
+  };
+  const dropEquip = async (key, target) => {
+    if (!key || !target?.matches('[data-gear-drop].empty')) return;
+    if (H.item(key)?.kind !== 'EQ') { UI.toast('Chỉ pháp bảo mới có thể trang bị.', { type: 'info' }); return; }
+    if (UI.s().equipment.includes(key)) { UI.toast('Pháp bảo này đang trang bị.', { type: 'info' }); return; }
+    try { await UI.command('equip', { code: key }); UI.toast('Đã trang bị ' + H.item(key).name + '.', { type: 'success', title: 'Pháp bảo' }); UI.refresh(); }
+    catch (error) { UI.toast(error.message || 'Không thể trang bị.', { type: 'danger' }); }
+  };
+  document.addEventListener('dragstart', e => {
+    const item = e.target.closest?.('[data-drag-item]');
+    if (!item) return;
+    draggedEquip = item.dataset.dragItem;
+    e.dataTransfer?.setData('text/plain', draggedEquip);
+    if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+  });
+  document.addEventListener('dragover', e => { if (draggedEquip && e.target.closest?.('[data-gear-drop].empty, [data-drag-item]')) e.preventDefault(); });
+  document.addEventListener('drop', e => {
+    const target = e.target.closest?.('[data-gear-drop].empty, [data-drag-item]');
+    if (!target || !draggedEquip) return;
+    e.preventDefault(); const key = draggedEquip; draggedEquip = '';
+    if (target.dataset.dragItem) moveItem(key, target.dataset.dragItem); else void dropEquip(key, target);
+  });
+  document.addEventListener('dragend', () => { draggedEquip = ''; });
+  let touchDrag = null;
+  document.addEventListener('pointerdown', e => {
+    const item = e.target.closest?.('[data-drag-item]');
+    if (item && e.pointerType === 'touch') touchDrag = { id: e.pointerId, key: item.dataset.dragItem, x: e.clientX, y: e.clientY, moved: false };
+  });
+  document.addEventListener('pointermove', e => {
+    if (!touchDrag || e.pointerId !== touchDrag.id) return;
+    if (Math.hypot(e.clientX - touchDrag.x, e.clientY - touchDrag.y) > 12) touchDrag.moved = true;
+    if (touchDrag.moved && e.cancelable) e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('pointerup', e => {
+    if (!touchDrag || e.pointerId !== touchDrag.id) return;
+    const drag = touchDrag; touchDrag = null;
+    if (!drag.moved) return;
+    const target = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-gear-drop].empty, [data-drag-item]');
+    if (target) { e.preventDefault(); if (target.dataset.dragItem) moveItem(drag.key, target.dataset.dragItem); else void dropEquip(drag.key, target); }
+  });
+  document.addEventListener('pointercancel', () => { touchDrag = null; });
 
   UI.action('meridianPick', (el, d) => { const n = Number(d.index); if (Number.isInteger(n)) UI.view.meridianIndex = n; });
   UI.action('meridianGroup', (el, d) => { UI.view.meridianGroup = d.group === 'ky' ? 'ky' : 'chinh'; UI.view.meridianIndex = 0; });
