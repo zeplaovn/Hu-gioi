@@ -1066,6 +1066,8 @@
     const [id, tab] = String(target || 'idle').split(':');
     if (trib.pageOpen && id !== 'tribulation') trib.closePage();
     if (id === 'tribulation') {
+      const conflict = root.HU_COMMANDS?.activityConflict(UI.s(), 'breakthrough');
+      if (conflict) { toast(conflict, { type: 'info' }); return; }
       resetFilters();
       wins.closeAll();
       UI.current = 'tribulation';
@@ -1120,7 +1122,8 @@
       if (moneyEl.textContent !== moneyText) moneyEl.innerHTML = moneyHTML(s.stone);
       moneyEl.setAttribute('aria-label', 'Linh thạch ' + moneyText);
     }
-    $('topRate').textContent = s.exploration?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
+    const trainingBusy = !!root.HU_COMMANDS?.activityConflict(s, 'breakthrough');
+    $('topRate').textContent = trainingBusy ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
     $('topDaoVan').textContent = H.META_UPGRADES[s.destiny]?.name || 'Không có';
     $('topQiFill').style.width = p + '%';
@@ -1152,12 +1155,12 @@
     const bb = $('btn-break');
     if (bb) {
       /* Tiểu cảnh giới tự động đột phá; chỉ tầng cuối (viên mãn) mới cần bấm tay để độ kiếp. */
-      const peak = s.stage === F.STAGES[s.realm], can = !s.completed && readyQi && peak;
+      const peak = s.stage === F.STAGES[s.realm], can = !s.completed && readyQi && peak && !trainingBusy;
       bb.disabled = !can;
       bb.classList.toggle('ready', can);
       bb.classList.toggle('auto', !s.completed && !peak);
       $('breakLabel').textContent = s.completed ? 'Đã chứng đạo' : peak ? 'Đột phá đại cảnh giới' : 'Tự động đột phá';
-      $('breakHint').textContent = s.completed ? 'Đạo quả viên mãn' : peak ? (can ? 'Viên mãn · bấm để nhận thiên kiếp' : 'Viên mãn · chưa đủ tu vi') : 'Tầng ' + s.stage + '/' + F.STAGES[s.realm] + ' · tự động';
+      $('breakHint').textContent = trainingBusy ? 'Hoàn tất hoạt động đang làm' : s.completed ? 'Đạo quả viên mãn' : peak ? (can ? 'Viên mãn · bấm để nhận thiên kiếp' : 'Viên mãn · chưa đủ tu vi') : 'Tầng ' + s.stage + '/' + F.STAGES[s.realm] + ' · tự động';
     }
     const badge = (id, text, on) => {
       const el = document.querySelector('#menu [data-badge="' + id + '"]');
@@ -1428,7 +1431,7 @@
     clearTimers() { this.timers.forEach(clearTimeout); this.timers = []; },
     wait(fn, ms) { this.timers.push(setTimeout(fn, ms)); },
     major() { const s = UI.s(); return s.stage === F.STAGES[s.realm]; },
-    canStart() { const s = UI.s(), g = UI.g(); return !s.completed && s.qi >= g.need(); },
+    canStart() { const s = UI.s(), g = UI.g(); return !s.completed && s.qi >= g.need() && !root.HU_COMMANDS?.activityConflict(s, 'breakthrough'); },
     worldOf() { return A.tribWorld ? A.tribWorld(UI.s().realm) : 'ha_gioi'; },
     preload() {
       const world = this.worldOf();

@@ -127,7 +127,30 @@
           }
           elapsed = Math.max(0, (now - start) / 1000);
         }
-        for (let i = 0; i < 400 && this.autoStage(); i++); // bản lưu cũ có tu vi đầy ở tiểu cảnh giới
+        // Resolve an automatic dungeon exactly when it ends, before any later
+        // meditation. A fatal run must not grant progress after the death.
+        const dungeonEnd = s.dungeon.active?.end;
+        if (dungeonEnd > start && dungeonEnd < now) {
+          const first = this.advance(dungeonEnd, false);
+          if (this.isDead()) {
+            s.lastUpdate = now; s.lastSaved = now;
+            return { ...first, died: true, cause: s.death?.cause || 'combat',
+              explorationFinished: exploring && !s.exploration?.active ? exploring : null };
+          }
+          const second = this.advance(now, false);
+          return { ...second, seconds: first.seconds + second.seconds, exp: first.exp + second.exp,
+            stone: first.stone + second.stone, batches: first.batches + second.batches,
+            dungeon: second.dungeon || first.dungeon, sect: second.sect || first.sect,
+            encounters: [...first.encounters, ...second.encounters],
+            explorationFinished: second.explorationFinished || (exploring && !s.exploration?.active ? exploring : null) };
+        }
+        const workEnd = Math.max(start,
+          s.craftQueue.length ? s.craftQueue[s.craftQueue.length - 1].end : start,
+          s.dungeon.active?.end || start);
+        const trainingStart = s.dungeon.run ? now : Math.min(now, workEnd);
+        if (trainingStart < now) {
+          for (let i = 0; i < 400 && this.autoStage(); i++); // bản lưu cũ có tu vi đầy
+        }
 
         let seconds = elapsed;
         const eff = 1;
@@ -146,13 +169,15 @@
         }
         const end = start + seconds * 1000, before = s.stone, beforeExp = s.totalRunExp;
         this.tickDefinedCombat(end, offline);
-        this.gainExp(this.integrateRate(start, end, eff));
-        s.progress.meditate += seconds;
+        const meditationStart = Math.min(end, Math.max(start, trainingStart));
+        const meditationSeconds = Math.max(0, (end - meditationStart) / 1000);
+        if (meditationSeconds > 0) this.gainExp(this.integrateRate(meditationStart, end, eff));
+        s.progress.meditate += meditationSeconds;
         s.tick += seconds;
         s.age += pace * seconds;
         if (died) { s.age = maxLife; this.markDeath('lifespan', now); }
         else this.warnLife(maxLife);
-        for (const key of s.activeManuals) s.learned[key] = Math.min(1, s.learned[key] + seconds / (F.realm_time(s.realm) * .5));
+        for (const key of s.activeManuals) s.learned[key] = Math.min(1, s.learned[key] + meditationSeconds / (F.realm_time(s.realm) * .5));
         if (s.sect.joined) s.stone += this.sectIncome() * seconds * eff;
         if (s.auto && !offline && !s.dungeon.run) {
           s.combatClock += seconds;

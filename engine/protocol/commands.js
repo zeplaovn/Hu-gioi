@@ -75,6 +75,22 @@
 
   const types = Object.freeze(Object.keys(SCHEMAS));
 
+  const trainingActions = new Set(['absorb', 'upgrade', 'craft', 'forge', 'garden', 'startDungeon', 'enterDungeon',
+    'startExploration', 'startSectMission', 'breakthrough', 'manualEncounter', 'setAuto']);
+  const legacyEscape = new Set(['exploreChoice', 'abortDungeon', 'dungeonAct', 'abortSectMission', 'setPreference']);
+  function activityConflict(state, type) {
+    if (legacyEscape.has(type)) return '';
+    if (state.exploration?.active && (trainingActions.has(type) || type === 'use'))
+      return 'Đang lịch luyện: tu hành và nghề phụ tạm dừng đến khi trở về.';
+    if ((state.dungeon?.active || state.dungeon?.run) && trainingActions.has(type))
+      return 'Đang ở bí cảnh: hãy hoàn tất hoặc rút lui trước khi tu luyện, đột phá hay bắt đầu việc khác.';
+    if (state.sect?.mission && type === 'craft')
+      return 'Đang nhận ủy thác tông môn: hãy hoàn tất hoặc hủy ủy thác trước khi luyện đan.';
+    if (state.craftQueue?.length && type !== 'craft')
+      return 'Đang luyện đan: hãy chờ hoàn tất các mẻ trước khi làm việc khác.';
+    return '';
+  }
+
   function invalid() {
     const e = Error('Lệnh game không hợp lệ.');
     e.code = 'INVALID_COMMAND';
@@ -96,14 +112,12 @@
     if (!Number.isFinite(now) || now < 0) invalid();
     if (!game.s.created) throw Error('Chưa tạo nhân vật.');
     if (game.isDead()) throw Error('Đạo thân đã tọa hóa. Hãy trở về Khởi Nguyên.');
-    const pausedActions = ['absorb', 'upgrade', 'craft', 'forge', 'garden', 'startDungeon', 'enterDungeon',
-      'startSectMission', 'breakthrough', 'manualEncounter', 'use', 'setAuto'];
-    if (game.s.exploration?.active && pausedActions.includes(c.type))
-      throw Error('Đang lịch luyện: tu hành và nghề phụ tạm dừng đến khi trở về.');
+    const conflict = activityConflict(game.s, c.type);
+    if (conflict) throw Error(conflict);
     return game[c.type](c.payload, now);
   }
 
-  const API = { VERSION, types, validate, execute };
+  const API = { VERSION, types, validate, execute, activityConflict };
   root.HU_COMMANDS = API;
   if (node) module.exports = API;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -87,10 +87,10 @@
         <p>${esc(x.description)}</p>
         ${Object.entries(r.herbs).map(([key, n]) => row(esc(H.item(key).name), `<span class="${g.ingredientCount(key) >= n ? 'green-text' : 'danger-text'}">${g.ingredientCount(key)} / ${n}</span>`)).join('')}
         ${row('Chi phí', moneyHTML(r.stone))}${row('Thời gian', duration(r.time))}${row('Thành công', pct(g.craftChance(x.tier)))}
-        ${btn('Xếp mẻ luyện', 'craft', codeAttr(x.code), s.craftQueue.length >= 3 || !ok)}
+        ${btn('Xếp mẻ luyện', 'craft', codeAttr(x.code), s.craftQueue.length >= 3 || !ok || !!root.HU_COMMANDS?.activityConflict(s, 'craft'))}
       </section>`;
     }).join('');
-    return `<div class="list-head">${lists.controls({ categories: ['Tất cả'], placeholder: 'Tên đan hoặc mã' })}
+    return `${root.HU_COMMANDS?.activityConflict(s, 'craft') ? '<p class="info-note">' + esc(root.HU_COMMANDS.activityConflict(s, 'craft')) + '</p>' : ''}<div class="list-head">${lists.controls({ categories: ['Tất cả'], placeholder: 'Tên đan hoặc mã' })}
         <button class="btn ${UI.view.onlyReady ? 'btn-gold' : 'btn-outline'}" data-act="onlyReady" aria-pressed="${!!UI.view.onlyReady}">Chỉ đan đủ nguyên liệu</button></div>
       ${lists.pager(xs.length)}
       <div class="recipe-grid">${cards || empty('Không có đan phương phù hợp.')}</div>`;
@@ -193,7 +193,7 @@
     tabs: TABS, render, update,
     /* Trang Nghề phụ toàn màn hình dùng nền riêng của từng nghề. */
     pageBg: tab => abs(tab === 'dien' ? root.HU_ASSETS.BG.garden : root.HU_CUSTOM_MEDIA?.installed ? root.HU_CUSTOM_MEDIA.backgrounds[tab] : tab === 'khi' ? UI.data.ART.talisman : UI.data.ART.workshop),
-    signature: () => { const s = UI.s(); return s.realm + '|' + s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
+    signature: () => { const s = UI.s(); return [s.exploration?.active?.end,s.dungeon?.active?.end,s.dungeon?.run?.id].join('|') + '|' + s.realm + '|' + s.craftQueue.length + '|' + s.garden.length + '|' + s.craftQueue.map(j => j.code).join(',') + '|' + s.garden.map(p => p.herb).join(',') + '|' + s.gardenSoils.join(','); }
   });
 
   UI.action('workshopFocus', (el, d) => { UI.view.workshopFocus = d.focus === 'furnace' ? 'furnace' : 'hero'; });

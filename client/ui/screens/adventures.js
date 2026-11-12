@@ -53,8 +53,10 @@
   }
   function dungeons() {
     const s = UI.s(), g = UI.g(), a = s.dungeon.active, active = H.DUNGEONS.find(d => d.id === a?.id), run = s.dungeon.run;
-    const busy = !!a || !!run || !!s.sect.mission, hpOk = s.hp >= g.stats().HP * .5;
-    return `<p class="screen-lead">Vượt từng tầng, hạ thủ lĩnh để thu Tinh hoa. Có thể để chuyến đi tự chạy (hoàn tất cả khi đóng game, chiến lực chốt lúc khởi hành) hoặc tự tay chiến đấu từng lượt: quản lý thể lực, thủ thế đúng lúc, thưởng thêm ${Math.round((H.DUNGEON_RUN.bonus - 1) * 100)}% và 1 Tinh hoa khi thông quan.</p>
+    const blocked = root.HU_COMMANDS?.activityConflict(s, 'startDungeon');
+    const busy = !!a || !!run || !!s.sect.mission || !!blocked, hpOk = s.hp >= g.stats().HP * .5;
+    return `<p class="screen-lead">Vượt từng tầng, hạ thủ lĩnh để thu Tinh hoa. Có thể để chuyến đi tự chạy khi mở game (tạm dừng khi rời game, chiến lực chốt lúc khởi hành) hoặc tự tay chiến đấu từng lượt: quản lý thể lực, thủ thế đúng lúc, thưởng thêm ${Math.round((H.DUNGEON_RUN.bonus - 1) * 100)}% và 1 Tinh hoa khi thông quan.</p>
+      ${blocked && !a && !run ? '<p class="info-note">' + esc(blocked) + '</p>' : ''}
       ${runPanel()}
       ${active ? card('Đang thám hiểm · ' + active.name, clock(a) + `<p>Thủ lĩnh tầng ${active.floors}: ${active.boss}</p>` + btn('Rút lui', 'dungeonAbort', '', false, 'btn-outline'), { eyebrow: 'CHUYẾN ĐI' }) : ''}
       ${s.dungeon.last ? dungeonResult(s.dungeon.last) : ''}

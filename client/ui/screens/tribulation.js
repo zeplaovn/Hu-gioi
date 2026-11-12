@@ -98,6 +98,8 @@
 
   async function request() {
     const s = UI.s(), g = UI.g();
+    const conflict = root.HU_COMMANDS?.activityConflict(s, 'breakthrough');
+    if (conflict) throw Error(conflict);
     if (s.completed) throw Error('Đạo Tổ đã chứng đạo; kiếp này viên mãn.');
     if (s.qi < g.need()) throw Error('Tu vi chưa đầy.');
     if (s.stage === F.STAGES[s.realm]) {

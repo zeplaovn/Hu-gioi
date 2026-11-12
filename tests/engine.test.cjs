@@ -800,7 +800,8 @@ test('bí cảnh tương tác: đang đánh thì không tự hồi, không lịc
   assert.ok(g.s.dungeon.run, 'chuyến tương tác không hết hạn theo thời gian');
   assert.throws(() => run(g, 'strike'), /bí cảnh/);
   assert.throws(() => run(g, 'skill', { index: 0 }), /bí cảnh/);
-  run(g, 'setAuto', { enabled: true });
+  assert.throws(() => run(g, 'setAuto', { enabled: true }), /bí cảnh/);
+  g.s.auto = true; // Bản lưu cũ vẫn không tự chiến khi offline.
   g.advance(NOW + 40_000, true);
   assert.equal(g.s.hp, hp);
 });

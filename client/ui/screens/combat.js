@@ -5,13 +5,14 @@
   const { $, esc, num, btn, card } = UI.kit;
 
   function zoneCard() {
-    const s = UI.s(), journey = s.exploration?.active;
+    const s = UI.s(), journey = s.exploration?.active, blocked = root.HU_COMMANDS?.activityConflict(s, 'startExploration');
     const now = Date.now(), remain = journey ? Math.max(0, Math.ceil((journey.end - now) / 1000)) : 600;
     const countdown = String(Math.floor(remain / 60)).padStart(2, '0') + ':' + String(remain % 60).padStart(2, '0');
     return card('Chọn nơi lịch luyện', `
       <p class="info-note">${journey
         ? 'Đang hành tẩu trong bí cảnh. Phải kết thúc chuyến đi mới có thể trở về đài Tu luyện hoặc đổi địa điểm.'
         : 'Chọn địa điểm phù hợp đạo hạnh, sau đó khởi hành. Một chuyến lịch luyện kéo dài đúng mười phút.'}</p>
+      ${blocked && !journey ? '<p class="info-note">' + esc(blocked) + '</p>' : ''}
       <p class="info-note">Hoàn thành chuyến đi nhận ${H.EXPLORE_POINTS} điểm lịch luyện · hiện có ${num(s.adventurePoints || 0)} điểm. Dùng điểm để mượn sách tại Tàng Kinh Các trong tông môn.</p>
       ${journey ? `<div class="exploration-clock" role="timer" aria-label="Thời gian lịch luyện còn lại">
             <span>Thời gian trở về</span><strong id="explorationCountdown">${countdown}</strong>
@@ -22,7 +23,7 @@
           ${journey || z.realm > s.realm ? 'disabled' : ''} aria-pressed="${z.id === s.zone}">
           <b>${esc(z.name)}</b><small>${z.realm > s.realm ? 'Mở ở ' + F.REALMS[z.realm] : esc(z.desc)}</small>
         </button>`).join('')}</div>
-      ${journey ? '' : btn('Khởi hành lịch luyện · 10 phút', 'exploreStart', '', false, 'btn-gold')}
+      ${journey ? '' : btn('Khởi hành lịch luyện · 10 phút', 'exploreStart', '', !!blocked, 'btn-gold')}
     `, { eyebrow: 'BÍ CẢNH', cls: 'zone-card' });
   }
 
@@ -78,7 +79,7 @@
     render: panel, panel, update,
     signature: () => {
       const s = UI.s(), e = s.exploration?.active;
-      return [s.zone, e?.start || 0, e?.end || 0, e?.kind || '', e?.choice ?? -1, s.tamMa || 0, s.exploration?.last?.end || 0,
+      return [s.craftQueue.length,s.dungeon?.active?.end,s.dungeon?.run?.id,s.zone, e?.start || 0, e?.end || 0, e?.kind || '', e?.choice ?? -1, s.tamMa || 0, s.exploration?.last?.end || 0,
         s.logs[0] || '', s.logs.length, s.adventurePoints || 0].join('|');
     }
   });

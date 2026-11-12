@@ -125,7 +125,7 @@
     if (daoChip.getAttribute('aria-label') !== daoLabel)
       daoChip.setAttribute('aria-label', daoLabel);
     if (daoChip.title !== daoLabel) daoChip.title = daoLabel;
-    textIfChanged($('chipRateVal'), '+' + num(g.rate()) + '/giây');
+    textIfChanged($('chipRateVal'), root.HU_COMMANDS?.activityConflict(s, 'breakthrough') ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây');
     tween('dao', thienTinh, v => { textIfChanged($('chipDaoVal'), num(Math.round(v))); });
   }
 
@@ -135,7 +135,7 @@
     const peak = g.isPeakStage(), total = F.STAGES[s.realm];
     $('stage')?.style.setProperty('--qi-p', String((p / 100).toFixed(3)));
 
-    const cta = $('peakCta'), ready = !s.completed && peak && full;
+    const cta = $('peakCta'), ready = !s.completed && peak && full && !root.HU_COMMANDS?.activityConflict(s, 'breakthrough');
     if (cta.hidden === ready) cta.hidden = !ready;
     if (ready) {
       const next = s.realm < 13 ? F.REALMS[s.realm + 1] : 'Đạo Tổ';

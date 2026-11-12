@@ -261,7 +261,12 @@
         const x = this.s.sect;
         if (!x.repeat || !x.mission || x.mission.end > now) return null;
         const result = this._claimSectMission(now);
-        if (!offline && result.success && this.s.hp >= this.stats().HP * .4) this._startSectMission(result.id, now);
+        if (!offline && result.success && this.s.hp >= this.stats().HP * .4) {
+          if (this.s.craftQueue.length || this.s.dungeon.active || this.s.dungeon.run || this.s.exploration?.active) {
+            x.repeat = false;
+            this.log('Tạm dừng tự nhận ủy thác vì đạo thân đang làm việc khác.');
+          } else this._startSectMission(result.id, now);
+        }
         return result;
       },
       sectShopOffer(id) {

@@ -435,3 +435,16 @@ test('đồng bộ lưu danh phận cho đệ tử cũ mà không đổi cống 
   assert.equal(saved.sect.contribution,123); assert.equal(saved.sect.earned,456);
   repo.close();
 });
+
+test('máy chủ chặn xung đột khi luyện đan và chỉ cộng đả tọa sau lúc mẻ hoàn tất', async () => {
+  const {svc,repo,clock}=setup({onlineGraceMs:60000});const {playerId:id}=await spawn(svc);
+  const old=(await repo.get(id)).state;old.craftQueue=[{code:'PILL-002',end:clock.t+10000,success:1,quality:0}];
+  const raw=JSON.stringify(old);repo.db.prepare('UPDATE players SET state = ?, state_bytes = ? WHERE id = ?').run(raw,Buffer.byteLength(raw),id);
+  clock.t+=5000;const before=old.progress.meditate;
+  assert.equal(await code(async()=>svc.command('owner-a',id,await envelope(svc,'owner-a','startExploration',{},'busy-work-1'))),'GAME_RULE_VIOLATION');
+  assert.equal((await repo.get(id)).state.progress.meditate,before);
+  clock.t+=10000;const synced=await svc.sync('owner-a',id);
+  assert.equal(synced.state.craftQueue.length,0);assert.equal(synced.state.progress.meditate-before,5);
+  assert.ok((await svc.command('owner-a',id,await envelope(svc,'owner-a','startExploration',{},'busy-work-2'))).state.exploration.active);
+  repo.close();
+});
