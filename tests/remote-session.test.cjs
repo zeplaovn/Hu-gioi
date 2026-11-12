@@ -18,7 +18,7 @@ function fixture({ initialPlayer = false } = {}) {
   const context = {
     URL, AbortSignal, setTimeout, clearTimeout,
     HU_GAME: { Game, create: () => ({ created: false, settings: {} }), VERSION: 10 },
-    HU_COMMANDS: { VERSION: 3, validate: c => c },
+    HU_COMMANDS: { VERSION: 4, validate: c => c },
     HU_SUPABASE: { accessToken: async () => 'token' },
     location: { protocol: 'https:' },
     crypto: { randomUUID: () => 'request-' + (++issued) },
@@ -26,20 +26,20 @@ function fixture({ initialPlayer = false } = {}) {
       const path = url.replace('/api/v1', '');
       calls.push({ path, body: init.body ? JSON.parse(init.body) : null });
       let out;
-      if (path === '/bootstrap') out = { protocolVersion: 3, schemaVersion: 10, contentVersion: 'content', player: playerId ? { id: playerId } : null };
+      if (path === '/bootstrap') out = { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', player: playerId ? { id: playerId } : null };
       else if (path === '/creation/preview') out = { ticketId: 'ticket-' + ++count, preview: { age: 18, race: 'nhan', roots: [77,20,20,20,20], rootType: 'Thiên', rootSub: '' } };
       else if (path === '/players') {
-        playerId = PLAYER; out = { playerId, protocolVersion: 3, schemaVersion: 10, contentVersion: 'content', revision: 0, state };
+        playerId = PLAYER; out = { playerId, protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision: 0, state };
       } else if (path.endsWith('/sync')) {
-        out = { protocolVersion: 3, schemaVersion: 10, contentVersion: 'content', revision, state, report: null };
+        out = { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision, state, report: null };
       } else if (path.endsWith('/commands')) {
         const body = JSON.parse(init.body);
-        assert.equal(body.protocolVersion, 3);
+        assert.equal(body.protocolVersion, 4);
         assert.equal(body.expectedRevision, revision);
         assert.equal(body.requestId, 'request-' + issued);
         revision++; applied++; state = { ...state, qi: state.qi + 3 };
-        out = { protocolVersion: 3, schemaVersion: 10, contentVersion: 'content', revision, state, result: 3 };
-      } else if (path.endsWith('/state')) out = { protocolVersion: 3, schemaVersion: 10, contentVersion: 'content', revision, state };
+        out = { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision, state, result: 3 };
+      } else if (path.endsWith('/state')) out = { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision, state };
       else throw Error('Unexpected API ' + path);
       return { ok: true, status: 200, json: async () => out };
     }
@@ -87,7 +87,7 @@ test('RemoteSession hoãn heartbeat theo retryAfterMs khi server trả 429', asy
   f.session.request = async () => {
     attempts++;
     if (attempts === 1) throw Object.assign(Error('rate limited'), { status: 429, retryAfterMs: 20000 });
-    return { protocolVersion: 3, schemaVersion: 10, contentVersion: 'content', revision: 0,
+    return { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision: 0,
       state: { created: true, name: 'Vân Tiêu', settings: {} }, nextSyncInMs: 5000 };
   };
   now = 5000;
@@ -104,7 +104,7 @@ test('RemoteSession hoãn heartbeat theo retryAfterMs khi server trả 429', asy
 test('hiệu ứng tiểu cảnh chỉ phát khi snapshot tăng tầng trong cùng cảnh giới', async () => {
   const f=fixture({initialPlayer:true}); await f.session.connect(ACCOUNT);
   const events=[];f.session.subscribe(e=>events.push(e.type));
-  const data=(revision,realm,stage)=>({protocolVersion:3,schemaVersion:10,contentVersion:'content',revision,state:{created:true,realm,stage,name:'Vân Tiêu',settings:{}}});
+  const data=(revision,realm,stage)=>({protocolVersion:4,schemaVersion:10,contentVersion:'content',revision,state:{created:true,realm,stage,name:'Vân Tiêu',settings:{}}});
   f.session.apply(data(1,0,1)); f.session.apply(data(2,0,2)); f.session.apply(data(2,0,2)); f.session.apply(data(3,1,1));
   assert.equal(events.filter(x=>x==='minorBreakthrough').length,1);
 });
@@ -113,7 +113,7 @@ test('hiệu ứng tiểu cảnh chỉ phát khi snapshot tăng tầng trong cù
 test('thử lại khi đồng bộ sau khi mở tab gặp lỗi tạm thời', async () => {
   const f=fixture({initialPlayer:true}); await f.session.connect(ACCOUNT);
   f.session.paused=true;let calls=0;
-  f.session.request=async()=>{calls++;if(calls===1)throw Object.assign(Error('offline'),{code:'NETWORK_UNAVAILABLE'});return {protocolVersion:3,schemaVersion:10,contentVersion:'content',revision:0,state:{created:true,settings:{}}};};
+  f.session.request=async()=>{calls++;if(calls===1)throw Object.assign(Error('offline'),{code:'NETWORK_UNAVAILABLE'});return {protocolVersion:4,schemaVersion:10,contentVersion:'content',revision:0,state:{created:true,settings:{}}};};
   await assert.rejects(f.session.synchronize(true),/offline/);
   assert.notEqual(f.session.resumeTimer,null);
   await new Promise(resolve=>setTimeout(resolve,3200));

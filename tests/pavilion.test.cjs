@@ -22,7 +22,7 @@ async function spawn(service, owner, name) {
   });
 }
 const body = async (service, owner, requestId, type = 'breakthrough') => ({
-  protocolVersion: 3, requestId, expectedRevision: (await service.bootstrap(owner)).player.revision,
+  protocolVersion: 4, requestId, expectedRevision: (await service.bootstrap(owner)).player.revision,
   type, payload: {}
 });
 async function addPoints(repo, playerId, amount) {

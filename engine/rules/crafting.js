@@ -54,19 +54,24 @@
       },
       craft(payload, now) {
         now = at(this, now);
-        const s = this.s, code = payload.code, x = item(code);
+        const s = this.s, code = payload.code, x = item(code), count = payload.count ?? 1;
+        if (!Number.isInteger(count) || count < 1 || count > 3) throw Error('Số mẻ luyện không hợp lệ.');
         this.requireCraftRecipe(code);
         const r = this.recipe(code);
         if (x.tier > s.realm + 1) throw Error('Đan phương chưa mở.');
-        if (s.craftQueue.length >= 3) throw Error('Hàng đợi đã đủ ba mẻ.');
-        for (const [c, n] of Object.entries(r.herbs)) if (this.ingredientCount(c) < n) throw Error('Thiếu ' + item(c).name);
-        const success = this.craftChance(x.tier);
-        const skill = s.alchemySkill + this.manualEffects().alchemy + s.craftBoost;
-        this.spend(r.stone);
-        for (const [c, n] of Object.entries(r.herbs)) this.takeIngredient(c, n);
-        s.craftBoost = 0;
-        const start = Math.max(now, s.craftQueue.at(-1)?.end || 0);
-        s.craftQueue.push({ code, end: start + r.time * 1000, success, quality: F.craft_quality(x.tier, skill, this.rng) });
+        if (s.craftQueue.length + count > 3) throw Error('Hàng đợi chỉ có ba chỗ trống.');
+        for (const [c, n] of Object.entries(r.herbs))
+          if (this.ingredientCount(c) < n * count) throw Error('Thiếu ' + item(c).name);
+        // Kiểm tra toàn bộ nguyên liệu và chi phí trước khi xếp, không tạo dở hàng đợi.
+        this.spend(r.stone * count);
+        for (const [c, n] of Object.entries(r.herbs)) this.takeIngredient(c, n * count);
+        for (let i = 0; i < count; i++) {
+          const success = this.craftChance(x.tier);
+          const skill = s.alchemySkill + this.manualEffects().alchemy + s.craftBoost;
+          s.craftBoost = 0;
+          const start = Math.max(now, s.craftQueue.at(-1)?.end || 0);
+          s.craftQueue.push({ code, end: start + r.time * 1000, success, quality: F.craft_quality(x.tier, skill, this.rng) });
+        }
       },
       finishJobs(now, offline = false) {
         const s = this.s;
