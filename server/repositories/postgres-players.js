@@ -452,8 +452,10 @@ class PostgresPlayers extends PlayerRepository {
       const ticketRow = await one(c, 'SELECT count(*)::bigint AS n FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
       const account = pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId]));
       const tickets = toInt(ticketRow.n);
+      // Chat chỉ có hiệu lực 1 giờ; không xuất bản ghi đã hết TTL dù cron chưa kịp xóa.
       const chatRows = await rows(c, `SELECT id, sender_name, body, created_at
-        FROM game.world_chat_messages WHERE owner_id = $1 ORDER BY id ASC`, [ownerId]);
+        FROM game.world_chat_messages WHERE owner_id = $1 AND created_at > $2 ORDER BY id ASC`,
+      [ownerId, this.clock() - 3600000]);
       const accountRow = await one(c, 'SELECT doc FROM game.account_state WHERE owner_id = $1', [ownerId]);
       const mail = (await rows(c, `SELECT * FROM game.account_mail
         WHERE owner_id = $1 ORDER BY created_at ASC, id ASC`, [ownerId])).map(mailRow);
