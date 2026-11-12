@@ -17,7 +17,7 @@ jobs:
           echo "GET /bootstrap HTTP: $code"
           head -c 1000 /tmp/edge_get || true
           echo
-          options="$(curl --max-time 20 -sS -o /tmp/edge_options -w '%{http_code}' -X OPTIONS "$base/bootstrap" -H 'Origin: https://hugioi.blackbearvn.workers.dev' -H 'Access-Control-Request-Method: POST')"
+          options="$(curl --max-time 20 -sS -o /tmp/edge_options -w '%{http_code}' -X OPTIONS "$base/bootstrap" -H 'Origin: https://hugioi.redeyestudio.workers.dev' -H 'Access-Control-Request-Method: POST')"
           echo "OPTIONS /bootstrap HTTP: $options"
           head -c 1000 /tmp/edge_options || true
           echo

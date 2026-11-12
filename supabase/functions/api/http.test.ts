@@ -29,11 +29,11 @@ Deno.test('route giữ nguyên prefix function, quyền dữ liệu và UUID', (
   expect(routeOf('GET', prefix + '/players/not-uuid/state') === null, 'sai UUID');
 });
 Deno.test('CORS: allowlist, Vary Origin, headers & no wildcard', () => {
-  const origins = new Set(['https://hugioi.blackbearvn.workers.dev']);
+  const origins = new Set(['https://hugioi.redeyestudio.workers.dev']);
   const allowed = corsHeaders(new Request('https://api.example.test', {
-    headers: { origin: 'https://hugioi.blackbearvn.workers.dev' }
+    headers: { origin: 'https://hugioi.redeyestudio.workers.dev' }
   }), origins);
-  expect(allowed.get('access-control-allow-origin') === 'https://hugioi.blackbearvn.workers.dev', 'allow exact origin');
+  expect(allowed.get('access-control-allow-origin') === 'https://hugioi.redeyestudio.workers.dev', 'allow exact origin');
   expect(allowed.get('vary') === 'Origin', 'Vary Origin');
   expect(allowed.get('access-control-allow-headers')?.includes('apikey'), 'allow apikey');
   expect(allowed.get('access-control-allow-headers')?.includes('x-request-id'), 'allow request id');

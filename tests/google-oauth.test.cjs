@@ -14,8 +14,8 @@ function harness(sourceCode = source) {
   const store = new Map();
   const calls = [];
   const location = {
-    protocol: 'https:', hostname: 'hugioi.blackbearvn.workers.dev',
-    origin: 'https://hugioi.blackbearvn.workers.dev', pathname: '/',
+    protocol: 'https:', hostname: 'hugioi.redeyestudio.workers.dev',
+    origin: 'https://hugioi.redeyestudio.workers.dev', pathname: '/',
     search: '', hash: '', assigned: '',
     assign(url) { this.assigned = url; }
   };

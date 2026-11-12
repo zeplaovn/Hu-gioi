@@ -5,7 +5,7 @@
 
 ## Kiến trúc và ranh giới tin cậy
 
-- Trang tĩnh: Cloudflare Worker assets, origin `https://hugioi.blackbearvn.workers.dev`. `index.html` nạp `client/config.js` **trước** `remote-session.js` và `auth/supabase.js`; CSP chỉ `script-src 'self'`. `HU_AUTH_MODE='direct'` gọi HTTPS Supabase Auth `/auth/v1/token?grant_type=password` bằng publishable key **công khai**, không gọi Node login gateway.
+- Trang tĩnh: Cloudflare Worker assets, origin `https://hugioi.redeyestudio.workers.dev`. `index.html` nạp `client/config.js` **trước** `remote-session.js` và `auth/supabase.js`; CSP chỉ `script-src 'self'`. `HU_AUTH_MODE='direct'` gọi HTTPS Supabase Auth `/auth/v1/token?grant_type=password` bằng publishable key **công khai**, không gọi Node login gateway.
 - API duy nhất: `https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api`; Deno route và xác minh JWT (ES256/RS256 qua JWKS, HS256 chỉ khi có secret), `verify_jwt=false` để preflight OPTIONS chạy không cần token; API bearer token vẫn bắt buộc cho mọi gameplay route.
 - Database: **schema riêng `game`**, 11 bảng theo migrations hiện hành: `players`, `player_receipts`, `creation_tickets`, `pavilion_accounts`, `pavilion_receipts`, `world_chat_messages`, `world_chat_presence`, `player_leaderboard`, `account_state`, `account_receipts`, `account_mail`. Không cấp quyền hay policy RLS cho `anon` hoặc `authenticated`. Không thêm `game` vào Data API exposed schemas. Function kết nối qua `HU_DB_POOLER_URL` (Supavisor **transaction pooler, port 6543**) lấy từ dashboard > Connect. `SUPABASE_DB_URL` mặc định là direct, **không dùng** cho gameplay.
 - `public.policy_acceptances` có các version lịch sử; runtime hiện tại **chỉ chấp nhận consent v7 `2026-11-11-v7`**. Migration `20261111023603_v7_consent_and_deceased_leaderboard.sql` bổ sung constraint v7. **Không** chạy lại `supabase/sql/policy_acceptances.sql`. Edge đọc trực tiếp bảng này, đòi đủ `privacy` và `release_terms` cho route gameplay; `/me/*` chỉ cần JWT.
@@ -72,12 +72,12 @@ Bí mật do dự án tự đặt (không ghi giá trị thật vào Git, comman
 ```sh
 # Đọc giá trị thực trong Supabase Dashboard; nhập qua nơi lưu secret an toàn.
 # HU_DB_POOLER_URL: postgres://<DB-USER>:<PASSWORD>@<TRANSACTION-POOLER-HOST>:6543/postgres
-# HU_ALLOWED_ORIGINS: https://hugioi.blackbearvn.workers.dev
+# HU_ALLOWED_ORIGINS: https://hugioi.redeyestudio.workers.dev
 supabase secrets set --env-file ./private-edge-secrets.env --project-ref rvrwfeblishqadkpzspb
 # private-edge-secrets.env KHÔNG commit; chmod 0600; xóa sau khi thiết lập.
 ```
 
-`HU_ALLOWED_ORIGINS` nếu chưa đặt sẽ mặc định duy nhất origin Cloudflare chính thức `https://hugioi.blackbearvn.workers.dev`; cấu hình secret tường minh vẫn được khuyến nghị và bắt buộc để thêm staging. Không dùng wildcard.\n\n`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS`, `HU_ONLINE_GRACE_MS` (tham khảo `server/presence-config.js`) (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
+`HU_ALLOWED_ORIGINS` nếu chưa đặt sẽ mặc định duy nhất origin Cloudflare chính thức `https://hugioi.redeyestudio.workers.dev`; cấu hình secret tường minh vẫn được khuyến nghị và bắt buộc để thêm staging. Không dùng wildcard.\n\n`private-edge-secrets.env` chứa `HU_DB_POOLER_URL`, `HU_ALLOWED_ORIGINS`; tùy chọn `HU_SYNC_INTERVAL_MS`, `HU_ONLINE_GRACE_MS` (tham khảo `server/presence-config.js`) (grace ≥ 3× sync). Chỉ với project vẫn dùng JWT HS256, có thể đặt `HU_JWT_HS256_SECRET` (tuyệt đối không đưa vào client); nếu không, xác minh ES256/RS256 qua JWKS. Địa chỉ frontend staging phải **thêm origin đúng** vào HU_ALLOWED_ORIGINS, không dùng `*`. `_headers` hiện chỉ `connect-src 'self' https://rvrwfeblishqadkpzspb.supabase.co`, không mở rộng CSP không cần thiết.
 
 Biến tùy chọn để giảm lượt gọi mạng (không phải secret; đặt cùng cách với secret nếu muốn đổi):
 
@@ -136,13 +136,13 @@ jobs:
 
 ## 4. Cấu hình Auth
 
-Dashboard > Authentication > Providers > Email: bật email/password, kiểm tra **Confirm email**. Site URL = `https://hugioi.blackbearvn.workers.dev`; Redirect URLs chỉ origin/callback bạn sở hữu, không wildcard bên ngoài. Thiết lập Supabase Auth rate limits, hạn mức email và nhà cung cấp gửi mail phù hợp. Bật **Leaked Password Protection** nếu gói hỗ trợ; Turnstile optional giai đoạn sau. Direct login công khai bị ràng buộc bởi chính Supabase Auth rate limits; không tuyên bố gateway Node vẫn bảo vệ Edge.
+Dashboard > Authentication > Providers > Email: bật email/password, kiểm tra **Confirm email**. Site URL = `https://hugioi.redeyestudio.workers.dev`; Redirect URLs chỉ origin/callback bạn sở hữu, không wildcard bên ngoài. Thiết lập Supabase Auth rate limits, hạn mức email và nhà cung cấp gửi mail phù hợp. Bật **Leaked Password Protection** nếu gói hỗ trợ; Turnstile optional giai đoạn sau. Direct login công khai bị ràng buộc bởi chính Supabase Auth rate limits; không tuyên bố gateway Node vẫn bảo vệ Edge.
 
 ### Đăng nhập Google OAuth (chỉ sau khi cấu hình Dashboard)
 
 - Tạo Google OAuth Client **Web application** trong Google Cloud Console. Authorized redirect URI tại Google phải là `https://rvrwfeblishqadkpzspb.supabase.co/auth/v1/callback` (đây là callback của Supabase, **không** phải URL Cloudflare). Cấu hình OAuth consent screen, test users và chính sách xuất bản phù hợp.
 - Supabase Dashboard > Authentication > Providers > Google: bật provider, nhập **Client ID** và **Client Secret** tại Dashboard (không commit vào Git hoặc đưa vào client).
-- Supabase Dashboard > Authentication > URL Configuration: Site URL `https://hugioi.blackbearvn.workers.dev`, thêm chính URL này vào Redirect URLs; với staging dùng allowlist chính xác, không wildcard tùy tiện. Frontend khởi tạo Authorization Code + PKCE S256, chuyển hướng qua Supabase Auth và đổi `code` lấy phiên bằng `/auth/v1/token?grant_type=pkce`.
+- Supabase Dashboard > Authentication > URL Configuration: Site URL `https://hugioi.redeyestudio.workers.dev`, thêm chính URL này vào Redirect URLs; với staging dùng allowlist chính xác, không wildcard tùy tiện. Frontend khởi tạo Authorization Code + PKCE S256, chuyển hướng qua Supabase Auth và đổi `code` lấy phiên bằng `/auth/v1/token?grant_type=pkce`.
 - Chế độ Google chỉ áp dụng `HU_AUTH_MODE='direct'` và HTTPS (hoặc localhost). PKCE verifier chỉ lưu ở `sessionStorage`, mã OAuth được dọn khỏi URL trước khi đổi token. Không nhận JWT trực tiếp từ URL fragment. Browser cần cho phép sessionStorage và Web Crypto.
 - Xác minh bằng tài khoản Google thử nghiệm: redirect Google → Supabase callback → Cloudflare → xác minh `/auth/v1/user` → **consent v7** → bootstrap/reload/logout. Thử từ chối quyền Google, refresh tab trong lúc redirect, và mở URL callback ngoài phiên gốc; không được tự động nhận token.
 - Tài khoản email/password cũ được giữ nguyên; việc gộp tài khoản với Google phụ thuộc hành vi liên kết danh tính của Supabase. Không tự gộp người chơi chỉ theo địa chỉ email.
@@ -155,7 +155,7 @@ Sau **mỗi lần** deploy Edge: dùng Supabase Dashboard → Edge Functions →
 
 ## 5. Xác minh sau deploy
 
-- Từ terminal: `curl -i https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap` **không JWT** phải 401; preflight `OPTIONS` với `Origin: https://hugioi.blackbearvn.workers.dev` phải 204 và trả `Vary: Origin`, allow origin/header.
+- Từ terminal: `curl -i https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api/bootstrap` **không JWT** phải 401; preflight `OPTIONS` với `Origin: https://hugioi.redeyestudio.workers.dev` phải 204 và trả `Vary: Origin`, allow origin/header.
 - Thử origin ngoài whitelist: không có `Access-Control-Allow-Origin`.
 - Đăng ký → xác nhận email → đăng nhập trực tiếp Supabase → đồng ý đủ 2 chính sách v7 → bootstrap → gieo phiếu → tạo nhân vật → 20 lệnh → reload → so sánh revision, state và seed bị ẩn.
 - Test offline 20 phút: sync đầu tiên trả 0 giây; gửi lệnh breakthrough lỗi; sync ngay sau vẫn 0 giây, không cộng tuổi/tu vi. Pause tab ẩn → reload → không được tiến triển.

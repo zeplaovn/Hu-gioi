@@ -13,7 +13,7 @@ async function main() {
   const cwd = path.resolve(__dirname, '../supabase/functions/api');
   const env = { ...process.env,
     SUPABASE_URL: 'https://rvrwfeblishqadkpzspb.supabase.co',
-    HU_ALLOWED_ORIGINS: 'https://hugioi.blackbearvn.workers.dev',
+    HU_ALLOWED_ORIGINS: 'https://hugioi.redeyestudio.workers.dev',
     HU_DB_POOLER_URL: 'postgresql://ci_fake:ci_fake@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres'
   };
   const server = spawn('deno', ['run', '--node-modules-dir=auto', '--allow-env', '--allow-net', '--allow-read', 'index.ts'], { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -21,7 +21,7 @@ async function main() {
   server.stdout.on('data', b => { logs += b.toString(); });
   server.stderr.on('data', b => { logs += b.toString(); });
   const base = 'http://127.0.0.1:8000/functions/v1/api';
-  const origin = 'https://hugioi.blackbearvn.workers.dev';
+  const origin = 'https://hugioi.redeyestudio.workers.dev';
   try {
     let ready = false;
     for (let i = 0; i < 100; i++) {
