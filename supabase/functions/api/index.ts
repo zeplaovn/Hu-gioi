@@ -16,8 +16,11 @@ import {
 
 const BASE = (Deno.env.get('SUPABASE_URL') || '').replace(/\/+$/, '');
 const DATABASE = Deno.env.get('HU_DB_POOLER_URL') || '';
-const ORIGINS = new Set((Deno.env.get('HU_ALLOWED_ORIGINS') || 'https://hugioi.blackbearvn.workers.dev')
-  .split(',').map(x => x.trim()).filter(Boolean));
+const ORIGINS = new Set([
+  'https://hugioi.redeyestudio.workers.dev',
+  ...(Deno.env.get('HU_ALLOWED_ORIGINS') || 'https://hugioi.blackbearvn.workers.dev')
+    .split(',').map(x => x.trim()).filter(Boolean)
+]);
 const POLICY_VERSION = '2026-11-11-v7';
 const REQUIRED = new Set(['privacy', 'release_terms']);
 const REQUEST_ID = /^[A-Za-z0-9_-]{8,64}$/;
