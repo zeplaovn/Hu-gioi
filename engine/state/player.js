@@ -330,7 +330,7 @@
     x.debuffs = Array.isArray(raw.debuffs) ? raw.debuffs.filter(v => typeof v === 'string').slice(0, 8) : [];
     for (const k of Object.keys(x.progress)) x.progress[k] = finite(raw.progress?.[k]);
     x.claimed = Array.isArray(raw.claimed)
-      ? uniq(raw.claimed.filter(k => ['kill', 'meditate', 'travel', 'breaks', 'alchemy', 'fragments'].includes(k)))
+      ? uniq(raw.claimed.filter(k => ['kill', 'meditate', 'travel', 'breaks', 'alchemy', 'fragments', ...D.NOVICE_QUESTS.map(q => q.id)].includes(k)))
       : [];
     x.locations = Array.isArray(raw.locations)
       ? uniq([0, ...raw.locations.filter(n => Number.isInteger(n) && n >= 0 && n <= x.realm)])

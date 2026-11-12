@@ -97,7 +97,10 @@
 
   const quests = () => {
     const s = UI.s(), g = UI.g(), fragments = H.ITEMS.filter(x => x.kind === 'QITEM');
-    return `<p class="screen-lead">Mỗi nhiệm vụ chỉ có thể nhận thưởng một lần với nhân vật hiện tại.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
+    const novice = g.noviceQuestInfo(), q = novice.quest;
+    const guide = q ? card(q.name, `<p>${esc(q.desc)}</p>${row('Mục tiêu', esc(q.goal))}${row('Tiến độ', (novice.index + 1) + ' / ' + H.NOVICE_QUESTS.length)}${bar(novice.index / H.NOVICE_QUESTS.length * 100, 'novice-quest-progress')}<p>${moneyHTML(q.stone)} · ${esc(H.item(q.item).name)} ×${q.qty}</p><div class="action-group">${novice.ready ? btn('Nhận thưởng', 'claimQuest', `data-id="${esc(q.id)}"`) : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`}</div>`, { eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ' })
+      : card('Đã hoàn thành hành trình tân thủ', '<p>Bạn đã bước vào Trúc Cơ. Con đường tu hành vẫn còn rộng mở.</p>', { eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ' });
+    return `${guide}<p class="screen-lead">Mỗi nhiệm vụ chỉ có thể nhận thưởng một lần với nhân vật hiện tại.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
       card(name, `${row('Tiến độ', num(Math.min(max, s.progress[id])) + ' / ' + max)}${bar(Math.min(max, s.progress[id]) / max * 100, 'quest-progress')}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p>${btn(s.claimed.includes(id) ? 'Đã nhận' : s.progress[id] < max ? 'Chưa đủ tiến độ' : 'Nhận thưởng', 'claimQuest', `data-id="${id}"`, s.claimed.includes(id) || s.progress[id] < max)}`)).join('')}
       ${card('Hợp nhất đạo ấn', `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để nhận 10 Thiên Tinh vào tài khoản.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}${btn('Hợp ấn', 'fragments', '', !fragments.every(x => g.count(x.code) > 0) || s.claimed.includes('fragments'))}`)}</div>`;
   };
@@ -176,7 +179,7 @@
     render: () => '<header class="screen-title"><span class="eyebrow gold">TU HÀNH</span><h2>Nhiệm vụ</h2></header><div class="screen-body">' + quests() + '</div>',
     signature: () => {
       const s = UI.s();
-      return [JSON.stringify(s.progress), s.claimed.join(','), s.stone, UI.session.pavilion?.balance || 0, Object.entries(s.bag)
+      return [JSON.stringify(s.progress), s.claimed.join(','), s.stone, s.realm, s.stage, s.sect.joined, s.sect.missionsDone, s.exploration.last?.end, UI.session.pavilion?.balance || 0, Object.entries(s.bag)
         .filter(([code]) => H.item(code)?.kind === 'QITEM').map(([code, n]) => code + ':' + n).join(',')].join('|');
     }
   });

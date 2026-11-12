@@ -54,12 +54,38 @@
         return { id: payload.id, option: this.s.story.flags[payload.id] || null };
       },
       claimQuest(payload) {
-        const s = this.s, q = QUESTS.find(q => q[0] === payload.id);
+        const s = this.s, novice = H.NOVICE_QUESTS.find(q => q.id === payload.id);
+        if (novice) {
+          const info = this.noviceQuestInfo();
+          if (!info.quest || info.quest.id !== novice.id || !info.ready) throw Error('Chưa thể nhận thưởng nhiệm vụ tân thủ.');
+          s.stone += novice.stone;
+          this.add(novice.item, novice.qty);
+          s.claimed.push(novice.id);
+          this.log('Hoàn thành nhiệm vụ tân thủ: ' + novice.name + '.');
+          return [novice.id, novice.name, 1, novice.stone, novice.item, novice.qty];
+        }
+        const q = QUESTS.find(q => q[0] === payload.id);
         if (!q || s.claimed.includes(q[0]) || s.progress[q[0]] < q[2]) throw Error('Chưa thể nhận thưởng.');
         s.stone += q[3];
         this.add(q[4], q[5]);
         s.claimed.push(q[0]);
         return q;
+      },
+      noviceQuestInfo() {
+        const s = this.s, index = H.NOVICE_QUESTS.findIndex(q => !s.claimed.includes(q.id));
+        if (index < 0) return { quest: null, index: H.NOVICE_QUESTS.length, ready: false };
+        const q = H.NOVICE_QUESTS[index];
+        const done = {
+          novice_meditate: s.progress.meditate >= 60,
+          novice_sect: s.sect.joined,
+          novice_mission: s.sect.missionsDone >= 1,
+          novice_explore: !!s.exploration.last,
+          novice_alchemy: s.progress.alchemy >= 1,
+          novice_stage: s.realm > 0 || s.stage >= 3,
+          novice_peak: s.realm > 0 || s.stage >= F.STAGES[0],
+          novice_foundation: s.realm >= 1
+        };
+        return { quest: q, index, ready: !!done[q.id] };
       },
       claimFragments() {
         const s = this.s, parts = ITEMS.filter(x => x.kind === 'QITEM');

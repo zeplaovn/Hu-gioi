@@ -18,10 +18,25 @@ test('toàn bộ migration dựng được database trắng từ đầu và khô
     await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE SCHEMA auth;
       CREATE TABLE auth.users(id uuid primary key);
       CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
-      INSERT INTO auth.users VALUES ('11111111-1111-4111-8111-111111111111');`);
+      INSERT INTO auth.users VALUES ('11111111-1111-4111-8111-111111111111');
+      -- PGlite không có pg_cron; giả lập API lập lịch để vẫn replay và kiểm tra migration.
+      CREATE SCHEMA cron;
+      CREATE TABLE cron.job(jobid bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, jobname text, schedule text, command text);
+      CREATE TABLE cron.job_run_details(jobid bigint, end_time timestamptz);
+      CREATE FUNCTION cron.schedule(job_name text, schedule text, command text) RETURNS bigint LANGUAGE sql AS $$
+        INSERT INTO cron.job(jobname,schedule,command) VALUES (job_name,schedule,command) RETURNING jobid $$;
+      CREATE FUNCTION cron.alter_job(job_id bigint, command text) RETURNS void LANGUAGE sql AS $$
+        UPDATE cron.job SET command = alter_job.command WHERE jobid = job_id $$;`);
     for (const filename of files) {
-      const sql = fs.readFileSync(path.join(dir, filename), 'utf8');
+      const sql = fs.readFileSync(path.join(dir, filename), 'utf8').replace(/create extension if not exists pg_cron\s*;/i, '-- pg_cron được giả lập trong PGlite');
       await db.exec(sql);
+    }
+    const jobs = (await db.query("select schedule,command from cron.job where jobname='hugioi-cleanup-expired-data'")).rows;
+    if (files.some(name => name.endsWith('_cleanup_chat_messages.sql'))) {
+      assert.equal(jobs.length, 1);
+      assert.equal(jobs[0].schedule, '0 */3 * * *');
+      assert.match(jobs[0].command, /delete from game\.world_chat_messages/i);
+      await db.exec('BEGIN; ' + jobs[0].command + ' ROLLBACK;');
     }
     const tables = (await db.query(`select n.nspname || '.' || c.relname as tbl,c.relrowsecurity as rls
       from pg_class c join pg_namespace n on n.oid=c.relnamespace

@@ -15,6 +15,7 @@
 
   function nearGoals() {
     const s = UI.s(), g = UI.g(), need = g.need(), goals = [];
+    const novice = g.noviceQuestInfo();
     if (s.completed) goals.push({ icon: '☯', text: 'Đã chứng đạo. Đạo quả kiếp này đã viên mãn.', go: 'meta:destiny', cta: 'Thiên mệnh' });
     else if (s.qi >= need) {
       const odds = g.breakthroughOdds();
@@ -24,6 +25,7 @@
     const life = g.lifeInfo();
     if (!s.completed && (life.left <= 40 || life.seconds <= 1800)) goals.unshift({ icon: '⌛', text: `Thọ nguyên còn ${num(Math.floor(life.left))} năm, khoảng ${duration(life.seconds)} nữa sẽ tọa hóa${Number.isFinite(life.safeSeconds) ? ` (vắng mặt quá ${duration(life.safeSeconds)} cũng tọa hóa)` : ''}.`, go: 'character:bag', cta: 'Hành trang' });
     const claimable = QUESTS.filter(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]).length;
+    if (novice.quest) goals.unshift({ icon: '✦', text: novice.ready ? `Đã hoàn thành: ${esc(novice.quest.name)}. Hãy nhận thưởng.` : `Tân thủ ${novice.index + 1}/${H.NOVICE_QUESTS.length}: ${esc(novice.quest.goal)}.`, go: novice.ready ? 'quests' : novice.quest.go, cta: novice.ready ? 'Nhận thưởng' : 'Thực hiện' });
     if (claimable) goals.push({ icon: '✦', text: `${claimable} nhiệm vụ đã đủ điều kiện nhận thưởng.`, go: 'world:quests', cta: 'Nhận' });
     const job = s.craftQueue[0];
     if (job) goals.push({ icon: '⚗', text: `Mẻ đan ${esc(H.item(job.code).name)} sẽ hoàn thành sau ${live(job.end)}.`, go: 'craft:dan', cta: 'Nghề phụ' });
@@ -100,7 +102,7 @@
 
   const signature = () => {
     const s = UI.s();
-    return [s.craftQueue.length, s.garden.length, s.claimed.length, s.sect.joined, s.activeManuals.length, s.qi >= UI.g().need(), s.dungeon.active?.end, s.dungeon.run?.floor, s.sect.mission?.end, s.encounter.total].join('|');
+    return [s.craftQueue.length, s.garden.length, s.claimed.length, s.sect.joined, s.sect.missionsDone, s.exploration.last?.end, s.realm, s.stage, UI.g().noviceQuestInfo().ready, s.activeManuals.length, s.qi >= UI.g().need(), s.dungeon.active?.end, s.dungeon.run?.floor, s.sect.mission?.end, s.encounter.total].join('|');
   };
 
   UI.register({

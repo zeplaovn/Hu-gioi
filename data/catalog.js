@@ -31,11 +31,22 @@ const QUESTS=[
  ['breaks','Phá kén thành tiên',1,280,pill(7),1],
  ['alchemy','Luyện đan kỳ tài',2,220,'HERB-002',3]
 ];
+// Các mục tiêu dùng tiến độ do máy chủ ghi nhận, có thể hoàn thành trước khi nhận bước.
+const NOVICE_QUESTS=[
+ {id:'novice_meditate',name:'Bước đầu nhập định',desc:'Ở lại trong game và tu luyện 60 giây để cảm nhận linh khí.',goal:'Tu luyện 60 giây',go:'idle',stone:60,item:pill(2),qty:2},
+ {id:'novice_sect',name:'Bái nhập tông môn',desc:'Tìm một tông môn và gia nhập để bắt đầu con đường tu hành.',goal:'Gia nhập một tông môn',go:'world:sect',stone:80,item:'HERB-001',qty:3},
+ {id:'novice_mission',name:'Ủy thác đầu tiên',desc:'Nhận và hoàn thành một nhiệm vụ tại bảng tông môn.',goal:'Hoàn thành 1 nhiệm vụ tông môn',go:'world:sect',stone:100,item:'HERB-002',qty:3},
+ {id:'novice_explore',name:'Bước ra tiên sơn',desc:'Khởi hành lịch luyện, chọn cách ứng phó nếu gặp người hoặc yêu thú, rồi trở về.',goal:'Hoàn thành 1 chuyến lịch luyện',go:'combat',stone:120,item:pill(1),qty:2},
+ {id:'novice_alchemy',name:'Lửa lò sơ khai',desc:'Đến Đan phòng, dùng dược liệu luyện thành một mẻ đan. Mẻ thất bại có thể thử lại.',goal:'Luyện thành 1 mẻ đan',go:'craft:dan',stone:120,item:pill(2),qty:2},
+ {id:'novice_stage',name:'Tích lũy đạo cơ',desc:'Tiếp tục tu luyện đến Luyện Khí tầng 3; các tiểu cảnh giới tự đột phá.',goal:'Đạt Luyện Khí tầng 3',go:'idle',stone:150,item:pill(1),qty:2},
+ {id:'novice_peak',name:'Chuẩn bị độ kiếp',desc:'Tu luyện đến đỉnh Luyện Khí. Kiểm tra sinh lực và vật phẩm hộ kiếp trước khi dẫn lôi.',goal:'Đạt đỉnh Luyện Khí',go:'tribulation',stone:200,item:pill(7),qty:1},
+ {id:'novice_foundation',name:'Trúc Cơ khai lộ',desc:'Vượt qua thiên kiếp đại cảnh giới để tiến vào Trúc Cơ. Thất bại sẽ khiến đạo thân tử vong.',goal:'Đạt Trúc Cơ',go:'tribulation',stone:300,item:pill(2),qty:3}
+];
 /* Mở khóa tính năng theo cảnh giới (chỉ số r của F.REALMS). Nguồn duy nhất cho engine và giao diện. */
 const FEATURES={
  forge:{realm:2,label:'Rèn pháp bảo và vẽ phù'},
  social:{realm:3,label:'Giao du: kết bạn, luận kiếm, bảng xếp hạng'}
 };
-const API={ITEMS,BY_ID,item,keyFor,pill,ZONES,ENEMY_NAMES,QUESTS,DESIGN,FEATURES};
+const API={ITEMS,BY_ID,item,keyFor,pill,ZONES,ENEMY_NAMES,QUESTS,NOVICE_QUESTS,DESIGN,FEATURES};
 root.HU_CATALOG=API;if(node)module.exports=API;
 })(typeof window!=='undefined'?window:globalThis);
