@@ -199,6 +199,13 @@ def open_page(page, section):
 def set_tab(page, section, tab):
     if tab is None:
         return
+    if section == 'character' and tab == 'skills':
+        # Công pháp đã chuyển từ tab riêng vào mục mở rộng của trang Đạo thể.
+        page.locator('.win.desktop-window[data-window="character"] .tabbar [data-tab="stats"]').first.click()
+        details = page.locator('.win.desktop-window[data-window="character"] .char-techniques')
+        if details.get_attribute('open') is None:
+            details.locator('summary').click()
+        return
     selector = (f'[data-act="sectPanel"][data-panel="{tab}"]' if section == 'sect'
                 else f'.tabbar [data-tab="{tab}"]')
     btn = page.locator(f'.win.desktop-window[data-window="{section}"] {selector}')
