@@ -238,9 +238,9 @@ const { PGlite } = require('@electric-sql/pglite');
 const { PostgresPlayers } = require('../server/repositories/postgres-players.js');
 const OWNER_A = '11111111-1111-4111-8111-111111111111';
 const OWNER_B = '22222222-2222-4222-8222-222222222222';
-const migrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
-const socialMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
-const rankMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
+const migrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261110075419_game_schema.sql'), 'utf8');
+const socialMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
+const rankMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
 
 async function sharedFixture(mode, t) {
   let repo;
