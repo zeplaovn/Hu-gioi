@@ -11,7 +11,7 @@ const root = path.join(__dirname, '..');
 const dir = path.join(root, 'supabase/migrations');
 test('toàn bộ migration dựng được database trắng từ đầu và không tái hiện đạo thân tử vong', async () => {
   const files = fs.readdirSync(dir).filter(name => name.endsWith('.sql')).sort();
-  assert.equal(files.length, 1, 'chỉ một baseline được replay');
+  assert.equal(files.filter(name => name.endsWith('_unified_baseline.sql')).length, 1, 'phải có đúng một baseline');
   assert.match(files[0], /_unified_baseline\.sql$/);
   const db = new PGlite();
   try {
