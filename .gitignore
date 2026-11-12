@@ -63,3 +63,6 @@ accounts.json
 
 # Tạo bằng npm run build:edge, không commit artifact đóng gói
 supabase/functions/api/game.bundle.mjs
+
+# Trạng thái liên kết tạm của Supabase CLI
+supabase/.temp/
