@@ -30,6 +30,8 @@
 .chat-connection .btn{min-height:30px;font-size:11px;padding:4px 10px}
 .chat-availability{margin:0;padding:8px 14px;font-size:12px;color:#f0b9a4}
 .chat-transcript{position:relative;display:flex;flex:1;min-height:100px;overflow:hidden}
+.chat-panel [hidden]{display:none!important}
+.chat-journal{gap:5px}
 .chat-feed{display:flex;flex:1;min-width:0;min-height:0;flex-direction:column;gap:10px;
   overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;overflow-anchor:none;
   padding:15px 16px 22px;background:radial-gradient(ellipse at 60% 3%,#263c2a33,transparent 65%),

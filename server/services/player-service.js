@@ -101,6 +101,13 @@ class PlayerService {
     return { ...deleted, pavilion: await this.repo.getPavilion(ownerId) };
   }
 
+  async deleteCharacter(ownerId, playerId, body) {
+    onlyKeys(body, ['confirm']);
+    if (body.confirm !== 'delete-character') throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa nhân vật.');
+    const deleted = await this.repo.deletePlayer(ownerId, playerId, { allowAlive: true });
+    return { ...deleted, pavilion: await this.repo.getPavilion(ownerId) };
+  }
+
   /* Quyền truy cập dữ liệu: bản sao dữ liệu gameplay của chính tài khoản (không có seed RNG/seed bí cảnh). */
   async exportData(ownerId) {
     const data = await this.repo.exportOwnerData(ownerId);

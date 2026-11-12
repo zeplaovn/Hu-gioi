@@ -503,3 +503,13 @@ body:has(#game.page-open) .chat-bubble.open .chat-bubble-btn{
 #game #logPanel.log-floating .log-max-toggle:hover,#game #logPanel.log-floating .log-max-toggle:focus-visible{border-color:#daba72;color:#ffecbb}
 #game #logPanel.log-floating.log-maximized{left:8px!important;top:8px!important;width:calc(100vw - 16px)!important;height:calc(100dvh - 76px)!important;max-width:none;max-height:none;border-radius:9px;resize:none}
 #game #logPanel.log-floating.collapsed .log-max-toggle{display:none}
+/* Nhật ký hiển thị trong Truyền âm, giữ nguồn log ẩn để nhận thông báo. */
+body.journal-in-chat #game #logPanel{display:none!important}
+body.in-game.journal-in-chat{--log-panel-h:0px!important}
+body.journal-in-chat #game[data-layout="portrait"]{grid-template-rows:auto minmax(0,1fr) 0 auto}
+body.journal-in-chat #game[data-layout="landscape"]{grid-template-rows:auto minmax(0,1fr) 0}
+body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 0}
+.status-settings-mobile{display:none}
+#game:not([data-layout="wide"]) .status-settings-mobile{display:grid;place-items:center;grid-column:2;grid-row:1;justify-self:end;width:44px;height:44px;border:1px solid #567864;border-radius:10px;background:#14251c;color:#f0d79c;font-size:23px;cursor:pointer}
+#game:not([data-layout="wide"]) .btn-break{grid-row:2 / span 2}
+@media(max-width:600px){.settings-row{flex-wrap:wrap;gap:8px}.settings-row label{min-width:55%}.settings-row select{max-width:100%}}

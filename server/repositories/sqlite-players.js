@@ -268,11 +268,11 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
-  async deletePlayer(ownerId, playerId) {
+  async deletePlayer(ownerId, playerId, { allowAlive = false } = {}) {
     return this.run(() => {
       const row = this.q.byId.get(playerId);
       if (!row || row.owner_id !== ownerId) throw new GameError('PLAYER_NOT_FOUND', 'Không tìm thấy đạo thân.');
-      if (!new GAME.Game(JSON.parse(row.state)).isDead())
+      if (!allowAlive && !new GAME.Game(JSON.parse(row.state)).isDead())
         throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
       this.q.deletePlayer.run(playerId, ownerId);
       // Giữ ticket để giới hạn lượt khởi nguyên không bị lợi dụng.

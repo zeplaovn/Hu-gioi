@@ -344,12 +344,12 @@ class PostgresPlayers extends PlayerRepository {
   /* Tử vong: xóa sạch tiến trình và Thiên Tinh nhưng giữ auth.users cùng phiếu
    * khởi nguyên cũ để hạn mức gieo lại không thể bị reset bằng chết liên tục.
    * Kiểm tra sống/chết trong transaction đã khóa hàng, không tin browser. */
-  async deletePlayer(ownerId, playerId) {
+  async deletePlayer(ownerId, playerId, { allowAlive = false } = {}) {
     return this.transaction(async c => {
       await this.ownerLock(c, ownerId);
       const player = await one(c, 'SELECT id, state FROM game.players WHERE id = $1 AND owner_id = $2 FOR UPDATE', [playerId, ownerId]);
       if (!player) throw new GameError('PLAYER_NOT_FOUND','Không tìm thấy đạo thân.');
-      if (!new GAME.Game(json(player.state)).isDead())
+      if (!allowAlive && !new GAME.Game(json(player.state)).isDead())
         throw new GameError('GAME_RULE_VIOLATION','Đạo thân chưa tọa hóa.');
       // Bản ghi xếp hạng tự xóa bằng FK CASCADE, không cộng chỉ số chuyển kiếp.
       await exec(c, 'DELETE FROM game.world_chat_messages WHERE owner_id = $1', [ownerId]);

@@ -19,7 +19,7 @@ const { quotaIpKey } = require('./client-ip.js');
 
 const MAX_BODY = 64 * 1024;
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|pause|reset-after-death)$`, 'i');
+const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands|pause|reset-after-death|delete-character)$`, 'i');
 
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
 
@@ -102,6 +102,7 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
         case 'sync': limit('sync:' + who, LIMITS.sync); out = await service.sync(who, route.id, body); break;
         case 'pause': limit('pause:' + who, LIMITS.pause); out = await service.pause(who, route.id); break;
         case 'reset-after-death': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
+        case 'delete-character': limit('erase:' + who, LIMITS.erase); out = await service.deleteCharacter(who, route.id, body); break;
         case 'commands': limit('cmd:' + who, LIMITS.command); out = await service.command(who, route.id, body); break;
         case 'exportData': limit('export:' + who, LIMITS.export); out = await service.exportData(who); break;
         case 'eraseData': limit('erase:' + who, LIMITS.erase); out = await service.eraseData(who, body); break;

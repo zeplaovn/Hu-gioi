@@ -73,10 +73,6 @@
     return card('Mục tiêu gần', items || empty('Không có mục tiêu gần.'), { eyebrow: 'GỢI Ý TIÊN LỘ' });
   }
 
-  function logCard() {
-    return card('Nhật ký tu hành', `<div class="journal" id="idleJournal">${UI.s().logs.slice(0, 6).map(v => `<div><time>✦</time>${esc(v)}</div>`).join('')}</div>`, { eyebrow: 'GHI CHÉP' });
-  }
-
   function panel() {
     const s = UI.s(), a = s.dungeon.active, m = s.sect.mission;
     const tasks = card('Hành trình tiên lộ',
@@ -84,7 +80,7 @@
       (m ? row(H.SECT_MISSIONS.find(d => d.id === m.id).name, live(m.end)) : '') +
       row('Kỳ ngộ đã gặp', num(s.encounter.total)) +
       `<div class="action-group"><button class="btn btn-outline" data-go="world:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="combat">Kỳ ngộ</button><button class="btn btn-outline" data-go="world:sect">Tông môn</button></div>`, { eyebrow: 'DUYÊN SỰ ĐANG TIẾN HÀNH' });
-    return `<div class="screen-grid idle-grid">${qiCard()}${tasks}${boostCard()}${manualsCard()}${goalsCard()}${logCard()}</div>`;
+    return `<div class="screen-grid idle-grid">${qiCard()}${tasks}${boostCard()}${manualsCard()}${goalsCard()}</div>`;
   }
 
   function update() {
@@ -97,7 +93,6 @@
     $('idleEta').textContent = s.completed ? '—' : p >= 100 ? 'Đã đầy' : duration(F.time_to_goal(need, s.qi, g.rate()));
     $('idleChance').textContent = pct(g.chance());
     $('idlePity').textContent = 'Thất bại = tọa hóa';
-    $('idleJournal').innerHTML = s.logs.slice(0, 6).map(v => `<div><time>✦</time>${esc(v)}</div>`).join('');
   }
 
   const signature = () => {

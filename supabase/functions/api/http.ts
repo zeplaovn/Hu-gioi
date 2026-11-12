@@ -46,11 +46,11 @@ export function routeOf(method: string, path: string): { name: string; id?: stri
   if (method === 'GET' && pathname === '/me/export') return { name: 'exportData' };
   if (method === 'POST' && pathname === '/me/erase') return { name: 'eraseData' };
   if (method === 'POST' && pathname === '/me/delete-account') return { name: 'deleteAccount' };
-  const match = /^\/players\/([0-9a-f-]{36})\/(state|sync|commands|pause|reset-after-death)$/i.exec(pathname);
+  const match = /^\/players\/([0-9a-f-]{36})\/(state|sync|commands|pause|reset-after-death|delete-character)$/i.exec(pathname);
   if (!match || !UUID.test(match[1])) return null;
   const op = match[2];
   if (method !== (op === 'state' ? 'GET' : 'POST')) return null;
-  return { name: op === 'reset-after-death' ? 'resetAfterDeath' : op, id: match[1].toLowerCase() };
+  return { name: op === 'reset-after-death' ? 'resetAfterDeath' : op === 'delete-character' ? 'deleteCharacter' : op, id: match[1].toLowerCase() };
 }
 export async function parseBody(req: Request): Promise<unknown> {
   if (req.method !== 'POST') return {};

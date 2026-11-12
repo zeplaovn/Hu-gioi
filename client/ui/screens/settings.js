@@ -8,6 +8,7 @@
     { id: 'season', label: 'Tứ thời', icon: '✿' },
     { id: 'audio', label: 'Âm thanh', icon: '♪' },
     { id: 'guide', label: 'Hướng dẫn', icon: '?' },
+    { id: 'account', label: 'Nhân vật', icon: '♙' },
     { id: 'legal', label: 'Pháp lý', icon: '§' }
   ];
   const SEASONS = [
@@ -60,29 +61,28 @@
         <p><b>4.</b> <b>Nghề phụ</b> gồm luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Thời gian chế tác chỉ tiến triển khi tab game đang mở và kết nối; khi rời game, công việc sẽ tạm dừng.</p>
         <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký tu tiên; đại cảnh giới mở Độ kiếp đài.</p>
         <p><b>6.</b> <b>Thế giới → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Kỳ ngộ</b> là một cơ duyên có thể bắt gặp khi Lịch luyện; kết quả hiển lộ sau khi chuyến đi kết thúc.</p>
-        <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Thiên mệnh</b> để xem thành tựu, bồi dưỡng đạo cơ lâu dài và mục Trọng sinh.</p>
+        <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Nhiệm vụ</b> để theo tuyến tân thủ đến Trúc Cơ.</p>
         <button class="btn btn-gold" data-act="tutorial">Xem lại hướng dẫn từng bước</button>`, { eyebrow: 'TIÊN LỘ' })}
       ${card('Phím tắt', `
         <div class="key-grid">
           <span><kbd>T</kbd> Tu luyện</span><span><kbd>L</kbd> Lịch luyện</span>
           <span><kbd>N</kbd> Nghề phụ</span><span><kbd>C</kbd> Nhân vật</span>
           <span><kbd>I</kbd> Hành trang</span><span><kbd>M</kbd> Thế giới</span>
-          <span><kbd>S</kbd> Cài đặt</span><span><kbd>1</kbd>–<kbd>4</kbd> Kỹ năng</span>
+          <span><kbd>1</kbd>–<kbd>4</kbd> Kỹ năng</span>
           <span><kbd>Esc</kbd> Đóng hộp thoại</span>
         </div>
         <p class="info-note">Phím kỹ năng chỉ có tác dụng ở màn Lịch luyện. Khi hộp thoại mở, phím tắt toàn cục tạm khóa. Thiên kiếp mở từ nút Đột phá khi đủ duyên, không có phím tắt riêng.</p>
         <div class="action-group"><button class="btn btn-outline" data-go="character:bag">Hành trang</button><button class="btn btn-outline" data-go="world:quests">Nhiệm vụ</button></div>`, { eyebrow: 'ĐIỀU KHIỂN' })}
       ${card('Nhật ký & tiến trình xuyên kiếp', `
-        <p>• Nhật ký tu tiên dưới sân khấu nhận cả ghi chép tu hành và thông báo. Dòng ghi chép mới hiện dần; cuộn lên để đọc cũ, bấm <b>↓ Tin mới</b> để về cuối.</p>
-        <p>• Nút thu gọn nhật ký được ghi nhớ trên thiết bị. Chế độ giảm chuyển động hiển thị ngay, không dùng hiệu ứng hiện chữ.</p>
-        <p>• <b>Thiên Mệnh Các</b> giữ Thiên Tinh, nâng cấp vĩnh viễn và Kỳ Trân chưa dùng theo tài khoản khi bắt đầu kiếp mới. Vật phẩm và thành tựu của nhân vật cũ không được kế thừa.</p>
+        <p>• Mở <b>Truyền âm → Nhật ký</b> để xem ghi chép tu hành và thông báo gần đây.</p>
+        <p>• Khi bắt đầu lại sau tử vong, Thiên Tinh, nâng cấp, vật phẩm và thành tựu của đạo thân cũ không được kế thừa.</p>
         <p>• <b>Nhiệm vụ tông môn</b> chỉ tiếp tục tính thời gian khi bạn đang trong game và kết nối. Khi hoàn tất, hãy quay lại nhận cống hiến.</p>`, { eyebrow: 'XUYÊN KIẾP' })}
       ${card('Mẹo tu hành', `
         <p>• Bán yêu đan ở Lịch luyện hoặc Thế giới → Cửa hàng để lấy linh thạch.</p>
         <p>• Đan cấp thấp vẫn dùng được nhưng hiệu quả giảm theo chênh lệch cảnh giới.</p>
-        <p>• Kiếp vận tích lũy tăng một bậc sau mỗi lần đột phá thất bại, tối đa 15 bậc.</p>
+        <p>• Độ kiếp đại cảnh giới thất bại khiến đạo thân tử vong. Hãy chuẩn bị trước khi dẫn lôi.</p>
         <p>• Tông môn mang lại linh thạch định kỳ và chúc phúc +10% tốc độ hấp thụ linh khí.</p>
-        <p>• Khi nhân vật <b>tọa hóa</b>, bạn có thể trở về Khởi Nguyên để tạo nhân vật mới. Tiến trình kiếp cũ sẽ bị xóa; tài khoản và quyền lợi thuộc Thiên Mệnh Các vẫn được giữ.</p>`, { eyebrow: 'GHI NHỚ' })}
+        <p>• Khi nhân vật <b>tọa hóa</b>, bạn có thể trở về Khởi Nguyên để tạo nhân vật mới. Tiến trình và quyền lợi kiếp cũ bị xóa; tài khoản đăng nhập được giữ.</p>`, { eyebrow: 'GHI NHỚ' })}
     </div>`;
   }
 
@@ -93,7 +93,19 @@
       '</div>';
   }
 
-  const body = { season, audio, guide, legal };
+  function account() {
+    return '<div class="screen-grid">' + card('Xóa nhân vật', '<p>Xóa đạo thân hiện tại để tạo lại từ đầu. Cảnh giới, trang bị, vật phẩm, Thiên Tinh, nâng cấp và thứ hạng của nhân vật sẽ mất. Tin nhắn do nhân vật gửi cũng bị xóa.</p><p>Tài khoản đăng nhập được giữ. Giới hạn lượt tạo nhân vật vẫn được áp dụng.</p><button type="button" class="btn btn-danger" data-act="deleteCharacter">Xóa nhân vật</button>', { eyebrow: 'NHÂN VẬT' }) + '</div>';
+  }
+  UI.action('deleteCharacter', () => {
+    const name = UI.kit.esc(UI.s().name);
+    UI.modal('Xóa nhân vật?', '<p>Bạn sắp xóa vĩnh viễn <b>' + name + '</b> cùng toàn bộ tiến trình, vật phẩm, Thiên Tinh, nâng cấp, thứ hạng và tin nhắn đã gửi.</p><p>Tài khoản đăng nhập vẫn được giữ. Thao tác này không thể hoàn tác.</p>', async () => {
+      UI.store.ready = false;
+      try { await UI.session.deleteCharacter(); root.location.reload(); }
+      catch (error) { UI.store.ready = true; throw Error('Chưa xác nhận được việc xóa. Hãy tải lại trang để kiểm tra trạng thái. ' + error.message); }
+    }, 'Xóa vĩnh viễn', 'XÓA NHÂN VẬT', { type: 'danger', vfx: false });
+    return UI.KEEP;
+  });
+  const body = { season, audio, guide, account, legal };
   UI.register({
     id: 'settings', label: 'Cài đặt', icon: 'ICON-MENU-006', eyebrow: 'THIẾT LẬP', nav: false, tabs: TABS,
     render: tab => `<header class="screen-title"><span class="eyebrow gold">THIẾT LẬP</span><h2>Cài đặt</h2></header>${tabs(TABS, tab)}<div class="screen-body">${body[tab]()}</div>`,

@@ -3,7 +3,7 @@
   'use strict';
   const UI = root.HU_UI, { $, esc } = UI.kit;
   const session = new root.HU_CHAT_SESSION.ChatSession();
-  let draft = '', sending = false, error = '', pending = null, opened = false;
+  let draft = '', sending = false, error = '', pending = null, opened = false, journalOpen = false, journalMarkup = '';
   const CHANNELS = [
     { id: 'world', title: 'Thế giới', help: 'Kênh công khai toàn máy chủ.' },
     { id: 'sect', title: 'Tông môn', help: 'Chỉ thành viên cùng tông môn được đọc và gửi.' },
@@ -26,7 +26,7 @@
       <nav id="chatChannels" class="chat-channels" role="tablist" aria-label="Chuyển kênh Truyền âm">
         ${CHANNELS.map(ch => '<button type="button" role="tab" data-chat-channel="' + ch.id +
           '" aria-selected="' + (ch.id === session.channel) + '" tabindex="' + (ch.id === session.channel ? 0 : -1) +
-          '">' + esc(ch.title) + '</button>').join('')}</nav>
+          '">' + esc(ch.title) + '</button>').join('')}<button type="button" role="tab" data-chat-channel="journal" aria-selected="false" tabindex="-1">Nhật ký</button></nav>
       <div class="chat-context">
         <p id="chatChannelInfo">${esc(activeChannel.help)}</p>
         <span class="chat-retention">Tin lưu tạm thời · Chỉ dành cho người chơi</span>
@@ -41,6 +41,7 @@
       ${!session.available ? '<p class="chat-availability" role="status">Truyền âm cần kết nối HTTPS và tài khoản đã đăng nhập.</p>' : ''}
       <div class="chat-transcript">
         <div id="chatFeed" class="chat-feed" role="log" aria-label="Tin nhắn kênh thế giới" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+        <div id="chatJournal" class="chat-feed chat-journal" role="log" aria-label="Nhật ký tu tiên" tabindex="0" hidden></div>
         <div id="chatEmpty" class="chat-empty">
           <span aria-hidden="true">✧</span><strong>Chưa có lời truyền âm</strong>
           <p>Kết nối và gửi lời chào tới các đạo hữu đang hành tẩu trong Hư Giới.</p>
@@ -98,16 +99,30 @@
     $('chatStatus').dataset.status = state.status;
     $('chatOnline').textContent = state.online + ' đạo hữu đang hiện diện';
     $('chatError').textContent = error || state.error;
+    const active = journalOpen ? 'journal' : session.channel;
     document.querySelectorAll('[data-chat-channel]').forEach(el => {
-      el.classList.toggle('on', el.dataset.chatChannel === session.channel);
-      el.setAttribute('aria-selected', String(el.dataset.chatChannel === session.channel));
+      el.classList.toggle('on', el.dataset.chatChannel === active);
+      el.setAttribute('aria-selected', String(el.dataset.chatChannel === active));
     });
-    if ($('chatChannelInfo')) $('chatChannelInfo').textContent = CHANNELS.find(x => x.id === session.channel)?.help || '';
+    if ($('chatChannelInfo')) $('chatChannelInfo').textContent = journalOpen ? 'Ghi chép tu hành và thông báo gần đây.' : CHANNELS.find(x => x.id === session.channel)?.help || '';
+    $('chatFeed').hidden = journalOpen;
+    $('chatJournal').hidden = !journalOpen;
+    $('chatForm').hidden = journalOpen;
+    document.querySelector('.chat-connection').hidden = journalOpen;
+    if (journalOpen) {
+      const source = $('logFeed'), target = $('chatJournal'), markup = source?.innerHTML || '';
+      if (markup !== journalMarkup || !target.childNodes.length) {
+        const followJournal = target.scrollHeight - target.clientHeight - target.scrollTop < 48;
+        target.replaceChildren(...[...(source?.childNodes || [])].map(node => node.cloneNode(true)));
+        if (followJournal) target.scrollTop = target.scrollHeight;
+        journalMarkup = markup;
+      }
+    }
     feed.setAttribute('aria-label', 'Tin nhắn kênh ' + (CHANNELS.find(x => x.id === session.channel)?.title || 'thế giới'));
     $('chatConnect').hidden = ['connecting', 'online'].includes(state.status) || !session.available;
     $('chatDisconnect').hidden = !['connecting', 'online', 'offline'].includes(state.status);
     refreshComposer();
-    document.querySelectorAll('[data-chat-channel]').forEach(el => el.tabIndex = el.dataset.chatChannel === session.channel ? 0 : -1);
+    document.querySelectorAll('[data-chat-channel]').forEach(el => el.tabIndex = el.dataset.chatChannel === active ? 0 : -1);
     const follow = feed.scrollHeight - feed.clientHeight - feed.scrollTop < 48;
     const ids = new Set(state.messages.map(m => m.id));
     [...feed.children].forEach(el => { if (!ids.has(el.dataset.message)) el.remove(); });
@@ -125,13 +140,17 @@
       content.textContent = message.text;
       heading.append(name, time); el.append(heading, content); feed.append(el);
     }
-    $('chatEmpty').hidden = !!state.messages.length || state.status === 'connecting';
+    $('chatEmpty').hidden = journalOpen || !!state.messages.length || state.status === 'connecting';
     if (follow) feed.scrollTop = feed.scrollHeight;
   }
   function mount() {
     const switchChannel = channel => {
-      if (!CHANNELS.some(item => item.id === channel) || channel === session.channel) return;
-      pending = null; error = ''; void session.connect(channel); update();
+      if (channel === 'journal') { journalOpen = true; update(); return; }
+      if (!CHANNELS.some(item => item.id === channel)) return;
+      const change = channel !== session.channel;
+      journalOpen = false;
+      if (change) { pending = null; error = ''; void session.connect(channel); }
+      update();
     };
     $('chatChannels')?.addEventListener('click', event => {
       const tab = event.target.closest('[data-chat-channel]');
@@ -140,11 +159,12 @@
     $('chatChannels')?.addEventListener('keydown', event => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
       event.preventDefault();
-      const current = CHANNELS.findIndex(ch => ch.id === session.channel);
-      const next = event.key === 'Home' ? 0 : event.key === 'End' ? CHANNELS.length - 1 :
-        (current + (event.key === 'ArrowRight' ? 1 : -1) + CHANNELS.length) % CHANNELS.length;
-      switchChannel(CHANNELS[next].id);
-      $('chatChannels')?.querySelector('[data-chat-channel="' + CHANNELS[next].id + '"]')?.focus();
+      const ids = [...CHANNELS.map(ch => ch.id), 'journal'];
+      const current = ids.indexOf(journalOpen ? 'journal' : session.channel);
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? ids.length - 1 :
+        (current + (event.key === 'ArrowRight' ? 1 : -1) + ids.length) % ids.length;
+      switchChannel(ids[next]);
+      $('chatChannels')?.querySelector('[data-chat-channel="' + ids[next] + '"]')?.focus();
     });
     $('chatInput').addEventListener('input', event => {
       const clean = root.HU_CHARACTER.sanitizeText(event.target.value);

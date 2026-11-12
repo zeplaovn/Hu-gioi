@@ -414,6 +414,7 @@
   function buildLog() {
     const feed = $('logFeed');
     if (!feed) return;
+    document.body.classList.toggle('journal-in-chat', !!UI.release.chat);
     logState.owner = UI.s();
     logState.live = true;
     seedLogFeed(UI.s().logs);
@@ -676,7 +677,7 @@
           else if (button) this.toggle(button.dataset.taskWindow);
         });
       }
-      const logInTaskbar = logFloatState.floating && $('logPanel');
+      const logInTaskbar = !UI.release.chat && logFloatState.floating && $('logPanel');
       this.taskbar.hidden = (!this.map.size && !logInTaskbar) || $('game')?.hidden === true;
       this.taskbar.innerHTML = [...this.map.entries()].map(([id,w]) =>
         '<button type="button" class="window-task' + (w.minimized ? ' minimized' : '') +

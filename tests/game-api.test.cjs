@@ -100,6 +100,23 @@ test('API: cần đăng nhập, envelope lỗi chuẩn, route lạ và phương 
   assert.equal(boot1.headers['cache-control'], 'no-store');
 });
 
+test('xóa nhân vật đang sống cần đúng chủ, đúng xác nhận và không xóa tài khoản', async t => {
+  const { call, tokenA, tokenB } = await boot(t);
+  const preview = await call('POST', '/api/v1/creation/preview', { token: tokenA });
+  const created = await call('POST', '/api/v1/players', { token: tokenA, body: { ticketId: preview.data.ticketId, name: 'Lâm Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' } });
+  assert.equal(created.status, 201);
+  const route = `/api/v1/players/${created.data.playerId}/delete-character`;
+  assert.notEqual((await call('POST', route, { token: tokenA, body: {} })).status, 200);
+  assert.equal((await call('POST', route, { token: tokenB, body: { confirm: 'delete-character' } })).status, 404);
+  assert.equal((await call('GET', `/api/v1/players/${created.data.playerId}/state`, { token: tokenA })).status, 200);
+  assert.equal((await call('POST', route, { token: tokenA, body: { confirm: 'delete-character' } })).status, 200);
+  const after = await call('GET', '/api/v1/bootstrap', { token: tokenA });
+  assert.equal(after.status, 200);
+  assert.equal(after.data.player, null);
+  assert.equal((await call('POST', '/api/v1/creation/preview', { token: tokenA })).status, 201);
+  assert.equal((await call('POST', route, { token: tokenA, body: { confirm: 'delete-character' } })).status, 404);
+});
+
 test('API: luồng chơi đầy đủ preview → tạo → state → sync → lệnh → replay, cô lập hai tài khoản', async t => {
   const { call, tokenA, tokenB } = await boot(t);
   const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });

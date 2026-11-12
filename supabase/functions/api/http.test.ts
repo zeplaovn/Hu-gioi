@@ -23,6 +23,8 @@ Deno.test('route giữ nguyên prefix function, quyền dữ liệu và UUID', (
   expect(routeOf('POST', prefix + '/me/delete-account')?.name === 'deleteAccount', 'delete-account route');
   const id = '11111111-1111-4111-8111-111111111111';
   expect(routeOf('POST', prefix + '/players/' + id + '/commands')?.id === id, 'command route');
+  expect(routeOf('POST', prefix + '/players/' + id + '/delete-character')?.name === 'deleteCharacter', 'delete-character route');
+  expect(routeOf('GET', prefix + '/players/' + id + '/delete-character') === null, 'delete must use POST');
   expect(routeOf('GET', prefix + '/players/' + id + '/commands') === null, 'sai method');
   expect(routeOf('GET', prefix + '/players/not-uuid/state') === null, 'sai UUID');
 });

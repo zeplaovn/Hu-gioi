@@ -281,6 +281,16 @@
       });
     }
     drainAchievements() { return this.achievements.splice(0); }
+    async deleteCharacter() {
+      return this.run(async () => {
+        if (!this.playerId) throw Error('Không có đạo thân để xóa.');
+        const id = this.playerId;
+        await this.request('/players/' + id + '/delete-character', 'POST', { confirm: 'delete-character' });
+        this.playerId = null;
+        this.ticket = null;
+        return true;
+      });
+    }
     /* Bắt đầu lại sau tử vong: số dư/cấp/kho và bảng xếp hạng reset tại server. */
     async resetAfterDeath() {
       return this.run(async () => {
