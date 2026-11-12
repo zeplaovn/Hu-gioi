@@ -32,4 +32,4 @@
 ## Đã loại bản cũ
 Đã gỡ các bản chụp cũ: hướng dẫn online Node/SQLite trong `docs/archive/`, kiểm kê gameplay trước chat thật, nhật ký frontend optimization, hotfix chat/rank v9 và production-readiness cũ. Nội dung đang sử dụng đã được đưa vào [GAME](GAME.md), [SYSTEM](SYSTEM.md), [Tổng hợp](PROJECT-STATUS.md); lịch sử vẫn có trong Git. **Không** xóa migration hoặc mã dev/test.
 
-Nguồn yêu cầu backend còn mở: [task.txt](../task.txt) §11 ưu tiên khi mâu thuẫn. Release chỉ khi [checklist](release-checklist.md) có bằng chứng thực tế.
+Nguồn yêu cầu backend còn mở (lịch sử Git): [task.txt](https://github.com/zeplaovn/Hugioi/blob/0b99954/task.txt) §11 ưu tiên khi mâu thuẫn. Release chỉ khi [checklist](release-checklist.md) có bằng chứng thực tế.

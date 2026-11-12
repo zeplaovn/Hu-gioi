@@ -39,4 +39,4 @@ Schema `game` phải không nằm trong Supabase Data API exposed schemas. Khôn
 
 ## Công việc chưa có trong lần reset
 
-Việc dựng lại **không tự triển khai** yêu cầu `task.txt` mục 11: chat 15 giây/tin, TTL tin 1 giờ, snapshot xếp hạng 12 giờ/lần, receipt retention và giảm write/Edge calls. Những mục này đòi hỏi migration và thay đổi backend mới có kiểm thử riêng. Không đồng nhất “database dựng mới” với “production-ready”.
+Việc dựng lại **không tự triển khai** yêu cầu backend trước đây (`task.txt`, lịch sử Git) mục 11: chat 15 giây/tin, TTL tin 1 giờ, snapshot xếp hạng 12 giờ/lần, receipt retention và giảm write/Edge calls. Những mục này đòi hỏi migration và thay đổi backend mới có kiểm thử riêng. Không đồng nhất “database dựng mới” với “production-ready”.

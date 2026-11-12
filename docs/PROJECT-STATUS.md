@@ -23,7 +23,7 @@
 ## II. Những việc CHƯA HOÀN THÀNH hoặc chưa đủ bằng chứng
 
 1. **Backend F0:** benchmark thực tế Edge calls/giờ, SQL round-trips, p50/p95 latency, WAL, DB size, byte response/egress; mô hình 50/500/5.000 người. Mô phỏng quota cũ không phải đo production.
-2. **Chat F1:** 15 giây/tin ở server và client đã có mã; nhánh `perf/chat-11-1-20261112` đã thêm **TTL 1 giờ, xóa vật lý 5 phút, UNLOGGED, conditional rate limit, cache/singleflight, optimistic send** theo `task.txt` §11.1. **Chưa chạy migration/deploy production** và chưa đo WAL/latency thực tế.
+2. **Chat F1:** 15 giây/tin ở server và client đã có mã; PR #96 đã thêm **TTL 1 giờ, xóa vật lý 5 phút, UNLOGGED, conditional rate limit, cache/singleflight, optimistic send** theo §11.1. Migration `20261112030000_chat_unlogged_ttl_5m.sql` **đã áp dụng production ngày 12/11/2026**; **Edge bundle mới chưa deploy**, chưa đo WAL/latency thực tế và chưa authenticated smoke.
 3. **Ranking F1:** hiện có rank live, loại người chết; **ảnh chụp 12 giờ/lần, giảm trigger/ghi DB** chưa triển khai đầy đủ theo §11.2.
 4. **Backend F2/F3:** tối ưu sync, xác minh JWT/cache, receipts và retention `pavilion_receipts`, `creation_tickets`, state JSONB, response delta; cần migration additive, rollback, đo trước/sau.
 5. **GAME:** luật kinh mạch Z=100, 12 sách nghề, nội dung cao giới và các mục P0/P1 chưa chốt; kinh mạch hiển thị không đồng nghĩa gameplay đã triển khai.
@@ -41,7 +41,7 @@
 - **[GAME.md](GAME.md)**: chỉ có luật game, UI, tính năng, gameplay chờ duyệt.
 - **[SYSTEM.md](SYSTEM.md)**: runtime, auth, API, DB, performance, release.
 - **[docs/index.md](index.md)**: mục lục các tài liệu chuyên môn vẫn còn dùng.
-- **[task.txt](../task.txt)**: yêu cầu tối ưu backend; §11 là ưu tiên mới nhất. Mọi hạng mục “đã hoàn thành” phải có code/test/deployment proof tương ứng.
+- **[task.txt (lịch sử Git)](https://github.com/zeplaovn/Hugioi/blob/0b99954/task.txt)**: yêu cầu tối ưu backend; §11 là ưu tiên mới nhất. Mọi hạng mục “đã hoàn thành” phải có code/test/deployment proof tương ứng.
 
 Không coi việc merge tài liệu vào main là cấp phép chạy migration, deploy Supabase/Cloudflare hoặc công bố game.
 

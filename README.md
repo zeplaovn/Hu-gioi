@@ -28,7 +28,7 @@ npm run edge:budget
 - [SYSTEM — Backend/DB/API](docs/SYSTEM.md)
 - [Mục lục tài liệu chuyên môn](docs/index.md)
 - [Checklist trước release](docs/release-checklist.md)
-- [Task backend](task.txt) — §11 ưu tiên.
+- [Task backend (lịch sử Git)](https://github.com/zeplaovn/Hugioi/blob/0b99954/task.txt) — §11 ưu tiên.
 
 **Merge mã/tài liệu không đồng nghĩa deploy, migrate database hoặc chứng nhận production-ready.**
 # Supabase migration baseline
