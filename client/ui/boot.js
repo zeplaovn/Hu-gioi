@@ -549,11 +549,11 @@
   }
 
   async function showForAccount(account) {
-    if (!account?.id) throw Error('Phải đăng nhập để tải nhân vật online.');
+    if (!account?.id) throw Error('Vui lòng đăng nhập để tiếp tục hành trình.');
     creation = freshCreation();
     await store.setAccount(account.id, account);
     if (UI.session.ticket?.preview) Object.assign(creation, UI.session.ticket.preview);
-    $('accountLabel').textContent = account.email || 'Tài khoản online';
+    $('accountLabel').textContent = account.email || 'Tài khoản';
     $('accountExit').textContent = 'Đăng xuất';
     const saved = store.load();
     if (saved?.created) {
