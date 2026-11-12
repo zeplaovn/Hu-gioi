@@ -41,7 +41,7 @@ supabase db push --remote --dry-run
 # supabase db push --remote
 ```
 
-**Checklist review SQL trước khi duyệt:** xác nhận đã backup, bảng public.policy_acceptances và constraint v7 đúng, `game` không nằm trong Dashboard > Integrations > Data API > Exposed Schemas, tài khoản `postgres` của connection pooler có quyền bảng riêng, 11 bảng có `relrowsecurity=true`, `pg_policies` game rỗng, foreign keys auth.users `ON DELETE CASCADE`, state ≤64 KB, tên `name_key` unique, receipt và ticket đúng hạn. Migration nhiệm vụ ngày `20261112020000_daily_mail_checkin.sql` tạo `account_state`, `account_receipts`, `account_mail` và cron `hugioi-cleanup-account-receipts`; chỉ áp sau khi chủ dự án duyệt. Supabase migrations có thể tạo `supabase_migrations` history; không sửa thủ công.
+**Checklist review SQL trước khi duyệt:** xác nhận đã backup, bảng public.policy_acceptances và constraint v7 đúng, `game` không nằm trong Dashboard > Integrations > Data API > Exposed Schemas, tài khoản `postgres` của connection pooler có quyền bảng riêng, 11 bảng có `relrowsecurity=true`, `pg_policies` game rỗng, foreign keys auth.users `ON DELETE CASCADE`, state ≤64 KB, tên `name_key` unique, receipt và ticket đúng hạn. Migration nhiệm vụ ngày `20261112020000_daily_mail_checkin.sql` tạo `account_state`, `account_receipts`, `account_mail` và cron `hugioi-cleanup-account-receipts`; chỉ áp sau khi chủ dự án duyệt. Migration tối ưu chat `20261112030000_chat_unlogged_ttl_5m.sql` (nhánh §11.1) chuyển hai bảng chat sang UNLOGGED, thêm `last_chat_at` và cron `hugioi-cleanup-chat` 5 phút; cần cửa sổ bảo trì ngắn vì migration copy rồi đổi tên bảng. Rollback thủ công ở `supabase/sql/rollback/20261112030000_chat_unlogged_ttl_5m_rollback.sql`. Supabase migrations có thể tạo `supabase_migrations` history; không sửa thủ công.
 
 Sau migration được phê duyệt, dùng truy vấn đọc để kiểm chứng:
 
@@ -59,6 +59,17 @@ begin;
 set local role anon;
 select * from game.players; -- phải bị permission denied
 rollback;
+```
+
+Sau khi migration chat được duyệt, kiểm tra thêm:
+
+```sql
+select c.relname, c.relpersistence
+from pg_class c join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'game' and c.relname in ('world_chat_messages','world_chat_presence');
+-- cả hai phải là 'u' (UNLOGGED)
+select jobname, schedule from cron.job where jobname = 'hugioi-cleanup-chat';
+-- phải có đúng một job, schedule '*/5 * * * *'
 ```
 
 Không dùng `security definer` hoặc grant bổ sung để chữa lỗi RLS. Nếu thiếu quyền kết nối function, kiểm tra user DB pooler đúng trước.

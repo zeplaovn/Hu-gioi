@@ -1,6 +1,7 @@
 /* Kênh truyền âm + bảng xếp hạng thật. DB private, chỉ gọi từ Edge API sau JWT/consent.
- * Không đọc state JSON trong truy vấn ranking. Chat dùng keyset id (PK) và giới hạn 50 tin/lần.
- * Quota isolate + khóa giao dịch theo user chống spam từ nhiều isolate, không tin client clock/name. */
+ * Chat là dữ liệu tạm: API chỉ trả tin trong 1 giờ, DB xóa vật lý bằng cron 5 phút.
+ * Rate limit 15 giây dùng conditional UPDATE trên presence.last_chat_at, không advisory lock.
+ * Đọc theo kênh có micro-cache + singleflight; online count cache 45 giây. */
 import { GameError } from './game.bundle.mjs';
 
 type Row = Record<string, unknown>;
@@ -11,11 +12,17 @@ type Database = {
 };
 const LIMIT = 50;
 const MAX_TEXT = 80; // ký tự (code point), khớp client và CHECK trong DB
+const MESSAGE_TTL_MS = 60 * 60 * 1000;
+const READ_CACHE_MS = 4000;
+const ONLINE_CACHE_MS = 45000;
+const ONLINE_GRACE_MS = 90000;
+const HEARTBEAT_MS = 60000;
+const SEND_INTERVAL_MS = 15000;
 // Chỉ chữ ASCII, chữ tiếng Việt (NFC), chữ số; giữa các từ đúng 1 dấu cách. Khớp data/character.js và CHECK trong DB.
 const TEXT_CHARS = '0-9A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯư\\u1EA0-\\u1EF9';
 const TEXT_OK = new RegExp(`^[${TEXT_CHARS}]+(?: [${TEXT_CHARS}]+)*$`);
 const textLength = (s: string) => Array.from(s).length;
-const fail = (code: string, msg: string) => { throw new GameError(code, msg); };
+const fail = (code: string, msg: string, details?: unknown) => { throw new GameError(code, msg, details); };
 const asSafe = (v: unknown): number => {
   const n = Number(v);
   return Number.isSafeInteger(n) ? n : 0;
@@ -45,8 +52,12 @@ const asMessage = (r: Row) => ({
   admin: r.is_admin === true
 });
 const player = (c: Db, ownerId: string) =>
-  first(c, `SELECT p.id,p.name,l.sect_id FROM game.players p
-    JOIN game.player_leaderboard l ON l.player_id=p.id WHERE p.owner_id = $1`, [ownerId]);
+  first(c, `SELECT p.id, p.name, l.sect_id, l.realm,
+      EXISTS(SELECT 1 FROM game.admin_users a
+        WHERE a.user_id = p.owner_id AND a.enabled AND a.role IN ('owner','admin')) AS is_admin
+    FROM game.players p
+    JOIN game.player_leaderboard l ON l.player_id = p.id
+    WHERE p.owner_id = $1`, [ownerId]);
 /* Nhóm kênh public độc lập; Tông môn chỉ cho thành viên cùng tông môn.
  * "Đạo hữu" và "Đạo lữ" là phòng cộng đồng, KHÔNG phải nhắn riêng. */
 const channelOf = (input: unknown, me: Row): string => {
@@ -58,16 +69,81 @@ const channelOf = (input: unknown, me: Row): string => {
   }
   return input;
 };
-async function onlineCount(c: Db, now: number): Promise<number> {
-  const count = await first(c, 'SELECT count(*)::bigint AS n FROM game.world_chat_presence WHERE seen_at >= $1', [now - 90000]);
-  return asSafe(count?.n);
+
+/* Micro-cache + singleflight cho lịch sử kênh. N người cùng poll trong 4 giây
+ * chỉ tốn một truy vấn; dữ liệu vẫn được lọc lại theo TTL 1 giờ ở mỗi response. */
+const readCache = new Map<string, { at: number; rows: Row[] }>();
+const readInFlight = new Map<string, Promise<Row[]>>();
+async function latestMessages(c: Db, channelKey: string, now: number): Promise<Row[]> {
+  const hit = readCache.get(channelKey);
+  if (hit && Date.now() - hit.at < READ_CACHE_MS) return hit.rows;
+  let pending = readInFlight.get(channelKey);
+  if (!pending) {
+    pending = rows(c, `${MESSAGE_SELECT}
+      WHERE m.channel_key = $1 AND m.created_at > $2
+      ORDER BY m.id DESC LIMIT ${LIMIT}`, [channelKey, now - MESSAGE_TTL_MS])
+      .then(found => {
+        if (readCache.size > 64) readCache.clear();
+        readCache.set(channelKey, { at: Date.now(), rows: found });
+        return found;
+      })
+      .finally(() => { readInFlight.delete(channelKey); });
+    readInFlight.set(channelKey, pending);
+  }
+  return pending;
 }
+/* Lọc lại tại thời điểm trả response: cache tối đa 4 giây nhưng không được
+ * để tin vượt quá TTL 1 giờ chỉ vì request bắt đầu trước đó. */
+const visibleSince = (found: Row[]): Row[] => {
+  const cutoff = Date.now() - MESSAGE_TTL_MS;
+  return found.filter(row => asSafe(row.created_at) > cutoff);
+};
+
+/* Số người hiện diện là số ước lượng đủ dùng cho UI, không phải dữ liệu gameplay.
+ * Cache 45 giây và singleflight để count(*) không chạy trên mỗi lượt poll. */
+let onlineCache = { at: 0, value: 0 };
+let onlineInFlight: Promise<number> | null = null;
+async function onlineCount(c: Db, now: number): Promise<number> {
+  if (now - onlineCache.at < ONLINE_CACHE_MS) return onlineCache.value;
+  if (!onlineInFlight) {
+    onlineInFlight = first(c, 'SELECT count(*)::bigint AS n FROM game.world_chat_presence WHERE seen_at >= $1',
+      [now - ONLINE_GRACE_MS])
+      .then(row => {
+        const value = asSafe(row?.n);
+        onlineCache = { at: Date.now(), value };
+        return value;
+      })
+      .finally(() => { onlineInFlight = null; });
+  }
+  return onlineInFlight;
+}
+/* Connect ghi presence khi đã cũ hơn 60 giây; poll chỉ UPDATE (không upsert)
+ * và cũng chỉ ghi khi cũ, nên không tạo row version mỗi 10 giây. */
 async function heartbeat(c: Db, ownerId: string, now: number): Promise<void> {
-  // ON CONFLICT ... WHERE tránh tạo phiên bản row mới trên mỗi lần poll 6s.
-  await rows(c, `INSERT INTO game.world_chat_presence (owner_id, seen_at)
-    VALUES ($1, $2)
+  await rows(c, `INSERT INTO game.world_chat_presence (owner_id, seen_at, last_chat_at)
+    VALUES ($1, $2, 0)
     ON CONFLICT(owner_id) DO UPDATE SET seen_at = EXCLUDED.seen_at
-    WHERE game.world_chat_presence.seen_at < EXCLUDED.seen_at - 20000`, [ownerId, now]);
+    WHERE game.world_chat_presence.seen_at < EXCLUDED.seen_at - $3::bigint`,
+  [ownerId, now, HEARTBEAT_MS]);
+}
+async function touchPresence(c: Db, ownerId: string, now: number): Promise<void> {
+  await rows(c, `UPDATE game.world_chat_presence SET seen_at = $2
+    WHERE owner_id = $1 AND seen_at < $2 - $3::bigint`,
+  [ownerId, now, HEARTBEAT_MS]);
+}
+/* Conditional UPDATE làm rate limiter: hàng presence bị khóa ngắn, không cần
+ * advisory lock và không cần đọc tin gần nhất. Trả null nếu đã chiếm được slot. */
+async function claimSendSlot(c: Db, ownerId: string, now: number): Promise<number | null> {
+  const claimed = await first(c, `INSERT INTO game.world_chat_presence (owner_id, seen_at, last_chat_at)
+    VALUES ($1, $2, $2)
+    ON CONFLICT(owner_id) DO UPDATE
+      SET last_chat_at = EXCLUDED.last_chat_at,
+          seen_at = greatest(game.world_chat_presence.seen_at, EXCLUDED.seen_at)
+      WHERE game.world_chat_presence.last_chat_at <= EXCLUDED.last_chat_at - $3::bigint
+    RETURNING last_chat_at`, [ownerId, now, SEND_INTERVAL_MS]);
+  if (claimed) return null;
+  const last = await first(c, 'SELECT last_chat_at FROM game.world_chat_presence WHERE owner_id = $1', [ownerId]);
+  return Math.max(1000, asSafe(last?.last_chat_at) + SEND_INTERVAL_MS - now);
 }
 function cursorOf(data: Record<string, unknown>): number {
   const cursor = data.since ?? 0;
@@ -84,11 +160,17 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
       if (!me) return fail('PLAYER_NOT_FOUND', 'Bạn cần có đạo thân trước khi truyền âm.');
       const channelKey = channelOf(body.channel || 'world', me);
       await heartbeat(c, ownerId, now);
-      const history = await rows(c, `${MESSAGE_SELECT}
-        WHERE m.channel_key = $1 ORDER BY m.id DESC LIMIT ${LIMIT}`, [channelKey]);
-      const messages = history.reverse().map(asMessage);
-      return { self: { id: ownerId, name: String(me.name) }, messages, online: await onlineCount(c, now),
-        cursor: messages.at(-1)?.id || '0', channel: body.channel || 'world' };
+      const history = visibleSince(await latestMessages(c, channelKey, now));
+      const messages = history.slice().reverse().map(asMessage);
+      return {
+        self: {
+          id: ownerId, name: String(me.name),
+          realm: me.realm === null || me.realm === undefined ? null : Math.max(0, Math.min(13, asSafe(me.realm))),
+          admin: me.is_admin === true
+        },
+        messages, online: await onlineCount(c, now),
+        cursor: messages.at(-1)?.id || '0', channel: body.channel || 'world'
+      };
     });
   }
   if (route === 'chatPoll') {
@@ -98,9 +180,18 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
       const me = await player(c, ownerId);
       if (!me) return fail('PLAYER_NOT_FOUND', 'Đạo thân không tồn tại.');
       const channelKey = channelOf(body.channel || 'world', me);
-      await heartbeat(c, ownerId, now);
-      const found = await rows(c, `${MESSAGE_SELECT}
-        WHERE m.channel_key = $1 AND m.id > $2 ORDER BY m.id ASC LIMIT ${LIMIT}`, [channelKey, String(since)]);
+      await touchPresence(c, ownerId, now);
+      const cached = visibleSince(await latestMessages(c, channelKey, now));
+      const oldest = cached.length ? asSafe(cached[cached.length - 1].id) : 0;
+      let found: Row[];
+      if (since > 0 && oldest > 0 && since < oldest - 1) {
+        // Cursor cũ hơn cửa sổ cache: đọc bù đúng khoảng còn thiếu, vẫn giới hạn TTL.
+        found = await rows(c, `${MESSAGE_SELECT}
+          WHERE m.channel_key = $1 AND m.id > $2 AND m.created_at > $3
+          ORDER BY m.id ASC LIMIT ${LIMIT}`, [channelKey, String(since), now - MESSAGE_TTL_MS]);
+      } else {
+        found = cached.filter(row => asSafe(row.id) > since).reverse();
+      }
       return { messages: found.map(asMessage), online: await onlineCount(c, now), channel: body.channel || 'world',
         cursor: found.length ? String(found.at(-1)?.id) : String(since), hasMore: found.length === LIMIT };
     });
@@ -108,7 +199,9 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
   if (route === 'chatLeave') {
     strict(rawBody, []);
     return repo.connection(async c => {
-      await rows(c, 'DELETE FROM game.world_chat_presence WHERE owner_id = $1', [ownerId]);
+      // Chỉ đánh dấu offline, giữ last_chat_at để đóng/mở chat không reset cooldown 15 giây.
+      // Cron dọn presence không hoạt động quá 10 phút sẽ xóa hẳn hàng.
+      await rows(c, 'UPDATE game.world_chat_presence SET seen_at = 0 WHERE owner_id = $1', [ownerId]);
       return { left: true };
     });
   }
@@ -121,29 +214,34 @@ export async function handleSocial(repo: Database, ownerId: string, route: strin
     if (typeof requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
       return fail('INVALID_REQUEST', 'Mã tin nhắn không hợp lệ.');
     return repo.transaction(async c => {
-      // Khóa ngắn theo user, chống gửi đồng thời vượt 15 giây giữa các isolate.
-      await rows(c, 'SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [ownerId]);
-      const previous = await first(c, `${MESSAGE_SELECT}
-        WHERE m.owner_id = $1 AND m.request_id = $2`, [ownerId, requestId]);
       const me = await player(c, ownerId);
       if (!me) return fail('PLAYER_NOT_FOUND', 'Bạn cần có đạo thân trước khi truyền âm.');
       const channelKey = channelOf(body.channel || 'world', me);
+      // Idempotency trước rate limit: retry cùng requestId không bị cooldown chặn oan.
+      const previous = await first(c, `${MESSAGE_SELECT}
+        WHERE m.owner_id = $1 AND m.request_id = $2 AND m.created_at > $3`,
+      [ownerId, requestId, now - MESSAGE_TTL_MS]);
       if (previous) {
         if (previous.body !== text || previous.channel_key !== channelKey)
           return fail('REQUEST_ID_REUSED','Mã tin nhắn đã được dùng cho kênh hoặc nội dung khác.');
         return { message: asMessage(previous), replayed: true };
       }
-      const last = await first(c, `SELECT created_at FROM game.world_chat_messages
-        WHERE owner_id = $1 ORDER BY created_at DESC LIMIT 1`, [ownerId]);
-      if (last && now - asSafe(last.created_at) < 15000)
-        return fail('RATE_LIMITED', 'Mỗi tin nhắn cách nhau ít nhất 15 giây.');
+      const retryAfterMs = await claimSendSlot(c, ownerId, now);
+      if (retryAfterMs !== null)
+        return fail('RATE_LIMITED', 'Mỗi tin nhắn cách nhau ít nhất 15 giây.', { retryAfterMs });
+      // Tin cùng requestId đã hết TTL nhưng cron chưa kịp xóa: dọn trước khi insert.
+      await rows(c, `DELETE FROM game.world_chat_messages
+        WHERE owner_id = $1 AND request_id = $2 AND created_at <= $3`,
+      [ownerId, requestId, now - MESSAGE_TTL_MS]);
       const saved = await first(c, `INSERT INTO game.world_chat_messages
         (owner_id, sender_name, body, request_id, created_at, channel_key)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id`,
-        [ownerId, String(me.name).slice(0, 60), text, requestId, now, channelKey]);
+      [ownerId, String(me.name).slice(0, 60), text, requestId, now, channelKey]);
       if (!saved) return fail('MAINTENANCE', 'Chưa thể lưu lời truyền âm.');
-      const full = await first(c, `${MESSAGE_SELECT} WHERE m.id = $1`, [saved.id]);
+      readCache.delete(channelKey);
+      const full = await first(c, `${MESSAGE_SELECT} WHERE m.id = $1 AND m.created_at > $2`,
+        [saved.id, now - MESSAGE_TTL_MS]);
       if (!full) return fail('MAINTENANCE', 'Chưa thể lưu lời truyền âm.');
       return { message: asMessage(full), replayed: false };
     });

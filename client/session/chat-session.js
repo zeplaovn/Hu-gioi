@@ -1,9 +1,11 @@
 /* Truyền âm online: HTTPS + Bearer JWT; keyset polling qua Edge API.
  * Không dùng SSE thiếu Authorization, không tin tên người gửi hoặc thời gian từ browser.
- * Poll 6 giây khi tab hiển thị; presence cập nhật tối đa một lần/20 giây tại DB. */
+ * Poll 10 giây khi cửa sổ chat mở và tab hiển thị; dừng khi đóng chat hoặc tab ẩn.
+ * Tin của mình hiện ngay (optimistic) rồi thay bằng bản server xác nhận. */
 (function (root) {
   'use strict';
   const BASE = String(root.HU_API_BASE || '/api/v1').replace(/\/+$/, '');
+  const SEND_INTERVAL_MS = 15000;
   class ChatSession {
     constructor() {
       this.available = ['http:', 'https:'].includes(root.location?.protocol) && !!root.HU_SUPABASE?.accessToken;
@@ -11,7 +13,7 @@
       this.state = { status: this.available ? 'idle' : 'unavailable', online: 0, self: null, messages: [], error: '', channel: 'world' };
       this.listeners = new Set();
       this.timer = null; this.generation = 0; this.attempt = 0; this.cursor = '0'; this.wanted = false;
-      this.lastSentAt = 0;
+      this.lastSentAt = 0; this.retryAt = 0;
       root.addEventListener?.('offline', () => {
         if (!this.wanted) return;
         this.stopTransport(); this.state.status = 'offline'; this.state.online = 0;
@@ -41,8 +43,10 @@
         try { payload = await response.json(); }
         catch { throw Error('Phản hồi truyền âm không hợp lệ.'); }
         if (!response.ok) {
+          const retryAfter = Number(response.headers.get('retry-after') || 0);
           const err = Object.assign(Error(payload?.error?.message || 'Dịch vụ truyền âm tạm thời không khả dụng.'), {
-            permanent: [401, 403, 404, 405].includes(response.status), status: response.status
+            permanent: [401, 403, 404, 405].includes(response.status), status: response.status,
+            retryAfterMs: retryAfter > 0 ? retryAfter * 1000 : 0
           });
           throw err;
         }
@@ -96,8 +100,16 @@
         this.schedule(gen, 10000);
       } catch (error) { this.fail(error, gen); }
     }
+    cooldownUntil() {
+      return Math.max((this.lastSentAt || 0) + SEND_INTERVAL_MS, this.retryAt || 0);
+    }
     receive(message) {
-      if (!message || message.channel !== this.channel || this.state.messages.some(m => m.id === message.id)) return;
+      if (!message || message.channel !== this.channel) return;
+      if (message.senderId === this.state.self?.id) {
+        const pending = this.state.messages.findIndex(m => m.pending && m.senderId === message.senderId && m.text === message.text);
+        if (pending >= 0) this.state.messages.splice(pending, 1);
+      }
+      if (this.state.messages.some(m => m.id === message.id)) return;
       this.state.messages.push(message);
       if (this.state.messages.length > 100) this.state.messages = this.state.messages.slice(-100);
       this.cursor = String(message.id);
@@ -105,7 +117,8 @@
     }
     async poll(gen) {
       if (gen !== this.generation || !this.wanted) return;
-      if (root.document?.hidden || root.navigator?.onLine === false) { this.schedule(gen, 12000); return; }
+      // Tab ẩn: dừng hẳn vòng poll; bubbleSync sẽ kết nối lại khi tab hiện lại.
+      if (root.document?.hidden || root.navigator?.onLine === false) return;
       try {
         const data = await this.request('chat/poll', 'POST', { since: Number(this.cursor), channel: this.channel });
         if (gen !== this.generation) return;
@@ -118,10 +131,30 @@
     }
     async send(text, requestId) {
       if (this.state.status !== 'online') throw Error('Chưa kết nối truyền âm. Vui lòng thử lại.');
-      const { message } = await this.request('chat/send', 'POST', { text, requestId, channel: this.channel });
-      this.lastSentAt = Date.now();
-      this.receive(message);
-      return message;
+      const channel = this.channel;
+      const mine = this.state.self || {};
+      const optimistic = {
+        id: 'pending:' + requestId, senderId: mine.id || '', name: mine.name || '',
+        text, at: Date.now(), channel,
+        realm: Number.isInteger(mine.realm) ? mine.realm : null,
+        admin: mine.admin === true, pending: true
+      };
+      // Khóa gửi cục bộ ngay khi bấm, không đợi server trả về.
+      this.lastSentAt = Date.now(); this.retryAt = 0;
+      this.state.messages.push(optimistic);
+      if (this.state.messages.length > 100) this.state.messages = this.state.messages.slice(-100);
+      this.emit();
+      try {
+        const { message } = await this.request('chat/send', 'POST', { text, requestId, channel });
+        this.state.messages = this.state.messages.filter(m => m.id !== optimistic.id);
+        this.receive(message);
+        return message;
+      } catch (error) {
+        this.state.messages = this.state.messages.filter(m => m.id !== optimistic.id);
+        if (error.status === 429 && error.retryAfterMs > 0) this.retryAt = Date.now() + error.retryAfterMs;
+        this.emit();
+        throw error;
+      }
     }
   }
   root.HU_CHAT_SESSION = { ChatSession, CHANNELS: ['world','sect','dao_huu','dao_lu'] };

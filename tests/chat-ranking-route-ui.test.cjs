@@ -21,8 +21,16 @@ test('Edge route table must register all four chat endpoints and both leaderboar
   assert.match(index,/await handleSocial\(repo, ownerId, route\.name, body\)/);
   assert.match(social,/WHERE m\.channel_key = \$1 AND m\.id > \$2/);
   assert.match(social,/if \(!me\.sect_id\)/);
-  assert.match(social,/pg_advisory_xact_lock/);
-  assert.match(social,/now - asSafe\(last\.created_at\) < 15000/);
+  assert.match(social,/claimSendSlot/);
+  assert.match(social,/ON CONFLICT\(owner_id\) DO UPDATE/);
+  assert.match(social,/last_chat_at <= EXCLUDED\.last_chat_at - \$3::bigint/);
+  assert.match(social,/MESSAGE_TTL_MS/);
+  assert.match(social,/m\.created_at > \$2/);
+  assert.doesNotMatch(social,/pg_advisory_xact_lock/);
+  assert.doesNotMatch(social,/now - asSafe\(last\.created_at\) < 15000/);
+  assert.match(social,/readCache/);
+  assert.match(social,/readInFlight/);
+  assert.match(social,/onlineCache/);
   assert.match(social,/SELECT player_id, owner_id, name, realm, stage, combat_power/);
 });
 
@@ -37,12 +45,16 @@ test('Chat uses one desktop window, a scrollable feed, a persistent composer and
   assert.match(css,/\.chat-transcript\{position:relative;display:flex;flex:1;min-height:100px/);
   assert.match(css,/\.chat-form\{flex:none/);
   assert.match(ui,/chatInput/);
-  assert.match(ui,/session\.lastSentAt/);
+  assert.match(ui,/session\.cooldownUntil\(\)/);
   assert.match(ui,/if \(!visible && opened\)/);
   assert.match(ui,/if \(visible && !opened && session\.available\)/);
   assert.match(client,/this\.schedule\(gen, 10000\)/);
   assert.match(client,/this\.schedule\(gen, data\.hasMore \? 1800 : 10000\)/);
   assert.match(client,/this\.lastSentAt = Date\.now\(\)/);
+  assert.match(client,/cooldownUntil\(\)/);
+  assert.match(client,/id: 'pending:' \+ requestId/);
+  assert.match(client,/pending: true/);
+  assert.match(client,/const optimistic/);
   assert.doesNotMatch(ui,/innerHTML\s*=\s*message\.text/,'chat must render text as textContent');
   assert.match(ui,/content\.textContent = message\.text/);
 });

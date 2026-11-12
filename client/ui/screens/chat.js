@@ -60,7 +60,7 @@
   function refreshComposer() {
     const send = $('chatSend');
     if (!send) return;
-    const left = Math.max(0, Math.ceil(((session.lastSentAt || 0) + 15000 - Date.now()) / 1000));
+    const left = Math.max(0, Math.ceil((session.cooldownUntil() - Date.now()) / 1000));
     send.disabled = sending || session.state.status !== 'online' || !draft.trim() || left > 0;
     send.innerHTML = sending ? 'Đang gửi…' : left ? left + ' giây' : 'Gửi <span aria-hidden="true">➤</span>';
     if ($('chatLimit')) $('chatLimit').textContent = left
@@ -130,13 +130,18 @@
     for (const message of state.messages) {
       if (existing.has(message.id)) continue;
       const el = document.createElement('article');
-      el.className = 'chat-message' + (message.senderId === state.self?.id ? ' mine' : '');
+      const mine = message.senderId === state.self?.id;
+      el.className = 'chat-message' + (mine ? ' mine' : '') + (message.pending ? ' pending' : '');
       el.dataset.message = message.id;
       const heading = document.createElement('header'), name = document.createElement('b'), time = document.createElement('time'), content = document.createElement('p');
-      fillName(name, message, message.senderId === state.self?.id);
+      fillName(name, message, mine);
       name.title = 'Đạo hữu ' + message.senderId.slice(0, 8);
-      time.dateTime = new Date(message.at).toISOString();
-      time.textContent = new Date(message.at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      if (message.pending) {
+        time.textContent = 'Đang gửi…';
+      } else {
+        time.dateTime = new Date(message.at).toISOString();
+        time.textContent = new Date(message.at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      }
       content.textContent = message.text;
       heading.append(name, time); el.append(heading, content); feed.append(el);
     }
@@ -173,7 +178,7 @@
     });
     $('chatForm').addEventListener('submit', async event => {
       event.preventDefault();
-      if (sending || !draft.trim() || Date.now() < (session.lastSentAt || 0) + 15000) return;
+      if (sending || !draft.trim() || Date.now() < session.cooldownUntil()) return;
       const text = draft.trim();
       if (Array.from(text).length > MAX_TEXT || !root.HU_CHARACTER.TEXT_OK.test(text)) return;
       if (!pending || pending.text !== text || pending.channel !== session.channel) {

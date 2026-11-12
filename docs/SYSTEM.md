@@ -17,25 +17,25 @@ Browser → Cloudflare Workers Static Assets (dist/)
 - JWT có xác minh tại backend; `verify_jwt=false` trên Edge là cấu hình cho preflight, **không** mở gameplay vô danh. Ràng buộc owner, kiểm tra consent cả privacy và release_terms, policy `2026-11-11-v7`; `/me/*` có quy tắc riêng.
 - Dữ liệu online có requestId/idempotency, optimistic revision, row lock, RNG/time/reward/giá do server quyết. Không lộ seed/tokens, tránh ghi secrets.
 - Ảnh chụp player được trả từ `/bootstrap`, `/state`, sync/command; browser chỉ gửi intent; khi tab ẩn `pause`, không tính tích lũy offline.
-- Chat/ranking API: `/social/chat/connect`, `poll`, `send`, `leave`, `/social/ranking`. Bốn kênh có phân quyền; xác thực, consent và cooldown server **15 giây/tin**. Frontend poll khoảng **10 giây**, chỉ khi mở chat/hiện tab.
+- Chat/ranking API: `/social/chat/connect`, `poll`, `send`, `leave`, `/social/ranking`. Bốn kênh có phân quyền; xác thực, consent và cooldown server **15 giây/tin**. Frontend poll khoảng **10 giây**, chỉ khi mở chat/hiện tab. API chỉ trả tin trong **1 giờ**; bảng chat là **UNLOGGED**, cron dọn mỗi **5 phút**, đọc theo kênh có micro-cache + singleflight, số online cache 45 giây.
 - Nhiệm vụ ngày/điểm danh/hộp thư: `GET /daily`, `POST /daily/claim`, `POST /daily/checkin`, `GET /mail`, `POST /mail/claim`. Dữ liệu cấp tài khoản nằm trong `game.account_state`/`game.account_mail`; mọi claim có receipt idempotent trong `game.account_receipts`. Ngày reset cố định **UTC+7**, không theo múi giờ client; điểm danh lặp chu kỳ 7 ngày, bỏ ngày quay về ngày 1.
 - Root cause 404 cũ: source Git đã có routes nhưng Supabase **Edge ACTIVE v8** thiếu dispatcher. Theo PR #78, Edge **v9** đã hotfix trên test; chưa có bằng chứng authenticated `200` cho phiên người chơi thật. Consent v7 từng lệch ở Edge v7, hotfix v8 trong PR #76.
 
 ## 3. Database: giữ toàn vẹn trước tối ưu
 - Schema private `game`, **11 bảng**: `players`, `player_receipts`, `creation_tickets`, `pavilion_accounts`, `pavilion_receipts`, `world_chat_messages`, `world_chat_presence`, `player_leaderboard`, `account_state`, `account_receipts`, `account_mail`. Bảng `public.policy_acceptances` lưu đồng ý chính sách.
 - Không expose `game` qua Data API; RLS bật và không cấp thao tác trực tiếp cho `anon`/`authenticated`.
-- `supabase/migrations/` là lịch sử nguồn; **5 SQL migration** hiện hành trong tree, gồm baseline hợp nhất, admin chat, cleanup dữ liệu, cleanup chat và nhiệm vụ ngày/hộp thư. Migration mới `20261112020000_daily_mail_checkin.sql` thêm 3 bảng tài khoản và job `hugioi-cleanup-account-receipts` chạy `15 */3 * * *`; job cleanup cũ giữ nguyên.
+- `supabase/migrations/` là lịch sử nguồn; **6 SQL migration** hiện hành trong tree, gồm baseline hợp nhất, admin chat, cleanup dữ liệu, cleanup chat, nhiệm vụ ngày/hộp thư và tối ưu chat §11.1. Migration `20261112020000_daily_mail_checkin.sql` thêm 3 bảng tài khoản và job `hugioi-cleanup-account-receipts` chạy `15 */3 * * *`. Migration **trên nhánh §11.1** `20261112030000_chat_unlogged_ttl_5m.sql` chuyển hai bảng chat sang UNLOGGED qua bảng mới + đổi tên, thêm `last_chat_at` và job `hugioi-cleanup-chat` chạy `*/5 * * * *`; **chưa áp dụng production**. Rollback thủ công ở `supabase/sql/rollback/20261112030000_chat_unlogged_ttl_5m_rollback.sql`.
 - `supabase/sql/rebuild-internal-test.sql` là reset **phá hủy**, có guard để dùng khi game.* trống trên DB **test**; tuyệt đối không chạy production hoặc đẩy vào migration tự động. Đợt test đã bảo toàn 1 Auth user và 2 consent, 9 bảng RLS. Chi tiết [internal-db-rebuild.md](internal-db-rebuild.md).
 - Xóa player sau tử vong đồng thời xóa kho Thiên Mệnh Các và khỏi bảng rank; **không kế thừa Thiên Tinh**. Các trường legacy chỉ để tương thích dữ liệu. Đọc [thien-menh-cac.md](thien-menh-cac.md).
 
 ## 4. Việc đã làm vs còn mở theo task §11
 | Hạng mục | Đã có trên main / môi trường test | Chưa nghiệm thu / chưa triển khai |
 |---|---|---|
-| Chat | API 5 route, Edge v9 test, 15s send, client 10s foreground polling | TTL 1 giờ + xóa vật lý, UNLOGGED, cache/singleflight và giảm DB query/presence |
+| Chat | API 5 route, 15s send, client 10s foreground polling; nhánh §11.1 có TTL 1 giờ, UNLOGGED, cleanup 5 phút, cache/singleflight, optimistic send | Chưa deploy migration/Edge production; cần đo WAL/latency và authenticated smoke |
 | Ranking | Bảng live theo power/realm, trigger loại tử vong | Snapshot 12 giờ, chuyển độc lập sect_id và bỏ trigger/ghi thừa |
 | Auth | JWT + consent v7, hotfix Edge consent drift | Authenticated smoke, đo latency, cache/isolate theo benchmark |
 | State/Sync | Server-authoritative, online-only, revision/receipts | Giãn heartbeat an toàn, giảm ghi JSONB, response delta, đo p95 |
-| DB | Migration ledger hiện hành và rebuild test có guard; cleanup receipt tài khoản bằng cron riêng | Retention `player_receipts`, `pavilion_receipts`, `creation_tickets`, cleanup chat, WAL/bloat/TOAST |
+| DB | Migration ledger hiện hành và rebuild test có guard; cleanup receipt tài khoản bằng cron riêng; nhánh §11.1 có cleanup chat 5 phút | Retention `player_receipts`, `pavilion_receipts`, `creation_tickets`, WAL/bloat/TOAST; migration chat chưa chạy production |
 | Frontend | CSS min bundle/hash và responsive chat | Browser smoke toàn bộ thiết bị, Web Vitals/asset cost đo thực |
 
 **Ưu tiên:** (1) đo số calls, SQL, p50/p95, WAL, payload/egress, (2) giảm calls, (3) giảm lưu trữ, (4) giữ mượt và bảo mật thiết yếu. Không nêu quota/giá Cloudflare, Supabase như số thật nếu chưa kiểm tra tài liệu chính thức.
