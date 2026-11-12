@@ -16,7 +16,7 @@ function fixture({ initialPlayer = false } = {}) {
   const calls = [];
   class Game { constructor(s) { this.s = s; } }
   const context = {
-    URL, AbortSignal,
+    URL, AbortSignal, setTimeout, clearTimeout,
     HU_GAME: { Game, create: () => ({ created: false, settings: {} }), VERSION: 9 },
     HU_COMMANDS: { VERSION: 2, validate: c => c },
     HU_SUPABASE: { accessToken: async () => 'token' },
@@ -107,4 +107,15 @@ test('hiệu ứng tiểu cảnh chỉ phát khi snapshot tăng tầng trong cù
   const data=(revision,realm,stage)=>({protocolVersion:2,schemaVersion:9,contentVersion:'content',revision,state:{created:true,realm,stage,name:'Vân Tiêu',settings:{}}});
   f.session.apply(data(1,0,1)); f.session.apply(data(2,0,2)); f.session.apply(data(2,0,2)); f.session.apply(data(3,1,1));
   assert.equal(events.filter(x=>x==='minorBreakthrough').length,1);
+});
+
+
+test('thử lại khi đồng bộ sau khi mở tab gặp lỗi tạm thời', async () => {
+  const f=fixture({initialPlayer:true}); await f.session.connect(ACCOUNT);
+  f.session.paused=true;let calls=0;
+  f.session.request=async()=>{calls++;if(calls===1)throw Object.assign(Error('offline'),{code:'NETWORK_UNAVAILABLE'});return {protocolVersion:2,schemaVersion:9,contentVersion:'content',revision:0,state:{created:true,settings:{}}};};
+  await assert.rejects(f.session.synchronize(true),/offline/);
+  assert.notEqual(f.session.resumeTimer,null);
+  await new Promise(resolve=>setTimeout(resolve,3200));
+  assert.equal(calls,2);assert.equal(f.session.paused,false);f.session.disconnect();
 });

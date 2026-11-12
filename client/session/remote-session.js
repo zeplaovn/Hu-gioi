@@ -41,6 +41,7 @@
       this.lastSuccessfulCommandAt = 0;
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.syncInFlight = null;
+      this.resumeTimer = null;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
     subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
@@ -121,6 +122,8 @@
       return next;
     }
     disconnect() {
+      if (this.resumeTimer !== null) root.clearTimeout(this.resumeTimer);
+      this.resumeTimer = null;
       this.accountId = null; this.playerId = null; this.ticket = null;
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
@@ -212,12 +215,22 @@
             this.lastSyncAttempt = this.clock();
             this.nextSyncInMs = Math.max(this.nextSyncInMs, error.retryAfterMs);
           }
+          if (this.paused && !root.document?.hidden && (error.status === 429 || error.code === 'RATE_LIMITED' || error.code === 'NETWORK_UNAVAILABLE' || error.status >= 500))
+            this.scheduleResume(error.retryAfterMs);
           throw error;
         }
         this.apply(result);
         this.paused = false;
         return result.report || null;
       });
+    }
+    scheduleResume(delayMs) {
+      if (this.resumeTimer !== null) return;
+      const delay = Math.min(15000, Math.max(1500, Number(delayMs) || 3000));
+      this.resumeTimer = root.setTimeout(() => {
+        this.resumeTimer = null;
+        if (this.paused && this.ready && !root.document?.hidden) this.synchronize(true).catch(() => {});
+      }, delay);
     }
     advance() { return this.synchronize(); }
     dispatch(type, payload = {}) {
