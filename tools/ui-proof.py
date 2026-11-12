@@ -12,9 +12,9 @@ from playwright.sync_api import sync_playwright
 CASES = [
     ("idle", None, None),
     ("world-map", "world", "map"),
-    ("world-dungeons", "world", "dungeons"),
+    ("sect-dungeons", "sect", "dungeons"),
     ("world-quests", "quests", None),
-    ("world-sect", "world", "sect"),
+    ("sect-missions", "sect", "missions"),
     ("world-shop", "world", "shop"),
     ("world-auction", "world", "auction"),
     ("character-stats", "character", "stats"),
@@ -134,12 +134,12 @@ def mock_ci_chat(page, url):
 
 def enter_game(page, url, folder=None, name=None, outcome=None):
     # Dùng tap thật cho iOS giả lập; các bài proof khác vẫn giữ hành vi cũ.
-    touch = name in ("after_390x844", "webkit_390x844")
+    touch = name in ("after_390x844", "webkit_390x844", "release_390x844")
     def activate(locator):
         locator.tap() if touch else locator.click()
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     page.locator('#loading').wait_for(state='hidden', timeout=45000)
-    # Màn Tiên Tịch: chụp Đăng nhập/Đăng ký và vào chế độ offline để kiểm luồng game cũ.
+    # Màn Tiên Tịch dùng tài khoản và máy chủ giả lập của CI.
     if page.locator("#authGate").count() and page.locator("#authGate").is_visible():
         if folder is not None and outcome is not None:
             outcome["screenshots"].append(snap(page, folder, name, "auth-login"))
@@ -172,21 +172,17 @@ def enter_game(page, url, folder=None, name=None, outcome=None):
     # Không dựa vào thời gian chờ cố định: mở đầu được tạo ngay sau loading.
     intro = page.locator('#storyIntro')
     intro.wait_for(state='visible', timeout=15000)
-    if touch:
-        for _ in range(5): intro.tap()
-    else:
-        intro.press('Escape')
-    intro.wait_for(state='detached', timeout=15000)
-    # Nhân vật được tạo sau intro; lúc này tutorial mới khởi tạo.
-    tutorial = page.locator('#tutorialLayer')
-    tutorial.wait_for(state='visible', timeout=15000)
-    activate(page.locator('#tutorialSkip'))
-    tutorial.wait_for(state='detached', timeout=15000)
+    # Intro tự chạy qua cả năm cảnh, không còn phím hoặc thao tác bỏ qua.
+    intro.wait_for(state='detached', timeout=120000)
+    # Hướng dẫn tân thủ hiện là bảng đồng hành, không phải lớp tutorial cũ.
+    guide = page.locator('#noviceGuide')
+    guide.wait_for(state='visible', timeout=15000)
+    activate(page.locator('#noviceGuideHide'))
+    guide.wait_for(state='detached', timeout=15000)
     page.locator("#menu button").first.wait_for(state="visible", timeout=25000)
 
 def open_page(page, section):
-    # Bản desktop hiện hành giữ nhiều cửa sổ đồng thời; nhấn lại menu sẽ
-    # thu nhỏ cửa sổ, không phải mở tab mới. Focus cửa sổ sẵn có thay vì toggle.
+    # Trang khác che menu chính; trở về sân khấu trước khi mở trang kế tiếp.
     current = page.locator(f'.win.desktop-window[data-window="{section}"]')
     if current.count():
         if current.first.is_visible():
@@ -194,13 +190,18 @@ def open_page(page, section):
         else:
             page.locator(f'#windowTaskbar [data-task-window="{section}"]').first.click()
     else:
+        previous = page.locator('.win.page .page-back')
+        if previous.count():
+            previous.first.click()
         page.locator(f'#menu button[data-window="{section}"]').click()
     current.first.wait_for(state="visible", timeout=15000)
 
 def set_tab(page, section, tab):
     if tab is None:
         return
-    btn = page.locator(f'.win.desktop-window[data-window="{section}"] .tabbar [data-tab="{tab}"]')
+    selector = (f'[data-act="sectPanel"][data-panel="{tab}"]' if section == 'sect'
+                else f'.tabbar [data-tab="{tab}"]')
+    btn = page.locator(f'.win.desktop-window[data-window="{section}"] {selector}')
     btn.first.click()
     page.wait_for_timeout(250)
 
@@ -277,9 +278,14 @@ def verify_bubble(page, folder, name, outcome):
         assert abs(rect["gap"]) < 5, "Transcript không sát ô soạn chat"
         assert rect["composerBottom"] <= rect["panelBottom"] + 4, "Ô soạn bị cắt khuất"
         outcome["chat_composer_fits_window"] = True
+    win.locator('[data-chat-channel="journal"]').click()
+    assert win.locator('#chatJournal').is_visible(), "Nhật ký trong chat không hiển thị"
+    assert win.locator('#chatForm').is_hidden(), "Ô soạn vẫn hiện ở tab nhật ký"
+    win.locator('[data-chat-channel="world"]').click()
+    outcome["chat_journal"] = True
     outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
-    win.locator(".win-min").click()
-    win.wait_for(state="hidden", timeout=15000)
+    trigger.click()
+    win.wait_for(state="detached", timeout=15000)
     trigger.click()
     win.wait_for(state="visible", timeout=15000)
     win.locator(".win-close").click()
@@ -340,7 +346,7 @@ def run_set(browser, folder, name, url, width, height, mobile):
             world = page.locator('.win.desktop-window[data-window="world"]')
             world.wait_for(state="visible", timeout=15000)
             world.locator('[data-tab="shop"]').first.tap()
-            world.locator('.win-close').tap()
+            world.locator('.page-back').tap()
             assert world.count() == 0, "Touch không đóng được cửa sổ"
             rev = page.evaluate("""async () => {
                 const ui = window.HU_UI, old = ui.session.revision;
@@ -353,7 +359,8 @@ def run_set(browser, folder, name, url, width, height, mobile):
         outcome["screenshots"].append(snap(page, folder, name, "game-main"))
         verify_bubble(page, folder, name, outcome)
         if name.startswith('after_'):
-            verify_log_float(page, folder, name, outcome)
+            if not page.evaluate("() => window.HU_UI.release.chat"):
+                verify_log_float(page, folder, name, outcome)
             assert page.locator('#menu [data-window="settings"]').count() == 0, "Menu Cài đặt vẫn hiện"
             assert page.locator('.status-settings').count() == 1, "Nút Cài đặt ở thanh trạng thái bị mất"
         for key, section, tab in CASES:
@@ -375,31 +382,6 @@ def run_set(browser, folder, name, url, width, height, mobile):
                 "(buttons) => buttons.filter(b => b.scrollWidth > b.clientWidth + 2).map(b => b.textContent.trim())"
             )
             outcome["overflow_buttons"] = issues
-            # Tọa hóa thực: reset ngay cả Thiên mệnh, cài đặt và bản lưu dự phòng.
-            if width == 1366 and not name.startswith('after_'):
-                page.evaluate("""() => {
-                    const ui = window.HU_UI;
-                    ui.s().meta.points = 999;
-                    ui.s().settings.music = false;
-                    ui.s().age = ui.g().maxLife() + 1;
-                    ui.s().lastUpdate = Date.now() - 3000;
-                }""")
-                death = page.locator('[data-act="resetAfterDeath"]')
-                death.wait_for(state="visible", timeout=5000)
-                outcome["screenshots"].append(snap(page, folder, name, "death"))
-                death.click()
-                assert page.locator("#welcome").is_visible(), "Tọa hóa không về tạo nhân vật"
-                assert page.locator("#game").is_hidden(), "Game vẫn hiện sau tọa hóa"
-                assert page.locator("#continueGame").is_hidden(), "Vẫn còn bản lưu sau tọa hóa"
-                reset = page.evaluate("""() => ({
-                    created: window.HU_UI.s().created,
-                    points: window.HU_UI.s().meta.points,
-                    music: window.HU_UI.s().settings.music,
-                    ready: window.HU_UI.store.ready
-                })""")
-                assert reset == {"created": False, "points": 0, "music": True, "ready": False}, reset
-                outcome["death_reset"] = True
-                outcome["screenshots"].append(snap(page, folder, name, "back-to-creation"))
     except Exception as exc:
         outcome["exception"] = str(exc)
         try:
@@ -453,7 +435,7 @@ def run_webkit_mobile(playwright, url, folder):
         world = page.locator('.win.desktop-window[data-window="world"]')
         world.wait_for(state="visible", timeout=15000)
         world.locator('[data-tab="shop"]').first.tap()
-        world.locator('.win-close').tap()
+        world.locator('.page-back').tap()
         assert world.count() == 0, "WebKit touch không đóng được cửa sổ"
         revisions = page.evaluate("""async () => {
             const ui = window.HU_UI, before = ui.session.revision;

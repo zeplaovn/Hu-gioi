@@ -24,7 +24,8 @@ function preview() {
     card: (title, body) => '<section class="card"><h2>' + title + '</h2>' + body + '</section>'
   };
   const context = { HU_GAME: { ZONES, F: { REALMS: ['Luyện Khí', 'Trúc Cơ'] } },
-    HU_UI: { s: () => s, kit, register: x => { screen = x; }, action: (name, fn) => { actions[name] = fn; } } };
+    HU_UI: { s: () => s, session: { serverNow: () => now }, kit,
+      register: x => { screen = x; }, action: (name, fn) => { actions[name] = fn; } } };
   vm.runInNewContext(read('client/ui/screens/combat.js'), { window: context, Date });
   return { s, screen, actions, now };
 }

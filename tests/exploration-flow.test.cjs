@@ -16,19 +16,20 @@ test('một lần khởi hành 10 phút, bốc đều được ba nhóm sự ki�
     assert.equal(e.kind,kind);
     assert.equal(e.end-e.start,600000);
     assert.equal(g.s.auto,false);
-    assert.throws(() => run(g,'startExploration'), /đang diễn ra/);
+    assert.throws(() => run(g,'startExploration'), /Đang lịch luyện/);
     if(kind==='npc') assert.ok(Object.hasOwn(H.DESIGN.npc,e.npcId));
     if(kind==='encounter') assert.ok(H.ENCOUNTERS.some(v=>v.id===e.eventId));
   }
 });
 
-test('tu vi và mẻ đan, linh điền cùng dừng đúng thời gian lịch luyện', () => {
+test('lịch luyện tạm dừng tu vi, linh điền và mẻ đan trong bản lưu cũ', () => {
   const g=make(.5);
   const end=NOW+700000;
+  const start=run(g,'startExploration');
+  // Bản lưu cũ có thể chứa chuyến đi và mẻ đan đồng thời; lệnh mới không cho bắt đầu như vậy.
   g.s.craftQueue=[{code:'PILL-001',end,success:.99,quality:0}];
   g.s.garden=[{slot:0,herb:'HERB-001',plantedAt:NOW,end:NOW+1200000,water:1,soil:.6,
     pest:false,steps:0,good:0,dry:0,wilt:false}];
-  const start=run(g,'startExploration');
   const original={qi:g.s.qi,exp:g.s.totalRunExp,meditate:g.s.progress.meditate,
     alchemy:g.s.progress.alchemy,tick:g.s.tick};
   const partial=g.advance(NOW+180000);
@@ -49,6 +50,8 @@ test('tu vi và mẻ đan, linh điền cùng dừng đúng thời gian lịch l
   assert.equal(g.s.garden[0].plantedAt,NOW+600000);
   assert.equal(g.s.progress.meditate,original.meditate);
   g.advance(start.end+1000);
+  assert.equal(g.s.totalRunExp,original.exp, 'mẻ đan còn chạy thì chưa tu luyện');
+  g.advance(g.s.craftQueue[0].end+1000);
   assert.ok(g.s.totalRunExp>original.exp);
 });
 

@@ -1,8 +1,6 @@
 name: Smoke live Supabase Edge API
 on:
-  push:
-    branches: [ops/edge-bundle-deploy-20261110]
-    paths: [.github/workflows/edge-production-smoke.yml]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

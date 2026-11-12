@@ -94,9 +94,10 @@ test('sync: tổng số câu lệnh SQL cho một heartbeat không vượt ngân
   clock.now += 20000;
   log.length = 0;
   await svc.sync(OWNER, made.playerId);
-  // BEGIN, set_config, SELECT … FOR UPDATE, UPDATE, COMMIT + 1 truy vấn pavilion ngoài giao dịch.
+  // BEGIN, set_config, SELECT … FOR UPDATE, UPDATE, COMMIT; sync không đọc pavilion riêng.
   // sweep() có thể thêm SAVEPOINT/DELETE/RELEASE nhưng chỉ mỗi 10 phút/người chơi.
   assert.ok(log.length <= 6, 'Heartbeat dùng ' + log.length + ' câu lệnh: ' + JSON.stringify(log));
   assert.equal(log[0], 'BEGIN');
-  assert.equal(log.at(-2), 'COMMIT');
+  assert.equal(log.at(-1), 'COMMIT');
+  assert.equal(log.some(q => /FROM game\.pavilion_accounts/.test(q)), false);
 });

@@ -39,6 +39,7 @@ def setup_page(browser, url, name, viewport, report):
     page = context.new_page()
     proof.mock_ci_config(page, url)
     proof.mock_supabase(page, name)
+    proof.mock_ci_chat(page, url)
     report["errors"] = []
     report["network"] = []
     page.on("pageerror", lambda error: report["errors"].append("pageerror: " + str(error)))
@@ -72,10 +73,9 @@ def run(url, folder):
             proof.enter_game(page, url, folder, "release_1366x768", {"screenshots": []})
             shot(page, "01-desktop-game")
             assert page.locator("#game").is_visible(), "Game did not become visible"
-            assert page.evaluate("() => !HU_UI.release.chat && !HU_UI.release.ranking")
-            assert page.locator("#chatBubble").is_hidden(), "Hidden chat became accessible"
-            assert not page.locator('#moreMenu [data-more-go="more:ranking"]').count(), (
-                "Hidden ranking is still in moreMenu")
+            assert page.evaluate("() => HU_UI.release.chat && HU_UI.release.ranking")
+            page.locator("#chatBubble").wait_for(state="visible", timeout=15000)
+            assert page.locator('#moreMenu [data-more-go="more:ranking"]').count() == 1
             d["initial"] = snapshot(page)
             # Catch even transient failed-sync toasts which can auto-dismiss
             # before the final snapshot. Only inspect, never modify the UI.
@@ -108,9 +108,15 @@ def run(url, folder):
                 ?.code || null;
             }""")
             assert recipe, "No alchemy recipe fits starting materials and funds"
-            command(page, "craft", {"code": recipe})
-            d["crafted"] = recipe
-            shot(page, "03-craft-queued")
+            # Nhân vật mới chưa mượn sách: máy chủ phải từ chối lệnh luyện đan.
+            alchemy = page.evaluate("""async code => {
+              try { await window.HU_UI.command('craft', {code}); return {accepted: true}; }
+              catch (e) { return {accepted: false, code: e.code, message: e.message}; }
+            }""", recipe)
+            assert not alchemy["accepted"] and alchemy["code"] == "GAME_RULE_VIOLATION", alchemy
+            assert "mượn sách nghề" in alchemy["message"], alchemy
+            d["alchemy_requires_book"] = True
+            shot(page, "03-alchemy-locked")
 
             # 180 seconds of REAL wall-clock time (not mocked Date.now).
             d["idle_samples"] = [snapshot(page)]
@@ -158,10 +164,11 @@ def run(url, folder):
             auction_text = page.locator('.win.page[data-window="world"] .release-label').inner_text()
             assert "mô phỏng" in auction_text, "Auction is not labelled simulation"
             shot(page, "06-auction-npc-label")
-            proof.set_tab(page, "world", "sect")
-            sect_text = page.locator('.win.page[data-window="world"] .release-label').inner_text()
-            assert "Tông môn cá nhân" in sect_text, "Sect is not labelled private"
-            shot(page, "07-sect-npc-label")
+            page.locator('.win.page[data-window="world"] .page-back').click()
+            proof.open_page(page, "sect")
+            assert page.locator('.win.page[data-window="sect"] .sect-rite').is_visible(), (
+                "Sect initiation screen is missing")
+            shot(page, "07-sect-initiation")
             # The world is a modal overlay; close it before using the main
             # 'Thêm' menu. The menu button exists in DOM but is not clickable
             # while a modal page is open.
@@ -234,7 +241,7 @@ def run(url, folder):
                                            {"width": 390, "height": 844}, m)
             proof.enter_game(mobile, url, folder, "release_390x844", {"screenshots": []})
             assert mobile.locator("#game").is_visible(), "390x844 gameplay not visible"
-            assert mobile.locator("#chatBubble").is_hidden()
+            mobile.locator("#chatBubble").wait_for(state="visible", timeout=15000)
             m["state"] = snapshot(mobile)
             shot(mobile, "10-mobile-game")
 
@@ -249,6 +256,12 @@ def run(url, folder):
                 unknown_errors = [e for e in area["errors"] if not
                                   (report["expected_maintenance"] and
                                    "503" in e and "Failed to load resource" in e)]
+                # Chỉ bỏ một console error 422 phát sinh từ lệnh luyện đan cố tình bị từ chối.
+                if area is d and d.get("alchemy_requires_book"):
+                    expected = next((e for e in unknown_errors if "422" in e and
+                                     "Failed to load resource" in e), None)
+                    if expected:
+                        unknown_errors.remove(expected)
                 assert not unknown_errors, "Browser console errors: " + repr(unknown_errors)
             d["sync_error_toasts"] = page.evaluate("window.__hu_sync_toast_errors")
             assert not d["sync_error_toasts"], (

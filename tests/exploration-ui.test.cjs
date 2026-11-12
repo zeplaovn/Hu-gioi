@@ -70,13 +70,15 @@ test('loại bỏ nút Nhập định/Tự chiến và sử dụng nút Lịch l
 test('engine không tính tu vi và nghề phụ trong 600 giây lịch luyện', () => {
   const time=read('engine/rules/time.js');
   const combat=read('engine/rules/combat.js');
-  const protocol=read('engine/protocol/commands.js');
+  const protocol=require('../engine/protocol/commands.js');
   assert.match(combat, /end: now \+ 600000/);
   assert.match(time, /const pauseMs = Math\.max/);
   assert.match(time, /job\.end \+= pauseMs/);
   assert.match(time, /plot\.plantedAt \+= pauseMs; plot\.end \+= pauseMs/);
   assert.match(time, /s\.lastUpdate = now;[\s\S]{0,110}return \{ \.\.\.empty\(\), exploring: true/);
-  assert.match(protocol, /pausedActions\.includes\(c\.type\)/);
+  const state = { exploration: { active: {} } };
+  assert.match(protocol.activityConflict(state, 'craft'), /Đang lịch luyện/);
+  assert.equal(protocol.activityConflict(state, 'exploreChoice'), '');
 });
 
 
