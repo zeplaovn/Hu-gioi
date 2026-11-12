@@ -119,3 +119,15 @@ test('thử lại khi đồng bộ sau khi mở tab gặp lỗi tạm thời', a
   await new Promise(resolve=>setTimeout(resolve,3200));
   assert.equal(calls,2);assert.equal(f.session.paused,false);f.session.disconnect();
 });
+
+test('dự đoán tu vi chỉ hiển thị, dừng khi bận và không vượt giới hạn', async () => {
+  const f=fixture({initialPlayer:true});await f.session.connect(ACCOUNT);let now=100000;f.session.clock=()=>now;
+  const s={created:true,qi:10,lastUpdate:100000,craftQueue:[],dungeon:{},settings:{}};
+  f.session.game={s,isDead:()=>false,lifeInfo:()=>({seconds:60}),need:()=>20,integrateRate:(a,b)=>(b-a)/1000};
+  f.session.predictable=true;f.session.nextSyncInMs=20000;f.session.serverOffset=0;
+  now+=5000;assert.equal(f.session.displayQi(),15);assert.equal(s.qi,10);
+  s.craftQueue.push({});assert.equal(f.session.displayQi(),10);s.craftQueue=[];
+  s.dungeon.active={};assert.equal(f.session.displayQi(),10);s.dungeon={};
+  now+=50000;assert.equal(f.session.displayQi(),20);
+  f.session.paused=true;assert.equal(f.session.displayQi(),10);f.session.disconnect();
+});

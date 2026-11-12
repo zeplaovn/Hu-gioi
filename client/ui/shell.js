@@ -1111,6 +1111,7 @@
       if (unlocked.length > 2) toast('+' + (unlocked.length - 2) + ' thành tựu khác vừa mở.', { type: 'gold', title: 'Thành tựu', duration: 5200 });
     }
     const need = g.need(), p = clamp(s.qi / need * 100, 0, 100), readyQi = p >= 100 && !s.completed;
+    const shown = UI.session.displayQi(), pShown = clamp(shown / need * 100, 0, 100);
     $('playerName').textContent = s.name;
     $('playerRealm').textContent = g.realmLabel();
     $('playerRoot').textContent = H.rootLabel(s.rootType, s.rootSub).toUpperCase();
@@ -1126,10 +1127,10 @@
     $('topRate').textContent = trainingBusy ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
     $('topDaoVan').textContent = H.META_UPGRADES[s.destiny]?.name || 'Không có';
-    $('topQiFill').style.width = p + '%';
-    $('topQiFill').parentElement.classList.toggle('full', p >= 100);
-    $('topQiText').textContent = num(s.qi) + ' / ' + num(need);
-    $('topQiHint').textContent = s.completed ? 'Đã chứng đạo' : readyQi ? 'Đã đầy' : Math.floor(p) + '%';
+    $('topQiFill').style.width = pShown + '%';
+    $('topQiFill').parentElement.classList.toggle('full', pShown >= 100);
+    $('topQiText').textContent = num(shown) + ' / ' + num(need);
+    $('topQiHint').textContent = s.completed ? 'Đã chứng đạo' : readyQi ? 'Đã đầy' : Math.floor(pShown) + '%';
     const st = g.stats(), maxMp = g.maxMp(), hpPct = clamp(s.hp / st.HP * 100, 0, 100), mpPct = clamp(s.mp / maxMp * 100, 0, 100);
     if ($('hpFill')) $('hpFill').style.width = hpPct + '%';
     if ($('mpFill')) $('mpFill').style.width = mpPct + '%';

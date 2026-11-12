@@ -133,7 +133,8 @@
   function updateProgress(s, g) {
     const need = g.need(), p = clamp(s.qi / need * 100, 0, 100), full = p >= 100 - 1e-9;
     const peak = g.isPeakStage(), total = F.STAGES[s.realm];
-    $('stage')?.style.setProperty('--qi-p', String((p / 100).toFixed(3)));
+    const pShown = clamp(UI.session.displayQi() / need * 100, 0, 100);
+    $('stage')?.style.setProperty('--qi-p', String((pShown / 100).toFixed(3)));
 
     const cta = $('peakCta'), ready = !s.completed && peak && full && !root.HU_COMMANDS?.activityConflict(s, 'breakthrough');
     if (cta.hidden === ready) cta.hidden = !ready;

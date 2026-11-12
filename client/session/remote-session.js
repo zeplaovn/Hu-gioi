@@ -42,6 +42,7 @@
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.syncInFlight = null;
       this.resumeTimer = null;
+      this.serverOffset = 0; this.predictable = false;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
     subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
@@ -124,6 +125,7 @@
     disconnect() {
       if (this.resumeTimer !== null) root.clearTimeout(this.resumeTimer);
       this.resumeTimer = null;
+      this.predictable = false; this.serverOffset = 0;
       this.accountId = null; this.playerId = null; this.ticket = null;
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
@@ -175,6 +177,10 @@
       if (response.pavilion) this.pavilion = response.pavilion;
       if (Number.isFinite(Number(response.nextSyncInMs)) && Number(response.nextSyncInMs) >= 3000)
         this.nextSyncInMs = Number(response.nextSyncInMs);
+      const serverTime = Number(response.serverTime);
+      const windowMs = (Number.isFinite(this.nextSyncInMs) ? this.nextSyncInMs : 20000) * 1.5;
+      this.predictable = Number.isFinite(serverTime) && Number.isFinite(response.state.lastUpdate) && !response.state.presencePaused && Math.abs(serverTime - response.state.lastUpdate) <= windowMs;
+      if (Number.isFinite(serverTime)) this.serverOffset = serverTime - this.clock();
       const before = this.game.s;
       this.game = new H.Game(response.state);
       if (before?.created && before.realm === response.state.realm && response.state.stage > before.stage && !response.died)
@@ -231,6 +237,15 @@
         this.resumeTimer = null;
         if (this.paused && this.ready && !root.document?.hidden) this.synchronize(true).catch(() => {});
       }, delay);
+    }
+    serverNow() { return this.clock() + this.serverOffset; }
+    displayQi() {
+      const g = this.game, s = g.s;
+      if (!this.ready || !this.predictable || this.paused || root.document?.hidden || s.completed || s.exploration?.active || s.dungeon?.active || s.dungeon?.run || s.craftQueue?.length || g.isDead()) return s.qi;
+      const windowMs = (Number.isFinite(this.nextSyncInMs) ? this.nextSyncInMs : 20000) * 1.5;
+      const life = g.lifeInfo().seconds;
+      const end = Math.min(this.serverNow(), s.lastUpdate + windowMs, s.lastUpdate + (Number.isFinite(life) ? life * 1000 : Infinity));
+      return end > s.lastUpdate ? Math.max(s.qi, Math.min(g.need(), s.qi + g.integrateRate(s.lastUpdate, end))) : s.qi;
     }
     advance() { return this.synchronize(); }
     dispatch(type, payload = {}) {
