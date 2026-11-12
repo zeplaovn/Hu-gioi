@@ -18,7 +18,7 @@ jobs:
       - name: Run entire test suite
         run: npm test
       - name: Package worktree for responsive screenshots
-        run: tar --exclude=.git -czf /tmp/hu-gioi-story-worktree.tar.gz .
+        run: tar --exclude=.git --exclude=node_modules -czf /tmp/hu-gioi-story-worktree.tar.gz .
       - uses: actions/upload-artifact@v4
         with:
           name: hu-gioi-story-worktree

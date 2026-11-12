@@ -45,8 +45,6 @@ jobs:
           python -m playwright install --with-deps chromium webkit
       - name: Chụp trước/sau (cả hai dùng CI API cục bộ + mock Supabase) và kiểm tra file://
         shell: bash
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           git fetch origin main --depth=1
           git worktree add --detach /tmp/hu-gioi-base origin/main

@@ -40,7 +40,8 @@ test('menu Thêm không còn Chat, các chức năng giao du vẫn còn', () => 
 
 test('chat nổi giữ mở/đóng, báo tin và tự hiển thị khi vào game', () => {
   const chat = read('client/ui/screens/chat.js');
-  assert.match(chat, /aria-controls="chatBubblePanel"/);
+  assert.match(chat, /aria-controls="chatFloating"/);
+  assert.match(read('client/ui/shell.js'), /if \(id === 'chat'\) el\.id = 'chatFloating'/);
   assert.match(chat, /chat-bubble-badge/);
   assert.match(chat, /bubble\.btn\.addEventListener\('click',/);
   assert.match(chat, /bubble\.unread = Math\.max\(0, n - bubble\.seen\)/);

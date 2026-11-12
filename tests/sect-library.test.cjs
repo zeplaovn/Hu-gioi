@@ -73,7 +73,7 @@ test('tất cả sách đều có nội dung tương ứng công thức game hi�
   }
 });
 
-test('chỉ chế tạo bằng sách đang mượn; mẻ đã xếp vẫn hoàn tất sau khi đổi sách', () => {
+test('chỉ chế tạo bằng sách đang mượn; phải hoàn tất mẻ trước khi đổi sách', () => {
   const g=make(); const code=H.pill(2), before=g.s.stone, herbs={...g.s.bag};
   assert.throws(()=>run(g,'craft',{code}),/mượn sách nghề/);
   assert.equal(g.s.stone,before); assert.deepEqual(g.s.bag,herbs);
@@ -82,10 +82,12 @@ test('chỉ chế tạo bằng sách đang mượn; mẻ đã xếp vẫn hoàn 
   run(g,'craft',{code});
   assert.equal(g.s.craftQueue.length,1);
   const end=g.s.craftQueue[0].end;
-  run(g,'buySect',{id:'khi_ha'});
-  assert.throws(()=>run(g,'craft',{code}),/mượn sách nghề/);
+  assert.throws(()=>run(g,'buySect',{id:'khi_ha'}),/Đang luyện đan/);
+  assert.equal(g.s.borrowedBook,'dan_ha');
   assert.equal(g.finishJobs(end),1);
   assert.equal(g.s.craftQueue.length,0);
+  run(g,'buySect',{id:'khi_ha'},end);
+  assert.throws(()=>run(g,'craft',{code},end),/mượn sách nghề/);
 });
 
 test('thư viện hiển thị các giá sách và công thức khi đã mượn', () => {
