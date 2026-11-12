@@ -448,3 +448,16 @@ test('máy chủ chặn xung đột khi luyện đan và chỉ cộng đả tọ
   assert.ok((await svc.command('owner-a',id,await envelope(svc,'owner-a','startExploration',{},'busy-work-2'))).state.exploration.active);
   repo.close();
 });
+
+test('sync và pause không truy vấn Thiên Mệnh Các; bootstrap vẫn trả dữ liệu', async () => {
+  const {svc,repo,clock}=setup(); const {playerId}=await spawn(svc);
+  let calls=0; const original=repo.getPavilion.bind(repo);
+  repo.getPavilion=async (...args)=>{calls++; return original(...args);};
+  clock.t+=1000; const sync=await svc.sync('owner-a',playerId);
+  assert.equal(calls,0); assert.equal(sync.pavilion,undefined);
+  const paused=await svc.pause('owner-a',playerId);
+  assert.equal(calls,0); assert.equal(paused.pavilion,undefined);
+  const boot=await svc.bootstrap('owner-a');
+  assert.ok(calls>0); assert.ok(boot.pavilion);
+  repo.close();
+});

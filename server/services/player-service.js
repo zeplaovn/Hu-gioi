@@ -257,7 +257,7 @@ class PlayerService {
       };
     }, this.#dbRate('sync', ownerId, now));
     if (out.error) throw out.error;
-    return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, report: out.report, logs: out.logs, achievements: out.achievements, died: out.died });
+    return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, report: out.report, logs: out.logs, achievements: out.achievements, died: out.died, withPavilion: false });
   }
 
   /* Xác nhận ngừng chơi: tab ẩn/đóng. Đóng băng timers, kể cả khi quay lại ngay. */
@@ -280,7 +280,7 @@ class PlayerService {
         value: { rec, revision, state: run.game.s }
       };
     }, this.#dbRate('pause', ownerId, now));
-    return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, died: new H.Game(out.state).isDead() });
+    return this.#response({ rec: out.rec, revision: out.revision, now, state: out.state, died: new H.Game(out.state).isDead(), withPavilion: false });
   }
 
   /* ---------- Lệnh gameplay ---------- */
@@ -407,10 +407,10 @@ class PlayerService {
     };
     return { rate: { ...rules[key], key, ownerId, now } };
   }
-  async #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false, pavilionView = null }) {
+  async #response({ rec, revision, now, state, result = null, report = null, logs = [], achievements = [], died = false, replayed = false, pavilionView = null, withPavilion = true }) {
     return {
       protocolVersion: C.VERSION, revision, serverTime: now, schemaVersion: H.VERSION, contentVersion: this.contentVersion,
-      state: snapshot(state), pavilion: pavilionView || await this.repo.getPavilion(rec.ownerId), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
+      state: snapshot(state), pavilion: pavilionView || (withPavilion ? await this.repo.getPavilion(rec.ownerId) : undefined), result, report, logs, achievements, died, replayed, nextSyncInMs: this.cfg.nextSyncInMs
     };
   }
 }
