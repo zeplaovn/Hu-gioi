@@ -58,7 +58,7 @@ async function spawn(svc, owner, name) {
   });
 }
 const envelope = async (svc, owner, type, payload, requestId) => ({
-  protocolVersion: 2, type, payload, requestId, expectedRevision: (await svc.bootstrap(owner)).player.revision
+  protocolVersion: 3, type, payload, requestId, expectedRevision: (await svc.bootstrap(owner)).player.revision
 });
 const command = async (svc, owner, id, requestId, type = 'buy', payload = { code: 'HERB-001' }) =>
   svc.command(owner, id, await envelope(svc, owner, type, payload, requestId));
@@ -299,12 +299,12 @@ test('Final audit: rejected revision attempts consume durable Postgres command q
   const { playerId } = await spawn(svc, A, 'Cấm Lặp Revision');
   for (let i = 0; i < 30; i++) {
     await assert.rejects(svc.command(A, playerId, {
-      protocolVersion: 2, type: 'buy', payload: { code: 'HERB-001' },
+      protocolVersion: 3, type: 'buy', payload: { code: 'HERB-001' },
       requestId: 'stale-revision-' + i, expectedRevision: 999
     }), { code: 'REVISION_CONFLICT' });
   }
   await assert.rejects(svc.command(A, playerId, {
-    protocolVersion: 2, type: 'buy', payload: { code: 'HERB-001' },
+    protocolVersion: 3, type: 'buy', payload: { code: 'HERB-001' },
     requestId: 'stale-blocked', expectedRevision: 999
   }), { code: 'RATE_LIMITED' });
   const after = await repo.get(playerId);

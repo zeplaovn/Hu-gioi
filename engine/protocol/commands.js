@@ -1,4 +1,4 @@
-/* Hợp đồng lệnh v1: client chỉ gửi ý định + ID. Không gửi trạng thái, phần thưởng, giá hay đồng hồ.
+/* Hợp đồng lệnh v3: client chỉ gửi ý định + ID. Không gửi trạng thái, phần thưởng, giá hay đồng hồ.
    File này chỉ kiểm tra payload (schema) và chuyển lệnh tới phương thức cùng tên của Game.
    Quy ước phương thức: game[type](payload, now) — now do bên sở hữu phiên cung cấp. */
 (function (root) {
@@ -8,7 +8,7 @@
   const C = node ? require('../../data/character.js') : root.HU_CHARACTER;
   const D = node ? require('../../data/catalog.js') : root.HU_CATALOG;
 
-  const VERSION = 2;
+  const VERSION = 3;
   const isObject = v => v && typeof v === 'object' && !Array.isArray(v) && [Object.prototype, null].includes(Object.getPrototypeOf(v));
   const string = v => typeof v === 'string' && v.length > 0 && v.length <= 80;
   const integer = (min, max) => v => Number.isSafeInteger(v) && v >= min && v <= max;
@@ -26,6 +26,9 @@
     breakthrough: {},
     setAuto: { enabled: boolean },
     setPreference: { key: oneOf(['season', 'seasonEffects', 'cultivationEffects', 'combatEffects', 'motionMode', 'music', 'musicVolume', 'musicTrack']), value: v => typeof v === 'string' || typeof v === 'boolean' || Number.isFinite(v) },
+    startRetreat: { duration: oneOf([1800, 7200, 28800]) },
+    stopRetreat: {},
+    acknowledgeRetreat: {},
     // inventory
     buy: { code }, sell: { code }, equip: { code }, learn: { code }, activate: { code }, use: { code },
     sellYao: {},
@@ -76,9 +79,11 @@
   const types = Object.freeze(Object.keys(SCHEMAS));
 
   const trainingActions = new Set(['absorb', 'upgrade', 'craft', 'forge', 'garden', 'startDungeon', 'enterDungeon',
-    'startExploration', 'startSectMission', 'breakthrough', 'manualEncounter', 'setAuto']);
+    'startExploration', 'startSectMission', 'breakthrough', 'manualEncounter', 'setAuto', 'startRetreat']);
   const legacyEscape = new Set(['exploreChoice', 'abortDungeon', 'dungeonAct', 'abortSectMission', 'setPreference']);
   function activityConflict(state, type) {
+    if (state.retreat?.active && !['stopRetreat', 'setPreference'].includes(type))
+      return 'Đang bế quan: hãy kết thúc phiên trước khi làm việc khác.';
     if (legacyEscape.has(type)) return '';
     if (state.exploration?.active && (trainingActions.has(type) || type === 'use'))
       return 'Đang lịch luyện: tu hành và nghề phụ tạm dừng đến khi trở về.';

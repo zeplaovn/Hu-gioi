@@ -210,13 +210,14 @@ export async function handleApi(req: Request): Promise<Response> {
     const { status, body } = toEnvelope(err, requestId);
     const diagnostic = err instanceof Error ? err : null;
     const safeNames = new Set(['Error', 'TypeError', 'RangeError', 'ReferenceError', 'PostgresError', 'GameError']);
+    const errorName = diagnostic?.name || '';
     const frame = diagnostic?.stack?.match(/game\.bundle\.mjs:(\d+):(\d+)/);
     const pgCode = (err as { code?: unknown } | null)?.code;
     if (shouldLogApiError(err, status)) logOperational({
       event: 'api_error', requestId, code: body.error.code, status,
-      route: routeName, errorType: safeNames.has(diagnostic?.name || '') ? diagnostic?.name : 'Other',
-      sqlstate: typeof pgCode === 'string' && /^[A-Z0-9]{5}$/.test(pgCode) ? pgCode : undefined,
-      bundleFrame: frame ? `${frame[1]}:${frame[2]}` : undefined,
+      route: routeName, errorType: safeNames.has(errorName) ? errorName : 'Other',
+      ...(typeof pgCode === 'string' && /^[A-Z0-9]{5}$/.test(pgCode) ? { sqlstate: pgCode } : {}),
+      ...(frame ? { bundleFrame: `${frame[1]}:${frame[2]}` } : {}),
       durationMs: Math.round(performance.now() - since)
     }); // không token, state, SQL hoặc password; đã giới hạn log/isolate
     const failure = err as { details?: { retryAfterMs?: number } } | null;

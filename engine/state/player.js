@@ -1,4 +1,4 @@
-/* Trạng thái người chơi (schema V8), khởi tạo và chuyển bản lưu V4–V8.
+/* Trạng thái người chơi (schema V10), khởi tạo và chuyển bản lưu V4–V10.
    Chỉ phụ thuộc data/; game.js truyền lớp Game vào normalize để tránh import vòng. */
 (function (root) {
   'use strict';
@@ -13,7 +13,7 @@
   const { RACES, LEGACY_RACES, TALENT_INFO, TALENT_MAX, META_UPGRADES, META_ACHIEVEMENTS, rootType } = C;
   const { item, pill } = D;
   const { ELEMENT_NAMES, DUNGEONS, SECTS, SECT_MISSIONS, ENCOUNTERS } = A;
-  const VERSION = 9, SUPPORTED_VERSIONS = Object.freeze([4, 5, 6, 7, 8, 9]), MAX = 1e100;
+  const VERSION = 10, SUPPORTED_VERSIONS = Object.freeze([4, 5, 6, 7, 8, 9, 10]), MAX = 1e100;
   const finite = (v, fallback = 0, max = MAX) => Number.isFinite(Number(v)) ? Math.max(0, Math.min(max, Number(v))) : fallback;
   const integer = (v, fallback = 0, max = 1e9) => Math.floor(finite(v, fallback, max));
   const uniq = xs => [...new Set(xs)];
@@ -74,6 +74,7 @@
       realm: 0, stage: 1, qi: 0, hp: 100, mp: 100, stone: 380, jade: 6, zone: 0,
       auto: false, enemyHp: 0, enemyNum: 0, combatClock: 0, manualAt: 0, enemyKind: 'thường',
       exploration: { active: null, last: null },
+      retreat: { active: null, report: null },
       bag: initialBag(), equipment: [], tech: [1, 1, 1, 1], cooldowns: [0, 0, 0, 0],
       learned: {}, activeManuals: [], pity: 0, breakBonus: 0, shield: 0, reduction: 0,
       pillUses: 0, pillRealmExp: 0, permanent: 0, buffs: [], debuffs: [],
@@ -412,6 +413,30 @@
     }
     x.enemyHp = finite(raw.enemyHp);
     x.manualAt = finite(raw.manualAt, 0, now);
+
+    // Phiên bế quan chỉ có từ V10; bản cũ bắt đầu không có phiên hay báo cáo.
+    if (raw.version >= 10 && object(raw.retreat)) {
+      const cleanSummary = value => {
+        if (!object(value) || ![1800, 7200, 28800].includes(value.duration)) return null;
+        const loot = {};
+        if (object(value.loot)) for (const [code, count] of Object.entries(value.loot).slice(0, 20))
+          if (item(code) && integer(count, 0, 1e9) > 0) loot[code] = integer(count, 0, 1e9);
+        return {
+          duration: value.duration, startedAt: finite(value.startedAt, now, now),
+          seconds: finite(value.seconds, 0, value.duration), exp: finite(value.exp),
+          stone: finite(value.stone), stages: integer(value.stages, 0, 100), loot,
+          events: Array.isArray(value.events) ? value.events.filter(v => typeof v === 'string').slice(-12).map(v => v.slice(0, 240)) : []
+        };
+      };
+      const active = cleanSummary(raw.retreat.active);
+      if (active && Number.isFinite(raw.retreat.active.end)) {
+        active.end = finite(raw.retreat.active.end, now, now + active.duration * 1000);
+        if (active.end >= x.lastUpdate) x.retreat.active = active;
+      }
+      const report = cleanSummary(raw.retreat.report);
+      if (report && ['finished', 'ready', 'manual', 'death', 'life'].includes(raw.retreat.report.reason))
+        x.retreat.report = { ...report, reason: raw.retreat.report.reason, endedAt: finite(raw.retreat.report.endedAt, now, now) };
+    }
 
     x.craftQueue = Array.isArray(raw.craftQueue) ? raw.craftQueue
       .filter(j => object(j) && item(j.code)?.kind === 'PILL' && Number.isFinite(j.end) && Number.isFinite(j.success))

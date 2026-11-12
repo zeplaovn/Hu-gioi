@@ -13,7 +13,7 @@ Browser ──> Cloudflare Static Assets (dist/)
 
 **Backend:** `supabase/functions/api/index.ts` kiểm JWT, consent, CORS và route; `tools/build-edge.cjs` bundle `server/`, `engine/`, `data/`. `server/services/player-service.js` xử lý gameplay, còn `server/repositories/postgres-players.js` dùng transaction và receipt. `game` có RLS, không được expose Data API; các bảng cấm quyền `anon`/`authenticated`.
 
-**Gameplay:** state V9 tại `engine/state/player.js`; protocol v2, 49 lệnh tại `engine/protocol/commands.js`. Giữ luật từ `engine/` và `data/`; không quyết P0/P1 thay chủ dự án. Nhịp heartbeat và grace lấy từ `server/presence-config.js` và backend phản hồi cho client. Offline và tab ẩn không tích lũy.
+**Gameplay:** state V10 tại `engine/state/player.js`; protocol v3, 52 lệnh tại `engine/protocol/commands.js`. Giữ luật từ `engine/` và `data/`; không quyết P0/P1 thay chủ dự án. Nhịp heartbeat và grace lấy từ `server/presence-config.js` và backend phản hồi cho client. Offline và tab ẩn không tích lũy.
 
 **Dev/legacy:** `server/main.js` và `server/repositories/sqlite-players.js` chỉ dùng Node/SQLite dev/test. `LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) không thuộc gói frontend.
 

@@ -33,7 +33,7 @@
 ## Thiên mệnh và tương thích
 
 - `state.destiny` lưu lựa chọn tại Khởi Nguyên, hiệu lực một cấp của `META_UPGRADES` hiện có; `meta.achievements` chỉ là nhật ký thành tựu trong kiếp hiện tại, không cộng điểm mua nâng cấp.
-- `engine/state/player.js` dùng V9, chấp nhận V4–V9; `engine/protocol/commands.js` dùng protocol V2 và có 49 lệnh.
+- `engine/state/player.js` dùng V10, chấp nhận V4–V10; `engine/protocol/commands.js` dùng protocol V3 và có 52 lệnh. V10 bổ sung phiên bế quan tu luyện và báo cáo server.
 - Khi một nhân vật V8 đang tồn tại được nâng lên V9, người chơi không được tự đưa phiên bản state/hành trang client lên server; chỉ backend chạy normalize. Chưa có công cụ cho nhân vật cũ chọn Thiên mệnh giữa kiếp. Tạo lại sau khi chết mới chọn.
 
 ## Quyết định thiết kế tạm thời cần chủ dự án xác nhận

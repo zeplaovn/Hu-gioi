@@ -54,12 +54,12 @@ function run(g, type, payload = {}, now = NOW) {
   return C.execute(g, { type, payload }, now);
 }
 
-test('hợp đồng: engine READY, đủ 49 lệnh và phân miền rõ ràng', () => {
+test('hợp đồng: engine READY, đủ 52 lệnh và phân miền rõ ràng', () => {
   assert.equal(H.READY, true);
   assert.deepEqual(H.MISSING, []);
-  assert.equal(H.VERSION, 9);
-  assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8, 9]);
-  assert.equal(C.types.length, 49);
+  assert.equal(H.VERSION, 10);
+  assert.deepEqual(H.SUPPORTED_VERSIONS, [4, 5, 6, 7, 8, 9, 10]);
+  assert.equal(C.types.length, 52);
   assert.equal(typeof H.createCharacter, 'function');
   assert.equal(typeof H.normalize, 'function');
   assert.equal(typeof H.create, 'function');
@@ -75,7 +75,7 @@ test('hợp đồng: engine READY, đủ 49 lệnh và phân miền rõ ràng', 
     world: ['claimQuest', 'claimFragments', 'manualEncounter', 'joinSect', 'leaveSect', 'donateSect', 'setBlessing', 'setSectRepeat', 'startSectMission', 'claimSectMission', 'abortSectMission', 'buySect', 'temperRoot', 'storyMark'],
     adventures: ['startDungeon', 'abortDungeon', 'enterDungeon', 'dungeonAct'],
     social: ['meetFriend', 'giftFriend', 'discuss', 'npcGift', 'npcOffer', 'npcQuest', 'duel'],
-    time: ['setPreference'],
+    time: ['setPreference', 'startRetreat', 'stopRetreat', 'acknowledgeRetreat'],
     creation: []
   };
   assert.deepEqual([...new Set(Object.values(H.OWNERS))].sort(), Object.entries(expected).filter(([, commands]) => commands.length).map(([domain]) => domain).sort());
@@ -126,7 +126,7 @@ test('hợp đồng: mọi phương thức truy vấn UI đang gọi đều tồ
 test('state: tạo state trống, tạo nhân vật và giữ đúng hình dạng V9', () => {
   const empty = H.create(NOW);
   assert.equal(empty.created, false);
-  assert.equal(empty.version, 9);
+  assert.equal(empty.version, 10);
   assert.equal(typeof empty.bag, 'object');
 
   const g = game();
@@ -173,7 +173,7 @@ test('state: normalize nâng cấp V4–V9 và loại bản lưu hỏng', () => 
     const raw = { ...JSON.parse(JSON.stringify(saved)), version };
     const next = H.normalize(raw, NOW + 1000);
     assert.ok(next, 'v' + version);
-    assert.equal(next.version, 9);
+    assert.equal(next.version, 10);
     assert.equal(next.created, true);
     assert.equal(next.name, saved.name);
     assert.equal(next.realm, saved.realm);
@@ -186,7 +186,7 @@ test('state: normalize nâng cấp V4–V9 và loại bản lưu hỏng', () => 
     resources: { jade: 5000, gold: 12 }
   }, NOW);
   assert.ok(v4);
-  assert.equal(v4.version, 9);
+  assert.equal(v4.version, 10);
   assert.equal(v4.realm, 2);
   assert.equal(v4.name, 'Cổ Nhân');
   assert.equal(v4.stone, 5000);
@@ -215,7 +215,7 @@ test('state: normalize nâng cấp V4–V9 và loại bản lưu hỏng', () => 
   assert.ok(clean.talent.phucDuyen >= 0);
   assert.equal(clean.settings.musicVolume, 100);
   assert.equal(clean.settings.motionMode, 'auto');
-  assert.equal(clean.version, 9);
+  assert.equal(clean.version, 10);
 
   const backwards = H.normalize({ ...JSON.parse(JSON.stringify(saved)), lastUpdate: NOW + 60_000, lastSaved: NOW + 60_000 }, NOW);
   assert.equal(backwards.lastUpdate, NOW);

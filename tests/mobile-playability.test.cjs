@@ -25,14 +25,14 @@ test('Safari thiếu AbortSignal.timeout và crypto.randomUUID vẫn tạo/sync/
     },
     clearTimeout(id) { clearTimeout(id); timers.delete(id); },
     crypto: { getRandomValues: bytes => webcrypto.getRandomValues(bytes) },
-    HU_GAME: { VERSION: 9, Game: class { constructor(s) { this.s = s; } }, create: () => ({ created: false }) },
-    HU_COMMANDS: { VERSION: 2, validate: v => v },
+    HU_GAME: { VERSION: 10, Game: class { constructor(s) { this.s = s; } }, create: () => ({ created: false }) },
+    HU_COMMANDS: { VERSION: 3, validate: v => v },
     HU_SUPABASE: { accessToken: async () => 'ci-access-token' },
     document: { hidden: false },
     fetch: async (url, init) => {
       assert.ok(init.signal instanceof AbortSignal, 'timeout fallback phải tạo tín hiệu AbortController');
       requests.push({ url, body: init.body && JSON.parse(init.body) });
-      const base = { protocolVersion: 2, schemaVersion: 9, contentVersion: 'mobile' };
+      const base = { protocolVersion: 3, schemaVersion: 10, contentVersion: 'mobile' };
       let payload;
       if (url.endsWith('/bootstrap')) payload = {
         ...base, player: { id: PLAYER }, snapshot: { ...base, revision: 0, state }

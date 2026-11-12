@@ -3,7 +3,7 @@
 > Trạng thái: Hiện hành.
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 49 lệnh và state V9. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
+> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 52 lệnh và state V10. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
 > Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
@@ -22,10 +22,10 @@ Phần **engine phải cung cấp**:
 
 | Thành viên | Vai trò |
 |---|---|
-| `VERSION` | Phiên bản schema (hiện 9), lấy từ `engine/state/player.js`. |
+| `VERSION` | Phiên bản schema (hiện 10), lấy từ `engine/state/player.js`. |
 | `create(now)` | State mới, `created: false`. |
 | `createCharacter(profile, now, rng)` | Tạo nhân vật; profile do màn tạo nhân vật dựng (`name`, `gender`, `age`, `race`, `roots`, `rootType`, `talent`, …). |
-| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V9 về V9; trả `null` nếu không hợp lệ. |
+| `normalize(raw, now)` | Làm sạch và nâng cấp bản lưu V4–V10 về V10; trả `null` nếu không hợp lệ. |
 | `Game` | Lớp bọc `(state, rng, onLog)`; xem §4. |
 
 ## 3. Phiên gameplay online (`client/session/remote-session.js`)
@@ -38,7 +38,7 @@ Phần **engine phải cung cấp**:
 
 `LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
 
-## 4. Lệnh (49, protocol V2)
+## 4. Lệnh (52, protocol V3)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -49,6 +49,9 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `breakthrough` | progression | — |
 | `setAuto` | progression | `enabled` |
 | `setPreference` | time | `key`, `value` (cài đặt giao diện được xác minh server) |
+| `startRetreat` | time | `duration` (1800, 7200 hoặc 28800 giây) |
+| `stopRetreat` | time | — |
+| `acknowledgeRetreat` | time | — |
 | `buy` | inventory | `code` |
 | `sell` | inventory | `code` |
 | `equip` | inventory | `code` |
@@ -94,11 +97,13 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `npcQuest` | social | `id` |
 | `duel` | social | `id` |
 
+Bế quan tu luyện chỉ tổng hợp tiến trình online do server tính; dừng khi hết giờ, viên mãn hoặc thọ nguyên còn 5 phút, không tự độ kiếp. Khi tab ẩn, thời gian phiên đóng băng; sau khi phiên dừng, luật tu luyện và thọ nguyên thông thường vẫn tiếp tục. Báo cáo là state do server trả về và không cấp thưởng lần hai.
+
 `storyMark` chỉ ghi `s.story.read` và `s.story.flags`. Engine kiểm tra ID, cảnh giới, thiện cảm và lựa chọn; không cấp chỉ số hay phần thưởng.
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).
 
-`execute` **từ chối tất cả 49 lệnh khi `isDead()`**, không có lệnh hồi sinh. `resetAfterDeath` là endpoint backend riêng chỉ dùng sau khi máy chủ xác nhận chết và chủ tài khoản yêu cầu xóa.
+`execute` **từ chối tất cả 52 lệnh khi `isDead()`**, không có lệnh hồi sinh. `resetAfterDeath` là endpoint backend riêng chỉ dùng sau khi máy chủ xác nhận chết và chủ tài khoản yêu cầu xóa.
 
 ## 5. Phương thức truy vấn UI đang gọi
 
@@ -121,7 +126,7 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 
 ## 7. Bản lưu
 
-- Schema hiện hành V9; normalize V4, V5, V6, V7, V8, V9 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
+- Schema hiện hành V10; normalize V4, V5, V6, V7, V8, V9, V10 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
 - `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu PostgreSQL được ghi ở Edge theo giao dịch; SQLite chỉ dùng Node dev/test.
 - Thiên mệnh được chọn một lần tại tạo nhân vật. Không có lệnh `prestige`/`reincarnate` và không tích lũy **thành tựu nhân vật** xuyên kiếp. **Bản code 11/11/2026:** Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân lưu tách trong `pavilion_accounts` nhưng bị xóa cùng nhân vật khi `reset-after-death`; không có kế thừa xuyên kiếp. Backend production dùng Postgres; Node/SQLite chỉ dành cho dev/test.
 
