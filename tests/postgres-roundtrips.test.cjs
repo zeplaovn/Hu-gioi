@@ -30,6 +30,11 @@ async function makePg(t, { statementTimeoutMs, lockTimeoutMs } = {}) {
         queryObject: async ({ text, args = [] }) => {
           log.push(text.replace(/\s+/g, ' ').trim());
           const result = await db.query(text, args);
+          // Deno Postgres queryObject rejects duplicate column names; PGlite
+          // normally overwrites them silently, so enforce the real contract.
+          const names = result.fields.map(field => field.name);
+          if (result.rows.length && new Set(names).size !== names.length)
+            throw new Error('Duplicate result column names');
           if (/FROM game\.players WHERE id = \$1 FOR UPDATE/.test(text)) {
             const s = await db.query("SELECT current_setting('statement_timeout') AS st, current_setting('lock_timeout') AS lt");
             settingsAtLock.push(s.rows[0]);
