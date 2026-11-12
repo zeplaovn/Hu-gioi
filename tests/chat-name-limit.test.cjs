@@ -13,7 +13,7 @@ test('giới hạn lời truyền âm 80 ký tự đồng bộ client, Edge API 
   assert.match(edge, /const MAX_TEXT = 80;/);
   assert.match(edge, /textLength\(text\) > MAX_TEXT/);
   assert.doesNotMatch(edge, /text\.length > 400|1–400/);
-  assert.match(read('supabase/migrations/20261112000000_chat_limit_80.sql'),
+  assert.match(read('supabase/sql/archive/pre-baseline/20261112000000_chat_limit_80.sql'),
     /ADD CONSTRAINT world_chat_messages_body_max80 CHECK \(length\(body\) <= 80\) NOT VALID/);
 });
 
@@ -52,7 +52,7 @@ test('tên và chat chỉ nhận chữ ASCII, chữ tiếng Việt, chữ số (
   assert.equal(H.sanitizeText('Tiếng'), H.sanitizeText('Tiếng')); // NFD → NFC
   for (let i = 0; i < 300; i++) assert.ok(H.cleanName(H.randomName(i % 2 ? 'nu' : 'nam')));
   const ui = read('client/ui/screens/chat.js'), edge = read('supabase/functions/api/social.ts'), boot = read('client/ui/boot.js');
-  const mig = read('supabase/migrations/20261112000000_chat_limit_80.sql');
+  const mig = read('supabase/sql/archive/pre-baseline/20261112000000_chat_limit_80.sql');
   assert.match(ui, /sanitizeText\(event\.target\.value\)/);
   assert.match(ui, /TEXT_OK\.test\(text\)/);
   assert.match(boot, /H\.sanitizeText\(e\.target\.value\)/);

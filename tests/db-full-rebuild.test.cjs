@@ -9,26 +9,10 @@ const { PGlite } = require('@electric-sql/pglite');
 
 const root = path.join(__dirname, '..');
 const dir = path.join(root, 'supabase/migrations');
-const deployed = [
-  '20261109095404_add_hu_gioi_policy_acceptances.sql',
-  '20261109120945_allow_online_only_policy_consent_v2.sql',
-  '20261109125831_allow_v3_permadeath_policy_consent.sql',
-  '20261109145450_allow_v4_email_ip_auth_consent.sql',
-  '20261110051049_allow_v5_policy_consent.sql',
-  '20261110075419_game_schema.sql',
-  '20261111015058_online_social_and_indexed_leaderboard.sql',
-  '20261111020645_allow_v6_policy_consent_online_social.sql',
-  '20261111022001_desktop_chat_channels_and_power_ranks.sql',
-  '20261111023603_v7_consent_and_deceased_leaderboard.sql',
-  '20261111030718_exclude_dead_from_live_leaderboards.sql',
-  '20261111073203_internal_test_full_schema_rebuild.sql'
-];
-
 test('toàn bộ migration dựng được database trắng từ đầu và không tái hiện đạo thân tử vong', async () => {
   const files = fs.readdirSync(dir).filter(name => name.endsWith('.sql')).sort();
-  assert.ok(deployed.every(name => files.includes(name)), 'Git phải chứa đủ lịch sử Supabase thực tế');
-  assert.ok(!files.some(name => /^202611110(?:32200|40200)_/.test(name)), 'không chạy lại bản migration sai timestamp');
-  assert.ok(files.includes('20261110095400_game_cleanup_indexes.sql'), 'cleanup index phải có thể replay');
+  assert.equal(files.length, 1, 'chỉ một baseline được replay');
+  assert.match(files[0], /_unified_baseline\.sql$/);
   const db = new PGlite();
   try {
     await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE SCHEMA auth;
@@ -79,6 +63,6 @@ test('reset nội bộ có điều kiện bảo vệ, không nằm trong migrati
   assert.match(script, /CREATE TEMP TABLE hu_policy_acceptances_snapshot/);
   assert.match(script, /INSERT INTO public\.policy_acceptances\(user_id,policy_kind,policy_version,accepted_at\)/);
   assert.doesNotMatch(script, /DROP SCHEMA (?:auth|storage)/i);
-  const marker = fs.readFileSync(path.join(dir,'20261111073203_internal_test_full_schema_rebuild.sql'),'utf8');
+  const marker = fs.readFileSync(path.join(root,'supabase/sql/archive/pre-baseline/20261111073203_internal_test_full_schema_rebuild.sql'),'utf8');
   assert.doesNotMatch(marker, /\bDROP\s+(?:SCHEMA|TABLE)\b/i);
 });

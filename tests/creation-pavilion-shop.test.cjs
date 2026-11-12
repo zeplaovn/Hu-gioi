@@ -27,7 +27,7 @@ async function fixture(adapter) {
     '20261110075419_game_schema.sql',
     '20261111015058_online_social_and_indexed_leaderboard.sql',
     '20261111022001_desktop_chat_channels_and_power_ranks.sql'
-  ]) await db.exec(fs.readFileSync(path.join(__dirname, '../supabase/migrations/', file), 'utf8'));
+  ]) await db.exec(fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/', file), 'utf8'));
   const pool = { async connect() {
     return { queryObject: async ({ text, args = [] }) => ({ rows: (await db.query(text, args)).rows }), release() {} };
   }, async end() { await db.close(); } };

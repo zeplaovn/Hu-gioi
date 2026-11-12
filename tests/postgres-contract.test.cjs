@@ -13,9 +13,9 @@ const H = require('../engine/game.js');
 const A = '11111111-1111-4111-8111-111111111111';
 const B = '22222222-2222-4222-8222-222222222222';
 const CLOCK = 1800000000000;
-const migration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
-const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
-const extendedMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
+const migration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261110075419_game_schema.sql'), 'utf8');
+const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
+const extendedMigration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
 
 async function makePg(t) {
   const db = new PGlite();
@@ -236,7 +236,7 @@ test('B1: one cleanup removes all stale creation tickets rather than only 16', a
 test('B1: cleanup index migration can be applied twice without changing schema', async t => {
   const { db } = await makePg(t);
   const cleanupSql = fs.readFileSync(path.join(__dirname,
-    '../supabase/migrations/20261110095400_game_cleanup_indexes.sql'), 'utf8');
+    '../supabase/sql/archive/pre-baseline/20261110095400_game_cleanup_indexes.sql'), 'utf8');
   await db.exec(cleanupSql);
   await db.exec(cleanupSql);
   const result = await db.query(`SELECT indexname FROM pg_indexes WHERE schemaname='game'

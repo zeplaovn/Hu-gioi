@@ -10,9 +10,9 @@ const { PlayerService } = require('../server/services/player-service.js');
 
 const OWNER = '11111111-1111-4111-8111-111111111111';
 const CLOCK = 1800000000000;
-const migration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261110075419_game_schema.sql'), 'utf8');
-const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
-const rankMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
+const migration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261110075419_game_schema.sql'), 'utf8');
+const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
+const rankMigration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
 
 async function makePg(t, { statementTimeoutMs, lockTimeoutMs } = {}) {
   const db = new PGlite();

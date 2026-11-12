@@ -21,7 +21,7 @@ test('mọi kênh chat có JWT, consent và không có EventSource vô danh', ()
 });
 
 test('bốn phòng chat cách ly bằng channel_key và quyền tông môn do backend xác thực', () => {
-  const sql = read('supabase/migrations/20261111022001_desktop_chat_channels_and_power_ranks.sql');
+  const sql = read('supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql');
   const api = read('supabase/functions/api/social.ts');
   const client = read('client/session/chat-session.js');
   assert.match(sql, /game_world_chat_channel_id/);
@@ -35,7 +35,7 @@ test('bốn phòng chat cách ly bằng channel_key và quyền tông môn do ba
 });
 
 test('Lực chiến engine server và Cảnh giới có covering indexes, tối đa top 50', () => {
-  const db = read('supabase/migrations/20261111022001_desktop_chat_channels_and_power_ranks.sql');
+  const db = read('supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql');
   const api = read('supabase/functions/api/social.ts');
   const repo = read('server/repositories/postgres-players.js');
   const ui = read('client/ui/screens/more.js');
@@ -51,7 +51,7 @@ test('Lực chiến engine server và Cảnh giới có covering indexes, tối 
 });
 
 test('quyền dữ liệu và reset sạch sau khi chết: chat, ranking, Thiên Tinh', () => {
-  const migration = read('supabase/migrations/20261111015058_online_social_and_indexed_leaderboard.sql');
+  const migration = read('supabase/sql/archive/pre-baseline/20261111015058_online_social_and_indexed_leaderboard.sql');
   const repo = read('server/repositories/postgres-players.js');
   const service = read('server/services/player-service.js');
   for (const table of ['world_chat_messages','world_chat_presence','player_leaderboard'])
