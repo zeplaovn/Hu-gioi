@@ -162,6 +162,7 @@ export async function handleApi(req: Request): Promise<Response> {
   const candidateId = req.headers.get('x-request-id') || '';
   const requestId: string = REQUEST_ID.test(candidateId) ? candidateId : crypto.randomUUID();
   const since = performance.now();
+  let routeName = '';
   if (req.method === 'OPTIONS') {
     const headers = corsHeaders(req, ORIGINS);
     headers.set('X-Request-Id', requestId);
@@ -170,6 +171,7 @@ export async function handleApi(req: Request): Promise<Response> {
   try {
     const route = routeOf(req.method, new URL(req.url).pathname);
     if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
+    routeName = route.name;
     const ownerId = await authenticate(req, route.name);
     // Defense in depth against repeated reads/failed intents. Not global across
     // Edge isolates: Supabase Auth limits and an upstream WAF are still required.
@@ -205,8 +207,15 @@ export async function handleApi(req: Request): Promise<Response> {
   } catch (err) {
     countContention(err);
     const { status, body } = toEnvelope(err, requestId);
+    const diagnostic = err instanceof Error ? err : null;
+    const safeNames = new Set(['Error', 'TypeError', 'RangeError', 'ReferenceError', 'PostgresError', 'GameError']);
+    const frame = diagnostic?.stack?.match(/game\.bundle\.mjs:(\d+):(\d+)/);
+    const pgCode = (err as { code?: unknown } | null)?.code;
     if (shouldLogApiError(err, status)) logOperational({
       event: 'api_error', requestId, code: body.error.code, status,
+      route: routeName, errorType: safeNames.has(diagnostic?.name || '') ? diagnostic?.name : 'Other',
+      sqlstate: typeof pgCode === 'string' && /^[A-Z0-9]{5}$/.test(pgCode) ? pgCode : undefined,
+      bundleFrame: frame ? `${frame[1]}:${frame[2]}` : undefined,
       durationMs: Math.round(performance.now() - since)
     }); // không token, state, SQL hoặc password; đã giới hạn log/isolate
     const failure = err as { details?: { retryAfterMs?: number } } | null;
