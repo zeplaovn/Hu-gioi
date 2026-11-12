@@ -29,3 +29,17 @@ body.reduced-motion .intro-dust{display:none}
 @media(max-width:600px){.intro-top{font-size:11px;letter-spacing:.12em}.intro-top span:last-child{max-width:130px;text-align:right}.intro-bottom{bottom:2vh;padding-top:18px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}.intro-caption{font-size:17px;line-height:1.65;margin:12px 0 20px}.intro-controls{align-items:flex-start;flex-direction:column;gap:12px}#tutorialCard{padding:16px}#tutorialCard h2{font-size:22px}}
 @media(max-height:500px){.intro-top{padding:10px 20px}.intro-bottom{bottom:0;padding:10px 24px;width:100%}#introTitle{font-size:26px;margin:6px 0}.intro-caption{font-size:16px;line-height:1.5;min-height:0;margin:8px 0 12px}.intro-controls{flex-direction:row}.intro-letterbox{border-block-width:28px}}
 @media(max-height:500px){#tutorialCard{width:min(340px,calc(100vw - 24px));padding:14px}#tutorialCard h2{font-size:20px;margin:8px 0}#tutorialCard p{font-size:13px;line-height:1.6}.tutorial-actions{margin-top:12px}}
+
+/* Dẫn đường đồng hành, không chặn nút hay thao tác của người chơi. */
+#noviceGuide{position:fixed;z-index:105;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));width:min(330px,calc(100vw - 24px));max-height:min(45dvh,320px);overflow:auto;padding:12px 14px;border:1px solid #bd9c5e;border-radius:14px;color:#f0e8d6;background:linear-gradient(145deg,#253d30f5,#101c16f7);box-shadow:0 10px 32px #0009}
+.novice-guide-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.novice-guide-heading button{width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:#dfd2b6;font-size:24px;cursor:pointer}
+#noviceGuide h2{font:700 18px/1.2 var(--serif);color:#f3dfad;margin:4px 0}
+#noviceGuide p{margin:6px 0 10px;font-size:13px;line-height:1.45;color:#e5e5d9}
+.novice-guide-actions{display:flex;gap:8px;flex-wrap:wrap}.novice-guide-actions .btn{min-height:38px;font-size:12px;padding:7px 10px}
+#noviceGuide.collapsed p,#noviceGuide.collapsed #noviceGuideGo{display:none}
+.novice-guide-target{outline:3px solid #ffe49b!important;outline-offset:3px;box-shadow:0 0 0 5px #e1aa4044,0 0 22px #f2c86a!important}
+@media(max-width:600px){#noviceGuide{top:auto;bottom:calc(72px + env(safe-area-inset-bottom));right:8px;width:min(300px,calc(100vw - 16px));max-height:33dvh;padding:8px 10px}#noviceGuide h2{font-size:16px}#noviceGuide p{font-size:12px;line-height:1.35}.novice-guide-heading button{width:32px;height:32px}}
+@media(max-width:600px){#noviceGuide.target-low{top:max(8px,env(safe-area-inset-top));bottom:auto}}
+@media(min-width:601px){#noviceGuide:not(.target-low){top:auto;bottom:12px}#noviceGuide.target-low{top:12px;bottom:auto}}
+body:has(#tribulationFx:not([hidden])[data-phase="running"]) #noviceGuide{display:none}

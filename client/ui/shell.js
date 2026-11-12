@@ -1033,6 +1033,7 @@
     wins.refreshAll();
     updateTimers();
     if (trib.pageOpen) trib.updatePage();
+    UI.tutorial?.update();
   }
 
   function soft() {
@@ -1042,6 +1043,7 @@
     wins.map.forEach(w => w.def.update?.(tabOf(w.def)));
     updateTimers();
     if (trib.pageOpen) trib.updatePage();
+    UI.tutorial?.update();
   }
 
   function go(target, { silent = false } = {}) {
@@ -1847,7 +1849,7 @@
   });
 
   document.addEventListener('keydown', e => {
-    if (UI.intro?.active || UI.tutorial?.active) return;
+    if (UI.intro?.active) return;
     if (e.key === 'Tab' && !$('modalLayer').hidden) {
       const els = [...$('modalLayer').querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]')].filter(x => x.offsetParent !== null);
       const first = els[0], last = els.at(-1);
@@ -1956,6 +1958,7 @@
       });
       updateTimers();
       if (trib.pageOpen) trib.updatePage();
+      UI.tutorial?.update();
       const st = UI.s();
       if (!trib.pageOpen && $('game')?.dataset.stage === 'idle' && !st.auto && st.settings.cultivationEffects && !isReduced() && Date.now() - lastIdleVfx > 14000) {
         lastIdleVfx = Date.now();

@@ -112,98 +112,119 @@
   }
   UI.intro = { play: playIntro, close: closeIntro, focus: () => intro?.el.focus({ preventScroll: true }), get active() { return !!intro; } };
 
-  function trapTab(el, event) {
-    const buttons = [...el.querySelectorAll('button:not(:disabled)')];
-    if (!buttons.length) { event.preventDefault(); return; }
-    const first = buttons[0], last = buttons.at(-1);
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    else if (!buttons.includes(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+  /* Bảng dẫn đường không khóa màn hình: người chơi phải tự thực hiện từng thao tác.
+     Điều kiện hoàn thành và phần thưởng vẫn do máy chủ quyết định. */
+  let guide = null, marked = null;
+  const GUIDE_KEY = 'huGioiNoviceGuideHidden:';
+  const key = () => GUIDE_KEY + (UI.session?.playerId || '');
+  function hiddenByPlayer() {
+    try { return !!UI.session?.playerId && root.localStorage?.getItem(key()) === '1'; } catch { return false; }
   }
-
-  const STEPS = [
-    { target: '#heroActor', title: 'Một hành trình mới', text: 'Đạo thân tự nhập định và hấp thụ linh khí theo thời gian. Số nổi trên nhân vật cho biết lượng vừa hấp thụ.', go: 'idle' },
-    { target: '#statusVitals', title: 'Sinh lực, linh khí và thọ nguyên', text: 'Theo dõi ba thanh này trước mỗi chuyến lịch luyện. Đột phá giúp kéo dài tuổi thọ; năm chỉ số thiên phú nằm ngay bên dưới.', go: 'idle' },
-    { target: '#equippedItems', title: 'Trang bị trong Hành trang', text: 'Bốn ô pháp bảo nằm ở đầu Hành trang. Chọn một pháp bảo trong túi rồi bấm Trang bị; bấm ô đang mặc để tháo.', go: 'character:bag' },
-    { target: '.inventory-cell[data-select="BT-001"]', fallback: '.inventory-items', title: 'Lĩnh ngộ công pháp', text: 'Chọn bí tịch Dẫn Khí Quyết rồi Lĩnh ngộ. Công pháp tự vận hành nếu còn ô trống; vào tab Công pháp để quản lý tối đa ba công pháp đang dùng.', go: 'character:bag' },
-    { target: '#menu [data-window="combat"]', title: 'Lịch luyện và cơ duyên', text: 'Lịch luyện để kiếm tài nguyên. Thế giới có nhiệm vụ, bí cảnh và tông môn; Nghề phụ giúp luyện đan, rèn đồ và trồng linh thảo.', go: 'idle' },
-    { target: '#btn-break', title: 'Bước qua cảnh giới', text: 'Khi tu vi đầy, nút Đột phá sẽ sáng lên. Bạn đã sẵn sàng! Có thể xem lại hướng dẫn này trong Cài đặt → Hướng dẫn.', go: 'idle' }
-  ];
-  let tutorial = null;
-  const stepTarget = step => document.querySelector(step.target) || (step.fallback ? document.querySelector(step.fallback) : null);
-  function placeTutorial() {
-    if (!tutorial) return;
-    const target = stepTarget(STEPS[tutorial.index]), spot = $('tutorialSpot'), card = $('tutorialCard');
-    const width = root.innerWidth, height = root.innerHeight;
-    spot.hidden = !target?.getClientRects().length;
-    tutorial.el.classList.toggle('no-target', spot.hidden);
-    let left = (width - card.offsetWidth) / 2, top = (height - card.offsetHeight) / 2;
-    if (!spot.hidden) {
-      const r = target.getBoundingClientRect(), clip = target.closest('.win-body')?.getBoundingClientRect();
-      const x = Math.max(4, r.left - 5, clip?.left || 0), y = Math.max(4, r.top - 5, clip?.top || 0);
-      const right = Math.min(width - 4, r.right + 5, clip?.right ?? width), bottom = Math.min(height - 4, r.bottom + 5, clip?.bottom ?? height);
-      Object.assign(spot.style, { left: x + 'px', top: y + 'px', width: Math.max(0, right - x) + 'px', height: Math.max(0, bottom - y) + 'px' });
-      const below = bottom + 18, above = y - card.offsetHeight - 18;
-      top = below + card.offsetHeight < height - 12 ? below : above > 12 ? above : height - card.offsetHeight - 12;
-      left = Math.max(12, Math.min(width - card.offsetWidth - 12, x + (right - x) / 2 - card.offsetWidth / 2));
-      if (below + card.offsetHeight >= height - 12 && above <= 12) {
-        if (right + 18 + card.offsetWidth < width - 12) left = right + 18;
-        else if (x - card.offsetWidth - 18 > 12) left = x - card.offsetWidth - 18;
+  function rememberHidden(value) {
+    try { if (UI.session?.playerId) root.localStorage?.setItem(key(), value ? '1' : '0'); } catch { /* vẫn sử dụng trong phiên */ }
+  }
+  function plan(s, info, now) {
+    const q = info.quest;
+    if (!q) return null;
+    if (info.ready) return { page: 'quests', target: '[data-act="claimQuest"][data-id="' + q.id + '"]', text: 'Mục tiêu đã hoàn thành. Mở Nhiệm vụ và chạm Nhận thưởng để tiếp tục.', action: 'Đi nhận thưởng' };
+    switch (q.id) {
+      case 'novice_meditate':
+        return { page: 'idle', target: '.status-progress', text: 'Giữ game đang mở và kết nối. Tu vi tự tăng; hãy nhập định đủ 60 giây (' + Math.min(60, Math.floor(s.progress.meditate)) + '/60).', action: 'Xem tu vi' };
+      case 'novice_sect':
+        return { page: 'world:sect', target: '[data-act="joinSect"]:not(:disabled)', text: 'Mở Tông môn, đọc giới thiệu rồi chạm Gia nhập ở tông môn bạn chọn.', action: 'Mở tông môn' };
+      case 'novice_mission': {
+        const m = s.sect.mission;
+        if (m && m.end > now) return { page: 'world:sect', target: '[data-act="sectMissionClaim"]', text: 'Ủy thác đang thực hiện. Giữ game mở, chờ hết giờ rồi trở lại nhận kết quả; nếu thất bại hãy thử lại.', action: 'Xem ủy thác' };
+        if (m) return { page: 'world:sect', target: '[data-act="sectMissionClaim"]:not(:disabled)', text: 'Ủy thác đã đến hạn. Chạm Nhận thưởng; nếu nhiệm vụ thất bại, hãy nhận lại một ủy thác khác.', action: 'Đến nhận kết quả' };
+        return { page: 'world:sect', target: '[data-act="sectMissionStart"]:not(:disabled)', text: 'Trong bảng Ủy thác tông môn, chọn một nhiệm vụ đang mở và chạm Nhận.', action: 'Chọn ủy thác' };
       }
+      case 'novice_explore': {
+        const e = s.exploration?.active;
+        if (!e) return { page: 'combat', target: '[data-act="exploreStart"]:not(:disabled)', text: 'Mở Lịch luyện, chọn nơi phù hợp và chạm Khởi hành. Một chuyến kéo dài 10 phút khi game đang mở.', action: 'Mở lịch luyện' };
+        if (e.choice < 0 && (e.kind === 'npc' || e.kind === 'monster')) return { page: 'combat', target: '[data-act="exploreChoice"]:not(:disabled)', text: 'Chọn một cách ứng phó với sự kiện. Đọc kỹ từng lựa chọn và nguy cơ trước khi quyết định.', action: 'Xem sự kiện' };
+        return { page: 'combat', target: '#explorationCountdown', text: 'Tiếp tục mở game cho đến khi chuyến lịch luyện kết thúc và bạn trở về.', action: 'Xem chuyến đi' };
+      }
+      case 'novice_alchemy':
+        return s.craftQueue.length ? { page: 'craft:dan', target: '.craft-top', text: 'Mẻ đan đang luyện. Giữ game mở đến khi hoàn tất; thất bại thì chuẩn bị nguyên liệu và thử lại.', action: 'Xem lò đan' }
+          : { page: 'craft:dan', target: '[data-act="craft"]:not(:disabled)', text: 'Mở Luyện đan, tìm công thức có đủ nguyên liệu rồi chạm Xếp mẻ luyện. Có thể mua thêm dược liệu nếu thiếu.', action: 'Mở luyện đan' };
+      case 'novice_stage':
+        return { page: 'idle', target: '.status-progress', text: 'Tiếp tục tu luyện đến Luyện Khí tầng 3. Tiểu cảnh giới tự đột phá khi đủ tu vi.', action: 'Xem tu luyện' };
+      case 'novice_peak':
+        return { page: 'idle', target: '.status-progress', text: 'Tiếp tục tu luyện đến tầng cuối Luyện Khí. Chuẩn bị sinh lực và vật phẩm hộ kiếp trước khi độ kiếp.', action: 'Xem tu luyện' };
+      case 'novice_foundation':
+        return { page: s.qi >= UI.g().need() ? 'tribulation' : 'idle', target: s.qi >= UI.g().need() ? '#tribStart' : '.status-progress', text: s.qi >= UI.g().need() ? 'Tu vi đã đủ. Xem kỹ xác suất và hộ kiếp trước khi dẫn lôi: thất bại khiến nhân vật tử vong.' : 'Tích đủ tu vi ở đỉnh Luyện Khí trước khi chuẩn bị độ kiếp. Thất bại khiến nhân vật tử vong.', action: s.qi >= UI.g().need() ? 'Xem chuẩn bị độ kiếp' : 'Xem tu luyện' };
+      default: return { page: q.go, target: '', text: q.desc, action: 'Đi thực hiện' };
     }
-    Object.assign(card.style, { top: Math.max(12, top) + 'px', left: Math.max(12, left) + 'px' });
   }
-  function endTutorial() {
-    if (!tutorial) return;
-    tutorial.el.remove();
-    $('game').inert = tutorial.wasInert;
-    root.removeEventListener('resize', placeTutorial);
-    document.removeEventListener('scroll', placeTutorial, true);
-    tutorial = null;
-    UI.go('idle', { silent: true });
-    $('stage').focus({ preventScroll: true });
+  function clearMark() { marked?.classList.remove('novice-guide-target'); marked = null; }
+  function findTarget(selector) {
+    if (!selector) return null;
+    return [...document.querySelectorAll(selector)].find(el => el.getClientRects().length && !el.closest('[hidden], [inert]')) || null;
   }
-  function showStep() {
-    const step = STEPS[tutorial.index];
-    UI.windows.closeAll();
-    UI.go(step.go, { silent: true });
-    $('tutorialTitle').textContent = step.title;
-    $('tutorialText').textContent = step.text;
-    $('tutorialCount').textContent = `DẪN ĐƯỜNG TIÊN LỘ · ${tutorial.index + 1}/${STEPS.length}`;
-    $('tutorialBack').disabled = tutorial.index === 0;
-    $('tutorialNext').textContent = tutorial.index === STEPS.length - 1 ? 'Bắt đầu hành trình' : 'Tiếp theo ›';
-    stepTarget(step)?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
-    placeTutorial();
-    requestAnimationFrame(placeTutorial);
-    $('tutorialNext').focus({ preventScroll: true });
+  function updateGuide() {
+    if (!guide || !UI.store.ready || !UI.s().created) return;
+    const info = UI.g().noviceQuestInfo(), q = info.quest;
+    if (!q) { closeGuide(); UI.toast('Đã hoàn thành hành trình tân thủ đến Trúc Cơ.', { type: 'success', title: 'Tiên lộ' }); return; }
+    const p = plan(UI.s(), info, Date.now());
+    const markerKey = q.id + ':' + info.ready + ':' + p.target;
+    if (guide.markerKey !== markerKey) clearMark();
+    guide.markerKey = markerKey;
+    guide.plan = p;
+    const setText = (id, value) => { const el = $(id); if (el.textContent !== value) el.textContent = value; };
+    setText('noviceGuideCount', 'TÂN THỦ · ' + (info.index + 1) + '/' + root.HU_GAME.NOVICE_QUESTS.length);
+    setText('noviceGuideTitle', q.name);
+    setText('noviceGuideText', p.text);
+    setText('noviceGuideGo', p.action);
+    if (marked && (!marked.isConnected || !marked.getClientRects().length)) clearMark();
   }
-  function startTutorial() {
-    if (tutorial || !UI.store.ready || UI.intro.active || UI.tribulation.active || !$('modalLayer').hidden) return;
-    const el = document.createElement('section');
-    el.id = 'tutorialLayer';
-    el.setAttribute('role', 'dialog');
-    el.setAttribute('aria-modal', 'true');
-    el.setAttribute('aria-labelledby', 'tutorialTitle');
-    el.innerHTML = `<div id="tutorialSpot" aria-hidden="true"></div><div id="tutorialCard">
-      <span id="tutorialCount" class="eyebrow gold"></span><h2 id="tutorialTitle"></h2><p id="tutorialText" role="status" aria-live="polite"></p>
-      <div class="tutorial-actions"><button id="tutorialSkip" class="text-btn" type="button">Bỏ qua</button><button id="tutorialBack" class="btn btn-outline" type="button">Quay lại</button><button id="tutorialNext" class="btn btn-gold" type="button">Tiếp theo ›</button></div></div>`;
+  function pointToStep() {
+    if (!guide) return;
+    updateGuide();
+    const p = guide?.plan;
+    if (!p) return;
+    if (p.page === 'world:sect') UI.view.sectPanel = 'missions';
+    UI.go(p.page);
+    const screen = p.page.split(':')[0];
+    if (screen !== 'idle' && screen !== 'tribulation' && UI.windows.has(screen)) UI.windows.render(screen);
+    clearMark();
+    const point = () => {
+      if (!guide || guide.plan !== p) return;
+      const target = findTarget(p.target);
+      if (!target) return;
+      target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
+      const r = target.getBoundingClientRect();
+      guide.el.classList.toggle('target-low', r.top + r.height / 2 > root.innerHeight / 2);
+      target.classList.add('novice-guide-target');
+      marked = target;
+    };
+    point();
+    root.requestAnimationFrame(point);
+  }
+  function closeGuide() {
+    if (!guide) return;
+    clearMark(); guide.el.remove(); guide = null;
+  }
+  function startGuide(force = true) {
+    if (!UI.store.ready || !UI.s().created || UI.intro.active || UI.tribulation.active || !$('modalLayer').hidden) return;
+    if (!force && hiddenByPlayer()) return;
+    if (!UI.g().noviceQuestInfo().quest) return;
+    if (guide) { updateGuide(); return; }
+    if (force) rememberHidden(false);
+    const el = document.createElement('aside');
+    el.id = 'noviceGuide';
+    el.setAttribute('aria-label', 'Hướng dẫn tân thủ');
+    el.innerHTML = '<div class="novice-guide-heading"><span id="noviceGuideCount" class="eyebrow gold"></span><button id="noviceGuideHide" type="button" aria-label="Ẩn hướng dẫn">×</button></div><h2 id="noviceGuideTitle"></h2><p id="noviceGuideText" role="status" aria-live="polite"></p><div class="novice-guide-actions"><button id="noviceGuideGo" type="button" class="btn btn-gold">Chỉ vị trí</button><button id="noviceGuideCollapse" type="button" class="btn btn-outline" aria-expanded="true">Thu gọn</button></div>';
     document.body.append(el);
-    tutorial = { el, index: 0, wasInert: $('game').inert };
-    $('game').inert = true;
-    $('tutorialSkip').addEventListener('click', endTutorial);
-    $('tutorialBack').addEventListener('click', () => { if (tutorial.index > 0) { tutorial.index--; showStep(); } });
-    $('tutorialNext').addEventListener('click', () => {
-      if (++tutorial.index === STEPS.length) endTutorial(); else showStep();
+    guide = { el, plan: null };
+    $('noviceGuideGo').addEventListener('click', pointToStep);
+    $('noviceGuideHide').addEventListener('click', () => { rememberHidden(true); closeGuide(); });
+    $('noviceGuideCollapse').addEventListener('click', event => {
+      const collapsed = el.classList.toggle('collapsed');
+      event.currentTarget.textContent = collapsed ? 'Mở rộng' : 'Thu gọn';
+      event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
     });
-    el.addEventListener('keydown', event => {
-      event.stopPropagation();
-      if (event.key === 'Escape') { event.preventDefault(); endTutorial(); }
-      else if (event.key === 'Tab') trapTab(el, event);
-    });
-    root.addEventListener('resize', placeTutorial);
-    document.addEventListener('scroll', placeTutorial, true);
-    showStep();
+    updateGuide();
   }
-  UI.tutorial = { start: startTutorial, close: endTutorial, get active() { return !!tutorial; } };
-  UI.action('tutorial', () => { startTutorial(); return UI.KEEP; });
+  UI.tutorial = { start: () => startGuide(true), resume: () => startGuide(false), close: closeGuide, update: updateGuide, plan, get active() { return !!guide; } };
+  UI.action('tutorial', () => { startGuide(true); return UI.KEEP; });
 })(typeof window !== 'undefined' ? window : globalThis);

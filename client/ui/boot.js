@@ -341,6 +341,7 @@
       try { root.history?.replaceState(null, '', '#' + target); } catch { /* file:// */ }
     }
     store.write();
+    UI.tutorial?.resume();
   }
 
   function bindCreation() {
