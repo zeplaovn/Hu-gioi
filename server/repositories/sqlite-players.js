@@ -275,7 +275,8 @@ class SqlitePlayers extends PlayerRepository {
       if (!allowAlive && !new GAME.Game(JSON.parse(row.state)).isDead())
         throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
       this.q.deletePlayer.run(playerId, ownerId);
-      // Giữ ticket để giới hạn lượt khởi nguyên không bị lợi dụng.
+      // Xóa tự nguyện đặt lại lượt gieo; tọa hóa vẫn giữ giới hạn cũ.
+      if (allowAlive) this.q.deleteOwnerTickets.run(ownerId);
       this.q.deletePavilion.run(ownerId);
       return { deleted: true };
     });

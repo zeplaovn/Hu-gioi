@@ -355,6 +355,7 @@ class PostgresPlayers extends PlayerRepository {
       await exec(c, 'DELETE FROM game.world_chat_messages WHERE owner_id = $1', [ownerId]);
       await exec(c, 'DELETE FROM game.world_chat_presence WHERE owner_id = $1', [ownerId]);
       await exec(c, 'DELETE FROM game.players WHERE id = $1 AND owner_id = $2', [playerId, ownerId]);
+      if (allowAlive) await exec(c, 'DELETE FROM game.creation_tickets WHERE owner_id = $1', [ownerId]);
       await exec(c, 'DELETE FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId]);
       return { deleted: true };
     });

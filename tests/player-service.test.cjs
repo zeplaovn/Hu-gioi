@@ -375,6 +375,32 @@ for (const adapter of ['sqlite', 'postgres']) {
     assert.equal((await service.sync(OWNER_A, playerId)).report.seconds, 0);
   });
 
+
+  test(`PlayerService hợp đồng [${adapter}]: xóa nhân vật đặt lại lượt gieo, không ảnh hưởng tài khoản khác`, async t => {
+    const { service, make } = await sharedFixture(adapter, t);
+    const other = await service.previewCreation(OWNER_B);
+    const first = await service.previewCreation(OWNER_A);
+    const { playerId } = await service.createPlayer(OWNER_A, { ticketId: first.ticketId, name: 'Tân Sinh', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' });
+    await assert.rejects(service.deleteCharacter(OWNER_B, playerId, { confirm: 'delete-character' }), { code: 'PLAYER_NOT_FOUND' });
+    await service.deleteCharacter(OWNER_A, playerId, { confirm: 'delete-character' });
+    const next = await service.previewCreation(OWNER_A);
+    assert.equal(next.rollsLeft, first.rollsLeft);
+    await assert.rejects(service.createPlayer(OWNER_A, { ticketId: first.ticketId, name: 'Tân Sinh', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' }), { code: 'TICKET_INVALID' });
+    const otherNext = await service.previewCreation(OWNER_B);
+    assert.equal(otherNext.rollsLeft, other.rollsLeft - 1);
+  });
+
+  test(`PlayerService hợp đồng [${adapter}]: xóa tài khoản xóa phiếu gieo của chính chủ`, async t => {
+    const { service, make } = await sharedFixture(adapter, t);
+    const other = await service.previewCreation(OWNER_B);
+    await make(OWNER_A, 'Xóa Tài Khoản');
+    const removed = await service.deleteAccount(OWNER_A, { confirm: 'delete-my-account' }, { deleteUser: async () => ({ deleted: true }) });
+    assert.equal(removed.players, 1);
+    assert.equal(removed.tickets, 1);
+    assert.equal((await service.previewCreation(OWNER_A)).rollsLeft, other.rollsLeft);
+    assert.equal((await service.previewCreation(OWNER_B)).rollsLeft, other.rollsLeft - 1);
+  });
+
   test(`PlayerService hợp đồng [${adapter}]: export bảo mật, erase, delete-account idempotent`, async t => {
     const { service, repo, make } = await sharedFixture(adapter, t);
     const { playerId } = await make(OWNER_A, 'Phàm Trần');

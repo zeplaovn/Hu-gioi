@@ -94,7 +94,7 @@
   }
 
   function account() {
-    return '<div class="screen-grid">' + card('Xóa nhân vật', '<p>Xóa đạo thân hiện tại để tạo lại từ đầu. Cảnh giới, trang bị, vật phẩm, Thiên Tinh, nâng cấp và thứ hạng của nhân vật sẽ mất. Tin nhắn do nhân vật gửi cũng bị xóa.</p><p>Tài khoản đăng nhập được giữ. Giới hạn lượt tạo nhân vật vẫn được áp dụng.</p><button type="button" class="btn btn-danger" data-act="deleteCharacter">Xóa nhân vật</button>', { eyebrow: 'NHÂN VẬT' }) + '</div>';
+    return '<div class="screen-grid">' + card('Xóa nhân vật', '<p>Xóa đạo thân hiện tại để tạo lại từ đầu. Cảnh giới, trang bị, vật phẩm, Thiên Tinh, nâng cấp và thứ hạng của nhân vật sẽ mất. Tin nhắn do nhân vật gửi cũng bị xóa.</p><p>Tài khoản đăng nhập được giữ. Lượt gieo nhân vật sẽ được đặt lại.</p><button type="button" class="btn btn-danger" data-act="deleteCharacter">Xóa nhân vật</button>', { eyebrow: 'NHÂN VẬT' }) + '</div>';
   }
   UI.action('deleteCharacter', () => {
     const name = UI.kit.esc(UI.s().name);
