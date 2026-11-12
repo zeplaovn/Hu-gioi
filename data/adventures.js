@@ -96,6 +96,16 @@
     { id: 'power', name: 'Đan chiến đấu', kind: 'PILL', effect: 'CHIEN_DAU', count: 1, cost: 180, rank: 1, sect: 'huyetsat' },
     { id: 'herbs', name: 'Linh thảo', kind: 'HERB', count: 4, cost: 100, rank: 0, sect: 'vanduoc' }
   ];
+  // Mỗi lần đổi sang một quyển khác là một lượt mượn mới. Nội dung lấy từ công thức đang có.
+  const SECT_BOOKS = [
+    ['dan','Đan Đạo Chân Giải','PILL'], ['khi','Bách Luyện Khí Phổ','EQ'],
+    ['phu','Vạn Phù Bí Lục','TAL'], ['dien','Bách Thảo Linh Kinh','SEED']
+  ].flatMap(([id, title, kind]) => [
+    ['ha','Hạ Giới',0,4,40], ['linh','Linh Giới',5,8,100], ['tien','Tiên Giới',9,13,200]
+  ].map(([level, world, minRealm, maxRealm, cost]) => ({
+    id: id + '_' + level, name: title + ' · ' + world, kind, world, minRealm, maxRealm, cost
+  })));
+  const EXPLORE_POINTS = 20;
   /* Sự kiện khi khởi hành Lịch luyện. Thứ tự và tỉ lệ: quái 45% · NPC 30% · kỳ duyên 25%. */
   const EXPLORE_WEIGHTS = [['monster', .45], ['npc', .30], ['encounter', .25]];
   /* Tâm ma: chỉ số 0–100. Mỗi điểm làm giảm xác suất đột phá nền (0,15%/điểm, tối đa −15%). */
@@ -113,7 +123,7 @@
       { id: 'bargain', label: 'Thương lượng', desc: 'Dùng lời lẽ khiến yêu thú nhường đường. Thành thì nhận một phần linh thạch, bại thì hao tổn sinh lực. Tâm ma cao khiến khó thành hơn.' }
     ]
   };
-  const data = { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX: 10, DUNGEONS, ENCOUNTER_RARITIES, ENCOUNTERS, ENCOUNTER_INTERVAL: 180, EXPLORE_WEIGHTS, EXPLORE_CHOICES, TAM_MA_MAX, TAM_MA_BREAK_PENALTY, TAM_MA_CLEANSE, SECTS, SECT_RANKS, SECT_MISSIONS, SECT_SHOP };
+  const data = { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX: 10, DUNGEONS, ENCOUNTER_RARITIES, ENCOUNTERS, ENCOUNTER_INTERVAL: 180, EXPLORE_WEIGHTS, EXPLORE_CHOICES, EXPLORE_POINTS, TAM_MA_MAX, TAM_MA_BREAK_PENALTY, TAM_MA_CLEANSE, SECTS, SECT_RANKS, SECT_MISSIONS, SECT_SHOP, SECT_BOOKS };
   root.HU_ADVENTURE_DATA = data;
   if (typeof module !== 'undefined' && module.exports) module.exports = data;
 })(typeof window !== 'undefined' ? window : globalThis);

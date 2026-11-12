@@ -81,7 +81,7 @@
       offlineCap: 0, offlineEff: 0, age: 18, extraLife: 0, alchemySkill: 0, craftBoost: 0,
       craftQueue: [], garden: [], gardenSoils: ['đất thường', 'linh điền', 'hỏa địa', 'hàn đàm'],
       offlineKills: 0, yaoValue: 0, progress: { kill: 0, meditate: 0, travel: 1, breaks: 0, alchemy: 0 },
-      claimed: [], locations: [0], npcAffinities: {}, npcQuests: {},
+      claimed: [], locations: [0], npcAffinities: {}, npcQuests: {}, adventurePoints: 0, borrowedBook: '',
       auction: { offers: {}, cycle: Math.floor(now / 3600000), pausedMs: 0 },
       social: { friends: {}, pvp: { rating: 1000, wins: 0, losses: 0, streak: 0, best: 1000, lastAt: 0 }, lastDiscuss: 0 },
       meta: metaDefault(), story: storyDefault(), designCombat: designCombatDefault(),
@@ -243,6 +243,8 @@
     }
 
     x.tamMa = integer(raw.tamMa, 0, A.TAM_MA_MAX);
+    x.adventurePoints = integer(raw.adventurePoints, 0, 1e9);
+    x.borrowedBook = A.SECT_BOOKS.some(book => book.id === raw.borrowedBook) ? raw.borrowedBook : '';
     for (const k of ['pity', 'rebirths', 'offlineCap', 'offlineEff', 'pillUses', 'enemyNum', 'chaosTries'])
       x[k] = integer(raw[k], 0, k === 'pity' ? 15 : k.startsWith('offline') ? 8 : 1e9);
 

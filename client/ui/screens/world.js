@@ -167,7 +167,7 @@
     update: () => UI.adventure.update(),
     signature: tab => {
       const s = UI.s(), g = UI.g();
-      return [s.realm, s.stage, s.sect.joined, s.sect.id, s.sect.earned, s.sect.contribution, s.sect.mission?.id || '', s.sect.mission?.end || 0, s.sect.blessing, s.sect.last?.at, s.sect.repeat, s.meta?.points || 0,
+      return [s.realm, s.stage, s.sect.joined, s.sect.id, s.sect.earned, s.sect.contribution, s.adventurePoints || 0, s.borrowedBook || '', s.sect.mission?.id || '', s.sect.mission?.end || 0, s.sect.blessing, s.sect.last?.at, s.sect.repeat, s.meta?.points || 0,
         s.dungeon.active?.end || 0, s.dungeon.last?.at || 0, s.dungeon.run ? [s.dungeon.run.floor, s.dungeon.run.turn, Math.round(s.hp), Math.round(s.dungeon.run.sta)].join(',') : '', tab === 'npc' ? [s.progress.kill, JSON.stringify(s.npcQuests), Object.values(s.npcAffinities).join(',')].join('/') : '', s.encounter.total, Math.floor(Date.now() / 864e5),
         tab === 'dungeons' || tab === 'sect' ? Math.floor(s.hp / g.stats().HP * 10) : '', s.stone >= F.price_ha(s.realm)].join('|');
     }

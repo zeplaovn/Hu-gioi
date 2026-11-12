@@ -117,7 +117,8 @@
           } else if (exploring.kind === 'npc') {
             exploring.text = this.resolveExplorationNpc(exploring);
           }
-          this.log('Lịch luyện kết thúc · ' + exploring.name + '. ' + exploring.text);
+          s.adventurePoints = Math.min(1e9, (s.adventurePoints || 0) + H.EXPLORE_POINTS);
+          this.log('Lịch luyện kết thúc · ' + exploring.name + '. ' + exploring.text + ' Điểm lịch luyện +' + H.EXPLORE_POINTS + '.');
           s.exploration.last = exploring;
           s.exploration.active = null;
           if (now <= start) {

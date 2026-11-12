@@ -90,6 +90,29 @@ test('lệnh: tăng revision, idempotent theo requestId, phát hiện revision l
   assert.equal((await svc.bootstrap('owner-a')).player.revision, 1, 'xung đột không ghi gì');
 });
 
+test('mượn sách được ghi bền và retry không trừ điểm lịch luyện hai lần', async () => {
+  const { svc, clock, repo } = setup({ onlineGraceMs: 300000 });
+  const made = await spawn(svc), id = made.playerId;
+  const send = async (type, payload, req) => svc.command('owner-a', id, await envelope(svc, 'owner-a', type, payload, req));
+  await send('joinSect', { id: H.SECTS[0].id }, 'lib-join');
+  for (let i = 0; i < 2; i++) {
+    await send('startSectMission', { id: 'patrol' }, 'lib-start-' + i);
+    clock.t += 90000;
+    await send('claimSectMission', {}, 'lib-claim-' + i);
+  }
+  const intent = await envelope(svc, 'owner-a', 'buySect', { id: 'dan_ha' }, 'lib-borrow');
+  const first = await svc.command('owner-a', id, intent);
+  assert.equal(first.state.adventurePoints,30);
+  assert.equal(first.state.borrowedBook,'dan_ha');
+  const replay = await svc.command('owner-a', id, intent);
+  assert.equal(replay.replayed,true);
+  assert.equal(replay.state.adventurePoints,30);
+  const stored = await svc.state('owner-a', id);
+  assert.equal(stored.state.adventurePoints,30);
+  assert.equal(stored.state.borrowedBook,'dan_ha');
+  repo.close();
+});
+
 test('lệnh sai: envelope, payload thừa, loại lệnh lạ, luật từ chối không ghi state', async () => {
   const { svc, clock } = setup();
   const { playerId: id } = await spawn(svc);

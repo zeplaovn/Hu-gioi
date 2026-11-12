@@ -12,6 +12,7 @@
       <p class="info-note">${journey
         ? 'Đang hành tẩu trong bí cảnh. Phải kết thúc chuyến đi mới có thể trở về đài Tu luyện hoặc đổi địa điểm.'
         : 'Chọn địa điểm phù hợp đạo hạnh, sau đó khởi hành. Một chuyến lịch luyện kéo dài đúng mười phút.'}</p>
+      <p class="info-note">Hoàn thành chuyến đi nhận ${H.EXPLORE_POINTS} điểm lịch luyện · hiện có ${num(s.adventurePoints || 0)} điểm. Dùng điểm để mượn sách tại Tàng Kinh Các trong tông môn.</p>
       ${journey ? `<div class="exploration-clock" role="timer" aria-label="Thời gian lịch luyện còn lại">
             <span>Thời gian trở về</span><strong id="explorationCountdown">${countdown}</strong>
             <div class="meter-bar" aria-hidden="true"><i id="explorationProgress" style="width:${(100 - remain / 6).toFixed(1)}%"></i></div>
@@ -78,7 +79,7 @@
     signature: () => {
       const s = UI.s(), e = s.exploration?.active;
       return [s.zone, e?.start || 0, e?.end || 0, e?.kind || '', e?.choice ?? -1, s.tamMa || 0, s.exploration?.last?.end || 0,
-        s.logs[0] || '', s.logs.length].join('|');
+        s.logs[0] || '', s.logs.length, s.adventurePoints || 0].join('|');
     }
   });
 

@@ -87,6 +87,19 @@
         };
         return { quest: q, index, ready: !!done[q.id] };
       },
+      borrowSectBook(payload) {
+        const s = this.s, book = H.SECT_BOOKS.find(b => b.id === payload.id);
+        if (!s.sect.joined) throw Error('Hãy gia nhập tông môn trước khi mượn sách.');
+        if (!book) throw Error('Không tìm thấy sách trong Tàng Kinh Các.');
+        if (s.realm < book.minRealm) throw Error('Cảnh giới chưa đủ để mượn sách này.');
+        if (s.borrowedBook === book.id) throw Error('Bạn đang mượn quyển sách này.');
+        const points = Number.isSafeInteger(s.adventurePoints) ? s.adventurePoints : 0;
+        if (points < book.cost) throw Error('Không đủ điểm lịch luyện.');
+        s.adventurePoints = points - book.cost;
+        s.borrowedBook = book.id;
+        this.log('Tàng Kinh Các · mượn ' + book.name + ' · −' + book.cost + ' điểm lịch luyện.');
+        return { id: book.id, name: book.name, cost: book.cost, points: s.adventurePoints };
+      },
       claimFragments() {
         const s = this.s, parts = ITEMS.filter(x => x.kind === 'QITEM');
         if (s.claimed.includes('fragments')) throw Error('Đã nhận thưởng.');
@@ -227,10 +240,10 @@
         const contribution = success ? Math.round(def.contribution * mult) : 0;
         const stone = success && !def.legacy ? F.income_rate(m.realm) * def.seconds * .25 * mult : 0;
         const exp = success && !def.legacy ? this.gainExp(F.base_rate(m.realm) * def.seconds * .18 * mult) : 0;
-        if (success) { this.addContribution(contribution); s.stone += stone; s.sect.missionsDone++; }
+        if (success) { this.addContribution(contribution); s.adventurePoints = Math.min(1e9, (s.adventurePoints || 0) + contribution); s.stone += stone; s.sect.missionsDone++; }
         else { s.hp = Math.max(1, s.hp - this.stats().HP * .1); s.sect.repeat = false; }
         s.sect.mission = null;
-        const text = def.name + (success ? (excellent ? ' · xuất sắc' : ' · hoàn thành') + ' · cống hiến +' + contribution + ', ' + F.format_linh_thach(stone) + ', tu vi +' + F.fmt(exp) : ' · thất bại, mất 10% sinh lực tối đa.') + (m.featured ? ' · ủy thác nổi bật ×1,5.' : '.');
+        const text = def.name + (success ? (excellent ? ' · xuất sắc' : ' · hoàn thành') + ' · cống hiến +' + contribution + ', điểm lịch luyện +' + contribution + ', ' + F.format_linh_thach(stone) + ', tu vi +' + F.fmt(exp) : ' · thất bại, mất 10% sinh lực tối đa.') + (m.featured ? ' · ủy thác nổi bật ×1,5.' : '.');
         const result = { id: def.id, at: now, success, contribution, stone, exp, text };
         s.sect.last = result;
         this.log('Tông môn · ' + text);
@@ -253,6 +266,7 @@
         return { ...d, item: reward, cost, locked: !this.s.sect.joined || this.sectRank().index < d.rank || (!!d.sect && this.s.sect.id !== d.sect) || (!!d.kind && !reward) };
       },
       buySect(payload) {
+        if (H.SECT_BOOKS.some(book => book.id === payload.id)) return this.borrowSectBook(payload);
         const id = payload.id, element = payload.element ?? this.activeElements()[0];
         const offer = this.sectShopOffer(id), x = this.s.sect;
         if (!offer || offer.locked) throw Error('Vật phẩm tông môn chưa mở.');
