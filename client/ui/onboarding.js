@@ -12,6 +12,9 @@
     'Chào mừng đến với Hư Giới! Nơi muôn vàn sinh linh rơi xuống những góc trời xa lạ — kẻ hóa thành cô độc giữa muôn ngàn hiểm nguy, người đứng trước cơ duyên thành Tiên hóa Thánh. Và số phận của bạn... chính thức bắt đầu từ đây!'
   ];
   const CHAPTERS = ['Nhân gian', 'Thiên biến', 'Ly giới', 'Vượt hư không', 'Tiên lộ khởi nguyên'];
+  const TYPE_INTERVAL = 35, SCROLL_DURATION = 2400;
+  const segmenter = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter('vi', { granularity: 'grapheme' }) : null;
+  const lettersOf = text => segmenter ? Array.from(segmenter.segment(text), part => part.segment) : Array.from(text);
   let intro = null;
 
   function playIntro() {
@@ -26,74 +29,102 @@
       <div class="intro-shade"></div><div class="intro-dust" aria-hidden="true"></div><div class="intro-letterbox" aria-hidden="true"></div>
       <header class="intro-top"><span>HƯ GIỚI</span><span>THIÊN MỆNH KHỞI NGUYÊN</span></header>
       <div class="intro-bottom"><span id="introChapter" class="eyebrow gold"></span><h2 id="introTitle"></h2>
-        <p id="introCaption" class="intro-caption" role="status" aria-live="polite"></p>
-        <div class="intro-controls"><span id="introDots" aria-hidden="true"></span><small id="introHint">Chạm để chuyển cảnh · Space tạm dừng · Esc bỏ qua</small></div></div>`;
+        <p id="introCaption" class="intro-caption" aria-hidden="true"><span id="introVisible"></span><span id="introPending"></span></p>
+        <p id="introNarration" class="intro-narration" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div class="intro-controls"><span id="introDots" aria-hidden="true"></span></div></div>`;
     document.body.append(el);
     document.body.classList.add('intro-open');
     const welcome = $('welcome'), wasInert = welcome.inert && !$('gameLoading');
     welcome.inert = true;
     let resolve;
-    const state = intro = { el, index: 0, timer: 0, paused: false, ended: false, remaining: 0, started: 0, welcome, wasInert,
+    const state = intro = { el, index: 0, timer: 0, ended: false, elapsed: 0, started: null, welcome, wasInert,
       promise: new Promise(done => { resolve = done; }) };
     const schedule = () => {
       clearTimeout(state.timer);
-      if (state.started) state.remaining = Math.max(0, state.remaining - (performance.now() - state.started));
-      state.started = 0;
-      const paused = state.paused || document.hidden;
+      if (state.started !== null) state.elapsed += performance.now() - state.started;
+      state.started = null;
+      const paused = document.hidden;
       el.classList.toggle('paused', paused);
       el.getAnimations({ subtree: true }).forEach(animation => paused ? animation.pause() : animation.play());
-      if (!state.ended && !state.paused && !document.hidden) {
+      if (!state.ended && !paused) {
         state.started = performance.now();
-        state.timer = setTimeout(next, state.remaining);
+        tick();
       }
     };
     const finish = () => {
       if (state.ended) return;
       state.ended = true;
       clearTimeout(state.timer);
+      $('introCaption').getAnimations().forEach(animation => animation.cancel());
+      $('introVisible').textContent = 'Đang bước vào Hư Giới…';
+      $('introPending').textContent = '';
+      $('introNarration').textContent = 'Đang bước vào Hư Giới.';
       el.focus({ preventScroll: true });
       resolve();
     };
+    const phase = (name, duration) => {
+      state.phase = name;
+      state.duration = duration;
+      state.elapsed = 0;
+      state.started = null;
+      if (name === 'scroll' && duration) $('introCaption').animate([
+        { opacity: 1, transform: 'translateY(0)' },
+        { opacity: 0, transform: 'translateY(-24vh)' }
+      ], { duration, fill: 'forwards', easing: 'ease-in-out' });
+      schedule();
+    };
+    function tick() {
+      if (state.ended || document.hidden) return;
+      const elapsed = state.elapsed + performance.now() - state.started;
+      if (state.phase === 'typing') {
+        const count = Math.min(state.letters.length, Math.floor(elapsed / TYPE_INTERVAL));
+        if (count !== state.written) {
+          state.written = count;
+          $('introVisible').textContent = state.letters.slice(0, count).join('');
+          $('introPending').textContent = state.letters.slice(count).join('');
+        }
+      }
+      if (elapsed >= state.duration) {
+        if (state.phase === 'typing') phase('reading', state.readingDuration);
+        else if (state.phase === 'reading') phase('scroll', state.reduced ? 0 : SCROLL_DURATION);
+        else next();
+        return;
+      }
+      const delay = state.phase === 'typing' ? Math.min(TYPE_INTERVAL, state.duration - elapsed) : state.duration - elapsed;
+      state.timer = setTimeout(tick, delay);
+    }
     const show = () => {
       const images = el.querySelectorAll('.intro-image'), current = images[state.index % 2];
       current.src = A.INTRO[state.index];
       images.forEach(image => image.classList.toggle('active', image === current));
-      state.remaining = Math.max(8000, STORY[state.index].split(/\s+/).length * 230);
-      state.started = 0;
+      state.reduced = UI.isReduced();
+      state.letters = lettersOf(STORY[state.index]);
+      state.written = state.reduced ? state.letters.length : 0;
+      const words = STORY[state.index].split(/\s+/).length;
+      state.readingDuration = state.reduced ? Math.max(8000, words * 230) : Math.max(1800, words * 60);
+      const typingDuration = state.reduced ? 0 : state.letters.length * TYPE_INTERVAL;
       current.getAnimations().forEach(animation => animation.cancel());
-      if (!UI.isReduced()) current.animate([
+      if (!state.reduced) current.animate([
         { transform: state.index % 2 ? 'scale(1.13) translateX(-1%)' : 'scale(1.02) translateX(1%)' },
         { transform: state.index % 2 ? 'scale(1.02) translateX(1%)' : 'scale(1.13) translateX(-1%)' }
-      ], { duration: state.remaining + 1800, fill: 'forwards', easing: 'linear' });
+      ], { duration: typingDuration + state.readingDuration + SCROLL_DURATION + 1800, fill: 'forwards', easing: 'linear' });
       $('introChapter').textContent = `CHƯƠNG ${String(state.index + 1).padStart(2, '0')} / 05`;
       $('introTitle').textContent = CHAPTERS[state.index];
       const caption = $('introCaption');
-      caption.textContent = STORY[state.index];
       caption.getAnimations().forEach(animation => animation.cancel());
-      if (!UI.isReduced()) caption.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 1500, easing: 'ease-out' });
+      $('introVisible').textContent = state.reduced ? STORY[state.index] : '';
+      $('introPending').textContent = state.reduced ? '' : STORY[state.index];
+      $('introNarration').textContent = CHAPTERS[state.index] + '. ' + STORY[state.index];
       $('introDots').innerHTML = STORY.map((_, i) => `<i class="${i <= state.index ? 'on' : ''}"></i>`).join('');
-      schedule();
+      phase(state.reduced ? 'reading' : 'typing', state.reduced ? state.readingDuration : typingDuration);
     };
     function next() {
       if (state.ended) return;
       if (state.index === STORY.length - 1) finish();
       else { state.index++; show(); }
     }
-    el.addEventListener('click', next);
-    const togglePause = () => {
-      state.paused = !state.paused;
-      $('introHint').textContent = state.paused ? 'Đã tạm dừng · Space để tiếp tục' : 'Chạm để chuyển cảnh · Space tạm dừng · Esc bỏ qua';
-      schedule();
-    };
     state.visibility = schedule;
     document.addEventListener('visibilitychange', schedule);
-    el.addEventListener('keydown', event => {
-      event.stopPropagation();
-      if (event.key === 'Escape') { event.preventDefault(); finish(); }
-      else if (event.key === 'ArrowRight' || event.key === 'Enter') { event.preventDefault(); next(); }
-      else if (event.code === 'Space') { event.preventDefault(); if (!event.repeat) togglePause(); }
-      else if (event.key === 'Tab') { event.preventDefault(); el.focus({ preventScroll: true }); }
-    });
     show();
     return state.promise;
   }
@@ -101,6 +132,7 @@
   async function closeIntro() {
     if (!intro) return;
     const state = intro;
+    state.ended = true;
     clearTimeout(state.timer);
     document.removeEventListener('visibilitychange', state.visibility);
     state.el.classList.add('leaving');
