@@ -2,14 +2,45 @@
 (function (root) {
   'use strict';
   const domain = 'time';
-  const commands = Object.freeze(['setPreference']);
+  const commands = Object.freeze(['setPreference', 'startRetreat', 'stopRetreat', 'acknowledgeRetreat']);
 
   function install(API) {
     const H = API, F = H.F;
     const uniq = xs => [...new Set(xs)];
     const empty = () => ({ seconds: 0, exp: 0, stone: 0, batches: 0, dungeon: null, encounters: [], sect: null, sectReady: false, died: false });
+    const finishRetreat = (s, reason, now) => {
+      const active = s.retreat.active;
+      if (!active) return s.retreat.report;
+      const { end, ...summary } = active;
+      s.retreat = { active: null, report: { ...summary, reason, endedAt: now } };
+      return s.retreat.report;
+    };
 
     Object.assign(H.Game.prototype, {
+      startRetreat(payload, now) {
+        const s = this.s;
+        if (![1800, 7200, 28800].includes(payload.duration)) throw Error('Thời lượng bế quan không hợp lệ.');
+        if (s.retreat?.active) throw Error('Đã có phiên bế quan đang diễn ra.');
+        if (s.retreat?.report) throw Error('Hãy xem báo cáo bế quan trước khi bắt đầu phiên mới.');
+        if (s.progress.meditate < 60) throw Error('Hãy tu luyện online đủ 60 giây để mở bế quan.');
+        if (s.completed) throw Error('Đạo quả kiếp này đã viên mãn.');
+        if (s.exploration?.active || s.dungeon?.active || s.dungeon?.run || s.sect?.mission || s.craftQueue.length)
+          throw Error('Hãy hoàn tất hoạt động đang làm trước khi bế quan.');
+        if (this.isPeakStage() && s.qi >= this.need()) throw Error('Tu vi đã viên mãn. Hãy chuẩn bị độ kiếp.');
+        if (this.lifeInfo().seconds <= 300) throw Error('Thọ nguyên còn dưới 5 phút; hãy xử lý trước khi bế quan.');
+        s.retreat = { active: { duration: payload.duration, startedAt: now, end: now + payload.duration * 1000,
+          seconds: 0, exp: 0, stone: 0, stages: 0, loot: {}, events: [] }, report: null };
+        return { duration: payload.duration, end: s.retreat.active.end };
+      },
+      stopRetreat(payload, now) {
+        if (!this.s.retreat?.active && !this.s.retreat?.report) throw Error('Không có phiên bế quan.');
+        return finishRetreat(this.s, 'manual', now);
+      },
+      acknowledgeRetreat() {
+        if (!this.s.retreat?.report) throw Error('Không có báo cáo bế quan.');
+        this.s.retreat.report = null;
+        return true;
+      },
       setPreference(payload) {
         const { key, value } = payload;
         const options = {
@@ -215,6 +246,68 @@
         };
       }
     });
+
+    // Bế quan chỉ theo dõi tiến trình online hiện có. Máy chủ vẫn chạy cùng luật
+    // tu luyện; báo cáo dừng ở thời điểm hết phiên, không tạo thêm phần thưởng.
+    const advanceTime = H.Game.prototype.advance;
+    H.Game.prototype.advance = function (now, offline = false) {
+      const s = this.s, active = s.retreat?.active, start = s.lastUpdate;
+      if (!active || !Number.isFinite(now) || now <= start) return advanceTime.call(this, now, offline);
+      if (offline) {
+        const result = advanceTime.call(this, now, true);
+        active.end += now - start;
+        return result;
+      }
+
+      let end = Math.min(now, active.end), reason = now >= active.end ? 'finished' : '';
+      const life = this.lifeInfo().seconds;
+      if (Number.isFinite(life)) {
+        const warningAt = start + Math.max(0, life - 300) * 1000;
+        if (warningAt <= end) { end = warningAt; reason = 'life'; }
+      }
+      // Tính đúng lúc đầy tầng cuối, kể cả khi một heartbeat vượt nhiều tầng.
+      let remaining = Math.max(0, this.need() - s.qi);
+      for (let stage = s.stage + 1; stage <= F.STAGES[s.realm]; stage++)
+        remaining += F.exp_need(s.realm, stage - 1);
+      if (remaining <= this.integrateRate(start, end)) {
+        let lo = start, hi = end;
+        while (hi - lo > 1) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (this.integrateRate(start, mid) >= remaining) hi = mid;
+          else lo = mid;
+        }
+        end = hi; reason = 'ready';
+      }
+
+      const before = { tick: s.tick, exp: s.totalRunExp, stone: s.stone, stage: s.stage, bag: { ...s.bag } };
+      const log = this.onLog, events = [];
+      this.onLog = message => { events.push(String(message).slice(0, 240)); log?.(message); };
+      let first;
+      try { first = advanceTime.call(this, end, false); }
+      finally { this.onLog = log; }
+      active.seconds = Math.min(active.duration, active.seconds + Math.max(0, s.tick - before.tick));
+      active.exp += Math.max(0, s.totalRunExp - before.exp);
+      active.stone += Math.max(0, s.stone - before.stone);
+      active.stages += Math.max(0, s.stage - before.stage);
+      for (const [code, count] of Object.entries(s.bag)) {
+        const gain = Math.max(0, count - (before.bag[code] || 0));
+        if (gain && (Object.hasOwn(active.loot, code) || Object.keys(active.loot).length < 20))
+          active.loot[code] = Math.min(1e9, (active.loot[code] || 0) + gain);
+      }
+      active.events = [...active.events, ...events].slice(-12);
+      if (this.isDead()) reason = 'death';
+      else if (this.isPeakStage() && s.qi >= this.need()) reason = 'ready';
+      if (reason) finishRetreat(s, reason, end);
+      if (end >= now || this.isDead()) return first;
+
+      // Sau khi bế quan kết thúc, tiếp tục luật tu luyện thông thường cho phần còn lại.
+      const second = advanceTime.call(this, now, false);
+      return { ...second, seconds: first.seconds + second.seconds, exp: first.exp + second.exp,
+        stone: first.stone + second.stone, batches: first.batches + second.batches,
+        dungeon: second.dungeon || first.dungeon, sect: second.sect || first.sect,
+        encounters: [...first.encounters, ...second.encounters],
+        explorationFinished: second.explorationFinished || first.explorationFinished };
+    };
   }
 
   const mod = Object.freeze({ domain, commands, install });

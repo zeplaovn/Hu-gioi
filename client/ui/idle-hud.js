@@ -125,7 +125,7 @@
     if (daoChip.getAttribute('aria-label') !== daoLabel)
       daoChip.setAttribute('aria-label', daoLabel);
     if (daoChip.title !== daoLabel) daoChip.title = daoLabel;
-    textIfChanged($('chipRateVal'), root.HU_COMMANDS?.activityConflict(s, 'breakthrough') ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây');
+    textIfChanged($('chipRateVal'), root.HU_COMMANDS?.activityConflict(s, 'breakthrough') && !s.retreat?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây');
     tween('dao', thienTinh, v => { textIfChanged($('chipDaoVal'), num(Math.round(v))); });
   }
 

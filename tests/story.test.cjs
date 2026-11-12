@@ -79,7 +79,7 @@ test('Vạn Kiếp Tàng Thư: nội dung không lộ chỉ số kỹ thuật v�
 test('protocol: lệnh storyMark đúng một miền, kiểm tra cảnh giới, thiện cảm và lựa chọn', () => {
   const g = make();
   assert.equal(H.OWNERS.storyMark, 'world');
-  assert.equal(C.types.length, 49);
+  assert.equal(C.types.length, 52);
   assert.deepEqual(g.s.story, { read: {}, flags: {} });
   assert.equal(run(g, 'ha-01').id, 'ha-01');
   assert.equal(g.s.story.read['ha-01'], true);
@@ -107,12 +107,12 @@ test('bản lưu V7 nâng lên V9, làm sạch cờ sai, không có trọng sinh
   run(g, 'ha-01');
   const saved = JSON.parse(JSON.stringify(g.s));
   const clean = H.normalize(saved, NOW + 1000);
-  assert.equal(clean.version, 9);
+  assert.equal(clean.version, 10);
   assert.equal(clean.story.read['ha-01'], true);
   const legacy = { ...saved, version: 7 };
   delete legacy.story;
   const upgraded = H.normalize(legacy, NOW + 1000);
-  assert.equal(upgraded.version, 9);
+  assert.equal(upgraded.version, 10);
   assert.deepEqual(upgraded.story, { read: {}, flags: {} });
   const dirty = H.normalize({ ...saved, story: {
     read: { 'ha-01': true, evil: true },

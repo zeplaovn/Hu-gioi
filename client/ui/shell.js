@@ -573,9 +573,9 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'sect', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
-  const WINDOW_SIZE = { idle: 470, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, ranking: 740, settings: 630, meta: 760, more: 720 };
-  const BADGED = ['combat', 'craft'];
+  const WINDOW_ORDER = ['idle', 'retreat', 'sect', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
+  const WINDOW_SIZE = { idle: 470, retreat: 620, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, ranking: 740, settings: 630, meta: 760, more: 720 };
+  const BADGED = ['combat', 'craft', 'retreat'];
 
   const wins = {
     map: new Map(),
@@ -1124,7 +1124,7 @@
       moneyEl.setAttribute('aria-label', 'Linh thạch ' + moneyText);
     }
     const trainingBusy = !!root.HU_COMMANDS?.activityConflict(s, 'breakthrough');
-    $('topRate').textContent = trainingBusy ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
+    $('topRate').textContent = trainingBusy && !s.retreat?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
     $('topDaoVan').textContent = H.META_UPGRADES[s.destiny]?.name || 'Không có';
     $('topQiFill').style.width = pShown + '%';
@@ -1170,6 +1170,7 @@
     };
     badge('craft', String(s.craftQueue.length + s.garden.length), s.craftQueue.length + s.garden.length > 0);
     badge('combat', '⚔', s.auto);
+    badge('retreat', '!', !!s.retreat?.report);
     markMenu();
     document.body.classList.toggle('mode-fight', s.auto);
     const docTitle = s.name + ' · Hư Giới';

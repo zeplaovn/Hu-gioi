@@ -380,6 +380,24 @@ def run_set(browser, folder, name, url, width, height, mobile):
             outcome["screenshots"].append(snap(page, folder, name, key))
             if section in ("world", "character", "craft", "settings"):
                 outcome["screenshots"].append(snap(page, folder, name, key, "bottom"))
+        if name == "after_390x844":
+            # Chờ đủ thời gian online thật, rồi đi hết luồng bế quan qua giao diện.
+            open_page(page, "retreat")
+            retreat = page.locator('.win.desktop-window[data-window="retreat"]')
+            page.wait_for_function('''() => {
+                const button = document.querySelector('.win[data-window="retreat"] [data-act="retreatStart"][data-duration="1800"]');
+                return button && !button.disabled;
+            }''', timeout=100000)
+            retreat.locator('[data-act="retreatStart"][data-duration="1800"]').tap()
+            retreat.locator('[data-act="retreatStop"]').wait_for(state="visible", timeout=15000)
+            assert page.evaluate('() => !!window.HU_UI.s().retreat.active'), "Máy chủ chưa xác nhận phiên bế quan"
+            retreat.locator('[data-act="retreatStop"]').tap()
+            retreat.locator('[data-act="retreatAcknowledge"]').wait_for(state="visible", timeout=15000)
+            assert page.evaluate('() => window.HU_UI.s().retreat.report?.reason') == 'manual'
+            outcome["screenshots"].append(snap(page, folder, name, "retreat-report"))
+            retreat.locator('[data-act="retreatAcknowledge"]').tap()
+            retreat.locator('[data-act="retreatStart"][data-duration="1800"]').wait_for(state="visible", timeout=15000)
+            outcome["retreat_server_report"] = True
         # Thanh menu thứ năm trở đi được phép cuộn, và Menu không dùng dấu X.
         page.evaluate("() => window.HU_UI.windows.closeAll()")
         outcome["screenshots"].append(snap(page, folder, name, "menu"))

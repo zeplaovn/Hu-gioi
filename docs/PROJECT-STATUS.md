@@ -7,7 +7,8 @@
 
 | Hệ | Nội dung đã có trong mã/main | Bằng chứng/giới hạn |
 |---|---|---|
-| GAME | State V9, protocol v2, 49 lệnh; server quyết định thời gian/RNG/state | `engine/`, `data/`, `engine/protocol/commands.js` |
+| GAME | State V10, protocol v3, 52 lệnh; server quyết định thời gian/RNG/state | `engine/`, `data/`, `engine/protocol/commands.js` |
+| GAME | Bế quan tu luyện online có báo cáo server; không tự độ kiếp | Nhánh triển khai, cần kiểm thử và triển khai đồng bộ client/Edge |
 | GAME | Online-only; tab ẩn/offline không tích lũy; tử vong một mạng, tạo lại không kế thừa | `server/services/player-service.js`, `docs/gameplay-v9.md` |
 | GAME | Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại, quầy starter trước tạo nhân vật | PR #77 đã merge, `tests/creation-pavilion-shop.test.cjs`; **giá test chưa duyệt** |
 | GAME | Sự kiện Lịch luyện 45% quái, 30% NPC, 25% kỳ duyên; Tâm Ma | `data/adventures.js`, `engine/rules/adventures.js`; cần duyệt cân bằng |

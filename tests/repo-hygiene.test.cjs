@@ -43,8 +43,8 @@ test('không có file nhãn thư mục giả dưới media/ (tệp 1 byte, thi�
 test('tài liệu kiến trúc hiện hành không quảng bá phiên offline V8/51 lệnh', () => {
   const architecture = fs.readFileSync(path.join(ROOT, 'docs/architecture.md'), 'utf8');
   const integration = fs.readFileSync(path.join(ROOT, 'docs/design-integration.md'), 'utf8');
-  assert.match(architecture, /state V9/i);
-  assert.match(architecture, /49 lệnh/);
+  assert.match(architecture, /state V10/i);
+  assert.match(architecture, /52 lệnh/);
   assert.match(integration, /online-only/);
   assert.doesNotMatch(architecture, /Schema V8|51 lệnh|Game chơi được.*offline/);
   assert.doesNotMatch(integration, /Schema lưu hiện là V8/);

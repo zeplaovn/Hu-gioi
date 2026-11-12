@@ -73,6 +73,39 @@
     return card('Mục tiêu gần', items || empty('Không có mục tiêu gần.'), { eyebrow: 'GỢI Ý TIÊN LỘ' });
   }
 
+  function retreatCard() {
+    const s = UI.s(), g = UI.g(), retreat = s.retreat || {}, active = retreat.active, report = retreat.report;
+    const note = '<p class="info-note">Chỉ tính khi tab đang hiển thị và có kết nối. Không tự độ kiếp; thọ nguyên vẫn trôi khi game online.</p>';
+    if (active) return card('Bế quan tu luyện',
+      row('Thời gian còn lại', live(active.end)) + row('Đã tu luyện', duration(active.seconds)) +
+      row('Tu vi ghi nhận', num(active.exp)) + note +
+      btn('Kết thúc bế quan', 'retreatStop', '', false, 'btn-outline'), { eyebrow: 'PHIÊN ĐANG DIỄN RA' });
+    if (report) {
+      const reasons = { finished: 'Đã hết thời gian', ready: 'Tu vi viên mãn · cần chuẩn bị độ kiếp',
+        manual: 'Đã kết thúc theo yêu cầu', death: 'Đạo thân tọa hóa', life: 'Dừng vì thọ nguyên còn dưới 5 phút' };
+      const loot = Object.entries(report.loot || {}).map(([code, count]) => esc(H.item(code)?.name || code) + ' ×' + num(count)).join(', ');
+      const events = (report.events || []).map(text => '<li>' + esc(text) + '</li>').join('');
+      return card('Báo cáo bế quan', '<p>' + esc(reasons[report.reason] || 'Phiên đã kết thúc') + '</p>' +
+        row('Thời gian online', duration(report.seconds)) + row('Tu vi', '+' + num(report.exp)) +
+        row('Linh thạch', moneyHTML(report.stone)) + row('Tiểu cảnh giới', '+' + num(report.stages)) +
+        row('Vật phẩm', loot || 'Không có') + (events ? '<ul class="retreat-events">' + events + '</ul>' : '') +
+        (report.reason === 'ready' ? '<button class="btn btn-outline" data-go="tribulation">Chuẩn bị độ kiếp</button>' : '') +
+        btn('Đã xem báo cáo', 'retreatAcknowledge', '', false, 'btn-gold') + note,
+      { eyebrow: 'KẾT QUẢ TỪ MÁY CHỦ' });
+    }
+    const blocked = s.progress.meditate < 60 ? 'Tu luyện online đủ 60 giây để mở bế quan.'
+      : s.completed ? 'Đạo quả kiếp này đã viên mãn.'
+        : g.isPeakStage() && s.qi >= g.need() ? 'Tu vi đã viên mãn; hãy chuẩn bị độ kiếp.'
+          : g.lifeInfo().seconds <= 300 ? 'Thọ nguyên còn dưới 5 phút; hãy xử lý trước khi bế quan.'
+            : s.exploration?.active || s.dungeon?.active || s.dungeon?.run || s.sect?.mission || s.craftQueue.length
+              ? 'Hãy hoàn tất hoạt động đang làm trước khi bế quan.' : '';
+    const choices = [[1800, '30 phút'], [7200, '2 giờ'], [28800, '8 giờ']].map(([seconds, label]) =>
+      btn(label, 'retreatStart', `data-duration="${seconds}"`, !!blocked, 'btn-outline')).join('');
+    return card('Bế quan tu luyện', '<p>Chọn thời lượng, rồi trở lại xem báo cáo tu luyện.</p>' +
+      (blocked ? '<p class="info-note">' + esc(blocked) + '</p>' : '') +
+      '<div class="action-group">' + choices + '</div>' + note, { eyebrow: 'TU LUYỆN ONLINE' });
+  }
+
   function panel() {
     const s = UI.s(), a = s.dungeon.active, m = s.sect.mission;
     const tasks = card('Hành trình tiên lộ',
@@ -80,7 +113,7 @@
       (m ? row(H.SECT_MISSIONS.find(d => d.id === m.id).name, live(m.end)) : '') +
       row('Kỳ ngộ đã gặp', num(s.encounter.total)) +
       `<div class="action-group"><button class="btn btn-outline" data-go="sect:dungeons">Bí cảnh</button><button class="btn btn-outline" data-go="sect:exploration">Lịch luyện</button><button class="btn btn-outline" data-go="sect:missions">Tông môn</button></div>`, { eyebrow: 'DUYÊN SỰ ĐANG TIẾN HÀNH' });
-    return `<div class="screen-grid idle-grid">${qiCard()}${tasks}${boostCard()}${manualsCard()}${goalsCard()}</div>`;
+    return `<div class="screen-grid idle-grid">${qiCard()}${retreatCard()}${tasks}${boostCard()}${manualsCard()}${goalsCard()}</div>`;
   }
 
   function update() {
@@ -97,12 +130,18 @@
 
   const signature = () => {
     const s = UI.s();
-    return [s.craftQueue.length, s.garden.length, s.claimed.length, s.sect.joined, s.sect.missionsDone, s.exploration.last?.end, s.realm, s.stage, UI.g().noviceQuestInfo().ready, s.activeManuals.length, s.qi >= UI.g().need(), s.dungeon.active?.end, s.dungeon.run?.floor, s.sect.mission?.end, s.encounter.total].join('|');
+    return [s.craftQueue.length, s.garden.length, s.claimed.length, s.sect.joined, s.sect.missionsDone, s.exploration.last?.end, s.realm, s.stage, UI.g().noviceQuestInfo().ready, s.activeManuals.length, s.qi >= UI.g().need(), s.dungeon.active?.end, s.dungeon.run?.floor, s.sect.mission?.end, s.encounter.total, s.progress.meditate >= 60, UI.g().lifeInfo().seconds <= 300, s.retreat?.active?.end, s.retreat?.active?.seconds, s.retreat?.report?.endedAt].join('|');
   };
 
   UI.register({
     id: 'idle', label: 'Tu luyện', icon: 'ICON-MENU-001', eyebrow: 'TU HÀNH',
     render: panel, panel, update, signature
+  });
+  UI.register({
+    id: 'retreat', label: 'Bế quan', icon: '☯', eyebrow: 'TĨNH TU',
+    render: () => '<header class="screen-title"><span class="eyebrow gold">TĨNH TU</span><h2>Bế quan</h2></header><div class="screen-grid">' +
+      retreatCard() + (UI.s().retreat?.report ? goalsCard() : '') + '</div>',
+    signature
   });
 
 
@@ -119,4 +158,13 @@
     UI.vfx?.effect('break');
     UI.vfx?.ring();
   });
+  UI.action('retreatStart', async (el, d) => {
+    await UI.command('startRetreat', { duration: Number(d.duration) });
+    UI.toast('Đã bắt đầu bế quan tu luyện.', { type: 'success', title: 'Bế quan' });
+  });
+  UI.action('retreatStop', async () => {
+    await UI.command('stopRetreat');
+    UI.toast('Đã kết thúc phiên; hãy xem báo cáo.', { type: 'info', title: 'Bế quan' });
+  });
+  UI.action('retreatAcknowledge', async () => { await UI.command('acknowledgeRetreat'); });
 })(typeof window !== 'undefined' ? window : globalThis);

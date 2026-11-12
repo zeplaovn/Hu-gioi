@@ -4,7 +4,7 @@ Game idle tu tiên tiếng Việt, **đang thử nghiệm nội bộ, chưa phá
 
 ## Phiên bản hiện tại
 - Cloudflare Workers Static Assets phục vụ `dist/`; Supabase Auth (JWT, direct) và Edge Function `api` (Deno); PostgreSQL private schema `game` qua transaction pooler 6543.
-- State **V9**, protocol **v2**, **49 lệnh**. Game **online-only**; nhân vật một mạng, chết bắt đầu lại **không kế thừa** Thiên Tinh hoặc vật phẩm.
+- State **V10**, protocol **v3**, **52 lệnh**. Game **online-only**; nhân vật một mạng, chết bắt đầu lại **không kế thừa** Thiên Tinh hoặc vật phẩm.
 - **Thiên Mệnh Các** ở màn tạo nhân vật là shop starter (PR #77 đã merge; giá vẫn là giá thử nghiệm).
 - Chat thật gồm **Thế giới, Tông môn, Đạo hữu, Đạo lữ**; bảng xếp hạng **Lực chiến/Cảnh giới** (PR #78 đã merge). Bản Edge test đã hotfix route, cần nghiệm thu JWT/máy thật.
 - Tri kỷ, Luận kiếm, Đấu giá và tương tác NPC vẫn là mô phỏng. Kinh Mạch Đồ 12 chính kinh xanh / 8 kỳ kinh vàng hiện là **UI tra cứu**, chưa có luật vận hành kinh mạch.

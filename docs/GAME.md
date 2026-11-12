@@ -3,7 +3,7 @@
 
 ## 1. Hệ luật hiện hành
 - Game idle tu tiên **online-only**: chỉ tiến triển trong thời gian máy chủ xác nhận có hoạt động; tab ẩn/offline không cấp tu vi, tài nguyên, tuổi, hồi HP hay RNG.
-- State **V9**, protocol **v2**, **49 lệnh** thuộc 9 miền; điều khiển thời gian, RNG và kết quả thuộc server. Mã chuẩn: `engine/`, `data/`, `server/services/player-service.js`.
+- State **V10**, protocol **v3**, **52 lệnh** thuộc 9 miền; điều khiển thời gian, RNG và kết quả thuộc server. Mã chuẩn: `engine/`, `data/`, `server/services/player-service.js`.
 - Mỗi đạo thân chỉ một mạng. Tử vong có thể xảy ra bởi lôi kiếp, chiến đấu, bí cảnh hoặc hết thọ nguyên khi online. Khi đã chết, chỉ có thao tác **bắt đầu lại từ đầu**, không hồi sinh/trọng sinh; xóa nhân vật, Thiên Tinh, nâng cấp Thiên Mệnh Các và rank theo logic hiện hành. Auth và consent được giữ riêng.
 - Tên kỹ thuật legacy như `rebirths` trong dữ liệu tương thích **không phải** tính năng chuyển kiếp có lợi ích.
 - Luật khác biệt giữa mô phỏng NPC và người chơi thật cần được hiển thị rõ.

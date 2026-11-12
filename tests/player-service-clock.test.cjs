@@ -17,7 +17,7 @@ async function spawn(svc, owner = 'owner-a', name = 'Bạch Thanh Vân') {
   return await svc.createPlayer(owner, { ticketId: pv.ticketId, name, gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' });
 }
 const envelope = async (svc, owner, type, payload, requestId) => ({
-  protocolVersion: 2, requestId, expectedRevision: (await svc.bootstrap(owner)).player.revision, type, payload
+  protocolVersion: 3, requestId, expectedRevision: (await svc.bootstrap(owner)).player.revision, type, payload
 });
 
 test('request chậm khóa hàng (now cũ) không làm lùi mốc và không khiến thời gian bị cộng hai lần', async () => {

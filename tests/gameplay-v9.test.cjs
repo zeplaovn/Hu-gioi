@@ -14,11 +14,11 @@ const PROFILE = {
 const character = rng => new H.Game(H.createCharacter(PROFILE, NOW, rng), rng);
 const execute = (game, type, payload = {}, now = NOW) => C.execute(game, { type, payload }, now);
 
-test('protocol v2 rejects resurrection, meta purchases and offline upgrades', () => {
-  assert.equal(C.VERSION, 2);
+test('protocol v3 rejects resurrection, meta purchases and offline upgrades', () => {
+  assert.equal(C.VERSION, 3);
   for (const type of ['prestige', 'reincarnate', 'buyMeta', 'upgradeOffline'])
     assert.throws(() => C.validate({ type, payload: {} }), { code: 'INVALID_COMMAND' });
-  assert.equal(H.VERSION, 9);
+  assert.equal(H.VERSION, 10);
 });
 
 test('defeated tribulation ends the life, preserves cause and blocks all commands', () => {
@@ -81,7 +81,7 @@ test('offline stops all stats, progression, jobs and exploration timers', () => 
   assert.equal(g.isDead(), false);
 });
 
-test('V4–V8 saves can normalize to V9 without granting fresh destiny points', () => {
+test('V4–V8 saves can normalize to V10 without granting fresh destiny points', () => {
   const g = character(() => .5);
   for (const version of [5, 6, 7, 8]) {
     const legacy = structuredClone(g.s);
@@ -89,7 +89,7 @@ test('V4–V8 saves can normalize to V9 without granting fresh destiny points', 
     delete legacy.destiny;
     delete legacy.death;
     const state = H.normalize(legacy, NOW);
-    assert.equal(state.version, 9);
+    assert.equal(state.version, 10);
     assert.equal(state.death, null);
     assert.equal(state.destiny, 'none');
   }
