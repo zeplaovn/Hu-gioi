@@ -178,7 +178,7 @@
     update: tab => { UI.adventure.update(); if (tab === 'exploration') UI.screens.combat.update(); },
     signature: tab => {
       const s = UI.s(), e = s.exploration?.active;
-      return [tab,s.realm,s.stage,s.sect.joined,s.sect.id,s.sect.earned,s.sect.contribution,s.adventurePoints || 0,s.borrowedBook || '',s.sect.mission?.id,s.sect.mission?.end,s.sect.last?.at,s.sect.repeat,s.hp,s.stone,s.dungeon.active?.end,s.dungeon.run?.floor,s.dungeon.run?.turn,e?.start,e?.choice,s.exploration?.last?.end].join('|');
+      return [tab,s.realm,s.stage,s.rootType,s.rootSub,s.sect.joined,s.sect.id,s.sect.discipleClass,UI.sectMeasured?.(),s.sect.earned,s.sect.contribution,s.adventurePoints || 0,s.borrowedBook || '',s.sect.mission?.id,s.sect.mission?.end,s.sect.last?.at,s.sect.repeat,s.hp,s.stone,s.dungeon.active?.end,s.dungeon.run?.floor,s.dungeon.run?.turn,e?.start,e?.choice,s.exploration?.last?.end].join('|');
     }
   });
 
@@ -220,8 +220,8 @@
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('joinSect', async (el, d) => {
-    await UI.command('joinSect', { id: d.id || 'thanhvan' });
-    UI.toast('Đã gia nhập ' + UI.g().sectDefinition().name + ' · mở nguồn linh thạch định kỳ.', { type: 'success', title: 'Tông môn' });
+    const sect = await UI.command('joinSect', { id: d.id || 'thanhvan' });
+    UI.toast('Đã gia nhập ' + sect.name + ' · ' + sect.disciple.name + '.', { type: 'success', title: 'Tông môn' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,17vw,180px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('sectMissionStart', async (el, d) => {

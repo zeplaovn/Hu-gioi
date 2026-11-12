@@ -54,9 +54,21 @@
     { id: 'huyetsat', name: 'Huyết Sát Môn', desc: 'Lấy chiến dưỡng đạo · nhiệm vụ săn thú, luyện huyết.', bonus: 'Bạo kích +2 điểm %', crit: .02 },
     { id: 'vanduoc', name: 'Vạn Dược Cốc', desc: 'Đan đạo dưỡng sinh · nhiệm vụ hái thuốc, cứu người.', bonus: 'Hấp thụ linh khí +3%', rate: .03 }
   ];
+  const SECT_DISCIPLES = Object.freeze({
+    tap_dich: { id: 'tap_dich', name: 'Đệ tử tạp dịch' },
+    ngoai_mon: { id: 'ngoai_mon', name: 'Đệ tử ngoại môn' },
+    noi_mon: { id: 'noi_mon', name: 'Đệ tử nội môn' },
+    than_truyen: { id: 'than_truyen', name: 'Đệ tử thân truyền' }
+  });
+  const sectDiscipleForRoot = type => {
+    const id = type === 'Ngụy' || type === 'Tứ hành' ? 'tap_dich'
+      : type === 'Tam hành' ? 'ngoai_mon' : type === 'Song' ? 'noi_mon'
+        : ['Thiên','Dị','Âm Dương','Hỗn Độn'].includes(type) ? 'than_truyen' : null;
+    return id ? SECT_DISCIPLES[id] : null;
+  };
   const SECT_RANKS = [
-    ['Ngoại môn đệ tử', 0, 1], ['Nội môn đệ tử', 180, 2], ['Chân truyền đệ tử', 650, 3],
-    ['Chấp sự', 1800, 4], ['Trưởng lão', 4500, 5], ['Thái thượng trưởng lão', 10000, 5]
+    ['Cống hiến bậc 1', 0, 1], ['Cống hiến bậc 2', 180, 2], ['Cống hiến bậc 3', 650, 3],
+    ['Cống hiến bậc 4', 1800, 4], ['Cống hiến bậc 5', 4500, 5], ['Cống hiến bậc 6', 10000, 5]
   ].map(([name, at, tier], index) => ({ name, at, tier, index, stipend: 1 + index * .1 }));
   const SECT_MISSIONS = [
     { id: 'patrol', name: 'Tuần sơn trừ yêu', desc: 'Quét yêu khí quanh sơn môn.', seconds: 90, contribution: 35, minRealm: 0, tier: 1, legacy: true },
@@ -123,7 +135,7 @@
       { id: 'bargain', label: 'Thương lượng', desc: 'Dùng lời lẽ khiến yêu thú nhường đường. Thành thì nhận một phần linh thạch, bại thì hao tổn sinh lực. Tâm ma cao khiến khó thành hơn.' }
     ]
   };
-  const data = { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX: 10, DUNGEONS, ENCOUNTER_RARITIES, ENCOUNTERS, ENCOUNTER_INTERVAL: 180, EXPLORE_WEIGHTS, EXPLORE_CHOICES, EXPLORE_POINTS, TAM_MA_MAX, TAM_MA_BREAK_PENALTY, TAM_MA_CLEANSE, SECTS, SECT_RANKS, SECT_MISSIONS, SECT_SHOP, SECT_BOOKS };
+  const data = { ELEMENT_NAMES, BEATS, TEMPER_EFFECTS, TEMPER_MAX: 10, DUNGEONS, ENCOUNTER_RARITIES, ENCOUNTERS, ENCOUNTER_INTERVAL: 180, EXPLORE_WEIGHTS, EXPLORE_CHOICES, EXPLORE_POINTS, TAM_MA_MAX, TAM_MA_BREAK_PENALTY, TAM_MA_CLEANSE, SECTS, SECT_RANKS, SECT_DISCIPLES, sectDiscipleForRoot, SECT_MISSIONS, SECT_SHOP, SECT_BOOKS };
   root.HU_ADVENTURE_DATA = data;
   if (typeof module !== 'undefined' && module.exports) module.exports = data;
 })(typeof window !== 'undefined' ? window : globalThis);

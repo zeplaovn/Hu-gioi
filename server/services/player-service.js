@@ -382,6 +382,10 @@ class PlayerService {
   #run(rec, now) {
     const rng = seededRng(rec.rngSeed, rec.rngCounter), logs = [];
     const state = structuredClone(this.#state(rec, now));
+    if (state.sect?.joined && !Object.hasOwn(H.SECT_DISCIPLES, state.sect.discipleClass)) {
+      const disciple = H.sectDiscipleForRoot(state.rootType);
+      if (disciple) state.sect.discipleClass = disciple.id;
+    }
     return { rng, logs, game: new H.Game(state, rng, m => logs.push(m)), offline: !!state.presencePaused || now - rec.lastSeenAt > this.cfg.onlineGraceMs };
   }
   #envelope(body) {

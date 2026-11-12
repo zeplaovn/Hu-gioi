@@ -54,7 +54,7 @@
   };
 
   const sectDefault = () => ({
-    joined: false, id: '', contribution: 0, earned: 0, blessing: false,
+    joined: false, id: '', discipleClass: '', contribution: 0, earned: 0, blessing: false,
     claimedDay: '', mission: null, missionsDone: 0, repeat: false, last: null
   });
   const adventureDefaults = () => ({
@@ -109,6 +109,7 @@
     const id = joined ? (SECTS.some(s => s.id === old.id) ? old.id : 'thanhvan') : '';
     x.sect = {
       ...sectDefault(), joined, id,
+      discipleClass: joined ? (Object.hasOwn(A.SECT_DISCIPLES, old.discipleClass) ? old.discipleClass : A.sectDiscipleForRoot(x.rootType)?.id || '') : '',
       contribution: finite(old.contribution),
       earned: Math.max(finite(old.earned), finite(old.contribution), raw.version < 7 ? integer(old.missionsDone) * 35 : 0),
       blessing: joined && !!old.blessing,

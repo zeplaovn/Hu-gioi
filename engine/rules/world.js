@@ -162,6 +162,10 @@
       },
 
       sectDefinition() { return this.s.sect.joined ? SECTS.find(x => x.id === this.s.sect.id) : null; },
+      sectDisciple() {
+        const s = this.s;
+        return (s.sect.joined && Object.hasOwn(H.SECT_DISCIPLES, s.sect.discipleClass) && H.SECT_DISCIPLES[s.sect.discipleClass]) || H.sectDiscipleForRoot(s.rootType);
+      },
       sectRank() {
         const index = Math.max(0, SECT_RANKS.findLastIndex(r => this.s.sect.earned >= r.at));
         return { ...SECT_RANKS[index], next: SECT_RANKS[index + 1] || null };
@@ -171,9 +175,11 @@
         const id = payload.id, d = SECTS.find(x => x.id === id);
         if (!d) throw Error('Tông môn không hợp lệ.');
         if (this.s.sect.joined) throw Error('Đã là đệ tử tông môn.');
-        this.s.sect = { ...sectDefault(), joined: true, id };
-        this.log('Gia nhập ' + d.name + ' · được hưởng linh thạch định kỳ và nhận ủy thác tông môn.');
-        return d;
+        const disciple = H.sectDiscipleForRoot(this.s.rootType);
+        if (!disciple) throw Error('Không thể xác định linh căn để gia nhập tông môn.');
+        this.s.sect = { ...sectDefault(), joined: true, id, discipleClass: disciple.id };
+        this.log('Gia nhập ' + d.name + ' · ' + disciple.name + ' · được hưởng linh thạch định kỳ và nhận ủy thác tông môn.');
+        return { ...d, disciple };
       },
       leaveSect() {
         if (this.s.sect.mission) throw Error('Hãy hoàn tất hoặc hủy nhiệm vụ trước.');

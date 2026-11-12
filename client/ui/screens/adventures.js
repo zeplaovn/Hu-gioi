@@ -6,6 +6,9 @@
   const element = i => i < 0 ? 'Vô hệ' : H.ELEMENT_NAMES[i];
   const color = i => UI.data.ELEMENTS[i]?.[1] || '#b6c7dc';
   const signed = n => (n >= 0 ? '+' : '') + pct(n);
+  let measuredPlayer = null;
+  const sectMeasured = () => !!UI.session?.playerId && measuredPlayer === UI.session.playerId;
+  UI.sectMeasured = sectMeasured;
   const clock = a => `<progress class="adventure-progress" max="100" value="0" data-job-start="${a.start}" data-job-end="${a.end}" aria-label="Tiến độ chuyến đi"></progress>${row('Còn lại', live(a.end))}`;
   const essenceText = a => a.map((n, i) => n ? `${element(i)} ×${num(n)}` : '').filter(Boolean).join(' · ');
   const date = at => new Date(at).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -140,20 +143,28 @@
     }
     return `<section class="sect-library"><div class="sect-library-intro"><span class="eyebrow gold">TÀNG KINH CÁC</span><h3>Tri thức trên tiên lộ</h3><p>Điểm lịch luyện: <b>${num(points)}</b>. Nhận 20 điểm mỗi chuyến lịch luyện và thêm điểm khi hoàn thành ủy thác tông môn.</p><p>Mỗi lần mượn trả điểm; bạn giữ một quyển để đọc đến khi mượn quyển khác. Những lần mở lại quyển đang mượn không mất thêm điểm.</p></div>${reading}<div class="sect-book-grid">${shelves}</div></section>`;
   }
+  function sectRite() {
+    const s = UI.s(), g = UI.g(), seen = sectMeasured(), disciple = g.sectDisciple();
+    const rootName = H.rootLabel(s.rootType, s.rootSub);
+    const guide = H.DESIGN.npc.NPC001;
+    const result = seen && disciple ? `<div class="sect-rite-result" role="status"><span>LINH CĂN</span><strong>${esc(rootName)}</strong><span>DANH PHẬN NHẬP MÔN</span><b>${esc(disciple.name)}</b>${s.sect.joined ? '<small>Danh phận được ghi nhận khi gia nhập.</small>' : '<small>Chọn tông môn để xác nhận danh phận.</small>'}</div>` : '<div class="sect-rite-prompt">Đặt tay lên bia đá để soi rõ linh căn.</div>';
+    return `<section class="sect-rite" aria-label="Bia đo linh căn"><div class="sect-rite-top"><span class="eyebrow gold">SƠ NHẬP SƠN MÔN</span><h2>Vấn Linh Đài</h2><p>Thiên địa làm chứng · một niệm khai linh</p></div>${result}<div class="sect-rite-bottom"><div class="sect-rite-guide"><img src="${esc(guide?.ảnh || '')}" alt="" loading="lazy"><p><b>${esc(guide?.['tên NPC'] || 'Người dẫn đường')}</b><br>Hãy chạm bia để xem linh căn và danh phận.</p></div>${btn(seen ? 'Đo lại linh căn' : 'Chạm bia đo linh căn', 'sectMeasure', '', false, 'btn-gold')}</div></section>`;
+  }
   function sect(tab = 'missions') {
     const s = UI.s(), g = UI.g(), d = g.sectDefinition();
     const sub = ['missions','library','shop','ranks','exploration','dungeons'].includes(tab) ? tab : 'missions';
     const nav = `<div class="action-group adventure-nav" role="group" aria-label="Bảng tông môn">${[['missions','Nhiệm vụ'],['exploration','Lịch luyện'],['dungeons','Bí cảnh'],['library','Tàng Kinh Các'],['shop','Kho tông môn'],['ranks','Chức vị']].map(([id,label]) => btn(label, 'sectPanel', `data-panel="${id}" aria-pressed="${sub === id}"`, false, sub === id ? 'btn-gold' : 'btn-outline')).join('')}</div>`;
     if (sub === 'exploration') return nav + UI.screens.combat.panel();
     if (sub === 'dungeons') return nav + dungeons();
-    if (!d) return nav + `<p class="screen-lead">Chọn một tông môn để nhận nguồn linh thạch định kỳ, ủy thác và quyền đổi bảo vật.</p><div class="adventure-grid">${H.SECTS.map(x => card(x.name, `<p>${x.desc}</p><p class="gold">${x.bonus}</p>` + btn('Gia nhập', 'joinSect', `data-id="${x.id}"`))).join('')}</div>`;
+    const rite = sub === 'missions' ? sectRite() : '';
+    if (!d) return nav + rite + `<p class="screen-lead">${sectMeasured() ? 'Chọn một tông môn để bước lên tiên lộ.' : 'Chạm bia đo linh căn trước khi chọn tông môn.'}</p><div class="adventure-grid">${H.SECTS.map(x => card(x.name, `<p>${x.desc}</p><p class="gold">${x.bonus}</p>` + btn('Gia nhập', 'joinSect', `data-id="${x.id}"`, !sectMeasured()))).join('')}</div>`;
     const rank = g.sectRank();
-    const header = card(d.name, `<p>${d.desc} <b class="gold">${d.bonus}</b></p>` + row('Chức vị', rank.name) + row('Cống hiến khả dụng', num(s.sect.contribution)) + row('Điểm lịch luyện', num(s.adventurePoints || 0)) + row('Tổng đã kiếm', num(s.sect.earned)) +
+    const header = card(d.name, `<p>${d.desc} <b class="gold">${d.bonus}</b></p>` + row('Danh phận', esc(g.sectDisciple()?.name || 'Chưa xác định')) + row('Cấp cống hiến', rank.name) + row('Cống hiến khả dụng', num(s.sect.contribution)) + row('Điểm lịch luyện', num(s.adventurePoints || 0)) + row('Tổng đã kiếm', num(s.sect.earned)) +
       row('Linh thạch tự tích lũy', moneyHTML(g.sectIncome()) + '/giây') +
       (rank.next ? bar((s.sect.earned - rank.at) / (rank.next.at - rank.at) * 100) + `<p class="info-note">Còn ${num(rank.next.at - s.sect.earned)} cống hiến đã kiếm để lên ${rank.next.name}.</p>` : '<p class="gold">Đã đạt chức vị tối cao.</p>') +
       `<div class="action-group">${btn(s.sect.blessing ? 'Tắt chúc phúc' : 'Chúc phúc +10% tốc độ hấp thụ linh khí', 'blessing', '', false, 'btn-outline')}${btn('Cống hiến · ' + moneyHTML(F.price_ha(s.realm)), 'donate', '', s.stone < F.price_ha(s.realm), 'btn-outline')}</div>`);
     const panels = { missions: missionBoard, library: sectLibrary, shop: sectShop, ranks: () => card('Lộ trình chức vị', H.SECT_RANKS.map(r => row(r.name, num(r.at) + ' tổng cống hiến · bậc ' + r.tier)).join('') + '<p class="info-note">Cống hiến đã kiếm tính cả nhiệm vụ và quyên góp. Rời tông môn sẽ đặt lại chức vị, cống hiến và chúc phúc.</p>' + btn('Rời tông môn', 'sectLeave', '', !!s.sect.mission, 'btn-outline')) };
-    return nav + header +
+    return nav + rite + header +
       (s.sect.last && sub === 'missions' ? `<p class="adventure-result info-note">${esc(s.sect.last.text)}</p>` : '') + panels[sub]();
   }
 
@@ -206,6 +217,11 @@
     document.querySelectorAll('[data-act="encounter"]').forEach(el => { el.disabled = UI.s().encounter.usedAt + 90000 > now; });
   }
   UI.adventure = { dungeons, encounters, sect, roots, update, runPanel };
+  UI.action('sectMeasure', () => {
+    if (!UI.session?.playerId) throw Error('Chưa có đạo thân để đo linh căn.');
+    measuredPlayer = UI.session.playerId;
+    UI.toast('Bia đã soi rõ ' + H.rootLabel(UI.s().rootType, UI.s().rootSub) + '.', { type: 'gold', title: 'Vấn Linh Đài' });
+  });
   UI.action('dungeonStart', async (el, d) => { await UI.command('startDungeon', { id: d.id }); UI.toast('Đã khởi hành. Kết quả sẽ tự ghi vào nhật ký.', { type: 'gold', title: 'Bí cảnh' }); });
   UI.action('dungeonEnter', async (el, d) => {
     await UI.command('enterDungeon', { id: d.id });

@@ -393,3 +393,19 @@ for (const adapter of ['sqlite', 'postgres']) {
     assert.deepEqual(calls, [OWNER_A]);
   });
 }
+
+test('đồng bộ lưu danh phận cho đệ tử cũ mà không đổi cống hiến', async () => {
+  const { svc, clock, repo } = setup();
+  const { playerId:id } = await spawn(svc);
+  await svc.command('owner-a', id, await envelope(svc,'owner-a','joinSect',{id:H.SECTS[0].id},'old-disciple-join'));
+  const old = (await repo.get(id)).state;
+  delete old.sect.discipleClass; old.rootType='Tam hành'; old.sect.contribution=123; old.sect.earned=456;
+  const encoded=JSON.stringify(old);
+  repo.db.prepare('UPDATE players SET state = ?, state_bytes = ? WHERE id = ?').run(encoded,Buffer.byteLength(encoded),id);
+  clock.t += 1000;
+  await svc.sync('owner-a',id);
+  const saved=(await repo.get(id)).state;
+  assert.equal(saved.sect.discipleClass,'ngoai_mon');
+  assert.equal(saved.sect.contribution,123); assert.equal(saved.sect.earned,456);
+  repo.close();
+});

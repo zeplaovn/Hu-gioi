@@ -131,6 +131,7 @@
       case 'novice_meditate':
         return { page: 'idle', target: '.status-progress', text: 'Giữ game đang mở và kết nối. Tu vi tự tăng; hãy nhập định đủ 60 giây (' + Math.min(60, Math.floor(s.progress.meditate)) + '/60).', action: 'Xem tu vi' };
       case 'novice_sect':
+        if (UI.sectMeasured && !UI.sectMeasured()) return { page: 'sect:missions', target: '[data-act="sectMeasure"]', text: 'Mở Tông môn và chạm bia đo linh căn để biết danh phận nhập môn.', action: 'Đến bia đo linh căn' };
         return { page: 'world:sect', target: '[data-act="joinSect"]:not(:disabled)', text: 'Mở Tông môn, đọc giới thiệu rồi chạm Gia nhập ở tông môn bạn chọn.', action: 'Mở tông môn' };
       case 'novice_mission': {
         const m = s.sect.mission;
@@ -147,6 +148,7 @@
       case 'novice_alchemy': {
         if (s.craftQueue.length) return { page: 'craft:dan', target: '.craft-top', text: 'Mẻ đan đang luyện. Giữ game mở đến khi hoàn tất; thất bại thì chuẩn bị nguyên liệu và thử lại.', action: 'Xem lò đan' };
         const book = root.HU_GAME.SECT_BOOKS.find(b => b.id === s.borrowedBook && b.kind === 'PILL');
+        if (!book && !s.sect.joined && UI.sectMeasured && !UI.sectMeasured()) return { page: 'sect:missions', target: '[data-act="sectMeasure"]', text: 'Đo linh căn rồi gia nhập tông môn để mượn sách luyện đan.', action: 'Đến bia đo linh căn' };
         if (!book && !s.sect.joined) return { page: 'sect:missions', target: '[data-act="joinSect"]:not(:disabled)', text: 'Gia nhập tông môn để mượn sách luyện đan ở Tàng Kinh Các.', action: 'Vào tông môn' };
         if (!book && (s.adventurePoints || 0) < 40) return { page: 'sect:missions', target: '[data-act="sectMissionStart"]:not(:disabled)', text: 'Cần 40 điểm lịch luyện để mượn Đan Đạo Chân Giải · Hạ Giới. Hoàn thành ủy thác hoặc lịch luyện để kiếm điểm.', action: 'Kiếm điểm' };
         if (!book) return { page: 'sect:library', target: '[data-act="borrowSectBook"][data-id="dan_ha"]:not(:disabled)', text: 'Trong Tàng Kinh Các, mượn Đan Đạo Chân Giải · Hạ Giới với 40 điểm để mở công thức luyện đan.', action: 'Mượn sách đan' };
