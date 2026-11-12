@@ -89,7 +89,7 @@
   function missionBoard() {
     const s = UI.s(), g = UI.g(), active = s.sect.mission, def = H.SECT_MISSIONS.find(x => x.id === active?.id), featured = g.featuredMission();
     const open = g.sectMissions(), all = g.sectMissions(true);
-    const ready = active && active.end <= Date.now();
+    const ready = active && active.end <= UI.session.serverNow();
     const task = def ? card(def.name, clock(active) + row('Thưởng cống hiến', '+' + Math.round(def.contribution * (active.featured ? 1.5 : 1))) +
       row('Thành công', pct(active.chance)) + (active.featured ? '<p class="gold">★ Nổi bật · thưởng ×1,5</p>' : '') +
       `<div class="action-group">${btn('Nhận thưởng', 'sectMissionClaim', '', !ready)}${btn('Hủy nhiệm vụ', 'sectMissionAbort', '', false, 'btn-outline')}</div>`, { eyebrow: ready ? 'ĐÃ HOÀN TẤT' : 'ĐANG THỰC HIỆN' }) : '';
@@ -210,7 +210,7 @@
       <details class="adventure-details"><summary>Ngũ hành & hệ số linh căn</summary>${card('Tương khắc', '<p>Kim → Mộc → Thổ → Thủy → Hỏa → Kim.</p><p>Khắc hệ +20%; bị khắc −20%. Dị khắc hệ gốc, Hỗn Độn khắc ngũ hành +10%.</p>')}</details>`;
   }
   function update() {
-    const now = Date.now();
+    const now = UI.session.serverNow();
     document.querySelectorAll('[data-job-end]').forEach(el => {
       const start = Number(el.dataset.jobStart), end = Number(el.dataset.jobEnd);
       el.value = Math.max(0, Math.min(100, (now - start) / Math.max(1, end - start) * 100));

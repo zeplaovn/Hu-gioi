@@ -173,7 +173,7 @@
     const claimable = quests.some(q => !s.claimed.includes(q[0]) && s.progress[q[0]] >= q[2]);
     dot('world', claimable);
     dot('idle', !s.completed && g.isPeakStage() && s.qi >= g.need());
-    const now = Date.now();
+    const now = UI.session.serverNow();
     dot('craft', s.garden.some(p => !p.wilt && p.end <= now) || s.craftQueue.some(j => j.end <= now));
   }
 

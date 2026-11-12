@@ -120,7 +120,7 @@
   }
 
   function garden() {
-    const s = UI.s(), g = UI.g(), now = Date.now();
+    const s = UI.s(), g = UI.g(), now = UI.session.serverNow();
     const plots = Array.from({ length: 4 }, (_, i) => {
       const p = s.garden.find(p => p.slot === i);
       if (!p) return `<div class="plot empty farm-plot"><img src="${FARM(10)}" alt="Ô đất trống" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(s.gardenSoils[i])}</b>${btn('Đổi loại đất', 'gardenTerrain', `data-slot="${i}"`, false, 'btn-outline')}</div>`;
@@ -160,7 +160,7 @@
   }
 
   function update() {
-    const now = Date.now();
+    const now = UI.session.serverNow();
     $$('[data-plot]').forEach(el => {
       const p = UI.s().garden.find(p => p.slot === Number(el.dataset.plot));
       if (!p) return;

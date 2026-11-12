@@ -6,7 +6,7 @@
 
   function zoneCard() {
     const s = UI.s(), journey = s.exploration?.active, blocked = root.HU_COMMANDS?.activityConflict(s, 'startExploration');
-    const now = Date.now(), remain = journey ? Math.max(0, Math.ceil((journey.end - now) / 1000)) : 600;
+    const now = UI.session.serverNow(), remain = journey ? Math.max(0, Math.ceil((journey.end - now) / 1000)) : 600;
     const countdown = String(Math.floor(remain / 60)).padStart(2, '0') + ':' + String(remain % 60).padStart(2, '0');
     return card('Chọn nơi lịch luyện', `
       <p class="info-note">${journey
@@ -61,7 +61,7 @@
   function update() {
     const s = UI.s(), journey = s.exploration?.active, clock = $('explorationCountdown');
     if (journey && clock) {
-      const remaining = Math.max(0, Math.ceil((journey.end - Date.now()) / 1000));
+      const remaining = Math.max(0, Math.ceil((journey.end - UI.session.serverNow()) / 1000));
       clock.textContent = String(Math.floor(remaining / 60)).padStart(2, '0') + ':' + String(remaining % 60).padStart(2, '0');
       const bar = $('explorationProgress');
       if (bar) bar.style.width = (100 - remaining / 6).toFixed(1) + '%';

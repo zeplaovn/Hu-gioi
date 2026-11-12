@@ -38,6 +38,12 @@
         });
         return null;
       },
+      syncOnce() {
+        if (!ready || locked || busy() || root.document?.hidden || (syncFailedAt && Date.now() - syncFailedAt < 15000)) return null;
+        const p = session.syncOnce(); if (!p) return null;
+        p.then(report => { syncFailedAt = 0; if (report) root.HU_UI?.refresh?.(); }).catch(error => { syncFailedAt = Date.now(); notify('Chưa đồng bộ được tiến trình: ' + error.message); });
+        return p;
+      },
       synchronize() { return session.synchronize(true); },
       clearAll() { /* Không thể xóa bản nhân vật máy chủ bằng thao tác trình duyệt. */ },
       fresh() { throw Error('Không thể tạo nhân vật lúc này. Vui lòng thử lại.'); },

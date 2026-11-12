@@ -131,3 +131,10 @@ test('dự đoán tu vi chỉ hiển thị, dừng khi bận và không vượt 
   now+=50000;assert.equal(f.session.displayQi(),20);
   f.session.paused=true;assert.equal(f.session.displayQi(),10);f.session.disconnect();
 });
+
+test('đồng bộ một lần mỗi revision và cho thử lại khi lỗi', async () => {
+ const f=fixture({initialPlayer:true});await f.session.connect(ACCOUNT);let n=0;f.session.clock=()=>100000;f.session.lastSyncAttempt=0;
+ f.session.synchronize=async()=>{n++;if(n===1)throw Error('network');return null;};
+ await assert.rejects(f.session.syncOnce(),/network/);await f.session.syncOnce();assert.equal(n,2);assert.equal(f.session.syncOnce(),null);
+ f.session.revision++;await f.session.syncOnce();assert.equal(n,3);f.session.disconnect();
+});

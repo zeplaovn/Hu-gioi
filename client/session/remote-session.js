@@ -42,7 +42,7 @@
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.syncInFlight = null;
       this.resumeTimer = null;
-      this.serverOffset = 0; this.predictable = false;
+      this.serverOffset = 0; this.predictable = false; this.forcedRevision = -1;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
     subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
@@ -125,7 +125,7 @@
     disconnect() {
       if (this.resumeTimer !== null) root.clearTimeout(this.resumeTimer);
       this.resumeTimer = null;
-      this.predictable = false; this.serverOffset = 0;
+      this.predictable = false; this.serverOffset = 0; this.forcedRevision = -1;
       this.accountId = null; this.playerId = null; this.ticket = null;
       this.revision = 0; this.serverContentVersion = ''; this.achievements = [];
       this.pavilion = { version: 0, balance: 0, totalEarned: 0, rebirths: 0, upgrades: {}, relics: {} };
@@ -239,6 +239,11 @@
       }, delay);
     }
     serverNow() { return this.clock() + this.serverOffset; }
+    syncOnce() {
+      if (this.forcedRevision === this.revision || this.clock() - this.lastSyncAttempt < 2000) return null;
+      const revision = this.revision; this.forcedRevision = revision;
+      return this.synchronize(true).catch(error => { if (this.forcedRevision === revision) this.forcedRevision = -1; throw error; });
+    }
     displayQi() {
       const g = this.game, s = g.s;
       if (!this.ready || !this.predictable || this.paused || root.document?.hidden || s.completed || s.exploration?.active || s.dungeon?.active || s.dungeon?.run || s.craftQueue?.length || g.isDead()) return s.qi;

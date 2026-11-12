@@ -1222,12 +1222,12 @@
     stageFrame(frameCount, false);
   }
 
-  function explorationCountdown(end, now = Date.now()) {
+  function explorationCountdown(end, now = UI.session.serverNow()) {
     const seconds = Math.max(0, Math.ceil((end - now) / 1000));
     return String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
   }
 
-  function explorationPose(start, now = Date.now()) {
+  function explorationPose(start, now = UI.session.serverNow()) {
     // Một tư thế kéo dài 9 giây; lựa chọn ngẫu nhiên có thể tái hiện khi tải lại.
     const phase = Math.floor(Math.max(0, now - start) / 9000);
     const seed = Math.imul((Math.floor(start / 1000) ^ (phase + 1)) >>> 0, 1664525) + 1013904223;
@@ -1251,7 +1251,7 @@
   }
 
   function updateTimers() {
-    const s = UI.s(), now = Date.now();
+    const s = UI.s(), now = UI.session.serverNow();
     $$('[data-end]').forEach(el => {
       const end = Number(el.dataset.end);
       el.textContent = now >= end ? 'Sẵn sàng' : duration((end - now) / 1000);
@@ -1961,6 +1961,10 @@
         store.write();
       }
       if (trib.active) return;
+      const stNow = UI.s(), gameNow = UI.g();
+      const finish = stNow.exploration?.active?.end;
+      if ((finish && UI.session.serverNow() >= finish) ||
+          (!root.HU_COMMANDS?.activityConflict(stNow, 'breakthrough') && !stNow.completed && stNow.qi < gameNow.need() * (1 - 1e-12) && UI.session.displayQi() >= gameNow.need())) store.syncOnce();
       updateChrome();
       updateStage();
       updateSceneEffects();
