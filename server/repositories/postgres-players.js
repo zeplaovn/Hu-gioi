@@ -100,7 +100,7 @@ class PostgresPlayers extends PlayerRepository {
         // Một round-trip thay vì hai: mỗi transaction gameplay chạy qua pooler từ Edge,
         // nên mỗi câu lệnh bớt đi là bớt một lượt mạng. Vẫn là set_config(..., true) = cục bộ giao dịch.
         await exec(client,
-          "SELECT set_config('statement_timeout', $1, true), set_config('lock_timeout', $2, true)",
+          "SELECT set_config('statement_timeout', $1, true) AS statement_timeout, set_config('lock_timeout', $2, true) AS lock_timeout",
           [String(this.statementTimeoutMs) + 'ms', String(this.lockTimeoutMs) + 'ms']);
         const result = await work(client);
         await exec(client, 'COMMIT');
