@@ -130,7 +130,7 @@ test('API: luồng chơi đầy đủ preview → tạo → state → sync → l
   const synced = await call('POST', `/api/v1/players/${id}/sync`, { token: tokenA, body: { lastRevision: 0 } });
   assert.equal(synced.status, 200);
   const rev = synced.data.revision;
-  const env = (rid, extra = {}) => ({ protocolVersion: 3, requestId: rid, expectedRevision: rev, type: 'buy', payload: { code: 'HERB-001' }, ...extra });
+  const env = (rid, extra = {}) => ({ protocolVersion: 4, requestId: rid, expectedRevision: rev, type: 'buy', payload: { code: 'HERB-001' }, ...extra });
   const c1 = await call('POST', `/api/v1/players/${id}/commands`, { token: tokenA, body: env('api-1') });
   assert.equal(c1.status, 200);
   assert.equal(c1.data.revision, rev + 1);

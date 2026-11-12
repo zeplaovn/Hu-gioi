@@ -13,7 +13,7 @@ async function fixture(repo) {
   const svc = new PlayerService({ repository: repo, clock: () => time.value, contentVersion: 'test', onError: () => {} });
   const ticket = await svc.previewCreation('owner-a');
   const made = await svc.createPlayer('owner-a', { ticketId: ticket.ticketId, name: 'Tử Vân', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' });
-  const command = async (type, payload, requestId) => ({ protocolVersion: 3, type, payload, requestId, expectedRevision: (await svc.bootstrap('owner-a')).player.revision });
+  const command = async (type, payload, requestId) => ({ protocolVersion: 4, type, payload, requestId, expectedRevision: (await svc.bootstrap('owner-a')).player.revision });
   return { svc, time, id: made.playerId, command };
 }
 for (const mode of ['memory', 'disk']) {

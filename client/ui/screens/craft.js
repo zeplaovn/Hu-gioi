@@ -82,12 +82,16 @@
     const xs = UI.view.onlyReady ? all.filter(x => canMake(recipeOf.get(x.code))) : all;
     const cards = lists.slice(xs).map(x => {
       const r = recipeOf.get(x.code), ok = canMake(r);
+      const available = Math.max(0, Math.min(3 - s.craftQueue.length,
+        Math.floor(s.stone / r.stone), ...Object.entries(r.herbs).map(([key, n]) => Math.floor(g.ingredientCount(key) / n))));
+      const disabled = !ok || available < 1 || !!root.HU_COMMANDS?.activityConflict(s, 'craft');
       return `<section class="card recipe ${ok ? 'ready' : ''}">
         <div class="row-wrap">${img(x.code, 'recipe-img')}<div><h3>${esc(x.name)}</h3><small class="muted">${x.realm} · ${x.grade}</small></div></div>
         <p>${esc(x.description)}</p>
         ${Object.entries(r.herbs).map(([key, n]) => row(esc(H.item(key).name), `<span class="${g.ingredientCount(key) >= n ? 'green-text' : 'danger-text'}">${g.ingredientCount(key)} / ${n}</span>`)).join('')}
         ${row('Chi phí', moneyHTML(r.stone))}${row('Thời gian', duration(r.time))}${row('Thành công', pct(g.craftChance(x.tier)))}
-        ${btn('Xếp mẻ luyện', 'craft', codeAttr(x.code), s.craftQueue.length >= 3 || !ok || !!root.HU_COMMANDS?.activityConflict(s, 'craft'))}
+        <div class="action-group">${btn('Xếp 1 mẻ', 'craft', codeAttr(x.code) + ' data-count="1"', disabled)}
+        ${available > 1 ? btn('Xếp ' + available + ' mẻ', 'craft', codeAttr(x.code) + ` data-count="${available}"`, disabled, 'btn-outline') : ''}</div>
       </section>`;
     }).join('');
     return `${root.HU_COMMANDS?.activityConflict(s, 'craft') ? '<p class="info-note">' + esc(root.HU_COMMANDS.activityConflict(s, 'craft')) + '</p>' : ''}<div class="list-head">${lists.controls({ categories: ['Tất cả'], placeholder: 'Tên đan hoặc mã' })}
@@ -199,8 +203,9 @@
   UI.action('workshopFocus', (el, d) => { UI.view.workshopFocus = d.focus === 'furnace' ? 'furnace' : 'hero'; });
 
   UI.action('craft', async (el, d) => {
-    await UI.command('craft', { code: d.code });
-    UI.toast('Đã xếp ' + H.item(d.code).name + ' vào lò luyện.', { type: 'success', title: 'Luyện đan' });
+    const count = Number(d.count || 1);
+    await UI.command('craft', { code: d.code, count });
+    UI.toast('Đã xếp ' + count + ' mẻ ' + H.item(d.code).name + ' vào lò luyện.', { type: 'success', title: 'Luyện đan' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('forge', async (el, d) => {

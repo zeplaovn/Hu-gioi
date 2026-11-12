@@ -14,8 +14,8 @@ const PROFILE = {
 const character = rng => new H.Game(H.createCharacter(PROFILE, NOW, rng), rng);
 const execute = (game, type, payload = {}, now = NOW) => C.execute(game, { type, payload }, now);
 
-test('protocol v3 rejects resurrection, meta purchases and offline upgrades', () => {
-  assert.equal(C.VERSION, 3);
+test('protocol v4 rejects resurrection, meta purchases and offline upgrades', () => {
+  assert.equal(C.VERSION, 4);
   for (const type of ['prestige', 'reincarnate', 'buyMeta', 'upgradeOffline'])
     assert.throws(() => C.validate({ type, payload: {} }), { code: 'INVALID_COMMAND' });
   assert.equal(H.VERSION, 10);

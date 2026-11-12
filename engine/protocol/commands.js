@@ -1,4 +1,4 @@
-/* Hợp đồng lệnh v3: client chỉ gửi ý định + ID. Không gửi trạng thái, phần thưởng, giá hay đồng hồ.
+/* Hợp đồng lệnh v4: client chỉ gửi ý định + ID. Không gửi trạng thái, phần thưởng, giá hay đồng hồ.
    File này chỉ kiểm tra payload (schema) và chuyển lệnh tới phương thức cùng tên của Game.
    Quy ước phương thức: game[type](payload, now) — now do bên sở hữu phiên cung cấp. */
 (function (root) {
@@ -8,7 +8,7 @@
   const C = node ? require('../../data/character.js') : root.HU_CHARACTER;
   const D = node ? require('../../data/catalog.js') : root.HU_CATALOG;
 
-  const VERSION = 3;
+  const VERSION = 4;
   const isObject = v => v && typeof v === 'object' && !Array.isArray(v) && [Object.prototype, null].includes(Object.getPrototypeOf(v));
   const string = v => typeof v === 'string' && v.length > 0 && v.length <= 80;
   const integer = (min, max) => v => Number.isSafeInteger(v) && v >= min && v <= max;
@@ -34,7 +34,7 @@
     sellYao: {},
     bid: { code },
     // crafting
-    craft: { code },
+    craft: { code, count: optional(integer(1, 3)) },
     forge: { code },
     garden: { slot: integer(0, 3), action: oneOf(['water', 'soil', 'pest', 'harvest', 'terrain']), terrain: optional(oneOf(TERRAINS)) },
     // combat

@@ -38,7 +38,7 @@ Phần **engine phải cung cấp**:
 
 `LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
 
-## 4. Lệnh (52, protocol V3)
+## 4. Lệnh (52, protocol V4)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -60,7 +60,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `use` | inventory | `code` |
 | `sellYao` | inventory | — |
 | `bid` | inventory | `code` |
-| `craft` | crafting | `code` |
+| `craft` | crafting | `code`, `count` tùy chọn (1–3 mẻ, mặc định 1) |
 | `forge` | crafting | `code` |
 | `garden` | crafting | `slot`, `action`, `terrain` |
 | `strike` | combat | — |

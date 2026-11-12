@@ -13,18 +13,18 @@ test('RemoteSession Edge: dùng HU_API_BASE + apikey + Bearer; bootstrap snapsho
   const base = 'https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api';
   const w = {
     HU_API_BASE: base, HU_GAME: { VERSION: 10, Game: class { constructor(s) { this.s = s; } }, create: () => ({ created: false }) },
-    HU_COMMANDS: { VERSION: 3, validate: v => v },
+    HU_COMMANDS: { VERSION: 4, validate: v => v },
     HU_SUPABASE: { publishableKey: 'sb_publishable_test', accessToken: async () => 'access' },
     location: { protocol: 'https:' }, document: { hidden: false }, crypto: { randomUUID: () => 'command-0001' },
     fetch: async (url, init) => {
       calls.push({ url, init });
       const suffix = url.slice(base.length);
       if (suffix === '/bootstrap') return { ok: true, status: 200, json: async () => ({
-        player: { id: player }, protocolVersion: 3, schemaVersion: 10, contentVersion: 'hash',
-        nextSyncInMs: 20000, snapshot: { state, revision: 0, protocolVersion: 3, schemaVersion: 10, contentVersion: 'hash' }
+        player: { id: player }, protocolVersion: 4, schemaVersion: 10, contentVersion: 'hash',
+        nextSyncInMs: 20000, snapshot: { state, revision: 0, protocolVersion: 4, schemaVersion: 10, contentVersion: 'hash' }
       }) };
       if (suffix.endsWith('/commands')) return { ok: true, status: 200, json: async () => ({
-        state: { ...state, qi: 2 }, revision: 1, protocolVersion: 3, schemaVersion: 10, contentVersion: 'hash'
+        state: { ...state, qi: 2 }, revision: 1, protocolVersion: 4, schemaVersion: 10, contentVersion: 'hash'
       }) };
       throw Error('Không mong đợi route ' + suffix);
     },

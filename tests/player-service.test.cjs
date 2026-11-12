@@ -20,7 +20,7 @@ async function spawn(svc, owner = 'owner-a', name = 'Bạch Thanh Vân') {
   return await svc.createPlayer(owner, { ticketId: pv.ticketId, name, gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' });
 }
 const envelope = async (svc, owner, type, payload, requestId, extra = {}) => ({
-  protocolVersion: 3, requestId, expectedRevision: (await svc.bootstrap(owner)).player.revision, type, payload, ...extra
+  protocolVersion: 4, requestId, expectedRevision: (await svc.bootstrap(owner)).player.revision, type, payload, ...extra
 });
 const code = async fn => { try { await fn(); } catch (e) { return e.code; } return null; };
 
@@ -179,7 +179,7 @@ test('cô lập chủ sở hữu: người khác không đọc, đồng bộ hay
   await spawn(svc, 'owner-b', 'Mạc Vân');
   assert.equal(await code(async () => await svc.state('owner-b', id)), 'PLAYER_NOT_FOUND');
   assert.equal(await code(async () => await svc.sync('owner-b', id, {})), 'PLAYER_NOT_FOUND');
-  assert.equal(await code(async () => await svc.command('owner-b', id, { protocolVersion: 3, requestId: 'x1', expectedRevision: 0, type: 'buy', payload: { code: 'HERB-001' } })), 'PLAYER_NOT_FOUND');
+  assert.equal(await code(async () => await svc.command('owner-b', id, { protocolVersion: 4, requestId: 'x1', expectedRevision: 0, type: 'buy', payload: { code: 'HERB-001' } })), 'PLAYER_NOT_FOUND');
   assert.equal(await code(async () => await svc.state('owner-a', '00000000-0000-4000-8000-000000000000')), 'PLAYER_NOT_FOUND');
 });
 
@@ -311,7 +311,7 @@ async function sharedFixture(mode, t) {
     });
   };
   const intent = async (owner, type, payload, requestId, revision = null) => ({
-    protocolVersion: 3, type, payload, requestId,
+    protocolVersion: 4, type, payload, requestId,
     expectedRevision: revision ?? (await service.bootstrap(owner)).player.revision
   });
   return { repo, service, time, make, intent };

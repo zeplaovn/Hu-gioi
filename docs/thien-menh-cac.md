@@ -1,4 +1,4 @@
-# Thiên Mệnh Các — Thiên Tinh trong kiếp hiện tại (protocol v3, state V10)
+# Thiên Mệnh Các — Thiên Tinh trong kiếp hiện tại (protocol v4, state V10)
 
 > Trạng thái: Hiện hành.
 ## Luật đã triển khai

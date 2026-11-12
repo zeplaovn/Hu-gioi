@@ -17,13 +17,13 @@ function fixture({ lostReply = false, conflict = false } = {}) {
     crypto: { randomUUID: () => '00000000-0000-4000-8000-' + String(++id).padStart(12, '0') },
     setTimeout: resolve => resolve(),
     HU_GAME: { VERSION: 10, Game: class { constructor(state) { this.s = state; } }, create: () => ({ created: false, settings: {} }) },
-    HU_COMMANDS: { VERSION: 3, validate: input => input },
+    HU_COMMANDS: { VERSION: 4, validate: input => input },
     HU_SUPABASE: { accessToken: async () => 'test-token' },
     fetch: async (url, init) => {
       const path = url.replace('/api/v1', '');
       const body = init.body ? JSON.parse(init.body) : null;
       calls.push({ path, body });
-      if (path === '/bootstrap') return ok({ protocolVersion: 3, schemaVersion: 10, contentVersion: 'test', player: null, pavilion: pavilion() });
+      if (path === '/bootstrap') return ok({ protocolVersion: 4, schemaVersion: 10, contentVersion: 'test', player: null, pavilion: pavilion() });
       if (path === '/creation/preview') return ok({ ticketId: 'ticket', preview: { age: 18, race: 'nhan' } });
       if (path === '/pavilion/purchase') {
         if (conflict) {
@@ -40,7 +40,7 @@ function fixture({ lostReply = false, conflict = false } = {}) {
           version++; balance -= 2; spent++;
         }
         if (loss) { loss = false; throw Error('Đã commit nhưng thất lạc phản hồi.'); }
-        return ok({ protocolVersion: 3, schemaVersion: 10, contentVersion: 'test', pavilion: pavilion(), replayed: seen.has(body.requestId),
+        return ok({ protocolVersion: 4, schemaVersion: 10, contentVersion: 'test', pavilion: pavilion(), replayed: seen.has(body.requestId),
           result: { key: 'ngoTinh', cost: 2 } });
       }
       throw Error('API ngoài dự kiến: ' + path);
