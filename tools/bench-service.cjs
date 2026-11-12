@@ -28,7 +28,7 @@ async function main() {
     const state = await service.bootstrap(owner);
     // Không tự tạo intent: state+revision chỉ dùng trong benchmark cục bộ.
     await service.command(owner, made.playerId, {
-      protocolVersion: 2, requestId: 'bench-' + i, expectedRevision: state.player.revision,
+      protocolVersion: state.protocolVersion, requestId: 'bench-' + i, expectedRevision: state.player.revision,
       type: 'setPreference', payload: { key: 'music', value: i % 2 === 0 }
     });
     command.push({ cpuMs: (process.cpuUsage(cpu2).user + process.cpuUsage(cpu2).system) / 1000, wallMs: performance.now() - wall2 });
