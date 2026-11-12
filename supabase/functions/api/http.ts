@@ -43,6 +43,11 @@ export function routeOf(method: string, path: string): { name: string; id?: stri
   if (method === 'POST' && pathname === '/creation/preview') return { name: 'preview' };
   if (method === 'POST' && pathname === '/players') return { name: 'create' };
   if (method === 'POST' && pathname === '/pavilion/purchase') return { name: 'pavilionPurchase' };
+  if (method === 'GET' && pathname === '/daily') return { name: 'daily' };
+  if (method === 'POST' && pathname === '/daily/claim') return { name: 'dailyClaim' };
+  if (method === 'POST' && pathname === '/daily/checkin') return { name: 'dailyCheckin' };
+  if (method === 'GET' && pathname === '/mail') return { name: 'mail' };
+  if (method === 'POST' && pathname === '/mail/claim') return { name: 'mailClaim' };
   if (method === 'GET' && pathname === '/me/export') return { name: 'exportData' };
   if (method === 'POST' && pathname === '/me/erase') return { name: 'eraseData' };
   if (method === 'POST' && pathname === '/me/delete-account') return { name: 'deleteAccount' };

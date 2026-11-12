@@ -1,10 +1,12 @@
 /* Điểm vào esbuild: dùng đúng lõi Node/SQLite, không sao chép luật sang Edge. */
 import service from '../../../server/services/player-service.js';
+import daily from '../../../server/services/daily-service.js';
 import pg from '../../../server/repositories/postgres-players.js';
 import errors from '../../../server/errors.js';
 import jwt from '../../../server/auth/jwt.js';
 import admin from '../../../server/auth/account-admin.js';
 export const PlayerService = service.PlayerService;
+export const DailyService = daily.DailyService;
 export const PostgresPlayers = pg.PostgresPlayers;
 export const GameError = errors.GameError;
 export const toEnvelope = errors.toEnvelope;

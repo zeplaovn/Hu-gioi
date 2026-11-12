@@ -68,6 +68,15 @@
       this.syncInFlight = null;
       this.resumeTimer = null;
       this.serverOffset = 0; this.predictable = false; this.forcedRevision = -1;
+      this.daily = null;
+      this.mail = null;
+      this.mailClaimable = 0;
+      this.mailUnread = 0;
+      this.dailyLoadedAt = 0;
+      this.mailLoadedAt = 0;
+      this.dailyResetAt = 0;
+      this.dailyPending = null;
+      this.mailPending = null;
     }
     get ready() { return !!this.accountId && !!this.playerId && !!this.game.s.created; }
     subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
@@ -159,6 +168,15 @@
       this.nextSyncInMs = Number.POSITIVE_INFINITY;
       this.paused = false;
       this.deathNotified = false;
+      this.daily = null;
+      this.mail = null;
+      this.mailClaimable = 0;
+      this.mailUnread = 0;
+      this.dailyLoadedAt = 0;
+      this.mailLoadedAt = 0;
+      this.dailyResetAt = 0;
+      this.dailyPending = null;
+      this.mailPending = null;
       this.game = new H.Game(H.create(this.clock()));
     }
     async connect(account) {
@@ -341,6 +359,80 @@
         else if (response.pavilion) this.pavilion = response.pavilion;
         this.emit({ type: 'pavilion', pavilion: this.pavilion });
         return response.result;
+      });
+    }
+    /* Nhiệm vụ ngày/điểm danh/hộp thư là dữ liệu cấp tài khoản, tải riêng để
+       không phình snapshot gameplay. Claim vẫn đi qua hàng đợi chung và receipt. */
+    loadDaily(force = false) {
+      if (!this.accountId) return Promise.resolve(null);
+      if (this.dailyPending) return this.dailyPending;
+      if (!force && this.daily && this.clock() - this.dailyLoadedAt < 30000) return Promise.resolve(this.daily);
+      const accountId = this.accountId;
+      const task = this.run(async () => {
+        const result = await this.request('/daily');
+        if (this.accountId !== accountId) return null;
+        this.acceptDaily(result);
+        this.dailyLoadedAt = this.clock();
+        return this.daily;
+      }).finally(() => { if (this.dailyPending === task) this.dailyPending = null; });
+      this.dailyPending = task;
+      return task;
+    }
+    loadMail(force = false) {
+      if (!this.accountId) return Promise.resolve(null);
+      if (this.mailPending) return this.mailPending;
+      if (!force && this.mail && this.clock() - this.mailLoadedAt < 30000) return Promise.resolve(this.mail);
+      const accountId = this.accountId;
+      const task = this.run(async () => {
+        const result = await this.request('/mail');
+        if (this.accountId !== accountId) return null;
+        this.acceptDaily(result);
+        this.mailLoadedAt = this.clock();
+        return this.mail;
+      }).finally(() => { if (this.mailPending === task) this.mailPending = null; });
+      this.mailPending = task;
+      return task;
+    }
+    acceptDaily(result) {
+      if (result.state) this.apply(result);
+      if (Object.hasOwn(result, 'daily')) this.daily = result.daily;
+      if (Number.isFinite(Number(result.resetAt))) this.dailyResetAt = Number(result.resetAt);
+      if (result.mail) {
+        if (Array.isArray(result.mail.items)) this.mail = result.mail;
+        this.mailClaimable = Number(result.mail.claimable) || 0;
+        this.mailUnread = Number(result.mail.unread) || 0;
+      }
+      this.dailyLoadedAt = this.clock();
+      this.emit({ type: 'daily', daily: this.daily, mail: result.mail || null });
+    }
+    claimDailyQuest(questId) {
+      return this.run(async () => {
+        if (!this.ready) throw Error('Bạn cần mở lại tab Hư Giới để tiếp tục tu luyện.');
+        const accountId = this.accountId, requestId = secureRequestId();
+        const result = await this.requestWithRetry('/daily/claim', 'POST', { requestId, questId });
+        if (this.accountId !== accountId) return null;
+        this.acceptDaily(result);
+        return result.result;
+      });
+    }
+    checkIn() {
+      return this.run(async () => {
+        if (!this.ready) throw Error('Bạn cần mở lại tab Hư Giới để tiếp tục tu luyện.');
+        const accountId = this.accountId, requestId = secureRequestId();
+        const result = await this.requestWithRetry('/daily/checkin', 'POST', { requestId });
+        if (this.accountId !== accountId) return null;
+        this.acceptDaily(result);
+        return result.result;
+      });
+    }
+    claimMail(mailId) {
+      return this.run(async () => {
+        if (!this.accountId) throw Error('Vui lòng đăng nhập để nhận thư.');
+        const accountId = this.accountId, requestId = secureRequestId();
+        const result = await this.requestWithRetry('/mail/claim', 'POST', { requestId, mailId });
+        if (this.accountId !== accountId) return null;
+        this.acceptDaily(result);
+        return result.result;
       });
     }
     drainAchievements() { return this.achievements.splice(0); }

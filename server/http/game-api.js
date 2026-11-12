@@ -14,6 +14,7 @@
 'use strict';
 const crypto = require('node:crypto');
 const { GameError, toEnvelope } = require('../errors.js');
+const { DailyService } = require('../services/daily-service.js');
 const { RateLimiter, LIMITS } = require('./rate-limit.js');
 const { quotaIpKey } = require('./client-ip.js');
 
@@ -23,8 +24,17 @@ const PLAYER_ROUTE = new RegExp(`^/api/v1/players/(${UUID})/(state|sync|commands
 
 const DATA_RIGHTS = new Set(['exportData', 'eraseData', 'deleteAccount']);
 
-function createGameApi({ service, accountAdmin = null, clientIp = req => req.socket?.remoteAddress || 'unknown', resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
+function createGameApi({ service, dailyService = null, accountAdmin = null, clientIp = req => req.socket?.remoteAddress || 'unknown', resolvePrincipal, allowedOrigins = [], limiter = new RateLimiter(), log = () => {} }) {
   const allowed = new Set(allowedOrigins);
+  // Node dev/test tự dựng DailyService từ PlayerService; Edge truyền instance riêng.
+  const daily = dailyService || (service?.repo ? new DailyService({
+    repository: service.repo, playerService: service,
+    clock: service.clock, contentVersion: service.contentVersion
+  }) : null);
+  const needDaily = () => {
+    if (!daily) throw new GameError('NOT_IMPLEMENTED', 'Nhiệm vụ ngày chưa được bật trên máy chủ này.');
+    return daily;
+  };
 
   function cors(req, res) {
     const origin = req.headers.origin;
@@ -104,6 +114,11 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
         case 'reset-after-death': limit('create:' + who, LIMITS.create); out = await service.resetAfterDeath(who, route.id); break;
         case 'delete-character': limit('erase:' + who, LIMITS.erase); out = await service.deleteCharacter(who, route.id, body); break;
         case 'commands': limit('cmd:' + who, LIMITS.command); out = await service.command(who, route.id, body); break;
+        case 'daily': limit('read:' + who, LIMITS.read); out = await needDaily().daily(who); break;
+        case 'dailyClaim': limit('cmd:' + who, LIMITS.command); out = await needDaily().claimQuest(who, body); break;
+        case 'dailyCheckin': limit('cmd:' + who, LIMITS.command); out = await needDaily().checkIn(who, body); break;
+        case 'mail': limit('read:' + who, LIMITS.read); out = await needDaily().mail(who); break;
+        case 'mailClaim': limit('cmd:' + who, LIMITS.command); out = await needDaily().claimMail(who, body); break;
         case 'exportData': limit('export:' + who, LIMITS.export); out = await service.exportData(who); break;
         case 'eraseData': limit('erase:' + who, LIMITS.erase); out = await service.eraseData(who, body); break;
         case 'deleteAccount': limit('erase:' + who, LIMITS.erase); out = await service.deleteAccount(who, body, accountAdmin); break;
@@ -123,6 +138,11 @@ function createGameApi({ service, accountAdmin = null, clientIp = req => req.soc
     if (method === 'POST' && pathname === '/api/v1/pavilion/purchase') return { name: 'pavilionPurchase' };
     if (method === 'POST' && pathname === '/api/v1/creation/preview') return { name: 'preview' };
     if (method === 'POST' && pathname === '/api/v1/players') return { name: 'create' };
+    if (method === 'GET' && pathname === '/api/v1/daily') return { name: 'daily' };
+    if (method === 'POST' && pathname === '/api/v1/daily/claim') return { name: 'dailyClaim' };
+    if (method === 'POST' && pathname === '/api/v1/daily/checkin') return { name: 'dailyCheckin' };
+    if (method === 'GET' && pathname === '/api/v1/mail') return { name: 'mail' };
+    if (method === 'POST' && pathname === '/api/v1/mail/claim') return { name: 'mailClaim' };
     if (method === 'GET' && pathname === '/api/v1/me/export') return { name: 'exportData' };
     if (method === 'POST' && pathname === '/api/v1/me/erase') return { name: 'eraseData' };
     if (method === 'POST' && pathname === '/api/v1/me/delete-account') return { name: 'deleteAccount' };

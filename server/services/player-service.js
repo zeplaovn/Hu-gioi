@@ -115,7 +115,8 @@ class PlayerService {
       format: 'hu-gioi-data-export', exportedAt: this.clock(), accountId: ownerId, policyNote: 'Dữ liệu gameplay lưu trên máy chủ Hư Giới; dữ liệu đăng nhập do Supabase Auth quản lý riêng.',
       player: data?.player ? { ...data.player, state: snapshot(data.player.state) } : null,
       pendingCreationTickets: data?.tickets || 0, pavilion: data?.pavilion || await this.repo.getPavilion(ownerId),
-      sentChatMessages: data?.chatMessages || []
+      sentChatMessages: data?.chatMessages || [],
+      account: data?.account || null, mail: data?.mail || []
     };
   }
 

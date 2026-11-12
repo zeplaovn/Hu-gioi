@@ -13,7 +13,22 @@ function fixture({ initialPlayer = false, bootstrap = null } = {}) {
   let count = 0, applied = 0, issued = 0;
   let state = { created: true, name: 'Vân Tiêu', qi: 10, lastUpdate: 10000, logs: [], settings: {} };
   let revision = 0, playerId = initialPlayer ? PLAYER : null;
+  let dailyClaimed = false, checkedIn = false, mailClaimed = false;
   const calls = [];
+  const dailyView = () => ({
+    day: '2027-01-15', playerId,
+    quests: [{ id: 'kill', name: 'Trừ yêu hộ đạo', desc: 'Hạ yêu thú.', counter: 'kill', unit: 'yêu thú', target: 1, progress: 1, ready: !dailyClaimed, claimed: dailyClaimed, reward: { stone: 80, item: 'PILL-002', itemName: 'Tụ Khí Đan', qty: 1 }, go: 'combat' }],
+    total: 1, claimable: dailyClaimed ? 0 : 1,
+    checkin: { streak: checkedIn ? 1 : 0, lastDay: checkedIn ? '2027-01-15' : null, today: '2027-01-15', checkedToday: checkedIn, canCheckIn: !checkedIn, nextStreak: 1, rewards: [] }
+  });
+  const mailView = () => ({
+    items: [{ id: 'mail-1', kind: 'system', title: 'Chào mừng', body: 'Quà nhập môn.', attachments: { stone: 100, items: [] }, hasAttachments: true, createdAt: 1000, expiresAt: null, claimedAt: mailClaimed ? 10000 : null, expired: false, claimable: !mailClaimed }],
+    total: 1, unread: mailClaimed ? 0 : 1, claimable: mailClaimed ? 0 : 1
+  });
+  const account = extra => ({
+    protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', serverTime: 10000, resetAt: 20000,
+    revision, state, ...extra
+  });
   class Game { constructor(s) { this.s = s; } }
   const context = {
     URL, AbortSignal, setTimeout, clearTimeout,
@@ -44,6 +59,21 @@ function fixture({ initialPlayer = false, bootstrap = null } = {}) {
         revision++; applied++; state = { ...state, qi: state.qi + 3 };
         out = { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision, state, result: 3 };
       } else if (path.endsWith('/state')) out = { protocolVersion: 4, schemaVersion: 10, contentVersion: 'content', revision, state };
+      else if (path === '/daily') out = account({ daily: dailyView(), mail: { total: 1, unread: mailClaimed ? 0 : 1, claimable: mailClaimed ? 0 : 1 } });
+      else if (path === '/mail') out = account({ daily: dailyView(), mail: mailView() });
+      else if (path === '/daily/claim') {
+        dailyClaimed = true; revision++; state = { ...state, stone: state.stone + 80 };
+        out = account({ daily: dailyView(), mail: { total: 1, unread: mailClaimed ? 0 : 1, claimable: mailClaimed ? 0 : 1 },
+          result: { questId: 'kill', reward: { stone: 80, item: 'PILL-002', itemName: 'Tụ Khí Đan', qty: 1 } } });
+      } else if (path === '/daily/checkin') {
+        checkedIn = true; revision++; state = { ...state, stone: state.stone + 50 };
+        out = account({ daily: dailyView(), mail: { total: 1, unread: mailClaimed ? 0 : 1, claimable: mailClaimed ? 0 : 1 },
+          result: { day: 1, streak: 1, reward: { stone: 50, item: null, itemName: null, qty: 0 } } });
+      } else if (path === '/mail/claim') {
+        mailClaimed = true; revision++; state = { ...state, stone: state.stone + 100 };
+        out = account({ daily: dailyView(), mail: mailView(),
+          result: { mailId: 'mail-1', attachments: { stone: 100, items: [] } } });
+      }
       else throw Error('Unexpected API ' + path);
       return { ok: true, status: 200, json: async () => out };
     }
@@ -194,4 +224,36 @@ test('đồng bộ một lần mỗi revision và cho thử lại khi lỗi', as
  f.session.synchronize=async()=>{n++;if(n===1)throw Error('network');return null;};
  await assert.rejects(f.session.syncOnce(),/network/);await f.session.syncOnce();assert.equal(n,2);assert.equal(f.session.syncOnce(),null);
  f.session.revision++;await f.session.syncOnce();assert.equal(n,3);f.session.disconnect();
+});
+
+test('RemoteSession tải nhiệm vụ ngày, điểm danh và thư qua route riêng', async () => {
+  const f = fixture({ initialPlayer: true });
+  await f.session.connect(ACCOUNT);
+  const daily = await f.session.loadDaily();
+  assert.equal(daily.quests.length, 1);
+  assert.equal(f.session.daily.claimable, 1);
+  assert.equal(f.session.mailClaimable, 1);
+  assert.equal(f.session.dailyResetAt, 20000);
+
+  const claim = await f.session.claimDailyQuest('kill');
+  assert.equal(claim.questId, 'kill');
+  assert.equal(f.session.daily.quests[0].claimed, true);
+  assert.equal(f.session.daily.claimable, 0);
+
+  const checkin = await f.session.checkIn();
+  assert.equal(checkin.day, 1);
+  assert.equal(f.session.daily.checkin.checkedToday, true);
+
+  const mail = await f.session.loadMail(true);
+  assert.equal(mail.items.length, 1);
+  const claimed = await f.session.claimMail('mail-1');
+  assert.equal(claimed.mailId, 'mail-1');
+  assert.equal(f.session.mail.items[0].claimedAt, 10000);
+  assert.equal(f.session.mailClaimable, 0);
+
+  f.session.disconnect();
+  assert.equal(f.session.daily, null);
+  assert.equal(f.session.mail, null);
+  assert.equal(f.session.dailyResetAt, 0);
+  assert.equal(f.session.mailClaimable, 0);
 });

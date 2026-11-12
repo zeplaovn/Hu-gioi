@@ -378,3 +378,44 @@ test('API Thiên Mệnh Các: chỉ JWT và intent hợp lệ; thiếu Thiên Ti
   const other = await call('GET', '/api/v1/bootstrap', { token: tokenB });
   assert.equal(other.data.pavilion.balance, 0);
 });
+
+test('API nhiệm vụ ngày/điểm danh/hộp thư: route đúng, receipt chống cấp thưởng hai lần', async t => {
+  const { call, tokenA } = await boot(t);
+  const noPlayer = await call('GET', '/api/v1/daily', { token: tokenA });
+  assert.equal(noPlayer.status, 200);
+  assert.equal(noPlayer.data.daily, null);
+  assert.equal(noPlayer.data.mail.total, 3, 'thư mẫu thuộc tài khoản, không cần nhân vật');
+
+  const pv = await call('POST', '/api/v1/creation/preview', { token: tokenA });
+  const made = await call('POST', '/api/v1/players', { token: tokenA, body: {
+    ticketId: pv.data.ticketId, name: 'Nhiệm Nguyệt', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+  } });
+  assert.equal(made.status, 201);
+  const daily = await call('GET', '/api/v1/daily', { token: tokenA });
+  assert.equal(daily.status, 200);
+  assert.equal(daily.data.daily.quests.length, 3);
+  assert.equal(daily.data.daily.checkin.canCheckIn, true);
+  assert.equal(daily.data.mail.total, 3);
+
+  const checkin = await call('POST', '/api/v1/daily/checkin', { token: tokenA, body: { requestId: 'api-checkin-01' } });
+  assert.equal(checkin.status, 200);
+  assert.equal(checkin.data.result.day, 1);
+  const replay = await call('POST', '/api/v1/daily/checkin', { token: tokenA, body: { requestId: 'api-checkin-01' } });
+  assert.equal(replay.status, 200);
+  assert.equal(replay.data.replayed, true);
+  assert.equal(replay.data.state.stone, checkin.data.state.stone);
+
+  const mail = await call('GET', '/api/v1/mail', { token: tokenA });
+  const welcome = mail.data.mail.items.find(x => x.kind === 'system');
+  const claim = await call('POST', '/api/v1/mail/claim', { token: tokenA, body: { requestId: 'api-mail-01', mailId: welcome.id } });
+  assert.equal(claim.status, 200);
+  assert.equal(claim.data.result.mailId, welcome.id);
+  const mailReplay = await call('POST', '/api/v1/mail/claim', { token: tokenA, body: { requestId: 'api-mail-01', mailId: welcome.id } });
+  assert.equal(mailReplay.data.replayed, true);
+  assert.equal(mailReplay.data.state.stone, claim.data.state.stone);
+
+  const wrong = await call('POST', '/api/v1/daily/claim', { token: tokenA, body: { requestId: 'api-daily-01', questId: 'khong-co' } });
+  assert.equal(wrong.status, 400);
+  assert.equal(wrong.data.error.code, 'INVALID_REQUEST');
+  assert.equal((await call('POST', '/api/v1/daily/checkin', { token: tokenA, body: {} })).status, 400);
+});

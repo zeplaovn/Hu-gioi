@@ -10,7 +10,7 @@ import { getVerifiedUserId } from './auth-user.ts';
 import { createVerifiedUserCache } from './auth-cache.ts';
 import { handleSocial } from './social.ts';
 import {
-  PlayerService, PostgresPlayers, GameError, toEnvelope,
+  PlayerService, DailyService, PostgresPlayers, GameError, toEnvelope,
   createAccountAdmin, shouldLogApiError, CONTENT_VERSION
 } from './game.bundle.mjs';
 
@@ -73,6 +73,9 @@ const service = new PlayerService({
   repository: repo, contentVersion: CONTENT_VERSION,
   config: { onlineGraceMs: grace, nextSyncInMs: syncInterval, repositoryRates: true },
   onError: () => { /* log bên ngoài, không log state/token */ }
+});
+const dailyService = new DailyService({
+  repository: repo, playerService: service, contentVersion: CONTENT_VERSION
 });
 /* Supabase đã đánh dấu SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY là deprecated; runtime mới cấp
    SUPABASE_PUBLISHABLE_KEYS / SUPABASE_SECRET_KEYS (chuỗi JSON dạng dictionary). Giữ khóa cũ làm ưu tiên để
@@ -197,6 +200,11 @@ export async function handleApi(req: Request): Promise<Response> {
       case 'sync': result = await service.sync(ownerId, route.id, body); break;
       case 'commands': result = await service.command(ownerId, route.id, body); break;
       case 'pause': result = await service.pause(ownerId, route.id); break;
+      case 'daily': result = await dailyService.daily(ownerId); break;
+      case 'dailyClaim': result = await dailyService.claimQuest(ownerId, body); break;
+      case 'dailyCheckin': result = await dailyService.checkIn(ownerId, body); break;
+      case 'mail': result = await dailyService.mail(ownerId); break;
+      case 'mailClaim': result = await dailyService.claimMail(ownerId, body); break;
       case 'resetAfterDeath': result = await service.resetAfterDeath(ownerId, route.id); break;
       case 'deleteCharacter': result = await service.deleteCharacter(ownerId, route.id, body); break;
       case 'exportData': result = await service.exportData(ownerId); break;

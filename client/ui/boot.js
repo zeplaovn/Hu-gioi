@@ -341,6 +341,7 @@
       try { root.history?.replaceState(null, '', '#' + target); } catch { /* file:// */ }
     }
     store.write();
+    UI.session.loadDaily().catch(error => console.warn('Không tải được nhiệm vụ ngày:', error.message));
     UI.tutorial?.resume();
   }
 

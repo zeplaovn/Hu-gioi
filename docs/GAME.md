@@ -40,6 +40,15 @@
 - Bảng xếp hạng theo **Lực chiến/Cảnh giới**, loại nhân vật chết khỏi bảng live; yêu cầu đổi sang **snapshot 12 giờ** chưa hoàn thành.
 - Không đồng nhất nút UI có mặt với API deployed đã hoạt động trên mobile.
 
+### 5.1 Nhiệm vụ ngày, điểm danh và hộp thư
+- Màn **Nhiệm vụ** có bốn tab: **Hằng ngày**, **Điểm danh**, **Hộp thư**, **Nhiệm vụ cũ**. Tab Hằng ngày/Điểm danh/Hộp thư lấy dữ liệu từ tài khoản, không nhúng vào snapshot gameplay.
+- Máy chủ chọn **3 trong 5 nhiệm vụ** theo `SHA-256(ownerId + ngày)`. Ngày cố định **UTC+7**, reset lúc 00:00 giờ Việt Nam; tiến độ là hiệu số `state.progress` hiện tại trừ baseline đầu ngày. Đổi nhân vật hoặc sang ngày mới sẽ tạo baseline mới, không cộng tiến độ offline.
+- Năm nhiệm vụ hiện có: hạ yêu thú, tu luyện online, khám phá vùng đất mới, luyện đan và đột phá. Thưởng Linh Thạch + vật phẩm; chỉ nhận một lần/ngày.
+- **Điểm danh** chu kỳ 7 ngày, thưởng tăng dần; bỏ lỡ một ngày quay về ngày 1, hết ngày 7 quay lại ngày 1. Cần có đạo thân.
+- **Hộp thư** gieo mẫu `welcome`, `event`, `support` một lần cho mỗi tài khoản bằng `seed_key`; quà đính kèm cấp vào nhân vật hiện tại. Thư sự kiện có hạn 30 ngày; thư hỗ trợ không có quà vẫn đánh dấu đã đọc được.
+- Mọi claim dùng `requestId` + receipt phía máy chủ; replay cùng `requestId` trả kết quả cũ, không cộng thưởng lần hai. RequestId dùng cho intent khác bị từ chối.
+- Dữ liệu nằm trong `game.account_state`, `game.account_mail`, `game.account_receipts`; xóa tài khoản/dữ liệu gameplay xóa cả ba. Production chỉ có tính năng này sau khi áp migration và deploy lại Edge bundle.
+
 ## 6. Quyết định và kiểm thử còn mở
 - Các mục P0/P1 về kinh mạch, phàm nhân, sách nghề, thiết kế cao giới, cân bằng và quyền sở hữu nội dung: [gameplay-decisions.md](gameplay-decisions.md).
 - Nghiệm thu cuối: tạo và reset nhân vật, gameplay online/ẩn tab, hồi quy death/permadeath, 12/8 kinh mạch, chat bốn kênh, ranking, 390×844/mobile ngang và desktop, tốc độ load assets.

@@ -62,6 +62,35 @@ CREATE TABLE IF NOT EXISTS pavilion_receipts (
   fingerprint TEXT NOT NULL,
   PRIMARY KEY (owner_id, request_id)
 );
+CREATE TABLE IF NOT EXISTS account_state (
+  owner_id TEXT PRIMARY KEY,
+  doc TEXT NOT NULL DEFAULT '{}',
+  updated_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS account_receipts (
+  owner_id TEXT NOT NULL REFERENCES account_state(owner_id) ON DELETE CASCADE,
+  request_id TEXT NOT NULL,
+  fingerprint TEXT NOT NULL,
+  response TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  PRIMARY KEY (owner_id, request_id)
+);
+CREATE INDEX IF NOT EXISTS account_receipts_expires ON account_receipts (expires_at);
+CREATE TABLE IF NOT EXISTS account_mail (
+  id TEXT PRIMARY KEY,
+  owner_id TEXT NOT NULL,
+  seed_key TEXT,
+  kind TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  attachments TEXT NOT NULL DEFAULT '{}',
+  created_at INTEGER NOT NULL,
+  expires_at INTEGER,
+  claimed_at INTEGER
+);
+CREATE UNIQUE INDEX IF NOT EXISTS account_mail_seed ON account_mail (owner_id, seed_key) WHERE seed_key IS NOT NULL;
+CREATE INDEX IF NOT EXISTS account_mail_owner_created ON account_mail (owner_id, created_at DESC, id);
 `;
 const DAY = 24 * 3600 * 1000;
 const nameKey = name => String(name).normalize('NFC').toLocaleLowerCase('vi');
@@ -71,6 +100,14 @@ function hydrate(row) {
     id: row.id, ownerId: row.owner_id, name: row.name, state: JSON.parse(row.state), revision: row.revision,
     schemaVersion: row.schema_version, contentVersion: row.content_version, rngSeed: row.rng_seed,
     rngCounter: row.rng_counter, lastSeenAt: row.last_seen_at, createdAt: row.created_at
+  };
+}
+
+function hydrateMail(row) {
+  return {
+    id: row.id, seedKey: row.seed_key, kind: row.kind, title: row.title, body: row.body,
+    attachments: JSON.parse(row.attachments), createdAt: row.created_at,
+    expiresAt: row.expires_at, claimedAt: row.claimed_at
   };
 }
 
@@ -122,7 +159,25 @@ class SqlitePlayers extends PlayerRepository {
       pavilionReceipt: p('SELECT fingerprint FROM pavilion_receipts WHERE owner_id = ? AND request_id = ?'),
       pavilionPutReceipt: p('INSERT INTO pavilion_receipts (owner_id, request_id, fingerprint) VALUES (?, ?, ?)'),
       pavilionSyncPlayer: p('UPDATE players SET state = ?, state_bytes = ?, revision = revision + 1, updated_at = ? WHERE owner_id = ?'),
-      deletePavilion: p('DELETE FROM pavilion_accounts WHERE owner_id = ?')
+      deletePavilion: p('DELETE FROM pavilion_accounts WHERE owner_id = ?'),
+      accountEnsure: p("INSERT OR IGNORE INTO account_state (owner_id, doc, updated_at) VALUES (?, '{}', ?)"),
+      accountGet: p('SELECT * FROM account_state WHERE owner_id = ?'),
+      accountSave: p('UPDATE account_state SET doc = ?, updated_at = ? WHERE owner_id = ?'),
+      accountReceipt: p('SELECT * FROM account_receipts WHERE owner_id = ? AND request_id = ? AND expires_at > ?'),
+      accountPutReceipt: p(`INSERT INTO account_receipts (owner_id, request_id, fingerprint, response, created_at, expires_at)
+        VALUES (?, ?, ?, ?, ?, ?)`),
+      accountSavePlayer: p(`UPDATE players SET state = ?, state_bytes = ?, revision = ?, rng_counter = ?,
+        last_seen_at = ?, schema_version = ?, content_version = ?, updated_at = ? WHERE id = ? AND revision = ?`),
+      mailList: p('SELECT * FROM account_mail WHERE owner_id = ? ORDER BY created_at DESC, id ASC'),
+      mailInsert: p(`INSERT OR IGNORE INTO account_mail
+        (id, owner_id, seed_key, kind, title, body, attachments, created_at, expires_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`),
+      mailClaim: p(`UPDATE account_mail SET claimed_at = ?
+        WHERE id = ? AND owner_id = ? AND claimed_at IS NULL AND (expires_at IS NULL OR expires_at > ?)`),
+      deleteAccountMail: p('DELETE FROM account_mail WHERE owner_id = ?'),
+      deleteAccountState: p('DELETE FROM account_state WHERE owner_id = ?'),
+      countAccountReceipts: p('SELECT COUNT(*) AS n FROM account_receipts WHERE owner_id = ?'),
+      purgeAccountReceipts: p('DELETE FROM account_receipts WHERE expires_at <= ?')
     };
   }
 
@@ -268,6 +323,54 @@ class SqlitePlayers extends PlayerRepository {
     });
   }
 
+  /* Giao dịch cấp tài khoản cho nhiệm vụ ngày/điểm danh/hộp thư. Mutex FIFO của
+     SQLite thay cho advisory lock; thứ tự đọc account_state → player giống Postgres. */
+  async accountTransact(ownerId, fn, { now = Date.now() } = {}) {
+    return this.run(async () => {
+      this.q.accountEnsure.run(ownerId, now);
+      const account = this.q.accountGet.get(ownerId);
+      const playerRow = this.q.byOwner.get(ownerId);
+      const doc = JSON.parse(account.doc);
+      const originalDoc = JSON.stringify(doc);
+      const tx = {
+        doc,
+        player: playerRow ? hydrate(playerRow) : null,
+        receipt: async requestId => {
+          const r = this.q.accountReceipt.get(ownerId, requestId, now);
+          return r ? { requestId, fingerprint: r.fingerprint, response: JSON.parse(r.response) } : null;
+        },
+        mail: {
+          list: async () => this.q.mailList.all(ownerId).map(hydrateMail),
+          insert: async items => {
+            for (const m of items) this.q.mailInsert.run(m.id, ownerId, m.seedKey ?? null, m.kind,
+              m.title, m.body, JSON.stringify(m.attachments || {}), m.createdAt, m.expiresAt ?? null);
+          },
+          claim: async (id, at) => this.q.mailClaim.run(at, id, ownerId, at).changes === 1
+        }
+      };
+      const out = await fn(tx) || {};
+      const nextDoc = out.doc !== undefined ? out.doc : tx.doc;
+      const serializedDoc = JSON.stringify(nextDoc);
+      if (serializedDoc !== originalDoc) {
+        if (Buffer.byteLength(serializedDoc) > 16384)
+          throw new GameError('STATE_CORRUPT', 'Dữ liệu tài khoản vượt giới hạn.');
+        this.q.accountSave.run(serializedDoc, now, ownerId);
+      }
+      if (out.save) {
+        const s = out.save, state = JSON.stringify(s.state), size = Buffer.byteLength(state);
+        if (size > 65536) throw new GameError('STATE_CORRUPT', 'Trạng thái nhân vật vượt giới hạn.');
+        const res = this.q.accountSavePlayer.run(state, size, s.revision, s.rngCounter,
+          playerRow.last_seen_at, s.schemaVersion, s.contentVersion, now, playerRow.id, playerRow.revision);
+        if (res.changes !== 1) throw new GameError('REVISION_CONFLICT', 'Tiến trình đã thay đổi. Hãy đồng bộ lại.');
+      }
+      if (out.receipt) {
+        const r = out.receipt;
+        this.q.accountPutReceipt.run(ownerId, r.requestId, r.fingerprint, JSON.stringify(r.response), now, r.expiresAt);
+      }
+      return out.value;
+    });
+  }
+
   async deletePlayer(ownerId, playerId, { allowAlive = false } = {}) {
     return this.run(() => {
       const row = this.q.byId.get(playerId);
@@ -287,11 +390,13 @@ class SqlitePlayers extends PlayerRepository {
     const row = this.q.byOwner.get(ownerId);
     const tickets = Number(this.q.ticketCount.get(ownerId, 0).n);
     const pavilion = await this.getPavilion(ownerId);
-    if (!row && !tickets && pavilion.totalEarned === 0 && pavilion.rebirths === 0) return null;
+    const accountRow = this.q.accountGet.get(ownerId);
+    const mail = this.q.mailList.all(ownerId).map(hydrateMail);
+    if (!row && !tickets && pavilion.totalEarned === 0 && pavilion.rebirths === 0 && !accountRow && !mail.length) return null;
     return {
       player: row ? { id: row.id, name: row.name, revision: row.revision, schemaVersion: row.schema_version,
         state: JSON.parse(row.state), lastSeenAt: row.last_seen_at, createdAt: row.created_at, updatedAt: row.updated_at } : null,
-      tickets, pavilion
+      tickets, pavilion, account: accountRow ? JSON.parse(accountRow.doc) : null, mail
     };
   }
 
@@ -301,17 +406,21 @@ class SqlitePlayers extends PlayerRepository {
       const row = this.q.byOwner.get(ownerId);
       let receipts = 0;
       if (row) receipts = Number(this.q.countReceipts.get(row.id).n);
+      const accountReceipts = Number(this.q.countAccountReceipts.get(ownerId).n);
       const players = Number(this.q.deleteOwnerPlayers.run(ownerId).changes);
       const tickets = Number(this.q.deleteOwnerTickets.run(ownerId).changes);
       const pavilionAccounts = Number(this.q.deletePavilion.run(ownerId).changes);
-      return { players, tickets, receipts, pavilionAccounts };
+      const accountMail = Number(this.q.deleteAccountMail.run(ownerId).changes);
+      const accountState = Number(this.q.deleteAccountState.run(ownerId).changes);
+      return { players, tickets, receipts, pavilionAccounts, accountMail, accountReceipts, accountState };
     });
   }
 
   async purgeExpired(now) {
     return this.run(() => ({
       receipts: Number(this.q.purgeReceipts.run(now).changes),
-      tickets: Number(this.q.purgeTickets.run(now, now - 7 * DAY).changes)
+      tickets: Number(this.q.purgeTickets.run(now, now - 7 * DAY).changes),
+      accountReceipts: Number(this.q.purgeAccountReceipts.run(now).changes)
     }));
   }
 

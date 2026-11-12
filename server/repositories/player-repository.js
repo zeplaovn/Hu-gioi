@@ -17,8 +17,18 @@
                                                 touch   { rngCounter, lastSeenAt } chỉ cập nhật metadata, giữ nguyên state
                                                 receipt { requestId, fingerprint, revision, response, expiresAt }
                                               fn ném lỗi → hoàn tác toàn bộ. Trả value của fn.
-     exportOwnerData(ownerId)                 → { player, tickets } | null  Dữ liệu gameplay của tài khoản (không gồm seed RNG).
-     deleteOwnerData(ownerId)                 → { players, tickets, receipts }  Xóa toàn bộ dữ liệu gameplay của tài khoản (quyền xóa dữ liệu).
+     accountTransact(ownerId, async fn, { now })
+                                              Giao dịch cấp tài khoản (nhiệm vụ ngày/điểm danh/hộp thư). Khóa advisory owner
+                                              → account_state → player. fn(tx) chạy async với tx = {
+                                                doc, player, receipt(requestId), mail: { list(), insert(rows), claim(id, at) }
+                                              }.
+                                              fn trả { value, doc?, save?, receipt? }:
+                                                doc     JSON tài khoản (nhiệm vụ ngày, baseline, điểm danh); tối đa 16 KiB
+                                                save    { state, revision, rngCounter, schemaVersion, contentVersion }; lastSeenAt được giữ nguyên
+                                                receipt { requestId, fingerprint, revision, response, expiresAt }
+                                              fn ném lỗi → hoàn tác toàn bộ. Trả value của fn.
+     exportOwnerData(ownerId)                 → { player, tickets, account, mail } | null  Dữ liệu gameplay của tài khoản (không gồm seed RNG).
+     deleteOwnerData(ownerId)                 → { players, tickets, receipts, accountMail, accountState }  Xóa toàn bộ dữ liệu gameplay của tài khoản (quyền xóa dữ liệu).
      purgeExpired(now)                        Xóa receipt/ticket quá hạn.
      close() */
 /* Tất cả phương thức lưu trữ, ngoại trừ close(), trả Promise. SQLite thực hiện bằng mutex FIFO; Postgres dùng SELECT FOR UPDATE. */
@@ -31,6 +41,7 @@ class PlayerRepository {
   transact() { throw notImplemented('transact'); }
   getPavilion() { throw notImplemented('getPavilion'); }
   purchasePavilion() { throw notImplemented('purchasePavilion'); }
+  accountTransact() { throw notImplemented('accountTransact'); }
   deletePlayer() { throw notImplemented('deletePlayer'); }
   exportOwnerData() { throw notImplemented('exportOwnerData'); }
   deleteOwnerData() { throw notImplemented('deleteOwnerData'); }

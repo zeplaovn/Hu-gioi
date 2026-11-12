@@ -93,7 +93,7 @@
     apply();
   }
 
-  const quests = () => {
+  const legacyQuests = () => {
     const s = UI.s(), g = UI.g(), fragments = H.ITEMS.filter(x => x.kind === 'QITEM');
     const novice = g.noviceQuestInfo(), q = novice.quest;
     const guide = q ? card(q.name, `<p>${esc(q.desc)}</p>${row('Mục tiêu', esc(q.goal))}${row('Tiến độ', (novice.index + 1) + ' / ' + H.NOVICE_QUESTS.length)}${bar(novice.index / H.NOVICE_QUESTS.length * 100, 'novice-quest-progress')}<p>${moneyHTML(q.stone)} · ${esc(H.item(q.item).name)} ×${q.qty}</p><div class="action-group">${novice.ready ? btn('Nhận thưởng', 'claimQuest', `data-id="${esc(q.id)}"`) : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`}</div>`, { eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ' })
@@ -101,6 +101,99 @@
     return `${guide}<p class="screen-lead">Mỗi nhiệm vụ chỉ có thể nhận thưởng một lần với nhân vật hiện tại.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
       card(name, `${row('Tiến độ', num(Math.min(max, s.progress[id])) + ' / ' + max)}${bar(Math.min(max, s.progress[id]) / max * 100, 'quest-progress')}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p>${btn(s.claimed.includes(id) ? 'Đã nhận' : s.progress[id] < max ? 'Chưa đủ tiến độ' : 'Nhận thưởng', 'claimQuest', `data-id="${id}"`, s.claimed.includes(id) || s.progress[id] < max)}`)).join('')}
       ${card('Hợp nhất đạo ấn', `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để nhận 10 Thiên Tinh vào tài khoản.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}${btn('Hợp ấn', 'fragments', '', !fragments.every(x => g.count(x.code) > 0) || s.claimed.includes('fragments'))}`)}</div>`;
+  };
+
+  /* Dữ liệu nhiệm vụ ngày/thư thuộc tài khoản, tải riêng khỏi snapshot gameplay.
+     Mỗi lần tải xong mới vẽ lại màn đang mở; lỗi có backoff để không lặp request. */
+  const dailyLoad = { owner: '', error: '', at: 0, pending: false };
+  const mailLoad = { owner: '', error: '', at: 0, pending: false };
+  const loadView = (state, owner, run, force) => {
+    if (state.owner !== owner) Object.assign(state, { owner, error: '', at: 0, pending: false });
+    if (state.pending) return;
+    if (!force && Date.now() - state.at < 15000) return;
+    state.pending = true;
+    Promise.resolve().then(run).catch(error => {
+      if (state.owner === owner) state.error = error.message;
+    }).finally(() => {
+      state.pending = false;
+      state.at = Date.now();
+      if (UI.windows?.has('quests')) UI.windows.render('quests');
+    });
+  };
+  const refreshDaily = (force = false) => {
+    const owner = UI.session?.accountId;
+    if (!owner) return;
+    loadView(dailyLoad, owner, () => UI.session.loadDaily(force), force);
+  };
+  const refreshMail = (force = false) => {
+    const owner = UI.session?.accountId;
+    if (!owner) return;
+    loadView(mailLoad, owner, () => UI.session.loadMail(force), force);
+  };
+  const accountLoading = what => {
+    const error = dailyLoad.error || mailLoad.error;
+    return card(error ? 'Chưa tải được ' + what : 'Đang tải ' + what,
+      error ? `<p>${esc(error)}</p>${btn('Thử lại', 'accountRefresh', '', false, 'btn-outline')}` : '<p>Đang hỏi máy chủ Hư Giới...</p>',
+      { eyebrow: 'KẾT NỐI MÁY CHỦ' });
+  };
+  const rewardLine = reward => {
+    const parts = [];
+    if (reward?.stone) parts.push(moneyHTML(reward.stone));
+    if (reward?.itemName && reward.qty) parts.push(esc(reward.itemName) + ' ×' + reward.qty);
+    if (Array.isArray(reward?.items)) for (const item of reward.items)
+      if (item?.name && item.qty) parts.push(esc(item.name) + ' ×' + item.qty);
+    return parts.join(' · ') || 'Không có quà';
+  };
+  const dailyPanel = () => {
+    const d = UI.session.daily;
+    if (!d) return accountLoading('nhiệm vụ ngày');
+    const reset = Number(UI.session.dailyResetAt) || 0;
+    const cards = d.quests.map(q => {
+      const percent = q.target ? q.progress / q.target * 100 : 0;
+      const action = q.claimed ? btn('Đã nhận', 'claimDaily', '', true, 'btn-outline')
+        : q.ready ? btn('Nhận thưởng', 'claimDaily', `data-id="${esc(q.id)}"`)
+          : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`;
+      return card(q.name, `<p>${esc(q.desc)}</p>${row('Tiến độ', num(q.progress) + ' / ' + num(q.target) + ' ' + esc(q.unit))}${bar(percent, 'quest-progress')}<p>${rewardLine(q.reward)}</p><div class="action-group">${action}</div>`, { eyebrow: q.claimed ? 'ĐÃ NHẬN' : q.ready ? 'CÓ THỂ NHẬN' : 'HÔM NAY' });
+    }).join('');
+    return `<p class="screen-lead">Máy chủ chọn ${d.total} nhiệm vụ mỗi ngày; tiến độ chỉ tính từ lúc mở ngày. Làm mới lúc 00:00 giờ Việt Nam${reset ? ' · còn ' + live(reset) : ''}.</p><div class="screen-grid">${cards}</div>`;
+  };
+  const checkinPanel = () => {
+    const d = UI.session.daily;
+    if (!d) return accountLoading('điểm danh');
+    const c = d.checkin;
+    const head = card(c.checkedToday ? 'Đã điểm danh hôm nay' : 'Điểm danh hằng ngày',
+      `<p>Chuỗi hiện tại <b>${num(c.streak)}/7</b>. ${c.checkedToday ? 'Hôm nay đã nhận thưởng; quay lại vào ngày mai.' : 'Ngày kế tiếp sẽ là <b>' + num(c.nextStreak) + '/7</b>.'}</p>` +
+      (c.canCheckIn ? btn('Điểm danh hôm nay', 'checkIn') : `<p class="info-note">${c.checkedToday ? 'Chuỗi được giữ qua ngày mai.' : 'Cần có đạo thân để điểm danh.'}</p>`),
+      { eyebrow: 'BẢY NGÀY LINH KHÍ' });
+    const grid = `<div class="checkin-grid">${c.rewards.map(r => card('Ngày ' + num(r.day),
+      `${moneyHTML(r.stone)}${r.itemName ? `<br>${esc(r.itemName)} ×${r.qty}` : ''}`,
+      { cls: r.current ? 'is-current' : r.next ? 'is-next' : '', eyebrow: r.current ? 'HÔM NAY' : r.next ? 'KẾ TIẾP' : '' })).join('')}</div>`;
+    return head + `<p class="screen-lead">Chuỗi 7 ngày lặp lại. Bỏ lỡ một ngày sẽ quay về ngày 1; mốc 7 có thưởng cao nhất.</p>` + grid;
+  };
+  const MAIL_KIND = { system: 'Hệ thống', event: 'Sự kiện', support: 'Hỗ trợ', compensation: 'Đền bù' };
+  const mailPanel = () => {
+    const m = UI.session.mail;
+    if (!m) return accountLoading('hộp thư');
+    if (!m.items.length) return card('Hộp thư trống', '<p>Hiện chưa có thư nào cho tài khoản này.</p>', { eyebrow: 'HỘP THƯ' });
+    const items = m.items.map(mail => {
+      const action = mail.claimedAt ? btn('Đã nhận', 'claimMail', '', true, 'btn-outline')
+        : mail.expired ? btn('Hết hạn', 'claimMail', '', true, 'btn-outline')
+          : mail.hasAttachments ? btn('Nhận quà', 'claimMail', `data-id="${esc(mail.id)}"`)
+            : btn('Đánh dấu đã đọc', 'claimMail', `data-id="${esc(mail.id)}"`, false, 'btn-outline');
+      const expiry = mail.expiresAt ? row('Hết hạn', new Date(mail.expiresAt).toLocaleDateString('vi-VN')) : '';
+      return card(esc(mail.title), `<p>${esc(mail.body)}</p>${row('Quà đính kèm', rewardLine(mail.attachments))}${expiry}<div class="action-group">${action}</div>`,
+        { cls: 'mail-item', eyebrow: MAIL_KIND[mail.kind] || 'HỘP THƯ' });
+    }).join('');
+    return `<p class="screen-lead">Thư hệ thống, sự kiện và hỗ trợ thuộc tài khoản. ${num(m.claimable)} thư có quà chưa nhận; quà chỉ cấp một lần.</p><div class="mail-list">${items}</div>`;
+  };
+  const QUEST_TABS = () => {
+    const d = UI.session.daily;
+    return [
+      { id: 'daily', label: 'Hằng ngày', icon: '☀', badge: d?.claimable ? String(d.claimable) : '' },
+      { id: 'checkin', label: 'Điểm danh', icon: '✓', badge: d?.checkin?.canCheckIn ? '!' : '' },
+      { id: 'mail', label: 'Hộp thư', icon: '✉', badge: UI.session.mailClaimable ? String(UI.session.mailClaimable) : '' },
+      { id: 'legacy', label: 'Nhiệm vụ cũ', icon: '✦' }
+    ];
   };
 
   const sect = () => UI.adventure.sect();
@@ -183,12 +276,20 @@
   });
 
   // Nhiệm vụ là một màn độc lập trong menu chính, không nằm lẫn với bản đồ.
+  const questBodies = { daily: dailyPanel, checkin: checkinPanel, mail: mailPanel, legacy: legacyQuests };
   UI.register({
     id: 'quests', label: 'Nhiệm vụ', icon: '✦', eyebrow: 'NHIỆM VỤ',
-    render: () => '<header class="screen-title"><span class="eyebrow gold">TU HÀNH</span><h2>Nhiệm vụ</h2></header><div class="screen-body">' + quests() + '</div>',
-    signature: () => {
-      const s = UI.s();
-      return [JSON.stringify(s.progress), s.claimed.join(','), s.stone, s.realm, s.stage, s.sect.joined, s.sect.missionsDone, s.exploration.last?.end, UI.session.pavilion?.balance || 0, Object.entries(s.bag)
+    get tabs() { return QUEST_TABS(); },
+    render: tab => '<header class="screen-title"><span class="eyebrow gold">TU HÀNH</span><h2>Nhiệm vụ</h2></header>' + tabs(QUEST_TABS(), tab) + '<div class="screen-body">' + (questBodies[tab] || dailyPanel)() + '</div>',
+    mount: tab => {
+      if (tab === 'daily' || tab === 'checkin') refreshDaily();
+      else if (tab === 'mail') refreshMail();
+    },
+    signature: tab => {
+      const s = UI.s(), d = UI.session.daily, m = UI.session.mail;
+      const dailySig = d ? [d.day, d.claimable, d.checkin?.streak, d.checkin?.checkedToday, d.quests.map(q => q.progress + ':' + q.claimed).join(',')].join('/') : 'nodaily';
+      const mailSig = m ? [m.total, m.unread, m.claimable, m.items.map(x => x.claimedAt ? 1 : 0).join('')].join('/') : 'nomail';
+      return [tab, JSON.stringify(s.progress), s.claimed.join(','), s.stone, s.realm, s.stage, s.sect.joined, s.sect.missionsDone, s.exploration.last?.end, UI.session.pavilion?.balance || 0, dailySig, mailSig, UI.session.dailyResetAt || 0, Object.entries(s.bag)
         .filter(([code]) => H.item(code)?.kind === 'QITEM').map(([code, n]) => code + ':' + n).join(',')].join('|');
     }
   });
@@ -256,6 +357,35 @@
     const q = await UI.command('claimQuest', { id: d.id });
     UI.toast('Đã nhận thưởng ' + q[1] + ' · ' + money(q[3]) + ' và ' + H.item(q[4]).name + ' ×' + q[5] + '.', { type: 'success', title: 'Nhiệm vụ' });
     UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+  });
+  UI.action('accountRefresh', async () => {
+    refreshDaily(true);
+    refreshMail(true);
+    UI.toast('Đang tải lại nhiệm vụ và hộp thư.', { type: 'info', title: 'Nhiệm vụ' });
+  });
+  UI.action('claimDaily', async (el, d) => {
+    const result = await UI.session.claimDailyQuest(d.id);
+    if (!result) return UI.KEEP;
+    UI.toast('Đã nhận ' + rewardLine(result.reward) + '.', { type: 'loot', title: 'Nhiệm vụ ngày' });
+    UI.vfx?.stage({ kind: 'chien_dau', variant: 'phi_thang', fps: 14, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+  });
+  UI.action('checkIn', async () => {
+    const result = await UI.session.checkIn();
+    if (!result) return UI.KEEP;
+    if (result.already) {
+      UI.toast('Hôm nay đã điểm danh · chuỗi ' + num(result.streak) + '/7.', { type: 'info', title: 'Điểm danh' });
+      return UI.KEEP;
+    }
+    UI.toast('Điểm danh ngày ' + num(result.day) + ' · ' + rewardLine(result.reward) + '.', { type: 'loot', title: 'Điểm danh' });
+    UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_khi', fps: 14, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+  });
+  UI.action('claimMail', async (el, d) => {
+    const result = await UI.session.claimMail(d.id);
+    if (!result) return UI.KEEP;
+    const reward = result.attachments;
+    const has = (reward?.stone || 0) > 0 || (reward?.items || []).length > 0;
+    UI.toast(has ? 'Đã nhận ' + rewardLine(reward) + '.' : 'Đã đánh dấu thư là đã đọc.', { type: has ? 'loot' : 'info', title: 'Hộp thư' });
+    if (has) UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(110px,18vw,190px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
   });
   UI.action('fragments', async () => {
     await UI.command('claimFragments');

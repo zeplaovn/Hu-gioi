@@ -38,13 +38,23 @@ test('toàn bộ migration dựng được database trắng từ đầu và khô
       assert.match(jobs[0].command, /delete from game\.world_chat_messages/i);
       await db.exec('BEGIN; ' + jobs[0].command + ' ROLLBACK;');
     }
+    if (files.some(name => name.endsWith('_daily_mail_checkin.sql'))) {
+      const accountJob = (await db.query(
+        "select schedule,command from cron.job where jobname='hugioi-cleanup-account-receipts'")).rows;
+      assert.equal(accountJob.length, 1);
+      assert.equal(accountJob[0].schedule, '15 */3 * * *');
+      assert.match(accountJob[0].command, /delete from game\.account_receipts/i);
+      await db.exec('BEGIN; ' + accountJob[0].command + ' ROLLBACK;');
+    }
     const tables = (await db.query(`select n.nspname || '.' || c.relname as tbl,c.relrowsecurity as rls
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where c.relkind='r' and (n.nspname='game' or n.nspname='public' and c.relname='policy_acceptances')
       order by tbl`)).rows;
-    assert.equal(tables.length, 11, '9 bảng game/Auth hiện hành + 2 bảng admin riêng tư');
+    assert.equal(tables.length, 14, '12 bảng game/Auth hiện hành + 2 bảng admin riêng tư');
     assert.ok(tables.some(row => row.tbl === 'game.admin_users'));
     assert.ok(tables.some(row => row.tbl === 'game.admin_audit_log'));
+    for (const tbl of ['game.account_state', 'game.account_receipts', 'game.account_mail'])
+      assert.ok(tables.some(row => row.tbl === tbl), 'thiếu bảng ' + tbl);
     assert.ok(tables.every(row => row.rls), 'mọi bảng nghiệp vụ đều phải bật RLS');
     const scopes = (await db.query(`select schemaname,tablename,policyname from pg_policies
       where schemaname in ('game','public') order by schemaname,tablename`)).rows;

@@ -16,6 +16,7 @@ const CLOCK = 1800000000000;
 const migration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261110075419_game_schema.sql'), 'utf8');
 const socialMigration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111015058_online_social_and_indexed_leaderboard.sql'), 'utf8');
 const extendedMigration = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
+const accountMigration = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261112020000_daily_mail_checkin.sql'), 'utf8');
 
 async function makePg(t) {
   const db = new PGlite();
@@ -25,6 +26,7 @@ async function makePg(t) {
   await db.exec(migration);
   await db.exec(socialMigration);
   await db.exec(extendedMigration);
+  await db.exec(accountMigration);
   let queued = Promise.resolve();
   const pool = {
     async connect() {
@@ -69,8 +71,8 @@ test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/a
     FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname='game' AND c.relkind='r' ORDER BY c.relname`);
   assert.deepEqual(result.rows.map(x => x.relname), [
-    'creation_tickets', 'pavilion_accounts', 'pavilion_receipts', 'player_leaderboard', 'player_receipts', 'players',
-    'world_chat_messages', 'world_chat_presence'
+    'account_mail', 'account_receipts', 'account_state', 'creation_tickets', 'pavilion_accounts', 'pavilion_receipts',
+    'player_leaderboard', 'player_receipts', 'players', 'world_chat_messages', 'world_chat_presence'
   ]);
   assert.ok(result.rows.every(x => x.relrowsecurity === true));
   assert.equal((await db.query(`SELECT count(*)::int AS n FROM pg_policies WHERE schemaname='game'`)).rows[0].n, 0);
@@ -81,6 +83,7 @@ test('Postgres migration: private RLS, bảng Thiên Mệnh Các, quyền anon/a
   await db.exec(migration); // idempotent
   await db.exec(socialMigration); // index + trigger idempotent
   await db.exec(extendedMigration); // kênh chat + combat power idempotent
+  await db.exec(accountMigration); // nhiệm vụ ngày/hộp thư idempotent
 });
 
 test('Postgres contract: ticket, owner 404, name unique, receipt, optimistic revision, export', async t => {

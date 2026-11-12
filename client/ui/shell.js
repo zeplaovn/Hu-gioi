@@ -575,7 +575,7 @@
      ====================================================================== */
   const WINDOW_ORDER = ['idle', 'retreat', 'sect', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
   const WINDOW_SIZE = { idle: 470, retreat: 620, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, ranking: 740, settings: 630, meta: 760, more: 720 };
-  const BADGED = ['combat', 'craft', 'retreat'];
+  const BADGED = ['combat', 'craft', 'retreat', 'quests'];
 
   const wins = {
     map: new Map(),
@@ -1171,6 +1171,9 @@
     badge('craft', String(s.craftQueue.length + s.garden.length), s.craftQueue.length + s.garden.length > 0);
     badge('combat', '⚔', s.auto);
     badge('retreat', '!', !!s.retreat?.report);
+    const daily = UI.session.daily;
+    const questBadge = (daily?.claimable || 0) + (UI.session.mailClaimable || 0) + (daily?.checkin?.canCheckIn ? 1 : 0);
+    badge('quests', String(questBadge), questBadge > 0);
     markMenu();
     document.body.classList.toggle('mode-fight', s.auto);
     const docTitle = s.name + ' · Hư Giới';
@@ -1969,6 +1972,9 @@
       updateChrome();
       updateStage();
       updateSceneEffects();
+      // Nhiệm vụ ngày làm mới định kỳ để badge và mốc 00:00 UTC+7 cập nhật.
+      if (UI.session.daily && Date.now() - UI.session.dailyLoadedAt > 60000)
+        UI.session.loadDaily().catch(() => { /* lần sau tick sẽ thử lại */ });
       const absorbed = Math.max(0, UI.s().qi - beforeQi);
       if (absorbed > 0 && report?.seconds <= 3 && UI.current === 'idle' && !UI.s().auto && !UI.intro?.active && !trib.pageOpen && $('modalLayer').hidden && $('game')?.dataset.stage === 'idle') UI.vfx?.cultivationGain(absorbed);
       wins.map.forEach((w, id) => {
