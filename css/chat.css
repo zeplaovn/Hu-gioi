@@ -225,3 +225,6 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
 @media (prefers-reduced-motion:reduce){
   .chat-realm,.chat-name.chat-admin{animation:none}
 }
+/* Năm tab dùng một hàng, có thể vuốt khi màn hình quá hẹp. */
+.win.desktop-window[data-window="chat"] .chat-channels{display:flex;overflow-x:auto;overscroll-behavior-x:contain}
+.win.desktop-window[data-window="chat"] .chat-channels>button{flex:1 0 62px}
