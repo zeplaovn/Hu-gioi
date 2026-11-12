@@ -58,13 +58,13 @@
 
   function manualsCard() {
     const s = UI.s();
-    const slots = Array.from({ length: 3 }, (_, i) => {
+    const slots = Array.from({ length: 4 }, (_, i) => {
       const key = s.activeManuals[i];
       if (!key) return `<button class="manual-slot empty" data-go="character:skills"><span>＋</span><small>Ô trống</small></button>`;
       const x = H.item(key);
       return `<div class="manual-slot">${img(key)}<div><b>${esc(x.name)}</b><small>Thuần thục ${pct(s.learned[key])}</small>${bar(s.learned[key] * 100)}</div></div>`;
     }).join('');
-    return card('Công pháp đang vận', `<div class="manual-slots">${slots}</div><p class="info-note">Tối đa ba công pháp cùng vận hành. Thuần thục tăng theo thời gian tu luyện.</p>`,
+    return card('Công pháp đang vận', `<div class="manual-slots">${slots}</div><p class="info-note">Tối đa bốn công pháp cùng vận hành. Thuần thục tăng theo thời gian tu luyện.</p>`,
       { eyebrow: 'TRUYỀN THỪA', aside: '<button class="text-btn" data-go="character:skills">Quản lý ›</button>' });
   }
 

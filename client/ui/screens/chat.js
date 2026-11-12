@@ -269,7 +269,7 @@
     if (!UI.release.chat || bubble.el || !root.document) return;
     const el = document.createElement('div');
     el.id = 'chatBubble'; el.className = 'chat-bubble';
-    el.innerHTML = '<button type="button" class="chat-bubble-btn" aria-expanded="false" aria-controls="chatBubblePanel" aria-label="Mở chat thế giới"><img class="chat-bubble-icon" src="media/assets/ui/icon/chat/truyen-am.svg" width="36" height="36" alt="" aria-hidden="true" decoding="async"><i class="chat-bubble-badge" hidden>0</i></button>' +
+    el.innerHTML = '<button type="button" class="chat-bubble-btn" aria-expanded="false" aria-controls="chatFloating" aria-label="Mở chat thế giới"><img class="chat-bubble-icon" src="media/assets/ui/icon/chat/truyen-am.svg" width="36" height="36" alt="" aria-hidden="true" decoding="async"><i class="chat-bubble-badge" hidden>0</i></button>' +
       '<div id="chatBubblePanel" class="chat-bubble-panel" role="dialog" aria-label="Truyền âm vạn giới" hidden><button type="button" class="chat-bubble-close" aria-label="Thu nhỏ chat">×</button><div class="chat-bubble-body"></div></div>';
     document.body.appendChild(el);
     bubble.el = el; bubble.btn = el.querySelector('.chat-bubble-btn'); bubble.panel = el.querySelector('.chat-bubble-panel'); bubble.badge = el.querySelector('.chat-bubble-badge');
@@ -296,9 +296,9 @@
     const wins = UI.windows;
     if (!wins) return;
     const w = wins.map.get('chat');
-    if (force === false) { if (w) UI.go('idle'); }
-    else if (force === true) UI.go('chat');
-    else if (w) UI.go('idle'); else UI.go('chat');
+    if (force === false) { if (w) wins.close('chat'); }
+    else if (force === true) wins.open('chat');
+    else wins.toggle('chat');
     bubble.open = wins.has('chat') && !wins.map.get('chat')?.minimized;
     bubbleCount();
   }
@@ -313,6 +313,8 @@
     // thu nhỏ/đóng cửa sổ hoặc ẩn tab thì ngắt vòng poll sau tối đa 1 giây.
     const win = UI.windows?.map?.get('chat');
     const visible = !!(show && win && !win.minimized && !root.document.hidden);
+    if (bubble.open !== visible) { bubble.open = visible; bubbleCount(); }
+    bubble.btn?.setAttribute('aria-expanded', String(visible));
     if (!visible && opened) { opened = false; session.disconnect(); }
     if (visible && !opened && session.available) { opened = true; void session.connect(); }
     if (bubble.el) bubble.el.hidden = !show;

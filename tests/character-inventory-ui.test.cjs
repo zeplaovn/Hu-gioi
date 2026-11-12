@@ -30,3 +30,20 @@ test('kéo pháp bảo đến ô trống gọi lệnh trang bị',async()=>{
   listeners.drop({target:{closest:()=>target},preventDefault(){}});
   await new Promise(resolve=>setImmediate(resolve));assert.ok(game.s.equipment.includes(key));
 });
+
+test('bốn ô công pháp và pháp bảo đang mặc không hiện trong túi nếu không còn bản dư',()=>{
+  const {game,screen}=setup(); const eq=H.ITEMS.find(x=>x.kind==='EQ'&&x.tier===0); const key=eq.key||eq.code;
+  game.s.bag[key]=1;game.equip({code:key},NOW);
+  let html=screen.render('bag');assert.equal((html.match(/class="manual-gear-slot/g)||[]).length,4);
+  assert.doesNotMatch(html,new RegExp('data-select="'+key+'"'));
+  game.s.bag[key]=2; html=screen.render('bag');assert.match(html,new RegExp('data-select="'+key+'"'));
+});
+test('máy chủ cho vận hành bốn công pháp và giữ đủ sau khi chuẩn hóa',()=>{
+  const {game}=setup();const manuals=H.ITEMS.filter(x=>x.kind==='BT'&&x.tier===0&&!['BT-900','BT-901'].includes(x.code)).slice(0,5);
+  assert.ok(manuals.length>=5);
+  for(const item of manuals){const key=item.key||item.code;game.s.learned[key]=0;}
+  for(const item of manuals.slice(0,4)) game.activate({code:item.key||item.code},NOW);
+  assert.equal(game.s.activeManuals.length,4);
+  assert.equal(H.normalize(game.s,NOW).activeManuals.length,4);
+  assert.throws(()=>game.activate({code:manuals[4].key||manuals[4].code},NOW),/bốn công pháp/);
+});

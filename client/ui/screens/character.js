@@ -75,7 +75,7 @@
       return card(`${name} · ${n}/20`, row('Giá một cấp', moneyHTML(F.cost(g.upgradeBase(i), 1.15, n))) +
         `<div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="${i}" data-count="${k}"`, n >= 20, 'btn-outline')).join('')}</div>`);
     }).join('');
-    return `<p class="screen-lead">Vận hành tối đa ba công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc độ hấp thụ linh khí tối đa +70%.</p>
+    return `<p class="screen-lead">Vận hành tối đa bốn công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc độ hấp thụ linh khí tối đa +70%.</p>
       <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Mở mục Hành trang để lĩnh ngộ Dẫn Khí Quyết có sẵn.')}</div>
       <h3 class="section-title">Bồi dưỡng theo cảnh giới</h3>
       <p class="info-note">Chi phí mỗi bậc tăng ×1,15. Tu luyện và củng cố đạo cơ có thể tăng tối đa 40% tốc độ hấp thụ linh khí; phần bồi dưỡng thường sẽ bắt đầu lại khi sang đại cảnh giới mới.</p>
@@ -186,7 +186,7 @@
       return `<button type="button" class="gear-slot ${key ? '' : 'empty'} gear-corner-${i}" data-gear-drop="${i}" ${key ? `data-act="equip" ${codeAttr(key)}` : ''} aria-label="${key ? 'Tháo ' + esc(item.name) : 'Ô pháp bảo ' + (i + 1) + ' trống'}">${key ? img(key) : '<span>＋</span>'}<small>${key ? esc(item.name) : 'Ô ' + (i + 1)}</small></button>`;
     }).join('');
     /* Hành trang chứa cả các ô trang bị và toàn bộ vật phẩm trong túi. */
-    const xs = Object.keys(s.bag).map(H.item).filter(Boolean)
+    const xs = Object.keys(s.bag).map(H.item).filter(x => x && g.count(x.key) > (s.equipment.includes(x.key) ? 1 : 0))
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
     const order = bagOrder();
     const visible = xs.slice().sort((a,b) => { const ai=order.indexOf(a.key), bi=order.indexOf(b.key); return (ai < 0 ? Number.MAX_SAFE_INTEGER : ai) - (bi < 0 ? Number.MAX_SAFE_INTEGER : bi); });
@@ -195,9 +195,14 @@
     const main = x ? `${img(v.selected, 'detail-img')}<h3 class="detail-title">${esc(x.name)}</h3>${itemDescription(v.selected)}${row('Giá bán', moneyHTML(F.shop_sell_price(g.price(v.selected))))}
       <div class="detail-actions">${btn(x.kind === 'EQ' ? (s.equipment.includes(v.selected) ? 'Tháo' : 'Trang bị') : x.kind === 'BT' ? 'Lĩnh ngộ' : usable ? 'Sử dụng' : 'Công dụng',
         x.kind === 'EQ' ? 'equip' : x.kind === 'BT' ? 'learn' : usable ? 'consume' : 'info', codeAttr(v.selected))}${btn('Bán 1', 'sell', codeAttr(v.selected), s.equipment.includes(v.selected), 'btn-outline')}</div>` : empty('Chọn một vật phẩm.');
+    const manuals = Array.from({ length: 4 }, (_, i) => {
+      const key = s.activeManuals[i];
+      return key ? `<button type="button" class="manual-gear-slot" data-act="activate" ${codeAttr(key)} aria-label="Dừng vận hành ${esc(H.item(key).name)}">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
+        : `<button type="button" class="manual-gear-slot empty" data-go="character:skills" aria-label="Ô công pháp ${i + 1} trống"><span>＋</span><small>Ô ${i + 1}</small></button>`;
+    }).join('');
     return `<div class="inventory-scene-layout">
-      <section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Kéo pháp bảo vào ô trống hoặc chọn rồi bấm Trang bị; ô trống đầu tiên sẽ được dùng.</p></section>
-      <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Túi trữ vật đang trống.')}</div></section>
+      <div class="inventory-hero-column"><section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Kéo pháp bảo vào ô trống hoặc chọn rồi bấm Trang bị; ô trống đầu tiên sẽ được dùng.</p></section><section class="manual-gear-panel"><div><span class="eyebrow gold">TRUYỀN THỪA</span><h3>Công pháp đang vận · ${s.activeManuals.length}/4</h3></div><div class="manual-gear-grid">${manuals}</div></section></div>
+      <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><p class="rarity-legend"><span>Hạ</span><span>Trung</span><span>Thượng</span><span>Cực</span></p><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key) - (s.equipment.includes(i.key) ? 1 : 0))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Túi trữ vật đang trống.')}</div></section>
       <section class="card item-detail inventory-detail" aria-live="polite">${main}</section>
     </div>`;
 

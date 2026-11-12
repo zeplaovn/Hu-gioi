@@ -525,3 +525,23 @@ body.in-tribulation{overflow:hidden}
 .inventory-cell[data-drag-item]{touch-action:none;cursor:grab}.inventory-cell[data-drag-item]:active{cursor:grabbing}
 .inventory-detail{grid-column:1/-1}.inventory-detail .detail-img{display:block}
 @media(max-width:760px){.inventory-scene-layout{grid-template-columns:minmax(0,1fr)}.gear-stage{min-height:360px}.gear-hero{height:75%}.inventory-detail{grid-column:auto}.inventory-pouch{min-height:0}.inventory-pouch .inventory-items{max-height:330px}}
+
+/* Hành trang: bốn công pháp và phẩm chất */
+.manual-gear-panel{margin-top:12px;padding:14px;border:1px solid #7a6b49;border-radius:14px;background:linear-gradient(135deg,#14271c,#0d1712)}
+.manual-gear-panel h3{margin:4px 0 10px;color:#eed6a3;font:700 16px var(--serif)}
+.manual-gear-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.manual-gear-slot{min-width:0;min-height:70px;border:1px solid #8a7d57;border-radius:9px;background:#102018;color:#eadcbf;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.manual-gear-slot img{height:42px;width:42px;object-fit:contain}.manual-gear-slot small{font-size:10px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.manual-gear-slot.empty span{font-size:22px;color:#a7c1ae}
+.rarity-legend{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:11px}.rarity-legend span:nth-child(1){color:#c5d4cc}.rarity-legend span:nth-child(2){color:#70d9a4}.rarity-legend span:nth-child(3){color:#85bfff}.rarity-legend span:nth-child(4){color:#f3ca72}
+.inventory-cell[data-sub="0"]{--q:#b0c0b4}.inventory-cell[data-sub="1"]{--q:#63d6a3}.inventory-cell[data-sub="2"]{--q:#7ab6f0}.inventory-cell[data-sub="3"]{--q:#e6c164}
+.inventory-cell{border-color:var(--q,#58735f)}
+/* Cây và ô đất nằm trực tiếp trên nền vườn; bảng chăm sóc chỉ mở khi cần. */
+.garden-field{min-height:500px;padding:120px 12% 24px;background-position:center;background-size:cover}
+.garden-field .plot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18%;align-items:end}
+.garden-field .plot.farm-plot{min-height:150px;background:transparent;border:0;box-shadow:none;backdrop-filter:none;padding:4px;justify-content:end;color:#fff4d3;text-shadow:0 2px 4px #000,0 1px 6px #000}
+.garden-field .farm-plot>img{width:100px;height:100px;max-width:100%;object-fit:contain;filter:drop-shadow(0 4px 5px #0009)}
+.garden-field .farm-plot>b,.garden-field .plot-status{padding:3px 7px;background:#06180fbd;border-radius:6px;text-align:center}
+.garden-field .farm-plot .job-bar{max-width:150px}.farm-care{width:min(100%,230px);text-shadow:none}
+.farm-care summary{cursor:pointer;text-align:center;background:#102b1dde;border:1px solid #7b9b70;border-radius:7px;padding:5px;color:#f8ebc7}
+.farm-care-body{padding:7px;background:#081b13e8;border-radius:8px}
+@media(max-width:600px){.garden-field{padding:100px 8px 18px;min-height:420px}.garden-field .plot-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.garden-field .plot.farm-plot{min-height:130px}.garden-field .farm-plot>img{width:78px;height:78px}.manual-gear-grid{gap:4px}}

@@ -100,3 +100,11 @@ test('RemoteSession hoãn heartbeat theo retryAfterMs khi server trả 429', asy
   assert.equal(attempts, 2);
   assert.equal(f.session.nextSyncInMs, 5000);
 });
+
+test('hiệu ứng tiểu cảnh chỉ phát khi snapshot tăng tầng trong cùng cảnh giới', async () => {
+  const f=fixture({initialPlayer:true}); await f.session.connect(ACCOUNT);
+  const events=[];f.session.subscribe(e=>events.push(e.type));
+  const data=(revision,realm,stage)=>({protocolVersion:2,schemaVersion:9,contentVersion:'content',revision,state:{created:true,realm,stage,name:'Vân Tiêu',settings:{}}});
+  f.session.apply(data(1,0,1)); f.session.apply(data(2,0,2)); f.session.apply(data(2,0,2)); f.session.apply(data(3,1,1));
+  assert.equal(events.filter(x=>x==='minorBreakthrough').length,1);
+});

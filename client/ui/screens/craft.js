@@ -123,12 +123,12 @@
     const s = UI.s(), g = UI.g(), now = Date.now();
     const plots = Array.from({ length: 4 }, (_, i) => {
       const p = s.garden.find(p => p.slot === i);
-      if (!p) return `<div class="plot empty"><img src="${FARM(10)}" alt="Ô trống" loading="lazy" decoding="async"><b>Ô ${i + 1}</b><small>${esc(s.gardenSoils[i])}</small>${btn('Đổi loại đất', 'gardenTerrain', `data-slot="${i}"`, false, 'btn-outline')}</div>`;
+      if (!p) return `<div class="plot empty farm-plot"><img src="${FARM(10)}" alt="Ô đất trống" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(s.gardenSoils[i])}</b>${btn('Đổi loại đất', 'gardenTerrain', `data-slot="${i}"`, false, 'btn-outline')}</div>`;
       const action = (key, label) => btn(label, 'gardenAct', `data-slot="${i}" data-care="${key}"`, false, key === 'harvest' ? 'btn-gold' : 'btn-outline');
-      return `<div class="plot growing" data-plot="${i}" data-start="${p.plantedAt}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Linh thảo" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(H.item(p.herb).name)}</b>
-        <div class="meter-bar job-bar"><i></i></div><span class="plot-status"></span>
-        <div class="farm-meters"><label>Nước <meter class="farm-water" min="0" max="1" value="${p.water}"></meter></label><label>Đất <meter class="farm-soil" min="0" max="1" value="${p.soil}"></meter></label></div><small class="farm-pest"></small>
-        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 linh thạch')}${action('pest', 'Trừ sâu')}${action('harvest', 'Thu hoạch')}</div></div>`;
+      return `<div class="plot growing farm-plot" data-plot="${i}" data-start="${p.plantedAt}" data-end-at="${p.end}"><img src="${plotArt(p, now)}" alt="Linh thảo" loading="lazy" decoding="async"><b>Ô ${i + 1} · ${esc(H.item(p.herb).name)}</b>
+        <span class="plot-status"></span><div class="meter-bar job-bar"><i></i></div>
+        <details class="farm-care"><summary>Chăm sóc</summary><div class="farm-care-body"><div class="farm-meters"><label>Nước <meter class="farm-water" min="0" max="1" value="${p.water}"></meter></label><label>Đất <meter class="farm-soil" min="0" max="1" value="${p.soil}"></meter></label></div><small class="farm-pest"></small>
+        <div class="farm-actions">${action('water', 'Tưới nước')}${action('soil', 'Bón thổ · 1 linh thạch')}${action('pest', 'Trừ sâu')}${action('harvest', 'Thu hoạch')}</div></div></details></div>`;
     }).join('');
     const seeds = Object.keys(s.bag).map(H.item).filter(x => x?.kind === 'SEED' && x.tier <= s.realm + 1).sort((a, b) => a.tier - b.tier);
     const seedRows = seeds.map(x => {

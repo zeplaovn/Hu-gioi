@@ -174,6 +174,8 @@
         this.nextSyncInMs = Number(response.nextSyncInMs);
       const before = this.game.s;
       this.game = new H.Game(response.state);
+      if (before?.created && before.realm === response.state.realm && response.state.stage > before.stage && !response.died)
+        this.emit({ type: 'minorBreakthrough', realm: response.state.realm, stage: response.state.stage });
       if (Array.isArray(response.achievements)) this.achievements.push(...response.achievements);
       for (const message of response.logs || []) if (typeof message === 'string') this.emit({ type: 'log', message });
       if (response.died && !this.deathNotified) {

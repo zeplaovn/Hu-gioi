@@ -324,7 +324,7 @@
     if (object(raw.learned)) for (const [k, v] of Object.entries(raw.learned))
       if (item(k)?.kind === 'BT') x.learned[k] = finite(v, 0, 1);
     x.activeManuals = Array.isArray(raw.activeManuals)
-      ? uniq(raw.activeManuals.filter(k => k in x.learned && item(k).tier <= x.realm + 1)).slice(0, 3)
+      ? uniq(raw.activeManuals.filter(k => k in x.learned && item(k).tier <= x.realm + 1)).slice(0, 4)
       : [];
     x.buffs = Array.isArray(raw.buffs) ? raw.buffs
       .filter(b => object(b) && ['rate', 'attack'].includes(b.type) && Number.isFinite(b.end) && b.end > 0)

@@ -51,7 +51,7 @@
         if (x.tier > s.realm + 1) throw Error('Công pháp vượt quá một bậc cảnh giới.');
         this.take(key);
         s.learned[key] = Math.min(1, (s.learned[key] || 0) + .05);
-        if (!['BT-900', 'BT-901'].includes(x.code) && !s.activeManuals.includes(key) && s.activeManuals.length < 3) s.activeManuals.push(key);
+        if (!['BT-900', 'BT-901'].includes(x.code) && !s.activeManuals.includes(key) && s.activeManuals.length < 4) s.activeManuals.push(key);
         return s.learned[key];
       },
       activate(payload, now) {
@@ -62,7 +62,7 @@
         if (x.tier > s.realm + 1) throw Error('Công pháp vượt quá một bậc cảnh giới.');
         if (s.activeManuals.includes(key)) s.activeManuals = s.activeManuals.filter(k => k !== key);
         else {
-          if (s.activeManuals.length >= 3) throw Error('Chỉ vận hành ba công pháp.');
+          if (s.activeManuals.length >= 4) throw Error('Chỉ vận hành bốn công pháp.');
           s.activeManuals.push(key);
         }
         s.hp = Math.min(s.hp, this.stats().HP);

@@ -653,3 +653,12 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .window-taskbar .window-task:focus-visible{outline:2px solid #f6d18f;outline-offset:2px}
 @media(max-width:600px){.window-taskbar{bottom:calc(72px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 12px);padding:4px}.window-taskbar .window-task{max-width:100px;min-height:29px;padding:4px 7px;font-size:11px}.win-controls>button{width:30px;min-width:30px;height:29px}}
 @media(prefers-reduced-motion:reduce){.win.desktop-window{animation:none}}
+
+/* Truyền âm là cửa sổ nổi, không phủ thành trang riêng. */
+#statusPanel .info [hidden], .info .row[hidden]{display:none!important}
+.win.chat-floating{background:#0d1d16;border-radius:14px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
+.win.chat-floating>header{background:#10251b}
+.minor-breakthrough{position:absolute;left:50%;top:23%;z-index:20;transform:translateX(-50%);display:grid;text-align:center;gap:6px;pointer-events:none;color:#ffdf86;text-shadow:0 2px 8px #241100,0 0 22px #ffb835;animation:minor-breakthrough-in 2.8s ease-out both}
+.minor-breakthrough strong{font:800 clamp(26px,4vw,52px) var(--serif);letter-spacing:.13em;white-space:nowrap}.minor-breakthrough span{font:700 clamp(14px,2vw,20px) var(--serif);color:#fff3c8}
+@keyframes minor-breakthrough-in{0%{opacity:0;transform:translate(-50%,20px) scale(.8)}20%,72%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-24px)}}
+@media(prefers-reduced-motion:reduce){.minor-breakthrough{animation:none}.minor-breakthrough strong{text-shadow:none}}

@@ -470,6 +470,14 @@
   /* Theo dõi đúng phiên chơi, không sửa prototype của luật dùng chung. */
   UI.session.subscribe(event => {
     if (event.type === 'log' && logState.live && UI.s() === logState.owner) queueLog(event.message, { source: 'engine' });
+    if (event.type === 'minorBreakthrough') {
+      const stage = $('stage'); if (!stage) return;
+      stage.querySelector('.minor-breakthrough')?.remove();
+      const el = document.createElement('div'); el.className = 'minor-breakthrough'; el.setAttribute('role', 'status');
+      const title = document.createElement('strong'), subtitle = document.createElement('span');
+      title.textContent = 'ĐỘT PHÁ'; subtitle.textContent = (F.REALMS[event.realm] || '') + ' · Tầng ' + event.stage;
+      el.append(title, subtitle); stage.appendChild(el); root.setTimeout(() => el.remove(), 2800);
+    }
   });
 
   function modal(title, html, onConfirm = null, label = 'Tiếp tục', eyebrow = 'THIÊN MỆNH', opts = {}) {
@@ -584,16 +592,17 @@
       const def = UI.screens[id];
       if (!def) return null;
       closeMoreMenu();
-      this.closeOthers(id);
+      if (id !== 'chat') this.closeOthers(id);
       if (this.map.has(id)) {
         const w = this.map.get(id);
         if (w.tab !== tabOf(def)) this.render(id);
         this.restore(id); return w.el;
       }
       const el = document.createElement('section');
-      const isPage = true;
-      el.className = 'win page desktop-window';
+      const isPage = id !== 'chat';
+      el.className = isPage ? 'win page desktop-window' : 'win chat-floating desktop-window';
       el.dataset.window = id;
+      if (id === 'chat') el.id = 'chatFloating';
       el.tabIndex = -1;
       el.setAttribute('role', 'dialog');
       el.setAttribute('aria-label', def.label);
@@ -603,14 +612,16 @@
       const navIcon = k => { const d = UI.screens[k], ic = d.icon && /^ICON-/.test(d.icon) ? '<img src="media/assets/ui/icon/menu/' + esc(d.icon) + '-40.png" alt="" decoding="async">' : '<span aria-hidden="true">' + esc(d.icon || '◈') + '</span>'; return ic; };
       const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' + [...WINDOW_ORDER, 'settings'].filter(k => k !== 'idle' && UI.screens[k]).map(k =>
         '<button type="button" data-open-page="' + k + '" class="' + (k === id ? 'on' : '') + '" aria-label="' + esc(UI.screens[k].label) + '" title="' + esc(UI.screens[k].label) + '"' + (k === id ? ' aria-current="page"' : '') + '>' + navIcon(k) + '<span>' + esc(UI.screens[k].label) + '</span></button>').join('') + '</nav>' : '';
-      el.innerHTML = '<header><button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' +
-        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '</header><div class="win-body"></div>';
+      el.innerHTML = isPage ? '<header><button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' +
+        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '</header><div class="win-body"></div>'
+        : '<header><b>' + icon + '<span>' + esc(def.label) + '</span></b><button type="button" class="win-close" aria-label="Đóng truyền âm">×</button></header><div class="win-body"></div><div class="rz" aria-hidden="true"></div>';
       $('wins').appendChild(el);
       const rect = this.clampRect(this.loadRect(id) || this.defaultRect(id));
       this.setRect(el, rect);
       this.map.set(id, { el, body: el.querySelector('.win-body'), rect, def, sig: '', minimized: false, maximized: false, restoreRect: null });
       el.addEventListener('pointerdown', () => this.focus(id), true);
-      el.querySelector('.page-back').addEventListener('click', e => { e.stopPropagation(); go('idle'); });
+      if (isPage) el.querySelector('.page-back').addEventListener('click', e => { e.stopPropagation(); go('idle'); });
+      else { el.querySelector('.win-close').addEventListener('click', e => { e.stopPropagation(); this.close(id); }); drag(el.querySelector('header'), el, id); resize(el.querySelector('.rz'), el, id); }
       this.render(id);
       this.focus(id);
       markMenu();
@@ -632,7 +643,7 @@
     closeOthers(except = null) {
       let removed = false;
       [...this.map.keys()].forEach(id => {
-        if (id === except) return;
+        if (id === except || id === 'chat') return;
         const w = this.map.get(id);
         if (!w) return;
         if (!w.maximized) this.saveRect(id, w.rect);
@@ -717,7 +728,7 @@
       if (w.minimized) { w.minimized = false; w.el.hidden = false; }
       w.el.style.zIndex = ++zTop;
       this.map.forEach((v, k) => v.el.classList.toggle('top', k === id));
-      UI.current = id;
+      if (id !== 'chat') UI.current = id;
       this.updateTaskbar();
       markMenu();
     },
@@ -957,7 +968,7 @@
   }
 
   function markMenu() {
-    $('game')?.classList.toggle('page-open', wins.map.size > 0);
+    $('game')?.classList.toggle('page-open', [...wins.map.keys()].some(id => id !== 'chat'));
     $$('#menu [data-window]').forEach(b => {
       const on = b.dataset.window === 'tribulation' ? trib.pageOpen : b.dataset.window === 'idle' ? wins.map.size === 0 && !trib.pageOpen : wins.has(b.dataset.window);
       b.classList.toggle('on', on);
@@ -1046,6 +1057,7 @@
     if (target === 'world:dungeons') target = 'sect:dungeons';
     if (target === 'world:sect') target = 'sect:missions';
     if (!UI.release.allowed(target)) return;
+    if (target === 'chat') { wins.toggle('chat'); return; }
     if (target === 'world:quests') target = 'quests'; // Liên kết cũ từ NPC / URL vẫn hoạt động.
     if (!UI.s().created) return;
     if (['running', 'settling'].includes(trib.phase)) return;
@@ -1070,7 +1082,7 @@
     if (UI.current !== def.id || tab) resetFilters();
     UI.current = def.id;
     if (tab) UI.tabState[def.id] = tab;
-    if (def.id === 'idle') wins.closeAll();
+    if (def.id === 'idle') { wins.closeOthers('chat'); UI.current = 'idle'; }
     else wins.open(def.id);
     updateChrome();
     updateStage();
