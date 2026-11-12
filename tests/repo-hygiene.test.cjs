@@ -104,6 +104,8 @@ test('B3: generated game.bundle.mjs is not tracked by git, while bundle entry re
   assert.match(workflow, /npm run build:edge/);
   assert.match(workflow, /SUPABASE_ACCESS_TOKEN/);
   assert.match(workflow, /supabase functions deploy api/);
+  assert.match(workflow, /supabase functions deploy api[^\n]*--yes/);
+  assert.match(workflow, /supabase functions deploy api[^\n]*--remote=rvrwfeblishqadkpzspb/);
   for (const forbidden of ['git add -f', 'git commit ', 'git push ', 'ops/edge-bundle-deploy-20261110']) {
     assert.equal(workflow.includes(forbidden), false, 'Workflow must not commit/push bundle: ' + forbidden);
   }
