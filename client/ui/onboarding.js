@@ -144,9 +144,14 @@
         if (e.choice < 0 && (e.kind === 'npc' || e.kind === 'monster')) return { page: 'combat', target: '[data-act="exploreChoice"]:not(:disabled)', text: 'Chọn một cách ứng phó với sự kiện. Đọc kỹ từng lựa chọn và nguy cơ trước khi quyết định.', action: 'Xem sự kiện' };
         return { page: 'combat', target: '#explorationCountdown', text: 'Tiếp tục mở game cho đến khi chuyến lịch luyện kết thúc và bạn trở về.', action: 'Xem chuyến đi' };
       }
-      case 'novice_alchemy':
-        return s.craftQueue.length ? { page: 'craft:dan', target: '.craft-top', text: 'Mẻ đan đang luyện. Giữ game mở đến khi hoàn tất; thất bại thì chuẩn bị nguyên liệu và thử lại.', action: 'Xem lò đan' }
-          : { page: 'craft:dan', target: '[data-act="craft"]:not(:disabled)', text: 'Mở Luyện đan, tìm công thức có đủ nguyên liệu rồi chạm Xếp mẻ luyện. Có thể mua thêm dược liệu nếu thiếu.', action: 'Mở luyện đan' };
+      case 'novice_alchemy': {
+        if (s.craftQueue.length) return { page: 'craft:dan', target: '.craft-top', text: 'Mẻ đan đang luyện. Giữ game mở đến khi hoàn tất; thất bại thì chuẩn bị nguyên liệu và thử lại.', action: 'Xem lò đan' };
+        const book = root.HU_GAME.SECT_BOOKS.find(b => b.id === s.borrowedBook && b.kind === 'PILL');
+        if (!book && !s.sect.joined) return { page: 'sect:missions', target: '[data-act="joinSect"]:not(:disabled)', text: 'Gia nhập tông môn để mượn sách luyện đan ở Tàng Kinh Các.', action: 'Vào tông môn' };
+        if (!book && (s.adventurePoints || 0) < 40) return { page: 'sect:missions', target: '[data-act="sectMissionStart"]:not(:disabled)', text: 'Cần 40 điểm lịch luyện để mượn Đan Đạo Chân Giải · Hạ Giới. Hoàn thành ủy thác hoặc lịch luyện để kiếm điểm.', action: 'Kiếm điểm' };
+        if (!book) return { page: 'sect:library', target: '[data-act="borrowSectBook"][data-id="dan_ha"]:not(:disabled)', text: 'Trong Tàng Kinh Các, mượn Đan Đạo Chân Giải · Hạ Giới với 40 điểm để mở công thức luyện đan.', action: 'Mượn sách đan' };
+        return { page: 'craft:dan', target: '[data-act="craft"]:not(:disabled)', text: 'Mở Luyện đan, tìm công thức có đủ nguyên liệu rồi chạm Xếp mẻ luyện. Có thể mua thêm dược liệu nếu thiếu.', action: 'Mở luyện đan' };
+      }
       case 'novice_stage':
         return { page: 'idle', target: '.status-progress', text: 'Tiếp tục tu luyện đến Luyện Khí tầng 3. Tiểu cảnh giới tự đột phá khi đủ tu vi.', action: 'Xem tu luyện' };
       case 'novice_peak':
@@ -182,7 +187,6 @@
     updateGuide();
     const p = guide?.plan;
     if (!p) return;
-    if (p.page === 'world:sect') UI.view.sectPanel = 'missions';
     UI.go(p.page);
     const screen = p.page.split(':')[0];
     if (screen !== 'idle' && screen !== 'tribulation' && UI.windows.has(screen)) UI.windows.render(screen);

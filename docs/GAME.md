@@ -24,7 +24,8 @@
 
 ## 4. Kinh mạch, nghề phụ và tài sản
 - Tàng Kinh Các nằm trong tông môn, có 12 sách tra cứu tương ứng bốn nghề và ba giới. Mỗi chuyến lịch luyện hoàn thành cho 20 điểm lịch luyện; ủy thác tông môn thành công cho thêm số điểm bằng cống hiến nhận được. Một nhân vật mượn một quyển tại một thời điểm; đổi sách tiêu điểm theo giá hiển thị, đọc lại quyển đang mượn không tốn thêm. Điểm và sách gắn với nhân vật, không dựa vào cống hiến đã có trước khi cập nhật.
-- Sách trình bày các công thức đang có trong game, không khóa lại công thức cũ. Cảnh giới và điều kiện nghề, bí tịch vẫn áp dụng như trước; các bí tịch hiếm độc quyền chưa thuộc phiên bản thư viện này.
+- Công thức luyện đan, luyện khí và chế phù chỉ hiển thị và chế tạo được khi đang mượn quyển sách tương ứng. Đổi sách đóng quyền chế tạo theo quyển cũ; mẻ đã xếp và cây đã trồng vẫn tiếp tục. Cảnh giới và điều kiện nghề, bí tịch vẫn áp dụng; các bí tịch hiếm độc quyền chưa thuộc phiên bản thư viện này. Gieo hạt và chăm sóc linh điền vẫn dùng như hiện hành.
+- Các mục chính mở thành trang riêng; Lịch luyện và Bí cảnh nằm trong trang Tông môn. Liên kết cũ đến hai mục này chuyển sang đúng tab mới.
 - Kinh Mạch Đồ hiển thị **12 Chính Kinh xanh** và **8 Kỳ Kinh vàng**; không có nút bật Thanh Quang/Kim Quang độc lập.
 - Phần này hiện là **tra cứu UI/design**, chưa có state/lệnh thực thi tác dụng kinh mạch; luật tạp chất **Z=100 → phế tu vi, thành phàm nhân nhưng không chết ngay** là quyết định thiết kế **chưa code**.
 - Các cơ chế Luyện Đan/Luyện Khí/Chế Phù/Linh Điền hiện có cần giữ gating theo cảnh giới; đề xuất **12 sách nghề (4 nghề × 3 giới)** chưa cài.

@@ -136,20 +136,24 @@
     let reading = '';
     if (selected) {
       const entries = H.ITEMS.filter(x => x.kind === selected.kind && x.tier >= selected.minRealm && x.tier <= selected.maxRealm);
-      reading = card('Đang đọc · ' + esc(selected.name), `<p>${entries.length} mục · bấm vào từng mục để xem chi tiết. Chế tác vẫn theo yêu cầu cảnh giới và nghề hiện tại.</p>${selected.kind === 'EQ' || selected.kind === 'TAL' ? '<p class="info-note">Luyện khí và chế phù mở ở Kết Đan; một số công thức cần bí tịch riêng.</p>' : ''}<div class="sect-book-recipes">${entries.map(x => libraryRecipe(x,g)).join('')}</div>`, { eyebrow: 'SÁCH ĐANG MƯỢN' });
+      reading = card('Đang đọc · ' + esc(selected.name), `<p>${entries.length} mục · bấm vào từng mục để xem chi tiết. Công thức chế tạo chỉ dùng được khi đang mượn đúng sách; cảnh giới và điều kiện nghề vẫn áp dụng.</p>${selected.kind === 'EQ' || selected.kind === 'TAL' ? '<p class="info-note">Luyện khí và chế phù mở ở Kết Đan; một số công thức cần bí tịch riêng.</p>' : ''}${selected.kind === 'PILL' ? '<button class="btn btn-outline" data-go="craft:dan">Đến Luyện đan</button>' : ['EQ','TAL'].includes(selected.kind) ? '<button class="btn btn-outline" data-go="craft:khi">Đến Luyện khí & Chế phù</button>' : '<button class="btn btn-outline" data-go="craft:dien">Đến Linh điền</button>'}<div class="sect-book-recipes">${entries.map(x => libraryRecipe(x,g)).join('')}</div>`, { eyebrow: 'SÁCH ĐANG MƯỢN' });
     }
     return `<section class="sect-library"><div class="sect-library-intro"><span class="eyebrow gold">TÀNG KINH CÁC</span><h3>Tri thức trên tiên lộ</h3><p>Điểm lịch luyện: <b>${num(points)}</b>. Nhận 20 điểm mỗi chuyến lịch luyện và thêm điểm khi hoàn thành ủy thác tông môn.</p><p>Mỗi lần mượn trả điểm; bạn giữ một quyển để đọc đến khi mượn quyển khác. Những lần mở lại quyển đang mượn không mất thêm điểm.</p></div>${reading}<div class="sect-book-grid">${shelves}</div></section>`;
   }
-  function sect() {
+  function sect(tab = 'missions') {
     const s = UI.s(), g = UI.g(), d = g.sectDefinition();
-    if (!d) return `<p class="screen-lead">Chọn một tông môn để nhận nguồn linh thạch định kỳ, ủy thác và quyền đổi bảo vật.</p><div class="adventure-grid">${H.SECTS.map(x => card(x.name, `<p>${x.desc}</p><p class="gold">${x.bonus}</p>` + btn('Gia nhập', 'joinSect', `data-id="${x.id}"`))).join('')}</div>`;
-    const rank = g.sectRank(), sub = UI.view.sectPanel || 'missions';
+    const sub = ['missions','library','shop','ranks','exploration','dungeons'].includes(tab) ? tab : 'missions';
+    const nav = `<div class="action-group adventure-nav" role="group" aria-label="Bảng tông môn">${[['missions','Nhiệm vụ'],['exploration','Lịch luyện'],['dungeons','Bí cảnh'],['library','Tàng Kinh Các'],['shop','Kho tông môn'],['ranks','Chức vị']].map(([id,label]) => btn(label, 'sectPanel', `data-panel="${id}" aria-pressed="${sub === id}"`, false, sub === id ? 'btn-gold' : 'btn-outline')).join('')}</div>`;
+    if (sub === 'exploration') return nav + UI.screens.combat.panel();
+    if (sub === 'dungeons') return nav + dungeons();
+    if (!d) return nav + `<p class="screen-lead">Chọn một tông môn để nhận nguồn linh thạch định kỳ, ủy thác và quyền đổi bảo vật.</p><div class="adventure-grid">${H.SECTS.map(x => card(x.name, `<p>${x.desc}</p><p class="gold">${x.bonus}</p>` + btn('Gia nhập', 'joinSect', `data-id="${x.id}"`))).join('')}</div>`;
+    const rank = g.sectRank();
     const header = card(d.name, `<p>${d.desc} <b class="gold">${d.bonus}</b></p>` + row('Chức vị', rank.name) + row('Cống hiến khả dụng', num(s.sect.contribution)) + row('Điểm lịch luyện', num(s.adventurePoints || 0)) + row('Tổng đã kiếm', num(s.sect.earned)) +
       row('Linh thạch tự tích lũy', moneyHTML(g.sectIncome()) + '/giây') +
       (rank.next ? bar((s.sect.earned - rank.at) / (rank.next.at - rank.at) * 100) + `<p class="info-note">Còn ${num(rank.next.at - s.sect.earned)} cống hiến đã kiếm để lên ${rank.next.name}.</p>` : '<p class="gold">Đã đạt chức vị tối cao.</p>') +
       `<div class="action-group">${btn(s.sect.blessing ? 'Tắt chúc phúc' : 'Chúc phúc +10% tốc độ hấp thụ linh khí', 'blessing', '', false, 'btn-outline')}${btn('Cống hiến · ' + moneyHTML(F.price_ha(s.realm)), 'donate', '', s.stone < F.price_ha(s.realm), 'btn-outline')}</div>`);
     const panels = { missions: missionBoard, library: sectLibrary, shop: sectShop, ranks: () => card('Lộ trình chức vị', H.SECT_RANKS.map(r => row(r.name, num(r.at) + ' tổng cống hiến · bậc ' + r.tier)).join('') + '<p class="info-note">Cống hiến đã kiếm tính cả nhiệm vụ và quyên góp. Rời tông môn sẽ đặt lại chức vị, cống hiến và chúc phúc.</p>' + btn('Rời tông môn', 'sectLeave', '', !!s.sect.mission, 'btn-outline')) };
-    return header + `<div class="action-group adventure-nav" role="group" aria-label="Bảng tông môn">${[['missions', 'Nhiệm vụ'], ['library', 'Tàng Kinh Các'], ['shop', 'Kho tông môn'], ['ranks', 'Chức vị']].map(([id, label]) => btn(label, 'sectPanel', `data-panel="${id}" aria-pressed="${sub === id}"`, false, sub === id ? 'btn-gold' : 'btn-outline')).join('')}</div>` +
+    return nav + header +
       (s.sect.last && sub === 'missions' ? `<p class="adventure-result info-note">${esc(s.sect.last.text)}</p>` : '') + panels[sub]();
   }
 
@@ -236,7 +240,7 @@
     UI.toast('Linh căn ' + element(i) + ' đạt cấp ' + level + '.', { type: 'gold', title: 'Tôi luyện' });
     UI.vfx?.ring('hero', color(i)); UI.vfx?.effect('qi');
   });
-  UI.action('sectPanel', async (el, d) => { if (['missions', 'library', 'shop', 'ranks'].includes(d.panel)) UI.view.sectPanel = d.panel; });
+  UI.action('sectPanel', async (el, d) => { if (['missions', 'library', 'shop', 'ranks','exploration','dungeons'].includes(d.panel)) UI.go('sect:' + d.panel); });
   UI.action('borrowSectBook', async (el, d) => { const book = await UI.command('buySect', { id: d.id }); UI.toast('Đã mượn ' + book.name + ' · còn ' + num(book.points) + ' điểm lịch luyện.', { type: 'success', title: 'Tàng Kinh Các' }); });
   UI.action('sectRepeat', async () => { await UI.command('setSectRepeat', { enabled: !UI.s().sect.repeat }); });
   UI.action('sectMissionAbort', async () => { UI.modal('Hủy nhiệm vụ?', '<p>Nhiệm vụ hiện tại không có phần thưởng; tự lặp sẽ tắt.</p>', async () => await UI.command('abortSectMission'), 'Hủy nhiệm vụ'); return UI.KEEP; });

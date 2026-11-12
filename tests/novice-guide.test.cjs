@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const source = fs.readFileSync(require('node:path').join(__dirname, '../client/ui/onboarding.js'), 'utf8');
 const UI = { kit: { $: () => null }, action() {}, g: () => ({ need: () => 100 }) };
-const root = { HU_UI: UI, HU_ASSETS: {}, setTimeout, clearTimeout };
+const root = { HU_UI: UI, HU_ASSETS: {}, HU_GAME: { SECT_BOOKS: [{id:'dan_ha',kind:'PILL'}] }, setTimeout, clearTimeout };
 root.window = root;
 vm.runInNewContext(source, root);
 const state = () => ({ progress: { meditate: 20 }, sect: { mission: null }, exploration: { active: null }, craftQueue: [], qi: 0 });
@@ -24,6 +24,9 @@ test('hướng dẫn chỉ nút phù hợp theo mục tiêu và trạng thái, k
   assert.match(p(s, info('novice_explore'), 0).target, /exploreChoice/);
   s.exploration.active.choice = 1;
   assert.equal(p(s, info('novice_explore'), 0).target, '#explorationCountdown');
+  s.sect.joined = true; s.adventurePoints = 40;
+  assert.match(p(s, info('novice_alchemy'), 0).target, /borrowSectBook/);
+  s.borrowedBook = 'dan_ha';
   assert.match(p(s, info('novice_alchemy'), 0).target, /craft/);
   s.craftQueue.push({});
   assert.match(p(s, info('novice_alchemy'), 0).text, /đang luyện/);

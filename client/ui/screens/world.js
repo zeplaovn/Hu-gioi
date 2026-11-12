@@ -9,8 +9,6 @@
 
   const TABS = [
     { id: 'map', label: 'Bản đồ', icon: '✥' },
-    { id: 'dungeons', label: 'Bí cảnh', icon: '⚔' },
-    { id: 'sect', label: 'Tông môn', icon: '⌂' },
     { id: 'shop', label: 'Cửa hàng', icon: '◈' },
     { id: 'auction', label: 'Đấu giá', icon: '⚖' }
   ];
@@ -170,6 +168,17 @@
       return [s.realm, s.stage, s.sect.joined, s.sect.id, s.sect.earned, s.sect.contribution, s.adventurePoints || 0, s.borrowedBook || '', s.sect.mission?.id || '', s.sect.mission?.end || 0, s.sect.blessing, s.sect.last?.at, s.sect.repeat, s.meta?.points || 0,
         s.dungeon.active?.end || 0, s.dungeon.last?.at || 0, s.dungeon.run ? [s.dungeon.run.floor, s.dungeon.run.turn, Math.round(s.hp), Math.round(s.dungeon.run.sta)].join(',') : '', tab === 'npc' ? [s.progress.kill, JSON.stringify(s.npcQuests), Object.values(s.npcAffinities).join(',')].join('/') : '', s.encounter.total, Math.floor(Date.now() / 864e5),
         tab === 'dungeons' || tab === 'sect' ? Math.floor(s.hp / g.stats().HP * 10) : '', s.stone >= F.price_ha(s.realm)].join('|');
+    }
+  });
+
+  UI.register({
+    id: 'sect', label: 'Tông môn', icon: '⌂', eyebrow: 'TÔNG MÔN',
+    tabs: ['missions','exploration','dungeons','library','shop','ranks'].map(id => ({ id })),
+    render: tab => '<header class="screen-title"><span class="eyebrow gold">TIÊN MÔN</span><h2>Tông môn</h2></header><div class="screen-body">' + UI.adventure.sect(tab) + '</div>',
+    update: tab => { UI.adventure.update(); if (tab === 'exploration') UI.screens.combat.update(); },
+    signature: tab => {
+      const s = UI.s(), e = s.exploration?.active;
+      return [tab,s.realm,s.stage,s.sect.joined,s.sect.id,s.sect.earned,s.sect.contribution,s.adventurePoints || 0,s.borrowedBook || '',s.sect.mission?.id,s.sect.mission?.end,s.sect.last?.at,s.sect.repeat,s.hp,s.stone,s.dungeon.active?.end,s.dungeon.run?.floor,s.dungeon.run?.turn,e?.start,e?.choice,s.exploration?.last?.end].join('|');
     }
   });
 

@@ -296,9 +296,9 @@
     const wins = UI.windows;
     if (!wins) return;
     const w = wins.map.get('chat');
-    if (force === false) { if (w) wins.minimize('chat'); }
-    else if (force === true) wins.open('chat');
-    else wins.toggle('chat');
+    if (force === false) { if (w) UI.go('idle'); }
+    else if (force === true) UI.go('chat');
+    else if (w) UI.go('idle'); else UI.go('chat');
     bubble.open = wins.has('chat') && !wins.map.get('chat')?.minimized;
     bubbleCount();
   }

@@ -565,7 +565,7 @@
   /* ======================================================================
      CỬA SỔ NỔI
      ====================================================================== */
-  const WINDOW_ORDER = ['idle', 'combat', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
+  const WINDOW_ORDER = ['idle', 'sect', 'craft', 'character', 'world', 'quests', 'chat', 'ranking'];
   const WINDOW_SIZE = { idle: 470, combat: 590, craft: 740, character: 760, world: 850, quests: 700, chat: 620, ranking: 740, settings: 630, meta: 760, more: 720 };
   const BADGED = ['combat', 'craft'];
 
@@ -584,14 +584,15 @@
       const def = UI.screens[id];
       if (!def) return null;
       closeMoreMenu();
+      this.closeOthers(id);
       if (this.map.has(id)) {
         const w = this.map.get(id);
         if (w.tab !== tabOf(def)) this.render(id);
         this.restore(id); return w.el;
       }
       const el = document.createElement('section');
-      const isPage = false;
-      el.className = 'win desktop-window';
+      const isPage = true;
+      el.className = 'win page desktop-window';
       el.dataset.window = id;
       el.tabIndex = -1;
       el.setAttribute('role', 'dialog');
@@ -600,21 +601,16 @@
         ? '<img src="media/assets/ui/icon/menu/' + esc(def.icon) + '-40.png" alt="" decoding="async">'
         : '<span aria-hidden="true">' + esc(def.icon || '◈') + '</span>';
       const navIcon = k => { const d = UI.screens[k], ic = d.icon && /^ICON-/.test(d.icon) ? '<img src="media/assets/ui/icon/menu/' + esc(d.icon) + '-40.png" alt="" decoding="async">' : '<span aria-hidden="true">' + esc(d.icon || '◈') + '</span>'; return ic; };
-      const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' + WINDOW_ORDER.filter(k => k !== 'idle' && UI.screens[k]).map(k =>
+      const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' + [...WINDOW_ORDER, 'settings'].filter(k => k !== 'idle' && UI.screens[k]).map(k =>
         '<button type="button" data-open-page="' + k + '" class="' + (k === id ? 'on' : '') + '" aria-label="' + esc(UI.screens[k].label) + '" title="' + esc(UI.screens[k].label) + '"' + (k === id ? ' aria-current="page"' : '') + '>' + navIcon(k) + '<span>' + esc(UI.screens[k].label) + '</span></button>').join('') + '</nav>' : '';
-      el.innerHTML = '<header>' + (isPage ? '<button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' : '') +
-        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '<span class="win-controls"><button class="win-min" type="button" aria-label="Thu nhỏ" title="Thu nhỏ">─</button><button class="win-max" type="button" aria-label="Phóng to" title="Phóng to">▢</button><button class="win-close" type="button" aria-label="Đóng">✕</button></span></header><div class="win-body"></div>' + (isPage ? '' : '<div class="rz" aria-hidden="true"></div>');
+      el.innerHTML = '<header><button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' +
+        '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '</header><div class="win-body"></div>';
       $('wins').appendChild(el);
       const rect = this.clampRect(this.loadRect(id) || this.defaultRect(id));
       this.setRect(el, rect);
       this.map.set(id, { el, body: el.querySelector('.win-body'), rect, def, sig: '', minimized: false, maximized: false, restoreRect: null });
       el.addEventListener('pointerdown', () => this.focus(id), true);
-      el.querySelector('.win-close').addEventListener('click', e => { e.stopPropagation(); this.close(id); });
-      el.querySelector('.win-min').addEventListener('click', e => { e.stopPropagation(); this.minimize(id); });
-      el.querySelector('.win-max').addEventListener('click', e => { e.stopPropagation(); this.maximize(id); });
-      el.querySelector('header').addEventListener('dblclick', e => { if (!e.target.closest('button')) this.maximize(id); });
-      drag(el.querySelector('header'), el, id);
-      resize(el.querySelector('.rz'), el, id);
+      el.querySelector('.page-back').addEventListener('click', e => { e.stopPropagation(); go('idle'); });
       this.render(id);
       this.focus(id);
       markMenu();
@@ -661,8 +657,7 @@
     },
     toggle(id) {
       if (!this.has(id)) return this.open(id);
-      const w = this.map.get(id);
-      return w.minimized || this.topId() !== id ? this.restore(id) : this.minimize(id);
+      this.close(id);
     },
     updateTaskbar() {
       if (!this.taskbar) {
@@ -678,7 +673,7 @@
         });
       }
       const logInTaskbar = !UI.release.chat && logFloatState.floating && $('logPanel');
-      this.taskbar.hidden = (!this.map.size && !logInTaskbar) || $('game')?.hidden === true;
+      this.taskbar.hidden = true;
       this.taskbar.innerHTML = [...this.map.entries()].map(([id,w]) =>
         '<button type="button" class="window-task' + (w.minimized ? ' minimized' : '') +
         (this.topId() === id ? ' active' : '') + '" data-task-window="' + esc(id) +
@@ -962,7 +957,7 @@
   }
 
   function markMenu() {
-    $('game')?.classList.remove('page-open'); // Không chặn sân khấu như trang phủ.
+    $('game')?.classList.toggle('page-open', wins.map.size > 0);
     $$('#menu [data-window]').forEach(b => {
       const on = b.dataset.window === 'tribulation' ? trib.pageOpen : b.dataset.window === 'idle' ? wins.map.size === 0 && !trib.pageOpen : wins.has(b.dataset.window);
       b.classList.toggle('on', on);
@@ -1047,6 +1042,9 @@
   }
 
   function go(target, { silent = false } = {}) {
+    if (target === 'combat') target = 'sect:exploration';
+    if (target === 'world:dungeons') target = 'sect:dungeons';
+    if (target === 'world:sect') target = 'sect:missions';
     if (!UI.release.allowed(target)) return;
     if (target === 'world:quests') target = 'quests'; // Liên kết cũ từ NPC / URL vẫn hoạt động.
     if (!UI.s().created) return;
@@ -1057,6 +1055,7 @@
     if (trib.pageOpen && id !== 'tribulation') trib.closePage();
     if (id === 'tribulation') {
       resetFilters();
+      wins.closeAll();
       UI.current = 'tribulation';
       trib.openPage();
       updateChrome();
@@ -1805,7 +1804,7 @@
     if (e.target.closest('#menuToggle')) { e.preventDefault(); toggleMenu(); return; }
     const pageBtn = e.target.closest('[data-open-page]');
     if (pageBtn && UI.s().created) {
-      safe(() => { store.catchUp(); if (trib.pageOpen) trib.closePage(); wins.open(pageBtn.dataset.openPage); });
+      safe(() => { store.catchUp(); if (trib.pageOpen) trib.closePage(); go(pageBtn.dataset.openPage); });
       return;
     }
     const winBtn = e.target.closest('[data-window]');
@@ -1823,7 +1822,7 @@
           go('idle');
         } else {
           if (trib.pageOpen) trib.closePage();
-          wins.toggle(winBtn.dataset.window);
+          go(winBtn.dataset.window);
         }
       });
       return;
@@ -1896,6 +1895,7 @@
       }
       const [id, tab] = String(root.location.hash || '#idle').replace(/^#\/?/, '').split('/');
       if (!UI.release.allowed(id + (tab ? ':' + tab : ''))) { go('idle'); return; }
+      if (id === 'world' && ['sect','dungeons'].includes(tab)) { go('world:' + tab, { silent: true }); return; }
       if (!UI.screens[id]) return;
       if (id === 'tribulation') { trib.openPage(); return; }
       if (trib.pageOpen) trib.closePage();

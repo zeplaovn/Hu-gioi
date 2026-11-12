@@ -5,12 +5,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const read = p => fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 
-test('launcher chat mở duy nhất một desktop window và không nhân bản form', () => {
+test('launcher chat mở trang riêng và không nhân bản form', () => {
   const chat=read('client/ui/screens/chat.js');
   const shell=read('client/ui/shell.js');
   const css=read('css/shell.css');
   assert.match(chat, /UI\.windows/);
-  assert.match(chat, /wins\.toggle\('chat'\)/);
+  assert.match(chat, /UI\.go\('chat'\)/);
+  assert.match(shell, /el\.className = 'win page desktop-window'/);
   assert.match(chat, /chat-channels/);
   assert.match(shell, /'chat', 'ranking'/);
   assert.match(css, /\.win-controls/);

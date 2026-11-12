@@ -374,6 +374,7 @@ test('inventory: dùng hạt giống, thuốc hồi phục và vật phẩm khô
 
 test('crafting: luyện đan theo hàng đợi, linh điền và rèn pháp bảo', () => {
   const g = rich();
+  g.s.borrowedBook = 'dan_ha';
   const pillBefore = g.ingredientCount('PILL-001');
   g.craft({ code: 'PILL-001' }, NOW);
   assert.equal(g.s.craftQueue.length, 1);
@@ -409,6 +410,7 @@ test('crafting: luyện đan theo hàng đợi, linh điền và rèn pháp bả
   const eqBefore = g.count('EQ-001');
   assert.throws(() => run(g, 'forge', { code: 'EQ-001' }), /mở ở cảnh giới Kết Đan/);
   g.s.realm = Math.max(g.s.realm, 2);
+  g.s.borrowedBook = 'khi_ha';
   run(g, 'forge', { code: 'EQ-001' });
   assert.equal(g.count('EQ-001'), eqBefore + 1);
   assert.throws(() => run(g, 'forge', { code: 'PILL-001' }), /Chỉ rèn|Chế tạo|công thức/);

@@ -73,6 +73,21 @@ test('tất cả sách đều có nội dung tương ứng công thức game hi�
   }
 });
 
+test('chỉ chế tạo bằng sách đang mượn; mẻ đã xếp vẫn hoàn tất sau khi đổi sách', () => {
+  const g=make(); const code=H.pill(2), before=g.s.stone, herbs={...g.s.bag};
+  assert.throws(()=>run(g,'craft',{code}),/mượn sách nghề/);
+  assert.equal(g.s.stone,before); assert.deepEqual(g.s.bag,herbs);
+  run(g,'joinSect',{id:H.SECTS[0].id}); g.s.adventurePoints=80;
+  run(g,'buySect',{id:'dan_ha'});
+  run(g,'craft',{code});
+  assert.equal(g.s.craftQueue.length,1);
+  const end=g.s.craftQueue[0].end;
+  run(g,'buySect',{id:'khi_ha'});
+  assert.throws(()=>run(g,'craft',{code}),/mượn sách nghề/);
+  assert.equal(g.finishJobs(end),1);
+  assert.equal(g.s.craftQueue.length,0);
+});
+
 test('thư viện hiển thị các giá sách và công thức khi đã mượn', () => {
   const vm=require('node:vm'), fs=require('node:fs'), path=require('node:path');
   const g=make(); run(g,'joinSect',{id:H.SECTS[0].id}); g.s.adventurePoints=100;
@@ -80,12 +95,13 @@ test('thư viện hiển thị các giá sách và công thức khi đã mượn
   const kit={esc,num:String,moneyHTML:String,pct:String,duration:String,
     row:(a,b)=>String(a)+String(b), btn:(label,action,attrs='')=>`<button data-act="${action}" ${attrs}>${label}</button>`,
     card:(title,body)=>`<section><h2>${title}</h2>${body}</section>`,empty:String,live:String,bar:()=>''};
-  const ui={kit,data:{ELEMENTS:[]},s:()=>g.s,g:()=>g,view:{sectPanel:'library'},action(){}};
+  const ui={kit,data:{ELEMENTS:[]},s:()=>g.s,g:()=>g,view:{sectPanel:'library'},screens:{combat:{panel:()=>'<p>CHUYẾN LỊCH LUYỆN</p>'}},action(){}};
   const context={HU_GAME:H,HU_UI:ui,document:{addEventListener(){}}}; context.window=context;
   vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../client/ui/screens/adventures.js'),'utf8'),context);
-  assert.match(ui.adventure.sect(),/Tàng Kinh Các/);
+  assert.match(ui.adventure.sect('library'),/Tàng Kinh Các/);
+  assert.match(ui.adventure.sect('exploration'),/CHUYẾN LỊCH LUYỆN/);
   run(g,'buySect',{id:'dan_ha'});
-  const html=ui.adventure.sect();
+  const html=ui.adventure.sect('library');
   assert.match(html,/Đang đọc · Đan Đạo Chân Giải/);
   assert.match(html,/Tụ Khí Đan/);
   assert.match(html,/Nguyên liệu:/);

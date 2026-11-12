@@ -10,6 +10,13 @@
     const at = (game, now) => Number.isFinite(now) ? now : game.s.lastUpdate;
 
     Object.assign(H.Game.prototype, {
+      hasCraftRecipe(code) {
+        const x = item(code), book = H.SECT_BOOKS.find(b => b.id === this.s.borrowedBook);
+        return !!x && !!book && book.kind === x.kind && x.tier >= book.minRealm && x.tier <= book.maxRealm;
+      },
+      requireCraftRecipe(code) {
+        if (!this.hasCraftRecipe(code)) throw Error('Hãy mượn sách nghề phù hợp tại Tàng Kinh Các trước khi chế tạo.');
+      },
       ingredientCount(code) {
         const base = item(code)?.code;
         if (!base) return 0;
@@ -47,7 +54,9 @@
       },
       craft(payload, now) {
         now = at(this, now);
-        const s = this.s, code = payload.code, x = item(code), r = this.recipe(code);
+        const s = this.s, code = payload.code, x = item(code);
+        this.requireCraftRecipe(code);
+        const r = this.recipe(code);
         if (x.tier > s.realm + 1) throw Error('Đan phương chưa mở.');
         if (s.craftQueue.length >= 3) throw Error('Hàng đợi đã đủ ba mẻ.');
         for (const [c, n] of Object.entries(r.herbs)) if (this.ingredientCount(c) < n) throw Error('Thiếu ' + item(c).name);
@@ -154,6 +163,7 @@
         this.requireFeature('forge');
         const code = payload.code, x = item(code), s = this.s;
         if (!x || !['EQ', 'TAL'].includes(x.kind) || x.tier > s.realm) throw Error('Chỉ rèn vật phẩm cùng hoặc dưới cảnh giới.');
+        this.requireCraftRecipe(code);
         const r = this.forgeRecipe(code);
         if (r.manual && !Object.keys(s.learned).some(k => item(k)?.code === r.manual)) throw Error('Cần lĩnh ngộ ' + item(r.manual).name + '.');
         if (!r.herb || this.ingredientCount(r.herb) < r.count) throw Error('Cần ' + r.count + ' ' + (item(r.herb)?.name || 'linh tài'));

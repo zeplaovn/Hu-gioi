@@ -65,12 +65,14 @@ test('quyền dữ liệu và reset sạch sau khi chết: chat, ranking, Thiên
   assert.match(service, /async resetAfterDeath/);
 });
 
-test('mọi màn là cửa sổ desktop và nhiệm vụ là ứng dụng độc lập', () => {
+test('mọi menu mở trang riêng và nhiệm vụ là trang độc lập', () => {
   const world = read('client/ui/screens/world.js');
   const shell = read('client/ui/shell.js');
   const boot = read('client/ui/boot.js');
   const css = read('css/shell.css');
   assert.match(world, /id: 'quests', label: 'Nhiệm vụ'/);
+  assert.match(world, /id: 'sect', label: 'Tông môn'/);
+  assert.match(shell, /el\.className = 'win page desktop-window'/);
   assert.doesNotMatch(world.split('const TABS = [')[1].split('];')[0], /id: 'quests'/);
   assert.match(shell, /'chat', 'ranking'/);
   assert.match(shell, /minimize\(id\)/);

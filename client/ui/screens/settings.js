@@ -60,7 +60,7 @@
         <p><b>3.</b> Mở <b>Lịch luyện</b>, chọn nơi muốn đến rồi bấm <b>Khởi hành</b>. Trong mười phút, đạo thân luân phiên đi bộ và ngồi thiền nghỉ ngơi; nhật ký ghi lại cơ duyên, thử thách gặp phải. Không thể về đài Tu luyện hay đổi địa điểm trước khi đồng hồ về 00:00. Tu luyện và nghề phụ tạm dừng, sau đó tự tiếp tục.</p>
         <p><b>4.</b> <b>Nghề phụ</b> gồm luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Thời gian chế tác chỉ tiến triển khi tab game đang mở và kết nối; khi rời game, công việc sẽ tạm dừng.</p>
         <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký tu tiên; đại cảnh giới mở Độ kiếp đài.</p>
-        <p><b>6.</b> <b>Thế giới → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Kỳ ngộ</b> là một cơ duyên có thể bắt gặp khi Lịch luyện; kết quả hiển lộ sau khi chuyến đi kết thúc.</p>
+        <p><b>6.</b> <b>Tông môn → Bí cảnh</b>: hạ thủ lĩnh lấy Tinh hoa rồi vào <b>Nhân vật → Linh căn</b> để tôi luyện. <b>Tông môn → Lịch luyện</b> đưa bạn đi tìm kỳ ngộ.</p>
         <p><b>7.</b> Chọn tông môn, làm ủy thác để thăng chức và đổi bảo vật. Mở <b>Nhiệm vụ</b> để theo tuyến tân thủ đến Trúc Cơ.</p>
         <p>Bảng dẫn đường sẽ chỉ vị trí cần chạm, theo dõi nhiệm vụ hiện tại và có thể thu gọn hoặc ẩn bất cứ lúc nào.</p><button class="btn btn-gold" data-act="tutorial">Mở hướng dẫn tân thủ</button>`, { eyebrow: 'TIÊN LỘ' })}
       ${card('Phím tắt', `

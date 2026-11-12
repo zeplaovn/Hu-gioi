@@ -75,7 +75,8 @@
 
   function recipes() {
     const s = UI.s(), g = UI.g();
-    const all = H.ITEMS.filter(x => x.kind === 'PILL' && x.tier <= s.realm + 1 && lists.matches(x));
+    if (!H.SECT_BOOKS.some(b => b.id === s.borrowedBook && b.kind === 'PILL')) return `<p class="info-note">Chưa mượn sách luyện đan. Đến Tàng Kinh Các trong Tông môn để chọn sách bằng điểm lịch luyện.</p><button class="btn btn-gold" data-go="sect:library">Đến Tàng Kinh Các</button>`;
+    const all = H.ITEMS.filter(x => x.kind === 'PILL' && g.hasCraftRecipe(x.code) && x.tier <= s.realm + 1 && lists.matches(x));
     const recipeOf = new Map(all.map(x => [x.code, g.recipe(x.code)]));
     const canMake = r => Object.entries(r.herbs).every(([k, n]) => g.ingredientCount(k) >= n) && s.stone >= r.stone;
     const xs = UI.view.onlyReady ? all.filter(x => canMake(recipeOf.get(x.code))) : all;
@@ -97,7 +98,8 @@
 
   function forge() {
     const s = UI.s(), g = UI.g();
-    const xs = H.ITEMS.filter(x => ['EQ', 'TAL'].includes(x.kind) && x.tier <= s.realm && lists.matches(x));
+    if (!H.SECT_BOOKS.some(b => b.id === s.borrowedBook && ['EQ','TAL'].includes(b.kind))) return `<p class="info-note">Chưa mượn sách luyện khí hoặc chế phù. Đến Tàng Kinh Các trong Tông môn để chọn sách bằng điểm lịch luyện.</p><button class="btn btn-gold" data-go="sect:library">Đến Tàng Kinh Các</button>`;
+    const xs = H.ITEMS.filter(x => ['EQ', 'TAL'].includes(x.kind) && g.hasCraftRecipe(x.code) && x.tier <= s.realm && lists.matches(x));
     const rows = lists.slice(xs).map(x => {
       const r=g.forgeRecipe(x.code),mat=H.item(r.herb),haveMat=mat?g.ingredientCount(mat.code):0;
       const manualOk=!r.manual||Object.keys(s.learned).some(k=>H.item(k)?.code===r.manual);
@@ -106,7 +108,7 @@
         <p>${r.count} ${esc(mat?.name || 'linh tài')} <span class="${haveMat >= r.count ? 'green-text' : 'danger-text'}">(${haveMat})</span>${r.ink ? ` · 1 ${esc(H.item(r.ink)?.name || 'mực')} <span class="${g.ingredientCount(r.ink) ? 'green-text' : 'danger-text'}">(${g.ingredientCount(r.ink)})</span>` : ''}${r.manual?` · ${esc(H.item(r.manual).name)} (${manualOk?'đã học':'chưa học'})`:''} · ${moneyHTML(r.stone)}</p></div>
         ${btn('Chế tạo', 'forge', codeAttr(x.code), !ok)}</article>`;
     }).join('');
-    return `<p class="screen-lead">Công thức mới dùng linh thảo và bí tịch nghề; các vật phẩm chưa có công thức mới tiếp tục dùng linh tài và mực như trước. Phí 10% giá trị, chỉ chế vật cùng hoặc dưới cảnh giới.</p>
+    return `<p class="screen-lead">Công thức từ sách đang mượn. Một số công thức cần bí tịch riêng; phí 10% giá trị, chỉ chế vật cùng hoặc dưới cảnh giới.</p>
       ${lists.controls({ categories: ['Tất cả', 'Pháp bảo', 'Phù lục'] })}${lists.pager(xs.length)}
       <div class="shop-list">${rows || empty('Chưa có vật phẩm để chế tạo ở cảnh giới này.')}</div>`;
   }
