@@ -698,3 +698,49 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
 @media(prefers-reduced-motion:reduce){
   .chat-channel-toggle-chevron{transition:none}
 }
+
+/* ===== MOBILE POLISH: mượt hơn, nhẹ hơn, dễ chạm hơn trên điện thoại ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,.btn,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+/* Cuộn mượt, không kéo giãn ra ngoài trang; thẻ ngoài màn hình không tốn công vẽ */
+.win.page .win-body{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-gutter:stable both-edges}
+.shop-item,.technique-item{content-visibility:auto;contain-intrinsic-size:auto 150px}
+
+/* Dropdown điều hướng: chừa vùng tai thỏ/thanh hệ thống, không tràn mép */
+#game:not([data-layout="wide"]) .win.page .page-nav-menu{
+  max-height:min(62vh,calc(100dvh - 108px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+  right:max(0px,env(safe-area-inset-right,0px));
+  will-change:opacity,transform;
+}
+
+@media(max-width:760px){
+  /* blur nền header rất tốn GPU trên máy yếu: dùng nền đặc */
+  .win.page>header{backdrop-filter:none;-webkit-backdrop-filter:none;background:linear-gradient(180deg,#1b2a22,#141f19)}
+  .win.page .card,.win.page .banner-stats div{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .win.page .win-body>*{min-width:0}
+
+  /* Thẻ cửa hàng: ảnh + chữ một hàng, nút Mua bên dưới, vùng chạm đủ lớn */
+  .shop-item,.technique-item{gap:9px 11px;padding:10px}
+  .shop-item h3,.technique-item h3{font-size:16px;overflow-wrap:anywhere}
+  .shop-item p,.technique-item p{font-size:13px;overflow-wrap:anywhere}
+  .shop-item>div{flex:1 1 0;min-width:0}
+  .shop-item>button{flex:1 1 100%;width:100%;min-height:44px}
+}
+
+@media(max-width:380px){
+  .shop-item img,.technique-item img{width:44px;height:44px}
+  .win.page .win-body{padding-left:10px;padding-right:10px}
+}
+
+/* Điện thoại nằm ngang: header gọn lại để nhường chỗ cho nội dung */
+@media(max-height:520px) and (orientation:landscape){
+  .win.page>header{padding-top:4px;padding-bottom:4px;min-height:0}
+  .win.page .page-nav-toggle,.win.page .page-back{min-height:38px}
+  .win.page .win-body{padding-top:10px;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .win,.win.page{animation:none}
+  .shop-item,.technique-item{transition:none}
+}
