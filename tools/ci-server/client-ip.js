@@ -1,4 +1,4 @@
-/* Một cách xác định IP cho cả gateway đăng nhập và gameplay API. */
+/* Một cách xác định IP cho gameplay API (CI). */
 'use strict';
 const net = require('node:net');
 

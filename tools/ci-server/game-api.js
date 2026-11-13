@@ -10,7 +10,7 @@
      POST /api/v1/me/delete-account (xóa dữ liệu gameplay + tài khoản Supabase; body { confirm: 'delete-my-account' };
                                     cần SUPABASE_SERVICE_ROLE_KEY ở máy chủ, nếu không trả NOT_IMPLEMENTED)
    Ba API /me/* không đòi hỏi bản đồng ý chính sách còn hiệu lực: quyền dữ liệu cá nhân không được phụ thuộc đồng ý.
-   Xác thực qua Bearer JWT hoặc cookie (xem server/auth/principal.js). Lỗi theo envelope { error: { code, message, requestId, retryable } }. */
+   Xác thực qua Bearer JWT (xem server/auth/principal.js). Lỗi theo envelope { error: { code, message, requestId, retryable } }. */
 'use strict';
 const crypto = require('node:crypto');
 const { GameError, toEnvelope } = require('../../server/errors.js');
@@ -88,7 +88,7 @@ function createGameApi({ service, dailyService = null, accountAdmin = null, clie
       if (!route) throw new GameError('NOT_FOUND', 'Chưa có API này.');
       // IP quota dành cho request chưa xác thực / JWT sai; người chơi đã xác thực
       // chịu quota riêng theo account, không chặn hàng trăm người sau cùng NAT.
-      const hasCredential = !!(req.headers.authorization || req.headers.cookie);
+      const hasCredential = !!req.headers.authorization;
       if (!hasCredential) limit('ip:' + quotaIpKey(clientIp(req)), LIMITS.ip);
       let principal;
       try {
