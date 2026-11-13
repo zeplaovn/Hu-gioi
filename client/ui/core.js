@@ -117,9 +117,16 @@
   const card = (title, body, { cls = '', eyebrow = '', aside = '' } = {}) =>
     `<section class="card ${cls}">${eyebrow || title || aside ? `<header class="card-head"><div>${eyebrow ? `<span class="eyebrow">${eyebrow}</span>` : ''}${title ? `<h3>${title}</h3>` : ''}</div>${aside}</header>` : ''}${body}</section>`;
   const empty = text => `<p class="empty-note">${text}</p>`;
-  const tabs = (items, active) =>
-    `<div class="tabbar" role="tablist">${items.map(t =>
-      `<button role="tab" class="tab ${t.id === active ? 'active' : ''}" aria-selected="${t.id === active}" data-tab="${t.id}">${t.icon ? `<span aria-hidden="true">${t.icon}</span>` : ''}${t.label}${t.badge ? `<em>${t.badge}</em>` : ''}</button>`).join('')}</div>`;
+  let tabbarSeq = 0;
+  const tabs = (items, active) => {
+    const current = items.find(t => t.id === active) || items[0] || { label: 'Chọn mục', icon: '☰' };
+    const menuId = 'tabbarMenu' + (++tabbarSeq);
+    return `<div class="tabbar">` +
+      `<button type="button" class="tabbar-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="${menuId}" aria-label="Chọn mục, đang xem ${esc(current.label)}">` +
+      `<span class="tabbar-toggle-ico" aria-hidden="true">${esc(current.icon || '☰')}</span><span class="tabbar-toggle-current">${esc(current.label)}</span><span class="tabbar-toggle-chevron" aria-hidden="true">⌄</span></button>` +
+      `<div id="${menuId}" class="tabbar-menu" role="tablist">${items.map(t =>
+      `<button role="tab" class="tab ${t.id === active ? 'active' : ''}" aria-selected="${t.id === active}" data-tab="${t.id}">${t.icon ? `<span aria-hidden="true">${t.icon}</span>` : ''}${t.label}${t.badge ? `<em>${t.badge}</em>` : ''}</button>`).join('')}</div></div>`;
+  };
   const live = end => `<span class="live" data-end="${end}"></span>`;
 
   /* Mô tả một bảng hiệu ứng {attack,hp,guard,rate,crit,dodge,regen} thành chữ: "Phòng thủ +12% · Sinh lực +5%". */

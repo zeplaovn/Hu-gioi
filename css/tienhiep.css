@@ -506,10 +506,90 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
 .win.page>header>b{flex:0 0 auto;min-width:0;max-width:min(32vw,240px)}
 .win.page>header>b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .win.page .page-nav{flex:0 1 auto;min-width:0;overscroll-behavior-x:contain;scrollbar-width:thin;scroll-behavior:auto}
-.win.page .page-nav::-webkit-scrollbar{display:block;height:3px}
+.win.page .page-nav-menu{flex:0 1 auto;min-width:0;overscroll-behavior-x:contain;scrollbar-width:thin;scroll-behavior:auto}
+.win.page .page-nav-menu::-webkit-scrollbar{display:block;height:3px}
 .win.page .page-nav button{flex:0 0 auto;min-height:42px;min-width:44px}
 .win.page .page-back{flex:0 0 auto;min-height:42px}
-.win.page .tabbar{overscroll-behavior-x:contain;scroll-behavior:auto}
+
+/* Điều hướng trang trên mobile: thu thanh ngang thành một nút mở dropdown.
+   Desktop vẫn giữ nguyên hàng nút để chuyển trang nhanh. */
+#game:not([data-layout="wide"]) .win.page .page-nav{position:relative;flex:0 0 auto;margin-left:auto;overflow:visible}
+#game:not([data-layout="wide"]) .win.page .page-nav-toggle{
+  display:inline-flex;align-items:center;gap:7px;max-width:min(48vw,210px);min-height:44px;padding:6px 11px;
+  border:1px solid #56876d;border-radius:999px;background:#16221c;color:#ece4d6;
+  font:700 13px var(--font);white-space:nowrap;cursor:pointer;
+}
+#game:not([data-layout="wide"]) .win.page .page-nav-toggle:hover,
+#game:not([data-layout="wide"]) .win.page .page-nav-toggle:focus-visible,
+#game:not([data-layout="wide"]) .win.page .page-nav.open .page-nav-toggle{border-color:var(--gold);color:var(--gold)}
+#game:not([data-layout="wide"]) .win.page .page-nav-toggle:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
+.page-nav-toggle-ico{flex:none;font-size:15px;color:#d8c08a}
+.page-nav-toggle-current{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-nav-toggle-chevron{flex:none;font-size:11px;line-height:1;transition:transform .15s}
+.page-nav-toggle[aria-expanded="true"] .page-nav-toggle-chevron{transform:rotate(180deg)}
+#game:not([data-layout="wide"]) .win.page .page-nav-menu{
+  display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:75;
+  width:min(290px,calc(100vw - 24px));max-height:min(62vh,calc(100dvh - 108px));overflow-y:auto;overscroll-behavior:contain;
+  flex-direction:column;gap:2px;padding:6px;border:1px solid #365645;border-radius:13px;
+  background:linear-gradient(165deg,#18251ff5,#0e1512f7);box-shadow:0 18px 46px #000c,0 0 0 1px #e6c1641f;
+  animation:pageNavIn .14s ease-out;
+}
+#game:not([data-layout="wide"]) .win.page .page-nav.open .page-nav-menu{display:flex}
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button{
+  flex:0 0 auto;width:100%;min-width:0;min-height:46px;justify-content:flex-start;gap:9px;padding:7px 9px;
+  border:1px solid transparent;border-radius:9px;background:transparent;color:#e5ded6;
+  font:650 14px var(--font);text-align:left;white-space:normal;
+}
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button img{width:24px;height:24px;flex:none}
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button span{display:inline}
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button:hover,
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button:focus-visible,
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button.on{
+  border-color:#7e6933;background:#e6c1640f;color:var(--gold);
+}
+#game:not([data-layout="wide"]) .win.page .page-nav-menu button:focus-visible{outline:2px solid #f9df9a;outline-offset:-2px}
+@keyframes pageNavIn{from{opacity:0;transform:translateY(-4px) scale(.985)}}
+@media(prefers-reduced-motion:reduce){
+  #game:not([data-layout="wide"]) .win.page .page-nav-menu{animation:none}
+  .page-nav-toggle-chevron{transition:none}
+}
+
+/* Tab phụ trong trang cũng thu thành dropdown trên mobile. */
+#game:not([data-layout="wide"]) .win.page .tabbar{display:block;position:relative;min-width:0;max-width:100%;overflow:visible}
+#game:not([data-layout="wide"]) .win.page .tabbar-toggle{
+  display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:7px 10px;
+  border:1px solid #4a725d;border-radius:4px 9px 9px 4px;background:#1b2b22;color:#e7dbcc;
+  font:700 14px var(--font);text-align:left;cursor:pointer;
+}
+#game:not([data-layout="wide"]) .win.page .tabbar-toggle:hover,
+#game:not([data-layout="wide"]) .win.page .tabbar-toggle:focus-visible,
+#game:not([data-layout="wide"]) .win.page .tabbar.open .tabbar-toggle{border-color:var(--gold);color:var(--gold)}
+#game:not([data-layout="wide"]) .win.page .tabbar-toggle:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
+.tabbar-toggle-ico{flex:none;font-size:16px;color:#d8c08a}
+.tabbar-toggle-current{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabbar-toggle-chevron{flex:none;font-size:11px;line-height:1;transition:transform .15s}
+.tabbar-toggle[aria-expanded="true"] .tabbar-toggle-chevron{transform:rotate(180deg)}
+#game:not([data-layout="wide"]) .win.page .tabbar-menu{
+  display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:25;
+  flex-direction:column;gap:2px;max-height:min(300px,56vh);overflow-y:auto;overscroll-behavior:contain;
+  padding:6px;border:1px solid #365645;border-radius:11px;
+  background:linear-gradient(165deg,#18251ff5,#0e1512f7);box-shadow:0 16px 40px #000c,0 0 0 1px #e6c1641f;
+}
+#game:not([data-layout="wide"]) .win.page .tabbar.open .tabbar-menu{display:flex}
+#game:not([data-layout="wide"]) .win.page .tabbar-menu .tab{
+  width:100%;min-height:44px;justify-content:flex-start;padding:9px 10px;border:1px solid transparent;border-bottom:0;
+  border-radius:8px;color:#e5ded6;font-size:14px;white-space:normal;text-align:left;
+}
+#game:not([data-layout="wide"]) .win.page .tabbar-menu .tab:hover,
+#game:not([data-layout="wide"]) .win.page .tabbar-menu .tab:focus-visible,
+#game:not([data-layout="wide"]) .win.page .tabbar-menu .tab.active{
+  border-color:#7e6933;background:#e6c1640f;color:var(--gold);
+}
+#game:not([data-layout="wide"]) .win.page .tabbar-menu .tab:focus-visible{outline:2px solid #f9df9a;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){
+  .tabbar-toggle-chevron{transition:none}
+}
+.win.page .tabbar-menu{overscroll-behavior-x:contain;scroll-behavior:auto}
 .more-menu{max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow-y:auto;overscroll-behavior:contain}
 
 /* Nút menu luôn trong tầm tay khi vuốt, không làm mờ các mục ở mép. */
@@ -522,20 +602,21 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
   .win.page .page-nav button span[aria-hidden="true"]{display:inline}
   .win.page .page-back{min-width:44px;justify-content:center}
   .win.page .page-nav button{min-width:44px;justify-content:center}
-  .win.page .tabbar{scrollbar-width:thin}
-  .win.page .tabbar::-webkit-scrollbar{display:block;height:3px}
+  .win.page .tabbar-menu{scrollbar-width:thin}
+  .win.page .tabbar-menu::-webkit-scrollbar{display:block;height:3px}
   .win.page .tab{min-height:44px}
 }
 @media(max-width:760px) and (min-height:521px){
-  .win.page>header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;padding:8px 12px}
+  .win.page>header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px 10px;padding:8px 12px}
   .win.page>header>b{display:flex;min-width:0;max-width:100%;overflow:hidden}
   .win.page>header>b span{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
-  .win.page .page-nav{grid-column:1/-1;width:100%;margin:0;gap:6px;padding-bottom:3px}
+  .win.page .page-nav{grid-column:3;grid-row:1;width:auto;margin:0;gap:6px;padding-bottom:0}
   .win.page .page-nav button{gap:5px;padding:6px 11px}
-  .win.page .page-nav button span{display:inline}
+  .win.page .page-nav-menu button span{display:inline}
 }
 @media(max-height:520px) and (orientation:landscape){
   .win.page .page-nav button span:not([aria-hidden="true"]){display:none}
+  #game:not([data-layout="wide"]) .win.page .page-nav-menu button span{display:inline}
 }
 @media(max-width:620px){
   .auth-gate{padding:max(clamp(14px,4vw,40px),env(safe-area-inset-top,0px)) max(clamp(14px,4vw,40px),env(safe-area-inset-right,0px)) max(clamp(14px,4vw,40px),env(safe-area-inset-bottom,0px)) max(clamp(14px,4vw,40px),env(safe-area-inset-left,0px))}
@@ -591,4 +672,29 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
 .keyboard-open .chat-form{padding:5px 9px}
 .keyboard-open .chat-compose-row input,.keyboard-open .chat-compose-row .btn{min-height:40px}
 .win.desktop-window[data-window="chat"].keyboard-open .chat-channels{padding:5px 9px}
-.win.desktop-window[data-window="chat"].keyboard-open .chat-channels>button{min-height:34px}
+.win.desktop-window[data-window="chat"].keyboard-open .chat-channel-menu>button{min-height:34px}
+
+/* Khung chat hẹp: thu hàng kênh thành dropdown, không cần vuốt ngang. */
+@container chat-window (max-width:460px){
+  .win.desktop-window[data-window="chat"] .chat-channels{display:block;position:relative;padding:7px 9px}
+  .win.desktop-window[data-window="chat"] .chat-channel-toggle{display:flex}
+  .win.desktop-window[data-window="chat"] .chat-channels .chat-channel-menu{
+    display:none;position:absolute;top:calc(100% + 4px);left:9px;right:9px;z-index:30;
+    flex-direction:column;gap:3px;width:auto;max-height:min(300px,56vh);overflow-y:auto;overscroll-behavior:contain;
+    padding:6px;border:1px solid #6b5536;border-radius:11px;
+    background:linear-gradient(165deg,#1d2a22f7,#101a14fa);box-shadow:0 16px 38px #000c,0 0 0 1px #e6c1641f;
+  }
+  .win.desktop-window[data-window="chat"] .chat-channels.open .chat-channel-menu{display:flex}
+  .win.desktop-window[data-window="chat"] .chat-channel-menu>button{
+    flex:0 0 auto;width:100%;min-height:44px;padding:9px 10px;font-size:13px;text-align:left;
+    justify-content:flex-start;border-color:transparent;border-radius:8px;background:transparent;color:#e5ded6;
+  }
+  .win.desktop-window[data-window="chat"] .chat-channel-menu>button[aria-selected="true"]{
+    background:#6c4e2a;border-color:#c99f5e;color:#ffedc3;
+  }
+  .win.desktop-window[data-window="chat"] .chat-channel-menu>button:focus-visible{outline:2px solid #f9df9a;outline-offset:-2px}
+  .win.desktop-window[data-window="chat"] .chat-channels.open .chat-channel-toggle{border-color:#e5bb6d;color:#ffe6af}
+}
+@media(prefers-reduced-motion:reduce){
+  .chat-channel-toggle-chevron{transition:none}
+}

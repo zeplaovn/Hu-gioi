@@ -569,6 +569,8 @@
   function applyLayout() {
     const el = $('game');
     if (!el) return;
+    closePageNav();
+    closeTabbar();
     const layout = pickLayout();
     document.body.dataset.layout = layout;
     if (el.dataset.layout !== layout) {
@@ -619,8 +621,11 @@
         ? '<img src="media/assets/ui/icon/menu/' + esc(def.icon) + '-40.png" alt="" decoding="async">'
         : '<span aria-hidden="true">' + esc(def.icon || '◈') + '</span>';
       const navIcon = k => { const d = UI.screens[k], ic = d.icon && /^ICON-/.test(d.icon) ? '<img src="media/assets/ui/icon/menu/' + esc(d.icon) + '-40.png" alt="" decoding="async">' : '<span aria-hidden="true">' + esc(d.icon || '◈') + '</span>'; return ic; };
-      const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' + [...WINDOW_ORDER, 'settings'].filter(k => k !== 'idle' && UI.screens[k]).map(k =>
-        '<button type="button" data-open-page="' + k + '" class="' + (k === id ? 'on' : '') + '" aria-label="' + esc(UI.screens[k].label) + '" title="' + esc(UI.screens[k].label) + '"' + (k === id ? ' aria-current="page"' : '') + '>' + navIcon(k) + '<span>' + esc(UI.screens[k].label) + '</span></button>').join('') + '</nav>' : '';
+      const nav = isPage ? '<nav class="page-nav" aria-label="Chuyển trang">' +
+        '<button type="button" class="page-nav-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="pageNavMenu" aria-label="Chuyển trang, đang ở ' + esc(def.label) + '">' +
+        '<span class="page-nav-toggle-ico" aria-hidden="true">☰</span><span class="page-nav-toggle-current">' + esc(def.label) + '</span><span class="page-nav-toggle-chevron" aria-hidden="true">⌄</span></button>' +
+        '<div id="pageNavMenu" class="page-nav-menu">' + [...WINDOW_ORDER, 'settings'].filter(k => k !== 'idle' && UI.screens[k]).map(k =>
+        '<button type="button" data-open-page="' + k + '" class="' + (k === id ? 'on' : '') + '" aria-label="' + esc(UI.screens[k].label) + '" title="' + esc(UI.screens[k].label) + '"' + (k === id ? ' aria-current="page"' : '') + '>' + navIcon(k) + '<span>' + esc(UI.screens[k].label) + '</span></button>').join('') + '</div></nav>' : '';
       el.innerHTML = isPage ? '<header><button class="page-back" type="button" aria-label="Quay lại màn tu luyện">‹ <span>Tu luyện</span></button>' +
         '<b>' + icon + '<span>' + esc(def.label) + '</span></b>' + nav + '</header><div class="win-body"></div>'
         : '<header><b>' + icon + '<span>' + esc(def.label) + '</span></b><button type="button" class="win-close" aria-label="Đóng truyền âm">×</button></header><div class="win-body"></div><div class="rz" aria-hidden="true"></div>';
@@ -634,7 +639,7 @@
       this.render(id);
       this.focus(id);
       if (isPage) root.requestAnimationFrame(() => {
-        if (el.isConnected) revealHorizontalItem(el.querySelector('.page-nav'), el.querySelector('.page-nav .on'));
+        if (el.isConnected) revealHorizontalItem(el.querySelector('.page-nav-menu'), el.querySelector('.page-nav-menu .on'));
       });
       markMenu();
       this.updateTaskbar();
@@ -749,16 +754,18 @@
       if (!w) return;
       if (tipCell && w.body.contains(tipCell)) hideItemTip();
       const def = w.def, tab = tabOf(def), y = w.body.scrollTop;
-      const oldTab = w.tab, oldTabScroll = w.body.querySelector('.tabbar')?.scrollLeft || 0;
+      const oldTab = w.tab, oldTabMenu = w.body.querySelector('.tabbar-menu');
+      const oldTabScroll = oldTabMenu?.scrollLeft || 0;
       const content = def.panel ? def.panel(tab) : def.render(tab);
       w.body.innerHTML = (id === 'idle' ? '<p class="screen-lead">Tu vi tự tăng khi nhập định. Mở các bảng bên dưới để tăng tốc, xem công pháp và mục tiêu gần.</p>' : '') + content;
       w.body.scrollTop = y;
       w.tab = tab;
       const tabbar = w.body.querySelector('.tabbar');
       if (tabbar) {
-        if (oldTab === tab) tabbar.scrollLeft = oldTabScroll;
+        const menu = tabbar.querySelector('.tabbar-menu');
+        if (oldTab === tab) { if (menu) menu.scrollLeft = oldTabScroll; }
         else root.requestAnimationFrame(() => {
-          if (tabbar.isConnected) revealHorizontalItem(tabbar, tabbar.querySelector('.tab.active'));
+          if (tabbar.isConnected) revealHorizontalItem(menu, tabbar.querySelector('.tab.active'));
         });
       }
       if (def.pageBg) { const bg = def.pageBg(tab); if (bg) w.el.style.setProperty('--page-bg', "url('" + bg + "')"); else w.el.style.removeProperty('--page-bg'); }
@@ -865,7 +872,7 @@
           w.rect = { x: 8, y: 8, w: W - 16, h: Math.max(180, H - 64) };
         } else w.rect = this.clampRect(w.rect);
         this.setRect(w.el, w.rect);
-        if (id !== 'chat') revealHorizontalItem(w.el.querySelector('.page-nav'), w.el.querySelector('.page-nav .on'));
+        if (id !== 'chat') revealHorizontalItem(w.el.querySelector('.page-nav-menu'), w.el.querySelector('.page-nav-menu .on'));
       });
       this.fitChatToVisualViewport();
     },
@@ -1077,6 +1084,55 @@
     const menu = $('moreMenu');
     if (!menu) return;
     menu.hidden ? openMoreMenu() : closeMoreMenu({ focus: true });
+  }
+
+  /* Điều hướng trang: thanh ngang trên desktop, dropdown gọn trên mobile.
+     Chỉ đổi cách trình bày, mục đang mở vẫn được đánh dấu và giữ nguyên hành vi. */
+  function pageNavToggle() {
+    return document.querySelector('.win.page .page-nav-toggle');
+  }
+
+  function closePageNav({ focus = false } = {}) {
+    const nav = pageNavToggle()?.closest('.page-nav');
+    if (!nav?.classList.contains('open')) return false;
+    nav.classList.remove('open');
+    pageNavToggle()?.setAttribute('aria-expanded', 'false');
+    if (focus) try { pageNavToggle()?.focus({ preventScroll: true }); } catch { /* bỏ qua */ }
+    return true;
+  }
+
+  function togglePageNav(nav) {
+    const toggle = nav?.querySelector('.page-nav-toggle');
+    if (!nav || !toggle) return;
+    if (nav.classList.contains('open')) { closePageNav({ focus: true }); return; }
+    closeTabbar();
+    nav.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    try {
+      (nav.querySelector('.page-nav-menu .on') || nav.querySelector('.page-nav-menu button'))?.focus({ preventScroll: true });
+    } catch { /* bỏ qua */ }
+  }
+
+  function closeTabbar({ focus = false } = {}) {
+    const bar = document.querySelector('.win.page .tabbar.open');
+    if (!bar) return false;
+    bar.classList.remove('open');
+    const toggle = bar.querySelector('.tabbar-toggle');
+    toggle?.setAttribute('aria-expanded', 'false');
+    if (focus) try { toggle?.focus({ preventScroll: true }); } catch { /* bỏ qua */ }
+    return true;
+  }
+
+  function toggleTabbar(bar) {
+    const toggle = bar?.querySelector('.tabbar-toggle');
+    if (!bar || !toggle) return;
+    if (bar.classList.contains('open')) { closeTabbar({ focus: true }); return; }
+    closePageNav();
+    bar.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    try {
+      (bar.querySelector('.tab.active') || bar.querySelector('.tab'))?.focus({ preventScroll: true });
+    } catch { /* bỏ qua */ }
   }
 
   /* ======================================================================
@@ -1871,9 +1927,16 @@
       return;
     }
     if (!$('moreMenu')?.hidden && !e.target.closest('#moreMenu, #moreMenuBtn')) closeMoreMenu();
+    const pageNavBtn = e.target.closest('.page-nav-toggle');
+    if (pageNavBtn) { e.preventDefault(); togglePageNav(pageNavBtn.closest('.page-nav')); return; }
+    if (!e.target.closest('.page-nav')) closePageNav();
+    const tabbarBtn = e.target.closest('.tabbar-toggle');
+    if (tabbarBtn) { e.preventDefault(); toggleTabbar(tabbarBtn.closest('.tabbar')); return; }
+    if (!e.target.closest('.tabbar')) closeTabbar();
     if (e.target.closest('#menuToggle')) { e.preventDefault(); toggleMenu(); return; }
     const pageBtn = e.target.closest('[data-open-page]');
     if (pageBtn && UI.s().created) {
+      closePageNav();
       safe(() => { store.catchUp(); if (trib.pageOpen) trib.closePage(); go(pageBtn.dataset.openPage); });
       return;
     }
@@ -1901,6 +1964,7 @@
     if (nav && UI.s().created) { safe(() => { store.catchUp(); go(nav.dataset.go); }); return; }
     const tab = e.target.closest('[data-tab]');
     if (tab) {
+      closeTabbar();
       UI.tabState[UI.current] = tab.dataset.tab;
       resetFilters();
       refresh();
@@ -1915,6 +1979,12 @@
   document.addEventListener('change', e => {
     if (store.locked || trib.active) return;
     if (['categoryFilter', 'qualityFilter'].includes(e.target.id)) safe(() => run('search', { dataset: {} }));
+  });
+
+  /* Chuyển tiêu điểm ra ngoài bằng Tab cũng đóng dropdown điều hướng. */
+  document.addEventListener('focusin', e => {
+    if (!e.target.closest('.page-nav')) closePageNav();
+    if (!e.target.closest('.tabbar')) closeTabbar();
   });
 
   document.addEventListener('keydown', e => {
@@ -1940,6 +2010,8 @@
     if (e.key === 'Escape') {
       if (!$('modalLayer').hidden) closeModal();
       else if (!$('moreMenu')?.hidden) closeMoreMenu({ focus: true });
+      else if (closePageNav({ focus: true })) { /* đã đóng dropdown điều hướng */ }
+      else if (closeTabbar({ focus: true })) { /* đã đóng dropdown tab phụ */ }
       else if (wins.topId()) wins.close(wins.topId());
       return;
     }

@@ -23,10 +23,17 @@
           <h2>Truyền âm</h2></div></div>
         <span id="chatOnline" class="chat-online" aria-label="Số đạo hữu trực tuyến"></span>
       </header>
-      <nav id="chatChannels" class="chat-channels" role="tablist" aria-label="Chuyển kênh Truyền âm">
+      <nav id="chatChannels" class="chat-channels" aria-label="Chuyển kênh Truyền âm">
+        <button type="button" class="chat-channel-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="chatChannelMenu" aria-label="Chọn kênh, đang xem ${esc(activeChannel.title)}">
+          <span class="chat-channel-toggle-ico" aria-hidden="true">☰</span>
+          <span class="chat-channel-toggle-label">Kênh</span>
+          <span id="chatChannelCurrent" class="chat-channel-toggle-current">${esc(activeChannel.title)}</span>
+          <span class="chat-channel-toggle-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div id="chatChannelMenu" class="chat-channel-menu" role="tablist" aria-label="Chọn kênh truyền âm">
         ${CHANNELS.map(ch => '<button type="button" role="tab" data-chat-channel="' + ch.id +
           '" aria-selected="' + (ch.id === session.channel) + '" tabindex="' + (ch.id === session.channel ? 0 : -1) +
-          '">' + esc(ch.title) + '</button>').join('')}<button type="button" role="tab" data-chat-channel="journal" aria-selected="false" tabindex="-1">Nhật ký</button></nav>
+          '">' + esc(ch.title) + '</button>').join('')}<button type="button" role="tab" data-chat-channel="journal" aria-selected="false" tabindex="-1">Nhật ký</button></div></nav>
       <div class="chat-context">
         <p id="chatChannelInfo">${esc(activeChannel.help)}</p>
         <span class="chat-retention">Tin lưu tạm thời · Chỉ dành cho người chơi</span>
@@ -104,6 +111,9 @@
       el.classList.toggle('on', el.dataset.chatChannel === active);
       el.setAttribute('aria-selected', String(el.dataset.chatChannel === active));
     });
+    const activeTitle = journalOpen ? 'Nhật ký' : CHANNELS.find(x => x.id === session.channel)?.title || 'Thế giới';
+    if ($('chatChannelCurrent')) $('chatChannelCurrent').textContent = activeTitle;
+    document.querySelector('.chat-channel-toggle')?.setAttribute('aria-label', 'Chọn kênh, đang xem ' + activeTitle);
     if ($('chatChannelInfo')) $('chatChannelInfo').textContent = journalOpen ? 'Ghi chép tu hành và thông báo gần đây.' : CHANNELS.find(x => x.id === session.channel)?.help || '';
     $('chatFeed').hidden = journalOpen;
     $('chatJournal').hidden = !journalOpen;
@@ -148,6 +158,34 @@
     $('chatEmpty').hidden = journalOpen || !!state.messages.length || state.status === 'connecting';
     if (follow) feed.scrollTop = feed.scrollHeight;
   }
+  /* Trên khung chat hẹp, hàng kênh thu thành dropdown để không phải vuốt ngang.
+     Desktop vẫn hiện đủ các tab như cũ. */
+  function closeChatChannels({ focus = false } = {}) {
+    const nav = $('chatChannels');
+    if (!nav?.classList.contains('open')) return false;
+    nav.classList.remove('open');
+    const toggle = nav.querySelector('.chat-channel-toggle');
+    toggle?.setAttribute('aria-expanded', 'false');
+    if (focus) try { toggle?.focus({ preventScroll: true }); } catch { /* bỏ qua */ }
+    return true;
+  }
+
+  function toggleChatChannels() {
+    const nav = $('chatChannels'), toggle = nav?.querySelector('.chat-channel-toggle');
+    if (!nav || !toggle) return;
+    if (nav.classList.contains('open')) { closeChatChannels({ focus: true }); return; }
+    nav.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    try {
+      (nav.querySelector('[data-chat-channel][aria-selected="true"]') || nav.querySelector('[data-chat-channel]'))?.focus({ preventScroll: true });
+    } catch { /* bỏ qua */ }
+  }
+
+  function chatChannelsCompact() {
+    const toggle = $('chatChannels')?.querySelector('.chat-channel-toggle');
+    return !!toggle && root.getComputedStyle(toggle).display !== 'none';
+  }
+
   function mount() {
     const switchChannel = channel => {
       if (channel === 'journal') { journalOpen = true; update(); return; }
@@ -158,11 +196,22 @@
       update();
     };
     $('chatChannels')?.addEventListener('click', event => {
+      const toggle = event.target.closest('.chat-channel-toggle');
+      if (toggle) { event.preventDefault(); toggleChatChannels(); return; }
       const tab = event.target.closest('[data-chat-channel]');
-      if (tab) switchChannel(tab.dataset.chatChannel);
+      if (tab) {
+        switchChannel(tab.dataset.chatChannel);
+        closeChatChannels({ focus: chatChannelsCompact() });
+      }
     });
     $('chatChannels')?.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (closeChatChannels({ focus: true })) { event.preventDefault(); event.stopPropagation(); }
+        return;
+      }
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      const nav = $('chatChannels');
+      if (chatChannelsCompact() && !nav?.classList.contains('open')) return;
       event.preventDefault();
       const ids = [...CHANNELS.map(ch => ch.id), 'journal'];
       const current = ids.indexOf(journalOpen ? 'journal' : session.channel);
@@ -326,5 +375,13 @@
     if (visible) refreshComposer();
   }
   if (root.document) setInterval(() => { try { bubbleSync(); } catch { /* bỏ qua */ } }, 1000);
+  if (root.document) root.document.addEventListener('click', event => {
+    if (event.target.closest?.('#chatChannels')) return;
+    closeChatChannels();
+  });
+  if (root.document) root.document.addEventListener('focusin', event => {
+    if (event.target.closest?.('#chatChannels')) return;
+    closeChatChannels();
+  });
   UI.register({ id: 'chat', label: 'Truyền âm', icon: '✧', eyebrow: 'TRUYỀN ÂM', render, mount, update });
 })(typeof window !== 'undefined' ? window : globalThis);

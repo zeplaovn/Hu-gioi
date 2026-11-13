@@ -114,18 +114,20 @@
 .win.page>header .win-close{display:none}
 .page-back{display:inline-flex;align-items:center;gap:5px;padding:8px 14px 8px 10px;border-radius:10px;border:1px solid #56876d;background:#16221c;color:#ece4d6;font:750 14px var(--font);white-space:nowrap}
 .page-back:hover{border-color:var(--gold);color:var(--gold)}
-.page-nav{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
-.page-nav::-webkit-scrollbar{display:none}
+.page-nav{display:flex;align-items:center;gap:6px;margin-left:auto;min-width:0}
+.page-nav-menu{display:flex;gap:6px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.page-nav-menu::-webkit-scrollbar{display:none}
 .page-nav button{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:10px;border:1px solid #406551;background:#131d18cc;color:#cfd8d2;font:650 13.5px var(--font);white-space:nowrap}
 .page-nav button img{width:22px;height:22px;object-fit:contain;image-rendering:pixelated}
 .page-nav button:hover{color:var(--gold);border-color:#4d7c63}
 .page-nav button.on{color:var(--gold);border-color:var(--gold);background:#1b2d2499}
+.page-nav .page-nav-toggle{display:none}
 .win.page .win-body{padding:16px clamp(12px,3vw,40px) 28px}
 .win.page .win-body>*{max-width:1280px;margin-left:auto;margin-right:auto}
 @media(min-width:900px){
   .win.page .screen-grid{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start}
 }
-@media(max-width:760px){.page-nav button span,.page-back span{display:none}.page-nav button,.page-back{padding:7px 10px}.win.page>header>b{font-size:16px}}
+@media(max-width:760px){.page-nav-menu button span,.page-back span{display:none}.page-nav button,.page-back{padding:7px 10px}.win.page>header>b{font-size:16px}}
 @media(max-width:420px){.win.page>header>b span{display:none}}
 
 /* Nghề phụ: toàn màn hình với nền riêng của từng nghề (đan phòng, luyện khí/chế phù, linh điền) */

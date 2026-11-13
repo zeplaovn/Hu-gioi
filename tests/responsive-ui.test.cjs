@@ -37,8 +37,59 @@ test('đưa mục đang chọn vào vùng nhìn thấy mà không cuộn trang n
   assert.equal(bar.scrollLeft, 220);
   reveal(bar, { getBoundingClientRect: () => ({ left: 20, right: 100, width: 80 }) });
   assert.equal(bar.scrollLeft, 220, 'không cuộn lại khi mục đã nằm trong thanh');
-  assert.match(shell, /if \(oldTab === tab\) tabbar\.scrollLeft = oldTabScroll/);
-  assert.match(shell, /revealHorizontalItem\(el\.querySelector\('\.page-nav'\)/);
+  assert.match(shell, /const oldTab = w\.tab, oldTabMenu = w\.body\.querySelector\('\.tabbar-menu'\)/);
+  assert.match(shell, /if \(oldTab === tab\) \{ if \(menu\) menu\.scrollLeft = oldTabScroll; \}/);
+  assert.match(shell, /revealHorizontalItem\(el\.querySelector\('\.page-nav-menu'\)/);
+});
+
+test('thanh điều hướng trang thu gọn thành dropdown trên mobile', () => {
+  const css = read('css/tienhiep.css');
+  assert.match(shell, /class="page-nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="pageNavMenu"/);
+  assert.match(shell, /id="pageNavMenu" class="page-nav-menu"/);
+  assert.match(shell, /function closePageNav\(\{ focus = false \} = \{\}\)/);
+  assert.match(shell, /function togglePageNav\(nav\)/);
+  assert.match(shell, /pageNavBtn = e\.target\.closest\('\.page-nav-toggle'\)/);
+  assert.match(shell, /if \(!e\.target\.closest\('\.page-nav'\)\) closePageNav\(\)/);
+  assert.match(shell, /closePageNav\(\{ focus: true \}\)/);
+  assert.match(css, /#game:not\(\[data-layout="wide"\]\) \.win\.page \.page-nav-toggle\{/);
+  assert.match(css, /#game:not\(\[data-layout="wide"\]\) \.win\.page \.page-nav\.open \.page-nav-menu\{display:flex\}/);
+  assert.match(css, /min-height:46px/);
+  assert.match(css, /@keyframes pageNavIn/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
+});
+
+test('tab phụ trong trang thu gọn thành dropdown trên mobile', () => {
+  const core = read('client/ui/core.js');
+  const css = read('css/tienhiep.css');
+  const base = read('css/base.css');
+  assert.match(core, /class="tabbar-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="\$\{menuId\}"/);
+  assert.match(core, /class="tabbar-menu" role="tablist"/);
+  assert.match(shell, /function closeTabbar\(\{ focus = false \} = \{\}\)/);
+  assert.match(shell, /function toggleTabbar\(bar\)/);
+  assert.match(shell, /tabbarBtn = e\.target\.closest\('\.tabbar-toggle'\)/);
+  assert.match(shell, /if \(!e\.target\.closest\('\.tabbar'\)\) closeTabbar\(\)/);
+  assert.match(base, /\.tabbar-menu\{display:flex/);
+  assert.match(css, /#game:not\(\[data-layout="wide"\]\) \.win\.page \.tabbar\.open \.tabbar-menu\{display:flex\}/);
+  assert.match(css, /#game:not\(\[data-layout="wide"\]\) \.win\.page \.tabbar-menu \.tab\{[^}]*min-height:44px/);
+});
+
+test('hàng kênh chat thu gọn thành dropdown trong cửa sổ hẹp', () => {
+  const chat = read('client/ui/screens/chat.js');
+  const css = read('css/chat.css');
+  const layout = read('css/tienhiep.css');
+  assert.match(chat, /class="chat-channel-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="chatChannelMenu"/);
+  assert.match(chat, /id="chatChannelMenu" class="chat-channel-menu" role="tablist"/);
+  assert.match(chat, /function closeChatChannels\(\{ focus = false \} = \{\}\)/);
+  assert.match(chat, /function toggleChatChannels\(\)/);
+  assert.match(chat, /chatChannelCurrent/);
+  assert.match(chat, /closeChatChannels\(\{ focus: chatChannelsCompact\(\) \}\)/);
+  assert.match(chat, /event\.stopPropagation\(\)/);
+  assert.match(css, /\.chat-channel-menu\{display:grid/);
+  assert.match(css, /\.chat-channel-menu>button/);
+  assert.match(layout, /@container chat-window \(max-width:460px\)/);
+  assert.match(layout, /\.chat-channels\.open \.chat-channel-menu\{display:flex\}/);
+  assert.match(layout, /\.chat-channel-toggle\{display:flex\}/);
+  assert.match(layout, /min-height:44px/);
 });
 
 test('bàn phím ảo chỉ thu tạm khung chat và khôi phục vị trí đã lưu', () => {
@@ -79,7 +130,7 @@ test('bàn phím ảo chỉ thu tạm khung chat và khôi phục vị trí đã
 test('bố cục dùng vùng chạm, vùng an toàn và kích thước thực của cửa sổ chat', () => {
   const css = read('css/tienhiep.css');
   assert.match(css, /\.page-nav button span\[aria-hidden="true"\]\{display:inline\}/);
-  assert.match(css, /\.page-nav button span\{display:inline\}/);
+  assert.match(css, /\.page-nav-menu button span\{display:inline\}/);
   assert.match(css, /\.page-nav button,\.win\.page \.page-back\{min-height:44px\}/);
   assert.match(css, /#menu \.menu-toggle\{position:sticky/);
   assert.match(css, /env\(safe-area-inset-bottom,0px\)/);

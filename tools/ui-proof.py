@@ -196,12 +196,23 @@ def open_page(page, section):
         page.locator(f'#menu button[data-window="{section}"]').click()
     current.first.wait_for(state="visible", timeout=15000)
 
+def select_tab(page, section, tab):
+    """Chọn tab phụ, tự mở dropdown nếu giao diện mobile đã thu gọn thanh tab."""
+    win = page.locator(f'.win.desktop-window[data-window="{section}"]')
+    btn = win.locator(f'.tabbar [data-tab="{tab}"]').first
+    if not btn.is_visible():
+        toggle = win.locator('.tabbar-toggle').first
+        if toggle.count() and toggle.is_visible():
+            toggle.click()
+        btn.wait_for(state='visible', timeout=5000)
+    btn.click()
+
 def set_tab(page, section, tab):
     if tab is None:
         return
     if section == 'character' and tab == 'skills':
         # Công pháp đã chuyển từ tab riêng vào mục mở rộng của trang Đạo thể.
-        page.locator('.win.desktop-window[data-window="character"] .tabbar [data-tab="stats"]').first.click()
+        select_tab(page, 'character', 'stats')
         details = page.locator('.win.desktop-window[data-window="character"] .char-techniques')
         if details.get_attribute('open') is None:
             details.locator('summary').click()
@@ -209,8 +220,23 @@ def set_tab(page, section, tab):
     selector = (f'[data-act="sectPanel"][data-panel="{tab}"]' if section == 'sect'
                 else f'.tabbar [data-tab="{tab}"]')
     btn = page.locator(f'.win.desktop-window[data-window="{section}"] {selector}')
+    if section != 'sect' and not btn.first.is_visible():
+        toggle = page.locator(f'.win.desktop-window[data-window="{section}"] .tabbar-toggle').first
+        if toggle.count() and toggle.is_visible():
+            toggle.click()
+        btn.first.wait_for(state='visible', timeout=5000)
     btn.first.click()
     page.wait_for_timeout(250)
+
+def select_chat_channel(page, win, channel):
+    """Chọn kênh chat, tự mở dropdown kênh khi cửa sổ đã thu gọn."""
+    btn = win.locator(f'[data-chat-channel="{channel}"]').first
+    if not btn.is_visible():
+        toggle = win.locator('.chat-channel-toggle').first
+        if toggle.count() and toggle.is_visible():
+            toggle.click()
+        btn.wait_for(state='visible', timeout=5000)
+    btn.click()
 
 def snap(page, folder, prefix, name, where="top"):
     area = page.locator(".win.desktop-window.top .win-body")
@@ -285,10 +311,10 @@ def verify_bubble(page, folder, name, outcome):
         assert abs(rect["gap"]) < 5, "Transcript không sát ô soạn chat"
         assert rect["composerBottom"] <= rect["panelBottom"] + 4, "Ô soạn bị cắt khuất"
         outcome["chat_composer_fits_window"] = True
-    win.locator('[data-chat-channel="journal"]').click()
+    select_chat_channel(page, win, "journal")
     assert win.locator('#chatJournal').is_visible(), "Nhật ký trong chat không hiển thị"
     assert win.locator('#chatForm').is_hidden(), "Ô soạn vẫn hiện ở tab nhật ký"
-    win.locator('[data-chat-channel="world"]').click()
+    select_chat_channel(page, win, "world")
     outcome["chat_journal"] = True
     outcome["screenshots"].append(snap(page, folder, name, "chat-open"))
     trigger.click()
@@ -352,7 +378,11 @@ def run_set(browser, folder, name, url, width, height, mobile):
             page.locator('#menu button[data-window="world"]').tap()
             world = page.locator('.win.desktop-window[data-window="world"]')
             world.wait_for(state="visible", timeout=15000)
-            world.locator('[data-tab="shop"]').first.tap()
+            shop = world.locator('.tabbar [data-tab="shop"]').first
+            if not shop.is_visible():
+                world.locator('.tabbar-toggle').first.tap()
+                shop.wait_for(state="visible", timeout=5000)
+            shop.tap()
             world.locator('.page-back').tap()
             assert world.count() == 0, "Touch không đóng được cửa sổ"
             rev = page.evaluate("""async () => {
@@ -459,7 +489,11 @@ def run_webkit_mobile(playwright, url, folder):
         page.locator('#menu button[data-window="world"]').tap()
         world = page.locator('.win.desktop-window[data-window="world"]')
         world.wait_for(state="visible", timeout=15000)
-        world.locator('[data-tab="shop"]').first.tap()
+        shop = world.locator('.tabbar [data-tab="shop"]').first
+        if not shop.is_visible():
+            world.locator('.tabbar-toggle').first.tap()
+            shop.wait_for(state="visible", timeout=5000)
+        shop.tap()
         world.locator('.page-back').tap()
         assert world.count() == 0, "WebKit touch không đóng được cửa sổ"
         revisions = page.evaluate("""async () => {

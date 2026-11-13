@@ -121,26 +121,40 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
 .chat-bubble.drag-positioned .chat-bubble-panel::after{display:none}
 @media(max-width:420px){.chat-bubble.drag-positioned .chat-bubble-panel{width:min(350px,calc(100vw - 20px))}}
 
-.chat-channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
-.chat-channels>button{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid #746247;border-radius:8px;background:#251c17;color:#e7dbcc;min-height:36px;padding:6px 8px;cursor:pointer}
-.chat-channels>button.on,.chat-channels>button[aria-selected="true"]{color:#ffe6af;background:#5d4426;border-color:#e5bb6d}
-.chat-channels>button:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
+.chat-channels{position:relative;display:flex;align-items:center;gap:6px;margin:12px 0;min-width:0}
+.chat-channel-toggle{display:none;align-items:center;gap:7px;width:100%;min-height:44px;padding:7px 10px;
+  border:1px solid #746247;border-radius:4px 9px 9px 4px;background:#251c17;color:#e7dbcc;
+  font:700 13px var(--font);text-align:left;cursor:pointer}
+.chat-channel-toggle[aria-expanded="true"]{border-color:#e5bb6d;color:#ffe6af;background:#3b2d1e}
+.chat-channel-toggle:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
+.chat-channel-toggle-ico{flex:none;color:#e5bb6d;font-size:15px}
+.chat-channel-toggle-label{flex:none;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#bda77d}
+.chat-channel-toggle-current{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#ffe6af}
+.chat-channel-toggle-chevron{flex:none;font-size:11px;line-height:1;transition:transform .15s}
+.chat-channel-toggle[aria-expanded="true"] .chat-channel-toggle-chevron{transform:rotate(180deg)}
+.chat-channel-menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;min-width:0}
+.chat-channel-menu>button{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid #746247;border-radius:8px;background:#251c17;color:#e7dbcc;min-height:36px;padding:6px 8px;cursor:pointer}
+.chat-channel-menu>button.on,.chat-channel-menu>button[aria-selected="true"]{color:#ffe6af;background:#5d4426;border-color:#e5bb6d}
+.chat-channel-menu>button:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
 .ranking-modes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
-@media(max-width:420px){.chat-channels{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.chat-channels>button{min-height:32px;font-size:12px}}
+@media(max-width:420px){.chat-channel-menu{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.chat-channel-menu>button{min-height:32px;font-size:12px}}
 
 /* Kênh đầu cửa sổ: phân đoạn cân đối và cuộn ngang thay vì chia 2 hàng trên mobile. */
-.win.desktop-window[data-window="chat"] .chat-channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:6px;margin:0;padding:9px 12px;border-bottom:1px solid #31513c;background:#192b20}
-.win.desktop-window[data-window="chat"] .chat-channels>button{display:flex;align-items:center;justify-content:center;
+.win.desktop-window[data-window="chat"] .chat-channels{display:flex;align-items:stretch;gap:6px;
+  margin:0;padding:9px 12px;border-bottom:1px solid #31513c;background:#192b20}
+.win.desktop-window[data-window="chat"] .chat-channel-menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:6px;width:100%;min-width:0}
+.win.desktop-window[data-window="chat"] .chat-channel-menu>button{display:flex;align-items:center;justify-content:center;
   min-height:38px;min-width:0;padding:7px 5px;border:1px solid #52664c;border-radius:9px;
   color:#d9decf;background:#203127;white-space:nowrap;text-overflow:ellipsis;font-size:12px;font-weight:650;
   transition:background .12s,border-color .12s}
-.win.desktop-window[data-window="chat"] .chat-channels>button[aria-selected="true"]{
+.win.desktop-window[data-window="chat"] .chat-channel-menu>button[aria-selected="true"]{
   background:#6c4e2a;border-color:#c99f5e;color:#ffedc3;box-shadow:inset 0 1px 0 #ffe8a422}
-.win.desktop-window[data-window="chat"] .chat-channels>button:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
+.win.desktop-window[data-window="chat"] .chat-channel-menu>button:focus-visible{outline:2px solid #f9df9a;outline-offset:2px}
 @media(max-width:420px){
-  .win.desktop-window[data-window="chat"] .chat-channels{gap:4px;padding:7px 8px;grid-template-columns:repeat(4,minmax(0,1fr))}
-  .win.desktop-window[data-window="chat"] .chat-channels>button{min-height:36px;font-size:11px;padding:5px 2px}
+  .win.desktop-window[data-window="chat"] .chat-channels{gap:4px;padding:7px 8px}
+  .win.desktop-window[data-window="chat"] .chat-channel-menu{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .win.desktop-window[data-window="chat"] .chat-channel-menu>button{min-height:36px;font-size:11px;padding:5px 2px}
 }
 
 /* Khung nhỏ trên điện thoại / Chrome DevTools: ưu tiên transcript + composer. */
@@ -180,7 +194,8 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
   .chat-compose-row input,.chat-compose-row .btn{min-height:34px}
   .chat-error{margin:2px 0 0}
   .win.desktop-window[data-window="chat"] .chat-channels{padding:5px 9px}
-  .win.desktop-window[data-window="chat"] .chat-channels>button{min-height:30px;padding:4px}
+  .win.desktop-window[data-window="chat"] .chat-channel-menu>button{min-height:30px;padding:4px}
+  .win.desktop-window[data-window="chat"] .chat-channel-toggle{min-height:40px}
 }
 
 /* Tên người gửi: "Tên • Cảnh giới". Màu cảnh giới tăng dần từ trắng thuần đến hiệu ứng đa sắc ở Đạo Tổ. */
@@ -228,5 +243,5 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
   .chat-realm,.chat-name.chat-admin{animation:none}
 }
 /* Năm tab dùng một hàng, có thể vuốt khi màn hình quá hẹp. */
-.win.desktop-window[data-window="chat"] .chat-channels{display:flex;overflow-x:auto;overscroll-behavior-x:contain}
-.win.desktop-window[data-window="chat"] .chat-channels>button{flex:1 0 62px}
+.win.desktop-window[data-window="chat"] .chat-channel-menu{display:flex;overflow-x:auto;overscroll-behavior-x:contain}
+.win.desktop-window[data-window="chat"] .chat-channel-menu>button{flex:1 0 62px}

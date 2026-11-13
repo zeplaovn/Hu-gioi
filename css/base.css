@@ -106,8 +106,10 @@ label{color:#cdd6d0;font-size:14px}
 .tag{display:inline-flex;align-items:center;gap:4px;border:1px solid #49735d;background:#1b2922;border-radius:6px;padding:2px 7px;font-size:12.5px;color:#c2cdc5}
 
 /* ===== tab ===== */
-.tabbar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:12px 0 0;padding-bottom:1px;border-bottom:1px solid #335141}
-.tabbar::-webkit-scrollbar{display:none}
+.tabbar{position:relative;display:flex;align-items:center;gap:4px;min-width:0;margin:12px 0 0;padding-bottom:1px;border-bottom:1px solid #335141}
+.tabbar-menu{display:flex;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.tabbar-menu::-webkit-scrollbar{display:none}
+.tabbar .tabbar-toggle{display:none}
 .tab{flex:0 0 auto;display:flex;align-items:center;gap:6px;border:0;border-bottom:2px solid transparent;background:transparent;color:#b4c2b9;padding:10px 13px;font-weight:750;font-size:15px;white-space:nowrap}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
