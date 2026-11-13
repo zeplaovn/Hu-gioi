@@ -116,7 +116,7 @@ test('Ô trò chuyện vẫn gửi tin đúng sau khi thêm lựa chọn lời n
   assert.equal(panel.querySelector('.fox-chatter-toggle').checked, true);
   const chat = panel.querySelector('.fox-messages').children;
   assert.equal(chat.at(-2).textContent, 'xin chào');
-  assert.match(chat.at(-1).textContent, /Linh Hồ có mặt/);
+  assert.match(chat.at(-1).textContent, /bổn hệ thống có mặt/);
 });
 
 test('Kéo bằng chuột/cảm ứng, giữ cửa sổ trong màn hình và nhớ vị trí qua lần mở lại', () => {
@@ -168,18 +168,18 @@ test('Nút đóng không kéo cửa sổ; bàn phím và thay đổi khung nhìn
 test('Lời thoại ngẫu nhiên không cướp focus, tự ẩn, không lặp liền và chạm được để trả lời', () => {
   const f = fixture(); f.tick();
   const companion = f.companion(), panel = f.panel(), bubble = companion.querySelector('.fox-bubble');
-  f.advance(59999); assert.equal(bubble.hidden, true);
+  f.advance(44999); assert.equal(bubble.hidden, true);
   f.advance(1); assert.equal(bubble.hidden, false);
   const first = bubble.querySelector('.fox-bubble-text').textContent;
   assert.ok(first);
   assert.equal(panel.hidden, true);
   assert.equal(panel.querySelector('.fox-form input').focused, undefined);
-  f.advance(12000); assert.equal(bubble.hidden, true);
-  f.advance(48000); assert.equal(bubble.hidden, false);
+  f.advance(10000); assert.equal(bubble.hidden, true);
+  f.advance(35000); assert.equal(bubble.hidden, false);
   assert.notEqual(bubble.querySelector('.fox-bubble-text').textContent, first);
   companion.querySelector('.fox-bubble-close').fire('click');
   assert.equal(bubble.hidden, true);
-  f.advance(60000);
+  f.advance(45000);
   companion.querySelector('.fox-bubble-open').fire('click');
   assert.equal(panel.hidden, false);
   assert.equal(bubble.hidden, true);
@@ -192,7 +192,7 @@ test('Dừng lời nhắn khi ẩn tab, mở trang khác hoặc đang trò chuy�
   f.document.hidden = true; f.document.fire('visibilitychange');
   f.advance(600000); assert.equal(bubble.hidden, true);
   f.document.hidden = false; f.tick(); assert.equal(bubble.hidden, true);
-  f.advance(60000); assert.equal(bubble.hidden, false);
+  f.advance(45000); assert.equal(bubble.hidden, false);
   for (const [pause, resume] of [
     [() => f.game.classList.add('page-open'), () => f.game.classList.remove('page-open')],
     [() => { f.game.hidden = true; }, () => { f.game.hidden = false; }],
@@ -202,7 +202,7 @@ test('Dừng lời nhắn khi ẩn tab, mở trang khác hoặc đang trò chuy�
   ]) {
     pause(); f.advance(600000); assert.equal(bubble.hidden, true);
     resume(); f.tick(); assert.equal(bubble.hidden, true);
-    f.advance(60000); assert.equal(bubble.hidden, false);
+    f.advance(45000); assert.equal(bubble.hidden, false);
   }
   f.open(); const before = f.panel().querySelector('.fox-messages').children.length;
   f.advance(600000);
@@ -222,7 +222,8 @@ test('Tắt lời nhắn ngẫu nhiên được lưu, nhưng vẫn hiện cảnh
   f.state.hp = 10; f.tick();
   assert.equal(bubble.hidden, false);
   assert.match(bubble.querySelector('.fox-bubble-text').textContent, /Cảnh báo/);
-  f.advance(12000); assert.equal(bubble.hidden, true);
+  assert.equal(bubble.dataset.kind, 'warn');
+  f.advance(10000); assert.equal(bubble.hidden, true);
 });
 
 test('Vị trí lưu bị hỏng không làm mất tùy chọn tắt lời nhắn', () => {
@@ -230,4 +231,65 @@ test('Vị trí lưu bị hỏng không làm mất tùy chọn tắt lời nhắ
   f.tick(); f.open();
   assert.deepEqual(pos(f.panel()), [320, 185]);
   assert.equal(f.panel().querySelector('.fox-chatter-toggle').checked, false);
+});
+
+const textOf = f => f.companion().querySelector('.fox-bubble').querySelector('.fox-bubble-text').textContent;
+const kindOf = f => f.companion().querySelector('.fox-bubble').dataset.kind;
+
+test('Chưa có nhiệm vụ thì Linh Hồ giục nhận nhiệm vụ bằng giọng bổn hệ thống', () => {
+  const f = fixture(); f.tick(); f.advance(45000);
+  assert.equal(kindOf(f), 'nag');
+  assert.match(textOf(f), /Nhiệm vụ|nhiệm vụ/);
+  assert.match(textOf(f), /bổn hệ thống|ngươi|ta /i);
+});
+
+test('Có nhiệm vụ dang dở thì giục theo tên và phần còn thiếu, càng nhắc càng gắt', () => {
+  const f = fixture(); f.tick();
+  f.panel().fire('click', { target: { dataset: { fox: 'mission' } } });
+  const seen = [];
+  for (let i = 0; i < 4; i++) {
+    f.advance(45000); assert.equal(kindOf(f), 'nag'); seen.push(textOf(f));
+    f.advance(10000);
+  }
+  for (const text of seen) assert.match(text, /Trừ yêu hộ đạo|Tĩnh tâm|Tiến thêm|Đan hương/);
+  assert.match(seen[0], /còn thiếu 5 yêu thú|Còn thiếu 5 yêu thú/i);
+  assert.match(seen[1], /bao nhiêu lần rồi/);
+  assert.match(seen[2], /Lần thứ 3 rồi/);
+  assert.match(seen[3], /chọc giận/);
+  f.state.progress.kill += 3;
+  f.advance(45000);
+  assert.match(textOf(f), /thiếu 2 yêu thú/);
+});
+
+test('Xong nhiệm vụ thì Linh Hồ khoe công, nhưng đã xong thì thôi giục', () => {
+  const f = fixture(); f.tick();
+  f.panel().fire('click', { target: { dataset: { fox: 'mission' } } });
+  f.state.progress.kill += 5; f.tick();
+  assert.equal(kindOf(f), 'praise');
+  assert.match(textOf(f), /biết ơn bổn hệ thống/);
+  f.advance(10000);
+  for (let i = 0; i < 6; i++) { f.advance(45000); if (kindOf(f) === 'nag') assert.doesNotMatch(textOf(f), /Trừ yêu hộ đạo.*thiếu/); f.advance(10000); }
+});
+
+test('Cảnh báo và nhắc việc dùng đúng loại lời; tắt tự lên tiếng thì không giục nhưng vẫn cảnh báo', () => {
+  const f = fixture(); f.tick(); f.open();
+  const toggle = f.panel().querySelector('.fox-chatter-toggle');
+  toggle.checked = false; toggle.fire('change'); f.panel().querySelector('.fox-close').fire('click');
+  f.panel().fire('click', { target: { dataset: { fox: 'mission' } } });
+  f.advance(600000);
+  assert.equal(f.companion().querySelector('.fox-bubble').hidden, true);
+  f.state.garden = [{ wilt: false, end: 1 }]; f.tick();
+  assert.equal(kindOf(f), 'hint'); assert.match(textOf(f), /Linh điền/);
+  f.advance(10000); f.advance(60000);
+  f.state.hp = 5; f.tick();
+  assert.equal(kindOf(f), 'warn'); assert.match(textOf(f), /^Cảnh báo/);
+});
+
+test('Trả lời trong ô chat cũng đúng giọng: cảm ơn, hỏi danh tính', () => {
+  const f = fixture(); f.tick(); f.open();
+  const panel = f.panel(), input = panel.querySelector('.fox-form input'), chat = () => panel.querySelector('.fox-messages').children;
+  input.value = 'cảm ơn'; panel.querySelector('form').fire('submit');
+  assert.match(chat().at(-1).textContent, /Ngươi nên biết ơn ta đấy, hahaha/);
+  input.value = 'bạn là ai'; panel.querySelector('form').fire('submit');
+  assert.match(chat().at(-1).textContent, /Bổn hệ thống chính là Linh Hồ/);
 });

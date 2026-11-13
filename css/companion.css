@@ -3,7 +3,15 @@
 .fox-companion[hidden],.fox-panel[hidden],.fox-bubble[hidden]{display:none!important}
 .fox-launch{display:block;width:100%;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:pointer;filter:drop-shadow(0 3px 5px #110d25a8)}
 #stage .hero-wrap .fox-launch img{position:static;display:block;width:100%;height:auto;max-width:100%;object-fit:contain;transform:none;filter:none}
-.fox-bubble{position:absolute;right:0;bottom:100%;width:min(230px,70vw);padding:10px 30px 10px 12px;border:1px solid #aa8dce;border-radius:14px;background:#211b34;color:#f6edff;font-size:12px;box-shadow:0 8px 24px #0008}
+.fox-bubble{--fox-accent:#aa8dce;position:absolute;right:-6px;bottom:calc(100% + 8px);width:min(236px,72vw);box-sizing:border-box;padding:10px 30px 10px 12px;border:1px solid var(--fox-accent);border-radius:14px;background:#211b34;color:#f6edff;font-size:13px;box-shadow:0 8px 24px #0008,0 0 14px color-mix(in srgb,var(--fox-accent) 35%,transparent);animation:foxBubbleIn .28s ease-out both,foxBubbleFloat 3.2s ease-in-out .3s infinite}
+.fox-bubble::after{content:"";position:absolute;right:26px;top:100%;width:12px;height:12px;margin-top:-7px;border:solid var(--fox-accent);border-width:0 1px 1px 0;background:#211b34;transform:rotate(45deg)}
+.fox-bubble[data-kind="warn"]{--fox-accent:#ff7a6b;background:#2e1a1d}.fox-bubble[data-kind="warn"]::after{background:#2e1a1d}
+.fox-bubble[data-kind="nag"]{--fox-accent:#ffb454;background:#2c2218}.fox-bubble[data-kind="nag"]::after{background:#2c2218}
+.fox-bubble[data-kind="hint"]{--fox-accent:#58d6c0;background:#16282a}.fox-bubble[data-kind="hint"]::after{background:#16282a}
+.fox-bubble[data-kind="praise"]{--fox-accent:#f2cf6b;background:#2b2616}.fox-bubble[data-kind="praise"]::after{background:#2b2616}
+@keyframes foxBubbleIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes foxBubbleFloat{50%{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.fox-bubble{animation:none}}
 .fox-bubble-open{display:block;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;line-height:1.5;cursor:pointer}
 .fox-bubble-open small{display:block;margin-top:6px;color:#d1b5f0;font-size:11px}
 .fox-bubble-close{position:absolute;right:2px;top:2px;width:28px;height:28px;padding:0;border:0;border-radius:6px;background:transparent;color:#efe6ff;font-size:20px;cursor:pointer}
