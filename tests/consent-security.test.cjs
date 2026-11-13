@@ -3,9 +3,6 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
 const { createConsentVerifier } = require('../server/auth/consent.js');
 const { createPrincipalResolver } = require('../server/auth/principal.js');
 const { MemoryPlayers } = require('./helpers/memory-players.js');
