@@ -66,7 +66,7 @@
   function build() {
     const game = document.getElementById('game'); if (!game || panel) return;
     const wrap = document.createElement('aside'); wrap.className = 'fox-companion';
-    wrap.innerHTML = `<span class="fox-bubble" aria-live="polite" hidden></span><button class="fox-launch" type="button" aria-label="Mở Linh Hồ hệ thống" aria-expanded="false"><img src="media/assets/companion/linh-ho.gif" alt=""><span class="fox-static" aria-hidden="true">🦊</span><b>Linh Hồ</b></button><section class="fox-panel" aria-label="Linh Hồ hệ thống" hidden><header><div><strong>✧ Linh Hồ Hệ Thống</strong><small>Bạn đồng hành · mô phỏng</small></div><button type="button" class="fox-close" aria-label="Đóng">×</button></header><div class="fox-messages" aria-live="polite"></div><div class="fox-mission"></div><div class="fox-actions"><button type="button" data-fox="guide">Gợi ý &amp; cảnh báo</button><button type="button" data-fox="mission">Nhiệm vụ</button><button type="button" data-fox="cancel">Hủy nhiệm vụ</button></div><form class="fox-form"><input aria-label="Nói với Linh Hồ" maxlength="200" placeholder="Nói gì đó với Linh Hồ…"><button type="submit">Gửi</button></form><p class="fox-foot">Đối thoại theo mẫu, không phải AI. Nhiệm vụ lưu trên thiết bị.</p></section>`;
+    wrap.innerHTML = `<span class="fox-bubble" aria-live="polite" hidden></span><button class="fox-launch" type="button" aria-label="Mở Linh Hồ hệ thống" aria-expanded="false"><img src="media/assets/companion/linh-ho.gif" alt=""><b>Linh Hồ</b></button><section class="fox-panel" aria-label="Linh Hồ hệ thống" hidden><header><div><strong>✧ Linh Hồ Hệ Thống</strong><small>Bạn đồng hành · mô phỏng</small></div><button type="button" class="fox-close" aria-label="Đóng">×</button></header><div class="fox-messages" aria-live="polite"></div><div class="fox-mission"></div><div class="fox-actions"><button type="button" data-fox="guide">Gợi ý &amp; cảnh báo</button><button type="button" data-fox="mission">Nhiệm vụ</button><button type="button" data-fox="cancel">Hủy nhiệm vụ</button></div><form class="fox-form"><input aria-label="Nói với Linh Hồ" maxlength="200" placeholder="Nói gì đó với Linh Hồ…"><button type="submit">Gửi</button></form><p class="fox-foot">Đối thoại theo mẫu, không phải AI. Nhiệm vụ lưu trên thiết bị.</p></section>`;
     game.append(wrap); panel = wrap.querySelector('.fox-panel'); bubble = wrap.querySelector('.fox-bubble'); messages = wrap.querySelector('.fox-messages'); missionBox = wrap.querySelector('.fox-mission');
     const launch = wrap.querySelector('.fox-launch');
     const toggle = open => { panel.hidden = !open; launch.setAttribute('aria-expanded', String(open)); if (open) { bubble.hidden = true; wrap.querySelector('input').focus(); } };
@@ -82,7 +82,14 @@
   }
   function update() {
     const s = state(); if (!s) { if (panel) panel.parentElement.hidden = true; return; }
-    build(); if (!panel) return; panel.parentElement.hidden = false; load(s); drawMission(s);
+    build(); if (!panel) return; panel.parentElement.hidden = false;
+    // Neo linh vật bên trong sân khấu để không che thanh menu ở mọi bố cục.
+    const stage = document.getElementById('stage'), rect = stage?.getBoundingClientRect();
+    if (rect && rect.width && rect.height) {
+      panel.parentElement.style.right = Math.max(8, root.innerWidth - rect.right + 8) + 'px';
+      panel.parentElement.style.bottom = Math.max(8, root.innerHeight - rect.bottom + 8) + 'px';
+    }
+    load(s); drawMission(s);
     const notice = guide(s), now = Date.now();
     if (notice.startsWith('Gợi ý:')) lastNotice = '';
     if (!notice.startsWith('Gợi ý:') && notice !== lastNotice && now - lastNoticeAt > 60000) {
