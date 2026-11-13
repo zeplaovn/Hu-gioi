@@ -27,7 +27,6 @@
 
 ## Thiết kế, dự thảo và bằng chứng
 
-- [Kế hoạch phát triển tính năng](feature-development-plan.md) — thứ tự triển khai, phạm vi và gate quyết định; không phải lệnh code.
 - [Sổ quyết định gameplay](gameplay-decisions.md) — các mục P0/P1/P2 còn chờ chủ dự án duyệt.
 - [Kiểm toán độ khó](design-audit.md) — bằng chứng thiết kế lịch sử; không phải cân bằng hiện hành.
 - [Cao giới 5–13](content-draft-realms-5-13.md) — dự thảo nội dung, chưa nhập `data/`.

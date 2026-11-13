@@ -1,6 +1,6 @@
 # Checklist phát hành product / production
 
-> Trạng thái: Hiện hành. **Checklist chưa đạt; CHƯA SẴN SÀNG production.** Kế hoạch và mốc nghiệm thu hiện hành: [SYSTEM](SYSTEM.md), [tổng hợp](PROJECT-STATUS.md) và [kế hoạch phát triển](feature-development-plan.md). Tất cả checkbox còn mở; chỉ xác nhận bằng bằng chứng từ staging/production và người sở hữu game.
+> Trạng thái: Hiện hành. **Checklist chưa đạt; CHƯA SẴN SÀNG production.** Kế hoạch và mốc nghiệm thu hiện hành: [SYSTEM](SYSTEM.md) và [tổng hợp](PROJECT-STATUS.md). Tất cả checkbox còn mở; chỉ xác nhận bằng bằng chứng từ staging/production và người sở hữu game.
 
 - [ ] **1. Cloudflare Workers Builds:** mở log Workers Builds của `hugioi`, tìm nguyên nhân lỗi (nếu có), gửi log đã che secret để sửa build hoặc Dashboard; không suy luận chỉ từ build local.
 - [ ] **2. Deploy Edge thủ công (sau khi duyệt):** xác minh GitHub Actions secret `SUPABASE_ACCESS_TOKEN` và môi trường staging; khi mọi gate đạt, chủ dự án mới chạy `.github/workflows/edge-bundle-build.yml` bằng `workflow_dispatch`. Không tự deploy hoặc đưa secret vào chat/repo.

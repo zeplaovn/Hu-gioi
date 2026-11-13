@@ -19,7 +19,7 @@
 | Nhiệm vụ ngày | 3/5 nhiệm vụ theo `SHA-256(ownerId + ngày)`, reset UTC+7; điểm danh 7 ngày; hộp thư 3 mẫu; receipt idempotent | `game.account_state`, `game.account_mail`, `game.account_receipts` |
 | Backend | Supabase Edge Function `api`, **23 route**, JWT + consent v7, PostgreSQL schema `game` **13 bảng**, RLS, **6 migration** | `supabase/functions/api/`, `supabase/migrations/` |
 | Triển khai | Bản ghi dự án: migration chat đã áp dụng production 12/11/2026; Edge bundle **version 26** đã deploy cùng ngày | Không thể xác minh Dashboard từ repository; xem [edge-deployment.md](edge-deployment.md) |
-| Tài liệu | Bộ **22 tài liệu** trong `docs/`; prompt cũ `prompt-story.md` đã được loại bỏ vì sai số liệu 49 lệnh/97 test | [index.md](index.md) |
+| Tài liệu | Bộ **21 tài liệu** trong `docs/`; prompt cũ `prompt-story.md` đã được loại bỏ vì sai số liệu 49 lệnh/97 test | [index.md](index.md) |
 
 ## II. Chưa hoàn thành hoặc chưa đủ bằng chứng
 
@@ -35,8 +35,7 @@
 
 - [GAME.md](GAME.md): luật chơi, UI, chat/ranking, daily/mail, quyết định còn mở.
 - [SYSTEM.md](SYSTEM.md): kiến trúc Edge, auth, 23 route, database, đồng bộ, vận hành.
-- [index.md](index.md): mục lục đầy đủ 22 tài liệu.
-- [feature-development-plan.md](feature-development-plan.md): kế hoạch phát triển đề xuất, không phải lệnh triển khai.
+- [index.md](index.md): mục lục đầy đủ 21 tài liệu.
 - [release-checklist.md](release-checklist.md): gate phát hành; tất cả vẫn chưa đạt.
 - [gameplay-decisions.md](gameplay-decisions.md): sổ quyết định P0/P1/P2 chưa duyệt.
 - [edge-deployment.md](edge-deployment.md): runbook triển khai/rollback Edge.
