@@ -280,22 +280,10 @@ body:has(.chat-bubble:not(.drag-positioned):not([hidden])) #game[data-layout="po
   .action-group > .btn{flex:1 1 130px;padding:9px 8px;font-size:14px}
 }
 
-/* B2: Các nhãn của menu dưới đủ rộng và thanh cuộn có vệt gợi ý hai mép. */
+/* B2: Các nhãn của menu dưới đủ rộng và thanh cuộn cho biết còn mục khác. */
 #game[data-layout="portrait"] #menu button:not(.menu-toggle){min-width:68px;padding-left:5px;padding-right:5px}
 #game[data-layout="portrait"] #menu button > span:not(.ico){white-space:nowrap;overflow:visible;text-overflow:clip}
 #game[data-layout="portrait"][data-menu="open"] #menu{scroll-behavior:auto}
-#game[data-layout="portrait"][data-menu="open"] #menu[data-more-right="true"]:not([data-more-left="true"]){
-  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 32px),transparent);
-  mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 32px),transparent);
-}
-#game[data-layout="portrait"][data-menu="open"] #menu[data-more-left="true"]:not([data-more-right="true"]){
-  -webkit-mask-image:linear-gradient(to right,transparent,#000 32px,#000 100%);
-  mask-image:linear-gradient(to right,transparent,#000 32px,#000 100%);
-}
-#game[data-layout="portrait"][data-menu="open"] #menu[data-more-left="true"][data-more-right="true"]{
-  -webkit-mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 32px),transparent);
-  mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 32px),transparent);
-}
 
 /* C6: Trạng thái tự đột phá không còn dáng của nút bấm đã bị khóa. */
 #btn-break.auto:disabled{
@@ -513,3 +501,94 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
 #game:not([data-layout="wide"]) .status-settings-mobile{display:grid;place-items:center;grid-column:2;grid-row:1;justify-self:end;width:44px;height:44px;border:1px solid #567864;border-radius:10px;background:#14251c;color:#f0d79c;font-size:23px;cursor:pointer}
 #game:not([data-layout="wide"]) .btn-break{grid-row:2 / span 2}
 @media(max-width:600px){.settings-row{flex-wrap:wrap;gap:8px}.settings-row label{min-width:55%}.settings-row select{max-width:100%}}
+
+/* ===== RESPONSIVE: điều hướng dễ nhận biết, kể cả khi nội dung phải cuộn ===== */
+.win.page>header>b{flex:0 0 auto;min-width:0;max-width:min(32vw,240px)}
+.win.page>header>b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win.page .page-nav{flex:0 1 auto;min-width:0;overscroll-behavior-x:contain;scrollbar-width:thin;scroll-behavior:auto}
+.win.page .page-nav::-webkit-scrollbar{display:block;height:3px}
+.win.page .page-nav button{flex:0 0 auto;min-height:42px;min-width:44px}
+.win.page .page-back{flex:0 0 auto;min-height:42px}
+.win.page .tabbar{overscroll-behavior-x:contain;scroll-behavior:auto}
+.more-menu{max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow-y:auto;overscroll-behavior:contain}
+
+/* Nút menu luôn trong tầm tay khi vuốt, không làm mờ các mục ở mép. */
+#game[data-layout="portrait"][data-menu="open"] #menu{overscroll-behavior-x:contain;scrollbar-width:thin}
+#game[data-layout="portrait"][data-menu="open"] #menu .menu-toggle{position:sticky;left:0;z-index:2;flex:0 0 48px;background:#1b2b22;box-shadow:4px 0 8px #101814aa}
+#game[data-layout="portrait"] #menu button:not(.menu-toggle){flex-basis:80px;min-width:80px}
+
+@media(max-width:760px){
+  /* Quy tắc cũ ẩn cả biểu tượng dạng chữ; chỉ ẩn nhãn khi màn ngang rất thấp. */
+  .win.page .page-nav button span[aria-hidden="true"]{display:inline}
+  .win.page .page-back{min-width:44px;justify-content:center}
+  .win.page .page-nav button{min-width:44px;justify-content:center}
+  .win.page .tabbar{scrollbar-width:thin}
+  .win.page .tabbar::-webkit-scrollbar{display:block;height:3px}
+  .win.page .tab{min-height:44px}
+}
+@media(max-width:760px) and (min-height:521px){
+  .win.page>header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;padding:8px 12px}
+  .win.page>header>b{display:flex;min-width:0;max-width:100%;overflow:hidden}
+  .win.page>header>b span{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .win.page .page-nav{grid-column:1/-1;width:100%;margin:0;gap:6px;padding-bottom:3px}
+  .win.page .page-nav button{gap:5px;padding:6px 11px}
+  .win.page .page-nav button span{display:inline}
+}
+@media(max-height:520px) and (orientation:landscape){
+  .win.page .page-nav button span:not([aria-hidden="true"]){display:none}
+}
+@media(max-width:620px){
+  .auth-gate{padding:max(clamp(14px,4vw,40px),env(safe-area-inset-top,0px)) max(clamp(14px,4vw,40px),env(safe-area-inset-right,0px)) max(clamp(14px,4vw,40px),env(safe-area-inset-bottom,0px)) max(clamp(14px,4vw,40px),env(safe-area-inset-left,0px))}
+  .modal-layer{padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .game-modal{max-height:100%}
+  /* iOS không tự phóng to khi người chơi chọn ô nhập. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea{font-size:16px}
+}
+@media(pointer:coarse){
+  .win.page .page-nav button,.win.page .page-back{min-height:44px}
+  .more-menu button{min-height:44px}
+}
+
+/* Khi bàn phím ảo mở, ưu tiên ô soạn và nội dung chat trong vùng còn thấy. */
+.win.desktop-window[data-window="chat"]{container:chat-window / size;min-height:180px}
+.win.desktop-window[data-window="chat"] .chat-transcript{min-height:0}
+/* Khung chat có thể được kéo nhỏ trên desktop, không chỉ trên điện thoại. */
+@container chat-window (max-width:420px){
+  .chat-heading{padding:7px 10px}
+  .chat-seal{width:30px;height:30px;border-radius:9px;font-size:22px}
+  .chat-heading .eyebrow{font-size:9px}
+  .chat-heading h2{font-size:18px}
+  .chat-context{display:none}
+  .chat-connection{padding:4px 9px}
+  .chat-connection .btn{min-height:28px;padding:3px 8px}
+  .chat-form{padding:7px 9px}
+  .chat-form label{display:none}
+  .chat-compose-meta{margin-top:3px}
+  .chat-compose-row input{font-size:16px}
+}
+@container chat-window (max-height:420px){
+  .chat-heading{padding:5px 10px}
+  .chat-seal,.chat-heading .eyebrow,.chat-context,.chat-form label,.chat-compose-meta{display:none}
+  .chat-heading h2{margin:0;font-size:18px}
+  .chat-online{padding:3px 7px;font-size:10px}
+  .chat-connection{padding:3px 10px}
+  .chat-form{padding:5px 9px}
+}
+@container chat-window (max-height:250px){
+  .chat-heading{display:none}
+  .chat-connection .btn{min-height:26px;padding:2px 8px}
+  .chat-availability{padding:3px 10px;font-size:11px}
+  .chat-form .chat-compose-row input,.chat-form .chat-compose-row .btn{min-height:34px}
+}
+.win.desktop-window[data-window="chat"].keyboard-open{min-height:0}
+.keyboard-open .chat-heading{padding:5px 10px}
+.keyboard-open .chat-seal,.keyboard-open .chat-heading .eyebrow,.keyboard-open .chat-context,.keyboard-open .chat-form label,.keyboard-open .chat-compose-meta{display:none}
+.keyboard-open .chat-heading h2{margin:0;font-size:18px}
+.keyboard-open .chat-online{padding:3px 7px;font-size:10px}
+.keyboard-open .chat-connection{padding:3px 10px}
+.keyboard-open .chat-connection .btn{min-height:28px;padding:3px 8px}
+.keyboard-open .chat-transcript{min-height:0}
+.keyboard-open .chat-form{padding:5px 9px}
+.keyboard-open .chat-compose-row input,.keyboard-open .chat-compose-row .btn{min-height:40px}
+.win.desktop-window[data-window="chat"].keyboard-open .chat-channels{padding:5px 9px}
+.win.desktop-window[data-window="chat"].keyboard-open .chat-channels>button{min-height:34px}

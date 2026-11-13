@@ -554,7 +554,16 @@
     const w = root.innerWidth || document.documentElement.clientWidth || 0;
     const h = root.innerHeight || document.documentElement.clientHeight || 1;
     const a = w / h;
-    return a < 0.85 ? 'portrait' : (a >= 1.5 && (w >= 1100 || (w >= 700 && h <= 520))) ? 'wide' : 'landscape';
+    return a < 0.85 ? 'portrait' : ((w >= 900 && a >= 1.15) || (w >= 700 && h <= 520 && a >= 1.5)) ? 'wide' : 'landscape';
+  }
+
+  /* Chỉ cuộn thanh điều hướng, không làm trang nội dung hoặc cả cửa sổ nhảy. */
+  function revealHorizontalItem(container, item) {
+    if (!container || !item) return;
+    const bar = container.getBoundingClientRect(), target = item.getBoundingClientRect();
+    if (target.left < bar.left || target.right > bar.right) {
+      container.scrollLeft += target.left - bar.left - (container.clientWidth - target.width) / 2;
+    }
   }
 
   function applyLayout() {
@@ -624,6 +633,9 @@
       else { el.querySelector('.win-close').addEventListener('click', e => { e.stopPropagation(); this.close(id); }); drag(el.querySelector('header'), el, id); resize(el.querySelector('.rz'), el, id); }
       this.render(id);
       this.focus(id);
+      if (isPage) root.requestAnimationFrame(() => {
+        if (el.isConnected) revealHorizontalItem(el.querySelector('.page-nav'), el.querySelector('.page-nav .on'));
+      });
       markMenu();
       this.updateTaskbar();
       updateStage();
@@ -737,10 +749,18 @@
       if (!w) return;
       if (tipCell && w.body.contains(tipCell)) hideItemTip();
       const def = w.def, tab = tabOf(def), y = w.body.scrollTop;
+      const oldTab = w.tab, oldTabScroll = w.body.querySelector('.tabbar')?.scrollLeft || 0;
       const content = def.panel ? def.panel(tab) : def.render(tab);
       w.body.innerHTML = (id === 'idle' ? '<p class="screen-lead">Tu vi tự tăng khi nhập định. Mở các bảng bên dưới để tăng tốc, xem công pháp và mục tiêu gần.</p>' : '') + content;
       w.body.scrollTop = y;
       w.tab = tab;
+      const tabbar = w.body.querySelector('.tabbar');
+      if (tabbar) {
+        if (oldTab === tab) tabbar.scrollLeft = oldTabScroll;
+        else root.requestAnimationFrame(() => {
+          if (tabbar.isConnected) revealHorizontalItem(tabbar, tabbar.querySelector('.tab.active'));
+        });
+      }
       if (def.pageBg) { const bg = def.pageBg(tab); if (bg) w.el.style.setProperty('--page-bg', "url('" + bg + "')"); else w.el.style.removeProperty('--page-bg'); }
       def.mount?.(tab);
       def.update?.(tab);
@@ -764,6 +784,12 @@
       if (id === 'chat' && H <= 520)
         return this.clampRect({ x: (W - Math.min(W - 16, WINDOW_SIZE.chat)) / 2, y: 8,
           w: Math.min(W - 16, WINDOW_SIZE.chat), h: H - 16 });
+      // Truyền âm trên điện thoại cần đủ chỗ đọc tin và soạn, kể cả màn thấp.
+      // Vị trí người chơi đã lưu vẫn được ưu tiên trong loadRect().
+      if (id === 'chat' && layout === 'portrait' && W < 600) {
+        const height = Math.min(H - 16, Math.max(380, H * 0.78));
+        return this.clampRect({ x: 8, y: (H - height) / 2, w: W - 16, h: height });
+      }
       const stage = $('stage')?.getBoundingClientRect();
       const pad = layout === 'portrait' ? 8 : 12;
       const maxW = stage ? Math.max(260, stage.width - pad * 2) : W - 16;
@@ -839,7 +865,30 @@
           w.rect = { x: 8, y: 8, w: W - 16, h: Math.max(180, H - 64) };
         } else w.rect = this.clampRect(w.rect);
         this.setRect(w.el, w.rect);
+        if (id !== 'chat') revealHorizontalItem(w.el.querySelector('.page-nav'), w.el.querySelector('.page-nav .on'));
       });
+      this.fitChatToVisualViewport();
+    },
+    /* Bàn phím ảo có thể chỉ thu visual viewport, không phát resize trên window.
+       Dùng hình chữ nhật tạm thời, không ghi đè vị trí/kích thước người chơi đã lưu. */
+    fitChatToVisualViewport() {
+      const w = this.map.get('chat'), viewport = root.visualViewport;
+      if (!w) return;
+      const composing = w.el.contains(document.activeElement) && document.activeElement.matches('input, textarea');
+      const keyboard = viewport && viewport.scale === 1 && composing && viewport.height < (root.innerHeight || 0) - 80;
+      w.el.classList.toggle('keyboard-open', !!keyboard);
+      if (!keyboard) {
+        if (w.visualRect) this.setRect(w.el, w.rect);
+        w.visualRect = false;
+        return;
+      }
+      const pad = 8, width = Math.max(0, viewport.width - pad * 2), height = Math.max(0, viewport.height - pad * 2);
+      const left = viewport.offsetLeft + pad, top = viewport.offsetTop + pad;
+      const rect = { w: Math.min(w.rect.w, width), h: Math.min(w.rect.h, height) };
+      rect.x = Math.max(left, Math.min(w.rect.x, left + width - rect.w));
+      rect.y = Math.max(top, Math.min(w.rect.y, top + height - rect.h));
+      this.setRect(w.el, rect);
+      w.visualRect = true;
     },
     relayout() {
       this.map.forEach((w, id) => {
@@ -848,6 +897,7 @@
         this.setRect(w.el, w.rect);
         this.render(id);
       });
+      this.fitChatToVisualViewport();
     }
   };
   UI.windows = wins;
@@ -1928,6 +1978,12 @@
     });
     root.addEventListener('resize', () => { applyLayout(); positionMoreMenu(); trib.layoutScene(); });
     root.addEventListener('orientationchange', () => { applyLayout(); positionMoreMenu(); trib.layoutScene(); });
+  }
+  if (root.visualViewport) {
+    root.visualViewport.addEventListener('resize', () => wins.fitChatToVisualViewport());
+    root.visualViewport.addEventListener('scroll', () => wins.fitChatToVisualViewport());
+    document.addEventListener('focusin', () => wins.fitChatToVisualViewport());
+    document.addEventListener('focusout', () => root.requestAnimationFrame(() => wins.fitChatToVisualViewport()));
   }
 
   document.addEventListener('pointerover', e => {
