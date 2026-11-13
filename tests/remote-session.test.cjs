@@ -17,7 +17,7 @@ function fixture({ initialPlayer = false, bootstrap = null } = {}) {
   const calls = [];
   const dailyView = () => ({
     day: '2027-01-15', playerId,
-    quests: [{ id: 'kill', name: 'Trừ yêu hộ đạo', desc: 'Hạ yêu thú.', counter: 'kill', unit: 'yêu thú', target: 1, progress: 1, ready: !dailyClaimed, claimed: dailyClaimed, reward: { stone: 80, item: 'PILL-002', itemName: 'Tụ Khí Đan', qty: 1 }, go: 'combat' }],
+    quests: [{ id: 'kill', name: 'Trừ yêu hộ đạo', desc: 'Hạ yêu thú.', counter: 'kill', unit: 'yêu thú', target: 1, progress: 1, ready: !dailyClaimed, claimed: dailyClaimed, reward: { stone: 80, item: 'PILL-002', itemName: 'Kim Nguyên Đan', qty: 1 }, go: 'combat' }],
     total: 1, claimable: dailyClaimed ? 0 : 1,
     checkin: { streak: checkedIn ? 1 : 0, lastDay: checkedIn ? '2027-01-15' : null, today: '2027-01-15', checkedToday: checkedIn, canCheckIn: !checkedIn, nextStreak: 1, rewards: [] }
   });
@@ -64,7 +64,7 @@ function fixture({ initialPlayer = false, bootstrap = null } = {}) {
       else if (path === '/daily/claim') {
         dailyClaimed = true; revision++; state = { ...state, stone: state.stone + 80 };
         out = account({ daily: dailyView(), mail: { total: 1, unread: mailClaimed ? 0 : 1, claimable: mailClaimed ? 0 : 1 },
-          result: { questId: 'kill', reward: { stone: 80, item: 'PILL-002', itemName: 'Tụ Khí Đan', qty: 1 } } });
+          result: { questId: 'kill', reward: { stone: 80, item: 'PILL-002', itemName: 'Kim Nguyên Đan', qty: 1 } } });
       } else if (path === '/daily/checkin') {
         checkedIn = true; revision++; state = { ...state, stone: state.stone + 50 };
         out = account({ daily: dailyView(), mail: { total: 1, unread: mailClaimed ? 0 : 1, claimable: mailClaimed ? 0 : 1 },

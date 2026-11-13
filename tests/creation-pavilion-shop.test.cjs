@@ -68,7 +68,7 @@ for (const adapter of ['sqlite','postgres']) {
     assert.equal(made.state.talent.canCot, 8);
     assert.equal(made.state.talent.ngoTinh, 1);
     assert.equal(H.normalize(made.state,T0).talent.ngoTinh, 1);
-    assert.ok(made.state.bag['PILL-002'] >= 2, 'Tụ Khí Đan đã được gửi vào hành trang');
+    assert.ok(made.state.bag['PILL-002'] >= 2, 'Kim Nguyên Đan đã được gửi vào hành trang');
     const account = (await svc.bootstrap(OWNER)).pavilion;
     assert.equal(account.balance, 3, 'Thiên Tinh chưa tiêu không bị mất');
     assert.deepEqual(account.relics, {}, 'Các món Khởi Nguyên đã được nhận, không lặp lại');

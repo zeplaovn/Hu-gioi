@@ -56,7 +56,7 @@
     return `<div class="screen-grid">
       ${card('Con đường tu hành', `
         <p><b>1.</b> Ở <b>Tu luyện</b>, nhân vật tự nhập định và tích tu vi theo thời gian thật. Cải thiện khả năng hấp thụ linh khí và dùng đan để tăng nhanh.</p>
-        <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Quyết có sẵn. Công pháp tự vận hành nếu còn ô trống; quản lý trong mục <b>Công pháp</b>.</p>
+        <p><b>2.</b> Vào <b>Nhân vật → Hành trang</b>, lĩnh ngộ Dẫn Khí Ngự Phong Quyết có sẵn. Công pháp tự vận hành nếu còn ô trống; quản lý trong mục <b>Công pháp</b>.</p>
         <p><b>3.</b> Mở <b>Lịch luyện</b>, chọn nơi muốn đến rồi bấm <b>Khởi hành</b>. Trong mười phút, đạo thân luân phiên đi bộ và ngồi thiền nghỉ ngơi; nhật ký ghi lại cơ duyên, thử thách gặp phải. Không thể về đài Tu luyện hay đổi địa điểm trước khi đồng hồ về 00:00. Tu luyện và nghề phụ tạm dừng, sau đó tự tiếp tục.</p>
         <p><b>4.</b> <b>Nghề phụ</b> gồm luyện đan, rèn pháp bảo, chế phù và trồng linh điền. Thời gian chế tác chỉ tiến triển khi tab game đang mở và kết nối; khi rời game, công việc sẽ tạm dừng.</p>
         <p><b>5.</b> Khi tu vi đầy, bấm <b>Đột phá</b>. Tiểu cảnh giới đột phá ngay, kết quả ghi vào Nhật ký tu tiên; đại cảnh giới mở Độ kiếp đài.</p>

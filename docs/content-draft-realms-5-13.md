@@ -1,7 +1,7 @@
 # DỰ THẢO THIẾT KẾ — Nội dung cao giới 5–13
 
 > Trạng thái: Đề xuất.
-> **Chờ chủ dự án duyệt.** Chỉ là tài liệu; **không** nhập vào `data/`, **không** đổi `engine/`, V9/protocol v2/48 lệnh hoặc quyết định P0/P1. Các ô **chờ duyệt** tuyệt đối không phải thông số đã được cân bằng.
+> **Chờ chủ dự án duyệt.** Chỉ là tài liệu; **không** nhập vào `data/`, **không** đổi `engine/`, state **V10** / protocol **v4** / **52 lệnh** hoặc quyết định P0/P1. Các ô **chờ duyệt** tuyệt đối không phải thông số đã được cân bằng.
 
 ## 1. Khảo sát độ phủ nguồn hiện có (trước khi soạn)
 

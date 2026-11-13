@@ -105,7 +105,7 @@ test('thư viện hiển thị các giá sách và công thức khi đã mượn
   run(g,'buySect',{id:'dan_ha'});
   const html=ui.adventure.sect('library');
   assert.match(html,/Đang đọc · Đan Đạo Chân Giải/);
-  assert.match(html,/Tụ Khí Đan/);
+  assert.match(html,/Kim Nguyên Đan/);
   assert.match(html,/Nguyên liệu:/);
   assert.match(html,/Điểm lịch luyện: <b>60<\/b>/);
 });

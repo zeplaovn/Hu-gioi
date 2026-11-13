@@ -91,7 +91,7 @@
         `<div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="${i}" data-count="${k}"`, n >= 20, 'btn-outline')).join('')}</div>`);
     }).join('');
     return `<p class="screen-lead">Vận hành tối đa bốn công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc độ hấp thụ linh khí tối đa +70%.</p>
-      <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Mở mục Hành trang để lĩnh ngộ Dẫn Khí Quyết có sẵn.')}</div>
+      <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Mở mục Hành trang để lĩnh ngộ Dẫn Khí Ngự Phong Quyết có sẵn.')}</div>
       <h3 class="section-title">Bồi dưỡng theo cảnh giới</h3>
       <p class="info-note">Chi phí mỗi bậc tăng ×1,15. Tu luyện và củng cố đạo cơ có thể tăng tối đa 40% tốc độ hấp thụ linh khí; phần bồi dưỡng thường sẽ bắt đầu lại khi sang đại cảnh giới mới.</p>
       <div class="screen-grid">${ups}</div>`;

@@ -1,58 +1,54 @@
-# Hư Giới — Tổng hợp công việc và trạng thái mới nhất
-> Trạng thái: Hiện hành. Đối chiếu GitHub main tại `82da14cd40f78ffa1f82309e604cbdd734acd190` (11/11/2026). Nội dung này phân biệt mã đã merge với deployment và nghiệm thu thực tế.
+# Hư Giới — Tổng hợp công việc và trạng thái
 
-**Tình trạng phát hành: thử nghiệm nội bộ; chưa xác nhận production-ready.** Đây là **một file tổng hợp duy nhất** về các việc đã làm, còn lại và các quyết định; chi tiết gameplay ở [GAME.md](GAME.md), chi tiết backend ở [SYSTEM.md](SYSTEM.md).
+> Trạng thái: Hiện hành. Đối chiếu mã nguồn `main` tại `58f7e6f` ngày 13/11/2026. Tài liệu phân biệt **mã đã merge**, **bản ghi triển khai** và **phần chưa được nghiệm thu**.
 
-## I. Công việc đã có trên main (có thể kiểm tra bằng mã và lịch sử Git)
+**Tình trạng phát hành: thử nghiệm nội bộ; chưa xác nhận production-ready.** Đây là đầu mối tổng hợp việc đã làm và còn mở; luật chơi ở [GAME.md](GAME.md), backend ở [SYSTEM.md](SYSTEM.md).
 
-| Hệ | Nội dung đã có trong mã/main | Bằng chứng/giới hạn |
+## I. Đã có trên main
+
+| Hệ | Nội dung | Bằng chứng / giới hạn |
 |---|---|---|
-| GAME | State V10, protocol v4, 52 lệnh; server quyết định thời gian/RNG/state | `engine/`, `data/`, `engine/protocol/commands.js` |
-| GAME | Bế quan tu luyện online có báo cáo server; không tự độ kiếp | Nhánh triển khai, cần kiểm thử và triển khai đồng bộ client/Edge |
-| GAME | Online-only; tab ẩn/offline không tích lũy; tử vong một mạng, tạo lại không kế thừa | `server/services/player-service.js`, `docs/gameplay-v9.md` |
-| GAME | Thiên Tinh và Thiên Mệnh Các trong kiếp hiện tại, quầy starter trước tạo nhân vật | PR #77 đã merge, `tests/creation-pavilion-shop.test.cjs`; **giá test chưa duyệt** |
-| GAME | Sự kiện Lịch luyện 45% quái, 30% NPC, 25% kỳ duyên; Tâm Ma | `data/adventures.js`, `engine/rules/adventures.js`; cần duyệt cân bằng |
-| GAME | Kinh Mạch Đồ 12 chính kinh (xanh), 8 kỳ kinh (vàng), asset WebP; nghề phụ và UI màn chơi | `docs/asset-pack-crafting-meridians.md`; **kinh mạch mới là hiển thị**, chưa có luật vận hành |
-| GAME | Chat 4 kênh, UI messenger desktop-window và mobile, rank Lực chiến/Cảnh giới | PR #78 đã merge; phải thử thiết bị và tài khoản thật |
-| SYSTEM | Supabase Auth/JWT, consent v7, private schema game, RLS, receipt/CAS | `server/`, `supabase/`, `docs/security.md` |
-| SYSTEM | Schema test nội bộ được dựng lại, migration history chuẩn và kiểm tra tử vong/rank | PR #73; chỉ mô tả môi trường test, **không reset production** |
-| SYSTEM | Edge consent v8 và chat/rank hotfix v9 đã báo cáo áp dụng trên test | PR #76 và #78; **chưa có authenticated browser smoke 200** |
-| SYSTEM | Source frontend có build CSS bundle/hash; giảm polling chat khi ẩn/đóng | `tools/build-dist.cjs`, `client/session/chat-session.js` |
-| DOCS | Tổng hợp GAME/SYSTEM/PROJECT-STATUS, gỡ tài liệu snapshot và chỉnh thông tin lỗi thời | Nhánh `chore/consolidate-game-system-docs-20261111` |
+| Engine | State **V10**, protocol **v4**, **52 lệnh** thuộc **8 miền**; máy chủ giữ đồng hồ, RNG, giá và phần thưởng | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
+| Vòng đời | Online-only; tab ẩn/offline không tích lũy; một mạng; chết phải bắt đầu lại, không kế thừa Thiên Tinh/vật phẩm | `server/services/player-service.js`, `docs/gameplay-v9.md` |
+| Tạo nhân vật | Ba bước Chọn đạo thân → Thiên Mệnh Các/Quầy Khởi Nguyên → Phân bổ thiên phú; preview/ticket 10 phút, 5 lượt/ngày | PR #77 đã merge, `tests/creation-pavilion-shop.test.cjs`; **giá starter là giá test chưa duyệt** |
+| Tu luyện | Bế quan 30 phút/2 giờ/8 giờ có báo cáo server; không tự độ kiếp; lịch luyện 10 phút với tỉ lệ 45% quái · 30% NPC · 25% kỳ duyên; tâm ma 0–100 | `engine/rules/time.js`, `data/adventures.js`; tỉ lệ cân bằng chờ duyệt |
+| Nội dung | **497 vật phẩm** trong `H.ITEMS`, 14 vùng, 9 bí cảnh (cao nhất cảnh giới 8), 5 nhiệm vụ, 23 kỳ ngộ, 3 tông môn, 49 ủy thác, 12 sách Tàng Kinh Các, 14 chương Thiên Thư, 10 NPC | `data/`, `engine/game.js`; nội dung cao giới 5–13 vẫn là dự thảo |
+| Giao diện | 9 cửa sổ chính: Tu luyện, Bế quan, Tông môn, Nghề phụ, Nhân vật, Thế giới, Nhiệm vụ, Truyền âm, Bảng xếp hạng; Cài đặt ở menu phụ; menu mobile thu gọn thành dropdown | `client/ui/screens/`, `client/ui/shell.js` |
+| Chat | 4 kênh Thế giới/Tông môn/Đạo hữu/Đạo lữ, 4 route chat; gửi cách 15 giây; TTL 1 giờ; bảng UNLOGGED; cron xóa vật lý 5 phút | PR #96; migration `20261112030000_chat_unlogged_ttl_5m.sql` |
+| Bảng xếp hạng | Top 50 theo Lực chiến/Cảnh giới, đọc bảng live `game.player_leaderboard`; trigger loại nhân vật đã chết | PR #78; **snapshot 12 giờ chưa triển khai** |
+| Nhiệm vụ ngày | 3/5 nhiệm vụ theo `SHA-256(ownerId + ngày)`, reset UTC+7; điểm danh 7 ngày; hộp thư 3 mẫu; receipt idempotent | `game.account_state`, `game.account_mail`, `game.account_receipts` |
+| Backend | Supabase Edge Function `api`, **23 route**, JWT + consent v7, PostgreSQL schema `game` **13 bảng**, RLS, **6 migration** | `supabase/functions/api/`, `supabase/migrations/` |
+| Triển khai | Bản ghi dự án: migration chat đã áp dụng production 12/11/2026; Edge bundle **version 26** đã deploy cùng ngày | Không thể xác minh Dashboard từ repository; xem [edge-deployment.md](edge-deployment.md) |
+| Tài liệu | Bộ **22 tài liệu** trong `docs/`; prompt cũ `prompt-story.md` đã được loại bỏ vì sai số liệu 49 lệnh/97 test | [index.md](index.md) |
 
-## II. Những việc CHƯA HOÀN THÀNH hoặc chưa đủ bằng chứng
+## II. Chưa hoàn thành hoặc chưa đủ bằng chứng
 
-1. **Backend F0:** benchmark thực tế Edge calls/giờ, SQL round-trips, p50/p95 latency, WAL, DB size, byte response/egress; mô hình 50/500/5.000 người. Mô phỏng quota cũ không phải đo production.
-2. **Chat F1:** 15 giây/tin ở server và client đã có mã; PR #96 đã thêm **TTL 1 giờ, xóa vật lý 5 phút, UNLOGGED, conditional rate limit, cache/singleflight, optimistic send** theo §11.1. Migration `20261112030000_chat_unlogged_ttl_5m.sql` **đã áp dụng production ngày 12/11/2026**; Edge bundle mới **đã deploy version 26** cùng ngày; còn chưa đo WAL/latency thực tế và chưa authenticated smoke.
-3. **Ranking F1:** hiện có rank live, loại người chết; **ảnh chụp 12 giờ/lần, giảm trigger/ghi DB** chưa triển khai đầy đủ theo §11.2.
-4. **Backend F2/F3:** tối ưu sync, xác minh JWT/cache, receipts và retention `pavilion_receipts`, `creation_tickets`, state JSONB, response delta; cần migration additive, rollback, đo trước/sau.
-5. **GAME:** luật kinh mạch Z=100, 12 sách nghề, nội dung cao giới và các mục P0/P1 chưa chốt; kinh mạch hiển thị không đồng nghĩa gameplay đã triển khai.
-6. **Release:** CI cho commit cuối, test mobile thật 390×844 và desktop, consent/bootstrap, chat/rank JWT 200, reset tử vong, migration, rollback; chủ dự án xác nhận.
+1. **Benchmark backend:** Edge calls/giờ, SQL round-trips, p50/p95 latency, WAL, dung lượng DB, byte response/egress; mô hình 50/500/5.000 người. Mô phỏng quota không phải đo production.
+2. **Authenticated smoke:** chưa có bằng chứng đầy đủ chuỗi JWT/consent → bootstrap → tạo nhân vật → lệnh/replay → sync/pause → chat 4 kênh → ranking → daily/checkin/mail → reset sau tử vong trên thiết bị thật sau Edge v26.
+3. **Ranking F1:** snapshot 12 giờ, giảm trigger/ghi DB và tách phụ thuộc `sect_id` chưa triển khai; bảng live vẫn là nguồn hiện hành.
+4. **Chat F1:** đã có TTL 1 giờ, UNLOGGED và cleanup 5 phút trong mã; chưa đo WAL/latency sau deploy, chưa có quy trình report/mute/kiểm duyệt hoàn chỉnh.
+5. **Gameplay chưa chốt:** luật kinh mạch Z=100, sách nghề vĩnh viễn `learnedRecipes`, nội dung Linh/Tiên Giới và các mục P0/P1 tại [gameplay-decisions.md](gameplay-decisions.md); Kinh Mạch Đồ hiện chỉ là UI tra cứu.
+6. **Retention/DB:** chưa đo WAL/bloat/TOAST, chưa xác minh retention `player_receipts`, `pavilion_receipts`, `creation_tickets`, `world_chat_messages` trên production.
+7. **Release:** CI trên commit cuối, test mobile 390×844 và desktop, kiểm tra migration/rollback, CSP/origin thực tế, quyền Dashboard và phê duyệt của chủ dự án.
 
-## III. Kiểm kê file main trước dọn
+## III. Bản đồ tài liệu
 
-- Git tree `main`: **953 file** trong **1.183 entry** gồm thư mục; khoảng **59,47 MiB** file tracked.
-- `media/`: **698 file**, khoảng **57,29 MiB**; không phát hiện blob SHA trùng nhau trên toàn cây.
-- `docs/`: 23 Markdown gốc. Không xóa asset, mã nguồn, migration, tests hoặc tools chỉ vì tên cũ.
-- **Đã chọn loại bỏ khỏi nhánh tổng hợp:** `docs/archive/online-deployment.md`, `docs/gameplay-audit.md`, `docs/frontend-optimization.md`, `docs/chat-rank-404-hotfix.md`, `docs/production-readiness.md`, `docs/REPOSITORY-AUDIT-2026-11-11.md` (audit tạm của nhánh). Nội dung vận hành/việc còn mở được quy về hồ sơ hiện hành; lịch sử vẫn xem trong Git.
-- Không xóa `docs/design-audit.md` (bằng chứng thiết kế), `docs/gameplay-decisions.md` (quyết định chưa duyệt), `docs/engine-contract.md` (hợp đồng API), các runbook Edge, SQL/migrations hoặc test.
+- [GAME.md](GAME.md): luật chơi, UI, chat/ranking, daily/mail, quyết định còn mở.
+- [SYSTEM.md](SYSTEM.md): kiến trúc Edge, auth, 23 route, database, đồng bộ, vận hành.
+- [index.md](index.md): mục lục đầy đủ 22 tài liệu.
+- [feature-development-plan.md](feature-development-plan.md): kế hoạch phát triển đề xuất, không phải lệnh triển khai.
+- [release-checklist.md](release-checklist.md): gate phát hành; tất cả vẫn chưa đạt.
+- [gameplay-decisions.md](gameplay-decisions.md): sổ quyết định P0/P1/P2 chưa duyệt.
+- [edge-deployment.md](edge-deployment.md): runbook triển khai/rollback Edge.
 
-## IV. Cách sử dụng bộ tài liệu
-- **[GAME.md](GAME.md)**: chỉ có luật game, UI, tính năng, gameplay chờ duyệt.
-- **[SYSTEM.md](SYSTEM.md)**: runtime, auth, API, DB, performance, release.
-- **[docs/index.md](index.md)**: mục lục các tài liệu chuyên môn vẫn còn dùng.
-- **[task.txt (lịch sử Git)](https://github.com/zeplaovn/Hugioi/blob/0b99954/task.txt)**: yêu cầu tối ưu backend; §11 là ưu tiên mới nhất. Mọi hạng mục “đã hoàn thành” phải có code/test/deployment proof tương ứng.
+## IV. Lịch sử dọn dẹp — 11/11/2026
 
-Không coi việc merge tài liệu vào main là cấp phép chạy migration, deploy Supabase/Cloudflare hoặc công bố game.
+Các đợt dọn trước đây đã loại khỏi `main` một số tài liệu tạm (`docs/archive/online-deployment.md`, `docs/gameplay-audit.md`, `docs/frontend-optimization.md`, `docs/chat-rank-404-hotfix.md`, `docs/production-readiness.md`, `docs/REPOSITORY-AUDIT-2026-11-11.md`), logo/forest không còn đường hiển thị, `tools/install-custom-assets.py` và demo sprite độc lập. Nội dung vận hành còn giá trị đã được chuyển vào bộ tài liệu hiện hành; lịch sử vẫn xem được trong Git.
 
-## V. Xóa tài sản/công cụ đã thay thế (11/11/2026)
-- Loại bỏ `media/assets/world/bg/logo.png` (giao diện và preload dùng `logo.webp`) và `media/assets/world/bg/forest.webp` (ảnh nền cũ chỉ còn trong preload, không còn đường hiển thị từ mã client). Xóa đường dẫn preload forest để giảm tải không cần thiết.
-- Loại `tools/install-custom-assets.py` — công cụ cài lại ZIP của đợt nhập asset, trong khi toàn bộ 15 WebP đã có sẵn trên Git; không dùng trong CI hay runtime.
-- **Giữ** `bi_canh.png` vì đang là fallback khi `bi_canh.webp` thất bại; giữ `tra_cuu_item.html` vì test item-art đọc, giữ atlas, bảng thiết kế, file XLSX/CSV làm nguồn tác giả, assets NPC, và adapters dev/test.
-- Không thay đổi API, game rules, Supabase migrations, cơ chế shop/chat/rank hoặc dữ liệu người chơi. Mọi xóa file đều còn trong lịch sử Git.
+Các tài sản và công cụ còn được dùng đã được giữ lại: `bi_canh.png` làm fallback, `tra_cuu_item.html` cho test item-art, atlas/bảng thiết kế, asset NPC và các adapter dev/test. `task.txt` đã bị xóa khỏi HEAD trong commit `7d9d984`; bản cũ chỉ còn trong lịch sử Git và không còn là nguồn việc hiện hành.
 
-## VI. Dọn demo/tool — 11/11/2026
-- Kiểm kê trên `main` trước đợt này: **1 demo** (`demo/player-pack-preview.html`) và **11 tool** trong `tools/`. Demo sprite độc lập không thuộc giao diện phát hành; đã loại bỏ và thay hướng dẫn thử bằng UI game hiện hành.
-- **Không xóa 11 tool còn có điểm sử dụng:** `build-dist.cjs`, `build-edge.cjs`, `check-css-bundle.cjs`, `simulate-edge-calls.cjs` được gọi qua npm; `bench-service.cjs`, `edge-http-smoke.cjs`, `online-ci-server.cjs`, `release-browser-smoke.py`, `release-security-audit.cjs`, `ui-proof.py` được gọi trong GitHub Actions; `backup-db.cjs` còn kiểm thử hồi quy SQLite trong `tests/game-api.test.cjs` (chỉ dành cho dev/test).
-- `tools/release-browser-smoke.py` vẫn đang chạy trong CI, nhưng có một số điều kiện kiểm tra chat/ranking ở phiên bản cũ; đây là **nợ bảo trì test cần cập nhật**, không phải tool không dùng. Không bỏ gate browser smoke chỉ để giảm file.
-- Không sửa gameplay, backend, SQL, asset dùng trong game, hoặc triển khai production.
+## V. Quy tắc cập nhật
+
+- Mã nguồn là nguồn sự thật; số liệu tài liệu phải đối chiếu lại khi schema, protocol, route hoặc migration thay đổi.
+- Không coi việc merge tài liệu là cấp phép chạy migration, deploy Supabase/Cloudflare, reset database hay công bố production.
+- Mọi thay đổi DB phải additive, có rollback, chạy staging và được chủ dự án duyệt.

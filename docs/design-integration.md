@@ -7,7 +7,7 @@
 
 ## 1. Dữ liệu và mã tương thích
 
-`data/design-raw.js` là bản snapshot của `du_lieu.json` ở nguồn thiết kế bên ngoài; **file nguồn đó không có trong repository**. `data/design.js` ánh xạ mã thiết kế sang mã vật phẩm cũ (ví dụ `HERB-001`, `EQ-001`, `BT-001`) để state V4–V9 vẫn giải mã được. Các mã mới có thể có định danh riêng, ví dụ `BT-900`, `TAL-PL-001`.
+`data/design-raw.js` là bản snapshot của `du_lieu.json` ở nguồn thiết kế bên ngoài; **file nguồn đó không có trong repository**. `data/design.js` ánh xạ mã thiết kế sang mã vật phẩm cũ (ví dụ `HERB-001`, `EQ-001`, `BT-001`) để state V4–V10 vẫn giải mã được. Các mã mới có thể có định danh riêng, ví dụ `BT-900`, `TAL-PL-001`.
 
 `data/catalog.js` hợp nhất vật phẩm và vùng của game. `data/balance.js`/`data/formulas.js` giữ luật số học. `data/roots.js`, `data/meridians.js`, `data/character.js`, `data/social.js`, `data/adventures.js`, `data/story.js` chứa bảng nội dung chuyên biệt. Các bảng này dùng trong Node/browser thông qua CommonJS/classic scripts, **không phải nguồn save của client**.
 
@@ -21,14 +21,14 @@ Khi thêm hoặc sửa vật phẩm, đảm bảo mã không đụng mã cũ, b�
 - **Chiến đấu và bí cảnh:** Quái Hạ Giới/boss có trong snapshot dùng dữ liệu mới; nội dung còn lại có quy tắc tổng quát. Bí cảnh có cả kết toán theo tầng và theo lượt (`startDungeon`, `enterDungeon`, `dungeonAct`). NPC thiết kế hiện vẫn tập trung ở Hạ Giới.
 - **Linh căn và kinh mạch:** Ngũ hành, Dị và thức tỉnh Hỗn Độn đã có luật. 12 chính kinh/8 kỳ kinh và tạp chất trong `data/meridians.js` **hiện mới là dữ liệu xem trước**, chưa có state/lệnh kinh mạch; phàm nhân Z=100 đã được **chốt thiết kế** nhưng **chưa triển khai**.
 - **Thiên Thư/NPC:** `data/story.js` có 14 chương, 10 NPC gốc, ghi chép kỳ ngộ. `world.storyMark` hiện ghi đọc/cờ lời hẹn, chưa có tác động chỉ số. Cờ nhân vật **không được kế thừa qua kiếp**, khác Thiên Mệnh Các thuộc tài khoản.
-- **Thiên Mệnh Các:** Đã triển khai trên `main`; đây là tích lũy Thiên Tinh theo account, không phải trọng sinh đạo thân cũ. Xem [thien-menh-cac.md](thien-menh-cac.md).
+- **Thiên Mệnh Các:** Đã triển khai trên `main`; Thiên Tinh, nâng cấp và Kỳ Trân là tài nguyên của **kiếp hiện tại**, lưu ở bảng account để giao dịch an toàn nhưng bị xóa khi reset sau tử vong. Đây không phải trọng sinh đạo thân cũ. Xem [thien-menh-cac.md](thien-menh-cac.md).
 
 ## 3. Những phần còn chờ quyết định
 
 `docs/gameplay-decisions.md` là **sổ duyệt tập trung** và nêu phương án cùng đánh dấu chưa chốt. Những điểm liên quan trực tiếp import dữ liệu:
 
 1. **P0-10→12:** định lượng công pháp khác hệ, tinh khiết/tuổi dược, hệ số đan và pháp bảo, cùng giới hạn cộng dồn.
-2. **P0-13→18:** chuẩn hóa **69 hạt**, ánh xạ công thức vào **12 sách nghề (4 nghề × 3 giới, đã duyệt số quyển)**, nguồn rơi/giá sách, quyền kiến thức và migration.
+2. **P0-13→18:** chuẩn hóa **69 hạt**, ánh xạ công thức vào **12 quyển sách nghề (4 nghề × 3 giới)**. Hiện hành đã có 12 sách **tra cứu/mượn theo lượt** ở Tàng Kinh Các để mở công thức đang dùng; hệ sách học vĩnh viễn `learnedRecipes`, nguồn rơi/giá sách, quyền kiến thức và migration vẫn là **đề xuất**.
 3. **P0-19→22:** hệ quả Thiên Thư, quái/bảng rơi, NPC, bí cảnh và nhiệm vụ Linh/Tiên Giới.
 4. **P0-24→25:** kiểm cân bằng và nguồn thu/tài nguyên bằng mô phỏng 30 ngày trước khi chốt thông số mới.
 
@@ -38,7 +38,7 @@ Khi thêm hoặc sửa vật phẩm, đảm bảo mã không đụng mã cũ, b�
 
 1. Xác định nguồn thay đổi và chốt các công thức/cột thuộc danh sách P0 tương ứng, lưu bản gốc trong PR để review.
 2. Chỉnh đúng file `data/` (không nhận số liệu từ client), duy trì ánh xạ legacy và các mã item/tier hiện có. Nếu cần tự động import từ JSON/Excel, **xây dựng công cụ import và test trước**, vì chưa có script `tools/import-game-design.mjs` trong repo.
-3. Bổ sung test liên kết tại `tests/engine.test.cjs`, `tests/meridians.test.cjs`, `tests/story.test.cjs` hoặc một test dữ liệu mới. Không đổi schema state nếu chưa có migration V4–V9.
+3. Bổ sung test liên kết tại `tests/engine.test.cjs`, `tests/meridians.test.cjs`, `tests/story.test.cjs` hoặc một test dữ liệu mới. Không đổi schema state nếu chưa có migration V4–V10.
 4. Chạy `npm run check && npm test`, đánh giá thay đổi thời gian tu, tỷ lệ thành công, loot và kinh tế. Nếu đổi state/tính cân bằng, thêm kiểm thử phiên server và bản lưu cũ.
 5. Cập nhật [sổ quyết định](gameplay-decisions.md), [GAME](GAME.md), `data/README.md` và tài liệu gameplay khi thay đổi đã được duyệt.
 

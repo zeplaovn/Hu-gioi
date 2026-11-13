@@ -3,7 +3,7 @@
 > Trạng thái: Đề xuất.
 > **Cần chủ dự án duyệt; chưa phải lệnh triển khai.** File này là **đầu mối duy nhất để ghi lựa chọn** về các luật/nội dung còn thiếu. Hồ sơ hiện hành ở [GAME.md](GAME.md); thiết kế sách nghề ở [profession-manuals-proposal.md](profession-manuals-proposal.md).
 >
-> **Đối chiếu lại ngày 11/11/2026:** main `82da14cd`; PR #77 và #78 đã merge. Các quyết định chưa được chủ dự án duyệt vẫn giữ dạng đề xuất; mô tả runtime hiện hành theo [GAME](GAME.md) và [SYSTEM](SYSTEM.md).
+> **Đối chiếu lại ngày 13/11/2026:** main `58f7e6f`; state **V10**, protocol **v4**, **52 lệnh/8 miền**; PR #77, #78 và #96 đã merge. Các quyết định chưa được chủ dự án duyệt vẫn giữ dạng đề xuất; mô tả runtime hiện hành theo [GAME](GAME.md) và [SYSTEM](SYSTEM.md).
 >
 > **Cách duyệt:** Giữ `[ ]` và đổi thành `[x]` ở lựa chọn phù hợp, hoặc ghi ở `Khác:`. Một lựa chọn **ĐỀ XUẤT** chưa trở thành yêu cầu game cho đến khi chủ dự án xác nhận. Nếu có quyết định đối nghịch đặc tả, **dừng lập trình phần liên quan và hỏi**, không ngầm chọn A. Với nội dung chưa có số liệu, chỉ chốt *nguyên tắc* trước; bảng số cuối phải dựa trên bot và được phê duyệt riêng.
 >
@@ -14,7 +14,7 @@
 | ID | Trạng thái | Quyết định được xác nhận | Mã nguồn/tài liệu |
 |---|---|---|---|
 | **K01** | **CHỐT** | Game **online-only**, Supabase Edge/Postgres server-authoritative (Node/SQLite chỉ dev/test), Supabase JWT; đồng hồ/RNG/giá/thưởng do máy chủ giữ. **Không tính thời gian offline/ẩn tab.** | `docs/gameplay-v9.md`, `PlayerService`, `RemoteSession` |
-| **K02** | **CHỐT hiện trạng** | Khi chốt là **state V9**, protocol **v2**, **49 lệnh/9 miền**; V10/protocol v3 bổ sung ba lệnh bế quan tu luyện; protocol v4 mở rộng lệnh luyện đan để xếp nhiều mẻ. Không quay lại V8/51 lệnh do tài liệu cũ. | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
+| **K02** | **CHỐT hiện trạng** | Lịch sử: lúc chốt là **state V9**, protocol **v2**, **49 lệnh/9 miền**. Hiện hành: **state V10**, protocol **v4**, **52 lệnh/8 miền**; V10/protocol v3 bổ sung ba lệnh bế quan tu luyện, protocol v4 mở rộng lệnh luyện đan để xếp nhiều mẻ. Không quay lại V8/51 lệnh do tài liệu cũ. | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
 | **K03** | **CHỐT** | Mỗi đạo thân **một mạng**. Tọa hóa → server xác minh → xóa đạo thân đã chết → tạo đạo thân mới. Không hồi sinh người cũ; reset sau tử vong **xóa cả Thiên Tinh, nâng cấp, Kỳ Trân và thứ hạng**, đúng backend hiện hành. | `docs/gameplay-v9.md`, `server/services/player-service.js` |
 | **K04** | **CHỐT & ĐÃ CÀI** | Thưởng **Thiên Tinh đầy đủ trong mỗi kiếp**, khi đột phá đại cảnh giới lên bậc `r` nhận `5×r`: Trúc Cơ +5, Kết Đan/Kim Đan +10, Nguyên Anh +15...; mỗi đạo thân mới chỉ kiếm thưởng từ các đại đột phá của chính mình, **không cộng dồn** giữa các lần reset. | `docs/thien-menh-cac.md` (PR #31 đã merge) |
 | **K05** | **CHỐT & ĐÃ CÀI** | Thiên Mệnh Các thuộc **tài khoản**; 6 thuộc tính tối đa 20 cấp, hiệu quả chính tối đa +50% tương đối; Thiên Tinh, nâng cấp và Kỳ Trân **bị xóa sau khi reset đạo thân chết** dù lưu ở bảng account riêng; xóa toàn bộ dữ liệu tài khoản thì xóa luôn. | `data/character.js`, `server/repositories/sqlite-players.js` |
@@ -28,9 +28,9 @@
 
 ### A. Vòng đời, phàm nhân và kinh mạch
 
-**P0-01 · Phiên bản save/migration sau khi bổ sung kinh mạch + sách nghề** — `main` đã ở V9, không thể “nâng lên V9”.  
-[ ] **A — ĐỀ XUẤT:** tăng `state.version` lên **V10**, giữ nhận V4–V9, normalize một lần phía server, kiểm tra 64 KB và contentVersion, không cho client upload state.  
-[ ] B: tiếp tục V9 bằng optional field, không bump schema (nguy cơ cache/version mismatch).  Khác: __________  
+**P0-01 · Phiên bản save/migration khi thêm kinh mạch + sách nghề** — `main` hiện ở **V10**, nhận V4–V10.  
+[ ] **A — ĐỀ XUẤT:** chỉ tăng `state.version` lên **V11** khi thật sự thêm trường schema kinh mạch/sách nghề; giữ nhận V4–V10, normalize một lần phía server, kiểm tra 64 KB và contentVersion, không cho client upload state.  
+[ ] B: thêm optional field trong V10, không bump schema (nguy cơ cache/version mismatch).  Khác: __________  
 **Nguồn:** `engine/state/player.js`, `docs/engine-contract.md`. **Trạng thái: MỞ P0.**
 
 **P0-02 · Người chơi đang có trước migration kinh mạch** — tránh tạp chất tự xuất hiện khiến đạo thân đang sống bị phế.  
@@ -46,7 +46,7 @@
 **P0-04 · Phàm nhân còn được thao tác những gì?**  
 [ ] **A — ĐỀ XUẤT:** chỉ đọc hồ sơ, Thiên Thư/sách đã học, nhật ký, chat (nếu có), cài đặt, xem thọ nguyên và tự tạm dừng; khóa **mọi hành động gameplay có thể tăng tu vi, nhận vật phẩm/tài nguyên, chiến đấu, chế tạo, trồng, mua/bán, học sách, hoàn thành nhiệm vụ** để không lách luật “không tu luyện/không dùng vật phẩm”.  
 [ ] B: vẫn được sinh hoạt/đi lại/giao tiếp và giao dịch nhưng không tu luyện hoặc kích hoạt vật phẩm; cần bảng whitelist lệnh không mang thưởng.  Khác: __________  
-**Nguồn:** 48 lệnh `engine/protocol/commands.js`, `time.advance`. **Trạng thái: MỞ P0.**
+**Nguồn:** 52 lệnh `engine/protocol/commands.js`, `time.advance`. **Trạng thái: MỞ P0.**
 
 **P0-05 · Phế tu vi có thể cứu chữa sau khi Z=100 hay không?**  
 [ ] **A — ĐỀ XUẤT:** **không hồi phục trong kiếp**; khai thông/tẩy tủy chỉ dùng **trước khi chạm ngưỡng 100**. Phù hợp “làm phàm nhân chờ cạn thọ nguyên”; tránh mua đan để thoát trạng thái không dùng vật phẩm.  
@@ -65,7 +65,7 @@
 
 **P0-08 · Khai thông kinh mạch/tẩy tủy: giá, tài nguyên, thao tác và giới hạn**  
 [ ] **A — ĐỀ XUẤT:** hai lệnh chủ động riêng: khai thông tiêu hao linh thạch + tài nguyên tương ứng realm, tẩy tủy tiêu hao linh thạch/thảo dược để giảm Z; có tỷ lệ chặn spam, một giao dịch idempotent; **không dùng Thiên Tinh tài khoản để xóa Z**. Giá/hiệu quả cụ thể cần lập bảng và duyệt sau khi bot đo thu nhập.  
-[ ] B: dùng vật phẩm `Tẩy Tủy Đan` hiện có như đường tẩy chính; phải thay/định nghĩa lại `PILL-007` hiện đang có hiệu ứng `BUFF_TOC` (thay đổi cân bằng và tương thích).  Khác: __________  
+[ ] B: dùng vật phẩm `Băng Tinh Đan` hiện có như đường tẩy chính; phải thay/định nghĩa lại `PILL-007` hiện đang có hiệu ứng `BUFF_TOC` (thay đổi cân bằng và tương thích).  Khác: __________  
 **Trạng thái: MỞ P0.**
 
 **P0-09 · Quan hệ cùng hệ/sinh hệ và trần cộng dồn kinh mạch**  
@@ -130,7 +130,7 @@
 **P0-20 · Mức nội dung tối thiểu Hạ/Linh/Tiên Giới**  
 [ ] **A — ĐỀ XUẤT:** **mỗi bậc 5–13** có tối thiểu 1 mục tiêu nhiệm vụ, 1 quái có bảng rơi, 1 boss/bí cảnh tương ứng hoặc chuỗi nhiều bậc, 1 NPC có hội thoại/dịch vụ nghề, và vật phẩm/đan/phù khả dụng; các tên/loot mới đánh dấu `DỰ THẢO THIẾT KẾ` để duyệt riêng.  
 [ ] B: chỉ một chuỗi dài theo *giới* thay vì theo 9 bậc (ít nội dung hơn nhưng cần cơ chế tái chơi).  Khác: __________  
-**Hiện trạng:** 492 vật phẩm, 14 zone, 9 bí cảnh mở cao nhất realm 8, 10 NPC thiết kế đều Hạ Giới. **Trạng thái: MỞ P0.**
+**Hiện trạng:** **497 vật phẩm** trong `H.ITEMS`, 14 zone, 9 bí cảnh mở cao nhất realm 8, 10 NPC thiết kế đều Hạ Giới. **Trạng thái: MỞ P0.**
 
 **P0-21 · Bí cảnh: hai chế độ và boss mới**  
 [ ] **A — ĐỀ XUẤT:** giữ **`startDungeon` kết toán theo tầng** và **`enterDungeon/dungeonAct` theo lượt** như hai đường chơi khác nhau, không cấp trùng phần thưởng trên một lượt; boss Linh/Tiên Giới cần giai đoạn kỹ năng/loot riêng, lưu seed server.  
@@ -162,7 +162,7 @@
 [ ] B: trả mã lỗi riêng trực tiếp làm top-level API `code` (phải version contract client).  Khác: __________  
 **Trạng thái: MỞ P0.**
 
-**P0-27 · Chặn softlock/thay đổi điều kiện tử vong V9**  
+**P0-27 · Chặn softlock/thay đổi điều kiện tử vong V10**  
 [ ] **A — ĐỀ XUẤT:** giữ quy tắc cũ về **HP = 0 trong chiến đấu/bí cảnh và độ kiếp thất bại = tử vong**; tab ẩn/offline tạm dừng; khảo sát các đường lách `advance`, `autoStage`, tu vi từ đan, EXP nhiệm vụ để phàm nhân không được nhận thưởng.  
 [ ] B: bổ sung trạng thái trọng thương thay chết cho một số hoạt động, phải cập nhật cả server/engine/UI/save.  Khác: __________  
 **Nguồn:** `docs/gameplay-v9.md` mục “quyết định tạm thời”. **Trạng thái: MỞ P0 để xác nhận, không tự đổi code.**
@@ -186,7 +186,7 @@
 
 **P1-01 · Đạo Tổ `completed`: vòng lặp hậu kỳ?**  
 [ ] **A — ĐỀ XUẤT:** hoàn tất Đạo Tổ mở sảnh tổng kết, nhiệm vụ thử thách tự chọn và **chuyển kiếp chủ động** có xác nhận server, giữ Thiên Mệnh Các; **không hồi sinh nhân vật cũ**. Chuyển chủ động cần endpoint riêng có receipt để không bị lợi dụng reset miễn phí khi chưa đạt.  
-[ ] B: Đạo Tổ là kết thúc kiếp hiện tại, chỉ tiếp tục giao du/khám phá chờ tuổi thọ; chuyển kiếp chỉ sau chết như V9.  Khác: __________  
+[ ] B: Đạo Tổ là kết thúc kiếp hiện tại, chỉ tiếp tục giao du/khám phá chờ tuổi thọ; chuyển kiếp chỉ sau chết như V10.  Khác: __________  
 **Trạng thái: MỞ P1.**
 
 **P1-02 · Hỗn Độn linh căn/thiên kiếp/nhánh đổi build qua kiếp**  
@@ -195,14 +195,14 @@
 **Trạng thái: MỞ P1.**
 
 **P1-03 · Mất PvP thật có tử vong không?**  
-[ ] **A — ĐỀ XUẤT:** PvP **giữa người thật** bất đồng bộ không làm đạo thân bị tọa hóa; trừ rating/nhận thưởng hạn chế. PvP NPC `duel` hiện hành vẫn có luật tử vong V9 cho tới khi sửa có duyệt.  
+[ ] **A — ĐỀ XUẤT:** PvP **giữa người thật** bất đồng bộ không làm đạo thân bị tọa hóa; trừ rating/nhận thưởng hạn chế. PvP NPC `duel` hiện hành vẫn có luật tử vong V10 cho tới khi sửa có duyệt.  
 [ ] B: PvP người thật cũng tử vong; rủi ro griefing/win-trading và yêu cầu chống thao túng nghiêm ngặt hơn.  Khác: __________  
 **Trạng thái: MỞ P1 — quyết định ảnh hưởng trực tiếp vòng đời.**
 
 **P1-04 · Bảng xếp hạng: tiêu chí và chu kỳ**  
 [ ] **A — ĐỀ XUẤT:** 3 board `realm/stage/totalRunExp`, chiến lực tính từ server, PvP Elo; top 100 và hạng cá nhân, loại tài khoản flagged; mùa giải tách khỏi bảng trường tồn.  
 [ ] B: chỉ bảng cảnh giới và chiến lực không reset, thêm Elo về sau.  Khác: __________  
-**Trạng thái: MỞ P1.**
+**Hiện trạng:** bảng live `game.player_leaderboard`, top 50, hai tiêu chí `power`/`realm`, trigger loại nhân vật đã chết; **chưa có snapshot 12 giờ**. **Trạng thái: MỞ P1.**
 
 **P1-05 · Quan hệ bạn bè có đi qua cái chết không?**  
 [ ] **A — ĐỀ XUẤT:** bạn bè **theo tài khoản** để đổi đạo thân vẫn giữ liên lạc; NPC thiện cảm thuộc mỗi đạo thân và không kế thừa. Trạng thái online theo phiên JWT/heartbeat, không công bố email/IP.  
@@ -212,12 +212,12 @@
 **P1-06 · Thư hệ thống và quà: hết hạn/nhận khi phàm nhân?**  
 [ ] **A — ĐỀ XUẤT:** mail theo account, quá hạn tự ghi nhận/hoàn về kho theo quy định; claim idempotent trong giao dịch; **phàm nhân chỉ đọc mail, không nhận vật phẩm** tới kiếp sau (nếu còn).  
 [ ] B: quà hết hạn bị xóa, phàm nhân có thể nhận về kho account; cần chống chuyển tài nguyên sang kiếp mới trái luật.  Khác: __________  
-**Trạng thái: MỞ P1.**
+**Hiện trạng:** hộp thư tài khoản trong `game.account_mail`, ba mẫu `welcome`/`event`/`support`; thư sự kiện hết hạn 30 ngày; quà cấp vào nhân vật hiện tại và claim idempotent. Hành vi với phàm nhân/nhân vật đã chết vẫn cần chốt. **Trạng thái: MỞ P1.**
 
 **P1-07 · Chat: phạm vi, lọc nội dung và lưu trữ**  
-[ ] **A — ĐỀ XUẤT:** world + tông môn + system trước, private sau; JWT, lọc spam/ngôn từ/URL, mute/report/admin queue; lưu nội dung có hạn **30 ngày** theo kế hoạch kế hoạch backend cũ (git 1bd987b:docs/archive/backend-plan.md) (con số chưa duyệt), hỗ trợ xóa/ẩn theo quy định dữ liệu; chọn SSE/polling nếu không cần WS realtime.  
-[ ] B: chỉ world chat lúc mở beta, các kênh khác feature flag.  Khác: __________  
-**Trạng thái: MỞ P1.**
+[ ] **A — ĐỀ XUẤT:** bốn kênh **Thế giới, Tông môn, Đạo hữu, Đạo lữ** (ba kênh công khai, không phải DM); JWT/consent, lọc spam/ngôn từ/URL, mute/report/admin queue; TTL hiện hành **1 giờ** với bảng UNLOGGED, cron xóa vật lý **5 phút**; hỗ trợ xóa/ẩn theo quy định dữ liệu; dùng polling khoảng 10 giây khi cửa sổ mở, không cần WebSocket.  
+[ ] B: chỉ world chat lúc mở beta, các kênh khác feature flag; giữ TTL dài hơn và bảng LOGGED nếu cần điều tra sự cố.  Khác: __________  
+**Trạng thái: MỞ P1 (kiểm duyệt/report; TTL 1 giờ đã là hiện trạng kỹ thuật, chưa phải chính sách lưu trữ được duyệt).**
 
 **P1-08 · Tông môn thật: chỉ số và chức vị xuyên kiếp?**  
 [ ] **A — ĐỀ XUẤT:** membership/chức vị/cống hiến theo **đạo thân**, chết thì ghi lịch sử và giải nhiệm vụ/roster; `state.sect` chỉ projection, mọi thay đổi roster + số dư phải atomic.  
@@ -234,10 +234,10 @@
 [ ] B: có đấu giá thật ngay khi phát hành đầu, phải thêm bid escrow, gia hạn và hoàn tiền idempotent.  Khác: __________  
 **Trạng thái: MỞ P1/P2 tùy phạm vi.**
 
-**P1-11 · Hạ tầng shared: SQLite mở rộng hay PostgreSQL?**  
-[ ] **A — ĐỀ XUẤT:** bắt đầu với **một writer SQLite** cho PvE & board read; trước PvP/chợ/tông môn nhiều account chọn schema ledger/outbox và kiểm transaction thật; chuyển PostgreSQL khi concurrent writers/scale yêu cầu. Không cho multi-instance cùng ghi SQLite không có quy tắc.  
-[ ] B: bắt buộc PostgreSQL trước khi bật bất kỳ shared social nào; tốn migration sớm nhưng dễ row lock hơn.  Khác: __________  
-**Trạng thái: MỞ P1 (quyết định kiến trúc trước social).**
+**P1-11 · Hạ tầng shared: giữ Edge/PostgreSQL hay mở rộng Node/SQLite?**  
+[ ] **A — ĐỀ XUẤT:** giữ **Supabase Edge + PostgreSQL** làm backend production; Node/SQLite chỉ dev/test, không mở multi-instance ghi SQLite. Trước khi bật PvP/chợ/tông môn người thật, chốt schema ledger/outbox, khóa hàng và kiểm transaction trên staging.  
+[ ] B: quay lại một writer SQLite cho PvE/board read; chỉ phù hợp dev/test hoặc single-instance, không đáp ứng Edge hiện hành.  Khác: __________  
+**Trạng thái: MỞ P1 (phần ledger/social); nền tảng Edge/PostgreSQL đã là hiện trạng.**
 
 **P1-12 · Giới hạn trận PvP/ngày và kiểm win-trading**  
 [ ] **A — ĐỀ XUẤT:** snapshot combat server + seed audit + Elo `K=32` như kế hoạch backend cũ (git 1bd987b:docs/archive/backend-plan.md); giới hạn trận có thưởng/ngày, chống cặp lặp/đa tài khoản; chỉ **flag/review**, không auto-ban. **Số trận và mức thưởng chưa duyệt.**  
@@ -268,7 +268,7 @@
 Các mục này là **tiêu chí kỹ thuật**, không phải giấy phép tự thay đổi cân bằng:
 
 - **E01:** Mọi tăng/giảm tài nguyên, mua sách, nhận thưởng, chuyển kiếp phải server-authoritative, receipt và expected revision/version, atomicity; kiểm replay, hai tab và restart.
-- **E02:** `normalize` của state mới phải nhận V4–V9, không thay độ khó cũ, không tạo chết đột ngột; đo byte state sau mọi lệnh; hard cap 64 KB; migration có rollback/backup plan.
+- **E02:** `normalize` của state mới phải nhận V4–V10, không thay độ khó cũ, không tạo chết đột ngột; đo byte state sau mọi lệnh; hard cap 64 KB; migration có rollback/backup plan.
 - **E03:** `tests/sources.test.cjs` cần kiểm cả `data/` không `Math.random`/đồng hồ/DOM, kể cả default param; RNG luôn được inject.
 - **E04:** Kiểm invariants realm/stage, qi, age, HP, số dư ≥0, bag count nguyên, equipment nằm trong bag, activeManuals ≤3, learned keys hợp lệ, quest/dungeon/sect không overlap trái phép; lỗi phải rollback.
 - **E05:** Test mỗi lệnh mới đúng **một miền**; cập nhật `commands.js`, `game.js`, `index.html` (nếu thêm module), `engine-contract.md` và UI tiếng Việt; không thêm dependency.

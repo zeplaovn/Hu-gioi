@@ -10,8 +10,8 @@ Màn tạo đạo thân có ba bước: **(01) Chọn đạo thân; (02) Thiên 
 |---|---:|---:|---|
 | 1 điểm Thiên Phú | 4 | 4 điểm | Nâng tổng điểm phân bổ từ 8 lên tối đa 12; mỗi chỉ số vẫn tối đa 8 |
 | Linh Thạch Nhập Thế | 2 | 2 túi | +200 linh thạch/túi |
-| Tụ Khí Đan | 3 | 2 gói | +2 Tụ Khí Đan/gói |
-| Bồi Nguyên Đan | 2 | 2 gói | +2 Bồi Nguyên Đan/gói |
+| Kim Nguyên Đan | 3 | 2 gói | +2 Kim Nguyên Đan/gói |
+| Huyết Châu Đan | 2 | 2 gói | +2 Huyết Châu Đan/gói |
 
 **Ngân sách nhập môn thử nghiệm:** tài khoản chưa có đạo thân và chưa có sổ Thiên Mệnh được tặng **10 Thiên Tinh duy nhất khi đổi món starter đầu tiên**. Backend cấp tiền bằng `INSERT ... ON CONFLICT DO NOTHING`, không cấp thêm khi gửi lại request, tải lại trang, gieo lại tuổi/chủng tộc/linh căn hoặc bấm nhiều lần. Nếu không mua món nào, tiền thưởng chưa phát sinh trong database. Sau khi có nhân vật, quầy starter khóa; Thiên Mệnh Các trong game vẫn bán các cấp nâng cấp bằng Thiên Tinh theo luật cũ.
 

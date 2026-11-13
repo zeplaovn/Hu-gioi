@@ -58,8 +58,8 @@ const PAVILION_STARTER=Object.freeze({
   destinyLuck:starterDestinyProduct('luck',5),
   talentPoint:{name:'Điểm Thiên Phú',desc:'+1 điểm phân bổ lúc tạo đạo thân (tối đa 4).',cost:4,max:STARTER_TALENT_MAX},
   linhThach:{name:'Linh Thạch Nhập Thế',desc:'+200 linh thạch khởi đầu.',cost:2,max:2},
-  tuKhiDan:{name:'Tụ Khí Đan',desc:'+2 Tụ Khí Đan trong hành trang đầu game.',cost:3,max:2},
-  boiNguyenDan:{name:'Bồi Nguyên Đan',desc:'+2 Bồi Nguyên Đan hồi phục đầu game.',cost:2,max:2}
+  tuKhiDan:{name:'Kim Nguyên Đan',desc:'+2 Kim Nguyên Đan trong hành trang đầu game.',cost:3,max:2},
+  boiNguyenDan:{name:'Huyết Châu Đan',desc:'+2 Huyết Châu Đan hồi phục đầu game.',cost:2,max:2}
 });
 /* Chỉ một Dấu ấn Thiên Mệnh được mua cho mỗi đạo thân. */
 const starterConflict=(relics,key)=>{

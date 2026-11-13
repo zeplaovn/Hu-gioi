@@ -219,7 +219,7 @@
           if (left > th) continue;
           if (!w[th]) {
             for (const u of [1, 3, 10]) if (u >= th) w[u] = 1;
-            this.log('⚠ Thọ nguyên chỉ còn ' + Math.max(0, left) + ' năm! Hãy đột phá đại cảnh giới để nới thọ nguyên, hoặc dùng Thọ Nguyên Đan nếu đã có. Nếu tọa hóa, toàn bộ hành trình kiếp này bị xóa.');
+            this.log('⚠ Thọ nguyên chỉ còn ' + Math.max(0, left) + ' năm! Hãy đột phá đại cảnh giới để nới thọ nguyên, hoặc dùng Bạch Ngọc Đan nếu đã có. Nếu tọa hóa, toàn bộ hành trình kiếp này bị xóa.');
           }
           break;
         }

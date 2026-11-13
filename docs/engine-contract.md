@@ -3,20 +3,21 @@
 > Trạng thái: Hiện hành.
 Tài liệu này là **đặc tả hợp đồng engine**. Nó ghi lại những gì giao diện (`client/`) đang gọi và đọc, trích từ mã nguồn tại thời điểm dọn backend. Engine hiện đã thỏa hợp đồng này nên UI chạy mà không phải sửa.
 
-> Trạng thái: engine đã cài đặt đầy đủ 9 miền luật, 52 lệnh và state V10. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
+> Trạng thái engine: đã cài đặt đầy đủ **8 miền lệnh**, **52 lệnh** và state **V10**. `HU_GAME.READY === true`, `HU_GAME.MISSING` rỗng; `client/main.js` mở phiên chơi thật và bài kiểm tra nằm trong `tests/`.
 >
-> Cài đặt cũ vẫn xem được trong lịch sử git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
+> Cài đặt cũ vẫn xem được trong lịch sử Git để đối chiếu hành vi: `git show 5f6b9bc:shared/rules/<miền>.js` (cũng như `shared/state/player.js`, `shared/game.js`, `server/services/player-service.js`). Không sao chép nguyên văn; dùng làm tham chiếu hành vi.
 
 ## 1. Ranh giới
 
 - `engine/` không dùng DOM, `localStorage`, mạng, timer hay `Date.now()`/`Math.random()` trực tiếp. Thời gian (`now`) và RNG trong gameplay online do `PlayerService` ở Node (dev) hoặc Supabase Edge cung cấp. Trình duyệt chỉ dùng `RemoteSession` để hiển thị snapshot và gửi intent.
-- `engine/` chạy trong Node (CommonJS `require`) và trình duyệt (classic script, `file://`). Mỗi file dùng mẫu `(function (root) { … })(window | globalThis)` và gán vào `root.HU_*` cùng `module.exports`.
+- `engine/` chạy trong Node (CommonJS `require`) và có thể nạp như classic script trong trình duyệt; phiên chơi production vẫn đi qua `RemoteSession`/Edge, **không có chế độ offline**. Mỗi file dùng mẫu `(function (root) { … })(window | globalThis)` và gán vào `root.HU_*` cùng `module.exports`.
 - `engine/` đọc dữ liệu từ `data/`, không bao giờ ngược lại.
 - Payload lệnh không chứa `now`, RNG, giá, phần thưởng hay state (xem `engine/protocol/commands.js`).
+- `engine/rules/creation.js` xử lý tạo nhân vật; nó không sở hữu lệnh nào trong bảng dưới.
 
 ## 2. `HU_GAME` (engine/game.js)
 
-UI đọc `root.HU_GAME` (viết tắt `H`). Phần **dữ liệu** đã có sẵn từ `data/` và được trải vào `H`: `F` (công thức), `item()`, `ITEMS`, `ZONES`, `DUNGEONS`, `QUESTS`, `ENCOUNTERS`, `SECTS`, `SECT_RANKS`, `SECT_SHOP`, `SECT_MISSIONS`, `META_UPGRADES`, `META_ACHIEVEMENTS`, `TALENT_INFO`, `ROOT_TYPES`, `DI_LINH_CAN`, `DESIGN`, … (và `rollRoots`, `rollRace`, `randomName`, `cleanName`, `rootLabel`, `raceName`…).
+UI đọc `root.HU_GAME` (viết tắt `H`). Phần **dữ liệu** đã có sẵn từ `data/` và được trải vào `H`: `F` (công thức), `item()`, `ITEMS`, `ZONES`, `DUNGEONS`, `QUESTS`, `ENCOUNTERS`, `SECTS`, `SECT_RANKS`, `SECT_BOOKS`, `SECT_SHOP`, `SECT_MISSIONS`, `META_ACHIEVEMENTS`, `TALENT_INFO`, `ROOT_TYPES`, `DI_LINH_CAN`, `DESIGN`, … (và `rollRoots`, `rollRace`, `randomName`, `cleanName`, `rootLabel`, `raceName`…).
 
 Phần **engine phải cung cấp**:
 
@@ -36,9 +37,7 @@ Phần **engine phải cung cấp**:
 
 `client/persistence/remote-store.js` cung cấp facade cho UI mà **không lưu trạng thái nhân vật vào localStorage**. Chỉ backend giữ RNG, đồng hồ, state và giao dịch SQLite/Postgres. Tab ẩn gửi `pause`, heartbeat sau khoảng 20 giây, server grace mặc định 60 giây; khi offline không tăng tài nguyên hay tuổi.
 
-`LocalSession` (legacy/dev-only) và `LocalStore` (legacy/dev-only) chỉ giữ trong kho mã phục vụ kiểm toán/migration; chúng không được import trong `index.html` hoặc đóng gói vào `dist/`. Mã gameplay thật là `PlayerService` ở Node.
-
-## 4. Lệnh (52, protocol V4)
+## 4. Lệnh (52, protocol v4)
 
 Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototype`, thuộc đúng một miền trong `engine/rules/` (game.js kiểm tra điều này khi nạp). Schema payload nằm ở `engine/protocol/commands.js`.
 
@@ -82,7 +81,7 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 | `startSectMission` | world | `id` |
 | `claimSectMission` | world | — |
 | `abortSectMission` | world | — |
-| `buySect` | world | `id`, `element` |
+| `buySect` | world | `id`, `element` (dùng cả để mượn sách Tàng Kinh Các) |
 | `temperRoot` | world | `index` |
 | `storyMark` | world | `id`, `option` (tùy chọn) |
 | `startDungeon` | adventures | `id` |
@@ -99,6 +98,8 @@ Mỗi lệnh là phương thức `game[type](payload, now)` trên `Game.prototyp
 
 Bế quan tu luyện chỉ tổng hợp tiến trình online do server tính; dừng khi hết giờ, viên mãn hoặc thọ nguyên còn 5 phút, không tự độ kiếp. Khi tab ẩn, thời gian phiên đóng băng; sau khi phiên dừng, luật tu luyện và thọ nguyên thông thường vẫn tiếp tục. Báo cáo là state do server trả về và không cấp thưởng lần hai.
 
+`buySect` nhận `id` của món kho tông môn hoặc ID sách trong `SECT_BOOKS` (ví dụ `dan_ha`, `khi_linh`); khi là sách, engine gọi nhánh mượn sách và trả thông tin điểm lịch luyện.
+
 `storyMark` chỉ ghi `s.story.read` và `s.story.flags`. Engine kiểm tra ID, cảnh giới, thiện cảm và lựa chọn; không cấp chỉ số hay phần thưởng.
 
 Ngoài lệnh, `Game` phải có: `advance(now, offline)` (miền `time`), `isDead()` (miền `time`), `checkMeta()` (miền `progression`, trả danh sách thành tựu mới).
@@ -114,11 +115,11 @@ Các phép tính/tra cứu chỉ-đọc mà UI gọi trên `UI.g()` (tức `sess
 ## 6. Trường state UI đang đọc (`UI.s()`)
 
 Tên: `name`, `gender`, `age`, `race`, `created`, `destiny`, `death`, `roots`, `rootType`, `rootSub`, `rootCraft`, `talent`, `chaosTries`.
-Cảnh giới và tu luyện: `realm`, `stage`, `qi`, `progress`, `totalRunExp`, `tamMa`, `breakBonus`, `pity`, `daoVan`, `rebirths`, `extraLife`, `tech`, `auto`, `tick`.
+Cảnh giới và tu luyện: `realm`, `stage`, `qi`, `progress`, `totalRunExp`, `tamMa`, `breakBonus`, `pity`, `daoVan`, `rebirths`, `extraLife`, `tech`, `auto`, `tick`, `retreat`, `adventurePoints`, `borrowedBook`.
 Chiến đấu: `hp`, `mp`, `shield`, `reduction`, `zone`, `enemyKind`, `enemyNum`, `enemyHp`, `cooldowns`, `designCombat`, `activeManuals`, `encounter`, `dungeon`.
 Kinh tế và hành trang: `stone`, `bag`, `equipment`, `learned`, `yaoValue`, `claimed`, `completed`, `auction`, `pillUses`, `pillRealmExp`.
 Nghề phụ: `alchemySkill`, `craftQueue`, `craftBoost`, `garden`, `gardenSoils`.
-Thế giới và xã hội: `sect`, `social`, `npcAffinities`.
+Thế giới và xã hội: `sect`, `social`, `npcAffinities`, `story`.
 Kiếp hiện tại: `meta` (thành tựu không cấp điểm), `destiny` (Thiên mệnh lúc tạo), `death` (nguyên nhân tử vong), `presencePaused` (tạm dừng server). `offlineCap`, `offlineEff` và `daoVan` chỉ còn để đọc dữ liệu cũ.
 Hệ thống: `settings`, `logs`, `lastUpdate`, `lastSaved`.
 
@@ -128,11 +129,11 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 
 - Schema hiện hành V10; normalize V4, V5, V6, V7, V8, V9, V10 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
 - `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu PostgreSQL được ghi ở Edge theo giao dịch; SQLite chỉ dùng Node dev/test.
-- Thiên mệnh được chọn một lần tại tạo nhân vật. Không có lệnh `prestige`/`reincarnate` và không tích lũy **thành tựu nhân vật** xuyên kiếp. **Bản code 11/11/2026:** Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân lưu tách trong `pavilion_accounts` nhưng bị xóa cùng nhân vật khi `reset-after-death`; không có kế thừa xuyên kiếp. Backend production dùng Postgres; Node/SQLite chỉ dành cho dev/test.
+- Thiên mệnh được chọn một lần tại tạo nhân vật. Không có lệnh `prestige`/`reincarnate` và không tích lũy **thành tựu nhân vật** xuyên kiếp. Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân lưu tách trong `pavilion_accounts` nhưng bị xóa cùng nhân vật khi `reset-after-death`; không có kế thừa xuyên kiếp. Backend production dùng Postgres; Node/SQLite chỉ dành cho dev/test.
 
 ## 8. Thứ tự đã triển khai
 
-1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V9).
+1. `state/player.js`: `create`, `normalize` (+ test nạp V4–V10).
 2. `rules/time.js` và `rules/creation.js`: `advance`, `isDead`, `createCharacter`.
 3. `rules/progression.js`: tu luyện, đột phá, độ kiếp, thiên mệnh.
 4. `rules/inventory.js`, `rules/crafting.js`, `rules/combat.js`.

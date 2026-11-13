@@ -1,22 +1,22 @@
 # Sách nghề và sổ công thức — bản thiết kế chờ duyệt
 
 > Trạng thái: Đề xuất.
-> **TÌNH TRẠNG: ĐÃ DUYỆT 12 QUYỂN, CHƯA TRIỂN KHAI GAMEPLAY.** Các quyết định chưa chốt được tổng hợp trong **[Sổ quyết định](gameplay-decisions.md)**. Chủ dự án chốt **sách công thức riêng cho từng nghề** và cấu trúc **4 nghề × 3 giới = 12 quyển**. Tên gọi, phân bố chính xác mã công thức, điều kiện học, giá/nguồn nhận, bồi hoàn bản lưu cũ và migration vẫn là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/inventory.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/items.js` trên `main` ngày 10/11/2026.
+> **TÌNH TRẠNG: ĐÃ DUYỆT CẤU TRÚC 12 QUYỂN; HỆ SÁCH HỌC VĨNH VIỄN CHƯA TRIỂN KHAI.** Hiện hành Tàng Kinh Các đã có **12 sách tra cứu/mượn theo lượt** (4 nghề × 3 giới) để mở công thức đang dùng; `learnedRecipes`, giá/nguồn nhận, điều kiện học và migration vẫn là **ĐỀ XUẤT**. Các quyết định chưa chốt được tổng hợp trong **[Sổ quyết định](gameplay-decisions.md)**. Chủ dự án chốt **sách công thức riêng cho từng nghề** và cấu trúc **4 nghề × 3 giới = 12 quyển**. Tên gọi, phân bố chính xác mã công thức, điều kiện học, giá/nguồn nhận, bồi hoàn bản lưu cũ và migration vẫn là **ĐỀ XUẤT**, chưa cố định. Nguồn: `engine/rules/world.js`, `engine/rules/crafting.js`, `client/ui/screens/craft.js`, `data/design.js` và `data/adventures.js` trên `main` ngày 13/11/2026.
 
 ## 1. Bốn loại sách nghề
 
 | Nghề thực tế | Tên dòng sách **ĐỀ XUẤT** | Loại kiến thức mở sau khi học | Mã vật phẩm hiện có |
 |---|---|---|---|
-| **Luyện đan** | **Đan Đạo Chân Giải** (Đan Phổ) | Danh sách `PILL` và định lượng nguyên liệu từ `DESIGN.recipes`/công thức kế thừa | `PILL-002` (Tụ Khí Đan), `PILL-001` (Bồi Nguyên Đan); **chưa có sách công thức nghề riêng** |
-| **Luyện khí** | **Bách Luyện Khí Phổ** | Danh sách `EQ` và nguyên liệu từ `DESIGN.forge`/công thức kế thừa | `EQ-001` (Thanh Vân Sơ Huy Kiếm), `BT-900` đã dùng như **bí tịch tiền điều kiện**, không phải sách liệt kê nhiều công thức |
-| **Chế phù** | **Vạn Phù Bí Lục** | Danh sách `TAL` và nguyên liệu từ `DESIGN.talisman`/công thức kế thừa | `TAL-001` (Hộ Thân Phù), `TAL-002` (Hỏa Cầu Phù), `BT-901` là **bí tịch tiền điều kiện** |
-| **Linh điền** | **Bách Thảo Linh Kinh** | Danh sách `SEED`/`HERB` trồng được, đất và điều kiện chăm theo bảng hạt | `SEED-HERB-001` (Hạt Tụ Khí Thảo) |
+| **Luyện đan** | **Đan Đạo Chân Giải** (Đan Phổ) | Danh sách `PILL` và định lượng nguyên liệu từ `DESIGN.recipes`/công thức kế thừa | `PILL-002` (Kim Nguyên Đan), `PILL-001` (Huyết Châu Đan); sách mượn hiện hành `dan_ha`/`dan_linh`/`dan_tien`; **chưa có item sách học vĩnh viễn** |
+| **Luyện khí** | **Bách Luyện Khí Phổ** | Danh sách `EQ` và nguyên liệu từ `DESIGN.forge`/công thức kế thừa | `EQ-001` (Thanh Vân Sư Tử Ấn), `BT-900` đã dùng như **bí tịch tiền điều kiện**, không phải sách liệt kê nhiều công thức; sách mượn `khi_ha`/`khi_linh`/`khi_tien` |
+| **Chế phù** | **Vạn Phù Bí Lục** | Danh sách `TAL` và nguyên liệu từ `DESIGN.talisman`/công thức kế thừa | `TAL-001` (Hỏa Cầu Phù), `TAL-002` (Hàn Băng Phù), `BT-901` là **bí tịch tiền điều kiện**; sách mượn `phu_ha`/`phu_linh`/`phu_tien` |
+| **Linh điền** | **Bách Thảo Linh Kinh** | Danh sách `SEED`/`HERB` trồng được, đất và điều kiện chăm theo bảng hạt | `SEED-HERB-001` (Hạt Thanh Linh Thảo); sách mượn `dien_ha`/`dien_linh`/`dien_tien` |
 
 Mã trong cột cuối **được xác nhận tồn tại**; đây là ví dụ công thức sẽ được đưa vào sách sau khi khóa dữ liệu, **không** phải danh sách đã học hoặc kết quả có trong game.
 
 ## 2. Cách chia tập — **ĐÃ ĐƯỢC DUYỆT**
 
-Mỗi nghề có **ba tập**, tương ứng Hạ Giới (bậc 0–4), Linh Giới (5–8), Tiên Giới (9–13), tổng **12 quyển**. Trong từng tập, danh sách mã công thức cụ thể phải được xuất từ `data/catalog.js` + `data/design.js`, rồi kiểm `item(code)`, tier, cost, nguyên liệu và ngưỡng mở; **không dùng tên hoặc vật phẩm không tồn tại**.
+Mỗi nghề có **ba tập**, tương ứng Hạ Giới (bậc 0–4), Linh Giới (5–8), Tiên Giới (9–13), tổng **12 quyển**. Hiện hành Tàng Kinh Các đã có đủ **12 sách mượn** theo cấu trúc này; tên cụ thể trong bảng dưới vẫn là **đề xuất biên tập**. Trong từng tập, danh sách mã công thức cụ thể phải được xuất từ `data/catalog.js` + `data/design.js`, rồi kiểm `item(code)`, tier, cost, nguyên liệu và ngưỡng mở; **không dùng tên hoặc vật phẩm không tồn tại**.
 
 | Tập | Đan Đạo Chân Giải | Bách Luyện Khí Phổ | Vạn Phù Bí Lục | Bách Thảo Linh Kinh |
 |---|---|---|---|---|
@@ -30,23 +30,25 @@ Mỗi tập **không thay thế điều kiện cảnh giới** hiện hành: bi�
 
 ## 3. Dự kiến luồng người chơi — **ĐỀ XUẤT**
 
+> Hiện hành chỉ có **mượn sách tra cứu**: một nhân vật mượn một quyển tại một thời điểm, trả điểm lịch luyện, và công thức của nghề tương ứng mở trong lúc mượn. Luồng `learn`/`learnedRecipes` dưới đây là đề xuất cho hệ sách **học vĩnh viễn**, chưa triển khai.
+
 1. Có quyển sách trong túi (mua từ NPC/cửa hàng, nhận nhiệm vụ hoặc rơi boss **sẽ phải duyệt nguồn/giá**).
 2. Gửi lệnh `learn` với mã item sách, máy chủ kiểm chủ sở hữu, cảnh giới, không phải phàm nhân và chưa học; ghi `learnedRecipes` vào state V10, tiêu hao sách theo luật `learn` hiện tại.
 3. `learnedRecipes` là danh sách **mã công thức server xác minh**, không chấp nhận danh sách nguyên liệu, tiền, tỷ lệ thành công hoặc kết quả từ client. Sách nghề **không chiếm ba ô vận hành công pháp**. Có thể mở giao diện **Tàng Kinh Các → Sách nghề** để đọc công thức.
 4. `craft`, `forge` và gieo qua `use(SEED)` hoặc `garden` xác minh đã học công thức. Chưa học → lỗi có mã `RECIPE_NOT_LEARNED` và lời dẫn tiếng Việt; không trừ nguyên liệu. Đang phàm nhân → từ chối học sách và dùng vật phẩm, không bỏ qua qua đường dùng khác.
 5. Phân định `BT-900` và `BT-901`: vẫn có hiệu lực như **bí tịch tiền điều kiện** đã học cho các công thức hiện hữu, không tự thu hồi. Trước khi tách thành hệ sách mới phải kiểm `craft/forge` và dữ liệu thành phẩm để tránh đòi hai cuốn không cần thiết.
 6. **Migration không phá người chơi cũ:** các công thức đã từng có quyền chế tạo trên bản cũ được coi là mở khóa tương đương khi migrate, hoặc được cấp “Sách nghề truyền thừa” miễn phí; **cách bồi hoàn phải chốt**, không tự khóa bộ đan đang luyện/cây đã gieo. Sổ công thức phải tồn tại sau logout; khi đạo thân tử vong, quyền kiến thức thuộc nhân vật hay tài khoản **chưa được duyệt**. Nếu gắn theo account, phải xem xét Thiên Mệnh Các PR #31.
-7. Không cho phép sách tạo ra vật phẩm hoặc lượng nguyên liệu tùy ý, không dùng `Math.random()`/đồng hồ phía client, không thêm dependency. Test parser sách, catalog link, học trùng, học sai cảnh giới, không sở hữu sách, công thức chưa học, dùng seed, restart, migration V4–V9 và giới hạn 64 KB.
+7. Không cho phép sách tạo ra vật phẩm hoặc lượng nguyên liệu tùy ý, không dùng `Math.random()`/đồng hồ phía client, không thêm dependency. Test parser sách, catalog link, học trùng, học sai cảnh giới, không sở hữu sách, công thức chưa học, dùng seed, restart, migration V4–V10 và giới hạn 64 KB.
 
 ## 4. Số liệu đã xác minh và giới hạn
 
 - `data/items.js` trên `main`: **60 PILL**, **82 EQ**, **36 TAL**, **69 SEED**; ngoài ra **80 BT** gồm công pháp/bí tịch, không đồng nghĩa 80 sách công thức.
 - Snapshot `data/design-raw.js`: **50 hàng nguyên liệu đan phương**, **30 hàng rèn pháp bảo**, **1 hàng vẽ phù**, **30 hàng hạt giống**. Đan phương có nhiều hàng vật liệu trên mỗi mã đan; phải gom theo mã, **không** coi 50 hàng là 50 công thức.
 - 39 hạt giống không có bảng chi tiết trong snapshot; tạm giữ fallback để không hỏng game cho đến khi dữ liệu đầy đủ được phê duyệt.
-- **ĐÃ CHỐT:** mỗi nghề có **3 tập**, tổng **12 quyển**. **CHƯA CHỐT:** giá, nơi nhận, danh sách công thức từng tập, học một lần hay nhiều lượt, tương thích bản lưu cũ và kiến thức có giữ qua kiếp hay không. Xem P0-14→18 tại [gameplay-decisions.md](gameplay-decisions.md).
+- **ĐÃ CHỐT:** mỗi nghề có **3 tập**, tổng **12 quyển**; hiện hành đã có 12 sách **mượn** tương ứng trong `SECT_BOOKS`. **CHƯA CHỐT:** giá, nơi nhận, danh sách công thức từng tập, học một lần hay nhiều lượt, tương thích bản lưu cũ và kiến thức có giữ qua kiếp hay không. Xem P0-14→18 tại [gameplay-decisions.md](gameplay-decisions.md).
 
 ## 5. Liên hệ luật phàm nhân (đã chốt một phần)
 
-Khi Z đạt 100, **đã chốt:** nhân vật phế tu vi, trở thành phàm nhân, không tu luyện và không dùng vật phẩm; không tử vong ngay, chỉ chết khi cạn thọ nguyên. Vì sách nghề là vật phẩm học/tiêu hao nên **đang ở trạng thái phàm nhân không được học sách**. **ĐÃ DUYỆT:** giữ nguyên **số năm thọ nguyên còn lại** ngay trước khi bị phế, không tính lại theo trần thọ nguyên của phàm nhân để tránh chết ngay. Chỉ chết khi thời gian sống còn lại cạn. **CHƯA CHỐT:** tốc độ hao số năm còn lại khi đã bị phế và khả năng chat, đọc sách đã học, đi lại; không được dùng sách để học trong trạng thái phàm nhân. Theo V9, đồng hồ game chỉ tiến khi **online**.
+Khi Z đạt 100, **đã chốt:** nhân vật phế tu vi, trở thành phàm nhân, không tu luyện và không dùng vật phẩm; không tử vong ngay, chỉ chết khi cạn thọ nguyên. Vì sách nghề là vật phẩm học/tiêu hao nên **đang ở trạng thái phàm nhân không được học sách**. **ĐÃ DUYỆT:** giữ nguyên **số năm thọ nguyên còn lại** ngay trước khi bị phế, không tính lại theo trần thọ nguyên của phàm nhân để tránh chết ngay. Chỉ chết khi thời gian sống còn lại cạn. **CHƯA CHỐT:** tốc độ hao số năm còn lại khi đã bị phế và khả năng chat, đọc sách đã học, đi lại; không được dùng sách để học trong trạng thái phàm nhân. Theo V10, đồng hồ game chỉ tiến khi **online**.
 
 **Cấu trúc 12 quyển đã được duyệt.** Chỉ bắt đầu luật học sách sau khi duyệt P0-14→18 về mapping recipe, nguồn/giá, cấp đầu và migration. Không tự thay đổi `BT-900`/`BT-901` hoặc khóa những công thức nhân vật cũ đã có.

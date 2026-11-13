@@ -1,42 +1,53 @@
-# Dựng lại toàn bộ database Hư Giới — môi trường test nội bộ
+# Dựng lại database Hư Giới — hồ sơ môi trường test nội bộ
 
-> Trạng thái: Hiện hành. Đã áp dụng thành công cho Supabase nội bộ ngày 11/11/2026; **không phải playbook production**.
+> Trạng thái: Lịch sử. Ghi lại lần dựng lại schema `game` ngày 11/11/2026 trên Supabase nội bộ. **Không phải playbook production và không phản ánh đầy đủ schema hiện hành.**
 
-## Kết quả đã xác nhận
+## 1. Bối cảnh và kết quả lần dựng 11/11/2026
 
-Project Supabase `Hugioi` được kiểm tra qua kết nối project của chủ dự án. Trước khi chạy: **8 bảng `game.*` đều trống**, `auth.users` có **1 tài khoản test**, `public.policy_acceptances` có **2 dòng**. Bộ SQL đầu tiên cố ý dừng do thấy tài khoản phát sinh sau kiểm tra. Bản chính thức đã được sửa thành reset chỉ khi **toàn bộ `game.*` đều rỗng**, giữ Auth và lưu/khôi phục consent.
+Project Supabase `Hugioi` được kiểm tra qua kết nối của chủ dự án. Trước khi chạy: **8 bảng `game.*` đều trống**, `auth.users` có **1 tài khoản test**, `public.policy_acceptances` có **2 dòng**. Bộ SQL đầu tiên cố ý dừng khi phát hiện tài khoản phát sinh sau kiểm tra. Bản chính thức chỉ reset khi **toàn bộ `game.*` đều rỗng**, giữ Auth và sao lưu/khôi phục consent.
 
-Đã áp dụng qua một migration duy nhất trong transaction:
-- Xóa schema private `game` và bảng `public.policy_acceptances` cũ;
-- Dựng lại từ nguyên văn **11 migration đã triển khai** có trong `supabase_migrations.schema_migrations`, theo thứ tự lịch sử;
-- Thêm hai chỉ mục `game_player_receipts_player_expires` và `game_creation_tickets_owner_expires` đã có trong Git;
-- Khôi phục hai bản ghi consent với thời điểm gốc. **Không DROP hoặc DELETE `auth.users`**, cũng không chạm schema hệ thống `auth`, `storage`, `realtime`.
+Đã áp dụng trong một transaction:
+
+- Xóa schema private `game` và bảng `public.policy_acceptances` cũ.
+- Dựng lại từ **11 migration đã triển khai** có trong `supabase_migrations.schema_migrations`, theo thứ tự lịch sử.
+- Thêm hai chỉ mục `game_player_receipts_player_expires` và `game_creation_tickets_owner_expires`.
+- Khôi phục hai bản ghi consent với thời điểm gốc. **Không DROP hoặc DELETE `auth.users`**, không chạm schema hệ thống `auth`, `storage`, `realtime`.
 
 Đối chiếu sau chạy:
-- 9/9 bảng nghiệp vụ tồn tại, 9/9 RLS bật.
-- 8 bảng `game.*` hoàn toàn rỗng; **1 tài khoản Auth và 2 consent giữ nguyên**.
+
+- **9/9 bảng nghiệp vụ** tồn tại và bật RLS: 8 bảng `game.*` cộng `public.policy_acceptances`.
+- 8 bảng `game.*` rỗng; 1 tài khoản Auth và 2 consent giữ nguyên.
 - Trigger `game.trg_sync_player_leaderboard` có trên INSERT/UPDATE.
-- SQL smoke trong transaction xác minh: thêm người sống → vào bảng xếp hạng; chết → loại khỏi bảng; cập nhật lực chiến sau chết → không xuất hiện lại. Test đã ROLLBACK, không để lại đạo thân.
+- SQL smoke trong transaction xác minh: thêm người sống → vào bảng xếp hạng; chết → loại khỏi bảng; cập nhật lực chiến sau chết → không xuất hiện lại. Test đã ROLLBACK.
 - Supabase migration history có thêm `20261111073203_internal_test_full_schema_rebuild`.
 
-## Các tệp quan trọng
+## 2. Liên hệ với schema hiện hành
 
-- [`supabase/sql/rebuild-internal-test.sql`](../supabase/sql/rebuild-internal-test.sql): **reset thủ công có tính phá hủy**, chỉ dùng khi `game.*` trống, tự RAISE EXCEPTION nếu có dữ liệu/những bảng bất thường. Không thêm script reset vào thư mục migration tự động.
-- [`supabase/migrations/`](../supabase/migrations): đã bổ sung đủ 5 migration policy v1–v5, đồng bộ timestamp desktop/v7 theo migration history và thêm bản fix tử vong; đồng bộ marker `20261111073203` dạng **NO-OP** cho replay sạch. Khi dựng database mới, chỉ chạy các migration bình thường.
-- [`tests/db-full-rebuild.test.cjs`](../tests/db-full-rebuild.test.cjs): kiểm tra dựng từ DB trống bằng PGlite, RLS, consent, trigger tử vong và không đưa destructive reset vào migration chain.
+Từ sau lần dựng trên, `main` đã bổ sung:
 
-## Bảo đảm an toàn
+- **3 bảng tài khoản** cho nhiệm vụ ngày/điểm danh/hộp thư: `account_state`, `account_mail`, `account_receipts`.
+- **2 bảng admin**: `admin_users`, `admin_audit_log`.
+- Chat chuyển sang bảng **UNLOGGED**, TTL **1 giờ**, cron xóa vật lý **5 phút**.
 
-Script có transaction và kiểm tra **mọi bảng game không có bản ghi** trước khi `DROP`. Không chạy trên môi trường có nhân vật; nếu phát sinh tài khoản thử nghiệm thì được giữ lại. Với dữ liệu đang dùng, sử dụng migration additive/backup/restore thay vì reset. Đừng chạy `supabase db reset --remote` vô điều kiện chỉ vì CLI có tùy chọn đó.
+Hiện hành schema `game` có **13 bảng** và `supabase/migrations/` có **6 migration**; migration cũ đã được hợp nhất vào baseline `20261112001142_unified_baseline.sql`. Chi tiết và danh sách bảng ở [SYSTEM](SYSTEM.md), quy trình triển khai ở [edge-deployment](edge-deployment.md). Hồ sơ này **không** dùng để suy ra số bảng, số migration hoặc trạng thái production hiện tại.
 
-Schema `game` phải không nằm trong Supabase Data API exposed schemas. Không thêm RLS policy client cho game, vì Edge backend truy cập trực tiếp sau xác thực JWT; `public.policy_acceptances` có policy read/insert theo `auth.uid()`.
+## 3. Tệp liên quan
 
-## Đọc cảnh báo từ Supabase Advisors
+- [`supabase/sql/rebuild-internal-test.sql`](../supabase/sql/rebuild-internal-test.sql): reset thủ công **có tính phá hủy**, chỉ dùng khi `game.*` trống, tự `RAISE EXCEPTION` nếu có dữ liệu/bảng bất thường. Không thêm script reset vào thư mục migration tự động và **không chạy trên production**.
+- [`supabase/migrations/`](../supabase/migrations): nguồn schema hiện hành; database mới chỉ chạy migration bình thường.
+- [`tests/db-full-rebuild.test.cjs`](../tests/db-full-rebuild.test.cjs): kiểm tra dựng từ DB trống bằng PGlite, RLS, consent, trigger tử vong và việc không đưa destructive reset vào migration chain.
 
-- **Security INFO:** 8 bảng `game` bật RLS nhưng không có policy — **cố ý**, vì schema private không cấp quyền cho `anon`/`authenticated`.
-- **Security WARN:** tính năng leaked-password protection của Supabase Auth đang tắt; đây là cấu hình dashboard, không phải lỗi schema. Cân nhắc bật trước khi phát hành công khai. [Supabase password security](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
-- **Performance INFO:** chỉ mục vừa dựng lại chưa có lượt sử dụng vì **không có dữ liệu**. Không tự xóa chúng dựa vào thống kê `idx_scan=0` ngay sau reset.
+## 4. Cảnh báo an toàn
 
-## Công việc chưa có trong lần reset
+- Script có transaction và kiểm tra **mọi bảng game không có bản ghi** trước khi `DROP`. Không chạy trên môi trường có nhân vật.
+- Với dữ liệu đang dùng, chỉ dùng migration additive/backup/restore. Không chạy `supabase db reset --remote` vô điều kiện.
+- Schema `game` không nằm trong Supabase Data API exposed schemas; không cấp quyền trực tiếp cho `anon`/`authenticated`.
+- `public.policy_acceptances` có policy read/insert theo `auth.uid()`.
 
-Việc dựng lại **không tự triển khai** yêu cầu backend trước đây (`task.txt`, lịch sử Git) mục 11: chat 15 giây/tin, TTL tin 1 giờ, snapshot xếp hạng 12 giờ/lần, receipt retention và giảm write/Edge calls. Những mục này đòi hỏi migration và thay đổi backend mới có kiểm thử riêng. Không đồng nhất “database dựng mới” với “production-ready”.
+## 5. Ghi chú từ Supabase Advisors tại thời điểm dựng
+
+- **Security INFO:** các bảng `game` bật RLS nhưng không có policy — **cố ý**, vì schema private không cấp quyền cho client.
+- **Security WARN:** leaked-password protection đang tắt; đây là cấu hình Dashboard, cần cân nhắc bật trước phát hành công khai.
+- **Performance INFO:** chỉ mục chưa có lượt sử dụng vì database không có dữ liệu; không xóa dựa vào `idx_scan=0` ngay sau reset.
+
+Các cảnh báo trên là ảnh chụp lịch sử, không phải trạng thái Dashboard hiện tại. Việc dựng lại database **không** triển khai chat TTL, snapshot xếp hạng, retention receipt hay các tối ưu backend khác; những phần đó có migration và mã riêng trong bộ tài liệu hiện hành.
