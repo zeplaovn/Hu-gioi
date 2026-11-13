@@ -220,7 +220,7 @@
     const s = UI.s(), g = UI.g();
     const worn = Array.from({ length: 4 }, (_, i) => {
       const key = s.equipment[i];
-      return key ? popCell(key, 'gearOpen', 'Đang mặc') : `<div class="pop-item pop-empty" aria-label="Ô pháp bảo ${i + 1} trống"><span>＋</span><span class="pop-name">Ô ${i + 1}</span></div>`;
+      return key ? `<div class="pop-worn">${popCell(key, 'gearOpen', 'Đang mặc')}<button type="button" class="btn btn-outline pop-unequip" data-act="equip" ${codeAttr(key)} aria-label="Tháo ${esc(H.item(key).name)}">Tháo</button></div>` : `<div class="pop-item pop-empty" aria-label="Ô pháp bảo ${i + 1} trống"><span>＋</span><span class="pop-name">Ô ${i + 1}</span></div>`;
     }).join('');
     const spare = Object.keys(s.bag).map(H.item).filter(x => x && x.kind === 'EQ' && g.count(x.key) > (s.equipment.includes(x.key) ? 1 : 0))
       .sort((a, b) => a.tier - b.tier || a.code.localeCompare(b.code) || a.sub - b.sub)
@@ -294,6 +294,18 @@
     popup(H.item(d.select).name, d.from === 'manualOpen' ? 'CÔNG PHÁP' : d.from === 'gearOpen' ? 'PHÁP BẢO' : 'VẬT PHẨM', itemDetail(d.select, d.from));
     return UI.KEEP;
   });
+
+  /* Vuốt xuống trên cửa sổ nổi (khi đã cuộn tới đầu) để đóng, cho điện thoại. */
+  let swipe = null;
+  document.addEventListener('touchstart', e => {
+    const box = e.target.closest?.('.game-modal');
+    swipe = box?.querySelector('.pop') && box.scrollTop <= 0 && e.touches.length === 1 ? { box, y: e.touches[0].clientY } : null;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!swipe) return;
+    const dy = (e.changedTouches[0]?.clientY ?? 0) - swipe.y; swipe = null;
+    if (dy > 110) UI.closeModal?.();
+  }, { passive: true });
 
   let draggedEquip = '';
   const moveItem = (key, before) => {

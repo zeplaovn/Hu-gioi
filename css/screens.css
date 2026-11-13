@@ -517,6 +517,8 @@ body.in-tribulation{overflow:hidden}
 .inventory-pouch .card-head h3{margin:2px 0}.inventory-pouch .card-head small{color:#c5b992}
 .inventory-pouch .inventory-items{max-height:430px;overflow:auto;padding:3px}
 .inventory-cell[data-drag-item]{touch-action:none;cursor:grab}.inventory-cell[data-drag-item]:active{cursor:grabbing}
+.game-modal:has(.pop){padding:22px 22px 20px;max-height:min(92dvh,720px)}.game-modal:has(.pop) h2{font-size:clamp(22px,4vw,28px);margin:4px 0 10px}.game-modal:has(.pop) .modal-symbol{display:none}
+.pop-worn{display:grid;gap:4px;align-content:start}.pop-grid>.pop-empty{min-height:120px}.pop-unequip{min-height:30px;padding:3px 8px;font-size:12px}
 .pop{text-align:left}.pop-title{margin:14px 0 8px;color:#f3d699;font:700 16px var(--serif)}.pop-title:first-child{margin-top:0}
 .pop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
 .pop-item{position:relative;display:grid;justify-items:center;align-content:start;gap:3px;min-height:120px;padding:8px 5px 10px;text-align:center;cursor:pointer}
@@ -524,7 +526,7 @@ body.in-tribulation{overflow:hidden}
 .pop-name{font-size:12px;line-height:1.3;color:var(--text);overflow-wrap:anywhere}
 .pop-note{font-size:11px;color:#c5b992}
 .pop-empty{border:1px dashed #5d7a67;border-radius:10px;color:#8fa596;cursor:default;align-content:center;font-size:22px}
-.pop-detail{display:grid;gap:8px;text-align:left}.pop-detail .detail-img{display:block;margin:0 auto;max-width:72px}
+.pop-detail{display:grid;gap:8px;text-align:left}.pop-detail .detail-img{display:block;margin:0 auto;max-width:64px}
 .pop-detail .detail-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px}
 @media(max-width:760px){.inventory-scene-layout{grid-template-columns:minmax(0,1fr)}.gear-stage{min-height:360px}.gear-hero{height:75%}.inventory-detail{grid-column:auto}.inventory-pouch{min-height:0}.inventory-pouch .inventory-items{max-height:330px}}
 
