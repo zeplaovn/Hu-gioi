@@ -60,3 +60,6 @@ supabase/functions/api/game.bundle.mjs
 
 # Trạng thái liên kết tạm của Supabase CLI
 supabase/.temp/
+
+__pycache__/
+*.pyc
