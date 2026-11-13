@@ -76,6 +76,17 @@
     bubble.querySelector('.fox-bubble-text').textContent = text;
     bubble.dataset.kind = kind;
     bubble.hidden = false; bubbleUntil = Date.now() + BUBBLE_DURATION; bubbleKind = kind;
+    fitBubble();
+  }
+  /* Chữ căn giữa trên đầu Linh Hồ; dịch ngang vừa đủ để không tràn mép màn hình. */
+  function fitBubble() {
+    bubble.style.marginLeft = '0px';
+    const r = bubble.getBoundingClientRect(), v = root.visualViewport, pad = 8;
+    const left = (v?.offsetLeft || 0) + pad, right = (v?.offsetLeft || 0) + (v?.width || root.innerWidth) - pad;
+    let dx = 0;
+    if (r.right > right) dx = right - r.right;
+    if (r.left + dx < left) dx = left - r.left;
+    bubble.style.marginLeft = Math.round(dx) + 'px';
   }
   const pick = list => {
     const pool = list.filter(line => line !== lastLine);
@@ -233,7 +244,7 @@
     if (!game || !actor || panel) return;
     // Linh vật theo đạo thân; cửa sổ chat có tọa độ riêng trong khung nhìn.
     companion = document.createElement('div'); companion.className = 'fox-companion';
-    companion.innerHTML = '<div class="fox-bubble" hidden><button class="fox-bubble-open" type="button" aria-label="Trả lời Linh Hồ"><span class="fox-bubble-text" aria-live="polite"></span><small>Chạm để trò chuyện</small></button><button class="fox-bubble-close" type="button" aria-label="Ẩn lời nhắn Linh Hồ">×</button></div><button class="fox-launch" type="button" aria-label="Mở Linh Hồ hệ thống" aria-controls="foxPanel" aria-expanded="false"><img src="media/assets/companion/linh-ho.gif" alt=""></button>';
+    companion.innerHTML = '<div class="fox-bubble" hidden><span class="fox-bubble-text" aria-live="polite"></span></div><button class="fox-launch" type="button" aria-label="Mở Linh Hồ hệ thống" aria-controls="foxPanel" aria-expanded="false"><img src="media/assets/companion/linh-ho.gif" alt=""></button>';
     panel = document.createElement('section'); panel.className = 'fox-panel'; panel.id = 'foxPanel';
     panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Linh Hồ hệ thống'); panel.hidden = true;
     panel.innerHTML = '<header tabindex="0" aria-label="Di chuyển cửa sổ Linh Hồ bằng phím mũi tên, Home để căn giữa" title="Kéo để di chuyển · Phím mũi tên để dịch chuyển · Home để căn giữa"><div><strong>✧ Linh Hồ Hệ Thống</strong><small>Kéo thanh này để di chuyển</small></div><button type="button" class="fox-close" aria-label="Đóng">×</button></header><div class="fox-messages" aria-live="polite"></div><div class="fox-mission"></div><div class="fox-actions"><button type="button" data-fox="guide">Gợi ý &amp; cảnh báo</button><button type="button" data-fox="mission">Nhiệm vụ</button><button type="button" data-fox="cancel">Hủy nhiệm vụ</button></div><form class="fox-form"><input aria-label="Nói với Linh Hồ" maxlength="200" placeholder="Nói gì đó với Linh Hồ…"><button type="submit">Gửi</button></form><label class="fox-chatter-setting"><input class="fox-chatter-toggle" type="checkbox">Linh Hồ tự lên tiếng (trò chuyện, giục việc)</label><p class="fox-foot">Đối thoại theo mẫu, không phải AI. Nhiệm vụ lưu trên thiết bị.</p>';
@@ -246,8 +257,6 @@
       if (open) { fitPanel(); panel.querySelector('.fox-form input').focus({ preventScroll: true }); }
     };
     launch.addEventListener('click', () => toggle(panel.hidden));
-    companion.querySelector('.fox-bubble-open').addEventListener('click', () => toggle(true));
-    companion.querySelector('.fox-bubble-close').addEventListener('click', () => { hideBubble(); postponeChatter(); });
     panel.querySelector('.fox-close').addEventListener('click', () => { toggle(false); launch.focus({ preventScroll: true }); });
     panel.addEventListener('keydown', e => {
       if (e.key === 'Escape') { e.stopPropagation(); toggle(false); launch.focus({ preventScroll: true }); }

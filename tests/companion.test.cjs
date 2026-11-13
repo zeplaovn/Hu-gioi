@@ -177,10 +177,10 @@ test('Lời thoại ngẫu nhiên không cướp focus, tự ẩn, không lặp 
   f.advance(10000); assert.equal(bubble.hidden, true);
   f.advance(35000); assert.equal(bubble.hidden, false);
   assert.notEqual(bubble.querySelector('.fox-bubble-text').textContent, first);
-  companion.querySelector('.fox-bubble-close').fire('click');
-  assert.equal(bubble.hidden, true);
-  f.advance(45000);
-  companion.querySelector('.fox-bubble-open').fire('click');
+  assert.doesNotMatch(companion.markup, /fox-bubble-(open|close)|<button[^>]*>[^<]*<\/button>[^<]*<small/, 'Chữ nổi là chữ trần, không có khung/nút');
+  f.advance(10000); assert.equal(bubble.hidden, true);
+  f.advance(35000); assert.equal(bubble.hidden, false);
+  companion.querySelector('.fox-launch').fire('click');
   assert.equal(panel.hidden, false);
   assert.equal(bubble.hidden, true);
   assert.equal(panel.querySelector('.fox-form input').focused, true);
@@ -292,4 +292,22 @@ test('Trả lời trong ô chat cũng đúng giọng: cảm ơn, hỏi danh tín
   assert.match(chat().at(-1).textContent, /Ngươi nên biết ơn ta đấy, hahaha/);
   input.value = 'bạn là ai'; panel.querySelector('form').fire('submit');
   assert.match(chat().at(-1).textContent, /Bổn hệ thống chính là Linh Hồ/);
+});
+
+test('Chữ nổi được dịch vào trong màn hình khi Linh Hồ đứng sát mép', () => {
+  const f = fixture(); f.tick();
+  const bubble = f.companion().querySelector('.fox-bubble');
+  bubble.getBoundingClientRect = () => {
+    const m = parseFloat(bubble.style.marginLeft) || 0;
+    return { left: 900 + m, right: 1120 + m, width: 220, height: 40, x: 900 + m, y: 100 };
+  };
+  f.advance(45000);
+  assert.equal(bubble.hidden, false);
+  assert.equal(bubble.style.marginLeft, '-128px');
+  bubble.getBoundingClientRect = () => {
+    const m = parseFloat(bubble.style.marginLeft) || 0;
+    return { left: -60 + m, right: 160 + m, width: 220, height: 40, x: -60 + m, y: 100 };
+  };
+  f.advance(10000); f.advance(35000);
+  assert.equal(bubble.style.marginLeft, '68px');
 });
