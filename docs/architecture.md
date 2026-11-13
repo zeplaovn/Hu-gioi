@@ -17,7 +17,7 @@ Browser ──> Cloudflare Workers Static Assets (dist/)
 
 **Gameplay:** state V10 tại `engine/state/player.js`; protocol **v4**, **52 lệnh** tại `engine/protocol/commands.js`, thuộc 8 miền lệnh. Giữ luật từ `engine/` và `data/`; không tự quyết định P0/P1 thay chủ dự án. Nhịp heartbeat và grace lấy từ `server/presence-config.js` (20 giây/60 giây) và backend phản hồi cho client. Offline và tab ẩn không tích lũy.
 
-**Dev/test:** `server/main.js` và `server/repositories/sqlite-players.js` chỉ dùng Node/SQLite cho dev/test. Chúng không nằm trong gói Cloudflare production.
+**Dev/test:** không còn server Node/SQLite. Test dùng kho in-memory (`tests/helpers/memory-players.js`) và PGlite; `tools/online-ci-server.cjs` chỉ phục vụ Playwright CI.
 
 **Trạng thái UI:** `client/ui/core.js` bật `release.chat` và `release.ranking`. Chat có 4 kênh (Thế giới, Tông môn, Đạo hữu, Đạo lữ), gửi/nhận qua `client/session/chat-session.js` + `supabase/functions/api/social.ts`, yêu cầu JWT và consent. Bảng xếp hạng người chơi thật theo Lực chiến hoặc Cảnh giới. Tri kỷ, Luận kiếm, Đấu giá và hoạt động NPC/tông môn vẫn là **mô phỏng**, không phải PvP/multiplayer thực.
 

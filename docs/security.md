@@ -6,7 +6,7 @@
 
 Cloudflare chỉ phát hành file tĩnh trong `dist/`. `client/config.js` chọn Supabase Auth trực tiếp và Edge API. Edge xác minh bearer **JWT** và consent cho gameplay rồi xử lý bằng `PlayerService`, giao dịch Postgres và receipt idempotent. Client không có quyền ghi state, RNG, thời gian hay phần thưởng đáng tin cậy.
 
-Node/SQLite và reverse proxy cùng origin chỉ là **dev/test/legacy**; không dùng để deploy production. Xem [SYSTEM](SYSTEM.md).
+Production chỉ gồm Cloudflare static + Supabase Edge; server Node/SQLite và reverse proxy cùng origin đã gỡ. Xem [SYSTEM](SYSTEM.md).
 
 ## 2. Xác thực và consent
 

@@ -13,8 +13,8 @@
    Xác thực qua Bearer JWT hoặc cookie (xem server/auth/principal.js). Lỗi theo envelope { error: { code, message, requestId, retryable } }. */
 'use strict';
 const crypto = require('node:crypto');
-const { GameError, toEnvelope } = require('../errors.js');
-const { DailyService } = require('../services/daily-service.js');
+const { GameError, toEnvelope } = require('../../server/errors.js');
+const { DailyService } = require('../../server/services/daily-service.js');
 const { RateLimiter, LIMITS } = require('./rate-limit.js');
 const { quotaIpKey } = require('./client-ip.js');
 

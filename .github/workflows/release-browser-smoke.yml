@@ -6,6 +6,8 @@ on:
       - '.github/workflows/release-browser-smoke.yml'
       - 'client/**'
       - 'server/**'
+      - 'tools/ci-server/**'
+      - 'tests/helpers/**'
       - 'css/**'
       - 'index.html'
   workflow_dispatch:

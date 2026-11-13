@@ -7,7 +7,7 @@
 
 Bậc đầu là Luyện Khí (`realm=0`). Sau một **đại đột phá thành công** từ bậc `r-1` lên `r`, thưởng `5 × r` Thiên Tinh (`r=1…13`). Thất bại độ kiếp, tự đột phá tiểu cảnh giới, tạo nhân vật và đọc trạng thái không thưởng. Mỗi nhân vật có thể nhận đủ thưởng theo các đại đột phá hợp lệ **trong kiếp hiện tại**; không mang số dư và nâng cấp từ nhân vật trước.
 
-Máy chủ ghi snapshot nhân vật, receipt lệnh và thưởng Thiên Tinh trong **cùng transaction Postgres `BEGIN`/`COMMIT`** (Node/SQLite dev dùng `BEGIN IMMEDIATE`). Gửi lại cùng `requestId` chỉ trả receipt, không cộng lần hai. Nếu revision lệch, không tính thưởng; người chơi phải đồng bộ lại.
+Máy chủ ghi snapshot nhân vật, receipt lệnh và thưởng Thiên Tinh trong **cùng transaction Postgres `BEGIN`/`COMMIT`**. Gửi lại cùng `requestId` chỉ trả receipt, không cộng lần hai. Nếu revision lệch, không tính thưởng; người chơi phải đồng bộ lại.
 
 ## Sáu thuộc tính nâng cấp của Thiên Mệnh Các
 
@@ -61,4 +61,4 @@ Mua nâng cấp áp dụng ngay cho đạo thân hiện tại: snapshot trên se
 - Thưởng Thiên Tinh được tính ở các lần đột phá thành công của nhân vật hiện tại, không cộng dồn giữa các kiếp. Giới hạn cấp 20 và 5 vật phẩm/kho vẫn được kiểm tra; chống bot/tạo nhiều tài khoản là vấn đề vận hành riêng.
 - Có thể đổi bậc giá/vật phẩm trong `data/character.js` với test hồi quy và quy trình tương thích contentVersion.
 - Dữ liệu cá nhân `/api/v1/me/export` phải gồm kho Thiên Mệnh Các; `/api/v1/me/erase` và xóa tài khoản sẽ hủy cả kho và receipt.
-- Production dùng PostgreSQL, giao dịch account/player/receipt phải nguyên tử; SQLite/Node chỉ dùng cho dev/test.
+- Production dùng PostgreSQL, giao dịch account/player/receipt phải nguyên tử.

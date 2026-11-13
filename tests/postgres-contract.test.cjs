@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { PGlite } = require('@electric-sql/pglite');
 const { PostgresPlayers } = require('../server/repositories/postgres-players.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const H = require('../engine/game.js');
 

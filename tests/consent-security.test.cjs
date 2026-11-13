@@ -8,7 +8,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { createConsentVerifier } = require('../server/auth/consent.js');
 const { createPrincipalResolver } = require('../server/auth/principal.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 
 const SUPABASE_URL = 'https://rvrwfeblishqadkpzspb.supabase.co';
 const KEY = 'sb_publishable_mock_key';
@@ -74,20 +74,3 @@ test('principal: JWT được xác minh rồi mới kiểm tra chính sách', as
     { code: 'CONSENT_REQUIRED' });
 });
 
-test('SQLite: DB có quyền 0600, thư mục 0700, cấm symlink và thư mục 0755', t => {
-  if (process.platform === 'win32') return t.skip('Unix permissions only');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-permissions-'));
-  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  const file = path.join(dir, 'private', 'game.sqlite');
-  const db = new SqlitePlayers(file);
-  db.close();
-  assert.equal(fs.statSync(path.dirname(file)).mode & 0o777, 0o700);
-  assert.equal(fs.statSync(file).mode & 0o777, 0o600);
-  const link = path.join(dir, 'private', 'link.sqlite');
-  fs.symlinkSync(file, link);
-  assert.throws(() => new SqlitePlayers(link), /symbolic link/);
-  const publicDir = path.join(dir, 'public');
-  fs.mkdirSync(publicDir, { mode: 0o755 });
-  fs.chmodSync(publicDir, 0o755);
-  assert.throws(() => new SqlitePlayers(path.join(publicDir, 'game.sqlite')), /0700/);
-});

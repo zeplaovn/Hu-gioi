@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const H = require('../engine/game.js'), C = require('../engine/protocol/commands.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const NOW = 1_800_000_000_000, CODE = 'PILL-001';
 const profile = { name: 'Lâm Vân', gender: 'nu', age: 18, race: 'nhan', roots: [72, 61, 45, 44, 33], rootType: 'Song',
@@ -60,7 +60,7 @@ test('lệnh cũ vẫn xếp một mẻ và từ chối số mẻ sai hoặc ph�
 });
 
 test('máy chủ không xếp trùng khi lệnh được gửi lại và đóng băng hàng đợi lúc offline', async t => {
-  const repo = new SqlitePlayers(':memory:'); t.after(() => repo.close());
+  const repo = new MemoryPlayers(); t.after(() => repo.close());
   let now = NOW;
   const svc = new PlayerService({ repository: repo, clock: () => now, contentVersion: 'test', onError: () => {} });
   const preview = await svc.previewCreation('owner');

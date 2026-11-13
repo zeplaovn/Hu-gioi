@@ -13,7 +13,7 @@
 
 | ID | Trạng thái | Quyết định được xác nhận | Mã nguồn/tài liệu |
 |---|---|---|---|
-| **K01** | **CHỐT** | Game **online-only**, Supabase Edge/Postgres server-authoritative (Node/SQLite chỉ dev/test), Supabase JWT; đồng hồ/RNG/giá/thưởng do máy chủ giữ. **Không tính thời gian offline/ẩn tab.** | `docs/gameplay-v9.md`, `PlayerService`, `RemoteSession` |
+| **K01** | **CHỐT** | Game **online-only**, Supabase Edge/Postgres server-authoritative, Supabase JWT; đồng hồ/RNG/giá/thưởng do máy chủ giữ. **Không tính thời gian offline/ẩn tab.** | `docs/gameplay-v9.md`, `PlayerService`, `RemoteSession` |
 | **K02** | **CHỐT hiện trạng** | Lịch sử: lúc chốt là **state V9**, protocol **v2**, **49 lệnh/9 miền**. Hiện hành: **state V10**, protocol **v4**, **52 lệnh/8 miền**; V10/protocol v3 bổ sung ba lệnh bế quan tu luyện, protocol v4 mở rộng lệnh luyện đan để xếp nhiều mẻ. Không quay lại V8/51 lệnh do tài liệu cũ. | `engine/state/player.js`, `engine/protocol/commands.js`, `engine/game.js` |
 | **K03** | **CHỐT** | Mỗi đạo thân **một mạng**. Tọa hóa → server xác minh → xóa đạo thân đã chết → tạo đạo thân mới. Không hồi sinh người cũ; reset sau tử vong **xóa cả Thiên Tinh, nâng cấp, Kỳ Trân và thứ hạng**, đúng backend hiện hành. | `docs/gameplay-v9.md`, `server/services/player-service.js` |
 | **K04** | **CHỐT & ĐÃ CÀI** | Thưởng **Thiên Tinh đầy đủ trong mỗi kiếp**, khi đột phá đại cảnh giới lên bậc `r` nhận `5×r`: Trúc Cơ +5, Kết Đan/Kim Đan +10, Nguyên Anh +15...; mỗi đạo thân mới chỉ kiếm thưởng từ các đại đột phá của chính mình, **không cộng dồn** giữa các lần reset. | `docs/thien-menh-cac.md` (PR #31 đã merge) |
@@ -234,9 +234,9 @@
 [ ] B: có đấu giá thật ngay khi phát hành đầu, phải thêm bid escrow, gia hạn và hoàn tiền idempotent.  Khác: __________  
 **Trạng thái: MỞ P1/P2 tùy phạm vi.**
 
-**P1-11 · Hạ tầng shared: giữ Edge/PostgreSQL hay mở rộng Node/SQLite?**  
-[ ] **A — ĐỀ XUẤT:** giữ **Supabase Edge + PostgreSQL** làm backend production; Node/SQLite chỉ dev/test, không mở multi-instance ghi SQLite. Trước khi bật PvP/chợ/tông môn người thật, chốt schema ledger/outbox, khóa hàng và kiểm transaction trên staging.  
-[ ] B: quay lại một writer SQLite cho PvE/board read; chỉ phù hợp dev/test hoặc single-instance, không đáp ứng Edge hiện hành.  Khác: __________  
+**P1-11 · Hạ tầng shared: giữ Edge/PostgreSQL hay đổi hướng?**  
+[ ] **A — ĐỀ XUẤT:** giữ **Supabase Edge + PostgreSQL** làm backend production (nhánh Node/SQLite đã gỡ). Trước khi bật PvP/chợ/tông môn người thật, chốt schema ledger/outbox, khóa hàng và kiểm transaction trên staging.  
+[ ] B: đổi nền tảng hạ tầng (cần dựng lại backend ngoài Edge hiện hành).  Khác: __________  
 **Trạng thái: MỞ P1 (phần ledger/social); nền tảng Edge/PostgreSQL đã là hiện trạng.**
 
 **P1-12 · Giới hạn trận PvP/ngày và kiểm win-trading**  

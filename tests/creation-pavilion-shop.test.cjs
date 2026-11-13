@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { PGlite } = require('@electric-sql/pglite');
 const H = require('../engine/game.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PostgresPlayers } = require('../server/repositories/postgres-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 
@@ -15,8 +15,8 @@ const T0 = 1800000000000;
 const OWNER = '11111111-1111-4111-8111-111111111111';
 
 async function fixture(adapter) {
-  if (adapter === 'sqlite') {
-    const repo = new SqlitePlayers(':memory:');
+  if (adapter === 'memory') {
+    const repo = new MemoryPlayers();
     return { service: new PlayerService({ repository: repo, contentVersion: 'test', clock: () => T0 }),
       close: () => repo.close() };
   }
@@ -38,7 +38,7 @@ async function fixture(adapter) {
 const purchase = (svc, kind, key, requestId, expectedVersion) =>
   svc.pavilionPurchase(OWNER, { kind, key, requestId, expectedVersion });
 
-for (const adapter of ['sqlite','postgres']) {
+for (const adapter of ['memory','postgres']) {
   test(`Thiên Mệnh Các trước khi nhập thế [${adapter}]: tặng ngân sách một lần, đổi điểm và đan rồi cấp đúng một lần`, async t => {
     const { service: svc, close } = await fixture(adapter);
     t.after(close);
@@ -80,7 +80,7 @@ for (const adapter of ['sqlite','postgres']) {
   });
 }
 
-for (const adapter of ['sqlite','postgres']) {
+for (const adapter of ['memory','postgres']) {
   test(`Thiên Mệnh Các trước khi nhập thế [${adapter}]: Dấu ấn Thiên Mệnh phải mua và chỉ chọn một`, async t => {
     const { service: svc, close } = await fixture(adapter);
     t.after(close);
@@ -101,7 +101,7 @@ for (const adapter of ['sqlite','postgres']) {
   });
 }
 
-for (const adapter of ['sqlite','postgres']) {
+for (const adapter of ['memory','postgres']) {
   test(`Thiên Mệnh Các trước khi nhập thế [${adapter}]: không mua Dấu ấn thì không có buff khởi đầu`, async t => {
     const { service: svc, close } = await fixture(adapter);
     t.after(close);

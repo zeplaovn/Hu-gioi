@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const H = require('../engine/game.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const NOW = 1_800_000_000_000;
 async function fixture(repo) {
@@ -16,11 +16,9 @@ async function fixture(repo) {
   const command = async (type, payload, requestId) => ({ protocolVersion: 4, type, payload, requestId, expectedRevision: (await svc.bootstrap('owner-a')).player.revision });
   return { svc, time, id: made.playerId, command };
 }
-for (const mode of ['memory', 'disk']) {
+for (const mode of ['memory']) {
   function useRepo(t) {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-f1-'));
-    t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-    const repo = new SqlitePlayers(mode === 'memory' ? ':memory:' : path.join(dir, 'database.sqlite'));
+    const repo = new MemoryPlayers();
     t.after(() => repo.close());
     return repo;
   }

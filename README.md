@@ -20,7 +20,7 @@ npm run build:edge
 npm run edge:budget
 ```
 
-`npm start` dùng Node/SQLite **dev/test**; không phải backend production. `npm run edge:budget` chỉ mô phỏng.
+Production chỉ chạy Cloudflare static + Supabase Edge; không còn server Node/SQLite hay Docker. `npm run edge:budget` chỉ mô phỏng.
 
 ## Hồ sơ nguồn sự thật
 - [Tổng hợp công việc](docs/PROJECT-STATUS.md)

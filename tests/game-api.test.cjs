@@ -9,13 +9,12 @@ const os = require('node:os');
 const path = require('node:path');
 const { createJwtVerifier } = require('../server/auth/jwt.js');
 const { createPrincipalResolver } = require('../server/auth/principal.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
-const { createGameApi } = require('../server/http/game-api.js');
-const { RateLimiter } = require('../server/http/rate-limit.js');
-const { createClientIp } = require('../server/http/client-ip.js');
-const { AuthService } = require('../server/services/auth-service.js');
-const { createRouter } = require('../server/http/router.js');
+const { createGameApi } = require('../tools/ci-server/game-api.js');
+const { RateLimiter } = require('../tools/ci-server/rate-limit.js');
+const { createClientIp } = require('../tools/ci-server/client-ip.js');
+const { createRouter } = require('../tools/ci-server/router.js');
 
 const SECRET = 'test-secret-test-secret-test-secret-123';
 const ID_A = '11111111-1111-4111-8111-111111111111', ID_B = '22222222-2222-4222-8222-222222222222';
@@ -62,11 +61,11 @@ test('JWT ES256 qua JWKS: xoay khóa, kid lạ và alg bị ép đều bị từ
   await assert.rejects(v.verify(signHs(p(), { secret: 'k1' })), { code: 'UNAUTHENTICATED' }); // không cho đổi sang HS256 khi chưa cấu hình secret
 });
 
-async function boot(t, { allowedOrigins = [], limiter, legacy = null, clientIp, loginGateway = null } = {}) {
-  const repo = new SqlitePlayers(':memory:');
+async function boot(t, { allowedOrigins = [], limiter, clientIp } = {}) {
+  const repo = new MemoryPlayers();
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  const api = createGameApi({ service, resolvePrincipal: createPrincipalResolver({ jwt: createJwtVerifier({ secret: SECRET }), legacy }), allowedOrigins, limiter, clientIp });
-  const server = http.createServer(createRouter(null, legacy, api, loginGateway));
+  const api = createGameApi({ service, resolvePrincipal: createPrincipalResolver({ jwt: createJwtVerifier({ secret: SECRET }) }), allowedOrigins, limiter, clientIp });
+  const server = http.createServer(createRouter(api));
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   t.after(async () => { await new Promise(r => server.close(r)); repo.close(); });
   const port = server.address().port;
@@ -199,28 +198,6 @@ test('API: CORS chỉ cho origin trong danh sách; preflight không cần đăng
   assert.equal(evil.headers['access-control-allow-origin'], undefined);
 });
 
-test('API: cookie thử nghiệm đi được tới /api/v1 và mọi yêu cầu ghi bị kiểm Origin', async t => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-api-'));
-  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  const legacy = new AuthService(path.join(dir, 'private', 'accounts.json'));
-  const { call, port } = await boot(t, { legacy });
-  const reg = await call('POST', '/api/auth/signup', { body: { email: 'dao@example.com', password: 'mat-khau-dai-va-kho-doan' } });
-  assert.equal(reg.status, 201);
-  const cookie = reg.headers['set-cookie'][0].split(';')[0];
-  assert.match(reg.headers['set-cookie'][0], /Path=\/api;/);
-  assert.equal((await call('GET', '/api/v1/bootstrap', { headers: { cookie } })).status, 200);
-  const evil = await call('POST', '/api/v1/creation/preview', { headers: { cookie, origin: 'https://evil.example', host: `127.0.0.1:${port}` } });
-  assert.equal(evil.status, 403);
-  assert.equal((await call('POST', '/api/v1/creation/preview', { headers: { cookie } })).status, 201);
-});
-
-test('health báo trạng thái gameplay và gateway Supabase đang cấu hình', async t => {
-  const { call } = await boot(t, { loginGateway: { handle() {} } });
-  const health = (await call('GET', '/api/health')).data;
-  assert.equal(health.gameplay, true);
-  assert.equal(health.auth, true);
-});
-
 test('API: tài khoản tự xuất và tự xóa dữ liệu gameplay, không lộ seed, cô lập theo chủ', async t => {
   const { call, tokenA, tokenB } = await boot(t);
   assert.equal((await call('GET', '/api/v1/me/export')).status, 401);
@@ -259,7 +236,7 @@ test('API: tài khoản tự xuất và tự xóa dữ liệu gameplay, không l
 });
 
 test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý chính sách còn hiệu lực', async t => {
-  const repo = new SqlitePlayers(':memory:');
+  const repo = new MemoryPlayers();
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
   const deleted = [];
   const accountAdmin = { deleteUser: async id => { deleted.push(id); return { deleted: true }; } };
@@ -267,7 +244,7 @@ test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý c
   let consentGiven = true;
   const verifyConsent = async () => { if (!consentGiven) throw new (require('../server/errors.js').GameError)('CONSENT_REQUIRED', 'Cần đồng ý.'); };
   const api = createGameApi({ service, accountAdmin, resolvePrincipal: createPrincipalResolver({ jwt, verifyConsent }) });
-  const server = http.createServer(createRouter(null, null, api));
+  const server = http.createServer(createRouter(api));
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   t.after(async () => { await new Promise(r => server.close(r)); repo.close(); });
   const token = signHs(claims(ID_A));
@@ -300,7 +277,7 @@ test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý c
 });
 
 test('xóa tài khoản luôn xóa dữ liệu và phiếu trước; thiếu khóa quản trị vẫn báo NOT_IMPLEMENTED, Supabase lỗi thì báo thử lại', async () => {
-  const repo = new SqlitePlayers(':memory:');
+  const repo = new MemoryPlayers();
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
   const t1 = (await service.previewCreation(ID_A)).ticketId;
   await service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
@@ -320,26 +297,6 @@ test('xóa tài khoản luôn xóa dữ liệu và phiếu trước; thiếu kh�
   assert.equal(calls[0].init.method, 'DELETE');
   assert.equal(calls[0].init.headers.Authorization, undefined); // khóa sb_secret_ chỉ đi qua apikey
   repo.close();
-});
-
-test('sao lưu SQLite: bản sao toàn vẹn, quyền 0600, luân phiên giữ N bản', async () => {
-  const { backup } = require('../tools/backup-db.cjs');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-backup-'));
-  fs.chmodSync(dir, 0o700);
-  const file = path.join(dir, 'game.sqlite');
-  const repo = new SqlitePlayers(file);
-  const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
-  await service.createPlayer(ID_A, { ticketId: (await service.previewCreation(ID_A)).ticketId, name: 'Thanh Vân', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
-  const results = [1, 2, 3].map(i => backup({ db: file, keep: 2, now: new Date(Date.UTC(2026, 10, 9, 0, 0, i)) }));
-  const kept = fs.readdirSync(path.join(dir, 'backups')).sort();
-  assert.equal(kept.length, 2);
-  assert.equal(results[2].removed.length, 1);
-  assert.equal(fs.statSync(results[2].dest).mode & 0o777, 0o600);
-  assert.equal(fs.statSync(path.join(dir, 'backups')).mode & 0o777, 0o700);
-  const copy = new SqlitePlayers(results[2].dest);
-  assert.equal((await copy.getByOwner(ID_A)).name, 'Thanh Vân');
-  copy.close(); repo.close();
-  fs.rmSync(dir, { recursive: true, force: true });
 });
 
 test('API: giới hạn theo IP chặn cả request không có token trước khi xác minh JWT', async t => {

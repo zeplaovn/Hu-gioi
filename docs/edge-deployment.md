@@ -17,7 +17,7 @@
 - `HU_AUTH_MODE='direct'` gọi HTTPS Supabase Auth `/auth/v1/token?grant_type=password` bằng publishable key **công khai**, không qua Node login gateway.
 - API duy nhất: `https://rvrwfeblishqadkpzspb.supabase.co/functions/v1/api`. `verify_jwt=false` trong `supabase/config.toml` để preflight OPTIONS chạy; code vẫn bắt buộc bearer JWT cho mọi route gameplay.
 - Client chỉ gửi intent + `requestId` + `expectedVersion`; không gửi state, thời gian, RNG, giá hay phần thưởng.
-- Node/SQLite (`server/main.js`, `client/session/local-session.js` legacy/dev-only) chỉ dùng dev/test; không đưa vào Cloudflare production.
+- Không còn server Node/SQLite: production chỉ gồm Cloudflare static + Supabase Edge. Test dùng kho in-memory và PGlite; `tools/online-ci-server.cjs` chỉ cho Playwright CI.
 - Thiên Mệnh Các có hiệu lực trong kiếp hiện tại; reset sau tử vong xóa kho, dù bảng account/receipt tách riêng.
 
 ## 2. Checklist trước khi deploy

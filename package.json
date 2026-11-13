@@ -7,7 +7,6 @@
     "node": ">=24"
   },
   "scripts": {
-    "start": "node server/main.js",
     "build": "node tools/build-dist.cjs",
     "build:min": "node tools/build-dist.cjs --minify && node tools/check-css-bundle.cjs",
     "check": "node --test tests/sources.test.cjs",

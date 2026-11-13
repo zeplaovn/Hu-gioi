@@ -3,13 +3,13 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const H = require('../engine/game.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const { decodePavilionReceipt, encodePavilionReceipt } = require('../server/repositories/pavilion-receipt.js');
 
 const T0 = 1_800_000_000_000;
 function setup(t) {
-  const repo = new SqlitePlayers(':memory:');
+  const repo = new MemoryPlayers();
   t.after(() => repo.close());
   const clock = { now: T0 };
   const service = new PlayerService({
@@ -65,8 +65,7 @@ test('Pavilion charged cost survives a replay; historical receipt reports unknow
   assert.equal(second.replayed, true);
   assert.equal(second.result.cost, first.result.cost);
   assert.deepEqual(second.pavilion, first.pavilion, 'replay must not charge again');
-  repo.db.prepare('UPDATE pavilion_receipts SET fingerprint = ? WHERE owner_id = ? AND request_id = ?')
-    .run('upgrade:ngoTinh', 'owner-a', 'upgrade-first');
+  repo.testSetPavilionFingerprint('owner-a', 'upgrade-first', 'upgrade:ngoTinh');
   const old = await retry();
   assert.equal(old.replayed, true);
   assert.equal(old.result.cost, null, 'unknown historical price is not zero');

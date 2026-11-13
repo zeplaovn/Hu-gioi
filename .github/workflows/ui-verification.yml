@@ -8,6 +8,8 @@ on:
       - 'tools/ui-proof.py'
       - 'tools/online-ci-server.cjs'
       - 'server/**'
+      - 'tools/ci-server/**'
+      - 'tests/helpers/**'
       - 'engine/**'
       - '.github/workflows/ui-verification.yml'
   workflow_dispatch:

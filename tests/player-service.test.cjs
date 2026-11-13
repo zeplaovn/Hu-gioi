@@ -6,12 +6,12 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const H = require('../engine/game.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService, snapshot, assertStateSafe } = require('../server/services/player-service.js');
 
 const T0 = 1_800_000_000_000;
-function setup(config = {}, file = ':memory:') {
-  const clock = { t: T0 }, repo = new SqlitePlayers(file);
+function setup(config = {}) {
+  const clock = { t: T0 }, repo = new MemoryPlayers();
   const svc = new PlayerService({ repository: repo, clock: () => clock.t, contentVersion: 'test', config, onError: () => {} });
   return { clock, repo, svc };
 }
@@ -290,26 +290,6 @@ test('thọ nguyên cạn: khởi đầu lại sau chết không mang theo tiề
   assert.equal((await svc.bootstrap('owner-a')).pavilion.balance, 0);
 });
 
-test('dữ liệu bền qua khởi động lại (state, revision, receipt)', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-db-'));
-  const file = path.join(dir, 'nested', 'game.sqlite');
-  try {
-    const one = setup({}, file);
-    const { playerId: id } = await spawn(one.svc);
-    one.clock.t += 8000;
-    const r = await one.svc.command('owner-a', id, await envelope(one.svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'keep-1'));
-    one.repo.close();
-
-    const two = setup({}, file);
-    two.clock.t = one.clock.t + 1000;
-    assert.equal((await two.svc.bootstrap('owner-a')).player.revision, r.revision);
-    const replay = await two.svc.command('owner-a', id, { ...await envelope(two.svc, 'owner-a', 'buy', { code: 'HERB-001' }, 'keep-1'), expectedRevision: 0 });
-    assert.equal(replay.replayed, true);
-    assert.equal(replay.state.stone, r.state.stone);
-    two.repo.close();
-  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
-});
-
 test('RNG theo người chơi tiến bộ và được lưu: cùng lệnh ngẫu nhiên không lặp lại kết quả cũ', async () => {
   const { svc, clock, repo } = setup();
   const { playerId: id } = await spawn(svc);
@@ -338,8 +318,8 @@ const accountMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/mi
 
 async function sharedFixture(mode, t, config = {}) {
   let repo;
-  if (mode === 'sqlite') {
-    repo = new SqlitePlayers(':memory:');
+  if (mode === 'memory') {
+    repo = new MemoryPlayers();
   } else {
     const db = new PGlite();
     await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated;
@@ -388,7 +368,7 @@ async function sharedFixture(mode, t, config = {}) {
   });
   return { repo, service, time, make, intent };
 }
-for (const adapter of ['sqlite', 'postgres']) {
+for (const adapter of ['memory', 'postgres']) {
   test(`PlayerService hợp đồng [${adapter}]: owner 404, ticket 1 lần, tên duy nhất`, async t => {
     const { service, make } = await sharedFixture(adapter, t);
     const a = await make(OWNER_A, 'Tử Yên');
@@ -529,7 +509,7 @@ test('đồng bộ lưu danh phận cho đệ tử cũ mà không đổi cống 
   const old = (await repo.get(id)).state;
   delete old.sect.discipleClass; old.rootType='Tam hành'; old.sect.contribution=123; old.sect.earned=456;
   const encoded=JSON.stringify(old);
-  repo.db.prepare('UPDATE players SET state = ?, state_bytes = ? WHERE id = ?').run(encoded,Buffer.byteLength(encoded),id);
+  repo.testSetRawState(id, encoded);
   clock.t += 1000;
   await svc.sync('owner-a',id);
   const saved=(await repo.get(id)).state;
@@ -541,7 +521,7 @@ test('đồng bộ lưu danh phận cho đệ tử cũ mà không đổi cống 
 test('máy chủ chặn xung đột khi luyện đan và chỉ cộng đả tọa sau lúc mẻ hoàn tất', async () => {
   const {svc,repo,clock}=setup({onlineGraceMs:60000});const {playerId:id}=await spawn(svc);
   const old=(await repo.get(id)).state;old.craftQueue=[{code:'PILL-002',end:clock.t+10000,success:1,quality:0}];
-  const raw=JSON.stringify(old);repo.db.prepare('UPDATE players SET state = ?, state_bytes = ? WHERE id = ?').run(raw,Buffer.byteLength(raw),id);
+  const raw=JSON.stringify(old);repo.testSetRawState(id, raw);
   clock.t+=5000;const before=old.progress.meditate;
   assert.equal(await code(async()=>svc.command('owner-a',id,await envelope(svc,'owner-a','startExploration',{},'busy-work-1'))),'GAME_RULE_VIOLATION');
   assert.equal((await repo.get(id)).state.progress.meditate,before);

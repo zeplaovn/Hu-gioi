@@ -2,7 +2,7 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { RateLimiter, LIMITS } = require('../server/http/rate-limit.js');
+const { RateLimiter, LIMITS } = require('../tools/ci-server/rate-limit.js');
 const { SYNC_INTERVAL_MS, ONLINE_GRACE_MS } = require('../server/presence-config.js');
 
 test('10 phút idle: heartbeat đúng nhịp FE không có lần 429', () => {

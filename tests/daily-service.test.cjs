@@ -3,7 +3,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const H = require('../engine/game.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 const { DailyService, dayKey, resetAt } = require('../server/services/daily-service.js');
 
@@ -13,7 +13,7 @@ const DAY = 24 * 3600 * 1000;
 const T0 = Date.UTC(2027, 0, 15, 8, 0, 0);
 
 function setup(t) {
-  const repo = new SqlitePlayers(':memory:');
+  const repo = new MemoryPlayers();
   t.after(() => repo.close());
   const clock = { now: T0 };
   const service = new PlayerService({

@@ -26,6 +26,6 @@ Màn tạo đạo thân có ba bước: **(01) Chọn đạo thân; (02) Thiên 
 
 ## Nghiệm thu
 
-`tests/creation-pavilion-shop.test.cjs` kiểm tra cả SQLite và PostgreSQL/PGlite: giá + quà nhập môn đúng một lần, receipt replay, version conflict, mã hàng không hợp lệ, từ chối tạo khi phân bổ thiếu điểm, cấp thuốc khi tạo nhân vật, không cấp lại khi tạo xong, và reload giữ điểm. PR #77 đã merge; **merge mã không chứng minh đã deploy Edge/Cloudflare hay nghiệm thu production**.
+`tests/creation-pavilion-shop.test.cjs` kiểm tra cả kho in-memory và PostgreSQL/PGlite: giá + quà nhập môn đúng một lần, receipt replay, version conflict, mã hàng không hợp lệ, từ chối tạo khi phân bổ thiếu điểm, cấp thuốc khi tạo nhân vật, không cấp lại khi tạo xong, và reload giữ điểm. PR #77 đã merge; **merge mã không chứng minh đã deploy Edge/Cloudflare hay nghiệm thu production**.
 
 **Cần chủ dự án duyệt** mức 10 Thiên Tinh tặng, giá 4/2/3/2 và giới hạn 4 điểm trước khi phát hành công khai; đây là giá mặc định đề xuất để test nội bộ, không phải luật game đã chốt.

@@ -1,6 +1,6 @@
 /* Token bucket trong bộ nhớ. Đủ cho một instance; nhiều instance cần Redis (backend-plan cũ @1bd987b §6.9). */
 'use strict';
-const { SYNC_INTERVAL_MS } = require('../presence-config.js');
+const { SYNC_INTERVAL_MS } = require('../../server/presence-config.js');
 class RateLimiter {
   constructor({ clock = Date.now, maxKeys = 20000 } = {}) { this.clock = clock; this.maxKeys = maxKeys; this.buckets = new Map(); }
   /* capacity: số lượt tối đa dồn lại; perMinute: tốc độ hồi. Trả { ok, retryAfterMs }. */

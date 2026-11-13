@@ -128,7 +128,7 @@ Hình dạng chi tiết của từng trường: xem `git show 5f6b9bc:shared/sta
 ## 7. Bản lưu
 
 - Schema hiện hành V10; normalize V4, V5, V6, V7, V8, V9, V10 (`SUPPORTED_VERSIONS`). Bản lưu client cũ không được nhập trực tiếp vào account online.
-- `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu PostgreSQL được ghi ở Edge theo giao dịch; SQLite chỉ dùng Node dev/test.
+- `normalize` làm sạch giá trị; `PlayerService` giới hạn JSON, kích thước và khóa. Dữ liệu PostgreSQL được ghi ở Edge theo giao dịch.
 - Thiên mệnh được chọn một lần tại tạo nhân vật. Không có lệnh `prestige`/`reincarnate` và không tích lũy **thành tựu nhân vật** xuyên kiếp. Thiên Tinh, cấp Thiên Mệnh Các và Kỳ Trân lưu tách trong `pavilion_accounts` nhưng bị xóa cùng nhân vật khi `reset-after-death`; không có kế thừa xuyên kiếp. Backend production dùng Postgres; Node/SQLite chỉ dành cho dev/test.
 
 ## 8. Thứ tự đã triển khai

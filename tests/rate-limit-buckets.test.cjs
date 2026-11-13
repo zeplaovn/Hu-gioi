@@ -1,7 +1,7 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { RateLimiter } = require('../server/http/rate-limit.js');
+const { RateLimiter } = require('../tools/ci-server/rate-limit.js');
 
 test('làm tràn key không đặt lại quota đang bị rate-limit của client khác', () => {
   let now = 1_800_000_000_000;
