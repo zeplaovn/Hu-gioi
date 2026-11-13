@@ -41,7 +41,8 @@
         throw Error('Điểm Thiên Phú Thiên Mệnh Các không hợp lệ.');
       const required = H.TALENT_MAX + extra;
       if (total !== required) throw Error('Phải phân bổ đủ ' + required + ' điểm thiên phú trước khi vào game.');
-      const destiny = profile.destiny === undefined ? 'none' : profile.destiny;
+      // Thiên mệnh khởi nguyên là tùy chọn: không gửi, gửi null hoặc 'none' đều không có buff.
+      const destiny = profile.destiny === undefined || profile.destiny === null ? 'none' : profile.destiny;
       if (destiny !== 'none' && !Object.hasOwn(H.META_UPGRADES, destiny)) throw Error('Thiên mệnh khởi nguyên không hợp lệ.');
       const s = H.create(now);
       s.destiny = destiny;

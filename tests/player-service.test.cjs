@@ -32,6 +32,24 @@ test('mọi hồ sơ do máy chủ gieo đều qua được createCharacter', as
   }
 });
 
+test('tạo nhân vật không bắt buộc chọn Thiên mệnh khởi nguyên', async () => {
+  const { svc } = setup();
+  const cases = [
+    ['owner-a', 'Vô Danh A', {}],
+    ['owner-b', 'Vô Danh B', { destiny: null }],
+    ['owner-c', 'Vô Danh C', { destiny: 'exp' }]
+  ];
+  for (const [owner, name, extra] of cases) {
+    const pv = await svc.previewCreation(owner);
+    const made = await svc.createPlayer(owner, {
+      ticketId: pv.ticketId, name, gender: 'nam', talent: { ngoTinh: 8 }, ...extra
+    });
+    assert.equal(made.state.destiny, 'none');
+    assert.equal(made.state.meta.upgrades.exp, 0, 'Không mua Dấu ấn thì không nhận buff từ client');
+    assert.equal((await svc.bootstrap(owner)).player.id, made.playerId);
+  }
+});
+
 test('tạo nhân vật: age/race/linh căn lấy từ ticket, không nhận từ client', async () => {
   const { svc } = setup();
   const pv = await svc.previewCreation('owner-a');

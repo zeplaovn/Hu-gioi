@@ -302,6 +302,17 @@ test('progression: hấp thụ, nâng cấp, đột phá thất bại/thành cô
   assert.ok(victor.checkMeta().some(a => a.id === 'kills_100'));
 });
 
+test('Thiên mệnh khởi nguyên là tùy chọn khi tạo nhân vật', () => {
+  for (const destiny of [undefined, null, 'none']) {
+    const profile = { ...PROFILE };
+    if (destiny !== undefined) profile.destiny = destiny;
+    const s = H.createCharacter(profile, NOW, seeded(5));
+    assert.equal(s.destiny, 'none');
+    assert.deepEqual(Object.values(s.meta.upgrades).filter(Boolean), []);
+    assert.equal(s.meta.points, 0);
+  }
+});
+
 test('Thiên mệnh chọn lúc tạo, không được trọng sinh hoặc nâng bế quan', () => {
   for (const key of Object.keys(H.META_UPGRADES)) {
     const s = H.createCharacter({ ...PROFILE, destiny: key }, NOW, seeded(5));
