@@ -63,9 +63,10 @@ function fixture(store = new Map()) {
   });
   const localStorage = { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value) };
   const math = Object.create(Math); math.random = () => 0;
-  const source = fs.readFileSync(path.join(__dirname, '../client/ui/companion.js'), 'utf8');
-  vm.runInNewContext(source, { window, document, localStorage, Math: math, Date: { now: () => clock },
+  const sources = ['companion-brain.js', 'companion.js'].map(name => fs.readFileSync(path.join(__dirname, '../client/ui/' + name), 'utf8'));
+  const context = vm.createContext({ window, document, localStorage, Math: math, Date: { now: () => clock },
     setInterval: fn => { tick = fn; }, console: { warn: (...args) => { throw Error(args.join(' ')); } } });
+  for (const source of sources) vm.runInContext(source, context);
   return { game, actor, tribulation, state, document, window, tick: () => tick(), advance: ms => { clock += ms; tick(); },
     resizePanel: () => resizePanel(), store,
     panel: () => game.children[0], companion: () => actor.children[0],
@@ -256,8 +257,10 @@ test('Có nhiệm vụ dang dở thì giục theo tên và phần còn thiếu, 
   assert.match(seen[1], /bao nhiêu lần rồi/);
   assert.match(seen[2], /Lần thứ 3 rồi/);
   assert.match(seen[3], /chọc giận/);
-  f.state.progress.kill += 3;
-  f.advance(45000);
+  f.state.progress.kill += 3; f.tick();
+  assert.equal(kindOf(f), 'praise');
+  assert.match(textOf(f), /Được một nửa nhiệm vụ “Trừ yêu hộ đạo”/);
+  f.advance(10000); f.advance(45000);
   assert.match(textOf(f), /thiếu 2 yêu thú/);
 });
 
