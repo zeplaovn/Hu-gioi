@@ -164,14 +164,22 @@ class PlayerService {
   }
 
   /* ---------- Tạo nhân vật ---------- */
-  async previewCreation(ownerId) {
+  /* Mở lại màn tạo nhân vật không tiêu thêm lượt gieo: server trả lại phiếu chưa
+     dùng gần nhất trong 24 giờ. Chỉ nút gieo lại mới gửi fresh=true để xin
+     thiên cơ mới và tính vào giới hạn 5 lượt/24 giờ. */
+  async previewCreation(ownerId, body = {}) {
+    onlyKeys(body, ['fresh']);
+    if (body.fresh !== undefined && typeof body.fresh !== 'boolean')
+      throw invalid('INVALID_REQUEST', 'Yêu cầu gieo lại không hợp lệ.');
     const now = this.clock();
     if (await this.repo.getByOwner(ownerId)) throw new GameError('PLAYER_EXISTS', 'Tài khoản đã có đạo thân.');
     const race = H.rollRace(secureRng), age = 14 + Math.floor(secureRng() * 17);
     const preview = { age, race, ...H.rollRoots(secureRng) };
-    const t = await this.repo.issueTicket(ownerId, preview, { now, ttlMs: this.cfg.ticketTtlMs, dailyLimit: this.cfg.previewsPerDay });
+    const t = await this.repo.issueTicket(ownerId, preview, {
+      now, ttlMs: this.cfg.ticketTtlMs, dailyLimit: this.cfg.previewsPerDay, fresh: body.fresh === true
+    });
     if (t.limited) throw new GameError('RATE_LIMITED', 'Hôm nay đã gieo quá nhiều lần.', { retryAfterMs: t.retryAfterMs });
-    return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview };
+    return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview: t.preview, reused: t.reused === true };
   }
 
   /* Tuổi/chủng tộc/linh căn từ ticket; tên, giới tính và thiên phú do client chọn.

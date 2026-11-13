@@ -79,10 +79,31 @@ test('ticket dùng một lần, đúng chủ, hết hạn; mỗi tài khoản m�
 
 test('giới hạn số lần gieo mỗi ngày', async () => {
   const { svc, clock } = setup({ previewsPerDay: 2 });
-  await svc.previewCreation('x'); await svc.previewCreation('x');
-  assert.equal(await code(async () => await svc.previewCreation('x')), 'RATE_LIMITED');
+  const first = await svc.previewCreation('x');
+  assert.equal((await svc.previewCreation('x')).ticketId, first.ticketId, 'Mở lại màn tạo không tiêu lượt');
+  const second = await svc.previewCreation('x', { fresh: true });
+  assert.equal(await code(async () => await svc.previewCreation('x', { fresh: true })), 'RATE_LIMITED');
+  assert.equal((await svc.previewCreation('x')).ticketId, second.ticketId, 'Vẫn dùng được phiếu mới nhất khi hết lượt gieo mới');
   clock.t += 24 * 3600 * 1000 + 1;
-  await assert.doesNotReject(async () => await svc.previewCreation('x'));
+  const next = await svc.previewCreation('x');
+  assert.notEqual(next.ticketId, first.ticketId);
+});
+
+test('mở lại màn tạo dùng lại phiếu trong 24 giờ và hồi hạn phiếu đã hết TTL', async () => {
+  const { svc, clock } = setup({ previewsPerDay: 5 });
+  const first = await svc.previewCreation('owner-a');
+  assert.equal(first.reused, false);
+  assert.equal(first.rollsLeft, 4);
+  const again = await svc.previewCreation('owner-a');
+  assert.equal(again.ticketId, first.ticketId);
+  assert.equal(again.reused, true);
+  assert.equal(again.rollsLeft, first.rollsLeft);
+  assert.deepEqual(again.preview, first.preview);
+  clock.t += 11 * 60000;
+  const revived = await svc.previewCreation('owner-a');
+  assert.equal(revived.ticketId, first.ticketId);
+  assert.equal(revived.expiresAt, clock.t + 10 * 60000);
+  assert.equal(await code(async () => await svc.previewCreation('owner-a', { fresh: 'yes' })), 'INVALID_REQUEST');
 });
 
 test('lệnh: tăng revision, idempotent theo requestId, phát hiện revision lệch và requestId dùng lại', async () => {
@@ -399,6 +420,8 @@ for (const adapter of ['sqlite', 'postgres']) {
   test(`PlayerService hợp đồng [${adapter}]: xóa nhân vật đặt lại lượt gieo, không ảnh hưởng tài khoản khác`, async t => {
     const { service, make } = await sharedFixture(adapter, t);
     const other = await service.previewCreation(OWNER_B);
+    const otherReuse = await service.previewCreation(OWNER_B);
+    assert.equal(otherReuse.ticketId, other.ticketId, 'Mở lại màn tạo dùng lại phiếu');
     const first = await service.previewCreation(OWNER_A);
     const { playerId } = await service.createPlayer(OWNER_A, { ticketId: first.ticketId, name: 'Tân Sinh', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' });
     await assert.rejects(service.deleteCharacter(OWNER_B, playerId, { confirm: 'delete-character' }), { code: 'PLAYER_NOT_FOUND' });
@@ -406,7 +429,7 @@ for (const adapter of ['sqlite', 'postgres']) {
     const next = await service.previewCreation(OWNER_A);
     assert.equal(next.rollsLeft, first.rollsLeft);
     await assert.rejects(service.createPlayer(OWNER_A, { ticketId: first.ticketId, name: 'Tân Sinh', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp' }), { code: 'TICKET_INVALID' });
-    const otherNext = await service.previewCreation(OWNER_B);
+    const otherNext = await service.previewCreation(OWNER_B, { fresh: true });
     assert.equal(otherNext.rollsLeft, other.rollsLeft - 1);
   });
 
@@ -418,7 +441,7 @@ for (const adapter of ['sqlite', 'postgres']) {
     assert.equal(removed.players, 1);
     assert.equal(removed.tickets, 1);
     assert.equal((await service.previewCreation(OWNER_A)).rollsLeft, other.rollsLeft);
-    assert.equal((await service.previewCreation(OWNER_B)).rollsLeft, other.rollsLeft - 1);
+    assert.equal((await service.previewCreation(OWNER_B, { fresh: true })).rollsLeft, other.rollsLeft - 1);
   });
 
   test(`PlayerService hợp đồng [${adapter}]: export bảo mật, erase, delete-account idempotent`, async t => {

@@ -163,13 +163,27 @@ class PostgresPlayers extends PlayerRepository {
   async getPavilion(ownerId) {
     return this.connection(async c => pavilion(await one(c, 'SELECT * FROM game.pavilion_accounts WHERE owner_id = $1', [ownerId])));
   }
-  async issueTicket(ownerId, preview, { now, ttlMs, dailyLimit }) {
+  async issueTicket(ownerId, preview, { now, ttlMs, dailyLimit, fresh = false }) {
     return this.transaction(async c => {
       await this.ownerLock(c, ownerId);
       const existing = await one(c,
         'SELECT count(*)::bigint AS n, min(created_at) AS oldest FROM game.creation_tickets WHERE owner_id = $1 AND created_at > $2',
         [ownerId, big(now - DAY)]);
       const n = toInt(existing.n);
+      if (!fresh) {
+        const latest = await one(c,
+          'SELECT * FROM game.creation_tickets WHERE owner_id = $1 AND used_at IS NULL AND created_at > $2 ORDER BY created_at DESC LIMIT 1',
+          [ownerId, big(now - DAY)]);
+        if (latest) {
+          let expiresAt = toInt(latest.expires_at);
+          if (expiresAt <= now) {
+            expiresAt = now + ttlMs;
+            await exec(c, 'UPDATE game.creation_tickets SET expires_at = $1 WHERE id = $2', [big(expiresAt), latest.id]);
+          }
+          return { id: latest.id, preview: json(latest.preview), expiresAt,
+            rollsLeft: Math.max(0, dailyLimit - n), reused: true };
+        }
+      }
       if (n >= dailyLimit) return { limited: true, retryAfterMs: Math.max(1000, toInt(existing.oldest) + DAY - now) };
       const id = crypto.randomUUID();
       await exec(c, `INSERT INTO game.creation_tickets (id, owner_id, preview, created_at, expires_at)

@@ -193,7 +193,7 @@ export async function handleApi(req: Request): Promise<Response> {
       case 'leaderboard':
         result = await handleSocial(repo, ownerId, route.name, body);
         break;
-      case 'preview': result = await service.previewCreation(ownerId); status = 201; break;
+      case 'preview': result = await service.previewCreation(ownerId, body); status = 201; break;
       case 'create': result = await service.createPlayer(ownerId, body); status = 201; break;
       case 'pavilionPurchase': result = await service.pavilionPurchase(ownerId, body); break;
       case 'state': result = await service.state(ownerId, route.id); break;

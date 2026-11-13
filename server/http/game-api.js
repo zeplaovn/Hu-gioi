@@ -106,7 +106,7 @@ function createGameApi({ service, dailyService = null, accountAdmin = null, clie
       switch (route.name) {
         case 'bootstrap': limit('read:' + who, LIMITS.read); out = await service.bootstrap(who); break;
         case 'pavilionPurchase': limit('cmd:' + who, LIMITS.command); out = await service.pavilionPurchase(who, body); break;
-        case 'preview': limit('preview:' + who, LIMITS.preview); out = await service.previewCreation(who); status = 201; break;
+        case 'preview': limit('preview:' + who, LIMITS.preview); out = await service.previewCreation(who, body); status = 201; break;
         case 'create': limit('create:' + who, LIMITS.create); out = await service.createPlayer(who, body); status = 201; break;
         case 'state': limit('read:' + who, LIMITS.read); out = await service.state(who, route.id); break;
         case 'sync': limit('sync:' + who, LIMITS.sync); out = await service.sync(who, route.id, body); break;

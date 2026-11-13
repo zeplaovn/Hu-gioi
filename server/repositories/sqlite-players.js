@@ -141,7 +141,9 @@ class SqlitePlayers extends PlayerRepository {
       putReceipt: p(`INSERT INTO player_receipts (player_id, request_id, fingerprint, revision, response, created_at, expires_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)`),
       ticketCount: p('SELECT COUNT(*) AS n, MIN(created_at) AS oldest FROM creation_tickets WHERE owner_id = ? AND created_at > ?'),
+      latestTicket: p('SELECT * FROM creation_tickets WHERE owner_id = ? AND used_at IS NULL AND created_at > ? ORDER BY created_at DESC LIMIT 1'),
       putTicket: p('INSERT INTO creation_tickets (id, owner_id, preview, created_at, expires_at) VALUES (?, ?, ?, ?, ?)'),
+      extendTicket: p('UPDATE creation_tickets SET expires_at = ? WHERE id = ?'),
       ticket: p('SELECT * FROM creation_tickets WHERE id = ?'),
       useTicket: p('UPDATE creation_tickets SET used_at = ? WHERE id = ? AND used_at IS NULL'),
       deletePlayer: p('DELETE FROM players WHERE id = ? AND owner_id = ?'),
@@ -260,9 +262,18 @@ class SqlitePlayers extends PlayerRepository {
     } finally { release(); }
   }
 
-  async issueTicket(ownerId, preview, { now, ttlMs, dailyLimit }) {
+  async issueTicket(ownerId, preview, { now, ttlMs, dailyLimit, fresh = false }) {
     return this.run(() => {
       const { n, oldest } = this.q.ticketCount.get(ownerId, now - DAY);
+      if (!fresh) {
+        const latest = this.q.latestTicket.get(ownerId, now - DAY);
+        if (latest) {
+          const expiresAt = latest.expires_at > now ? latest.expires_at : now + ttlMs;
+          if (expiresAt !== latest.expires_at) this.q.extendTicket.run(expiresAt, latest.id);
+          return { id: latest.id, preview: JSON.parse(latest.preview), expiresAt,
+            rollsLeft: Math.max(0, dailyLimit - n), reused: true };
+        }
+      }
       if (n >= dailyLimit) return { limited: true, retryAfterMs: Math.max(1000, oldest + DAY - now) };
       const id = crypto.randomUUID();
       this.q.putTicket.run(id, ownerId, JSON.stringify(preview), now, now + ttlMs);

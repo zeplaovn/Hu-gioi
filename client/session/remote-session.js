@@ -202,9 +202,9 @@
       }
       return this.game.s.created ? this.game.s : null;
     }
-    async previewCreation() {
+    async previewCreation({ fresh = false } = {}) {
       if (this.playerId) throw Error('Tài khoản đã có nhân vật.');
-      const ticket = await this.request('/creation/preview', 'POST', {});
+      const ticket = await this.request('/creation/preview', 'POST', fresh ? { fresh: true } : {});
       if (!ticket.ticketId || !ticket.preview) throw Error('Máy chủ chưa cấp được phiếu khởi nguyên.');
       this.ticket = ticket;
       return ticket.preview;

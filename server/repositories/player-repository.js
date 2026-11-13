@@ -5,7 +5,8 @@
 
      getByOwner(ownerId)                      → Promise<record | null>
      get(playerId)                            → Promise<record | null>
-     issueTicket(ownerId, preview, opts)      → Promise<ticket | null>   (null khi vượt giới hạn gieo trong 24 giờ)
+     issueTicket(ownerId, preview, opts)      → Promise<ticket>   ({ limited, retryAfterMs } khi hết lượt gieo mới trong 24 giờ;
+                                                 opts.fresh=false trả lại phiếu chưa dùng gần nhất thay vì gieo mới)
      createWithTicket({ ownerId, ticketId, now, build })
                                               Trong MỘT giao dịch: kiểm ticket (đúng chủ, chưa dùng, chưa hết hạn), chưa có nhân vật,
                                               await build(preview) → record mới, tên chưa bị dùng, ghi record và đánh dấu ticket đã dùng.

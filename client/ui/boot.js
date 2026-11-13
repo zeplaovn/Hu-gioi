@@ -278,12 +278,16 @@
     btn?.classList.add('rolling');
     try {
       // Một ticket máy chủ chứa đồng thời tuổi, chủng tộc và linh căn.
-      const preview = await UI.session.previewCreation();
+      const preview = await UI.session.previewCreation({ fresh: true });
       Object.assign(creation, preview);
       renderCreation();
-      UI.toast('Đã nhận thiên cơ mới từ máy chủ (tối đa 5 lần/24 giờ).', { type: 'info' });
+      const left = UI.session.ticket?.rollsLeft;
+      UI.toast('Đã nhận thiên cơ mới từ máy chủ' +
+        (Number.isInteger(left) ? ' (còn ' + left + ' lượt/24 giờ)' : '') + '.', { type: 'info' });
     } catch (error) {
-      UI.toast('Không thể gieo lại: ' + error.message, { type: 'danger' });
+      UI.toast(error.code === 'RATE_LIMITED'
+        ? 'Đã dùng hết lượt gieo mới trong 24 giờ. Thiên cơ hiện tại vẫn dùng được để tạo đạo thân.'
+        : 'Không thể gieo lại: ' + error.message, { type: error.code === 'RATE_LIMITED' ? 'info' : 'danger' });
     } finally {
       rolling = '';
       btn?.classList.remove('rolling');
