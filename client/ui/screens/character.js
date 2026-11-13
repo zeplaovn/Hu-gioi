@@ -10,6 +10,8 @@
 
   const TABS = [
     { id: 'stats', label: 'Đạo thể', icon: '☯' },
+    { id: 'skills', label: 'Công pháp', icon: '✧' },
+    { id: 'talents', label: 'Thiên phú', icon: '✦' },
     { id: 'roots', label: 'Kinh mạch', icon: '❋' },
     { id: 'bag', label: 'Hành trang', icon: '◈' }
   ];
@@ -62,22 +64,26 @@
     const power = [[S.hp, num(st.HP), 'hp'], [S.mp, num(g.maxMp()), 'mp'], [S.sta, num(st.STA), 'sta'], [S.atk, num(st.ATK), 'atk'],
       [S.def, num(st.DEF), 'def'], [S.spd, num(st.SPD), 'spd'], [S.cp, num(st.CP), 'cp'], [S.crit, pct(st.CRIT), 'crit'],
       [S.critDamage, pct(st.CRIT_DMG), 'critDamage'], [S.dodge, pct(st.DODGE), 'dodge']];
-    const talents = H.TALENT_INFO.map(t => {
-      const v = s.talent?.[t.key] || 0;
-      const name = L ? L.span(t.name, 'talent', t.key) : esc(t.name);
-      return `<li class="talent-chip"><b>${name}</b><span>${v} điểm</span><small>${esc(t.effect(v))}</small></li>`;
-    }).join('');
     const pillCap = .25 * F.realm_exp_total(s.realm);
     return `<div class="char-sheet">
       ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v, key]) => tile(k, v, '', key)).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
-      ${card('Thiên phú khởi nguyên', `<ul class="talent-list">${talents}</ul>`, { eyebrow: 'KHỞI NGUYÊN', cls: 'sheet-talent' })}
       ${card('Tu luyện', `<div class="stat-tiles tiles-4">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>', '', 'qiRate')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}${tile('Tâm ma', num(s.tamMa || 0) + '<small>/ ' + (H.TAM_MA_MAX || 100) + ' · đột phá −' + (Math.min(15, (s.tamMa || 0) * (H.TAM_MA_BREAK_PENALTY || .0015) * 100)).toFixed(1).replace('.', ',') + '%</small>', s.tamMa >= 50 ? 'tile-warn' : '')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
       ${card('Đạo vận · Thiên mệnh', `<div class="stat-tiles tiles-2">${tile('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${tile('Số kiếp đã qua', num(UI.session.pavilion?.rebirths || 0))}</div>
         <p class="info-note">Thiên Mệnh Các cho nâng cấp vĩnh viễn, tối đa 20 cấp.</p>
         <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI', cls: 'sheet-rebirth' })}
-      <details class="char-techniques"${UI.tabState?.character === 'skills' ? ' open' : ''}><summary>Công pháp & bồi dưỡng</summary>${skills()}</details>
       ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ', cls: 'sheet-glossary' })}
     </div>`;
+  }
+
+  /* Tab Thiên phú: điểm khởi nguyên của nhân vật và tác dụng hiện tại của từng điểm. */
+  function talents() {
+    const s = UI.s();
+    const list = H.TALENT_INFO.map(t => {
+      const v = s.talent?.[t.key] || 0;
+      const name = L ? L.span(t.name, 'talent', t.key) : esc(t.name);
+      return `<li class="talent-chip"><b>${name}</b><span>${v} điểm</span><small>${esc(t.effect(v))}</small></li>`;
+    }).join('');
+    return `<div class="char-sheet">${card('Thiên phú khởi nguyên', `<ul class="talent-list">${list}</ul>`, { eyebrow: 'KHỞI NGUYÊN', cls: 'sheet-talent' })}</div>`;
   }
 
   function skills() {
@@ -185,6 +191,52 @@
     return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ') + qualityHtml)}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${row('Nguồn gốc', 'Chưa có dữ liệu nguồn nhận')}${detail}`;
   }
 
+  /* ---------- Cửa sổ nổi: trang bị, công pháp, chi tiết vật phẩm ---------- */
+  const NO_ACTIVATE = ['BT-900', 'BT-901'];
+  const popup = (title, eyebrow, body) => UI.modal(title, `<div class="pop">${body}</div>`, null, 'Đóng', eyebrow, { vfx: false });
+  const qualityOf = x => F.SUBPHAM[x.sub];
+  const popCell = (key, from, note = '') => {
+    const x = H.item(key), q = qualityOf(x), qClass = L ? ' ' + L.keyClass('quality', q) : '';
+    return `<button type="button" class="pop-item inventory-cell${qClass}" data-select="${esc(key)}" data-popup="1" data-from="${from}" data-sub="${x.sub}" aria-label="${esc(x.name)} · ${q} phẩm${note ? ' · ' + esc(note) : ''}">${img(key)}<span class="pop-name">${esc(x.name)}</span>${note ? `<span class="pop-note">${esc(note)}</span>` : ''}</button>`;
+  };
+
+  function itemDetail(key, back) {
+    const s = UI.s(), g = UI.g(), x = H.item(key);
+    if (!x) return empty('Vật phẩm không còn tồn tại.');
+    const equipped = s.equipment.includes(key), learned = key in s.learned, active = s.activeManuals.includes(key);
+    const usable = ['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind) || (x.kind === 'HERB' && x.design?.['cách dùng']?.includes('ăn trực tiếp'));
+    let primary = '';
+    if (x.kind === 'EQ') primary = btn(equipped ? 'Tháo' : 'Trang bị', 'equip', codeAttr(key));
+    else if (x.kind === 'BT') primary = learned ? (NO_ACTIVATE.includes(x.code) ? '<span class="gold">Đã học bí tịch nghề</span>' : btn(active ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))) : btn('Lĩnh ngộ', 'learn', codeAttr(key));
+    else primary = btn(usable ? 'Sử dụng' : 'Công dụng', usable ? 'consume' : 'info', codeAttr(key));
+    const sell = g.count(key) > 0 ? btn('Bán 1', 'sell', codeAttr(key), equipped && g.count(key) <= 1, 'btn-outline') : '';
+    const back_ = back ? `<button type="button" class="btn btn-outline" data-act="${back}">‹ Quay lại</button>` : '';
+    const mastery = learned ? row('Thuần thục', pct(s.learned[key])) : '';
+    return `<div class="pop-detail">${img(key, 'detail-img')}${itemDescription(key)}${mastery}${g.count(key) > 0 ? row('Giá bán', moneyHTML(F.shop_sell_price(g.price(key)))) : ''}
+      <div class="detail-actions">${back_}${primary}${sell}</div></div>`;
+  }
+
+  function gearWindow() {
+    const s = UI.s(), g = UI.g();
+    const worn = Array.from({ length: 4 }, (_, i) => {
+      const key = s.equipment[i];
+      return key ? popCell(key, 'gearOpen', 'Đang mặc') : `<div class="pop-item pop-empty" aria-label="Ô pháp bảo ${i + 1} trống"><span>＋</span><span class="pop-name">Ô ${i + 1}</span></div>`;
+    }).join('');
+    const spare = Object.keys(s.bag).map(H.item).filter(x => x && x.kind === 'EQ' && g.count(x.key) > (s.equipment.includes(x.key) ? 1 : 0))
+      .sort((a, b) => a.tier - b.tier || a.code.localeCompare(b.code) || a.sub - b.sub)
+      .map(x => popCell(x.key, 'gearOpen', '×' + (g.count(x.key) - (s.equipment.includes(x.key) ? 1 : 0)))).join('');
+    popup('Pháp bảo', 'ĐẠO THÂN', `<h4 class="pop-title">Đang trang bị · ${s.equipment.length}/4</h4><div class="pop-grid">${worn}</div>
+      <h4 class="pop-title">Trong túi trữ vật</h4><div class="pop-grid">${spare || empty('Không còn pháp bảo nào trong túi.')}</div>`);
+  }
+
+  function manualWindow() {
+    const s = UI.s();
+    const keys = Object.keys(s.learned).filter(k => H.item(k));
+    const cells = keys.map(k => popCell(k, 'manualOpen', (s.activeManuals.includes(k) ? 'Đang vận · ' : '') + pct(s.learned[k]))).join('');
+    popup('Công pháp', 'TRUYỀN THỪA', `<h4 class="pop-title">Đã lĩnh ngộ · đang vận ${s.activeManuals.length}/4</h4>
+      <div class="pop-grid">${cells || empty('Chưa lĩnh ngộ công pháp nào. Mở một bí tịch trong Hành trang để lĩnh ngộ.')}</div>`);
+  }
+
   function bagOrder() {
     const player = UI.session?.playerId;
     if (!player) return [];
@@ -200,31 +252,25 @@
     const s = UI.s(), g = UI.g(), v = UI.view;
     const slots = Array.from({ length: 4 }, (_, i) => {
       const key = s.equipment[i], item = key && H.item(key);
-      return `<button type="button" class="gear-slot ${key ? '' : 'empty'} gear-corner-${i}" data-gear-drop="${i}" ${key ? `data-act="equip" ${codeAttr(key)}` : ''} aria-label="${key ? 'Tháo ' + esc(item.name) : 'Ô pháp bảo ' + (i + 1) + ' trống'}">${key ? img(key) : '<span>＋</span>'}<small>${key ? esc(item.name) : 'Ô ' + (i + 1)}</small></button>`;
+      return `<button type="button" class="gear-slot ${key ? '' : 'empty'} gear-corner-${i}" data-gear-drop="${i}" data-act="gearOpen" aria-label="${key ? 'Mở cửa sổ pháp bảo, đang mặc ' + esc(item.name) : 'Ô pháp bảo ' + (i + 1) + ' trống, mở cửa sổ pháp bảo'}">${key ? img(key) : '<span>＋</span>'}<small>${key ? esc(item.name) : 'Ô ' + (i + 1)}</small></button>`;
     }).join('');
     /* Hành trang chứa cả các ô trang bị và toàn bộ vật phẩm trong túi. */
     const xs = Object.keys(s.bag).map(H.item).filter(x => x && g.count(x.key) > (s.equipment.includes(x.key) ? 1 : 0))
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
     const order = bagOrder();
     const visible = xs.slice().sort((a,b) => { const ai=order.indexOf(a.key), bi=order.indexOf(b.key); return (ai < 0 ? Number.MAX_SAFE_INTEGER : ai) - (bi < 0 ? Number.MAX_SAFE_INTEGER : bi); });
-    if (!xs.some(x => x.key === v.selected)) v.selected = '';
-    const x = H.item(v.selected), usable = x && (['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind)||(x.kind==='HERB'&&x.design?.['cách dùng']?.includes('ăn trực tiếp')));
-    const main = x ? `${img(v.selected, 'detail-img')}<h3 class="detail-title">${esc(x.name)}</h3>${itemDescription(v.selected)}${row('Giá bán', moneyHTML(F.shop_sell_price(g.price(v.selected))))}
-      <div class="detail-actions">${btn(x.kind === 'EQ' ? (s.equipment.includes(v.selected) ? 'Tháo' : 'Trang bị') : x.kind === 'BT' ? 'Lĩnh ngộ' : usable ? 'Sử dụng' : 'Công dụng',
-        x.kind === 'EQ' ? 'equip' : x.kind === 'BT' ? 'learn' : usable ? 'consume' : 'info', codeAttr(v.selected))}${btn('Bán 1', 'sell', codeAttr(v.selected), s.equipment.includes(v.selected), 'btn-outline')}</div>` : empty('Chọn một vật phẩm.');
     const manuals = Array.from({ length: 4 }, (_, i) => {
       const key = s.activeManuals[i];
-      return key ? `<button type="button" class="manual-gear-slot" data-act="activate" ${codeAttr(key)} aria-label="Dừng vận hành ${esc(H.item(key).name)}">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
-        : `<button type="button" class="manual-gear-slot empty" data-go="character:skills" aria-label="Ô công pháp ${i + 1} trống"><span>＋</span><small>Ô ${i + 1}</small></button>`;
+      return key ? `<button type="button" class="manual-gear-slot" data-act="manualOpen" aria-label="Mở cửa sổ công pháp, đang vận ${esc(H.item(key).name)}">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
+        : `<button type="button" class="manual-gear-slot empty" data-act="manualOpen" aria-label="Ô công pháp ${i + 1} trống, mở cửa sổ công pháp"><span>＋</span><small>Ô ${i + 1}</small></button>`;
     }).join('');
     return `<div class="inventory-scene-layout">
-      <div class="inventory-hero-column"><section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Kéo pháp bảo vào ô trống hoặc chọn rồi bấm Trang bị; ô trống đầu tiên sẽ được dùng.</p></section><section class="manual-gear-panel"><div><span class="eyebrow gold">TRUYỀN THỪA</span><h3>Công pháp đang vận · ${s.activeManuals.length}/4</h3></div><div class="manual-gear-grid">${manuals}</div></section></div>
+      <div class="inventory-hero-column"><section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Chạm ô pháp bảo để mở cửa sổ trang bị, hoặc kéo pháp bảo vào ô trống.</p></section><section class="manual-gear-panel"><div><span class="eyebrow gold">TRUYỀN THỪA</span><h3>Công pháp đang vận · ${s.activeManuals.length}/4</h3></div><div class="manual-gear-grid">${manuals}</div></section></div>
       <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><p class="rarity-legend">${F.SUBPHAM.map(q => L ? L.span(q, 'quality', q) : esc(q)).join('')}</p><div class="inventory-items">${visible.map(i => {
         const quality = F.SUBPHAM[i.sub];
         const qClass = L ? ' ' + L.keyClass('quality', quality) : '';
-        return `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}${qClass}" data-select="${esc(i.key)}" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${quality} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key) - (s.equipment.includes(i.key) ? 1 : 0))}</span><span class="inv-sub" aria-hidden="true">${quality}</span></button>`;
+        return `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}${qClass}" data-select="${esc(i.key)}" data-popup="1" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${quality} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key) - (s.equipment.includes(i.key) ? 1 : 0))}</span><span class="inv-sub" aria-hidden="true">${quality}</span></button>`;
       }).join('') || empty('Túi trữ vật đang trống.')}</div></section>
-      <section class="card item-detail inventory-detail" aria-live="polite">${main}</section>
     </div>`;
 
   }
@@ -232,11 +278,21 @@
   UI.register({
     id: 'character', label: 'Nhân vật', icon: 'ICON-MENU-003', eyebrow: 'ĐẠO THỂ',
     tabs: TABS,
-    render: tab => header() + tabs(TABS, tab) + `<div class="screen-body">${{ stats, skills, roots, bag }[tab]()}</div>`,
+    render: tab => header() + tabs(TABS, tab) + `<div class="screen-body">${{ stats, skills, talents, roots, bag }[tab]()}</div>`,
     signature: () => {
       const s = UI.s();
       return [s.realm, s.stage, UI.session.pavilion?.balance || 0, s.meta?.points || 0, Object.keys(s.meta?.achievements || {}).length, ...s.rootCraft.essence, ...s.rootCraft.levels, s.sect.id].join('|');
     }
+  });
+
+  /* Mọi thao tác trong cửa sổ nổi chạy được dù cửa sổ đang mở; shell tự đóng cửa sổ trước khi chạy. */
+  ['itemPop', 'gearOpen', 'manualOpen', 'equip', 'learn', 'activate', 'consume', 'sell', 'info'].forEach(name => UI.modalActions?.add(name));
+  UI.action('gearOpen', () => { gearWindow(); return UI.KEEP; });
+  UI.action('manualOpen', () => { manualWindow(); return UI.KEEP; });
+  UI.action('itemPop', (el, d) => {
+    if (!H.item(d.select)) return UI.KEEP;
+    popup(H.item(d.select).name, d.from === 'manualOpen' ? 'CÔNG PHÁP' : d.from === 'gearOpen' ? 'PHÁP BẢO' : 'VẬT PHẨM', itemDetail(d.select, d.from));
+    return UI.KEEP;
   });
 
   let draggedEquip = '';

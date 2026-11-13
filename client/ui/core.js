@@ -210,6 +210,7 @@
   UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
   UI.screens = {};
   UI.actions = {};
+  UI.modalActions = new Set(); /* hành động cho phép chạy khi cửa sổ nổi đang mở (shell đóng cửa sổ trước) */
   UI.tabState = {};
   UI.current = 'idle';
   UI.KEEP = Symbol('keep');

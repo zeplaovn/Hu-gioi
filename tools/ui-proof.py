@@ -19,6 +19,7 @@ CASES = [
     ("world-auction", "world", "auction"),
     ("character-stats", "character", "stats"),
     ("character-skills", "character", "skills"),
+    ("character-talents", "character", "talents"),
     ("character-roots", "character", "roots"),
     ("character-bag", "character", "bag"),
     ("craft-dan", "craft", "dan"),
@@ -209,13 +210,6 @@ def select_tab(page, section, tab):
 
 def set_tab(page, section, tab):
     if tab is None:
-        return
-    if section == 'character' and tab == 'skills':
-        # Công pháp đã chuyển từ tab riêng vào mục mở rộng của trang Đạo thể.
-        select_tab(page, 'character', 'stats')
-        details = page.locator('.win.desktop-window[data-window="character"] .char-techniques')
-        if details.get_attribute('open') is None:
-            details.locator('summary').click()
         return
     selector = (f'[data-act="sectPanel"][data-panel="{tab}"]' if section == 'sect'
                 else f'.tabbar [data-tab="{tab}"]')

@@ -1907,7 +1907,10 @@
       return;
     }
     if (name === 'resetAfterDeath') { await safe(() => UI.resetAfterDeath?.()); return; }
-    if (!$('modalLayer').hidden) return;
+    if (!$('modalLayer').hidden) {
+      if (!UI.modalActions.has(name)) return;
+      closeModal();
+    }
     if (store.locked) { toast('Một tab khác đang chơi. Đóng tab kia rồi tải lại trang.'); return; }
     if (trib.pageOpen) {
       if (name === 'tribStart') { await safe(() => trib.start()); return; }
@@ -1984,6 +1987,7 @@
       return;
     }
     const select = e.target.closest('[data-select]');
+    if (select?.dataset.popup !== undefined) { safe(() => run('itemPop', select)); return; }
     if (select) { UI.view.selected = select.dataset.select; refresh(); return; }
     const b = e.target.closest('[data-act]');
     if (b) safe(() => run(b.dataset.act, b));
