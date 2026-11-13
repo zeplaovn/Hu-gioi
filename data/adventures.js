@@ -63,7 +63,7 @@
   const sectDiscipleForRoot = type => {
     const id = type === 'Ngụy' || type === 'Tứ hành' ? 'tap_dich'
       : type === 'Tam hành' ? 'ngoai_mon' : type === 'Song' ? 'noi_mon'
-        : ['Thiên','Dị','Âm Dương','Hỗn Độn'].includes(type) ? 'than_truyen' : null;
+        : ['Thiên','Dị','Hỗn Độn'].includes(type) ? 'than_truyen' : null;
     return id ? SECT_DISCIPLES[id] : null;
   };
   const SECT_RANKS = [

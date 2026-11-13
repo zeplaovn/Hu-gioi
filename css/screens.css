@@ -291,7 +291,7 @@ body.in-tribulation{overflow:hidden}
 .sect-rite{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:space-between;min-height:clamp(380px,58vh,660px);overflow:hidden;margin:14px 0;border:1px solid #a89162;border-radius:18px;background:linear-gradient(180deg,#07130dbb 0%,#0a130c12 35%,#07110bcc 100%),url('../media/assets/world/bg/sect-initiation.webp') center/cover no-repeat;box-shadow:0 18px 55px #0008;color:#f1ead7}
 .sect-rite-top{padding:clamp(16px,3vw,30px);text-shadow:0 2px 12px #000}.sect-rite-top h2{font:700 clamp(26px,4vw,44px)/1.1 var(--serif);margin:6px 0;color:#f4ddaa}.sect-rite-top p{margin:0;color:#e1e6d8;font-size:14px}
 .sect-rite-prompt,.sect-rite-result{align-self:center;text-align:center;text-shadow:0 2px 8px #000;padding:12px 20px;background:#0c1a12b8;border:1px solid #d7bc7b88;border-radius:12px;backdrop-filter:blur(5px)}
-.sect-rite-result{display:flex;flex-direction:column;gap:4px;max-width:min(90%,360px)}.sect-rite-result span{font-size:10px;letter-spacing:.15em;color:#dcc88f}.sect-rite-result strong{font:700 23px var(--serif);color:#f9e4ad}.sect-rite-result b{font-size:18px;color:#a9e7c2}.sect-rite-result small{font-size:12px;color:#e2e6d8}
+.sect-rite-result{display:flex;flex-direction:column;gap:4px;max-width:min(90%,360px)}.sect-rite-result>span{font-size:10px;letter-spacing:.15em;color:#dcc88f}.sect-rite-result strong{font:700 23px var(--serif)}.sect-rite-result>b{font-size:18px}.sect-rite-result small{font-size:12px;color:#e2e6d8}
 .sect-rite-bottom{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:clamp(14px,2vw,24px)}.sect-rite-guide{display:flex;align-items:center;gap:10px;max-width:360px}.sect-rite-guide img{width:58px;height:58px;object-fit:cover;border-radius:50%;border:2px solid #b99d65;background:#18281d}.sect-rite-guide p{font-size:13px;line-height:1.4;margin:0;text-shadow:0 2px 6px #000}.sect-rite-bottom .btn{min-height:44px}
 @media(max-width:600px){.sect-rite{min-height:460px;background-position:center}.sect-rite-top{padding:16px}.sect-rite-bottom{align-items:stretch;flex-direction:column}.sect-rite-guide img{width:44px;height:44px}.sect-rite-bottom .btn{width:100%}}
 @media(prefers-reduced-motion:no-preference){.sect-rite-result{animation:rite-reveal .5s ease-out}@keyframes rite-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}}
@@ -356,8 +356,8 @@ body.in-tribulation{overflow:hidden}
 .root-class{padding:9px 0;border-top:1px solid #3a5c4a}
 .root-class:first-child{border-top:0;padding-top:0}
 .root-class>b{display:block;color:var(--gold);margin-bottom:5px}
-.root-chip{display:inline-block;padding:2px 9px;border:1px solid #47705a;border-radius:99px;font-size:13px;color:#ced7d1;background:#141e19}
-.root-chip.is-current{border-color:var(--gold);color:#ffe08b;background:#18251f;font-weight:700}
+.root-chip{display:inline-block;padding:2px 9px;border:1px solid #47705a;border-radius:99px;font-size:13px;background:#141e19}
+.root-chip.is-current{border-color:var(--gold);background:#18251f;font-weight:700}
 .root-sep{margin:0 5px;color:var(--dim)}
 
 /* Thanh lôi kiếp / việc nền theo Hu-gioi */
@@ -506,12 +506,6 @@ body.in-tribulation{overflow:hidden}
 .char-techniques{grid-column:1/-1;padding:16px;border:1px solid #426b54;border-radius:14px;background:#101c16}
 .char-techniques>summary{color:#f3d699;font:700 18px var(--serif);cursor:pointer}
 .char-techniques[open]>summary{margin-bottom:15px}
-.stat-tile.stat-tone-0{border-color:#427f69;background:linear-gradient(145deg,#163c30,#101b16)}
-.stat-tile.stat-tone-0 b{color:#7fe7b0}.stat-tile.stat-tone-1{border-color:#3f748a;background:linear-gradient(145deg,#173945,#101c1e)}
-.stat-tile.stat-tone-1 b{color:#86d9f3}.stat-tile.stat-tone-2{border-color:#83703e;background:linear-gradient(145deg,#45391e,#1f1c13)}
-.stat-tile.stat-tone-2 b{color:#f5d280}.stat-tile.stat-tone-3{border-color:#8c5546;background:linear-gradient(145deg,#4a291f,#211713)}
-.stat-tile.stat-tone-3 b{color:#f4a889}.stat-tile.stat-tone-4{border-color:#756187;background:linear-gradient(145deg,#352844,#1a171e)}
-.stat-tile.stat-tone-4 b{color:#d8b5ef}
 .inventory-scene-layout{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(280px,1.1fr);gap:14px;align-items:start}
 .gear-stage{position:relative;min-height:420px;border:1px solid #987b4f;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 62%,#416853 0,#172b20 44%,#0b1510 100%);box-shadow:inset 0 0 55px #030a07a6}
 .gear-stage-heading{position:absolute;z-index:1;top:17px;left:18px}.gear-stage-heading h3{margin:3px 0;color:#f4dda9;font:700 21px var(--serif)}
@@ -532,9 +526,8 @@ body.in-tribulation{overflow:hidden}
 .manual-gear-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .manual-gear-slot{min-width:0;min-height:70px;border:1px solid #8a7d57;border-radius:9px;background:#102018;color:#eadcbf;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
 .manual-gear-slot img{height:42px;width:42px;object-fit:contain}.manual-gear-slot small{font-size:10px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.manual-gear-slot.empty span{font-size:22px;color:#a7c1ae}
-.rarity-legend{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:11px}.rarity-legend span:nth-child(1){color:#c5d4cc}.rarity-legend span:nth-child(2){color:#70d9a4}.rarity-legend span:nth-child(3){color:#85bfff}.rarity-legend span:nth-child(4){color:#f3ca72}
-.inventory-cell[data-sub="0"]{--q:#b0c0b4}.inventory-cell[data-sub="1"]{--q:#63d6a3}.inventory-cell[data-sub="2"]{--q:#7ab6f0}.inventory-cell[data-sub="3"]{--q:#e6c164}
-.inventory-cell{border-color:var(--q,#58735f)}
+.rarity-legend{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:11px}
+.inventory-cell{border-color:var(--label-color,#58735f)}
 /* Cây và ô đất nằm trực tiếp trên nền vườn; bảng chăm sóc chỉ mở khi cần. */
 .garden-field{min-height:500px;padding:120px 12% 24px;background-position:center;background-size:cover}
 .garden-field .plot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18%;align-items:end}

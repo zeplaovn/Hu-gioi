@@ -1,7 +1,7 @@
 /* Xem giao diện chính khi engine chưa sẵn sàng. Không tạo phiên hay truy cập bản lưu. */
 (function (root) {
   'use strict';
-  const UI = root.HU_UI, H = root.HU_GAME, A = root.HU_ASSETS;
+  const UI = root.HU_UI, H = root.HU_GAME, A = root.HU_ASSETS, L = root.HU_LABELS;
   if (!UI || !H || !A) return;
   const $ = id => document.getElementById(id);
   const MENU = ['idle', 'combat', 'craft', 'character', 'world', 'settings'];
@@ -104,7 +104,10 @@
     text('playerName', name);
     text('stageHeroName', name);
     text('playerRealm', 'Luyện Khí');
-    text('playerRoot', H.rootLabel(creation.rootType, creation.rootSub).toUpperCase());
+    const rootText = H.rootLabel(creation.rootType, creation.rootSub).toUpperCase();
+    $('playerRoot').innerHTML = !L ? rootText
+      : creation.rootType === 'Dị' && H.DI_LINH_CAN[creation.rootSub] ? L.span(rootText, 'element', creation.rootSub)
+        : L.span(rootText, 'root', creation.rootType);
     $('avatar').src = A.heroPortrait(creation.gender, 0);
     $('heroSprite').src = A.heroSrc(creation.gender, 0);
     $('sceneBackdrop').style.backgroundImage = 'url("' + A.zoneBg(0) + '")';

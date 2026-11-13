@@ -30,14 +30,24 @@ test('Edge API gắn cảnh giới và cờ admin do máy chủ xác định, kh
 
 test('Tên chat dạng "Tên • Cảnh giới", admin "Admin • Hư Giới Chi Chủ", đủ 14 màu và hiệu ứng', () => {
   const ui = read('client/ui/screens/chat.js'), css = read('css/chat.css');
+  const labels = require('../client/ui/labels.js');
   assert.match(ui, /Admin • Hư Giới Chi Chủ/);
   assert.match(ui, /message\.admin === true/);
   assert.match(ui, /Math\.max\(0, Math\.min\(13, message\.realm\)\)/);
+  assert.match(ui, /L\.apply\(tag, 'realm', realm/);
+  assert.match(ui, /L\.apply\(tag, 'role', 'admin'/);
   assert.doesNotMatch(ui, /innerHTML\s*=[^;]*message\./);
-  for (let i = 0; i < 14; i++) assert.match(css, new RegExp('\\.chat-realm\\.realm-' + i + '\\b'), 'realm-' + i);
-  assert.match(css, /\.chat-name\.chat-admin/);
-  assert.match(css, /@keyframes admin-sweep/);
-  assert.match(css, /prefers-reduced-motion:reduce\)\{[^}]*\.chat-name\.chat-admin\{animation:none\}/);
+  // Màu cảnh giới và admin do HU_LABELS sinh; chat.css không còn bảng màu thứ hai.
+  const generated = labels.buildCss();
+  for (let i = 0; i < 14; i++) {
+    assert.match(generated, new RegExp('\\.hu-label--realm-' + i + '\\{'), 'realm-' + i);
+  }
+  assert.match(generated, /\.hu-label\.is-admin\{/);
+  assert.match(generated, /@keyframes hu-label-admin-sweep/);
+  assert.match(generated, /prefers-reduced-motion:reduce\)\{[^}]*\.is-admin\{animation:none!important\}/);
+  assert.doesNotMatch(css, /\.chat-realm\.realm-\d/);
+  assert.doesNotMatch(css, /@keyframes admin-sweep/);
+  assert.match(css, /\.chat-name\.chat-admin\{/);
 });
 
 test('tên và chat chỉ nhận chữ ASCII, chữ tiếng Việt, chữ số (client, Edge API, DB)', () => {

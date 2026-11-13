@@ -2,6 +2,7 @@
 (function (root) {
   'use strict';
   const UI = root.HU_UI, { $, esc } = UI.kit;
+  const L = root.HU_LABELS;
   const session = new root.HU_CHAT_SESSION.ChatSession();
   let draft = '', sending = false, error = '', pending = null, opened = false, journalOpen = false, journalMarkup = '';
   const CHANNELS = [
@@ -76,23 +77,30 @@
     if ($('chatLength')) $('chatLength').textContent = Array.from(draft).length + '/' + MAX_TEXT;
   }
 
-  /* Tên hiển thị: "Tên • Cảnh giới" (cảnh giới tô màu theo bậc); admin do máy chủ xác nhận hiện
-     "Admin • Hư Giới Chi Chủ". Chỉ dùng textContent; lớp CSS lấy từ số nguyên đã kẹp 0–13. */
+  /* Tên hiển thị: "Tên • Cảnh giới" (màu lấy từ HU_LABELS); admin do máy chủ xác nhận hiện
+     "Admin • Hư Giới Chi Chủ". Chỉ dùng textContent; cảnh giới kẹp 0–13 trước khi tra nhãn. */
   function fillName(node, message, mine) {
     node.textContent = '';
     if (message.admin === true) {
       node.className = 'chat-name chat-admin';
-      node.append('Admin • Hư Giới Chi Chủ');
+      const tag = document.createElement('span');
+      tag.textContent = 'Admin • Hư Giới Chi Chủ';
+      if (L) L.apply(tag, 'role', 'admin', { variant: 'name' });
+      node.append(tag);
     } else {
       node.className = 'chat-name';
-      node.append(String(message.name || 'Vô danh'));
+      const who = document.createElement('span');
+      who.textContent = String(message.name || 'Vô danh');
+      if (L) L.apply(who, 'role', 'player', { variant: 'name' });
+      node.append(who);
       const realm = Number.isInteger(message.realm) ? Math.max(0, Math.min(13, message.realm)) : -1;
       const label = realm >= 0 ? REALM_NAMES()[realm] : '';
       if (label) {
         node.append(' • ');
         const tag = document.createElement('span');
-        tag.className = 'chat-realm realm-' + realm;
+        tag.className = 'chat-realm';
         tag.textContent = label;
+        if (L) L.apply(tag, 'realm', realm, { variant: 'name' });
         node.append(tag);
       }
     }

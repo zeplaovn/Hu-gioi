@@ -1,7 +1,7 @@
 /* Phân loại linh căn (tài liệu B2): ba nhóm tách bạch.
    - Ngũ hành cơ bản: Ngụy (tạp) < Tứ hành < Tam hành < Song < Thiên. Thiên = MỘT hệ thuần, không biến thể.
    - Dị linh căn: biến thể cao cấp của một hệ ngũ hành (Băng/Lôi/Phong/Độc), có thế mạnh riêng. KHÁC Thiên linh căn.
-   - Chí tôn: Âm Dương (gieo khi tạo nhân vật) và Hỗn Độn (không gieo bẩm sinh).
+   - Chí tôn: Hỗn Độn (không gieo bẩm sinh, chỉ thức tỉnh sau lôi kiếp).
    Dữ liệu thuần, không DOM/RNG; luật nằm ở engine/rules. */
 (function (root) {
   'use strict';
@@ -33,14 +33,13 @@
     'Song': { group: 'ngu_hanh', order: 3, how: 'Hai hệ đạt từ 50 điểm', desc: 'Tốc độ nhanh, dễ vượt các bình cảnh nhỏ.' },
     'Thiên': { group: 'ngu_hanh', order: 4, how: 'Đúng một hệ thuần', desc: 'Một hệ ngũ hành tinh thuần, hấp thụ linh khí cực nhanh. Không có biến thể hay thế mạnh riêng như Dị.' },
     'Dị': { group: 'di', order: 0, how: 'Một hệ gốc biến dị: Băng, Lôi, Phong hoặc Độc', desc: 'Khác Thiên linh căn nhờ sở trường đặc thù của nguyên tố biến dị.' },
-    'Âm Dương': { group: 'chi_ton', order: 0, how: 'Có thể thức tỉnh khi lập đạo thân (cực hiếm)', desc: 'Cân bằng hai thái cực, uy lực bộc phát vượt trội.' },
-    'Hỗn Độn': { group: 'chi_ton', order: 1, how: 'Chỉ có thể thức tỉnh sau khi vượt lôi kiếp', desc: 'Giữ các hệ thành phần ban đầu; khắc ngũ hành và dị, không bị khắc.' }
+    'Hỗn Độn': { group: 'chi_ton', order: 0, how: 'Chỉ có thể thức tỉnh sau khi vượt lôi kiếp', desc: 'Giữ các hệ thành phần ban đầu; khắc ngũ hành và dị, không bị khắc.' }
   };
 
   /* Tên đầy đủ: Dị theo biến thể ("Băng Linh Căn"), các loại đặc biệt viết hoa, còn lại viết thường. */
   function label(type, sub) {
     if (type === 'Dị') return (DI_LINH_CAN[sub] ? DI_LINH_CAN[sub].name + ' ' : 'Dị ') + 'Linh Căn';
-    return ['Âm Dương', 'Hỗn Độn'].includes(type) ? type + ' Linh Căn' : type + ' linh căn';
+    return type === 'Hỗn Độn' ? type + ' Linh Căn' : type + ' linh căn';
   }
   /* Hệ gốc được ngũ hành nâng lên 50+ của Dị (dùng khi bản lưu cũ chưa có rootSub). */
   function diFromRoots(roots) {

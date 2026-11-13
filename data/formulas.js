@@ -9,8 +9,8 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const sum=xs=>xs.reduce((a,b)=>a+b,0);
 const range=n=>Array.from({length:n},(_,i)=>i);
 const F={...D,BOLTS};
-/* Hệ số tốc tu mới; Âm Dương giữ tốc độ tương đối cũ. */
-F.LINH_CAN_RATE={...D.LINH_CAN_RATE,'Ngụy':.6,'Tứ hành':.8,'Tam hành':1,'Song':1.2,'Thiên':1.5,'Dị':2,'Âm Dương':3,'Hỗn Độn':3};
+/* Hệ số tốc tu mới. */
+F.LINH_CAN_RATE={...D.LINH_CAN_RATE,'Ngụy':.6,'Tứ hành':.8,'Tam hành':1,'Song':1.2,'Thiên':1.5,'Dị':2,'Hỗn Độn':3};
 F.LINH_CAN_COMBAT={...D.LINH_CAN_COMBAT,'Dị':1,'Hỗn Độn':1};
 F.stage_time=(r,s)=>P.T0*(1+r)**P.T_POW*(P.W_MIN+(P.W_MAX-P.W_MIN)*(STAGES[r]>1?s/(STAGES[r]-1):.5));
 F.base_rate=r=>P.R0*P.K_RATE**r;

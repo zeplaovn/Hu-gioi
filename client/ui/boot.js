@@ -3,7 +3,7 @@
 (function (root) {
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
-  const UI = root.HU_UI;
+  const UI = root.HU_UI, L = root.HU_LABELS;
   const { $, $$, esc, num, money, moneyHTML, pct, duration } = UI.kit;
   const { ELEMENTS } = UI.data;
   const store = UI.store;
@@ -32,6 +32,13 @@
   const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   const blankTalent = () => Object.fromEntries(TALENT_KEYS.map(k => [k, 0]));
   const rootLabel = (type, sub) => H.rootLabel(type, sub);
+  const rootLabelHtml = (type, sub, { variant = 'text' } = {}) => {
+    const text = H.rootLabel(type, sub);
+    if (!L) return esc(text);
+    return type === 'Dị' && H.DI_LINH_CAN[sub]
+      ? L.span(text, 'element', sub, { variant })
+      : L.span(text, 'root', type, { variant });
+  };
   const pctText = v => (v > 0 ? '+' : '') + Math.round(v * 100) + '%';
 
   const freshCreation = () => ({
@@ -112,7 +119,7 @@
       '<div class="root-tier" role="listitem"><span class="root-tier-name">Chí tôn</span><span class="root-tier-list">' +
         ['Hỗn Độn'].map(n => '<i class="' + cur(n).trim() + '">' + n + '</i>').join('<s>·</s>') + '</span></div>' +
       '</div>';
-    return '<div class="info-title">' + esc(rootLabel(type, sub)) +
+    return '<div class="info-title">' + rootLabelHtml(type, sub, { variant: 'badge' }) +
       ' <span class="root-group root-group-' + esc(info.group) + '">' + esc(group ? group.name : '') + '</span></div>' +
       '<div class="root-rate-line">tốc độ hấp thụ linh khí ×' + rate + (combat > 1 ? ' · chiến lực ×' + combat : '') + (trib > 1 ? ' · chịu kiếp ×' + trib : '') + '</div>' +
       '<div class="root-rate-line">Độ tinh khiết <b class="gold">' + (pv ? pv.purity : 0) + '%</b> (điểm trung bình các hệ chính)</div>' +
@@ -252,7 +259,7 @@
     $('ageValue').textContent = creation.age + ' tuổi';
     $('raceValue').innerHTML = '<span class="field-main">' + esc(H.raceName(creation.race)) + '</span>';
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
-    $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + '</span>';
+    $('rootValue').innerHTML = '<span class="field-main">' + rootLabelHtml(creation.rootType, creation.rootSub) + '</span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
     renderShop();
     renderStats();

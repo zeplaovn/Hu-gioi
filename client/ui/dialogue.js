@@ -1,7 +1,7 @@
 /* HƯ GIỚI · Khung hội thoại và Thiên Thư, chỉ đọc state và gửi UI.command. */
 (function (root) {
   'use strict';
-  const H = root.HU_GAME, UI = root.HU_UI;
+  const H = root.HU_GAME, UI = root.HU_UI, L = root.HU_LABELS;
   const { esc } = UI.kit;
   const tiers = [['stranger', 0, 'Sơ giao'], ['familiar', 20, 'Quen biết'], ['confidant', 55, 'Tri kỷ']];
   let panel = null, current = null, returnFocus = null;
@@ -76,8 +76,9 @@
         (locked ? 'Cần thiện cảm ' + min : label + (UI.s().story.read[scene.id] ? ' · Đã nghe' : ' · Chưa nghe')) +
         '</small></button>';
     }).join('');
+    const npcName = L ? L.span(npc['tên NPC'], 'role', 'npc', { variant: 'name' }) : esc(npc['tên NPC']);
     show('<div class="hu-dialogue-topic-head">' + portrait +
-      '<div><span class="eyebrow gold">KỲ NHÂN HẠ GIỚI</span><h2>' + esc(npc['tên NPC']) +
+      '<div><span class="eyebrow gold">KỲ NHÂN HẠ GIỚI</span><h2>' + npcName +
       '</h2><p>' + esc(npc['bối cảnh']) + '</p><small>Thiện cảm ' + affinity + '/100</small></div></div>' +
       '<p class="hu-dialogue-hint">Chọn chủ đề để hỏi chuyện. Những chuyện thầm kín chỉ mở khi đôi bên đủ tin cậy.</p>' +
       '<div class="hu-dialogue-topics">' + topics + '</div>');
@@ -107,12 +108,15 @@
     const npc = chapter ? null : npcById(npcId);
     const line = chapter ? { who: 'narrator', text: entry.text } : entry.lines[index];
     const who = line.who === 'player' ? UI.s().name : line.who === 'npc' ? npc['tên NPC'] : 'Thiên Thư';
+    const whoHtml = !L ? esc(who)
+      : line.who === 'player' ? L.span(who, 'role', 'player', { variant: 'name' })
+        : line.who === 'npc' ? L.span(who, 'role', 'npc', { variant: 'name' }) : esc(who);
     const portrait = npc && line.who === 'npc' ? '<img class="hu-dialogue-speaker" src="' +
       esc(npc.ảnh) + '" alt="" loading="lazy" decoding="async">' : '';
     const heading = chapter ? '<span class="eyebrow gold">THIÊN THƯ</span><h2>' + esc(entry.title) + '</h2>' : '';
     const back = chapter ? '' : '<button type="button" class="btn btn-outline" data-dialogue="topics">Chủ đề</button>';
     show(heading + '<div class="hu-dialogue-line">' + portrait + '<div class="hu-dialogue-speech">' +
-      '<b>' + esc(who) + '</b><p>' + esc(line.text) + '</p></div></div>' +
+      '<b>' + whoHtml + '</b><p>' + esc(line.text) + '</p></div></div>' +
       '<div class="hu-dialogue-actions"><span class="hu-dialogue-progress">' +
       (chapter ? 'Một trang Thiên Thư' : 'Lời ' + (index + 1) + '/' + entry.lines.length) +
       '</span>' + back + '<button type="button" class="btn btn-gold" data-dialogue="next">' +

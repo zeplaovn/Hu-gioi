@@ -198,50 +198,12 @@ body:has(#game.page-open) .chat-bubble-panel::after{left:auto;right:18px}
   .win.desktop-window[data-window="chat"] .chat-channel-toggle{min-height:40px}
 }
 
-/* Tên người gửi: "Tên • Cảnh giới". Màu cảnh giới tăng dần từ trắng thuần đến hiệu ứng đa sắc ở Đạo Tổ. */
+/* Tên người gửi: "Tên • Cảnh giới". Màu và hiệu ứng do client/ui/labels.js sinh ra. */
 .chat-name{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:0 .3em}
-.chat-realm{font-weight:800;letter-spacing:.01em;display:inline-block}
-.chat-realm.realm-0{color:#f4f4f2}                                            /* Luyện Khí: trắng */
-.chat-realm.realm-1{color:#6fe08f;text-shadow:0 0 6px #3fbf6a55}              /* Trúc Cơ: xanh lá */
-.chat-realm.realm-2{color:#f3cb4a;text-shadow:0 0 7px #d9a82a66}              /* Kết Đan: vàng */
-.chat-realm.realm-3{color:#5fcfff;text-shadow:0 0 8px #2f9fd866}              /* Nguyên Anh: xanh lam */
-.chat-realm.realm-4{color:#b68cff;text-shadow:0 0 8px #8a5ae066}              /* Hóa Thần: tím */
-.chat-realm.realm-5,.chat-realm.realm-6,.chat-realm.realm-7,.chat-realm.realm-8,
-.chat-realm.realm-9,.chat-realm.realm-10,.chat-realm.realm-11,.chat-realm.realm-12,
-.chat-realm.realm-13{color:transparent;-webkit-background-clip:text;background-clip:text;
-  background-size:220% 100%;animation:realm-flow 6s linear infinite}
-.chat-realm.realm-5{background-image:linear-gradient(90deg,#8f7bff,#4fb4ff,#8f7bff);color:#9d8cff} /* Luyện Hư: tím → lam */
-.chat-realm.realm-6{background-image:linear-gradient(90deg,#2fe0b6,#7dff9a,#2fe0b6);color:#6af0b0} /* Hợp Thể: ngọc lục */
-.chat-realm.realm-7{background-image:linear-gradient(90deg,#ff7a2f,#ffd04a,#ff3d3d,#ff7a2f);color:#ff9a4a;
-  filter:drop-shadow(0 0 4px #ff6a1f88)}                                       /* Đại Thừa: lửa cam đỏ */
-.chat-realm.realm-8{background-image:linear-gradient(90deg,#4fa8ff,#f4fbff,#4fa8ff);color:#9fd0ff;
-  filter:drop-shadow(0 0 5px #6fb8ffaa);animation-duration:3.2s}               /* Độ Kiếp: lôi điện xanh trắng */
-.chat-realm.realm-9{background-image:linear-gradient(90deg,#ff8fd0,#ffe08a,#9ff0ff,#ff8fd0);color:#ffc0e6;
-  filter:drop-shadow(0 0 5px #ff9ad566)}                                       /* Chân Tiên: hồng kim lam */
-.chat-realm.realm-10{background-image:linear-gradient(90deg,#ffd45a,#fff6d0,#ffb82e,#ffd45a);color:#ffd45a;
-  filter:drop-shadow(0 0 6px #ffc93acc);animation-duration:4s}                 /* Kim Tiên: vàng kim lấp lánh */
-.chat-realm.realm-11{background-image:linear-gradient(90deg,#ff5f6d,#ffc371,#7dff9a,#56c7ff,#b27dff,#ff5f6d);color:#ffd0a0;
-  filter:drop-shadow(0 0 5px #ffffff55);animation-duration:5s}                 /* Thái Ất: ngũ sắc */
-.chat-realm.realm-12{background-image:linear-gradient(90deg,#7a5cff,#2fe7ff,#ff5fd2,#7a5cff);color:#c9b8ff;
-  filter:drop-shadow(0 0 7px #8f6bffbb);animation-duration:4s}                 /* Đại La: tinh vân */
-.chat-realm.realm-13{background-image:linear-gradient(90deg,#fff,#ffe27a,#ff7ad9,#6ae6ff,#a98bff,#fff);color:#fff1c9;
-  filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px #ffcf5acc);
-  animation-duration:2.8s;font-size:1.04em}                                     /* Đạo Tổ: hào quang đa sắc */
-@keyframes realm-flow{to{background-position:220% 0}}
-
-/* Admin: "Admin • Hư Giới Chi Chủ" hai màu trắng đen, ánh sáng quét ngang + viền sáng để nửa đen vẫn đọc được. */
-.chat-name.chat-admin{position:relative;padding:1px 9px;border-radius:999px;border:1px solid #ffffffaa;
-  background:linear-gradient(100deg,#050505 0%,#fff 18%,#050505 36%,#fff 54%,#050505 72%,#fff 90%,#050505 100%);
-  background-size:260% 100%;animation:admin-sweep 3.6s linear infinite;
-  box-shadow:0 0 10px #ffffff66,0 0 22px #ffffff22,inset 0 0 6px #00000099;
-  color:#fff;font-weight:900;letter-spacing:.03em;
-  text-shadow:0 0 2px #000,0 0 4px #000,0 0 6px #000;mix-blend-mode:normal}
+.chat-realm{display:inline-block}
+.chat-name.chat-admin{position:relative}
 .chat-message:has(.chat-admin){border-color:#e8e8e8;background:linear-gradient(135deg,#0a0a0a,#262626 55%,#0a0a0a);
   box-shadow:0 0 0 1px #ffffff33,0 4px 16px #000a}
-@keyframes admin-sweep{to{background-position:260% 0}}
-@media (prefers-reduced-motion:reduce){
-  .chat-realm,.chat-name.chat-admin{animation:none}
-}
 /* Năm tab dùng một hàng, có thể vuốt khi màn hình quá hẹp. */
 .win.desktop-window[data-window="chat"] .chat-channel-menu{display:flex;overflow-x:auto;overscroll-behavior-x:contain}
 .win.desktop-window[data-window="chat"] .chat-channel-menu>button{flex:1 0 62px}

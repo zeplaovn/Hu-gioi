@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
-  const UI = root.HU_UI;
+  const UI = root.HU_UI, L = root.HU_LABELS;
   const { abs, $, esc, num, money, moneyHTML, pct, duration, row, btn, img, codeAttr, bar, card, empty, tabs } = UI.kit;
   const { ELEMENTS } = UI.data;
   const { lists } = UI;
@@ -13,6 +13,15 @@
     { id: 'roots', label: 'Kinh mạch', icon: '❋' },
     { id: 'bag', label: 'Hành trang', icon: '◈' }
   ];
+
+  /* Nhãn linh căn dùng chung cho đầu màn, hành trang và kinh mạch.
+     Dị linh căn lấy màu của hệ biến thể; Hỗn Độn giữ hiệu ứng đa sắc. */
+  function rootLabel(type, sub, { variant = 'badge', upper = false } = {}) {
+    const text = upper ? H.rootLabel(type, sub).toUpperCase() : H.rootLabel(type, sub);
+    if (!L) return esc(text);
+    if (type === 'Dị' && H.DI_LINH_CAN[sub]) return L.span(text, 'element', sub, { variant });
+    return L.span(text, 'root', type, { variant });
+  }
 
   /* Thanh tiến độ nhỏ kèm nhãn; dùng chung cho tu vi và thọ nguyên ở đầu màn. */
   function meter(label, text, percent, cls) {
@@ -26,7 +35,7 @@
     return `<header class="char-header">
       <div class="portrait"><img src="${A.heroPortrait(s.gender, s.realm)}" alt="${esc(s.name)}" decoding="async"></div>
       <div class="char-id">
-        <span class="eyebrow gold">${esc(H.rootLabel(s.rootType, s.rootSub).toUpperCase())}</span>
+        <span class="eyebrow gold">${rootLabel(s.rootType, s.rootSub, { upper: true })}</span>
         <h2>${esc(s.name)}</h2>
         <p class="char-realm">${g.realmLabel()} · ${F.realm_map(s.zone)}</p>
         <p class="muted">${H.raceName(s.race)}</p>
@@ -38,25 +47,31 @@
     </header>`;
   }
 
-  /* Ô chỉ số: nhãn nhỏ phía trên, giá trị lớn phía dưới. */
-  const tile = (label, value, cls = '') => `<div class="stat-tile ${cls}"><span>${label}</span><b>${value}</b></div>`;
+  /* Ô chỉ số: nhãn nhỏ phía trên, giá trị lớn phía dưới.
+     `key` tra màu nhãn trong HU_LABELS; không truyền key thì dùng màu chữ thường. */
+  const tile = (label, value, cls = '', key = '') => {
+    const name = key && L ? L.span(label, 'stat', key) : esc(label);
+    return `<div class="stat-tile ${cls}"><span>${name}</span><b>${value}</b></div>`;
+  };
 
   function stats() {
     const s = UI.s(), g = UI.g(), st = g.stats();
     const glossary = Object.entries(S).map(([key, label]) =>
       '<div class="stat-definition"><dt>' + esc(label) + '</dt><dd>' + esc(UI.statDescriptions[key] || '') + '</dd></div>'
     ).join('');
-    const power = [[S.hp, num(st.HP)], [S.mp, num(g.maxMp())], [S.sta, num(st.STA)], [S.atk, num(st.ATK)], [S.def, num(st.DEF)], [S.spd, num(st.SPD)],
-      [S.cp, num(st.CP)], [S.crit, pct(st.CRIT)], [S.critDamage, pct(st.CRIT_DMG)], [S.dodge, pct(st.DODGE)]];
+    const power = [[S.hp, num(st.HP), 'hp'], [S.mp, num(g.maxMp()), 'mp'], [S.sta, num(st.STA), 'sta'], [S.atk, num(st.ATK), 'atk'],
+      [S.def, num(st.DEF), 'def'], [S.spd, num(st.SPD), 'spd'], [S.cp, num(st.CP), 'cp'], [S.crit, pct(st.CRIT), 'crit'],
+      [S.critDamage, pct(st.CRIT_DMG), 'critDamage'], [S.dodge, pct(st.DODGE), 'dodge']];
     const talents = H.TALENT_INFO.map(t => {
       const v = s.talent?.[t.key] || 0;
-      return `<li class="talent-chip"><b>${esc(t.name)}</b><span>${v} điểm</span><small>${esc(t.effect(v))}</small></li>`;
+      const name = L ? L.span(t.name, 'talent', t.key) : esc(t.name);
+      return `<li class="talent-chip"><b>${name}</b><span>${v} điểm</span><small>${esc(t.effect(v))}</small></li>`;
     }).join('');
     const pillCap = .25 * F.realm_exp_total(s.realm);
     return `<div class="char-sheet">
-      ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v], i) => tile(k, v, 'stat-tone-' + (i % 5))).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
+      ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v, key]) => tile(k, v, '', key)).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
       ${card('Thiên phú khởi nguyên', `<ul class="talent-list">${talents}</ul>`, { eyebrow: 'KHỞI NGUYÊN', cls: 'sheet-talent' })}
-      ${card('Tu luyện', `<div class="stat-tiles tiles-4">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}${tile('Tâm ma', num(s.tamMa || 0) + '<small>/ ' + (H.TAM_MA_MAX || 100) + ' · đột phá −' + (Math.min(15, (s.tamMa || 0) * (H.TAM_MA_BREAK_PENALTY || .0015) * 100)).toFixed(1).replace('.', ',') + '%</small>', s.tamMa >= 50 ? 'tile-warn' : '')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
+      ${card('Tu luyện', `<div class="stat-tiles tiles-4">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>', '', 'qiRate')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}${tile('Tâm ma', num(s.tamMa || 0) + '<small>/ ' + (H.TAM_MA_MAX || 100) + ' · đột phá −' + (Math.min(15, (s.tamMa || 0) * (H.TAM_MA_BREAK_PENALTY || .0015) * 100)).toFixed(1).replace('.', ',') + '%</small>', s.tamMa >= 50 ? 'tile-warn' : '')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
       ${card('Đạo vận · Thiên mệnh', `<div class="stat-tiles tiles-2">${tile('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${tile('Số kiếp đã qua', num(UI.session.pavilion?.rebirths || 0))}</div>
         <p class="info-note">Thiên Mệnh Các cho nâng cấp vĩnh viễn, tối đa 20 cấp.</p>
         <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI', cls: 'sheet-rebirth' })}
@@ -68,7 +83,7 @@
   function skills() {
     const s = UI.s(), g = UI.g();
     const learned = Object.keys(s.learned).map(key => `<div class="technique-item">${img(key)}<div><h3>${esc(H.item(key).name)}</h3>
-      <p>${H.item(key).realm} · ${F.SUBPHAM[H.item(key).sub]} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.item(key).description)}</p></div>
+      <p>${H.item(key).realm} · ${L ? L.span(F.SUBPHAM[H.item(key).sub], 'quality', F.SUBPHAM[H.item(key).sub]) : esc(F.SUBPHAM[H.item(key).sub])} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.item(key).description)}</p></div>
       ${['BT-900','BT-901'].includes(H.item(key).code)?'<span class="gold">Đã học bí tịch nghề</span>':btn(s.activeManuals.includes(key) ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))}</div>`).join('');
     const ups = ['Công kích +2%', 'Tốc độ hấp thụ linh khí +2%', 'Phòng thủ +2%', 'Né tránh +0,5%'].map((name, i) => {
       const n = s.tech[i] - 1;
@@ -144,7 +159,7 @@
       '<div class="meridian-info"><span class="meridian-kind">' + esc(current.kind) + '</span>' +
       '<h4>' + esc(current.name) + '</h4>' +
       row('Ngũ hành', esc(current.he)) +
-      row('Độ hiếm dự kiến', esc(M.RARITY[current.rarity]?.name || current.rarity)) +
+      row('Độ hiếm dự kiến', L ? L.span(M.RARITY[current.rarity]?.name || current.rarity, 'rarity', current.rarity) : esc(M.RARITY[current.rarity]?.name || current.rarity)) +
       row('Mở theo thiết kế', esc(current.opens)) +
       (current.points ? row('Số huyệt theo thiết kế', String(current.points)) : '') +
       row('Liên hệ với linh căn', esc(connection)) +
@@ -165,7 +180,9 @@
     else if(d?.group==='công pháp')detail=row('Hệ',esc(d['hệ']))+row('Kỹ năng',esc(d['công dụng'])+' · '+d['tiêu hao mp']+' linh lực · '+d['hồi chiêu (giây)']+' giây');
     else if(d?.group==='bí tịch')detail=row('Thể loại',esc(d['thể loại']))+row('Công dụng',esc(d['công dụng']));
     else if(d?.group==='linh thảo')detail=row('Cách dùng',esc(d['cách dùng']))+row('Hiệu quả',esc(d['hiệu quả']));
-    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ' + F.SUBPHAM[x.sub]))}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${row('Nguồn gốc', 'Chưa có dữ liệu nguồn nhận')}${detail}`;
+    const quality = F.SUBPHAM[x.sub];
+    const qualityHtml = L ? L.span(quality, 'quality', quality) : esc(quality);
+    return `<p>${esc(x.description)}</p>${row('Cảnh giới',esc(x.realm))}${row('Phẩm chất',esc((x.grade || x.quality || '') + ' · ') + qualityHtml)}${x.age ? row('Tuổi dược liệu', esc(x.age)) : ''}${row('Nguồn gốc', 'Chưa có dữ liệu nguồn nhận')}${detail}`;
   }
 
   function bagOrder() {
@@ -202,7 +219,11 @@
     }).join('');
     return `<div class="inventory-scene-layout">
       <div class="inventory-hero-column"><section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Kéo pháp bảo vào ô trống hoặc chọn rồi bấm Trang bị; ô trống đầu tiên sẽ được dùng.</p></section><section class="manual-gear-panel"><div><span class="eyebrow gold">TRUYỀN THỪA</span><h3>Công pháp đang vận · ${s.activeManuals.length}/4</h3></div><div class="manual-gear-grid">${manuals}</div></section></div>
-      <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><p class="rarity-legend"><span>Hạ</span><span>Trung</span><span>Thượng</span><span>Cực</span></p><div class="inventory-items">${visible.map(i => `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}" data-select="${esc(i.key)}" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${F.SUBPHAM[i.sub]} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key) - (s.equipment.includes(i.key) ? 1 : 0))}</span><span class="inv-sub" aria-hidden="true">${F.SUBPHAM[i.sub]}</span></button>`).join('') || empty('Túi trữ vật đang trống.')}</div></section>
+      <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><p class="rarity-legend">${F.SUBPHAM.map(q => L ? L.span(q, 'quality', q) : esc(q)).join('')}</p><div class="inventory-items">${visible.map(i => {
+        const quality = F.SUBPHAM[i.sub];
+        const qClass = L ? ' ' + L.keyClass('quality', quality) : '';
+        return `<button class="inventory-cell ${v.selected === i.key ? 'selected' : ''}${qClass}" data-select="${esc(i.key)}" data-drag-item="${esc(i.key)}" draggable="true" data-sub="${i.sub}" aria-label="${esc(i.name)} · ${quality} phẩm · số lượng ${num(g.count(i.key))}">${img(i.key)}<span class="inv-count">×${num(g.count(i.key) - (s.equipment.includes(i.key) ? 1 : 0))}</span><span class="inv-sub" aria-hidden="true">${quality}</span></button>`;
+      }).join('') || empty('Túi trữ vật đang trống.')}</div></section>
       <section class="card item-detail inventory-detail" aria-live="polite">${main}</section>
     </div>`;
 

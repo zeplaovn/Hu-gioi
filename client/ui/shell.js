@@ -4,7 +4,7 @@
 (function (root) {
   'use strict';
   const H = root.HU_GAME, F = H.F, A = root.HU_ASSETS;
-  const UI = root.HU_UI;
+  const UI = root.HU_UI, L = root.HU_LABELS;
   const { $, $$, esc, clamp, num, money, moneyHTML, pct, duration, btn } = UI.kit;
   const store = UI.store;
 
@@ -1220,7 +1220,15 @@
     const shown = UI.session.displayQi(), pShown = clamp(shown / need * 100, 0, 100);
     $('playerName').textContent = s.name;
     $('playerRealm').textContent = g.realmLabel();
-    $('playerRoot').textContent = H.rootLabel(s.rootType, s.rootSub).toUpperCase();
+    const rootText = H.rootLabel(s.rootType, s.rootSub).toUpperCase(), rootNode = $('playerRoot');
+    const rootKey = s.rootType === 'Dị' ? 'di:' + s.rootSub : 'root:' + s.rootType;
+    // Chỉ dựng lại khi nhãn đổi, để animation chữ không bị khởi động lại mỗi giây.
+    if (rootNode.dataset.labelKey !== rootKey) {
+      rootNode.dataset.labelKey = rootKey;
+      rootNode.innerHTML = !L ? esc(rootText)
+        : s.rootType === 'Dị' && H.DI_LINH_CAN[s.rootSub] ? L.span(rootText, 'element', s.rootSub)
+          : L.span(rootText, 'root', s.rootType);
+    }
     $('playerPlace').textContent = F.realm_map(s.zone) + ' · ' + H.ZONES[s.zone].name;
     const avatar = $('avatar'), avatarSrc = A.heroPortrait(s.gender, s.realm);
     if (avatar && avatar.getAttribute('src') !== avatarSrc) avatar.src = avatarSrc;
@@ -1232,7 +1240,12 @@
     const trainingBusy = !!root.HU_COMMANDS?.activityConflict(s, 'breakthrough');
     $('topRate').textContent = trainingBusy && !s.retreat?.active ? 'Tạm dừng' : '+' + num(g.rate()) + '/giây';
     $('topWorld').textContent = F.realm_map(s.zone);
-    $('topDaoVan').textContent = H.META_UPGRADES[s.destiny]?.name || 'Không có';
+    const destiny = H.META_UPGRADES[s.destiny], destinyNode = $('topDaoVan');
+    const destinyName = destiny?.name || 'Không có';
+    if (destinyNode.dataset.labelKey !== (s.destiny || 'none')) {
+      destinyNode.dataset.labelKey = s.destiny || 'none';
+      destinyNode.innerHTML = destiny && L ? L.span(destinyName, 'destiny', s.destiny) : esc(destinyName);
+    }
     $('topQiFill').style.width = pShown + '%';
     $('topQiFill').parentElement.classList.toggle('full', pShown >= 100);
     $('topQiText').textContent = num(shown) + ' / ' + num(need);

@@ -7,7 +7,7 @@ const profile = { name:'Lý Vô Thường', gender:'nam', age:18, race:'nhan', r
 const make = () => new H.Game(H.createCharacter(profile, NOW, () => 0), () => 0);
 
 test('bia phân danh phận theo linh căn, lưu khi gia nhập và không tự thăng khi đổi linh căn', () => {
-  for (const [root, expected] of Object.entries({'Ngụy':'tap_dich','Tứ hành':'tap_dich','Tam hành':'ngoai_mon','Song':'noi_mon','Thiên':'than_truyen','Dị':'than_truyen','Âm Dương':'than_truyen','Hỗn Độn':'than_truyen'})) {
+  for (const [root, expected] of Object.entries({'Ngụy':'tap_dich','Tứ hành':'tap_dich','Tam hành':'ngoai_mon','Song':'noi_mon','Thiên':'than_truyen','Dị':'than_truyen','Hỗn Độn':'than_truyen'})) {
     const g = make(); g.s.rootType = root;
     assert.equal(H.sectDiscipleForRoot(root).id, expected, root);
     const result = C.execute(g, {type:'joinSect',payload:{id:H.SECTS[0].id}}, NOW);

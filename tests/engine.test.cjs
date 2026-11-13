@@ -156,7 +156,6 @@ test('state: createCharacter từ chối hồ sơ sai', () => {
     [{ ...PROFILE, roots: [70, 60, 50, 40] }, /Linh căn/],
     [{ ...PROFILE, roots: [101, 60, 50, 40, 30] }, /Linh căn/],
     [{ ...PROFILE, rootType: 'Hỗn Độn' }, /Hỗn Độn/],
-    [{ ...PROFILE, rootType: 'Âm Dương' }, /Âm Dương/],
     [{ ...PROFILE, rootType: 'Dị', rootSub: 'sai' }, /Dị linh căn/],
     [{ ...PROFILE, talent: { tuongMao: 9 } }, /Thiên phú/]
   ];

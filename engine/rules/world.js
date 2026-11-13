@@ -137,7 +137,7 @@
         const add = effects => { for (const [key, value] of Object.entries(effects || {})) out[key] += value; };
         if (this.s.rootType === 'Dị') add(H.DI_LINH_CAN[this.s.rootSub]?.effects);
         else if (this.s.rootType === 'Hỗn Độn') add({ hp: .15, mp: .15, attack: .10, guard: .10, dodge: .05, crit: .05, critDmg: .20 });
-        else if (this.s.rootType !== 'Âm Dương') for (const i of els) add(base[i]);
+        else for (const i of els) add(base[i]);
         return out;
       },
       temperCost(i) { return 2 + 2 * (this.s.rootCraft.levels[i] || 0); },

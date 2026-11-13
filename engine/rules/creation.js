@@ -19,7 +19,6 @@
       if (!Array.isArray(profile.roots) || profile.roots.length !== 5 || !profile.roots.every(n => Number.isInteger(n) && n >= 0 && n <= 100) || !Object.hasOwn(H.F.LINH_CAN_RATE, profile.rootType)) throw Error('Linh căn không hợp lệ.');
       /* Hỗn Độn chỉ đạt được sau lôi kiếp; Dị phải có biến thể hợp lệ, các loại khác không có. */
       if (profile.rootType === 'Hỗn Độn') throw Error('Hỗn Độn linh căn chỉ có thể đạt được sau lôi kiếp.');
-      if (profile.rootType === 'Âm Dương') throw Error('Âm Dương linh căn không còn được tạo mới.');
       const rootSub = profile.rootType === 'Dị' ? profile.rootSub : '';
       if (profile.rootType === 'Dị' && !Object.hasOwn(H.DI_LINH_CAN, rootSub)) throw Error('Dị linh căn không hợp lệ.');
       /* Loại linh căn phải khớp điểm các hệ: ngũ hành suy từ số hệ đạt 50 điểm; Dị chỉ có đúng một hệ gốc (thuộc `from` của biến thể) đạt 50. */

@@ -1,7 +1,7 @@
 /* Hư Giới — Thiên Mệnh Các dùng Thiên Tinh kiếm trong hành trình hiện tại. */
 (function (root) {
   'use strict';
-  const H = root.HU_GAME, F = H.F, UI = root.HU_UI;
+  const H = root.HU_GAME, F = H.F, UI = root.HU_UI, L = root.HU_LABELS;
   const { esc, num, row, btn, card, empty, tabs } = UI.kit;
   const TABS = [
     { id: 'destiny', label: 'Thiên mệnh', icon: '✦' },
@@ -14,14 +14,14 @@
     const choice = H.META_UPGRADES[UI.s().destiny];
     return `<header class="screen-title"><span class="eyebrow gold">THIÊN MỆNH</span><h2>Thiên mệnh</h2></header>
       <p class="screen-lead">Dấu ấn Thiên Mệnh là buff khởi đầu, phải mua tại Quầy Khởi Nguyên trước khi lập đạo thân. Mỗi đạo thân chỉ nhận một dấu ấn; khi tọa hóa, hành trình này kết thúc.</p>
-      ${choice ? card('Dấu ấn đã nhận', row('Dấu ấn', esc(choice.name)) + row('Hiệu ứng', esc(choice.desc)), { eyebrow: 'KHỞI NGUYÊN' }) : card('Chưa có Dấu ấn', '<p>Đạo thân này không mang Dấu ấn Thiên Mệnh. Dấu ấn chỉ có thể mua trước khi lập đạo thân.</p>', { eyebrow: 'KHỞI NGUYÊN' })}`;
+      ${choice ? card('Dấu ấn đã nhận', row('Dấu ấn', L ? L.span(choice.name, 'destiny', UI.s().destiny, { variant: 'name' }) : esc(choice.name)) + row('Hiệu ứng', esc(choice.desc)), { eyebrow: 'KHỞI NGUYÊN' }) : card('Chưa có Dấu ấn', '<p>Đạo thân này không mang Dấu ấn Thiên Mệnh. Dấu ấn chỉ có thể mua trước khi lập đạo thân.</p>', { eyebrow: 'KHỞI NGUYÊN' })}`;
   }
 
   function destiny() {
     const current = UI.s().destiny;
     return `<div class="screen-grid">${Object.entries(H.META_UPGRADES).map(([key, d]) => {
       const product = Object.values(H.PAVILION.starter).find(item => item.destiny === key);
-      return card(d.name, `<div class="meta-upgrade-head"><span class="meta-upgrade-icon" aria-hidden="true">${d.icon}</span>
+      return card(L ? L.span(d.name, 'destiny', key, { variant: 'name' }) : esc(d.name), `<div class="meta-upgrade-head"><span class="meta-upgrade-icon" aria-hidden="true">${d.icon}</span>
         <div>${row('Hiệu ứng', esc(d.desc))}${row('Mua tại', 'Quầy Khởi Nguyên · ' + (product ? product.cost + ' Thiên Tinh' : 'không bán'))}${row('Trạng thái', key === current ? 'Dấu ấn hiện tại' : 'Chưa nhận')}</div></div>`,
         { eyebrow: key === current ? 'ĐANG DÙNG' : 'KHỞI NGUYÊN' });
     }).join('')}</div>`;
@@ -34,7 +34,7 @@
         row('Tổng Thiên Tinh đã nhận', num(p.totalEarned || 0)), { eyebrow: 'TÀI NGUYÊN TU HÀNH' }) +
       '<div class="screen-grid">' + Object.entries(H.PAVILION.stats).map(([key, item]) => {
         const lvl = Math.min(20, p.upgrades?.[key] || 0), cost = H.PAVILION.upgradeCost(lvl);
-        return card(item.name,
+        return card(L ? L.span(item.name, 'talent', key, { variant: 'name' }) : esc(item.name),
           '<p>' + esc(item.desc) + '</p>' +
           row('Cấp nâng cấp', lvl + '/20') +
           row('Hiệu quả', '+' + (H.PAVILION.bonus(lvl) * 100).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + '%') +
