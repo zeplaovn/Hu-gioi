@@ -531,7 +531,7 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
   display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:75;
   width:min(290px,calc(100vw - 24px));max-height:min(62vh,calc(100dvh - 108px));overflow-y:auto;overscroll-behavior:contain;
   flex-direction:column;gap:2px;padding:6px;border:1px solid #365645;border-radius:13px;
-  background:linear-gradient(165deg,#18251ff5,#0e1512f7);box-shadow:0 18px 46px #000c,0 0 0 1px #e6c1641f;
+  background:linear-gradient(165deg,#18251f,#0e1512);box-shadow:0 18px 46px #000c,0 0 0 1px #e6c1641f;
   animation:pageNavIn .14s ease-out;
 }
 #game:not([data-layout="wide"]) .win.page .page-nav.open .page-nav-menu{display:flex}
@@ -573,7 +573,7 @@ body.journal-in-chat #game[data-layout="wide"]{grid-template-rows:minmax(0,1fr) 
   display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:25;
   flex-direction:column;gap:2px;max-height:min(300px,56vh);overflow-y:auto;overscroll-behavior:contain;
   padding:6px;border:1px solid #365645;border-radius:11px;
-  background:linear-gradient(165deg,#18251ff5,#0e1512f7);box-shadow:0 16px 40px #000c,0 0 0 1px #e6c1641f;
+  background:linear-gradient(165deg,#18251f,#0e1512);box-shadow:0 16px 40px #000c,0 0 0 1px #e6c1641f;
 }
 #game:not([data-layout="wide"]) .win.page .tabbar.open .tabbar-menu{display:flex}
 #game:not([data-layout="wide"]) .win.page .tabbar-menu .tab{
