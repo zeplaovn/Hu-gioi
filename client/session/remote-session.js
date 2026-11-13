@@ -244,7 +244,7 @@
       return this.run(async () => {
         if (!this.accountId || this.playerId || !this.ticket) throw Error('Chưa có phiếu khởi nguyên từ máy chủ.');
         const result = await this.request('/players', 'POST', {
-          ticketId: this.ticket.ticketId, name: profile.name, gender: profile.gender, talent: profile.talent, destiny: profile.destiny
+          ticketId: this.ticket.ticketId, name: profile.name, gender: profile.gender, talent: profile.talent
         });
         if (!result.playerId) throw Error('Phản hồi tạo đạo thân không hợp lệ.');
         this.playerId = result.playerId;

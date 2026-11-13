@@ -37,7 +37,7 @@
   const freshCreation = () => ({
     name: H.randomName('nam'), nameAuto: true, gender: 'nam',
     age: randInt(14, 30), race: H.rollRace(), ...H.rollRoots(),
-    points: TALENT_MAX, talent: blankTalent(), destiny: 'exp'
+    points: TALENT_MAX, talent: blankTalent()
   });
   let creation = freshCreation();
   let rolling = '', entering = false, shopping = false;
@@ -161,18 +161,37 @@
     const firstPurchase = pavilion.version === 0 && pavilion.balance === 0 && pavilion.totalEarned === 0 &&
       !Object.keys(pavilion.relics || {}).length && !Object.keys(pavilion.upgrades || {}).length;
     const balance = Number(pavilion.balance || 0) + (firstPurchase ? H.PAVILION.starterGrant : 0);
+    const entries = Object.entries(H.PAVILION.starter);
+    const chosen = entries.find(([key, item]) => item.destiny && Number(pavilion.relics?.[key]) > 0);
+    const summary = $('creationShopSummary');
+    if (summary) summary.textContent = num(balance) + ' ✧';
+    const trigger = $('creationShopOpen');
+    if (trigger) trigger.setAttribute('aria-label',
+      'Thiên Mệnh Các · Quầy Khởi Nguyên · ' + num(balance) + ' Thiên Tinh' +
+      (chosen ? ' · Dấu ấn ' + H.META_UPGRADES[chosen[1].destiny].name : '') +
+      (firstPurchase ? ' · tặng ' + H.PAVILION.starterGrant + ' khi đổi món đầu tiên' : ''));
+    const renderItem = ([key, item]) => {
+      const count = Number(pavilion.relics?.[key]) || 0;
+      const sold = count >= item.max;
+      const blocked = !!item.destiny && !!chosen && chosen[0] !== key;
+      const disabled = shopping || entering || !UI.session?.accountId || !!UI.session?.playerId ||
+        sold || blocked || balance < item.cost;
+      const label = sold ? (item.destiny ? 'Đã chọn' : 'Đã đủ') : item.cost + ' Thiên Tinh';
+      return '<article class="creation-shop-item' + (sold ? ' is-owned' : '') + '"><div><strong>' + esc(item.name) +
+        '</strong><p>' + esc(item.desc) + '</p><small>' + (item.destiny ? 'Dấu ấn Thiên Mệnh' : 'Đã đổi ' + count + '/' + item.max) +
+        '</small></div><button type="button" class="btn btn-outline" data-starter="' + key + '" ' +
+        (disabled ? 'disabled ' : '') + (blocked ? 'title="Chỉ được chọn một Dấu Ấn Thiên Mệnh" ' : '') +
+        'aria-label="Đổi ' + esc(item.name) + '">' + label + '</button></article>';
+    };
+    const grid = list => '<div class="creation-shop-grid">' + list.map(renderItem).join('') + '</div>';
+    const destinies = entries.filter(([, item]) => item.destiny);
+    const starters = entries.filter(([, item]) => !item.destiny);
     host.innerHTML = '<div class="creation-shop-wallet"><strong>Thiên Tinh: ' + num(balance) + ' ✧</strong>' +
       (firstPurchase ? '<small>Tặng ' + H.PAVILION.starterGrant + ' Thiên Tinh khi đổi món đầu tiên trong quầy Khởi Nguyên.</small>' :
         '<small>Còn ' + num(pavilion.balance || 0) + ' Thiên Tinh · hàng đã mua chờ nhận khi nhập thế.</small>') + '</div>' +
-      '<div class="creation-shop-grid">' + Object.entries(H.PAVILION.starter).map(([key, item]) => {
-        const count = Number(pavilion.relics?.[key]) || 0;
-        const sold = count >= item.max;
-        const disabled = shopping || entering || !UI.session?.accountId || !!UI.session?.playerId || sold || balance < item.cost;
-        return '<article class="creation-shop-item"><div><strong>' + esc(item.name) + '</strong><p>' + esc(item.desc) +
-          '</p><small>Đã đổi ' + count + '/' + item.max + '</small></div><button type="button" class="btn btn-outline" data-starter="' +
-          key + '" ' + (disabled ? 'disabled ' : '') + 'aria-label="Đổi ' + esc(item.name) + '">' +
-          (sold ? 'Đã đủ' : item.cost + ' Thiên Tinh') + '</button></article>';
-      }).join('') + '</div>';
+      '<section class="creation-shop-section"><h3>Dấu Ấn Thiên Mệnh</h3>' +
+        '<p>Chọn một dấu ấn duy nhất để nhận buff khởi đầu khi lập đạo thân.</p>' + grid(destinies) + '</section>' +
+      '<section class="creation-shop-section"><h3>Hành Trang Khởi Nguyên</h3>' + grid(starters) + '</section>';
   }
 
   function renderStats() {
@@ -235,7 +254,6 @@
     $('raceValue').setAttribute('aria-label', 'Chủng tộc ' + H.raceName(creation.race) + ' · xem thông tin');
     $('rootValue').innerHTML = '<span class="field-main">' + esc(rootLabel(creation.rootType, creation.rootSub)) + '</span>';
     $('rootValue').setAttribute('aria-label', rootLabel(creation.rootType, creation.rootSub) + ' · xem thông tin');
-    if ($('destinySelect')) $('destinySelect').value = creation.destiny;
     renderShop();
     renderStats();
     syncName();
@@ -300,6 +318,7 @@
       return;
     }
     UI.closeModal(true); deathOpen = false;
+    closeCreationShop();
     UI.windows?.closeAll();
     UI.tabState = {};
     UI.view = { category: 'Tất cả', query: '', page: 0, quality: 0, selected: '', onlyReady: false };
@@ -314,7 +333,13 @@
   };
 
 
+  function closeCreationShop() {
+    const dialog = $('creationShopDialog');
+    if (dialog?.open) dialog.close();
+  }
+
   function start() {
+    closeCreationShop();
     const s = UI.s();
     $('welcome').hidden = true;
     $('continueGame').hidden = true;
@@ -346,6 +371,24 @@
   }
 
   function bindCreation() {
+    const shopDialog = $('creationShopDialog');
+    $('creationShopOpen')?.addEventListener('click', () => {
+      if (entering || store.ready || !shopDialog) return;
+      renderShop();
+      if (!shopDialog.open) shopDialog.showModal();
+      $('creationShopClose')?.focus({ preventScroll: true });
+    });
+    $('creationShopClose')?.addEventListener('click', () => closeCreationShop());
+    shopDialog?.addEventListener('click', event => {
+      if (event.target !== shopDialog) return;
+      const rect = shopDialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right ||
+          event.clientY < rect.top || event.clientY > rect.bottom) closeCreationShop();
+    });
+    shopDialog?.addEventListener('close', () => {
+      if ($('welcome').hidden) return;
+      $('creationShopOpen')?.focus({ preventScroll: true });
+    });
     $('creationShop')?.addEventListener('click', async event => {
       const button = event.target.closest('button[data-starter]');
       if (!button || button.disabled || shopping || entering || store.ready) return;
@@ -358,7 +401,14 @@
         UI.toast('Đã đổi ' + H.PAVILION.starter[key].name + '. Sẽ nhận khi tạo đạo thân.', { type: 'success' });
       } catch (err) {
         UI.toast('Thiên Mệnh Các: ' + err.message, { type: 'danger' });
-      } finally { shopping = false; renderCreation(); }
+      } finally {
+        shopping = false;
+        renderCreation();
+        if ($('creationShopDialog')?.open) {
+          const again = $('creationShop')?.querySelector('[data-starter="' + key + '"]:not([disabled])');
+          (again || $('creationShopClose'))?.focus({ preventScroll: true });
+        }
+      }
     });
     $('createForm').addEventListener('submit', async e => {
       e.preventDefault();
@@ -375,7 +425,7 @@
       const profile = {
         name, gender: creation.gender, race: creation.race,
         roots: [...creation.roots], rootType: creation.rootType, rootSub: creation.rootSub || '',
-        age: creation.age, talent: { ...creation.talent }, destiny: creation.destiny
+        age: creation.age, talent: { ...creation.talent }
       };
       entering = true;
       const button = $('startNew'), label = button.textContent;
@@ -436,7 +486,6 @@
       creation.nameAuto = false;
       syncName();
     });
-    $('destinySelect')?.addEventListener('change', e => { creation.destiny = e.target.value; renderCreation(); });
     $('randomName').addEventListener('click', () => roll('name'));
     $('rollAge').addEventListener('click', () => roll('age'));
     $('rollRace').addEventListener('click', () => roll('race'));
@@ -576,6 +625,7 @@
     }
     store.ready = false;
     UI.tutorial?.close();
+    closeCreationShop();
     UI.windows?.closeAll();
     if (!$('modalLayer').hidden) UI.closeModal(true);
     UI.session.disconnect();

@@ -16,6 +16,57 @@
   const WORLD_NAME = { ha_gioi: 'Hạ Giới', linh_gioi: 'Linh Giới', tien_gioi: 'Tiên Giới' };
   const wrap = (n, count) => ((Math.floor(n) % count) + count) % count + 1;
 
+  /* ---- ảnh động: tải một lần rồi dùng lại bằng blob URL ----
+   * Đổi src của ảnh nhân vật/hiệu ứng sang một file khác nhau mỗi khung khiến
+   * DevTools ghi thêm một mục "disk cache" dù không có byte nào qua mạng. Trên
+   * màn Tu luyện, hiệu ứng linh khí lặp lại vài giây một lần nên danh sách
+   * Network cứ dài mãi. Blob URL giữ nguyên khung hình đã tải trong bộ nhớ,
+   * nhờ đó không còn request lặp và cũng không phải giải mã lại từ đĩa. */
+  const objectUrls = new Map();
+  const blobJobs = new Map();
+  const blobImages = new Map();
+  const canBlob = () => {
+    try {
+      return !!root.document && /^https?:$/.test(root.location?.protocol || '') &&
+        typeof root.fetch === 'function' && typeof root.URL?.createObjectURL === 'function';
+    } catch { return false; }
+  };
+  function mediaSrc(src, image) {
+    const ready = objectUrls.get(src);
+    if (ready) {
+      if (image && image.src !== ready) image.src = ready;
+      return ready;
+    }
+    if (!canBlob() || !/^\/?media\//.test(src)) return src;
+    if (image) {
+      let set = blobImages.get(src);
+      if (!set) blobImages.set(src, set = new Set());
+      set.add(image);
+    }
+    if (!blobJobs.has(src)) {
+      const job = Promise.resolve()
+        .then(() => root.fetch(src, { cache: 'force-cache', credentials: 'same-origin' }))
+        .then(response => {
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.blob();
+        })
+        .then(blob => {
+          const url = root.URL.createObjectURL(blob);
+          objectUrls.set(src, url);
+          const set = blobImages.get(src);
+          if (set) {
+            blobImages.delete(src);
+            set.forEach(img => { try { img.src = url; } catch { /* ảnh đã bị gỡ */ } });
+          }
+          return url;
+        })
+        .catch(() => src)
+        .finally(() => blobJobs.delete(src));
+      blobJobs.set(src, job);
+    }
+    return src;
+  }
+
   /* ---- nhân vật: chỉ còn WebP bán hiện thực; mọi giới dùng chung đạo thân ---- */
   const gender = g => g === 'nu' ? 'nu' : 'nam';
   const HERO_ACTIONS = Object.freeze({
@@ -27,7 +78,7 @@
   const heroSrc = (g, zone, action = 'dung_yen', n = 0) => {
     const folder = HERO_ACTIONS[action] || HERO_ACTIONS.dung_yen;
     const frame = ((Math.floor(Number(n) || 0) % HERO_FRAMES) + HERO_FRAMES) % HERO_FRAMES;
-    return PLAYER + gender(g) + '/' + folder + '/' + String(frame).padStart(2, '0') + '.webp';
+    return mediaSrc(PLAYER + gender(g) + '/' + folder + '/' + String(frame).padStart(2, '0') + '.webp');
   };
   const heroPortrait = g => PLAYER + gender(g) + '/portrait.webp';
   const HERO = { width: 512, height: 512, anchorX: 256, anchorY: 472,
@@ -40,7 +91,9 @@
     const frames = Array.from({ length: HERO_FRAMES }, (_, i) => {
       const image = new Image();
       image.decoding = 'async';
-      image.src = heroSrc(g, zone, action, i);
+      const src = PLAYER + gender(g) + '/' + (HERO_ACTIONS[action] || HERO_ACTIONS.dung_yen) +
+        '/' + String(i).padStart(2, '0') + '.webp';
+      image.src = mediaSrc(src, image);
       return image;
     });
     heroCache.set(key, frames);
@@ -144,11 +197,19 @@
   const tribWorld = realm => realm >= 13 ? 'hon_don' : realm >= 9 ? 'tien_gioi' : realm >= 5 ? 'linh_gioi' : 'ha_gioi';
   const vfxCache = new Map();
   function preloadVfx(kind, variant) {
-    const key = kind + '/' + variant;
+    // Khoá theo tên thật sau khi giải alias: "bolt" và "qi" cùng trỏ tới
+    // chien_dau/linh_khi, nếu tách khoá sẽ tải trùng cả bộ 8 khung.
+    const [realKind, realVariant] = resolveVfx(kind, variant);
+    const key = realKind + '/' + realVariant;
     if (vfxCache.has(key)) return vfxCache.get(key);
     const list = vfxFrames(kind, variant);
     if (!list.length || typeof Image === 'undefined') return [];
-    const imgs = list.map(src => { const im = new Image(); im.decoding = 'async'; im.src = src; return im; });
+    const imgs = list.map(src => {
+      const im = new Image();
+      im.decoding = 'async';
+      im.src = mediaSrc(src, im);
+      return im;
+    });
     vfxCache.set(key, imgs);
     return imgs;
   }
@@ -226,6 +287,6 @@
   }
   const itemSrc = x => itemImg(x).src;
 
-  root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, INTRO, seasonSprite, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, itemImg, itemTile, ITEM_CELL_SIZE, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
+  root.HU_ASSETS = { BASE, worldOf, WORLD_NAME, HERO, heroFrames, heroSrc, heroPortrait, preloadHero, mediaSrc, enemyDir, enemyFrames, enemySrc, enemyPath, BG, MAPS, zoneBg, INTRO, seasonSprite, skillIcon, menuIcon, farm, MONEY, moneyIcon, itemSrc, itemImg, itemTile, ITEM_CELL_SIZE, VFX_BASE, VFX, vfxCount, vfxFrames, vfxSrc, tribWorld, preloadVfx };
   if (typeof module !== 'undefined') module.exports = root.HU_ASSETS;
 })(typeof window !== 'undefined' ? window : globalThis);

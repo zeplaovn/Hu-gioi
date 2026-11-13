@@ -151,16 +151,13 @@
         <button type="button" id="rollRoot" class="dice" title="Gieo linh căn ngẫu nhiên" aria-label="Gieo linh căn ngẫu nhiên"><img src="media/assets/ui/button/dice.png" alt="" decoding="async"></button>
         <p id="nameNote" class="name-note form-note" role="alert" hidden></p>
       </div>
-      <div class="creation-divider talent-divider"><span>02</span> THIÊN MỆNH CÁC · QUẦY KHỞI NGUYÊN <i></i></div>
-      <p class="small">Đổi Thiên Tinh lấy điểm thiên phú hoặc hành trang hỗ trợ. Hàng đã mua được cấp một lần khi tạo đạo thân; không chuyển qua kiếp khác.</p>
-      <div id="creationShop" class="creation-shop" role="region" aria-label="Cửa hàng Thiên Mệnh Các"></div>
-      <label for="destinySelect" class="small">Dấu ấn Thiên Mệnh miễn phí (chọn một lần trước khi nhập thế):</label>
-      <select id="destinySelect" class="field" required>
-        <option value="exp">Đạo Tâm · +3% tốc độ tu luyện</option>
-        <option value="stone">Túi Càn Khôn · +20 linh thạch khởi đầu</option>
-        <option value="life">Trường Sinh · +5 năm thọ nguyên</option>
-        <option value="luck">Thiên Vận · +0,5% bạo kích và +0,3% đột phá</option>
-      </select>
+      <button type="button" id="creationShopOpen" class="creation-shop-trigger" aria-haspopup="dialog" aria-controls="creationShopDialog">
+        <span class="creation-shop-step" aria-hidden="true">02</span>
+        <span class="creation-shop-title">THIÊN MỆNH CÁC · QUẦY KHỞI NGUYÊN</span>
+        <i aria-hidden="true"></i>
+        <span id="creationShopSummary" class="creation-shop-summary">0 ✧</span>
+        <span class="creation-shop-chevron" aria-hidden="true">›</span>
+      </button>
       <div class="creation-divider talent-divider"><span>03</span> PHÂN BỔ THIÊN PHÚ <i></i></div>
       <p id="pointsValue" class="points points-pending" role="status" tabindex="-1">Còn 8/8 điểm — cần phân bổ hết để bắt đầu.</p>
       <div id="statGrid" class="stat-grid" aria-label="Phân bổ thiên phú"></div>
@@ -176,6 +173,17 @@
     <dialog id="creationInfoDialog" class="creation-info-dialog" aria-labelledby="creationInfoTitle">
       <header class="creation-info-header"><h2 id="creationInfoTitle"></h2><button type="button" id="creationInfoClose" aria-label="Đóng thông tin">×</button></header>
       <div id="creationInfoContent" class="info-box root-box"></div>
+    </dialog>
+    <dialog id="creationShopDialog" class="creation-info-dialog creation-shop-dialog" aria-labelledby="creationShopTitle">
+      <header class="creation-info-header">
+        <div>
+          <span class="eyebrow gold">THIÊN MỆNH CÁC · QUẦY KHỞI NGUYÊN</span>
+          <h2 id="creationShopTitle">Quầy Khởi Nguyên</h2>
+        </div>
+        <button type="button" id="creationShopClose" aria-label="Đóng cửa hàng">×</button>
+      </header>
+      <p class="small">Đổi Thiên Tinh lấy điểm thiên phú hoặc hành trang hỗ trợ. Hàng đã mua được cấp một lần khi tạo đạo thân; không chuyển qua kiếp khác.</p>
+      <div id="creationShop" class="creation-shop" role="region" aria-label="Cửa hàng Thiên Mệnh Các"></div>
     </dialog>
   </div>
 </section>

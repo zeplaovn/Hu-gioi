@@ -64,6 +64,8 @@
        Thiên tinh và kho bảo vật luôn lưu ngoài state, theo tài khoản. */
     H.applyPavilionOnCreate = function (state, upgrades, relics) {
       state.pavilion = Object.fromEntries(Object.keys(H.PAVILION.stats).map(k => [k, Math.min(20, Math.max(0, Math.floor(upgrades?.[k] || 0)))]));
+      const destiny = H.PAVILION.starterDestiny(relics);
+      if ((state.destiny || 'none') !== destiny) throw Error('Dấu ấn Thiên Mệnh không khớp giao dịch.');
       // Mỗi gói khởi nguyên đã trả tiền chỉ cấp một lần trong transaction tạo đạo thân.
       const game = new H.Game(state);
       const quantity = key => {

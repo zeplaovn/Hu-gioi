@@ -96,15 +96,37 @@
 body.reduced-motion .scene-photo,body.reduced-motion .scene-mist,body.reduced-motion .scene-orbit,body.reduced-motion .scene-orbit::before,body.reduced-motion .scene-motes i{animation:none!important}
 body.reduced-motion .scene-motes{display:none}
 
-/* Quầy Thiên Mệnh Các trong màn Khởi Nguyên — điều khiển chạm đủ 44px. */
+/* Quầy Thiên Mệnh Các trong màn Khởi Nguyên — thu gọn thành một nút, mở hộp thoại shop. */
+.creation-shop-trigger{display:flex;align-items:center;gap:8px;width:100%;min-height:46px;padding:8px 10px;
+  border:1px solid #3a5849;border-radius:6px;background:#101a15;color:#d8e5dc;font:inherit;text-align:left;cursor:pointer;
+  transition:border-color .2s,background .2s}
+.creation-shop-trigger:hover,.creation-shop-trigger:focus-visible{border-color:#b79354;background:#1a2821}
+.creation-shop-trigger .creation-shop-step{flex:none;color:var(--ink-gold);font:700 12px var(--serif)}
+.creation-shop-trigger .creation-shop-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#b7c9bb;font-size:10px;font-weight:800;letter-spacing:.12em}
+.creation-shop-trigger i{height:1px;flex:1 1 20px;min-width:8px;background:linear-gradient(90deg,#728b7280,transparent)}
+.creation-shop-trigger .creation-shop-summary{flex:none;color:#f2d48b;font-size:12px;font-weight:750;white-space:nowrap}
+.creation-shop-trigger .creation-shop-chevron{flex:none;color:#e6c67f;font-size:20px;line-height:1}
+.creation-shop-dialog{width:min(760px,calc(100vw - 24px));overscroll-behavior:contain}
+.creation-shop-dialog .creation-info-header{align-items:flex-start}
+.creation-shop-dialog .creation-info-header>div{min-width:0}
+.creation-shop-dialog .creation-info-header>button{width:44px;height:44px}
+.creation-shop-dialog .creation-info-header .eyebrow{display:block;margin-bottom:4px;font-size:9px;letter-spacing:.14em}
+.creation-shop-dialog .creation-info-header h2{overflow-wrap:anywhere}
+.creation-shop-dialog .creation-shop{margin-top:12px}
+@media(prefers-reduced-motion:reduce){.creation-shop-trigger{transition:none}}
 .creation-shop{display:grid;gap:10px;width:100%;min-width:0}
 .creation-shop-wallet{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;
   padding:10px 12px;border:1px solid #95713c;border-radius:9px;background:#1a1a13}
 .creation-shop-wallet strong{color:#f8d78b;font-size:15px}
 .creation-shop-wallet small{font-size:12px;color:#c9bca4;line-height:1.5}
+.creation-shop-section{display:grid;gap:7px}
+.creation-shop-section h3{margin:2px 0 0;color:#dcc28c;font:700 11px var(--serif);letter-spacing:.13em;text-transform:uppercase}
+.creation-shop-section>p{margin:0;color:#a9b8ab;font-size:12px;line-height:1.5}
 .creation-shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .creation-shop-item{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;
   padding:10px;border:1px solid #3a5849;border-radius:9px;background:#0f1915}
+.creation-shop-item.is-owned{border-color:#8a6c3d;background:#191a12}
 .creation-shop-item>div{min-width:0}
 .creation-shop-item strong{display:block;font-size:13.5px;color:#ead4a4;line-height:1.4}
 .creation-shop-item p{margin:4px 0;color:#bbcac0;font-size:12px;line-height:1.45}

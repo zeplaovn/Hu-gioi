@@ -80,14 +80,78 @@ for (const adapter of ['sqlite','postgres']) {
   });
 }
 
-test('quầy Khởi Nguyên là storefront thật ở màn tạo và server không tin dữ liệu giá/điểm client', () => {
+for (const adapter of ['sqlite','postgres']) {
+  test(`Thiên Mệnh Các trước khi nhập thế [${adapter}]: Dấu ấn Thiên Mệnh phải mua và chỉ chọn một`, async t => {
+    const { service: svc, close } = await fixture(adapter);
+    t.after(close);
+    const ticket = await svc.previewCreation(OWNER);
+    const first = await purchase(svc, 'starter', 'destinyLuck', 'starter-destiny-0001', 0);
+    assert.equal(first.pavilion.relics.destinyLuck, 1);
+    assert.equal(first.pavilion.balance, H.PAVILION.starterGrant - H.PAVILION.starter.destinyLuck.cost);
+    await assert.rejects(purchase(svc, 'starter', 'destinyExp', 'starter-destiny-0002', first.pavilion.version),
+      { code: 'GAME_RULE_VIOLATION' }, 'Không được mua hai Dấu ấn Thiên Mệnh');
+    const made = await svc.createPlayer(OWNER, {
+      ticketId: ticket.ticketId, name: 'Thiên Vận Tử', gender: 'nu',
+      talent: { vanKhi: 8 }, destiny: 'exp'
+    });
+    assert.equal(made.state.destiny, 'luck', 'Dấu ấn đã mua quyết định buff, không nhận destiny client gửi');
+    assert.equal(made.state.meta.upgrades.luck, 1);
+    assert.equal(made.state.meta.upgrades.exp, 0);
+    assert.deepEqual((await svc.bootstrap(OWNER)).pavilion.relics, {}, 'Dấu ấn được cấp đúng một lần');
+  });
+}
+
+for (const adapter of ['sqlite','postgres']) {
+  test(`Thiên Mệnh Các trước khi nhập thế [${adapter}]: không mua Dấu ấn thì không có buff khởi đầu`, async t => {
+    const { service: svc, close } = await fixture(adapter);
+    t.after(close);
+    const ticket = await svc.previewCreation(OWNER);
+    assert.equal((await svc.bootstrap(OWNER)).pavilion.balance, 0);
+    const made = await svc.createPlayer(OWNER, {
+      ticketId: ticket.ticketId, name: 'Vô Dấu Ấn', gender: 'nam',
+      talent: { canCot: 8 }, destiny: 'exp'
+    });
+    assert.equal(made.state.destiny, 'none');
+    assert.equal(made.state.meta.upgrades.exp, 0);
+  });
+}
+
+test('quầy Khởi Nguyên thu gọn ở màn tạo, mở bằng hộp thoại và server không tin dữ liệu giá/điểm client', () => {
   const read = pathName => fs.readFileSync(path.join(__dirname, '..',pathName),'utf8');
-  const html=read('index.html'), boot=read('client/ui/boot.js'), service=read('server/services/player-service.js');
+  const html=read('index.html'), boot=read('client/ui/boot.js'), css=read('css/creation.css'),
+    data=read('data/character.js'), remote=read('client/session/remote-session.js'),
+    service=read('server/services/player-service.js');
   assert.match(html, /id="creationShop"/);
   assert.match(html, /THIÊN MỆNH CÁC · QUẦY KHỞI NGUYÊN/);
+  assert.doesNotMatch(html, /id="destinySelect"/, 'Dấu ấn Thiên Mệnh không còn chọn miễn phí ở màn tạo');
+  assert.doesNotMatch(html, /Dấu ấn Thiên Mệnh miễn phí/);
+  assert.doesNotMatch(boot, /destinySelect/);
+  assert.match(html, /<button[^>]*id="creationShopOpen"[^>]*aria-haspopup="dialog"[^>]*aria-controls="creationShopDialog"/);
+  assert.match(html, /id="creationShopSummary"/);
+  assert.match(html, /<dialog[^>]*id="creationShopDialog"[^>]*aria-labelledby="creationShopTitle"/);
+  assert.match(html, /id="creationShopClose"/);
+  const dialogAt = html.indexOf('<dialog id="creationShopDialog"');
+  const shopAt = html.indexOf('id="creationShop"');
+  const dialogEnd = html.indexOf('</dialog>', dialogAt);
+  assert.ok(dialogAt >= 0 && shopAt > dialogAt && shopAt < dialogEnd,
+    '#creationShop phải nằm trong hộp thoại Thiên Mệnh Các');
+  assert.match(boot, /\$\('creationShopOpen'\)\?\.addEventListener\('click'/);
+  assert.match(boot, /if \(!shopDialog\.open\) shopDialog\.showModal\(\)/);
+  assert.match(boot, /function closeCreationShop\(\)/);
+  assert.match(boot, /function start\(\) \{\s*closeCreationShop\(\)/);
+  assert.match(boot, /summary\.textContent = num\(balance\) \+ ' ✧'/);
+  assert.match(boot, /item\.destiny/);
+  assert.match(data, /const starterDestinyProduct = \(key, cost\)/);
+  assert.match(data, /destinyExp:starterDestinyProduct\('exp',4\)/);
+  assert.match(data, /const starterConflict=\(relics,key\)/);
+  assert.match(service, /H\.PAVILION\.starterDestiny\(pavilion\.consumed\)/);
+  assert.match(remote, /ticketId: this\.ticket\.ticketId, name: profile\.name, gender: profile\.gender, talent: profile\.talent/);
+  assert.ok(css.includes('.creation-shop-trigger{') && /\.creation-shop-trigger\{[^}]*min-height:46px/.test(css),
+    'Nút thu gọn phải đủ 46px để chạm');
+  assert.match(css, /\.creation-shop-dialog \.creation-info-header>button\{width:44px;height:44px\}/);
   assert.match(boot, /UI\.session\.pavilionPurchase\('starter', key\)/);
   assert.match(boot, /H\.PAVILION\.starterTalentMax/);
   assert.match(service, /extraTalentPoints: pavilion\.consumed\?\.talentPoint \|\| 0/);
   assert.match(service, /onlyKeys\(body, \['ticketId', 'name', 'gender', 'talent', 'destiny'\]\)/);
-  assert.match(read('css/creation.css'), /creation-shop-item button\{min-height:44px/);
+  assert.match(css, /creation-shop-item button\{min-height:44px/);
 });

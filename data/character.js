@@ -44,16 +44,40 @@ const PAVILION_RELICS=Object.freeze({
    Tặng 10 Thiên Tinh cho tài khoản mới chỉ khi mua món starter đầu tiên. */
 const STARTER_GRANT = 10;
 const STARTER_TALENT_MAX = 4;
+/* Dấu ấn Thiên Mệnh không còn miễn phí ở màn tạo. Mỗi dấu ấn là một món
+   Khởi Nguyên mua bằng Thiên Tinh; chỉ được giữ một dấu ấn mỗi đạo thân. */
+const starterDestinyProduct = (key, cost) => ({
+  name: 'Dấu Ấn · ' + META_UPGRADES[key].name,
+  desc: META_UPGRADES[key].desc,
+  cost, max: 1, destiny: key, group: 'destiny'
+});
 const PAVILION_STARTER=Object.freeze({
+  destinyExp:starterDestinyProduct('exp',4),
+  destinyStone:starterDestinyProduct('stone',3),
+  destinyLife:starterDestinyProduct('life',4),
+  destinyLuck:starterDestinyProduct('luck',5),
   talentPoint:{name:'Điểm Thiên Phú',desc:'+1 điểm phân bổ lúc tạo đạo thân (tối đa 4).',cost:4,max:STARTER_TALENT_MAX},
   linhThach:{name:'Linh Thạch Nhập Thế',desc:'+200 linh thạch khởi đầu.',cost:2,max:2},
   tuKhiDan:{name:'Tụ Khí Đan',desc:'+2 Tụ Khí Đan trong hành trang đầu game.',cost:3,max:2},
   boiNguyenDan:{name:'Bồi Nguyên Đan',desc:'+2 Bồi Nguyên Đan hồi phục đầu game.',cost:2,max:2}
 });
+/* Chỉ một Dấu ấn Thiên Mệnh được mua cho mỗi đạo thân. */
+const starterConflict=(relics,key)=>{
+  const product=PAVILION_STARTER[key];
+  if(!product?.group)return false;
+  return Object.entries(PAVILION_STARTER).some(([other,item])=>
+    other!==key&&item.group===product.group&&Number(relics?.[other])>0);
+};
+/* Dấu ấn đã mua là nguồn duy nhất sinh ra destiny lúc tạo đạo thân. */
+const starterDestiny=relics=>{
+  for(const [key,item] of Object.entries(PAVILION_STARTER))
+    if(item.destiny&&Number(relics?.[key])>0)return item.destiny;
+  return 'none';
+};
 const pavilionBonus=level=>Math.min(20,Math.max(0,Math.floor(Number(level)||0)))*.025;
 const pavilionUpgradeCost=level=>level>=20?null:level<5?2:level<10?4:level<15?8:12;
 const pavilionRealmReward=realm=>Number.isInteger(realm)&&realm>0&&realm<=13?realm*5:0;
-const PAVILION=Object.freeze({stats:PAVILION_STATS,relics:PAVILION_RELICS,starter:PAVILION_STARTER,starterGrant:STARTER_GRANT,starterTalentMax:STARTER_TALENT_MAX,bonus:pavilionBonus,upgradeCost:pavilionUpgradeCost,realmReward:pavilionRealmReward});
+const PAVILION=Object.freeze({stats:PAVILION_STATS,relics:PAVILION_RELICS,starter:PAVILION_STARTER,starterGrant:STARTER_GRANT,starterTalentMax:STARTER_TALENT_MAX,starterConflict,starterDestiny,bonus:pavilionBonus,upgradeCost:pavilionUpgradeCost,realmReward:pavilionRealmReward});
 const META_ACHIEVEMENTS=[
  {id:'first_break',name:'Phá vỡ tầng đầu',desc:'Đột phá thành công lần đầu.',points:1,check:s=>s.stage>1||s.realm>0},
  {id:'kim_dan',name:'Kết Đan',desc:'Bước vào cảnh giới Kết Đan.',points:2,check:s=>s.realm>=2},

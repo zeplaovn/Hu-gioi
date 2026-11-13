@@ -13,17 +13,18 @@
   function header() {
     const choice = H.META_UPGRADES[UI.s().destiny];
     return `<header class="screen-title"><span class="eyebrow gold">THIÊN MỆNH</span><h2>Thiên mệnh</h2></header>
-      <p class="screen-lead">Thiên mệnh chỉ được chọn một lần khi tạo đạo thân. Khi tọa hóa, hành trình này kết thúc; không có cơ chế trọng sinh.</p>
-      ${choice ? card('Thiên mệnh đã chọn', row('Dấu ấn', esc(choice.name)) + row('Hiệu ứng', esc(choice.desc)), { eyebrow: 'KHỞI NGUYÊN' }) : ''}`;
+      <p class="screen-lead">Dấu ấn Thiên Mệnh là buff khởi đầu, phải mua tại Quầy Khởi Nguyên trước khi lập đạo thân. Mỗi đạo thân chỉ nhận một dấu ấn; khi tọa hóa, hành trình này kết thúc.</p>
+      ${choice ? card('Dấu ấn đã nhận', row('Dấu ấn', esc(choice.name)) + row('Hiệu ứng', esc(choice.desc)), { eyebrow: 'KHỞI NGUYÊN' }) : card('Chưa có Dấu ấn', '<p>Đạo thân này không mang Dấu ấn Thiên Mệnh. Dấu ấn chỉ có thể mua trước khi lập đạo thân.</p>', { eyebrow: 'KHỞI NGUYÊN' })}`;
   }
 
   function destiny() {
     const current = UI.s().destiny;
-    return `<div class="screen-grid">${Object.entries(H.META_UPGRADES).map(([key, d]) =>
-      card(d.name, `<div class="meta-upgrade-head"><span class="meta-upgrade-icon" aria-hidden="true">${d.icon}</span>
-        <div>${row('Hiệu ứng khi chọn', esc(d.desc))}${row('Trạng thái', key === current ? 'Thiên mệnh hiện tại' : 'Không thể đổi khi đang tu hành')}</div></div>`,
-        { eyebrow: key === current ? 'ĐÃ CHỌN' : 'KHỞI NGUYÊN' })
-      ).join('')}</div>`;
+    return `<div class="screen-grid">${Object.entries(H.META_UPGRADES).map(([key, d]) => {
+      const product = Object.values(H.PAVILION.starter).find(item => item.destiny === key);
+      return card(d.name, `<div class="meta-upgrade-head"><span class="meta-upgrade-icon" aria-hidden="true">${d.icon}</span>
+        <div>${row('Hiệu ứng', esc(d.desc))}${row('Mua tại', 'Quầy Khởi Nguyên · ' + (product ? product.cost + ' Thiên Tinh' : 'không bán'))}${row('Trạng thái', key === current ? 'Dấu ấn hiện tại' : 'Chưa nhận')}</div></div>`,
+        { eyebrow: key === current ? 'ĐANG DÙNG' : 'KHỞI NGUYÊN' });
+    }).join('')}</div>`;
   }
   function pavilion() {
     const p = UI.session.pavilion || { balance: 0, upgrades: {} };

@@ -92,7 +92,7 @@ test('RemoteSession requires Supabase, server preview and creates player from ti
   await f.session.create({ name: 'Vân Tiêu', gender: 'nam', talent: { canCot: 2 }, destiny: 'exp' });
   assert.equal(f.session.ready, true);
   assert.equal(f.session.playerId, PLAYER);
-  assert.deepEqual(Object.keys(f.calls.find(x => x.path === '/players').body).sort(), ['destiny','gender','name','talent','ticketId']);
+  assert.deepEqual(Object.keys(f.calls.find(x => x.path === '/players').body).sort(), ['gender','name','talent','ticketId']);
   assert.equal(f.session.game.s.qi, 10);
 });
 

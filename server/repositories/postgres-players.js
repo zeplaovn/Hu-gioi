@@ -400,6 +400,8 @@ class PostgresPlayers extends PlayerRepository {
         const product = catalog.starter[key], held = relics[key] || 0;
         if (!Number.isInteger(held) || held < 0 || held >= product.max)
           throw new GameError('GAME_RULE_VIOLATION', 'Hàng Khởi Nguyên đã đạt giới hạn.');
+        if (catalog.starterConflict?.(relics, key))
+          throw new GameError('GAME_RULE_VIOLATION', 'Chỉ được chọn một Dấu ấn Thiên Mệnh.');
         cost = product.cost;
         relics[key] = held + 1;
       } else throw new GameError('INVALID_REQUEST', 'Loại giao dịch Thiên Mệnh Các không hợp lệ.');

@@ -84,10 +84,11 @@
   // Bộ WebP mới là nguồn duy nhất. Bọc resolver chung để mọi giao diện
   // (Tu luyện, Lịch luyện, Độ kiếp, ảnh đại diện) cùng hiển thị đạo thân.
   A.heroFrames = () => COUNT;
+  const stable = src => A.mediaSrc ? A.mediaSrc(src) : src;
   A.heroSrc = (g, zone, action = 'dung_yen') => {
     const gender = sex(g), t = now();
     const name = effectiveAction(gender, action, t);
-    return path(gender, name, frame(gender, name, t));
+    return stable(path(gender, name, frame(gender, name, t)));
   };
   A.heroPortrait = g => BASE + sex(g) + '/portrait.webp';
   A.preloadHero = (g, zone, action = 'dung_yen') => {
@@ -98,7 +99,8 @@
       cache.set(key, Array.from({ length: COUNT }, (_, i) => {
         const image = new root.Image();
         image.decoding = 'async';
-        image.src = path(g, name, i);
+        const src = path(g, name, i);
+        image.src = A.mediaSrc ? A.mediaSrc(src, image) : src;
         return image;
       }));
     }

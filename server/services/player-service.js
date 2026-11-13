@@ -174,11 +174,11 @@ class PlayerService {
     return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview };
   }
 
-  /* Tuổi/chủng tộc/linh căn từ ticket; tên, giới tính, thiên phú và 1 Thiên mệnh do client chọn. */
+  /* Tuổi/chủng tộc/linh căn từ ticket; tên, giới tính và thiên phú do client chọn.
+     Dấu ấn Thiên Mệnh lấy từ hàng Khởi Nguyên đã mua trên server, không nhận từ client.
+     Trường destiny cũ vẫn được chấp nhận để client đã cache không lỗi, nhưng bị bỏ qua. */
   async createPlayer(ownerId, body) {
     onlyKeys(body, ['ticketId', 'name', 'gender', 'talent', 'destiny']);
-    if (typeof body.destiny !== 'string' || !Object.hasOwn(H.META_UPGRADES, body.destiny))
-      throw invalid('INVALID_PROFILE', 'Hãy chọn một Thiên mệnh khởi nguyên hợp lệ.');
     if (typeof body.ticketId !== 'string' || body.ticketId.length > 64) throw invalid('INVALID_REQUEST', 'Thiếu phiếu khởi nguyên.');
     if (body.talent !== undefined && !isPlain(body.talent)) throw invalid('INVALID_PROFILE', 'Thiên phú không hợp lệ.');
     const now = this.clock();
@@ -188,7 +188,8 @@ class PlayerService {
         const seed = crypto.randomBytes(32).toString('hex'), rng = seededRng(seed, 0);
         let state;
         try {
-          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny: body.destiny, extraTalentPoints: pavilion.consumed?.talentPoint || 0 }, now, rng);
+          const destiny = H.PAVILION.starterDestiny(pavilion.consumed);
+          state = H.createCharacter({ ...preview, name: body.name, gender: body.gender, talent: body.talent, destiny, extraTalentPoints: pavilion.consumed?.talentPoint || 0 }, now, rng);
           H.applyPavilionOnCreate(state, pavilion.upgrades, pavilion.consumed);
         }
         catch (err) { throw invalid('INVALID_PROFILE', err.message); }
