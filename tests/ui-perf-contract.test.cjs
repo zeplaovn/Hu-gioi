@@ -49,7 +49,7 @@ test('HUD dùng MediaQueryList đơn, cache nút thông báo và không đổi g
 test('index.html vẫn khai báo style nguồn, bản build CSS xác thực SHA-256', () => {
   const source = read('index.html');
   const links = [...source.matchAll(/<link rel="stylesheet" href="css\/[^"]+\.css">/g)];
-  assert.equal(links.length, 15);
+  assert.equal(links.length, 16);
   const build = read('tools/build-dist.cjs');
   const verify = read('tools/check-css-bundle.cjs');
   assert.match(build, /createHash\('sha256'\)/);
