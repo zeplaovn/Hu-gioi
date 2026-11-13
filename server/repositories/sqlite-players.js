@@ -142,8 +142,10 @@ class SqlitePlayers extends PlayerRepository {
         VALUES (?, ?, ?, ?, ?, ?, ?)`),
       ticketCount: p('SELECT COUNT(*) AS n, MIN(created_at) AS oldest FROM creation_tickets WHERE owner_id = ? AND created_at > ?'),
       latestTicket: p('SELECT * FROM creation_tickets WHERE owner_id = ? AND used_at IS NULL AND created_at > ? ORDER BY created_at DESC LIMIT 1'),
+      latestUsedTicket: p('SELECT * FROM creation_tickets WHERE owner_id = ? AND used_at IS NOT NULL AND created_at > ? ORDER BY created_at DESC LIMIT 1'),
       putTicket: p('INSERT INTO creation_tickets (id, owner_id, preview, created_at, expires_at) VALUES (?, ?, ?, ?, ?)'),
       extendTicket: p('UPDATE creation_tickets SET expires_at = ? WHERE id = ?'),
+      reviveTicket: p('UPDATE creation_tickets SET used_at = NULL, expires_at = ? WHERE id = ?'),
       ticket: p('SELECT * FROM creation_tickets WHERE id = ?'),
       useTicket: p('UPDATE creation_tickets SET used_at = ? WHERE id = ? AND used_at IS NULL'),
       deletePlayer: p('DELETE FROM players WHERE id = ? AND owner_id = ?'),
@@ -274,7 +276,20 @@ class SqlitePlayers extends PlayerRepository {
             rollsLeft: Math.max(0, dailyLimit - n), reused: true };
         }
       }
-      if (n >= dailyLimit) return { limited: true, retryAfterMs: Math.max(1000, oldest + DAY - now) };
+      if (n >= dailyLimit) {
+        // Hết hạn mức gieo mới nhưng không còn phiếu chưa dùng: mở lại phiếu đã
+        // dùng gần nhất, giữ nguyên preview để không tặng thêm lượt gieo.
+        if (!fresh) {
+          const used = this.q.latestUsedTicket.get(ownerId, now - DAY);
+          if (used) {
+            const expiresAt = now + ttlMs;
+            this.q.reviveTicket.run(expiresAt, used.id);
+            return { id: used.id, preview: JSON.parse(used.preview), expiresAt,
+              rollsLeft: 0, reused: true, revived: true };
+          }
+        }
+        return { limited: true, retryAfterMs: Math.max(1000, oldest + DAY - now) };
+      }
       const id = crypto.randomUUID();
       this.q.putTicket.run(id, ownerId, JSON.stringify(preview), now, now + ttlMs);
       return { id, preview, expiresAt: now + ttlMs, rollsLeft: dailyLimit - n - 1 };

@@ -299,13 +299,16 @@ test('API: quyền dữ liệu cá nhân không phụ thuộc bản đồng ý c
   assert.equal(await repo.getByOwner(ID_A), null);
 });
 
-test('xóa tài khoản: chưa cấu hình khóa quản trị thì từ chối và KHÔNG xóa dữ liệu; Supabase lỗi thì báo thử lại', async () => {
+test('xóa tài khoản luôn xóa dữ liệu và phiếu trước; thiếu khóa quản trị vẫn báo NOT_IMPLEMENTED, Supabase lỗi thì báo thử lại', async () => {
   const repo = new SqlitePlayers(':memory:');
   const service = new PlayerService({ repository: repo, contentVersion: 'test', onError: () => {} });
   const t1 = (await service.previewCreation(ID_A)).ticketId;
   await service.createPlayer(ID_A, { ticketId: t1, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
   await assert.rejects(service.deleteAccount(ID_A, { confirm: 'delete-my-account' }, null), { code: 'NOT_IMPLEMENTED' });
-  assert.ok(await repo.getByOwner(ID_A));
+  assert.equal(await repo.getByOwner(ID_A), null);
+  assert.equal((await service.exportData(ID_A)).pendingCreationTickets, 0, 'phiếu khởi nguyên phải bị xóa cùng tài khoản');
+  const t2 = (await service.previewCreation(ID_A)).ticketId;
+  await service.createPlayer(ID_A, { ticketId: t2, name: 'Mộ Dung', gender: 'nam', talent: { phucDuyen: 8 }, destiny: 'exp' });
   const { createAccountAdmin } = require('../server/auth/account-admin.js');
   const calls = [];
   const mk = status => createAccountAdmin({ url: 'https://abc.supabase.co', secretKey: 'sb_secret_' + 'x'.repeat(30),

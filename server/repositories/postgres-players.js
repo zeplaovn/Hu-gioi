@@ -184,7 +184,25 @@ class PostgresPlayers extends PlayerRepository {
             rollsLeft: Math.max(0, dailyLimit - n), reused: true };
         }
       }
-      if (n >= dailyLimit) return { limited: true, retryAfterMs: Math.max(1000, toInt(existing.oldest) + DAY - now) };
+      if (n >= dailyLimit) {
+        // Hết hạn mức gieo mới nhưng không còn phiếu chưa dùng: mở lại phiếu đã
+        // dùng gần nhất thay vì chặn người chơi tạo nhân vật. Giữ nguyên preview
+        // cũ để không biến thao tác này thành một lượt gieo mới miễn phí.
+        if (!fresh) {
+          const used = await one(c,
+            `SELECT * FROM game.creation_tickets
+             WHERE owner_id = $1 AND used_at IS NOT NULL AND created_at > $2
+             ORDER BY created_at DESC LIMIT 1`, [ownerId, big(now - DAY)]);
+          if (used) {
+            const expiresAt = now + ttlMs;
+            await exec(c, 'UPDATE game.creation_tickets SET used_at = NULL, expires_at = $1 WHERE id = $2',
+              [big(expiresAt), used.id]);
+            return { id: used.id, preview: json(used.preview), expiresAt,
+              rollsLeft: 0, reused: true, revived: true };
+          }
+        }
+        return { limited: true, retryAfterMs: Math.max(1000, toInt(existing.oldest) + DAY - now) };
+      }
       const id = crypto.randomUUID();
       await exec(c, `INSERT INTO game.creation_tickets (id, owner_id, preview, created_at, expires_at)
         VALUES ($1, $2, $3::jsonb, $4, $5)`, [id, ownerId, JSON.stringify(preview), big(now), big(now + ttlMs)]);

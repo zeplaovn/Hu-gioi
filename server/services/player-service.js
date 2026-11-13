@@ -128,12 +128,14 @@ class PlayerService {
   }
 
   /* Xóa tài khoản: xóa dữ liệu gameplay trước (cục bộ, đáng tin), rồi xóa người dùng Supabase (kéo theo bản ghi chấp thuận).
-     Nếu bước Supabase lỗi, dữ liệu gameplay đã xóa và người dùng có thể gọi lại; thao tác idempotent. */
+     Phiếu khởi nguyên phải biến mất kể cả khi bước Supabase chưa cấu hình hoặc tạm lỗi; người dùng có thể gọi lại,
+     thao tác idempotent. */
   async deleteAccount(ownerId, body, accountAdmin) {
     onlyKeys(body, ['confirm']);
     if (body.confirm !== DELETE_ACCOUNT_CONFIRMATION) throw invalid('INVALID_REQUEST', 'Cần xác nhận xóa tài khoản.');
-    if (!accountAdmin) throw new GameError('NOT_IMPLEMENTED', 'Máy chủ chưa bật xóa tài khoản tự động. Hãy gửi email yêu cầu.');
     const erased = await this.repo.deleteOwnerData(ownerId);
+    if (!accountAdmin)
+      throw new GameError('NOT_IMPLEMENTED', 'Đã xóa dữ liệu trò chơi, nhưng máy chủ chưa bật xóa tài khoản đăng nhập tự động. Hãy gửi email yêu cầu.');
     await accountAdmin.deleteUser(ownerId);
     return { accountDeleted: true, ...erased };
   }
@@ -179,7 +181,8 @@ class PlayerService {
       now, ttlMs: this.cfg.ticketTtlMs, dailyLimit: this.cfg.previewsPerDay, fresh: body.fresh === true
     });
     if (t.limited) throw new GameError('RATE_LIMITED', 'Hôm nay đã gieo quá nhiều lần.', { retryAfterMs: t.retryAfterMs });
-    return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview: t.preview, reused: t.reused === true };
+    return { ticketId: t.id, expiresAt: t.expiresAt, rollsLeft: t.rollsLeft, preview: t.preview,
+      reused: t.reused === true, revived: t.revived === true };
   }
 
   /* Tuổi/chủng tộc/linh căn từ ticket; tên, giới tính và thiên phú do client chọn.

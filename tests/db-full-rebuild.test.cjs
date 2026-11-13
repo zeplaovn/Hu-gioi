@@ -16,7 +16,7 @@ test('toàn bộ migration dựng được database trắng từ đầu và khô
   const db = new PGlite();
   try {
     await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE SCHEMA auth;
-      CREATE TABLE auth.users(id uuid primary key);
+      CREATE TABLE auth.users(id uuid primary key, deleted_at timestamptz);
       CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
       INSERT INTO auth.users VALUES ('11111111-1111-4111-8111-111111111111');
       -- PGlite không có pg_cron; giả lập API lập lịch để vẫn replay và kiểm tra migration.
@@ -46,6 +46,29 @@ test('toàn bộ migration dựng được database trắng từ đầu và khô
       assert.match(accountJob[0].command, /delete from game\.account_receipts/i);
       await db.exec('BEGIN; ' + accountJob[0].command + ' ROLLBACK;');
     }
+    // Xóa tài khoản phải xóa phiếu khởi nguyên, kể cả khi Auth xóa mềm.
+    const ticketFk = (await db.query(`select pg_get_constraintdef(oid) as def
+      from pg_constraint where conrelid='game.creation_tickets'::regclass and contype='f'`)).rows;
+    assert.equal(ticketFk.length, 1);
+    assert.match(ticketFk[0].def, /ON DELETE CASCADE/i);
+    const orphanJob = (await db.query(
+      "select schedule,command from cron.job where jobname='hugioi-cleanup-orphan-tickets'")).rows;
+    assert.equal(orphanJob.length, 1);
+    assert.equal(orphanJob[0].schedule, '30 */3 * * *');
+    const softDeleted = '33333333-3333-4333-8333-333333333333';
+    await db.query('insert into auth.users(id, deleted_at) values ($1, now())', [softDeleted]);
+    await db.query(`insert into game.creation_tickets(id, owner_id, preview, created_at, expires_at)
+      values ('44444444-4444-4444-8444-444444444444', $1, '{}'::jsonb, 1, 2)`, [softDeleted]);
+    await db.exec(orphanJob[0].command);
+    assert.equal((await db.query(
+      'select count(*)::int as n from game.creation_tickets where owner_id=$1', [softDeleted])).rows[0].n, 0);
+    const hardDeleted = '55555555-5555-4555-8555-555555555555';
+    await db.query('insert into auth.users(id) values ($1)', [hardDeleted]);
+    await db.query(`insert into game.creation_tickets(id, owner_id, preview, created_at, expires_at)
+      values ('66666666-6666-4666-8666-666666666666', $1, '{}'::jsonb, 1, 2)`, [hardDeleted]);
+    await db.query('delete from auth.users where id=$1', [hardDeleted]);
+    assert.equal((await db.query(
+      'select count(*)::int as n from game.creation_tickets where owner_id=$1', [hardDeleted])).rows[0].n, 0);
     const tables = (await db.query(`select n.nspname || '.' || c.relname as tbl,c.relrowsecurity as rls
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where c.relkind='r' and (n.nspname='game' or n.nspname='public' and c.relname='policy_acceptances')

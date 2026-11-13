@@ -89,6 +89,37 @@ test('giới hạn số lần gieo mỗi ngày', async () => {
   assert.notEqual(next.ticketId, first.ticketId);
 });
 
+test('hết lượt gieo và không còn phiếu chưa dùng: mở lại phiếu cũ thay vì chặn tạo nhân vật', async () => {
+  const { svc, clock, repo } = setup({ previewsPerDay: 1 });
+  const ticket = await svc.previewCreation('owner-a');
+  const made = await svc.createPlayer('owner-a', {
+    ticketId: ticket.ticketId, name: 'Cố Tái Sinh', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp'
+  });
+  const current = await repo.get(made.playerId);
+  const maxLife = new H.Game(current.state).maxLife();
+  await repo.transact(made.playerId, tx => ({ save: {
+    state: { ...tx.record.state, age: maxLife + 1 }, revision: 1,
+    rngCounter: 0, lastSeenAt: clock.t, schemaVersion: H.VERSION, contentVersion: 'test'
+  } }));
+  clock.t += 3600 * 1000;
+  assert.equal((await svc.sync('owner-a', made.playerId)).died, true);
+  await svc.resetAfterDeath('owner-a', made.playerId);
+
+  // Phiếu duy nhất đã dùng: xin gieo mới vẫn bị giới hạn...
+  assert.equal(await code(async () => await svc.previewCreation('owner-a', { fresh: true })), 'RATE_LIMITED');
+  // ...nhưng mở lại màn tạo phải dùng lại đúng phiếu cũ, không chặn người chơi.
+  const revived = await svc.previewCreation('owner-a');
+  assert.equal(revived.ticketId, ticket.ticketId);
+  assert.equal(revived.revived, true);
+  assert.equal(revived.reused, true);
+  assert.equal(revived.rollsLeft, 0);
+  assert.deepEqual(revived.preview, ticket.preview);
+  const remade = await svc.createPlayer('owner-a', {
+    ticketId: revived.ticketId, name: 'Cố Tái Sinh', gender: 'nam', talent: { ngoTinh: 8 }, destiny: 'exp'
+  });
+  assert.ok(remade.playerId);
+});
+
 test('mở lại màn tạo dùng lại phiếu trong 24 giờ và hồi hạn phiếu đã hết TTL', async () => {
   const { svc, clock } = setup({ previewsPerDay: 5 });
   const first = await svc.previewCreation('owner-a');
@@ -305,7 +336,7 @@ const socialMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/sql
 const rankMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/sql/archive/pre-baseline/20261111022001_desktop_chat_channels_and_power_ranks.sql'), 'utf8');
 const accountMigrationSQL = fs.readFileSync(path.join(__dirname, '../supabase/migrations/20261112020000_daily_mail_checkin.sql'), 'utf8');
 
-async function sharedFixture(mode, t) {
+async function sharedFixture(mode, t, config = {}) {
   let repo;
   if (mode === 'sqlite') {
     repo = new SqlitePlayers(':memory:');
@@ -342,7 +373,7 @@ async function sharedFixture(mode, t) {
   const time = { now: T0 };
   const service = new PlayerService({
     repository: repo, clock: () => time.now, contentVersion: 'test',
-    config: { nextSyncInMs: 20000, onlineGraceMs: 60000, repositoryRates: mode === 'postgres' },
+    config: { nextSyncInMs: 20000, onlineGraceMs: 60000, repositoryRates: mode === 'postgres', ...config },
     onError: () => {}
   });
   const make = async (owner, name) => {
@@ -416,6 +447,34 @@ for (const adapter of ['sqlite', 'postgres']) {
     assert.equal((await service.sync(OWNER_A, playerId)).report.seconds, 0);
   });
 
+
+  test(`PlayerService hợp đồng [${adapter}]: hết lượt gieo vẫn mở lại được phiếu đã dùng`, async t => {
+    const { service, repo, time } = await sharedFixture(adapter, t, { previewsPerDay: 1 });
+    const first = await service.previewCreation(OWNER_A);
+    const { playerId } = await service.createPlayer(OWNER_A, {
+      ticketId: first.ticketId, name: 'Bất Tử', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+    });
+    const current = await repo.get(playerId);
+    const maxLife = new H.Game(current.state).maxLife();
+    await repo.transact(playerId, tx => ({ save: {
+      state: { ...tx.record.state, age: maxLife + 1 }, revision: 1,
+      rngCounter: 0, lastSeenAt: time.now, schemaVersion: H.VERSION, contentVersion: 'test'
+    } }));
+    time.now += 3600 * 1000;
+    assert.equal((await service.sync(OWNER_A, playerId)).died, true);
+    await service.resetAfterDeath(OWNER_A, playerId);
+
+    assert.equal(await code(async () => await service.previewCreation(OWNER_A, { fresh: true })), 'RATE_LIMITED');
+    const revived = await service.previewCreation(OWNER_A);
+    assert.equal(revived.ticketId, first.ticketId);
+    assert.equal(revived.revived, true);
+    assert.equal(revived.rollsLeft, 0);
+    assert.deepEqual(revived.preview, first.preview);
+    const remade = await service.createPlayer(OWNER_A, {
+      ticketId: revived.ticketId, name: 'Bất Tử', gender: 'nu', talent: { ngoTinh: 8 }, destiny: 'exp'
+    });
+    assert.ok(remade.playerId);
+  });
 
   test(`PlayerService hợp đồng [${adapter}]: xóa nhân vật đặt lại lượt gieo, không ảnh hưởng tài khoản khác`, async t => {
     const { service, make } = await sharedFixture(adapter, t);
