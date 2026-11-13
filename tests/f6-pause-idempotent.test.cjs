@@ -1,11 +1,11 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 
 test('F6: pause đã dừng không làm revision, lastSeenAt, state đổi hoặc ghi lại', async t => {
-  const repo = new SqlitePlayers(':memory:');
+  const repo = new MemoryPlayers();
   t.after(() => repo.close());
   let now = 1_800_000_000_000;
   const svc = new PlayerService({ repository: repo, clock: () => now, contentVersion: 'test' });

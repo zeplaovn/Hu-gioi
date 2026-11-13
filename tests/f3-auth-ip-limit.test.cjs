@@ -2,7 +2,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
-const { createGameApi } = require('../server/http/game-api.js');
+const { createGameApi } = require('../tools/ci-server/game-api.js');
 
 test('F3: IP limit chỉ áp vào khách chưa xác thực hay JWT không hợp lệ; tài khoản hợp lệ đi theo account', async t => {
   const keys = [];

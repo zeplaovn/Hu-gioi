@@ -69,4 +69,4 @@ Không có cơ chế trọng thương sống sót, hồi sinh, `prestige`, `rein
 5. **Không giữ** vật phẩm thông thường, thành tựu, Thiên Thư, lịch sử nhân vật hay lựa chọn Thiên mệnh qua cái chết. Thiên Mệnh Các và Kỳ Trân lưu ở bảng account nhưng bị xóa khi bắt đầu lại; tài khoản đăng nhập và consent được giữ.
 6. `daoVan`, `offlineCap`, `offlineEff` giữ trường để migrate dữ liệu nhưng không còn lệnh gameplay tương ứng.
 
-Các quy tắc này không chứng minh production đã sẵn sàng. Chat bốn kênh và bảng xếp hạng là tính năng người chơi thật qua Edge API; Tri kỷ/Luận kiếm/Đấu giá vẫn là NPC mô phỏng. Node/SQLite chỉ dành cho dev/test. Xem [edge-deployment.md](edge-deployment.md) và [security.md](security.md).
+Các quy tắc này không chứng minh production đã sẵn sàng. Chat bốn kênh và bảng xếp hạng là tính năng người chơi thật qua Edge API; Tri kỷ/Luận kiếm/Đấu giá vẫn là NPC mô phỏng. Xem [edge-deployment.md](edge-deployment.md) và [security.md](security.md).

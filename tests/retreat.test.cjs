@@ -3,7 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const H = require('../engine/game.js');
 const C = require('../engine/protocol/commands.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 
 const NOW = 1_800_000_000_000;
@@ -120,7 +120,7 @@ test('bản lưu V9 nâng an toàn; phiên V10 được giữ và làm sạch kh
 });
 
 test('máy chủ lưu phiên, ngừng offline và xử lý lại requestId không nhân đôi', async t => {
-  const repo = new SqlitePlayers(':memory:'); t.after(() => repo.close());
+  const repo = new MemoryPlayers(); t.after(() => repo.close());
   let now = NOW;
   const svc = new PlayerService({ repository: repo, clock: () => now, contentVersion: 'test', onError: () => {} });
   const preview = await svc.previewCreation('owner');

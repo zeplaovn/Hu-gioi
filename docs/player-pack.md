@@ -18,9 +18,8 @@ Nguồn ảnh: `player.zip` do chủ repo cung cấp. Các khung gốc không b�
 node --test tests/player-pack.test.cjs
 npm test
 npm run check
-npm start
 ```
 
-Thử trực tiếp nhân vật nam/nữ và các trạng thái đứng, di chuyển, tấn công, tử vong trong game qua `npm start` (Node dev/test), rồi đối chiếu desktop/mobile bằng quy trình kiểm tra UI. Trang demo sprite độc lập đã được loại khỏi repository. Bộ ảnh khoảng 1,5 MB tổng dung lượng, có thể cache theo tên file ổn định. Bộ gốc PNG trong `player.zip` không bị xóa.
+Thử trực tiếp nhân vật nam/nữ và các trạng thái đứng, di chuyển, tấn công, tử vong trên bản staging/production (Cloudflare + Edge), rồi đối chiếu desktop/mobile bằng quy trình kiểm tra UI. Trang demo sprite độc lập đã được loại khỏi repository. Bộ ảnh khoảng 1,5 MB tổng dung lượng, có thể cache theo tên file ổn định. Bộ gốc PNG trong `player.zip` không bị xóa.
 
 **Giới hạn:** Sprite 6 khung dùng biến đổi tư thế từ ảnh nguồn; không có nội suy xương/3D. Việc kiểm tra cuối cùng trên nhiều máy và mạng chậm cần được thực hiện khi deploy.

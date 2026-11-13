@@ -1,9 +1,9 @@
-/* Xác định người gọi API gameplay: Bearer JWT (Supabase) hoặc cookie phiên của AuthService thử nghiệm.
-   Trả { accountId, via } hoặc null. consent:false chỉ dành cho quyền dữ liệu cá nhân (xem/xóa), để người dùng đã rút đồng ý vẫn thực hiện được. Cookie chỉ được chấp nhận kèm kiểm tra Origin cho mọi yêu cầu ghi (CSRF). */
+/* Xác định người gọi API gameplay: Bearer JWT (Supabase).
+   Trả { accountId, via } hoặc null. consent:false chỉ dành cho quyền dữ liệu cá nhân (xem/xóa), để người dùng đã rút đồng ý vẫn thực hiện được. */
 'use strict';
 const { GameError } = require('../errors.js');
 
-function createPrincipalResolver({ jwt = null, legacy = null, verifyConsent = null } = {}) {
+function createPrincipalResolver({ jwt = null, verifyConsent = null } = {}) {
   return async function resolve(req, { consent = true } = {}) {
     const header = String(req.headers.authorization || '');
     if (header) {
@@ -12,15 +12,6 @@ function createPrincipalResolver({ jwt = null, legacy = null, verifyConsent = nu
       const claims = await jwt.verify(m[1]);
       if (verifyConsent && consent) await verifyConsent(m[1], claims.sub);
       return { accountId: claims.sub, via: 'jwt' };
-    }
-    if (legacy) {
-      const account = legacy.session(req);
-      if (account) {
-        if (req.method !== 'GET' && req.method !== 'HEAD') {
-          try { legacy.verifyMutationOrigin(req); } catch { throw new GameError('FORBIDDEN', 'Nguồn yêu cầu không hợp lệ.'); }
-        }
-        return { accountId: account.id, via: 'cookie' };
-      }
     }
     return null;
   };

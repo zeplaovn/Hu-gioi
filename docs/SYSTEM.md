@@ -16,7 +16,7 @@ Browser
 - **Frontend:** `index.html`, `client/`, `css/`, `media/`; `npm run build:min` tạo `dist/`. Cloudflare chỉ phục vụ file tĩnh, không chạy logic gameplay.
 - **Luật dùng chung:** `engine/` + `data/`. State **V10**, protocol **v4**, **52 lệnh**; `engine/protocol/commands.js` là hợp đồng lệnh.
 - **Backend Edge:** `supabase/functions/api/index.ts` xác thực JWT, consent, CORS, route; `social.ts` xử lý chat/ranking; `tools/build-edge.cjs` đóng gói `server/`, `engine/`, `data/` thành bundle không commit.
-- **Node/SQLite:** `server/main.js` và `server/repositories/sqlite-players.js` chỉ dùng cho **dev/test**, không phải backend production. Khi chạy gateway Node sau reverse proxy, phải cấu hình `HU_AUTH_TRUSTED_PROXY_IPS` đúng IP proxy; proxy tin cậy phải ghi đè header forwarded và bảo vệ `SUPABASE_URL`.
+- **Không còn Node/SQLite:** server Node, kho SQLite, Docker và `npm start` đã gỡ. Lõi dùng chung (`server/services`, `postgres-players.js`) chạy trong Supabase Edge; test dùng kho in-memory `tests/helpers/memory-players.js` và PGlite; Playwright CI dùng `tools/online-ci-server.cjs` (chỉ CI, không phải production).
 - **Client:** `client/session/remote-session.js` chỉ gửi intent + `requestId` + `expectedVersion` + bearer JWT. Không gửi state, thời gian, RNG, giá hoặc phần thưởng đáng tin cậy.
 
 ## 2. Xác thực, consent và API

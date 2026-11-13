@@ -44,12 +44,10 @@ test('tất cả các ô ảnh dùng tọa độ hợp lệ và đúng bảng at
 
 test('Cài đặt không hiển thị Bản lưu; cơ chế tự lưu được giữ nguyên', () => {
   const s = read('client/ui/screens/settings.js');
-  const store = read('client/persistence/local-store.js');
   assert.doesNotMatch(s, /id: 'save'|function save\(\)|action\('export'|action\('import'/);
   assert.match(s, /const body = \{ season, audio, guide, account, legal \}/);
   assert.match(s, /data-act="deleteCharacter"/);
   assert.doesNotMatch(s, /WebGL|localStorage|HỆ THỐNG|file JSON/);
-  assert.match(store, /write\(\) \{/);
 });
 
 test('ba khung nâng cấp nhanh không còn che sân khấu, công năng nâng cấp vẫn giữ', () => {

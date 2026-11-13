@@ -50,26 +50,21 @@ test('tài liệu kiến trúc hiện hành không quảng bá phiên offline V8
   assert.doesNotMatch(integration, /Schema lưu hiện là V8/);
 });
 
-test('Docker HEALTHCHECK và meta CSP cùng origin, không còn chú thích offline-only', () => {
-  const docker = fs.readFileSync(path.join(ROOT, 'Dockerfile'), 'utf8');
+test('meta CSP cùng origin, không còn chú thích offline-only', () => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const adapter = fs.readFileSync(path.join(ROOT, 'client/auth/supabase.js'), 'utf8');
   const cspMeta = html.split('\n').find(line => line.includes('http-equiv="Content-Security-Policy"'));
-  assert.match(docker, /HEALTHCHECK[^\n]*[\s\S]*?\/api\/health/);
   assert.ok(cspMeta);
   assert.doesNotMatch(cspMeta, /file:/);
   assert.doesNotMatch(adapter, /gameplay remains offline-only/);
 });
 
-test('triển khai Edge có tài liệu riêng, Cloudflare chỉ phục vụ dist; Node gateway vẫn tách riêng cho dev', () => {
+test('triển khai Edge có tài liệu riêng, Cloudflare chỉ phục vụ dist', () => {
   const edge = fs.readFileSync(path.join(ROOT, 'docs/edge-deployment.md'), 'utf8');
-  const node = fs.readFileSync(path.join(ROOT, 'docs/SYSTEM.md'), 'utf8');
   const config = fs.readFileSync(path.join(ROOT, 'wrangler.jsonc'), 'utf8');
   assert.match(edge, /Supabase Edge/i);
   assert.match(edge, /HU_DB_POOLER_URL/);
   assert.match(edge, /game.*RLS|RLS.*game/s);
-  assert.match(node, /Node\/SQLite[\s\S]{0,180}dev\/test/i);
-  assert.match(node, /HU_AUTH_TRUSTED_PROXY_IPS/);
   assert.match(config, /"directory": "\.\/dist"/);
   assert.doesNotMatch(config, /api\/v1|SUPABASE_SERVICE_ROLE_KEY|node:sqlite/);
   const security = fs.readFileSync(path.join(ROOT, 'docs/security.md'), 'utf8');
@@ -78,11 +73,15 @@ test('triển khai Edge có tài liệu riêng, Cloudflare chỉ phục vụ dis
   assert.match(security, /CSP/);
 });
 
-test('Docker Compose yêu cầu SUPABASE_URL từ môi trường, mẫu nằm trong .env.example', () => {
-  const compose = fs.readFileSync(path.join(ROOT, 'compose.yaml'), 'utf8');
+test('nhánh Node/SQLite đã gỡ: không còn Docker, server Node hay SQLite; .env.example chỉ còn biến build', () => {
+  for (const gone of ['Dockerfile', 'compose.yaml', '.dockerignore', 'server/main.js',
+    'server/repositories/sqlite-players.js', 'client/session/local-session.js', 'tools/backup-db.cjs'])
+    assert.equal(fs.existsSync(path.join(ROOT, gone)), false, 'Phải đã xóa: ' + gone);
   const example = fs.readFileSync(path.join(ROOT, '.env.example'), 'utf8');
-  assert.ok(compose.includes('SUPABASE_URL: ${SUPABASE_URL:?Missing Supabase URL}'));
   assert.match(example, /^SUPABASE_URL=https:\/\/[^\s]+/m);
+  assert.doesNotMatch(example, /HU_DB_FILE|HU_AUTH_TRUSTED_PROXY_IPS|sqlite/i);
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  assert.equal(pkg.scripts.start, undefined, 'Không còn npm start chạy server Node');
 });
 
 test('UI CI kiểm tra cả before/after bằng Node online-ci-server', () => {
@@ -143,10 +142,10 @@ test('không để asset không dùng trong preload và không bỏ PNG dự ph�
   }
 });
 
-test('không còn trang demo sprite và vẫn giữ công cụ build, test, backup đang được dùng', () => {
+test('không còn trang demo sprite và vẫn giữ công cụ build, test đang được dùng', () => {
   assert.equal(fs.existsSync(path.join(ROOT, 'demo')), false, 'Đã loại bỏ demo độc lập khỏi repository');
   for (const filename of ['build-dist.cjs','build-edge.cjs','check-css-bundle.cjs',
-    'simulate-edge-calls.cjs','online-ci-server.cjs','ui-proof.py','backup-db.cjs']) {
+    'simulate-edge-calls.cjs','online-ci-server.cjs','ui-proof.py']) {
     assert.ok(fs.existsSync(path.join(ROOT, 'tools', filename)), 'Không được xóa tool còn sử dụng: ' + filename);
   }
 });

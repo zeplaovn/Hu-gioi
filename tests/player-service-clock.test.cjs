@@ -3,12 +3,12 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService } = require('../server/services/player-service.js');
 
 const T0 = 1_800_000_000_000;
 function setup(config = {}) {
-  const clock = { t: T0 }, repo = new SqlitePlayers(':memory:');
+  const clock = { t: T0 }, repo = new MemoryPlayers();
   const svc = new PlayerService({ repository: repo, clock: () => clock.t, contentVersion: 'test', config, onError: () => {} });
   return { clock, repo, svc };
 }

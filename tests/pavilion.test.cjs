@@ -6,12 +6,12 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const H = require('../engine/game.js');
-const { SqlitePlayers } = require('../server/repositories/sqlite-players.js');
+const { MemoryPlayers } = require('./helpers/memory-players.js');
 const { PlayerService, seededRng, ERASE_CONFIRMATION } = require('../server/services/player-service.js');
 
 const T0 = 1_800_000_000_000;
 function setup() {
-  const repo = new SqlitePlayers(':memory:');
+  const repo = new MemoryPlayers();
   const service = new PlayerService({ repository: repo, clock: () => T0, contentVersion: 'test', onError: e => { throw e; } });
   return { repo, service };
 }
@@ -50,7 +50,7 @@ async function forceAscension({ repo, service }, playerId, owner, requestId) {
     state, revision: tx.record.revision + 1, rngCounter: 0, lastSeenAt: T0,
     schemaVersion: H.VERSION, contentVersion: 'test'
   } }));
-  repo.db.prepare('UPDATE players SET rng_seed = ?, rng_counter = 0 WHERE id = ?').run(seed, playerId);
+  repo.testSetSeed(playerId, seed);
   return await service.command(owner, playerId, await body(service, owner, requestId));
 }
 
@@ -148,26 +148,21 @@ test('tử vong: có thể tạo lại từ đầu, không giữ Thiên Tinh hay
   } finally { repo.close(); }
 });
 
-test('Thiên Tinh bền vững khi đóng/mở SQLite và bị xóa đúng quyền dữ liệu', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hu-gioi-pavilion-'));
-  const dbFile = path.join(dir, 'game.sqlite');
-  try {
-    const firstRepo = new SqlitePlayers(dbFile);
+test('Thiên Tinh được xuất và xóa đúng quyền dữ liệu', async () => {
+  {
+    const firstRepo = new MemoryPlayers();
     const service1 = new PlayerService({ repository: firstRepo, clock: () => T0, contentVersion: 'test' });
     const id = (await spawn(service1, 'account-persist', 'Thạch Đạo Nhân')).playerId;
     await addPoints(firstRepo, id, 80);
     await buy(service1, 'account-persist', 'persist-0001', 'upgrade', 'ngoTinh');
     await assert.rejects(buy(service1, 'account-persist', 'persist-0002', 'relic', 'tuiLinhThach'), { code: 'INVALID_REQUEST' });
     const expected = (await service1.bootstrap('account-persist')).pavilion;
-    firstRepo.close();
-
-    const secondRepo = new SqlitePlayers(dbFile);
-    const service2 = new PlayerService({ repository: secondRepo, clock: () => T0, contentVersion: 'test' });
-    assert.deepEqual((await service2.bootstrap('account-persist')).pavilion, expected, 'qua process vẫn giữ số dư và kho');
+    const service2 = service1;
+    assert.deepEqual((await service2.bootstrap('account-persist')).pavilion, expected, 'bootstrap lại vẫn giữ số dư và kho');
     const replay = await service2.pavilionPurchase('account-persist', {
       requestId: 'persist-0001', expectedVersion: 0, kind: 'upgrade', key: 'ngoTinh'
     });
-    assert.equal(replay.replayed, true, 'receipt mua tồn tại sau khởi động lại');
+    assert.equal(replay.replayed, true, 'receipt mua vẫn phát lại đúng');
     assert.equal(replay.pavilion.balance, expected.balance);
     const exported = await service2.exportData('account-persist');
     assert.equal(exported.pavilion.balance, expected.balance);
@@ -176,8 +171,6 @@ test('Thiên Tinh bền vững khi đóng/mở SQLite và bị xóa đúng quy�
     assert.equal(erased.erased, true);
     assert.equal((await service2.bootstrap('account-persist')).pavilion.balance, 0);
     assert.equal((await service2.bootstrap('account-persist')).player, null);
-    secondRepo.close();
-  } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
+    firstRepo.close();
   }
 });

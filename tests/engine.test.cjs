@@ -604,56 +604,6 @@ test('protocol: kiểm tra payload, chưa tạo nhân vật và lệnh không t�
   assert.throws(() => C.execute(g, { type: 'strike', payload: {} }, -1), { code: 'INVALID_COMMAND' });
 });
 
-test('browser: nạp classic script đúng thứ tự index.html và chạy LocalSession', () => {
-  const files = [
-    'data/balance.js', 'data/items.js', 'data/design-raw.js', 'data/design.js',
-    'data/formulas.js', 'data/catalog.js', 'data/roots.js', 'data/character.js',
-    'data/social.js', 'data/adventures.js', 'data/story.js',
-    'engine/state/player.js',
-    'engine/rules/progression.js', 'engine/rules/inventory.js', 'engine/rules/crafting.js',
-    'engine/rules/combat.js', 'engine/rules/world.js', 'engine/rules/adventures.js',
-    'engine/rules/social.js', 'engine/rules/time.js', 'engine/rules/creation.js',
-    'engine/protocol/commands.js', 'engine/game.js',
-    'client/session/local-session.js'
-  ];
-  const root = { console };
-  root.window = root;
-  root.globalThis = root;
-  runInNewContext('var window = this; var globalThis = this;', root);
-  for (const file of files) runInNewContext(readFileSync(join(__dirname, '..', file), 'utf8'), root, { filename: file });
-
-  assert.equal(root.HU_GAME.READY, true);
-  assert.equal(root.HU_GAME.MISSING.length, 0);
-  let now = NOW;
-  let seed = 9;
-  const rng = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    return seed / 4294967296;
-  };
-  const session = new root.HU_LOCAL_SESSION.LocalSession({ clock: () => now, rng });
-  assert.equal(session.ready, true);
-  assert.equal(session.game.s.created, false);
-  const events = [];
-  session.subscribe(event => events.push(event));
-  session.create(PROFILE);
-  assert.equal(session.game.s.created, true);
-  now += 1000;
-  const result = session.dispatch('strike');
-  assert.equal(typeof result.won, 'boolean');
-  session.dispatch('setAuto', runInNewContext('({ enabled: false })', root));
-  session.dispatch('joinSect', runInNewContext("({ id: 'thanhvan' })", root));
-  now += 5000;
-  assert.ok(session.advance().seconds >= 5);
-  assert.ok(events.some(event => event.type === 'log'));
-
-  session.game.s.age = session.game.maxLife();
-  now += 1000;
-  session.advance();
-  assert.ok(events.some(event => event.type === 'death'));
-  assert.throws(() => session.dispatch('reincarnate'), { code: 'INVALID_COMMAND' });
-  assert.equal(session.game.isDead(), true);
-});
-
 test('progression: tự đột phá nhiều tầng liên tiếp và dừng ở tầng cuối đại cảnh giới', () => {
   const g = rich();
   g.s.realm = 0;

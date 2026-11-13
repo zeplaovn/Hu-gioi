@@ -5,7 +5,7 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { runInNewContext } = require('node:vm');
 const http = require('node:http');
-const { createRouter } = require('../server/http/router.js');
+const { createRouter } = require('../tools/ci-server/router.js');
 const ROOT = join(__dirname, '..');
 const read = path => readFileSync(join(ROOT, path), 'utf8');
 

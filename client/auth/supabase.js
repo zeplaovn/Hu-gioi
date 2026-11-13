@@ -267,40 +267,17 @@
   }
   async function login(email, password, options) {
     if (!validEmail(email)) throw Error('Email không hợp lệ. Vui lòng nhập địa chỉ email đúng định dạng.');
-    const direct = root.HU_AUTH_MODE === 'direct';
     let data;
-    if (direct) {
-      // Chế độ Cloudflare static + Supabase Edge: không có Node gateway.
-      // Chỉ gửi mật khẩu tới Supabase Auth cùng publishable key công khai.
-      try {
-        data = await request('/auth/v1/token?grant_type=password', {
-          method: 'POST', body: { email: email.toLowerCase(), password, ...captchaBody(options) }
-        });
-      } catch (error) {
-        const message = error.status === 429 ? 'Dịch vụ xác thực đang giới hạn tốc độ. Hãy thử lại sau.'
-          : [400, 401, 403].includes(error.status) ? 'Thông tin đăng nhập không đúng hoặc email chưa xác minh.'
-            : 'Không kết nối được dịch vụ đăng nhập. Hãy thử lại sau.';
-        throw Object.assign(Error(message), { status: error.status || 0 });
-      }
-    } else {
-      // Chế độ Node: giữ cổng same-origin có IP limiter cho dev/host Node.
-      let response;
-      try {
-        response = await root.fetch('/api/auth/supabase-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-          credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'
-        });
-      } catch {
-        throw Object.assign(Error('Không kết nối được dịch vụ đăng nhập.'), { status: 0 });
-      }
-      try { data = await response.json(); } catch { data = null; }
-      if (!response.ok) {
-        const message = response.status === 429 ? 'Bạn đã thử đăng nhập quá nhiều lần. Hãy thử lại sau.'
-          : 'Dịch vụ đăng nhập tạm thời chưa sẵn sàng. Vui lòng thử lại sau.';
-        throw Object.assign(Error(message), { status: response.status });
-      }
+    // Cloudflare static + Supabase Edge: chỉ gửi mật khẩu tới Supabase Auth cùng publishable key công khai.
+    try {
+      data = await request('/auth/v1/token?grant_type=password', {
+        method: 'POST', body: { email: email.toLowerCase(), password, ...captchaBody(options) }
+      });
+    } catch (error) {
+      const message = error.status === 429 ? 'Dịch vụ xác thực đang giới hạn tốc độ. Hãy thử lại sau.'
+        : [400, 401, 403].includes(error.status) ? 'Thông tin đăng nhập không đúng hoặc email chưa xác minh.'
+          : 'Không kết nối được dịch vụ đăng nhập. Hãy thử lại sau.';
+      throw Object.assign(Error(message), { status: error.status || 0 });
     }
     if (!data?.access_token || !data?.refresh_token) throw Error('Máy chủ chưa trả phiên đăng nhập hợp lệ.');
     persist(data);

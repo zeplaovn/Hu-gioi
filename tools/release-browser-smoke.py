@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real Chromium limited-release smoke. Mock Auth + localhost SQLite API ONLY.
+"""Real Chromium limited-release smoke. Mock Auth + localhost in-memory API ONLY.
 
 Run with tools/online-ci-server.cjs on localhost:8001. This is deliberately
 separate from npm test; never targets Supabase or Cloudflare production.

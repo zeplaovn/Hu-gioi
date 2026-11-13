@@ -1,4 +1,4 @@
-/* Dựng dist/ cho Cloudflare Workers Static Assets; Node/SQLite chỉ dành cho dev/test.
+/* Dựng dist/ cho Cloudflare Workers Static Assets.
    Không xuất bản server/, tests/, docs/, tools/, demo/ hay tệp cấu hình riêng.
    --minify giữ các classic script theo thứ tự cũ và gộp CSS trang chính thành
    một stylesheet có content hash, không đổi CSS nguồn hoặc style trang pháp lý.
@@ -7,14 +7,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
-const { ALLOWED, DENIED_PART, DENIED_PATH } = require('../server/http/static.js');
+const { ALLOWED, DENIED_PART, DENIED_PATH } = require('./ci-server/static.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
 const minify = process.argv.includes('--minify');
 /* Không đưa adapter offline/backup cũ vào frontend online. Giữ mã nguồn legacy
    trong repository chỉ để kiểm thử, kiểm toán và di trú thủ công về sau. */
-const OMIT_ONLINE = new Set(['client/session/local-session.js', 'client/persistence/local-store.js']);
 const htmlSource = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const STYLE_TAG = /^<link rel="stylesheet" href="(css\/[a-z0-9-]+\.css)">\r?\n/gm;
 const cssInputs = [...htmlSource.matchAll(STYLE_TAG)].map(match => match[1]);
@@ -79,7 +78,7 @@ for (const start of roots) {
   const files = fs.statSync(start).isDirectory() ? [...walk(start)] : [start];
   for (const file of files) {
     const url = '/' + path.relative(ROOT, file).split(path.sep).join('/');
-    if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url) || OMIT_ONLINE.has(path.relative(ROOT, file).split(path.sep).join('/'))) { skipped++; continue; }
+    if (!ALLOWED.test(url) || DENIED_PART.test(url) || DENIED_PATH.test(url)) { skipped++; continue; }
     // Các CSS này được gộp theo đúng thứ tự HTML; bản nguồn vẫn giữ trong Git.
     if (minify && cssInputSet.has(path.relative(ROOT, file).split(path.sep).join('/'))) {
       skipped++;
