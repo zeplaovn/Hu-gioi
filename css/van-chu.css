@@ -28,4 +28,3 @@
 @keyframes hcRise{0%{opacity:0;transform:translate(-50%,0) scale(.7);filter:blur(3px)}
   14%{opacity:1;filter:blur(0)}70%{opacity:.85}
   100%{opacity:0;transform:translate(calc(-50% + var(--w,0px)),calc(var(--h,160px) * -1)) scale(1.15);filter:blur(2px)}}
-@media (prefers-reduced-motion:reduce){.hc-field{display:none!important}}

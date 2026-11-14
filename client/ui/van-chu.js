@@ -1,14 +1,13 @@
 /* HƯ GIỚI · VẠN CHỮ CẢM NGỘ (client/ui/van-chu.js)
  * Hiệu ứng chữ Hán Nôm quanh đạo thân khi nhập định, như đang cảm ngộ công pháp:
  * chữ bay lên rồi tan, và hai vòng chữ xoay quanh người. Thuần trang trí: không đọc/ghi state,
- * không gọi engine. Tự tắt khi giảm chuyển động, tắt hiệu ứng tu luyện, vào chiến đấu hoặc mở trang.
+ * không gọi engine. Bật/tắt theo đúng cài đặt của game (chế độ chuyển động, hiệu ứng tu luyện) qua #idleAura; tự tắt khi vào chiến đấu hoặc mở trang.
  * Chỉ dùng chữ Hán phổ thông (có trong mọi phông CJK) để tránh ô vuông ở máy thiếu phông chữ Nôm. */
 (function () {
   'use strict';
   if (typeof document === 'undefined') return;
   var doc = document, game = doc.getElementById('game'), hero = doc.getElementById('heroActor');
   if (!game || !hero || hero.querySelector('.hc-field')) return;
-  var reduceQuery = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
 
   var GLYPHS = '道氣靈仙劍法心悟天玄無空陰陽火水木金土命魂丹符陣真元神通劫緣性定靜生滅變化因果虛';
   var RISE_MAX = 9, orbits = [];
@@ -54,7 +53,7 @@
 
   function active() {
     var aura = doc.getElementById('idleAura');
-    return !doc.hidden && !(reduceQuery && reduceQuery.matches) && game.getAttribute('data-stage') === 'idle' &&
+    return !doc.hidden && game.getAttribute('data-stage') === 'idle' &&
       !game.classList.contains('page-open') && !(aura && aura.hidden);
   }
   var on = false, timer = 0;
