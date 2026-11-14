@@ -1,0 +1,31 @@
+/* Vạn chữ cảm ngộ: chữ Hán Nôm neon trắng/đen pha vàng quanh đạo thân (xem client/ui/van-chu.js). */
+.hc-field{position:absolute;left:50%;top:50%;width:0;height:0;z-index:3;pointer-events:none;display:none;
+  --hc-font:"Noto Serif CJK TC","Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU","SimSun","Nom Na Tong","Han-Nom Gothic",serif;
+  --hc-size:clamp(20px,4.2vmin,42px);--hc-r:clamp(84px,21vmin,230px)}
+.hc-field.on{display:block}
+.hc-orbit{position:absolute;left:0;top:0;width:0;height:0;animation:hcSpin var(--t,16s) linear infinite}
+.hc-orbit.rev{animation-direction:reverse}
+.hc-g{position:absolute;left:0;top:0;width:0;height:0;display:block;transform:rotate(var(--a)) translateX(calc(var(--hc-r) * var(--k,1))) rotate(calc(var(--a) * -1))}
+.hc-u{position:absolute;left:0;top:0;width:0;height:0;display:block;animation:hcKeep var(--t,16s) linear infinite}
+.hc-orbit.rev .hc-u{animation-direction:reverse}
+.hc-g b,.hc-rise{font-family:var(--hc-font);font-weight:700;font-style:normal;line-height:1;white-space:nowrap}
+.hc-g b{position:absolute;left:-.55em;top:-.55em;display:block;font-size:var(--hc-size);opacity:0;animation:hcPulse 6.8s ease-in-out infinite}
+/* ba sắc: trắng viền đen, đen viền trắng, vàng nhạt; luôn có quầng sáng neon vàng */
+.hc-g.w b,.hc-rise.w{color:#fff;-webkit-text-stroke:.7px #000;paint-order:stroke fill;
+  text-shadow:0 0 2px #fff,0 0 6px #fff,0 0 12px #f6d36f,0 0 22px #f2c95a,0 0 38px #e2a93acc,0 1px 1px #000}
+.hc-g.k b,.hc-rise.k{color:#050505;-webkit-text-stroke:.9px #fff;paint-order:stroke fill;
+  text-shadow:0 0 2px #fff,0 0 7px #fffc,0 0 18px #f6d36f,0 0 32px #e2a93aaa}
+.hc-g.g b,.hc-rise.g{color:#fff6d0;-webkit-text-stroke:.6px #2a1d00;paint-order:stroke fill;
+  text-shadow:0 0 3px #fff2b8,0 0 10px #f6d36f,0 0 22px #f2c95a,0 0 40px #e2a93a}
+.hc-rise{position:absolute;left:var(--x,0);top:calc(var(--hc-r) * .55);font-size:calc(var(--hc-size) * var(--s,1));opacity:0;
+  transform:translate(-50%,0);animation:hcRise var(--d,4.5s) ease-out forwards}
+#game[data-ready] .hc-g b,#game[data-ready] .hc-rise{filter:drop-shadow(0 0 6px #f2c95a)}
+.stage-scene.low-fx .hc-field,#stage.low-fx .hc-field{display:none}
+@keyframes hcSpin{from{transform:scaleY(.42) rotate(0)}to{transform:scaleY(.42) rotate(360deg)}}
+/* chữ đứng thẳng: quay ngược vòng rồi bù tỉ lệ dẹt (2.381 = 1/.42) */
+@keyframes hcKeep{from{transform:rotate(0) scaleY(2.381)}to{transform:rotate(-360deg) scaleY(2.381)}}
+@keyframes hcPulse{0%,100%{opacity:0;filter:blur(3px)}18%,72%{opacity:.95;filter:blur(0)}}
+@keyframes hcRise{0%{opacity:0;transform:translate(-50%,0) scale(.7);filter:blur(3px)}
+  14%{opacity:1;filter:blur(0)}70%{opacity:.85}
+  100%{opacity:0;transform:translate(calc(-50% + var(--w,0px)),calc(var(--h,160px) * -1)) scale(1.15);filter:blur(2px)}}
+@media (prefers-reduced-motion:reduce){.hc-field{display:none!important}}
