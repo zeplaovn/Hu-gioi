@@ -115,7 +115,7 @@
         return `<details class="adventure-details" ${tier <= g.sectRank().tier ? 'open' : ''}><summary>Bậc ${tier} · ${list.filter(m => open.includes(m)).length}/${list.length} đã mở</summary><div class="peek-list">` + list.map(m => {
           const locked = !open.includes(m), bonus = featured?.id === m.id;
           return UI.kit.peekRow('sectmission:' + m.id, m.name, {
-            eyebrow: locked ? 'CHƯA MỞ' : bonus ? 'NỔI BẬT' : 'ỦY THÁC TÔNG MÔN', mark: bonus ? '★' : locked ? '🔒' : '', cls: locked ? 'is-locked' : '',
+            eyebrow: locked ? 'CHƯA MỞ' : bonus ? 'NỔI BẬT' : 'ỦY THÁC TÔNG MÔN', mark: bonus ? '★' : locked ? '🔒' : '○', cls: locked ? 'is-locked' : '',
             body: `<p>${duration(m.seconds)} · ${pct(g.missionChance(m))} thành công · +${Math.round(m.contribution * (bonus ? 1.5 : 1))} cống hiến</p><p>${locked ? 'Cần bậc nhiệm vụ ' + m.tier + ' · ' + F.REALMS[m.minRealm] : esc(m.desc)}${bonus ? ' · thưởng ×1,5' : ''}</p><div class="action-group">${btn(locked ? 'Chưa mở' : 'Nhận', 'sectMissionStart', `data-id="${m.id}"`, locked || !!active || !!s.dungeon.active || s.hp < g.stats().HP * .4)}</div>`
           });
         }).join('') + '</div></details>';
@@ -127,7 +127,7 @@
       const o = g.sectShopOffer(d.id);
       const buttons = d.id === 'essence' ? g.activeElements().map(i => btn(elementLabel(i), 'sectBuy', `data-id="essence" data-element="${i}"`, o.locked || s.sect.contribution < o.cost, 'btn-outline')).join('') : btn('Đổi · ' + num(o.cost), 'sectBuy', `data-id="${d.id}"`, o.locked || s.sect.contribution < o.cost);
       return UI.kit.peekRow('sectshop:' + d.id, o.item?.name || d.name, {
-        eyebrow: 'TÀNG BẢO CÁC', mark: o.locked ? '🔒' : '', cls: o.locked ? 'is-locked' : '',
+        eyebrow: 'TÀNG BẢO CÁC', mark: o.locked ? '🔒' : '◈', cls: o.locked ? 'is-locked' : '',
         body: row('Số lượng', '×' + d.count) + row('Cống hiến', num(o.cost)) + `<p class="info-note">${H.SECT_RANKS[d.rank].name}${o.item ? ' · ' + F.REALMS[o.item.tier] : ''}</p><div class="action-group">${buttons}</div>`
       });
     }).join('')}</div>`;

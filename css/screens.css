@@ -566,8 +566,7 @@ body.in-tribulation{overflow:hidden}
 .peek-row:hover,.peek-row:focus-visible{border-color:#8fd5ae;background:#183128}
 .peek-row img{width:32px;height:32px;object-fit:contain;flex:none}
 .peek-name{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600}
-.peek-mark{flex:none;font-style:normal;font-size:13px;color:#8fd5ae}
-.peek-go{flex:none;color:#8fa596;font-size:18px}
-.peek-row.is-ready{border-color:#d9b25f}.peek-row.is-ready .peek-mark{color:#f3d699;font-weight:700}
+.peek-mark{flex:none;width:24px;text-align:center;font-style:normal;font-size:16px;color:#8fa596}
+.peek-row.is-ready{border-color:#d9b25f}.peek-row.is-ready .peek-mark{color:#f3d699;font-weight:700;font-size:18px}.peek-row.is-done .peek-mark{color:#8fd5ae}
 .peek-row.is-done .peek-name{color:#9fb3a6}.peek-row.is-locked{opacity:.6}
 .peek-pop{text-align:left}.peek-pop .action-group,.peek-pop .detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}

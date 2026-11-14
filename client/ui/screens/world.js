@@ -100,7 +100,7 @@
     const mark = (claimed, ready) => claimed ? '✔' : ready ? '!' : '';
     const state = (claimed, ready) => claimed ? 'is-done' : ready ? 'is-ready' : '';
     if (q) rows.push(UI.kit.peekRow('journey:novice', q.name, {
-      eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ', mark: mark(false, novice.ready), cls: state(false, novice.ready),
+      eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ', mark: mark(false, novice.ready) || '○', cls: state(false, novice.ready),
       body: `<p>${esc(q.desc)}</p>${row('Mục tiêu', esc(q.goal))}${row('Tiến độ', (novice.index + 1) + ' / ' + H.NOVICE_QUESTS.length)}${bar(novice.index / H.NOVICE_QUESTS.length * 100, 'novice-quest-progress')}<p>${moneyHTML(q.stone)} · ${esc(H.item(q.item).name)} ×${q.qty}</p><div class="action-group">${novice.ready ? btn('Nhận thưởng', 'claimQuest', `data-id="${esc(q.id)}"`) : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`}</div>`
     }));
     for (const [id, name, max, stone, pill, qty] of QUESTS) {
@@ -259,7 +259,7 @@
       <div class="peek-list shop-list">${lists.slice(xs).map(x => {
         const key = ['PILL', 'EQ', 'BT', 'TAL'].includes(x.kind) ? H.keyFor(x.code, v.quality) : x.code;
         return UI.kit.peekRow('shop:' + key, x.name, {
-          eyebrow: 'CỬA HÀNG', img: img(key),
+          eyebrow: 'CỬA HÀNG', mark: '◈', img: img(key),
           body: `<div class="pop-detail">${img(key, 'detail-img')}<p>${x.category} · ${x.realm} · ${F.SUBPHAM[H.item(key).sub]} phẩm</p><p>${esc(x.description)}</p><div class="detail-actions">${btn('Mua · ' + moneyHTML(F.shop_buy_price(g.price(key))), 'buy', codeAttr(key))}</div></div>`
         });
       }).join('')}</div>
