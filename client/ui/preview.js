@@ -4,7 +4,7 @@
   const UI = root.HU_UI, H = root.HU_GAME, A = root.HU_ASSETS, L = root.HU_LABELS;
   if (!UI || !H || !A) return;
   const $ = id => document.getElementById(id);
-  const MENU = ['idle', 'combat', 'craft', 'character', 'world', 'settings'];
+  const MENU = ['idle', 'combat', 'character', 'craft', 'world', 'settings'];
   let bound = false;
 
   function text(id, value) { $(id).textContent = value; }
