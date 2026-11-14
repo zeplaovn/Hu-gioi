@@ -17,4 +17,4 @@ Dữ liệu thiết kế và mô hình cân bằng. Thuần dữ liệu và hàm
 | `adventures.js` | Bí cảnh, kỳ ngộ, tông môn, nhiệm vụ tông môn, tôi luyện linh căn. |
 | `story.js` | Thiên Thư, 14 chương và hội thoại NPC; dữ liệu không tự cấp thưởng. |
 
-Quy ước: file này không `require` bất cứ thứ gì ngoài `data/`. Tài liệu về phạm vi dữ liệu thiết kế: [docs/design-integration.md](../docs/design-integration.md).
+Quy ước: file này không `require` bất cứ thứ gì ngoài `data/`.

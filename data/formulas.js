@@ -1,4 +1,4 @@
-/* Pure numerical model. Port of docs/cong_thuc_game.py; stages are zero based. */
+/* Pure numerical model. Mô hình số học thuần; các stage đánh số từ 0. */
 (function(root){
 'use strict';
 const D=typeof module!=='undefined'&&module.exports?require('./balance.js'):root.HU_BALANCE;

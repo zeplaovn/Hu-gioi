@@ -1,45 +1,44 @@
 # Hư Giới · Tiên Lộ Vô Tận
 
-Game idle tu tiên tiếng Việt, **đang thử nghiệm nội bộ, chưa phát hành production**.
+Game idle tu tiên tiếng Việt, chơi online trên trình duyệt. Mỗi tài khoản có một đạo thân; đạo thân chỉ có một mạng, chết thì bắt đầu lại.
 
-## Phiên bản hiện tại
-- Cloudflare Workers Static Assets phục vụ `dist/`; Supabase Auth (JWT, direct) và Edge Function `api` (Deno); PostgreSQL private schema `game` qua transaction pooler 6543.
-- State **V10**, protocol **v4**, **52 lệnh**. Game **online-only**; nhân vật một mạng, chết bắt đầu lại **không kế thừa** Thiên Tinh hoặc vật phẩm.
-- **Thiên Mệnh Các** ở màn tạo nhân vật là shop starter (PR #77 đã merge; giá vẫn là giá thử nghiệm).
-- Chat thật gồm **Thế giới, Tông môn, Đạo hữu, Đạo lữ**; bảng xếp hạng **Lực chiến/Cảnh giới** (PR #78 đã merge). Bản Edge test đã hotfix route, cần nghiệm thu JWT/máy thật.
-- Tri kỷ, Luận kiếm, Đấu giá và tương tác NPC vẫn là mô phỏng. Kinh Mạch Đồ 12 chính kinh xanh / 8 kỳ kinh vàng hiện là **UI tra cứu**, chưa có luật vận hành kinh mạch.
+## Tính năng
+- **Tạo nhân vật:** gieo linh căn bằng phiếu khởi nguyên, phân bổ 8 điểm thiên phú, chọn Thiên mệnh. Quầy **Thiên Mệnh Các** ngay ở màn này: đổi Thiên Tinh lấy hành trang khởi nguyên và **nâng cấp vĩnh viễn** sáu thuộc tính.
+- **Tu luyện:** hấp thu linh thạch, tu vi tự tăng khi online, đột phá cảnh giới (lôi kiếp, có thể tử vong), bế quan.
+- **Nhân vật:** năm tab Đạo thể, Công pháp, Thiên phú, Kinh mạch, Hành trang. Bấm ô pháp bảo/công pháp hoặc vật phẩm để mở cửa sổ nổi.
+- **Vật phẩm:** mua, bán, trang bị, lĩnh ngộ và vận hành công pháp, dùng đan dược.
+- **Chế tạo:** luyện đan, rèn pháp bảo, linh điền.
+- **Chiến đấu:** đánh quái, đổi vùng, thám hiểm có lựa chọn, bí cảnh.
+- **Tông môn:** gia nhập, ủy thác, cống hiến, Tàng Bảo Các.
+- **Nhiệm vụ:** nhiệm vụ hằng ngày và hành trình trong một tab, điểm danh, hộp thư. Danh sách chỉ hiện tên, bấm để xem chi tiết.
+- **Giao du:** chat thật và bảng xếp hạng. Tri kỷ, Luận kiếm, Đấu giá là NPC mô phỏng.
+- **Linh Hồ:** linh thú đồng hành nói chuyện, giục nhiệm vụ, cảnh báo và gợi ý bằng chữ nổi trên đầu; hiểu câu hỏi về tình hình nhân vật.
 
-## Kiểm thử (Node.js 24+)
+## Luật cốt lõi
+- Máy chủ quyết định mọi thứ: đồng hồ, ngẫu nhiên, giá và phần thưởng. Client chỉ gửi ý định.
+- Mỗi lệnh có `requestId` (gửi lại không áp dụng hai lần) và `expectedRevision` (lệch thì phải đồng bộ lại).
+- Tu vi chỉ tăng khi online; offline không tích lũy.
+- **Thiên Tinh và nâng cấp thuộc tính thuộc về tài khoản.** Nhân vật chết hoặc bị xóa vẫn giữ; chỉ xóa khi xóa dữ liệu hoặc tài khoản. Vật phẩm và tiến trình thì không kế thừa.
 
+## Cấu trúc
+| Thư mục | Vai trò |
+|---|---|
+| `engine/` | Luật game thuần (không DOM, không mạng, không `Date.now`/`Math.random`). |
+| `data/` | Dữ liệu và công thức cân bằng. |
+| `server/` | `PlayerService` (luồng lệnh, giao dịch) và kho Postgres. |
+| `supabase/` | Edge Function `api` (Deno) và migration. |
+| `client/`, `css/`, `index.html` | Giao diện web (script thường, không bundler). |
+| `tools/` | Build, kiểm tra, server CI cục bộ. |
+| `tests/` | Test `node:test`, mỗi file một mảng tính năng. |
+
+Production: Cloudflare Workers phục vụ `dist/`; Supabase Auth + Edge Function + PostgreSQL (schema `game`). Test dùng kho in-memory (`tests/helpers/memory-players.js`) và PGlite.
+
+## Lệnh
 ```sh
 npm ci
-npm run check
-npm test
-npm run build:min
-npm run build:edge
-npm run edge:budget
+npm test            # toàn bộ test
+npm run check       # kiểm tra cú pháp và ranh giới engine
+npm run build:min   # build dist, gộp và xác thực CSS
+npm run build:edge  # bundle Edge Function
 ```
-
-Production chỉ chạy Cloudflare static + Supabase Edge; không còn server Node/SQLite hay Docker. `npm run edge:budget` chỉ mô phỏng.
-
-## Hồ sơ nguồn sự thật
-- [Tổng hợp công việc](docs/PROJECT-STATUS.md)
-- [GAME — Gameplay/UI](docs/GAME.md)
-- [SYSTEM — Backend/DB/API](docs/SYSTEM.md)
-- [Mục lục tài liệu chuyên môn](docs/index.md)
-- [Checklist trước release](docs/release-checklist.md)
-- [Task backend (lịch sử Git)](https://github.com/zeplaovn/Hugioi/blob/0b99954/task.txt) — §11 ưu tiên.
-
-**Merge mã/tài liệu không đồng nghĩa deploy, migrate database hoặc chứng nhận production-ready.**
-# Supabase migration baseline
-
-`supabase/migrations/20261112001142_unified_baseline.sql` là baseline của
-project Hư Giới trước khi public. Migration này **xóa toàn bộ dữ liệu trong
-schema `game` khi được áp dụng**, đồng thời giữ tài khoản Auth và lịch sử chấp
-thuận chính sách. Chỉ dùng cho project mới hoặc môi trường đã chấp nhận reset;
-không áp dụng lên một môi trường có dữ liệu cần giữ.
-
-Các migration cũ nằm trong `supabase/sql/archive/pre-baseline/` để đối chiếu,
-không thuộc đường chạy migration tự động. Các thay đổi schema mới phải được
-tạo thành migration mới sau baseline. Dashboard dùng chung schema từ repo này.
-
+Cần Node.js 24+. Merge mã không đồng nghĩa deploy hay migrate database.
