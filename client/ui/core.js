@@ -218,6 +218,21 @@
   UI.register = def => { UI.screens[def.id] = def; };
   UI.action = (name, fn) => { UI.actions[name] = fn; };
 
+  /* Danh sách thu gọn: mỗi mục chỉ hiện tên; bấm mới mở cửa sổ nổi chi tiết.
+     peekRow lưu nội dung chi tiết theo id lúc vẽ; mọi thao tác trong cửa sổ này đều được phép chạy
+     (shell tự đóng cửa sổ trước khi chạy hành động). */
+  UI.peek = new Map();
+  UI.kit.peekRow = (id, title, { mark = '', cls = '', eyebrow = 'CHI TIẾT', body = '', img = '' } = {}) => {
+    UI.peek.set(id, { title, eyebrow, body });
+    const e = UI.kit.esc;
+    return `<button type="button" class="peek-row ${cls}" data-act="peek" data-peek="${e(id)}">${img}<span class="peek-name">${e(title)}</span>${mark ? `<i class="peek-mark">${mark}</i>` : ''}<span class="peek-go" aria-hidden="true">›</span></button>`;
+  };
+  UI.action('peek', (el, d) => {
+    const p = UI.peek.get(d.peek);
+    if (p) UI.modal(p.title, `<div class="pop peek-pop">${p.body}</div>`, null, 'Đóng', p.eyebrow, { vfx: false });
+    return UI.KEEP;
+  });
+
   UI.action('search', () => {
     const v = UI.view;
     v.query = $('itemSearch')?.value || '';

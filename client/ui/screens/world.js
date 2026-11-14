@@ -93,14 +93,29 @@
     apply();
   }
 
-  const legacyQuests = () => {
+  /* Nhiệm vụ hành trình (tân thủ + chuỗi cũ + hợp nhất đạo ấn): hiện cùng danh sách nhiệm vụ hằng ngày. */
+  const journeyRows = () => {
     const s = UI.s(), g = UI.g(), fragments = H.ITEMS.filter(x => x.kind === 'QITEM');
-    const novice = g.noviceQuestInfo(), q = novice.quest;
-    const guide = q ? card(q.name, `<p>${esc(q.desc)}</p>${row('Mục tiêu', esc(q.goal))}${row('Tiến độ', (novice.index + 1) + ' / ' + H.NOVICE_QUESTS.length)}${bar(novice.index / H.NOVICE_QUESTS.length * 100, 'novice-quest-progress')}<p>${moneyHTML(q.stone)} · ${esc(H.item(q.item).name)} ×${q.qty}</p><div class="action-group">${novice.ready ? btn('Nhận thưởng', 'claimQuest', `data-id="${esc(q.id)}"`) : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`}</div>`, { eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ' })
-      : card('Đã hoàn thành hành trình tân thủ', '<p>Bạn đã bước vào Trúc Cơ. Con đường tu hành vẫn còn rộng mở.</p>', { eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ' });
-    return `${guide}<p class="screen-lead">Mỗi nhiệm vụ chỉ có thể nhận thưởng một lần với nhân vật hiện tại.</p><div class="screen-grid">${QUESTS.map(([id, name, max, stone, pill, qty]) =>
-      card(name, `${row('Tiến độ', num(Math.min(max, s.progress[id])) + ' / ' + max)}${bar(Math.min(max, s.progress[id]) / max * 100, 'quest-progress')}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p>${btn(s.claimed.includes(id) ? 'Đã nhận' : s.progress[id] < max ? 'Chưa đủ tiến độ' : 'Nhận thưởng', 'claimQuest', `data-id="${id}"`, s.claimed.includes(id) || s.progress[id] < max)}`)).join('')}
-      ${card('Hợp nhất đạo ấn', `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để nhận 10 Thiên Tinh vào tài khoản.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}${btn('Hợp ấn', 'fragments', '', !fragments.every(x => g.count(x.code) > 0) || s.claimed.includes('fragments'))}`)}</div>`;
+    const novice = g.noviceQuestInfo(), q = novice.quest, rows = [];
+    const mark = (claimed, ready) => claimed ? '✔' : ready ? '!' : '';
+    const state = (claimed, ready) => claimed ? 'is-done' : ready ? 'is-ready' : '';
+    if (q) rows.push(UI.kit.peekRow('journey:novice', q.name, {
+      eyebrow: 'ĐƯỜNG ĐẾN TRÚC CƠ', mark: mark(false, novice.ready), cls: state(false, novice.ready),
+      body: `<p>${esc(q.desc)}</p>${row('Mục tiêu', esc(q.goal))}${row('Tiến độ', (novice.index + 1) + ' / ' + H.NOVICE_QUESTS.length)}${bar(novice.index / H.NOVICE_QUESTS.length * 100, 'novice-quest-progress')}<p>${moneyHTML(q.stone)} · ${esc(H.item(q.item).name)} ×${q.qty}</p><div class="action-group">${novice.ready ? btn('Nhận thưởng', 'claimQuest', `data-id="${esc(q.id)}"`) : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`}</div>`
+    }));
+    for (const [id, name, max, stone, pill, qty] of QUESTS) {
+      const done = s.claimed.includes(id), have = Math.min(max, s.progress[id]), ready = !done && have >= max;
+      rows.push(UI.kit.peekRow('journey:' + id, name, {
+        eyebrow: done ? 'ĐÃ NHẬN' : ready ? 'CÓ THỂ NHẬN' : 'HÀNH TRÌNH', mark: mark(done, ready), cls: state(done, ready),
+        body: `${row('Tiến độ', num(have) + ' / ' + max)}${bar(have / max * 100, 'quest-progress')}<p>${moneyHTML(stone)} · ${esc(H.item(pill).name)} ×${qty}</p><div class="action-group">${btn(done ? 'Đã nhận' : ready ? 'Nhận thưởng' : 'Chưa đủ tiến độ', 'claimQuest', `data-id="${id}"`, done || !ready)}</div>`
+      }));
+    }
+    const sealDone = s.claimed.includes('fragments'), sealReady = !sealDone && fragments.every(x => g.count(x.code) > 0);
+    rows.push(UI.kit.peekRow('journey:fragments', 'Hợp nhất đạo ấn', {
+      eyebrow: sealDone ? 'ĐÃ NHẬN' : sealReady ? 'CÓ THỂ NHẬN' : 'HÀNH TRÌNH', mark: mark(sealDone, sealReady), cls: state(sealDone, sealReady),
+      body: `<p>Gom sáu mảnh ở kỳ ngộ Đạo Tổ để nhận 10 Thiên Tinh vào tài khoản.</p>${fragments.map(x => row(x.name, g.count(x.code) + '/1')).join('')}<div class="action-group">${btn('Hợp ấn', 'fragments', '', !sealReady)}</div>`
+    }));
+    return rows.join('');
   };
 
   /* Dữ liệu nhiệm vụ ngày/thư thuộc tài khoản, tải riêng khỏi snapshot gameplay.
@@ -146,16 +161,19 @@
   };
   const dailyPanel = () => {
     const d = UI.session.daily;
-    if (!d) return accountLoading('nhiệm vụ ngày');
     const reset = Number(UI.session.dailyResetAt) || 0;
-    const cards = d.quests.map(q => {
+    const daily = !d ? accountLoading('nhiệm vụ ngày') : '<div class="peek-list">' + d.quests.map(q => {
       const percent = q.target ? q.progress / q.target * 100 : 0;
       const action = q.claimed ? btn('Đã nhận', 'claimDaily', '', true, 'btn-outline')
         : q.ready ? btn('Nhận thưởng', 'claimDaily', `data-id="${esc(q.id)}"`)
           : `<button class="btn btn-outline" data-go="${esc(q.go)}">Đi thực hiện</button>`;
-      return card(q.name, `<p>${esc(q.desc)}</p>${row('Tiến độ', num(q.progress) + ' / ' + num(q.target) + ' ' + esc(q.unit))}${bar(percent, 'quest-progress')}<p>${rewardLine(q.reward)}</p><div class="action-group">${action}</div>`, { eyebrow: q.claimed ? 'ĐÃ NHẬN' : q.ready ? 'CÓ THỂ NHẬN' : 'HÔM NAY' });
-    }).join('');
-    return `<p class="screen-lead">Máy chủ chọn ${d.total} nhiệm vụ mỗi ngày; tiến độ chỉ tính từ lúc mở ngày. Làm mới lúc 00:00 giờ Việt Nam${reset ? ' · còn ' + live(reset) : ''}.</p><div class="screen-grid">${cards}</div>`;
+      return UI.kit.peekRow('daily:' + q.id, q.name, {
+        eyebrow: q.claimed ? 'ĐÃ NHẬN' : q.ready ? 'CÓ THỂ NHẬN' : 'HÔM NAY', mark: q.claimed ? '✔' : q.ready ? '!' : '', cls: q.claimed ? 'is-done' : q.ready ? 'is-ready' : '',
+        body: `<p>${esc(q.desc)}</p>${row('Tiến độ', num(q.progress) + ' / ' + num(q.target) + ' ' + esc(q.unit))}${bar(percent, 'quest-progress')}<p>${rewardLine(q.reward)}</p><div class="action-group">${action}</div>`
+      });
+    }).join('') + '</div>';
+    const head = d ? `<p class="screen-lead">Máy chủ chọn ${d.total} nhiệm vụ mỗi ngày. Làm mới lúc 00:00 giờ Việt Nam${reset ? ' · còn ' + live(reset) : ''}. Bấm tên nhiệm vụ để xem chi tiết.</p>` : '';
+    return `${head}<h3 class="peek-title">Hằng ngày</h3>${daily}<h3 class="peek-title">Hành trình</h3><div class="peek-list">${journeyRows()}</div>`;
   };
   const checkinPanel = () => {
     const d = UI.session.daily;
@@ -181,18 +199,20 @@
           : mail.hasAttachments ? btn('Nhận quà', 'claimMail', `data-id="${esc(mail.id)}"`)
             : btn('Đánh dấu đã đọc', 'claimMail', `data-id="${esc(mail.id)}"`, false, 'btn-outline');
       const expiry = mail.expiresAt ? row('Hết hạn', new Date(mail.expiresAt).toLocaleDateString('vi-VN')) : '';
-      return card(esc(mail.title), `<p>${esc(mail.body)}</p>${row('Quà đính kèm', rewardLine(mail.attachments))}${expiry}<div class="action-group">${action}</div>`,
-        { cls: 'mail-item', eyebrow: MAIL_KIND[mail.kind] || 'HỘP THƯ' });
+      const ready = mail.hasAttachments && !mail.claimedAt && !mail.expired;
+      return UI.kit.peekRow('mail:' + mail.id, mail.title, {
+        eyebrow: MAIL_KIND[mail.kind] || 'HỘP THƯ', mark: mail.claimedAt ? '✔' : ready ? '!' : '', cls: mail.claimedAt || mail.expired ? 'is-done' : ready ? 'is-ready' : '',
+        body: `<p>${esc(mail.body)}</p>${row('Quà đính kèm', rewardLine(mail.attachments))}${expiry}<div class="action-group">${action}</div>`
+      });
     }).join('');
-    return `<p class="screen-lead">Thư hệ thống, sự kiện và hỗ trợ thuộc tài khoản. ${num(m.claimable)} thư có quà chưa nhận; quà chỉ cấp một lần.</p><div class="mail-list">${items}</div>`;
+    return `<p class="screen-lead">Thư hệ thống, sự kiện và hỗ trợ thuộc tài khoản. ${num(m.claimable)} thư có quà chưa nhận; quà chỉ cấp một lần. Bấm tên thư để đọc.</p><div class="peek-list mail-list">${items}</div>`;
   };
   const QUEST_TABS = () => {
     const d = UI.session.daily;
     return [
-      { id: 'daily', label: 'Hằng ngày', icon: '☀', badge: d?.claimable ? String(d.claimable) : '' },
+      { id: 'daily', label: 'Nhiệm vụ', icon: '☀', badge: d?.claimable ? String(d.claimable) : '' },
       { id: 'checkin', label: 'Điểm danh', icon: '✓', badge: d?.checkin?.canCheckIn ? '!' : '' },
-      { id: 'mail', label: 'Hộp thư', icon: '✉', badge: UI.session.mailClaimable ? String(UI.session.mailClaimable) : '' },
-      { id: 'legacy', label: 'Nhiệm vụ cũ', icon: '✦' }
+      { id: 'mail', label: 'Hộp thư', icon: '✉', badge: UI.session.mailClaimable ? String(UI.session.mailClaimable) : '' }
     ];
   };
 
@@ -236,9 +256,12 @@
     const s = UI.s(), g = UI.g(), v = UI.view;
     const xs = H.ITEMS.filter(x => x.kind !== 'QITEM' && x.tier <= s.realm + 1 && lists.matches(x));
     return `<p class="screen-lead">Cửa hàng có thể bán vật phẩm cao hơn cảnh giới hiện tại một bậc. Giá mua bằng 120% giá trị vật phẩm. Số dư ${moneyHTML(s.stone)}.</p>${lists.controls({ quality: true })}${lists.pager(xs.length)}
-      <div class="shop-list">${lists.slice(xs).map(x => {
+      <div class="peek-list shop-list">${lists.slice(xs).map(x => {
         const key = ['PILL', 'EQ', 'BT', 'TAL'].includes(x.kind) ? H.keyFor(x.code, v.quality) : x.code;
-        return `<article class="shop-item">${img(key)}<div><h3>${esc(x.name)}</h3><p>${x.category} · ${x.realm} · ${F.SUBPHAM[H.item(key).sub]} phẩm</p><p>${esc(x.description)}</p></div>${btn('Mua · ' + moneyHTML(F.shop_buy_price(g.price(key))), 'buy', codeAttr(key))}</article>`;
+        return UI.kit.peekRow('shop:' + key, x.name, {
+          eyebrow: 'CỬA HÀNG', img: img(key),
+          body: `<div class="pop-detail">${img(key, 'detail-img')}<p>${x.category} · ${x.realm} · ${F.SUBPHAM[H.item(key).sub]} phẩm</p><p>${esc(x.description)}</p><div class="detail-actions">${btn('Mua · ' + moneyHTML(F.shop_buy_price(g.price(key))), 'buy', codeAttr(key))}</div></div>`
+        });
       }).join('')}</div>
       ${card('Yêu đan và linh thạch', `${row('Giá trị yêu đan', moneyHTML(s.yaoValue))}${btn('Bán yêu đan', 'sellYao', '', s.yaoValue <= 0)}<p>Hấp thu linh thạch để đổi lấy tu vi với hiệu suất 15%; loại thấp hơn cảnh giới bị giảm hiệu quả.</p><div class="action-group coin-row">${F.COINS.map(([n, val], i) => btn('Hấp thu 1 ' + coinLabel(n), 'absorb', `data-index="${i}"`, s.stone < val, 'btn-outline')).join(' ')}</div>`)}`;
   };
@@ -276,7 +299,7 @@
   });
 
   // Nhiệm vụ là một màn độc lập trong menu chính, không nằm lẫn với bản đồ.
-  const questBodies = { daily: dailyPanel, checkin: checkinPanel, mail: mailPanel, legacy: legacyQuests };
+  const questBodies = { daily: dailyPanel, checkin: checkinPanel, mail: mailPanel };
   UI.register({
     id: 'quests', label: 'Nhiệm vụ', icon: '✦', eyebrow: 'NHIỆM VỤ',
     get tabs() { return QUEST_TABS(); },

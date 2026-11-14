@@ -112,19 +112,24 @@
       ${s.dungeon.active ? '<p class="info-note">Đang trong bí cảnh; chờ trở về để nhận nhiệm vụ.</p>' : ''}
       ${[1, 2, 3, 4, 5].map(tier => {
         const list = all.filter(m => m.tier === tier);
-        return `<details class="adventure-details" ${tier <= g.sectRank().tier ? 'open' : ''}><summary>Bậc ${tier} · ${list.filter(m => open.includes(m)).length}/${list.length} đã mở</summary>` + list.map(m => {
+        return `<details class="adventure-details" ${tier <= g.sectRank().tier ? 'open' : ''}><summary>Bậc ${tier} · ${list.filter(m => open.includes(m)).length}/${list.length} đã mở</summary><div class="peek-list">` + list.map(m => {
           const locked = !open.includes(m), bonus = featured?.id === m.id;
-          return `<article class="mission-row ${locked ? 'adventure-locked' : ''}"><div><b>${m.name}${bonus ? ' <span class="gold">★ Nổi bật</span>' : ''}</b><p>${duration(m.seconds)} · ${pct(g.missionChance(m))} thành công · +${Math.round(m.contribution * (bonus ? 1.5 : 1))} cống hiến</p>
-            <small>${locked ? 'Cần bậc nhiệm vụ ' + m.tier + ' · ' + F.REALMS[m.minRealm] : m.desc}${bonus ? ' · thưởng ×1,5' : ''}</small></div>${btn(locked ? 'Chưa mở' : 'Nhận', 'sectMissionStart', `data-id="${m.id}"`, locked || !!active || !!s.dungeon.active || s.hp < g.stats().HP * .4, 'btn-outline')}</article>`;
-        }).join('') + '</details>';
+          return UI.kit.peekRow('sectmission:' + m.id, m.name, {
+            eyebrow: locked ? 'CHƯA MỞ' : bonus ? 'NỔI BẬT' : 'ỦY THÁC TÔNG MÔN', mark: bonus ? '★' : locked ? '🔒' : '', cls: locked ? 'is-locked' : '',
+            body: `<p>${duration(m.seconds)} · ${pct(g.missionChance(m))} thành công · +${Math.round(m.contribution * (bonus ? 1.5 : 1))} cống hiến</p><p>${locked ? 'Cần bậc nhiệm vụ ' + m.tier + ' · ' + F.REALMS[m.minRealm] : esc(m.desc)}${bonus ? ' · thưởng ×1,5' : ''}</p><div class="action-group">${btn(locked ? 'Chưa mở' : 'Nhận', 'sectMissionStart', `data-id="${m.id}"`, locked || !!active || !!s.dungeon.active || s.hp < g.stats().HP * .4)}</div>`
+          });
+        }).join('') + '</div></details>';
       }).join('')}`);
   }
   function sectShop() {
     const s = UI.s(), g = UI.g();
-    return `<p class="info-note">Vật phẩm gần bậc hiện tại; giá cống hiến tăng theo cảnh giới. Tiêu cống hiến không giảm chức vị.</p><div class="adventure-grid">${H.SECT_SHOP.filter(x => !x.sect || x.sect === s.sect.id).map(d => {
+    return `<p class="info-note">Vật phẩm gần bậc hiện tại; giá cống hiến tăng theo cảnh giới. Tiêu cống hiến không giảm chức vị.</p><div class="peek-list">${H.SECT_SHOP.filter(x => !x.sect || x.sect === s.sect.id).map(d => {
       const o = g.sectShopOffer(d.id);
       const buttons = d.id === 'essence' ? g.activeElements().map(i => btn(elementLabel(i), 'sectBuy', `data-id="essence" data-element="${i}"`, o.locked || s.sect.contribution < o.cost, 'btn-outline')).join('') : btn('Đổi · ' + num(o.cost), 'sectBuy', `data-id="${d.id}"`, o.locked || s.sect.contribution < o.cost);
-      return card(o.item?.name || d.name, row('Số lượng', '×' + d.count) + row('Cống hiến', num(o.cost)) + `<p class="info-note">${H.SECT_RANKS[d.rank].name}${o.item ? ' · ' + F.REALMS[o.item.tier] : ''}</p><div class="action-group">${buttons}</div>`);
+      return UI.kit.peekRow('sectshop:' + d.id, o.item?.name || d.name, {
+        eyebrow: 'TÀNG BẢO CÁC', mark: o.locked ? '🔒' : '', cls: o.locked ? 'is-locked' : '',
+        body: row('Số lượng', '×' + d.count) + row('Cống hiến', num(o.cost)) + `<p class="info-note">${H.SECT_RANKS[d.rank].name}${o.item ? ' · ' + F.REALMS[o.item.tier] : ''}</p><div class="action-group">${buttons}</div>`
+      });
     }).join('')}</div>`;
   }
   function libraryRecipe(x, g) {

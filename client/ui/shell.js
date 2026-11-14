@@ -1908,7 +1908,7 @@
     }
     if (name === 'resetAfterDeath') { await safe(() => UI.resetAfterDeath?.()); return; }
     if (!$('modalLayer').hidden) {
-      if (!UI.modalActions.has(name)) return;
+      if (!UI.modalActions.has(name) && !$('modalBody').querySelector('.peek-pop')) return;
       closeModal();
     }
     if (store.locked) { toast('Một tab khác đang chơi. Đóng tab kia rồi tải lại trang.'); return; }
@@ -1977,7 +1977,7 @@
       return;
     }
     const nav = e.target.closest('[data-go]');
-    if (nav && UI.s().created) { safe(() => { store.catchUp(); go(nav.dataset.go); }); return; }
+    if (nav && UI.s().created) { safe(() => { if (!$('modalLayer').hidden && nav.closest('#modalLayer')) closeModal(); store.catchUp(); go(nav.dataset.go); }); return; }
     const tab = e.target.closest('[data-tab]');
     if (tab) {
       closeTabbar();

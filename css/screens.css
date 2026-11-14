@@ -558,3 +558,16 @@ body.in-tribulation{overflow:hidden}
 .mail-item .card-head h3{font-size:18px}
 .mail-item .action-group{margin-top:8px}
 @media(max-width:600px){.checkin-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.checkin-grid .card{padding:8px}.mail-item .card-head h3{font-size:16.5px}}
+
+/* Danh sách thu gọn: chỉ tên; chi tiết mở trong cửa sổ nổi. */
+.peek-title{margin:16px 0 8px;color:#f3d699;font:700 16px var(--serif)}.peek-title:first-child{margin-top:0}
+.peek-list{display:grid;gap:6px}
+.peek-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px 12px;text-align:left;color:var(--text);background:#142a22;border:1px solid #2f5545;border-radius:10px;cursor:pointer;font:inherit}
+.peek-row:hover,.peek-row:focus-visible{border-color:#8fd5ae;background:#183128}
+.peek-row img{width:32px;height:32px;object-fit:contain;flex:none}
+.peek-name{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600}
+.peek-mark{flex:none;font-style:normal;font-size:13px;color:#8fd5ae}
+.peek-go{flex:none;color:#8fa596;font-size:18px}
+.peek-row.is-ready{border-color:#d9b25f}.peek-row.is-ready .peek-mark{color:#f3d699;font-weight:700}
+.peek-row.is-done .peek-name{color:#9fb3a6}.peek-row.is-locked{opacity:.6}
+.peek-pop{text-align:left}.peek-pop .action-group,.peek-pop .detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
