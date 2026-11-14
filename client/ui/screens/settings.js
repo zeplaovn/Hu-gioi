@@ -75,7 +75,7 @@
         <div class="action-group"><button class="btn btn-outline" data-go="character:bag">Hành trang</button><button class="btn btn-outline" data-go="world:quests">Nhiệm vụ</button></div>`, { eyebrow: 'ĐIỀU KHIỂN' })}
       ${card('Nhật ký & tiến trình xuyên kiếp', `
         <p>• Mở <b>Truyền âm → Nhật ký</b> để xem ghi chép tu hành và thông báo gần đây.</p>
-        <p>• Khi bắt đầu lại sau tử vong, Thiên Tinh, nâng cấp, vật phẩm và thành tựu của đạo thân cũ không được kế thừa.</p>
+        <p>• Khi bắt đầu lại sau tử vong, vật phẩm và thành tựu của đạo thân cũ không được kế thừa; Thiên Tinh và nâng cấp Thiên Mệnh Các thuộc về tài khoản nên được giữ lại.</p>
         <p>• <b>Nhiệm vụ tông môn</b> chỉ tiếp tục tính thời gian khi bạn đang trong game và kết nối. Khi hoàn tất, hãy quay lại nhận cống hiến.</p>`, { eyebrow: 'XUYÊN KIẾP' })}
       ${card('Mẹo tu hành', `
         <p>• Bán yêu đan ở Lịch luyện hoặc Thế giới → Cửa hàng để lấy linh thạch.</p>
@@ -94,11 +94,11 @@
   }
 
   function account() {
-    return '<div class="screen-grid">' + card('Xóa nhân vật', '<p>Xóa đạo thân hiện tại để tạo lại từ đầu. Cảnh giới, trang bị, vật phẩm, Thiên Tinh, nâng cấp và thứ hạng của nhân vật sẽ mất. Tin nhắn do nhân vật gửi cũng bị xóa.</p><p>Tài khoản đăng nhập được giữ. Lượt gieo nhân vật sẽ được đặt lại.</p><button type="button" class="btn btn-danger" data-act="deleteCharacter">Xóa nhân vật</button>', { eyebrow: 'NHÂN VẬT' }) + '</div>';
+    return '<div class="screen-grid">' + card('Xóa nhân vật', '<p>Xóa đạo thân hiện tại để tạo lại từ đầu. Cảnh giới, trang bị, vật phẩm và thứ hạng của nhân vật sẽ mất; Thiên Tinh và nâng cấp Thiên Mệnh Các được giữ lại. Tin nhắn do nhân vật gửi cũng bị xóa.</p><p>Tài khoản đăng nhập được giữ. Lượt gieo nhân vật sẽ được đặt lại.</p><button type="button" class="btn btn-danger" data-act="deleteCharacter">Xóa nhân vật</button>', { eyebrow: 'NHÂN VẬT' }) + '</div>';
   }
   UI.action('deleteCharacter', () => {
     const name = UI.kit.esc(UI.s().name);
-    UI.modal('Xóa nhân vật?', '<p>Bạn sắp xóa vĩnh viễn <b>' + name + '</b> cùng toàn bộ tiến trình, vật phẩm, Thiên Tinh, nâng cấp, thứ hạng và tin nhắn đã gửi.</p><p>Tài khoản đăng nhập vẫn được giữ. Thao tác này không thể hoàn tác.</p>', async () => {
+    UI.modal('Xóa nhân vật?', '<p>Bạn sắp xóa vĩnh viễn <b>' + name + '</b> cùng toàn bộ tiến trình, vật phẩm, thứ hạng và tin nhắn đã gửi.</p><p>Tài khoản đăng nhập, Thiên Tinh và nâng cấp Thiên Mệnh Các vẫn được giữ. Thao tác này không thể hoàn tác.</p>', async () => {
       UI.store.ready = false;
       try { await UI.session.deleteCharacter(); root.location.reload(); }
       catch (error) { UI.store.ready = true; throw Error('Chưa xác nhận được việc xóa. Hãy tải lại trang để kiểm tra trạng thái. ' + error.message); }

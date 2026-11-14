@@ -117,14 +117,15 @@ test('mua cấp Thiên Mệnh Các: optimistic version, receipt một lần, đ�
   } finally { repo.close(); }
 });
 
-test('tử vong: có thể tạo lại từ đầu, không giữ Thiên Tinh hay nâng cấp', async () => {
+test('tử vong: tạo lại từ đầu nhưng giữ Thiên Tinh và nâng cấp của tài khoản', async () => {
   const { repo, service } = setup();
   try {
     const id = (await spawn(service,'a','Tô Thiên Vân')).playerId;
     await forceAscension({ repo,service }, id,'a','first-ascend');
     await buy(service,'a','current-upgrade','upgrade','canCot');
     await assert.rejects(buy(service,'a','legacy-relic','relic','tuiLinhThach'), { code:'INVALID_REQUEST' });
-    const record = await repo.get(id);
+    const record = await repo.get(id), kept = await repo.getPavilion('a');
+    assert.equal(kept.upgrades.canCot,1);
     await assert.rejects(service.resetAfterDeath('a',id), { code:'GAME_RULE_VIOLATION' });
     await repo.transact(id, tx => ({ save: {
       state: { ...record.state, death: { cause:'combat', at:T0 } },
@@ -134,14 +135,13 @@ test('tử vong: có thể tạo lại từ đầu, không giữ Thiên Tinh hay
     await assert.rejects(spawn(service,'a','Tô Vân Kiếp'), { code:'PLAYER_EXISTS' });
     const reset = await service.resetAfterDeath('a',id);
     assert.equal(reset.deleted,true);
-    assert.equal(reset.pavilion.balance,0);
-    assert.equal(reset.pavilion.totalEarned,0);
-    assert.deepEqual(reset.pavilion.upgrades,{});
-    assert.equal(reset.pavilion.rebirths,0);
+    assert.equal(reset.pavilion.balance,kept.balance);
+    assert.equal(reset.pavilion.totalEarned,kept.totalEarned);
+    assert.deepEqual(reset.pavilion.upgrades,kept.upgrades);
     const next = await spawn(service,'a','Tô Vân Kiếp');
     assert.notEqual(next.playerId,id);
-    assert.equal(next.pavilion.balance,0);
-    assert.equal(next.state.pavilion?.canCot || 0,0);
+    assert.equal(next.pavilion.balance,kept.balance);
+    assert.equal(next.state.pavilion.canCot,1,'nâng cấp thuộc tính áp dụng cho đạo thân mới');
   } finally { repo.close(); }
 });
 

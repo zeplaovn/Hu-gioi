@@ -302,7 +302,7 @@ class MemoryPlayers extends PlayerRepository {
         throw new GameError('GAME_RULE_VIOLATION', 'Đạo thân chưa tọa hóa.');
       this.dropPlayer(playerId);
       if (allowAlive) for (const [id, t] of this.s.tickets) if (t.ownerId === ownerId) this.s.tickets.delete(id);
-      this.dropPavilion(ownerId);
+      /* Thiên Tinh và nâng cấp thuộc tính thuộc về tài khoản, không bị xóa cùng đạo thân. */
       return { deleted: true };
     });
   }

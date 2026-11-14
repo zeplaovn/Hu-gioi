@@ -149,7 +149,7 @@ test('quầy Khởi Nguyên thu gọn ở màn tạo, mở bằng hộp thoại 
   assert.ok(css.includes('.creation-shop-trigger{') && /\.creation-shop-trigger\{[^}]*min-height:46px/.test(css),
     'Nút thu gọn phải đủ 46px để chạm');
   assert.match(css, /\.creation-shop-dialog \.creation-info-header>button\{width:44px;height:44px\}/);
-  assert.match(boot, /UI\.session\.pavilionPurchase\('starter', key\)/);
+  assert.match(boot, /UI\.session\.pavilionPurchase\(upgrade \? 'upgrade' : 'starter', key\)/);
   assert.match(boot, /H\.PAVILION\.starterTalentMax/);
   assert.match(service, /extraTalentPoints: pavilion\.consumed\?\.talentPoint \|\| 0/);
   assert.match(service, /onlyKeys\(body, \['ticketId', 'name', 'gender', 'talent', 'destiny'\]\)/);

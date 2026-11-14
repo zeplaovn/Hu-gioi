@@ -91,8 +91,8 @@ class PlayerService {
     this.onError = onError;
   }
 
-  /* Bắt đầu lại sau khi chết thật. Không thưởng/cộng dồn trọng sinh:
-   * toàn bộ Thiên Tinh, Thiên Mệnh Các, xếp hạng và tiến trình được xóa. */
+  /* Bắt đầu lại sau khi chết thật. Đạo thân, xếp hạng và tiến trình bị xóa;
+   * Thiên Tinh và nâng cấp thuộc tính Thiên Mệnh Các thuộc về tài khoản nên được giữ lại. */
   async resetAfterDeath(ownerId, playerId) {
     const rec = this.#own(await this.repo.get(playerId), ownerId);
     if (!new H.Game(this.#state(rec, this.clock())).isDead())

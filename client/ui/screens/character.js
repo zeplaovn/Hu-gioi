@@ -68,9 +68,6 @@
     return `<div class="char-sheet">
       ${card('Chiến lực', `<div class="stat-tiles">${power.map(([k, v, key]) => tile(k, v, '', key)).join('')}</div>`, { eyebrow: 'CHỈ SỐ', cls: 'sheet-power' })}
       ${card('Tu luyện', `<div class="stat-tiles tiles-4">${tile(S.qiRate, num(g.rate()) + '<small>/giây</small>', '', 'qiRate')}${tile('Tu vi từ đan', num(s.pillRealmExp) + '<small>/ ' + num(pillCap) + '</small>')}${tile('Đan đã dùng', s.pillUses + '<small>viên · tầng này</small>')}${tile('Tâm ma', num(s.tamMa || 0) + '<small>/ ' + (H.TAM_MA_MAX || 100) + ' · đột phá −' + (Math.min(15, (s.tamMa || 0) * (H.TAM_MA_BREAK_PENALTY || .0015) * 100)).toFixed(1).replace('.', ',') + '%</small>', s.tamMa >= 50 ? 'tile-warn' : '')}</div>`, { eyebrow: 'ĐẠO CẢNH', cls: 'sheet-cultivate' })}
-      ${card('Đạo vận · Thiên mệnh', `<div class="stat-tiles tiles-2">${tile('Thiên Tinh', num(UI.session.pavilion?.balance || 0))}${tile('Số kiếp đã qua', num(UI.session.pavilion?.rebirths || 0))}</div>
-        <p class="info-note">Thiên Mệnh Các cho nâng cấp vĩnh viễn, tối đa 20 cấp.</p>
-        <div class="action-group"><button class="btn btn-outline" data-go="meta:pavilion">Mở Thiên Mệnh Các ›</button></div>`, { eyebrow: 'LUÂN HỒI', cls: 'sheet-rebirth' })}
       ${card('Giải nghĩa chỉ số', `<details class="stat-glossary"><summary>Xem ý nghĩa các chỉ số</summary><dl>${glossary}</dl></details>`, { eyebrow: 'ĐẠO THỂ', cls: 'sheet-glossary' })}
     </div>`;
   }

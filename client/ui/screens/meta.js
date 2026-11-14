@@ -1,11 +1,10 @@
-/* Hư Giới — Thiên Mệnh Các dùng Thiên Tinh kiếm trong hành trình hiện tại. */
+/* Hư Giới — Thiên mệnh, thành tựu và Thiên Thư. Thiên Mệnh Các chỉ còn ở màn tạo nhân vật. */
 (function (root) {
   'use strict';
   const H = root.HU_GAME, F = H.F, UI = root.HU_UI, L = root.HU_LABELS;
   const { esc, num, row, btn, card, empty, tabs } = UI.kit;
   const TABS = [
     { id: 'destiny', label: 'Thiên mệnh', icon: '✦' },
-    { id: 'pavilion', label: 'Thiên Mệnh Các', icon: '✧' },
     { id: 'achievements', label: 'Thành tựu', icon: '✧' },
     { id: 'story', label: 'Thiên Thư', icon: '❖' }
   ];
@@ -26,36 +25,6 @@
         { eyebrow: key === current ? 'ĐANG DÙNG' : 'KHỞI NGUYÊN' });
     }).join('')}</div>`;
   }
-  function pavilion() {
-    const p = UI.session.pavilion || { balance: 0, upgrades: {} };
-    return '<p class="screen-lead">Thiên Tinh nhận khi đột phá đại cảnh giới và hợp nhất đạo ấn. Thiên Mệnh Các nâng cấp sức mạnh cho đạo thân hiện tại; một thuộc tính tối đa 20 cấp, hiệu quả tối đa +50%.</p>' +
-      card('Thiên Tinh', row('Hiện có', num(p.balance) + ' ✧') +
-        row('Đã tích lũy', num(p.totalEarned || 0) + ' ✧') +
-        row('Tổng Thiên Tinh đã nhận', num(p.totalEarned || 0)), { eyebrow: 'TÀI NGUYÊN TU HÀNH' }) +
-      '<div class="screen-grid">' + Object.entries(H.PAVILION.stats).map(([key, item]) => {
-        const lvl = Math.min(20, p.upgrades?.[key] || 0), cost = H.PAVILION.upgradeCost(lvl);
-        return card(L ? L.span(item.name, 'talent', key, { variant: 'name' }) : esc(item.name),
-          '<p>' + esc(item.desc) + '</p>' +
-          row('Cấp nâng cấp', lvl + '/20') +
-          row('Hiệu quả', '+' + (H.PAVILION.bonus(lvl) * 100).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + '%') +
-          (cost === null ? '<p class="gold">Đã viên mãn</p>' :
-            btn('Nâng cấp · ' + cost + ' Thiên Tinh', 'pavilionBuy', 'data-kind="upgrade" data-key="' + esc(key) + '"', p.balance < cost, 'btn-outline')),
-          { eyebrow: 'THIÊN PHÚ' });
-      }).join('') + '</div>';
-  }
-
-  UI.action('pavilionBuy', async (el, data) => {
-    if (el?.disabled) return UI.KEEP;
-    const label = el?.textContent;
-    if (el) { el.disabled = true; el.textContent = 'Đang gửi tới Thiên Mệnh Các…'; }
-    try {
-      const result = await UI.session.pavilionPurchase(data.kind, data.key);
-      if (result) UI.toast('Thiên Mệnh Các đã ghi nhận giao dịch. Thiên Tinh và bảo vật được lưu trên máy chủ.', { type: 'success' });
-    } finally {
-      if (el) { el.disabled = false; el.textContent = label; }
-    }
-  });
-
   function achievements() {
     const m = UI.s().meta, unlocked = Object.keys(m.achievements).length;
     return `<p class="screen-lead">Thành tựu gắn với đạo thân hiện tại, không cấp điểm tích lũy. Đã đạt ${unlocked}/${H.META_ACHIEVEMENTS.length}.</p>
@@ -84,7 +53,7 @@
         }).join('') + '</div></section>').join('');
   }
 
-  const body = { destiny, pavilion, achievements, story };
+  const body = { destiny, achievements, story };
   UI.register({
     id: 'meta', label: 'Thiên mệnh', icon: '✦', eyebrow: 'THIÊN MỆNH', tabs: TABS,
     render: tab => header() + tabs(TABS, tab) + '<div class="screen-body">' + (body[tab] || destiny)() + '</div>',

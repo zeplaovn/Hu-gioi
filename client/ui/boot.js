@@ -198,7 +198,17 @@
         '<small>Còn ' + num(pavilion.balance || 0) + ' Thiên Tinh · hàng đã mua chờ nhận khi nhập thế.</small>') + '</div>' +
       '<section class="creation-shop-section"><h3>Dấu Ấn Thiên Mệnh</h3>' +
         '<p>Chọn một dấu ấn duy nhất để nhận buff khởi đầu khi lập đạo thân.</p>' + grid(destinies) + '</section>' +
-      '<section class="creation-shop-section"><h3>Hành Trang Khởi Nguyên</h3>' + grid(starters) + '</section>';
+      '<section class="creation-shop-section"><h3>Hành Trang Khởi Nguyên</h3>' + grid(starters) + '</section>' +
+      '<section class="creation-shop-section"><h3>Nâng Cấp Vĩnh Viễn</h3>' +
+        '<p>Thuộc tính nâng bằng Thiên Tinh thuộc về tài khoản, giữ nguyên qua mọi đạo thân. Mỗi thuộc tính tối đa 20 cấp.</p>' +
+        '<div class="creation-shop-grid">' + Object.entries(H.PAVILION.stats).map(([key, item]) => {
+          const lvl = Math.min(20, Number(pavilion.upgrades?.[key]) || 0), cost = H.PAVILION.upgradeCost(lvl);
+          const off = shopping || entering || !UI.session?.accountId || !!UI.session?.playerId || cost === null || Number(pavilion.balance || 0) < cost;
+          return '<article class="creation-shop-item' + (cost === null ? ' is-owned' : '') + '"><div><strong>' + esc(item.name) + '</strong><p>' + esc(item.desc) +
+            '</p><small>Cấp ' + lvl + '/20 · +' + (H.PAVILION.bonus(lvl) * 100).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + '%</small></div>' +
+            '<button type="button" class="btn btn-outline" data-upgrade="' + key + '" ' + (off ? 'disabled ' : '') + 'aria-label="Nâng cấp ' + esc(item.name) + '">' +
+            (cost === null ? 'Viên mãn' : cost + ' Thiên Tinh') + '</button></article>';
+        }).join('') + '</div></section>';
   }
 
   function renderStats() {
@@ -311,7 +321,7 @@
         '<div><span>Cảnh giới cuối cùng</span><b>' + esc(g.realmLabel()) + '</b></div>' +
         '<div><span>Tổng tu vi hành trình</span><b>' + num(s.totalRunExp) + '</b></div>' +
       '</div>' +
-      '<p class="info-note">Bạn có thể bắt đầu lại từ Khởi Nguyên. Nhân vật, cảnh giới, lực chiến, vật phẩm, Thiên Tinh và nâng cấp sẽ về 0. Không có thưởng hoặc cộng dồn trọng sinh.</p>' +
+      '<p class="info-note">Bạn có thể bắt đầu lại từ Khởi Nguyên. Nhân vật, cảnh giới, lực chiến và vật phẩm sẽ về 0; Thiên Tinh và nâng cấp Thiên Mệnh Các vẫn được giữ cho đạo thân kế tiếp.</p>' +
       '<div class="death-actions"><button type="button" class="btn btn-gold btn-wide" data-act="resetAfterDeath">Bắt đầu lại từ đầu</button></div>',
       null, 'Đóng', 'THIÊN MỆNH', { type: 'danger', symbol: '✝', vfx: ['loi_kiep', 'ha_gioi'] });
   };
@@ -401,22 +411,23 @@
       $('creationShopOpen')?.focus({ preventScroll: true });
     });
     $('creationShop')?.addEventListener('click', async event => {
-      const button = event.target.closest('button[data-starter]');
+      const button = event.target.closest('button[data-starter], button[data-upgrade]');
       if (!button || button.disabled || shopping || entering || store.ready) return;
-      const key = button.dataset.starter;
-      if (!Object.hasOwn(H.PAVILION.starter, key)) return;
+      const upgrade = button.dataset.upgrade !== undefined;
+      const key = upgrade ? button.dataset.upgrade : button.dataset.starter;
+      if (!Object.hasOwn(upgrade ? H.PAVILION.stats : H.PAVILION.starter, key)) return;
       shopping = true; renderShop();
       try {
-        await UI.session.pavilionPurchase('starter', key);
+        await UI.session.pavilionPurchase(upgrade ? 'upgrade' : 'starter', key);
         renderCreation();
-        UI.toast('Đã đổi ' + H.PAVILION.starter[key].name + '. Sẽ nhận khi tạo đạo thân.', { type: 'success' });
+        UI.toast(upgrade ? 'Đã nâng cấp ' + H.PAVILION.stats[key].name + '. Áp dụng cho mọi đạo thân.' : 'Đã đổi ' + H.PAVILION.starter[key].name + '. Sẽ nhận khi tạo đạo thân.', { type: 'success' });
       } catch (err) {
         UI.toast('Thiên Mệnh Các: ' + err.message, { type: 'danger' });
       } finally {
         shopping = false;
         renderCreation();
         if ($('creationShopDialog')?.open) {
-          const again = $('creationShop')?.querySelector('[data-starter="' + key + '"]:not([disabled])');
+          const again = $('creationShop')?.querySelector('[data-' + (upgrade ? 'upgrade' : 'starter') + '="' + key + '"]:not([disabled])');
           (again || $('creationShopClose'))?.focus({ preventScroll: true });
         }
       }
@@ -626,7 +637,7 @@
     }
     $('continueGame').hidden = true;
     $('continueGame').title = '';
-    $('welcomeRebirth').textContent = 'Khai mở một đạo thân · đổi Thiên Tinh tại Thiên Mệnh Các.';
+    $('welcomeRebirth').textContent = 'Khai mở một đạo thân · đổi Thiên Tinh tại Thiên Mệnh Các trước khi nhập thế.';
     $('welcome').hidden = false;
     renderCreation();
   }

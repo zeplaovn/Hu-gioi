@@ -149,7 +149,7 @@ test('Postgres contract: two concurrent commands on same revision serialize into
   assert.equal((await svc.bootstrap(A)).player.revision, 1);
 });
 
-test('Postgres contract: tử vong xóa sạch xếp hạng, chat và Thiên Tinh khi khởi đầu lại', async t => {
+test('Postgres contract: tử vong xóa xếp hạng và chat nhưng giữ Thiên Tinh, nâng cấp khi khởi đầu lại', async t => {
   const { svc, repo, db } = await makePg(t);
   const first = await spawn(svc, A, 'Tịnh Thiên');
   const id = first.playerId;
@@ -177,15 +177,15 @@ test('Postgres contract: tử vong xóa sạch xếp hạng, chat và Thiên Tin
   assert.equal(exported.sentChatMessages.length, 1);
   const reset = await svc.resetAfterDeath(A,id);
   assert.equal(reset.deleted, true);
-  assert.equal(reset.pavilion.balance, 0);
-  assert.deepEqual(reset.pavilion.upgrades, {});
+  assert.equal(reset.pavilion.upgrades.ngoTinh, 1);
   assert.equal((await svc.bootstrap(A)).player, null);
   for (const table of ['world_chat_messages','world_chat_presence','player_leaderboard']) {
     assert.equal((await db.query('SELECT count(*)::int AS n FROM game.' + table + ' WHERE owner_id=$1', [A])).rows[0].n, 0);
   }
   const again = await spawn(svc,A,'Tịnh Đạo');
   assert.notEqual(again.playerId,id);
-  assert.equal(again.pavilion.balance,0);
+  assert.equal(again.pavilion.upgrades.ngoTinh,1);
+  assert.equal(again.state.pavilion.ngoTinh,1);
   assert.ok(Number((await db.query('SELECT combat_power FROM game.players WHERE id=$1', [again.playerId])).rows[0].combat_power) > 0);
   const erased = await svc.eraseData(A, { confirm: 'delete-my-game-data' });
   assert.equal(erased.players, 1);
