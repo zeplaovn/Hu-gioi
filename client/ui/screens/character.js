@@ -85,16 +85,33 @@
 
   function skills() {
     const s = UI.s(), g = UI.g();
-    const learned = Object.keys(s.learned).map(key => `<div class="technique-item">${img(key)}<div><h3>${esc(H.item(key).name)}</h3>
-      <p>${H.item(key).realm} · ${L ? L.span(F.SUBPHAM[H.item(key).sub], 'quality', F.SUBPHAM[H.item(key).sub]) : esc(F.SUBPHAM[H.item(key).sub])} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.item(key).description)}</p></div>
-      ${['BT-900','BT-901'].includes(H.item(key).code)?'<span class="gold">Đã học bí tịch nghề</span>':btn(s.activeManuals.includes(key) ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))}</div>`).join('');
+    const room = H.MANUALS.slots(s.realm);
+    const entry = key => {
+      const x = H.item(key), sc = H.MANUALS.school(x), on = s.activeManuals.includes(key);
+      const state = sc === 'nghe' ? '<span class="gold">Đã mở nghề</span>' : btn(on ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key));
+      const cast = sc === 'ngoai' && on ? btn('Thi triển', 'castManual', codeAttr(key), false, 'btn-outline') : '';
+      const q = F.SUBPHAM[x.sub];
+      return `<div class="technique-item">${img(key)}<div><h3>${esc(x.name)}</h3>
+        <p>${x.realm} · ${L ? L.span(q, 'quality', q) : esc(q)} · Thuần thục ${pct(s.learned[key])}</p><p>${esc(H.MANUALS.describe(x))}</p></div>
+        <div class="technique-actions">${cast}${state}</div></div>`;
+    };
+    const group = (sc, title, hint) => {
+      const keys = Object.keys(s.learned).filter(k => H.item(k) && H.MANUALS.school(H.item(k)) === sc);
+      const used = s.activeManuals.filter(k => H.MANUALS.school(H.item(k)) === sc).length;
+      const count = sc === 'nghe' ? `${keys.length} bí tịch` : `${used}/${room[sc]} ô`;
+      return `<h3 class="section-title">${title} · ${count}</h3><p class="info-note">${hint}</p>
+        <div class="skill-list">${keys.map(entry).join('') || empty('Chưa lĩnh ngộ sách nào thuộc hệ này.')}</div>`;
+    };
+    const learned = group('ngoai', 'Ngoại tu · chủ động', 'Đặt vào ô để thi triển khi chiến đấu; khi tự động chiến đấu, skill sẵn sàng sẽ tự được thi triển. Tốn linh lực và có hồi chiêu.')
+      + group('noi', 'Nội tu · bị động', 'Đặt vào ô, luôn có hiệu lực: tăng tốc độ hấp thụ linh khí, sinh lực và phòng ngự.')
+      + group('nghe', 'Bí tịch nghề', 'Không chiếm ô. Học xong là mở nghề; sách phẩm cao tăng tỉ lệ thành công, chất lượng thành phẩm và mở đan hiếm.');
     const ups = ['Công kích +2%', 'Tốc độ hấp thụ linh khí +2%', 'Phòng thủ +2%', 'Né tránh +0,5%'].map((name, i) => {
       const n = s.tech[i] - 1;
       return card(`${name} · ${n}/20`, row('Giá một cấp', moneyHTML(F.cost(g.upgradeBase(i), 1.15, n))) +
         `<div class="action-group">${[1, 10, 'max'].map(k => btn(k === 'max' ? 'Tối đa' : '×' + k, 'upgrade', `data-index="${i}" data-count="${k}"`, n >= 20, 'btn-outline')).join('')}</div>`);
     }).join('');
-    return `<p class="screen-lead">Vận hành tối đa bốn công pháp. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm nửa hiệu quả. Nhóm tốc độ hấp thụ linh khí tối đa +70%.</p>
-      <div class="skill-list">${learned || empty('Chưa lĩnh ngộ công pháp nào. Mở mục Hành trang để lĩnh ngộ Dẫn Khí Ngự Phong Quyết có sẵn.')}</div>
+    return `<p class="screen-lead">Ngoại tu là skill chủ động, nội tu là skill bị động, mỗi hệ có số ô riêng mở dần theo cảnh giới. Thuần thục tăng khi tu luyện; thấp hơn một cảnh giới giảm hiệu quả. Phẩm chất sách quyết định độ mạnh.</p>
+      ${learned}
       <h3 class="section-title">Bồi dưỡng theo cảnh giới</h3>
       <p class="info-note">Chi phí mỗi bậc tăng ×1,15. Tu luyện và củng cố đạo cơ có thể tăng tối đa 40% tốc độ hấp thụ linh khí; phần bồi dưỡng thường sẽ bắt đầu lại khi sang đại cảnh giới mới.</p>
       <div class="screen-grid">${ups}</div>`;
@@ -189,7 +206,6 @@
   }
 
   /* ---------- Cửa sổ nổi: trang bị, công pháp, chi tiết vật phẩm ---------- */
-  const NO_ACTIVATE = ['BT-900', 'BT-901'];
   const popup = (title, eyebrow, body) => UI.modal(title, `<div class="pop">${body}</div>`, null, 'Đóng', eyebrow, { vfx: false });
   const qualityOf = x => F.SUBPHAM[x.sub];
   const popCell = (key, from, note = '') => {
@@ -204,7 +220,7 @@
     const usable = ['PILL', 'TAL', 'GFT', 'CAT', 'FERT', 'SEED'].includes(x.kind) || (x.kind === 'HERB' && x.design?.['cách dùng']?.includes('ăn trực tiếp'));
     let primary = '';
     if (x.kind === 'EQ') primary = btn(equipped ? 'Tháo' : 'Trang bị', 'equip', codeAttr(key));
-    else if (x.kind === 'BT') primary = learned ? (NO_ACTIVATE.includes(x.code) ? '<span class="gold">Đã học bí tịch nghề</span>' : btn(active ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))) : btn('Lĩnh ngộ', 'learn', codeAttr(key));
+    else if (x.kind === 'BT') primary = learned ? (H.MANUALS.school(x) === 'nghe' ? '<span class="gold">Đã học bí tịch nghề</span>' : btn(active ? 'Dừng vận hành' : 'Vận hành', 'activate', codeAttr(key))) : btn('Lĩnh ngộ', 'learn', codeAttr(key));
     else primary = btn(usable ? 'Sử dụng' : 'Công dụng', usable ? 'consume' : 'info', codeAttr(key));
     const sell = g.count(key) > 0 ? btn('Bán 1', 'sell', codeAttr(key), equipped && g.count(key) <= 1, 'btn-outline') : '';
     const back_ = back ? `<button type="button" class="btn btn-outline" data-act="${back}">‹ Quay lại</button>` : '';
@@ -227,11 +243,17 @@
   }
 
   function manualWindow() {
-    const s = UI.s();
+    const s = UI.s(), room = H.MANUALS.slots(s.realm);
     const keys = Object.keys(s.learned).filter(k => H.item(k));
-    const cells = keys.map(k => popCell(k, 'manualOpen', (s.activeManuals.includes(k) ? 'Đang vận · ' : '') + pct(s.learned[k]))).join('');
-    popup('Công pháp', 'TRUYỀN THỪA', `<h4 class="pop-title">Đã lĩnh ngộ · đang vận ${s.activeManuals.length}/4</h4>
-      <div class="pop-grid">${cells || empty('Chưa lĩnh ngộ công pháp nào. Mở một bí tịch trong Hành trang để lĩnh ngộ.')}</div>`);
+    const part = (sc, title) => {
+      const mine = keys.filter(k => H.MANUALS.school(H.item(k)) === sc);
+      const used = s.activeManuals.filter(k => H.MANUALS.school(H.item(k)) === sc).length;
+      const count = sc === 'nghe' ? mine.length + ' sách' : `đang vận ${used}/${room[sc]}`;
+      const cells = mine.map(k => popCell(k, 'manualOpen', (s.activeManuals.includes(k) ? 'Đang vận · ' : '') + pct(s.learned[k]))).join('');
+      return `<h4 class="pop-title">${title} · ${count}</h4><div class="pop-grid">${cells || empty('Chưa có.')}</div>`;
+    };
+    popup('Công pháp', 'TRUYỀN THỪA', keys.length ? part('ngoai', 'Ngoại tu') + part('noi', 'Nội tu') + part('nghe', 'Bí tịch nghề')
+      : `<div class="pop-grid">${empty('Chưa lĩnh ngộ công pháp nào. Mở một bí tịch trong Hành trang để lĩnh ngộ.')}</div>`);
   }
 
   function bagOrder() {
@@ -256,13 +278,18 @@
       .sort((a, b) => a.tier - b.tier || a.kind.localeCompare(b.kind) || a.code.localeCompare(b.code) || a.sub - b.sub);
     const order = bagOrder();
     const visible = xs.slice().sort((a,b) => { const ai=order.indexOf(a.key), bi=order.indexOf(b.key); return (ai < 0 ? Number.MAX_SAFE_INTEGER : ai) - (bi < 0 ? Number.MAX_SAFE_INTEGER : bi); });
-    const manuals = Array.from({ length: 4 }, (_, i) => {
-      const key = s.activeManuals[i];
-      return key ? `<button type="button" class="manual-gear-slot" data-act="manualOpen" aria-label="Mở cửa sổ công pháp, đang vận ${esc(H.item(key).name)}">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
-        : `<button type="button" class="manual-gear-slot empty" data-act="manualOpen" aria-label="Ô công pháp ${i + 1} trống, mở cửa sổ công pháp"><span>＋</span><small>Ô ${i + 1}</small></button>`;
-    }).join('');
+    const room = H.MANUALS.slots(s.realm);
+    const manualCells = (sc, mark) => {
+      const mine = s.activeManuals.filter(k => H.MANUALS.school(H.item(k)) === sc);
+      return Array.from({ length: room[sc] }, (_, i) => {
+        const key = mine[i];
+        return key ? `<button type="button" class="manual-gear-slot" data-act="manualOpen" aria-label="Mở cửa sổ công pháp, ${mark} đang vận ${esc(H.item(key).name)}">${img(key)}<small>${esc(H.item(key).name)}</small></button>`
+          : `<button type="button" class="manual-gear-slot empty" data-act="manualOpen" aria-label="Ô ${mark} ${i + 1} trống, mở cửa sổ công pháp"><span>＋</span><small>${mark} ${i + 1}</small></button>`;
+      }).join('');
+    };
+    const manuals = manualCells('ngoai', 'Ngoại tu') + manualCells('noi', 'Nội tu');
     return `<div class="inventory-scene-layout">
-      <div class="inventory-hero-column"><section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Chạm ô pháp bảo để mở cửa sổ trang bị, hoặc kéo pháp bảo vào ô trống.</p></section><section class="manual-gear-panel"><div><span class="eyebrow gold">TRUYỀN THỪA</span><h3>Công pháp đang vận · ${s.activeManuals.length}/4</h3></div><div class="manual-gear-grid">${manuals}</div></section></div>
+      <div class="inventory-hero-column"><section id="equippedItems" class="gear-stage" aria-label="Đạo thân và pháp bảo"><div class="gear-stage-heading"><span class="eyebrow gold">ĐẠO THÂN</span><h3>Pháp bảo · ${s.equipment.length}/4</h3></div><img class="gear-hero" src="${esc(A.heroSrc(s.gender, s.zone, 'dung_yen', 0))}" alt="${esc(s.name)} đang ngồi thiền">${slots}<p class="gear-stage-hint">Chạm ô pháp bảo để mở cửa sổ trang bị, hoặc kéo pháp bảo vào ô trống.</p></section><section class="manual-gear-panel"><div><span class="eyebrow gold">TRUYỀN THỪA</span><h3>Công pháp · ngoại ${s.activeManuals.filter(k => H.MANUALS.school(H.item(k)) === 'ngoai').length}/${room.ngoai} · nội ${s.activeManuals.filter(k => H.MANUALS.school(H.item(k)) === 'noi').length}/${room.noi}</h3></div><div class="manual-gear-grid">${manuals}</div></section></div>
       <section class="inventory-pouch card"><header class="card-head"><div><span class="eyebrow gold">TÚI TRỮ VẬT</span><h3>Hành trang</h3></div><small>${xs.length} loại</small></header><p class="rarity-legend">${F.SUBPHAM.map(q => L ? L.span(q, 'quality', q) : esc(q)).join('')}</p><div class="inventory-items">${visible.map(i => {
         const quality = F.SUBPHAM[i.sub];
         const qClass = L ? ' ' + L.keyClass('quality', quality) : '';
@@ -283,7 +310,7 @@
   });
 
   /* Mọi thao tác trong cửa sổ nổi chạy được dù cửa sổ đang mở; shell tự đóng cửa sổ trước khi chạy. */
-  ['itemPop', 'gearOpen', 'manualOpen', 'equip', 'learn', 'activate', 'consume', 'sell', 'info'].forEach(name => UI.modalActions?.add(name));
+  ['itemPop', 'gearOpen', 'manualOpen', 'equip', 'learn', 'activate', 'castManual', 'consume', 'sell', 'info'].forEach(name => UI.modalActions?.add(name));
   UI.action('gearOpen', () => { gearWindow(); return UI.KEEP; });
   UI.action('manualOpen', () => { manualWindow(); return UI.KEEP; });
   UI.action('itemPop', (el, d) => {
@@ -374,6 +401,10 @@
     const on = UI.s().activeManuals.includes(d.code);
     UI.toast((on ? 'Đang vận hành ' : 'Đã dừng ') + H.item(d.code).name + '.', { type: on ? 'success' : 'info', title: 'Công pháp' });
     if (on) UI.vfx?.stage({ kind: 'chien_dau', variant: 'linh_phu', fps: 12, size: 'clamp(100px,16vw,170px)', style: { left: '50%', bottom: '24%', transform: 'translateX(-50%)' } });
+  });
+  UI.action('castManual', async (el, d) => {
+    await UI.command('castManual', { code: d.code });
+    UI.toast('Thi triển ' + H.item(d.code).name + '.', { type: 'success', title: 'Ngoại tu' });
   });
   UI.action('consume', async (el, d) => {
     const x = H.item(d.code), msg = await UI.command('use', { code: d.code });

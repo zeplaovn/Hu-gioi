@@ -8,6 +8,7 @@
   const D = node ? require('../../data/catalog.js') : root.HU_CATALOG;
   const A = node ? require('../../data/adventures.js') : root.HU_ADVENTURE_DATA;
   const DESIGN = node ? require('../../data/design.js') : root.HU_DESIGN;
+  const MANUALS = node ? require('../../data/manuals.js') : root.HU_MANUALS;
   const social = node ? require('../../data/social.js') : root.HU_SOCIAL_DATA;
   const STORY = node ? require('../../data/story.js') : root.HU_STORY_DATA;
   const { RACES, LEGACY_RACES, TALENT_INFO, TALENT_MAX, META_UPGRADES, META_ACHIEVEMENTS, rootType } = C;
@@ -324,9 +325,15 @@
     x.learned = {};
     if (object(raw.learned)) for (const [k, v] of Object.entries(raw.learned))
       if (item(k)?.kind === 'BT') x.learned[k] = finite(v, 0, 1);
-    x.activeManuals = Array.isArray(raw.activeManuals)
-      ? uniq(raw.activeManuals.filter(k => k in x.learned && item(k).tier <= x.realm + 1)).slice(0, 4)
-      : [];
+    x.activeManuals = [];
+    if (Array.isArray(raw.activeManuals)) {
+      const room = MANUALS.slots(x.realm), used = { ngoai: 0, noi: 0 };
+      for (const k of uniq(raw.activeManuals)) {
+        const sc = MANUALS.school(item(k));
+        if (!(k in x.learned) || !(sc in used) || item(k).tier > x.realm + 1 || used[sc] >= room[sc]) continue;
+        used[sc]++; x.activeManuals.push(k);
+      }
+    }
     x.buffs = Array.isArray(raw.buffs) ? raw.buffs
       .filter(b => object(b) && ['rate', 'attack'].includes(b.type) && Number.isFinite(b.end) && b.end > 0)
       .slice(0, 64)

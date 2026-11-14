@@ -235,18 +235,36 @@
       castManual(payload, now) {
         this.assertNoRun();
         now = at(this, now);
-        const key = payload.code, s = this.s, x = item(key), d = x?.design, c = effects(s);
-        if (!x || d?.group !== 'công pháp' || !(key in s.learned) || !s.activeManuals.includes(key)) throw Error('Hãy lĩnh ngộ và vận hành công pháp.');
+        const key = payload.code, s = this.s, x = item(key);
+        if (H.MANUALS.school(x) !== 'ngoai' || !(key in s.learned) || !s.activeManuals.includes(key)) throw Error('Hãy lĩnh ngộ và đặt công pháp ngoại tu vào ô.');
+        return this._cast(key, now);
+      },
+      /* Thi triển một skill ngoại tu: kiểm tra hồi chiêu và linh lực, rồi áp dụng hiệu ứng theo phẩm chất sách. */
+      _cast(key, now) {
+        const s = this.s, x = item(key), k = H.MANUALS.skillOf(x), c = effects(s), power = this.manualPower(key);
         if (now < (c.manualCooldowns[key] || 0)) throw Error('Công pháp đang hồi chiêu.');
-        if (s.mp < d['tiêu hao mp']) throw Error('Linh lực không đủ để thi triển chiêu thức.');
-        s.mp -= d['tiêu hao mp'];
-        c.manualCooldowns[key] = now + d['hồi chiêu (giây)'] * 1000;
-        if (d['công dụng'] === 'công kích') return this._strike(d.atk_multiplier, now, true, d['hệ']);
-        if (d.heal) { const amount = d.heal * (1 + this.rootEffects().heal); s.hp = Math.min(this.stats(now).HP, s.hp + amount); }
-        if (d.def_bonus) c.buffs.push({ type: 'def', value: d.def_bonus, end: now + d['thời gian buff (giây)'] * 1000 });
-        if (d['buff stat'] === 'eva') c.buffs.push({ type: 'dodge', value: d['buff giá trị'] / 100, end: now + d['thời gian buff (giây)'] * 1000 });
+        const cost = this.maxMp() * k.mpPct;
+        if (s.mp < cost) throw Error('Linh lực không đủ để thi triển chiêu thức.');
+        s.mp -= cost;
+        c.manualCooldowns[key] = now + k.cooldown * 1000;
+        if (k.kind === 'attack') return this._strike(k.multiplier * power, now, true, k.element);
+        if (k.kind === 'heal') s.hp = Math.min(this.stats(now).HP, s.hp + k.value * power * (1 + this.rootEffects().heal));
+        else if (k.kind === 'guard') c.buffs.push({ type: 'def', value: k.value * power, end: now + k.seconds * 1000 });
+        else if (k.kind === 'evade') c.buffs.push({ type: 'dodge', value: k.value * power / 100, end: now + k.seconds * 1000 });
         this.log('Vận dụng ' + x.name + '.');
         return { support: true };
+      },
+      /* Khi tự động chiến đấu, các skill ngoại tu sẵn sàng được thi triển trước đòn thường. */
+      _autoCast(now) {
+        const s = this.s, c = effects(s);
+        for (const key of s.activeManuals) {
+          const k = H.MANUALS.skillOf(item(key));
+          if (!k || now < (c.manualCooldowns[key] || 0) || s.mp < this.maxMp() * k.mpPct) continue;
+          if (k.kind === 'heal' && s.hp > this.stats(now).HP * .6) continue;
+          const out = this._cast(key, now);
+          if (out?.won || this.isDead()) return out;
+        }
+        return null;
       },
       applyArtifactHit(now) {
         const s = this.s, c = effects(s);

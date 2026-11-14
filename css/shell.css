@@ -361,6 +361,7 @@ body.in-game.log-collapsed{--log-panel-h:31px}
 .shop-item h3, .technique-item h3{font:700 17px var(--serif);margin:0 0 3px}
 .shop-item p, .technique-item p{font-size:13.5px;color:#bfcbc3;margin:0;line-height:1.45}
 .shop-item>button, .technique-item>button{flex-shrink:0}
+.technique-item>.technique-actions{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 .shop-item .mini-img{width:42px;height:42px}
 .zone-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .zone-button{padding:11px;text-align:left;background:#19261f;color:#e5dac8;border:1px solid #436b56;border-radius:9px;min-width:0}

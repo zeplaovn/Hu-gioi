@@ -38,25 +38,33 @@
         this.log('Tự động đột phá: ' + this.realmLabel() + '.');
         return true;
       },
+      /* Độ mạnh của một công pháp đã học: lệch cảnh giới và độ thuần thục. */
+      manualPower(key) {
+        const s = this.s, x = item(key);
+        return F.P.CP_MISMATCH ** Math.max(0, s.realm - x.tier) * (F.P.CP_MIN_MASTERY + (1 - F.P.CP_MIN_MASTERY) * (s.learned[key] || 0));
+      },
+      /* Cộng dồn hiệu lực bị động: nội tu đang vận hành, và bí tịch nghề đã lĩnh ngộ (không chiếm ô). */
       manualEffects() {
         const s = this.s, out = { rate: 0, attack: 0, guard: 0, alchemy: 0, alchemyChance: 0 };
-        for (const key of s.activeManuals) {
-          const x = item(key);
-          if (!x || x.designOnly) continue;
-          const d = x.design;
-          const match = d?.group === 'bí tịch' && String(d['công dụng']).match(/(\d+(?:[.,]\d+)?)\s*(?:điểm\s*)?%/);
-          if (match && ['luyện khí', 'luyện đan'].includes(d['thể loại'])) {
-            const value = Number(match[1].replace(',', '.')) / 100 * 2 ** (x.sub - H.BY_ID[x.code].sub) *
-              F.P.CP_MISMATCH ** Math.max(0, s.realm - x.tier) * (F.P.CP_MIN_MASTERY + (1 - F.P.CP_MIN_MASTERY) * s.learned[key]);
-            if (d['thể loại'] === 'luyện khí') out.rate += value;
-            else out.alchemyChance += value;
-            continue;
+        const parsed = x => {
+          const d = x.design, m = d?.group === 'bí tịch' && String(d['công dụng']).match(/(\d+(?:[.,]\d+)?)\s*(?:điểm\s*)?%/);
+          return m ? Number(m[1].replace(',', '.')) / 100 * 2 ** (x.sub - H.BY_ID[x.code].sub) : null;
+        };
+        const keys = [...s.activeManuals, ...Object.keys(s.learned).filter(k => H.MANUALS.school(item(k)) === 'nghe')];
+        for (const key of new Set(keys)) {
+          const x = item(key), sc = H.MANUALS.school(x);
+          if (!x || x.designOnly || !(key in s.learned)) continue;
+          const power = this.manualPower(key), value = parsed(x);
+          if (sc === 'noi') {
+            if (value !== null) { out.rate += value * power; continue; }
+            const e = F.cong_phap_effect(x.effect, x.sub, Math.max(0, s.realm - x.tier), s.learned[key]);
+            out.rate += e.cong_gop_toc_do || 0;
+            out.guard += e.tang_HP_DEF || 0;
+          } else if (sc === 'nghe' && H.MANUALS.trade(x) === 'dan') {
+            if (value !== null) { out.alchemyChance += value * power; continue; }
+            const e = F.cong_phap_effect(x.effect, x.sub, Math.max(0, s.realm - x.tier), s.learned[key]);
+            out.alchemy += e.kynang_luyen_dan || e.ky_nang_luyen_dan || 0;
           }
-          const e = F.cong_phap_effect(x.effect, x.sub, Math.max(0, s.realm - x.tier), s.learned[key]);
-          out.rate += e.cong_gop_toc_do || 0;
-          out.attack += e.tang_ATK || 0;
-          out.guard += e.tang_HP_DEF || 0;
-          out.alchemy += e.kynang_luyen_dan || e.ky_nang_luyen_dan || 0;
         }
         return out;
       },

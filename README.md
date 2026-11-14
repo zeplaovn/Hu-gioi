@@ -7,6 +7,7 @@ Game idle tu tiên tiếng Việt, chơi online trên trình duyệt. Mỗi tài
 - **Tu luyện:** hấp thu linh thạch, tu vi tự tăng khi online, đột phá cảnh giới (lôi kiếp, có thể tử vong), bế quan.
 - **Nhân vật:** năm tab Đạo thể, Công pháp, Thiên phú, Kinh mạch, Hành trang. Bấm ô pháp bảo/công pháp hoặc vật phẩm để mở cửa sổ nổi.
 - **Vật phẩm:** mua, bán, trang bị, lĩnh ngộ và vận hành công pháp, dùng đan dược.
+- **Công pháp:** ba hệ. Ngoại tu là skill chủ động (thi triển, tự thi triển khi tự động chiến đấu), nội tu là skill bị động, bí tịch nghề không chiếm ô và mở nghề (đan hiếm cần sách luyện đan đủ cấp). Mỗi hệ có số ô riêng mở theo cảnh giới; phẩm chất sách quyết định độ mạnh. Dữ liệu ở `data/manuals.js`.
 - **Chế tạo:** luyện đan, rèn pháp bảo, linh điền.
 - **Chiến đấu:** đánh quái, đổi vùng, thám hiểm có lựa chọn, bí cảnh.
 - **Tông môn:** gia nhập, ủy thác, cống hiến, Tàng Bảo Các.

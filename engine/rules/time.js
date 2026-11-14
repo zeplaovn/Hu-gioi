@@ -216,7 +216,7 @@
           let turns = 0;
           while (s.auto && !this.isDead() && s.combatClock >= interval && turns < 300) {
             s.combatClock -= interval;
-            this._strike(1, now, true);
+            if (!this._autoCast(now)?.won) this._strike(1, now, true);
             turns++;
           }
         }

@@ -45,24 +45,31 @@
         s.equipment.push(key);
         return true;
       },
+      /* Số ô còn trống của một hệ công pháp. */
+      manualRoom(school) {
+        const s = this.s, used = s.activeManuals.filter(k => H.MANUALS.school(item(k)) === school).length;
+        return (H.MANUALS.slots(s.realm)[school] || 0) - used;
+      },
       learn(payload, now) {
         const key = payload.code, s = this.s, x = item(key);
         if (!x || x.kind !== 'BT' || !this.count(key)) throw Error('Không có bí tịch này.');
         if (x.tier > s.realm + 1) throw Error('Công pháp vượt quá một bậc cảnh giới.');
         this.take(key);
         s.learned[key] = Math.min(1, (s.learned[key] || 0) + .05);
-        if (!['BT-900', 'BT-901'].includes(x.code) && !s.activeManuals.includes(key) && s.activeManuals.length < 4) s.activeManuals.push(key);
+        const sc = H.MANUALS.school(x);
+        if (sc !== 'nghe' && !s.activeManuals.includes(key) && this.manualRoom(sc) > 0) s.activeManuals.push(key);
         return s.learned[key];
       },
       activate(payload, now) {
         const key = payload.code, s = this.s, x = item(key);
         if (!(key in s.learned)) throw Error('Chưa lĩnh ngộ công pháp.');
         if (!x) throw Error('Vật phẩm không hợp lệ.');
-        if (['BT-900', 'BT-901'].includes(x.code)) throw Error('Bí tịch nghề được áp dụng sau khi lĩnh ngộ.');
+        const sc = H.MANUALS.school(x);
+        if (sc === 'nghe') throw Error('Bí tịch nghề được áp dụng ngay sau khi lĩnh ngộ, không chiếm ô.');
         if (x.tier > s.realm + 1) throw Error('Công pháp vượt quá một bậc cảnh giới.');
         if (s.activeManuals.includes(key)) s.activeManuals = s.activeManuals.filter(k => k !== key);
         else {
-          if (s.activeManuals.length >= 4) throw Error('Chỉ vận hành bốn công pháp.');
+          if (this.manualRoom(sc) <= 0) throw Error('Hết ô ' + H.MANUALS.SCHOOLS[sc].label.toLowerCase() + ' (' + H.MANUALS.slots(s.realm)[sc] + ' ô ở cảnh giới này).');
           s.activeManuals.push(key);
         }
         s.hp = Math.min(s.hp, this.stats().HP);

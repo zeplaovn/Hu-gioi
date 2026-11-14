@@ -57,14 +57,17 @@
   }
 
   function manualsCard() {
-    const s = UI.s();
-    const slots = Array.from({ length: 4 }, (_, i) => {
-      const key = s.activeManuals[i];
-      if (!key) return `<button class="manual-slot empty" data-go="character:skills"><span>＋</span><small>Ô trống</small></button>`;
-      const x = H.item(key);
-      return `<div class="manual-slot">${img(key)}<div><b>${esc(x.name)}</b><small>Thuần thục ${pct(s.learned[key])}</small>${bar(s.learned[key] * 100)}</div></div>`;
-    }).join('');
-    return card('Công pháp đang vận', `<div class="manual-slots">${slots}</div><p class="info-note">Tối đa bốn công pháp cùng vận hành. Thuần thục tăng theo thời gian tu luyện.</p>`,
+    const s = UI.s(), room = H.MANUALS.slots(s.realm);
+    const slots = (sc, mark) => {
+      const mine = s.activeManuals.filter(k => H.MANUALS.school(H.item(k)) === sc);
+      return Array.from({ length: room[sc] }, (_, i) => {
+        const key = mine[i];
+        if (!key) return `<button class="manual-slot empty" data-go="character:skills"><span>＋</span><small>${mark} · ô trống</small></button>`;
+        const x = H.item(key), cast = sc === 'ngoai' ? btn('Thi triển', 'castManual', codeAttr(key), false, 'btn-outline') : '';
+        return `<div class="manual-slot">${img(key)}<div><b>${esc(x.name)}</b><small>${mark} · thuần thục ${pct(s.learned[key])}</small>${bar(s.learned[key] * 100)}</div>${cast}</div>`;
+      }).join('');
+    };
+    return card('Công pháp đang vận', `<div class="manual-slots">${slots('ngoai', 'Ngoại tu')}${slots('noi', 'Nội tu')}</div><p class="info-note">Ngoại tu là skill chủ động (tự thi triển khi tự động chiến đấu), nội tu là bị động. Thuần thục tăng theo thời gian tu luyện.</p>`,
       { eyebrow: 'TRUYỀN THỪA', aside: '<button class="text-btn" data-go="character:skills">Quản lý ›</button>' });
   }
 

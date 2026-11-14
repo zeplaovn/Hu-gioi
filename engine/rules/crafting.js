@@ -47,6 +47,11 @@
         need[b.code] = (need[b.code] || 0) + 2;
         return { code, herbs: need, stone: F.price_ha(x.tier) * .1, time: F.craft_time(x.tier) };
       },
+      /* Đan hiếm cần bí tịch luyện đan đủ cấp; đan thường không đòi gì thêm. */
+      pillGate(pillItem) {
+        const learned = Object.keys(this.s.learned).map(k => item(k)).filter(Boolean);
+        return H.MANUALS.pillGate(pillItem, learned);
+      },
       craftChance(tier) {
         const s = this.s, e = this.manualEffects();
         const skill = s.alchemySkill + e.alchemy + s.craftBoost;
@@ -57,6 +62,8 @@
         const s = this.s, code = payload.code, x = item(code), count = payload.count ?? 1;
         if (!Number.isInteger(count) || count < 1 || count > 3) throw Error('Số mẻ luyện không hợp lệ.');
         this.requireCraftRecipe(code);
+        const gate = this.pillGate(x);
+        if (!gate.ok) throw Error('Đan hiếm này cần bí tịch luyện đan cấp cao hơn (cấp sách ' + gate.have + '/' + gate.need + '). Hãy lĩnh ngộ sách phẩm cao hoặc cảnh giới cao hơn.');
         const r = this.recipe(code);
         if (x.tier > s.realm + 1) throw Error('Đan phương chưa mở.');
         if (s.craftQueue.length + count > 3) throw Error('Hàng đợi chỉ có ba chỗ trống.');
@@ -83,6 +90,7 @@
             this.add(key, F.P.BATCH_YIELD);
             s.progress.alchemy++;
             s.alchemySkill = Math.min(15, s.alchemySkill + .03);
+            for (const k of Object.keys(s.learned)) if (H.MANUALS.trade(item(k)) === 'dan') s.learned[k] = Math.min(1, s.learned[k] + .004);
             batches++;
             this.log('Luyện thành 3 ' + item(j.code).name + ' · ' + F.SUBPHAM[j.quality] + ' phẩm.');
           } else this.log('Luyện đan thất bại; nguyên liệu đã tiêu hao.');
